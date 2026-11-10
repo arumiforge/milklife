@@ -13,11 +13,12 @@ Web ini mengurus pendaftaran, cek pendaftaran, dan rekap panitia. Pelaksanaan lo
 
 ## Teknologi
 
-CodeIgniter 4, PHP 8.2+, MySQL 8, Nginx dari Laragon (pengembangan dan produksi), Bootstrap 5.3, DataTables, mPDF, PhpSpreadsheet.
+CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon pemilik: PHP 8.3), MySQL 8, Nginx dari Laragon (pengembangan dan produksi), Bootstrap 5.3, DataTables, mPDF, PhpSpreadsheet.
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/draf/rancangan-web-pendaftaran.md` (pindah ke `dokumen/final/` setelah disetujui).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17).
+- Rencana implementasi Tahap 1: `dokumen/draf/rencana-implementasi-tahap-1.md`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
 - Bahan asli: `sumber/flyer/`.
 - Data sekolah: `data/sekolah/sekolah.json`.
