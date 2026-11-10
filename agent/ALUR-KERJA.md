@@ -64,7 +64,7 @@ Bila sebuah tahap punya pilihan yang hanya bisa dijawab pemilik, tanyakan di awa
 - Nama cabang: `fitur/<ID>-<slug>`, `perbaikan/<slug>`, atau `dokumen/<slug>`. Cabang yang dibuat otomatis oleh sesi agen boleh memakai nama bawaannya.
 - Pesan commit: `<jenis>(<lingkup>): <ringkasan>`. Jenis: `fitur`, `perbaikan`, `dokumen`, `data`, `uji`, `rapikan`, `alat`.
   Contoh: `fitur(pendaftaran): hitung biaya individu per kelompok umur`.
-- PR digabung dengan *squash* setelah pemeriksaan otomatis lulus.
+- Tanpa CI GitHub. Uji dijalankan sendiri di komputer pengembang; PR digabung dengan *squash* setelah uji lulus.
 
 ## Kode (mulai Tahap 1)
 

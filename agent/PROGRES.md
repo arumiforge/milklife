@@ -14,7 +14,7 @@ Diperbarui: 10 November 2026
 
 | Tahap | Hasil | Status |
 |---|---|---|
-| 1. Kerangka | CodeIgniter terpasang, migrasi, impor sekolah, masuk admin, tata letak, tema, pemeriksaan otomatis | belum mulai |
+| 1. Kerangka | CodeIgniter terpasang, migrasi, impor sekolah, masuk admin, tata letak, tema, uji dasar | belum mulai |
 | 2. Pengaturan | Halaman pengaturan dan data induk, daftar kelengkapan | belum mulai |
 | 3. Halaman depan | Halaman depan, jadwal, unduhan, kontak | belum mulai |
 | 4. Pendaftaran | Wizard lengkap sampai tersimpan | belum mulai |

@@ -272,11 +272,11 @@ Keunikan NISN dan nomor dada dijaga oleh basis data, bukan hanya oleh aplikasi.
 
 **Risiko yang diterima pemilik:** NPSN bersifat publik dan ID pendaftaran berurutan, jadi orang yang menebaknya bisa melihat data siswa (nama, NISN, tanggal lahir). Pemilik memilih tampilan penuh berdasarkan MoU dengan sekolah. Pembatasan laju mengurangi pengambilan massal, tetapi tidak menutup risikonya.
 
-## 14. Pengujian dan pemeriksaan otomatis
+## 14. Pengujian
 
 - Uji unit untuk aturan murni: usia dan kelompok umur, biaya, ID pendaftaran, nomor dada, kelengkapan tim.
 - Uji fitur untuk alur pendaftaran, cek, dan penandaan lunas.
-- GitHub Actions pada setiap PR: pemeriksaan sintaks PHP, `composer validate`, dan PHPUnit dengan layanan MySQL.
+- Tanpa CI GitHub. Semua uji dijalankan sendiri di komputer pengembang dengan satu perintah, sebelum PR digabung.
 
 ## 15. Pemasangan
 
@@ -291,7 +291,7 @@ Setiap tahap punya wawancara singkat bila perlu, rencana implementasi, dan PR se
 | Tahap | Hasil |
 |---|---|
 | 0. Fondasi | Aturan repo, data sekolah, rancangan ini, `.env.example` |
-| 1. Kerangka | CodeIgniter terpasang, migrasi, impor sekolah, masuk admin, tata letak, tema, pemeriksaan otomatis |
+| 1. Kerangka | CodeIgniter terpasang, migrasi, impor sekolah, masuk admin, tata letak, tema, uji dasar |
 | 2. Pengaturan | Semua halaman pengaturan dan data induk, daftar kelengkapan |
 | 3. Halaman depan | Halaman depan, jadwal, unduhan, kontak |
 | 4. Pendaftaran | Wizard lengkap sampai tersimpan |

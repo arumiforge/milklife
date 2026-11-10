@@ -20,6 +20,7 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K12 | Batas usia kelompok umur kosong pada awalnya | Admin mengisi sesuai juknis; pendaftaran belum bisa dibuka sebelum terisi |
 | K13 | Tanpa atribusi alat AI pada commit, PR, kode, dan dokumen; satu-satunya kontributor adalah Arumi Studios | |
 | K14 | Cabang utama adalah `main` | |
+| K15 | Tanpa CI GitHub; uji dijalankan sendiri | Membatalkan rencana GitHub Actions di rancangan awal |
 
 ## Dari permintaan awal pemilik
 

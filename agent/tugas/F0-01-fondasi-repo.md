@@ -27,4 +27,4 @@ Pemilik menyetujui rancangan. Setelah itu rencana implementasi Tahap 1 ditulis.
 
 ## Catatan
 
-- Pemeriksaan otomatis GitHub dan pembuatan PDF dokumen dibuat di Tahap 1, bersama kode pertama.
+- Pembuatan PDF dokumen dibuat di Tahap 1.
