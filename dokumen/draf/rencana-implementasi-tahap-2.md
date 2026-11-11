@@ -198,7 +198,7 @@ Bila sebuah tugas ternyata perlu mengubah berkas di luar bagiannya, pelaksana be
 
 - Data acara: `MilkLife Athletics Challenge`, seri 2, tahun 2026, `Supersoccer Arena, Kudus`, 9–12 Desember 2026.
 - Pendaftaran: mulai 1 Oktober 2026 pukul 00.00, akhir 30 November 2026 pukul 23.59, tanggal patokan usia 30 November 2026.
-- Lima kelompok umur dan nomor lomba sesuai lampiran rancangan. Batas usia, jenjang, biaya individu, awalan nomor dada, serta batas anggota dan jumlah putra/putri nomor beregu dikosongkan untuk diisi admin.
+- Lima kelompok umur dan nomor lomba sesuai lampiran rancangan, dengan satu awalan nomor dada per kelompok umur: KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5 (K33). Batas usia, jenjang, biaya individu, serta batas anggota dan jumlah putra/putri nomor beregu dikosongkan untuk diisi admin.
 - Perintah menolak berjalan bila tabel `kelompok_umur` sudah berisi atau pengaturan acara sudah terisi, sehingga tidak menimpa isian admin. Hasilnya diringkas di layar.
 
 Data ini berasal dari flyer, bukan data siswa, jadi boleh ada di repo.
