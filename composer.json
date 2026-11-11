@@ -1,0 +1,42 @@
+{
+    "name": "arumiforge/milklife",
+    "description": "Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Karesidenan Pati",
+    "license": "proprietary",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "codeigniter4/framework": "^4.7",
+        "codeigniter4/settings": "^2.4",
+        "codeigniter4/translations": "^4.7"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.9",
+        "mikey179/vfsstream": "^1.6",
+        "phpunit/phpunit": "^10.5.16"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Config\\": "app/Config/"
+        },
+        "exclude-from-classmap": [
+            "**/Database/Migrations/**"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Support\\": "tests/_support"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "scripts": {
+        "uji": "phpunit"
+    },
+    "scripts-descriptions": {
+        "uji": "Menjalankan semua uji (PHPUnit)"
+    }
+}

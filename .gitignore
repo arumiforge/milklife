@@ -1,3 +1,65 @@
+#-------------------------
+# Rahasia dan pengaturan lokal
+#-------------------------
 .env
+.env.*
+!.env.example
+
+#-------------------------
+# Composer
+#-------------------------
 /vendor/
+
+#-------------------------
+# Isi writable/ (hanya .htaccess dan index.html yang disimpan)
+#-------------------------
+/writable/cache/*
+!/writable/cache/index.html
+
+/writable/logs/*
+!/writable/logs/index.html
+
+/writable/session/*
+!/writable/session/index.html
+
+/writable/uploads/*
+!/writable/uploads/index.html
+
+/writable/debugbar/*
+!/writable/debugbar/index.html
+
+php_errors.log
+
+#-------------------------
+# Hasil PHPUnit
+#-------------------------
+/build/
+/phpunit.xml
+/tests/coverage*
+.phpunit.cache/
+.phpunit.result.cache
+
+#-------------------------
+# Python (alat data)
+#-------------------------
 __pycache__/
+
+#-------------------------
+# Sistem operasi
+#-------------------------
+.DS_Store
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*~
+
+#-------------------------
+# Penyunting
+#-------------------------
+.idea/
+*.iml
+.vscode/
+*.sublime-workspace
+*.sublime-project
