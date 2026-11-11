@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Pengaturan PHPUnit. Jalankan dengan: composer uji
+
+    Sambungan basis data uji dibaca dari `database.tests.*` di `.env`,
+    jadi tidak ada kata sandi yang ditulis di sini. Untuk pengaturan pribadi,
+    salin berkas ini menjadi `phpunit.xml` (tidak masuk git).
+-->
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="vendor/codeigniter4/framework/system/Test/bootstrap.php"
+    backupGlobals="false"
+    beStrictAboutOutputDuringTests="true"
+    colors="true"
+    columns="max"
+    failOnRisky="true"
+    failOnWarning="true"
+    cacheDirectory="build/.phpunit.cache"
+>
+    <testsuites>
+        <testsuite name="unit">
+            <directory>./tests/unit</directory>
+        </testsuite>
+        <testsuite name="basisdata">
+            <directory>./tests/basisdata</directory>
+        </testsuite>
+        <testsuite name="fitur">
+            <directory>./tests/fitur</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">./app</directory>
+        </include>
+        <exclude>
+            <directory suffix=".php">./app/Views</directory>
+            <file>./app/Config/Routes.php</file>
+        </exclude>
+    </source>
+
+    <php>
+        <server name="app.baseURL" value="http://milklife.test/"/>
+        <server name="CODEIGNITER_SCREAM_DEPRECATIONS" value="0"/>
+        <!-- Folder yang berisi phpunit.dist.xml -->
+        <const name="HOMEPATH" value="./"/>
+        <!-- Folder berkas konfigurasi Paths -->
+        <const name="CONFIGPATH" value="./app/Config/"/>
+        <!-- Folder pengendali depan (index.php) -->
+        <const name="PUBLICPATH" value="./public/"/>
+    </php>
+</phpunit>
