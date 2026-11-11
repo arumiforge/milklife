@@ -20,7 +20,6 @@ $bagian = [
         'pengantar'  => 'Orang yang bisa dihubungi sekolah lewat WA bila ada pertanyaan.',
         'tombol'     => 'Tambah narahubung',
         'kosong'     => 'Belum ada narahubung. Tambahkan nama dan nomor WA panitia supaya sekolah tahu siapa yang bisa ditanya.',
-        'kolomNilai' => 'Nomor WA',
         'daftar'     => $narahubung,
         'alamat'     => 'narahubung',
     ],
@@ -32,7 +31,6 @@ $bagian = [
         'pengantar'  => 'Akun media sosial acara yang tampil di halaman depan.',
         'tombol'     => 'Tambah media sosial',
         'kosong'     => 'Belum ada media sosial. Tambahkan alamat Instagram, YouTube, atau akun lain supaya sekolah bisa mengikuti kabar acara.',
-        'kolomNilai' => 'Alamat',
         'daftar'     => $mediaSosial,
         'alamat'     => 'media-sosial',
     ],
@@ -50,8 +48,8 @@ $bagian = [
 
     <div class="row g-4">
         <?php foreach ($bagian as $b) : ?>
-            <div class="col-12 col-xxl-6">
-                <section class="card h-100" id="<?= $b['id'] ?>" aria-labelledby="judul-<?= $b['id'] ?>">
+            <div class="col-12">
+                <section class="card" id="<?= $b['id'] ?>" aria-labelledby="judul-<?= $b['id'] ?>">
                     <div class="card-body p-3 p-lg-4">
                         <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
                             <div>
@@ -71,13 +69,12 @@ $bagian = [
                                 <p class="mb-0 mx-auto"><?= esc($b['kosong']) ?></p>
                             </div>
                         <?php else : ?>
-                            <div class="tabel-gulir">
+                            <div class="tabel-gulir position-relative">
                                 <table class="table align-middle mb-0">
                                     <thead>
                                         <tr>
                                             <th scope="col" class="text-center">Urutan</th>
-                                            <th scope="col">Nama</th>
-                                            <th scope="col"><?= esc($b['kolomNilai']) ?></th>
+                                            <th scope="col"><?= esc($b['judul']) ?></th>
                                             <th scope="col"><span class="visually-hidden">Tindakan</span></th>
                                         </tr>
                                     </thead>
@@ -85,22 +82,20 @@ $bagian = [
                                         <?php foreach ($b['daftar'] as $kontak) : ?>
                                             <tr data-id="<?= (int) $kontak['id'] ?>">
                                                 <td class="text-center"><?= (int) $kontak['urutan'] ?></td>
-                                                <?php if ($kontak['jenis'] === TautanModel::NARAHUBUNG) : ?>
-                                                    <td class="fw-semibold"><?= esc($kontak['label']) ?></td>
-                                                    <td class="text-nowrap">
-                                                        <a href="https://wa.me/<?= esc($kontak['nilai'], 'url') ?>" target="_blank" rel="noopener noreferrer">
+                                                <td class="w-100">
+                                                    <?php if ($kontak['jenis'] === TautanModel::NARAHUBUNG) : ?>
+                                                        <span class="fw-semibold d-block"><?= esc($kontak['label']) ?></span>
+                                                        <a class="small text-nowrap" href="https://wa.me/<?= esc($kontak['nilai'], 'url') ?>" target="_blank" rel="noopener noreferrer">
                                                             <i class="bi bi-whatsapp" aria-hidden="true"></i> <?= esc(NomorWa::tampilan($kontak['nilai'])) ?>
                                                         </a>
-                                                    </td>
-                                                <?php else : ?>
-                                                    <td class="fw-semibold">
-                                                        <i class="bi bi-<?= TautanModel::ikonMediaSosial($kontak['nilai']) ?> text-primary" aria-hidden="true"></i>
-                                                        <?= esc($kontak['label']) ?>
-                                                    </td>
-                                                    <td class="text-break">
-                                                        <a href="<?= esc($kontak['nilai'], 'attr') ?>" target="_blank" rel="noopener noreferrer"><?= esc(TautanModel::alamatRingkas($kontak['nilai'])) ?></a>
-                                                    </td>
-                                                <?php endif ?>
+                                                    <?php else : ?>
+                                                        <span class="fw-semibold d-block">
+                                                            <i class="bi bi-<?= TautanModel::ikonMediaSosial($kontak['nilai']) ?> text-primary" aria-hidden="true"></i>
+                                                            <?= esc($kontak['label']) ?>
+                                                        </span>
+                                                        <a class="small text-break" href="<?= esc($kontak['nilai'], 'attr') ?>" target="_blank" rel="noopener noreferrer"><?= esc(TautanModel::alamatRingkas($kontak['nilai'])) ?></a>
+                                                    <?php endif ?>
+                                                </td>
                                                 <td class="text-end">
                                                     <div class="d-flex justify-content-end gap-2">
                                                         <a class="btn btn-sm btn-outline-primary text-nowrap" href="<?= site_url('admin/pengaturan/kontak/' . (int) $kontak['id'] . '/ubah') ?>">

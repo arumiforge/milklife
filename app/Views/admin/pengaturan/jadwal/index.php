@@ -48,7 +48,7 @@ use App\Models\TautanModel;
                     </a>
                 </div>
 
-                <div class="tabel-gulir">
+                <div class="tabel-gulir position-relative">
                     <table class="table align-middle mb-0">
                         <thead>
                             <tr>
@@ -62,7 +62,7 @@ use App\Models\TautanModel;
                             <?php foreach ($daftar as $jadwal) : ?>
                                 <tr data-id="<?= (int) $jadwal['id'] ?>">
                                     <td class="text-center"><?= (int) $jadwal['urutan'] ?></td>
-                                    <td style="min-width: 14rem">
+                                    <td class="w-100">
                                         <span class="fw-semibold d-block"><?= esc($jadwal['judul']) ?></span>
                                         <ul class="list-unstyled small text-body-secondary mb-0 mt-1">
                                             <li>
