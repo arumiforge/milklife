@@ -28,6 +28,16 @@
  *
  * Tanpa JavaScript formulir tetap terkirim tanpa konfirmasi; server tetap
  * memeriksa semua aturan. Bila Bootstrap tidak termuat, `window.confirm` dipakai.
+ *
+ * Skrip yang sama memeriksa ukuran berkas sebelum formulir dikirim. Kotak
+ * unggah dengan `data-ukuran-maksimal="<bita>"` menolak berkas yang lebih
+ * besar dengan pesan ramah, supaya admin tidak mengirim berkas yang akan
+ * ditolak server (berkas di atas batas PHP `post_max_size` bahkan tidak
+ * sampai ke pengendali). Batasnya dari `App\Libraries\Unggahan`:
+ *
+ *     <input type="file" class="form-control" id="logo_bank" name="logo_bank"
+ *         accept="image/jpeg,image/png,image/webp"
+ *         data-ukuran-maksimal="<?= Unggahan::BATAS_GAMBAR ?>">
  */
 (function () {
     'use strict';
@@ -93,8 +103,58 @@
         }
     }
 
+    function teksUkuran(bita) {
+        var mb = bita / (1024 * 1024);
+
+        return mb >= 1 ? (Math.round(mb * 10) / 10).toString().replace('.', ',') + ' MB' : Math.max(1, Math.round(bita / 1024)) + ' KB';
+    }
+
+    // Periksa ukuran berkas di kotak unggah; kembalikan false bila terlalu besar.
+    function periksaUkuran(kotak) {
+        var batas = parseInt(kotak.getAttribute('data-ukuran-maksimal'), 10);
+        var pesan = '';
+
+        if (batas > 0 && kotak.files) {
+            for (var i = 0; i < kotak.files.length; i++) {
+                if (kotak.files[i].size > batas) {
+                    pesan = 'Ukuran berkas ' + teksUkuran(kotak.files[i].size) + ', lebih dari batas ' +
+                        teksUkuran(batas) + '. Perkecil dulu, lalu pilih lagi.';
+                    break;
+                }
+            }
+        }
+
+        kotak.setCustomValidity(pesan);
+
+        if (pesan !== '') {
+            kotak.reportValidity();
+        }
+
+        return pesan === '';
+    }
+
+    document.addEventListener('change', function (peristiwa) {
+        var kotak = peristiwa.target;
+
+        if (kotak instanceof HTMLInputElement && kotak.type === 'file' && kotak.hasAttribute('data-ukuran-maksimal')) {
+            periksaUkuran(kotak);
+        }
+    });
+
     document.addEventListener('submit', function (peristiwa) {
         var formulir = peristiwa.target;
+
+        if (formulir instanceof HTMLFormElement) {
+            var kotakBerkas = formulir.querySelectorAll('input[type="file"][data-ukuran-maksimal]');
+
+            for (var i = 0; i < kotakBerkas.length; i++) {
+                if (!periksaUkuran(kotakBerkas[i])) {
+                    peristiwa.preventDefault();
+                    kotakBerkas[i].focus();
+                    return;
+                }
+            }
+        }
 
         if (!(formulir instanceof HTMLFormElement) || !formulir.hasAttribute('data-konfirmasi')) {
             return;
