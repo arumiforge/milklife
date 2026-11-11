@@ -12,8 +12,13 @@
  * punya halaman: tampil non-aktif (`aria-disabled`, tanpa tautan) dengan
  * keterangan "Segera". Saat halamannya dibuat, isi `alamat`-nya.
  *
+ * Nama acara di kepala (`tata_letak/_merek`) dan kaki diambil dari pengaturan
+ * `Acara.nama` dan `Acara.tahun`.
+ *
  * @var CodeIgniter\View\View $this
  */
+
+use App\Controllers\Admin\Pengaturan\AcaraController;
 
 $menuPublik = [
     ['label' => 'Beranda', 'alamat' => '/'],
@@ -22,10 +27,11 @@ $menuPublik = [
     ['label' => 'Unduhan', 'alamat' => null],
 ];
 
-// Nama acara dan tahun ditulis langsung dulu; Tahap 3 menggantinya dengan pengaturan admin.
-$namaAcaraUtama     = 'MilkLife';
-$namaAcaraSambungan = 'Athletics Challenge';
-$tahunAcara         = '2026';
+// Nama dan tahun acara dari pengaturan admin (Data Acara). Selama nama belum
+// diisi, merek dan kaki memakai `AcaraController::NAMA_PENGGANTI`; tahun yang
+// belum diisi tidak ditampilkan.
+$namaAcara  = AcaraController::namaTampil();
+$tahunAcara = trim((string) setting('Acara.tahun'));
 ?>
 <!doctype html>
 <html lang="id">
@@ -47,8 +53,7 @@ $tahunAcara         = '2026';
         <nav class="navbar navbar-expand-md navbar-dark" aria-label="Menu utama">
             <div class="container">
                 <a class="navbar-brand merek py-2" href="<?= site_url('/') ?>">
-                    <span class="merek-utama"><?= esc($namaAcaraUtama) ?></span>
-                    <span class="merek-sambungan"><?= esc($namaAcaraSambungan) ?></span>
+                    <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu-publik" aria-controls="menu-publik" aria-expanded="false" aria-label="Buka atau tutup menu">
                     <span class="navbar-toggler-icon" aria-hidden="true"></span>
@@ -81,7 +86,7 @@ $tahunAcara         = '2026';
 
     <footer class="kaki-publik">
         <div class="container py-4">
-            <p class="mb-0"><?= esc($namaAcaraUtama . ' ' . $namaAcaraSambungan) ?> <?= esc($tahunAcara) ?></p>
+            <p class="mb-0"><?= esc(trim($namaAcara . ' ' . $tahunAcara)) ?></p>
         </div>
     </footer>
 

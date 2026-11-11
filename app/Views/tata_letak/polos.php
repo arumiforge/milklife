@@ -1,7 +1,8 @@
 <?php
 /**
- * Tata letak polos untuk halaman masuk admin: latar biru, nama acara di atas,
- * dan satu kartu putih di tengah (lebar paling besar 420 px).
+ * Tata letak polos untuk halaman masuk admin: latar biru, nama acara di atas
+ * (dari pengaturan `Acara.nama`, lewat `tata_letak/_merek`), dan satu kartu
+ * putih di tengah (lebar paling besar 420 px).
  *
  * Halaman galat (`errors/html/*`) tidak memakai berkas ini karena bisa
  * dirender saat sistem bermasalah, tetapi tampil selaras dengannya.
@@ -34,8 +35,7 @@
         <div class="polos-kolom">
             <p class="polos-merek merek">
                 <a href="<?= site_url('/') ?>">
-                    <span class="merek-utama">MilkLife</span>
-                    <span class="merek-sambungan">Athletics Challenge</span>
+                    <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
                 </a>
             </p>
             <div class="card polos-kartu">

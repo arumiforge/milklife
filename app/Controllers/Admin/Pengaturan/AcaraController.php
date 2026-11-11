@@ -19,6 +19,12 @@ class AcaraController extends BaseController
     private const ALAMAT = 'admin/pengaturan/acara';
 
     /**
+     * Teks pengganti nama acara di tata letak dan halaman depan selama admin
+     * belum mengisinya.
+     */
+    public const NAMA_PENGGANTI = 'Pendaftaran Lomba';
+
+    /**
      * Batas tahun dan seri yang masuk akal, supaya salah ketik tertangkap.
      */
     private const TAHUN_PALING_AWAL  = 2000;
@@ -128,6 +134,18 @@ class AcaraController extends BaseController
         }
 
         return $galat;
+    }
+
+    /**
+     * Nama acara untuk ditampilkan: `Acara.nama`, atau `NAMA_PENGGANTI` bila
+     * belum diisi. Dipakai tata letak (`tata_letak/_merek`, kaki publik) dan
+     * halaman depan.
+     */
+    public static function namaTampil(): string
+    {
+        $nama = trim((string) setting('Acara.nama'));
+
+        return $nama !== '' ? $nama : self::NAMA_PENGGANTI;
     }
 
     /**

@@ -8,7 +8,8 @@ use Tests\Support\UjiHalaman;
 
 /**
  * Tata letak publik, admin, dan polos yang jadi (F1-05), beserta komponen
- * "tanpa gambar" dan bilah kemajuan.
+ * "tanpa gambar" dan bilah kemajuan. Sejak F2-02 nama dan data acara diambil
+ * dari pengaturan, jadi uji yang memeriksanya mengisi pengaturan lebih dulu.
  *
  * @internal
  */
@@ -18,6 +19,8 @@ final class TataLetakHalamanTest extends UjiHalaman
 
     public function testHalamanDepanMemakaiTataLetakPublik(): void
     {
+        $this->isiDataAcara();
+
         $hasil = $this->get('/');
         $hasil->assertOK();
 
@@ -191,6 +194,8 @@ final class TataLetakHalamanTest extends UjiHalaman
 
     public function testTataLetakPolosMembungkusIsiDalamKartu(): void
     {
+        $this->isiDataAcara();
+
         $xpath = $this->xpath(view('Tests\Support\Views\tata_letak_polos_formulir'));
 
         $this->assertSame(1, $xpath->query('//body[@data-bs-theme="light"]')->length);
@@ -253,6 +258,20 @@ final class TataLetakHalamanTest extends UjiHalaman
     }
 
     // ---------- Bantuan ----------
+
+    /**
+     * Nama acara dan lainnya diambil dari pengaturan (F2-02); isi seperti
+     * flyer Seri 2. Tampilan saat belum diisi diuji di `PengaturanAcaraTest`.
+     */
+    private function isiDataAcara(): void
+    {
+        setting('Acara.nama', 'MilkLife Athletics Challenge');
+        setting('Acara.seri', 2);
+        setting('Acara.tahun', 2026);
+        setting('Acara.tempat', 'Supersoccer Arena, Kudus');
+        setting('Acara.tanggal_mulai', '2026-12-09');
+        setting('Acara.tanggal_selesai', '2026-12-12');
+    }
 
     /**
      * Merender view seolah-olah permintaan sedang membuka `$alamat`.

@@ -14,6 +14,8 @@
  * - `isi`: isi halaman, di dalam `<main id="isi">`; bungkus dengan `container-fluid`.
  * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap dan `aset/js/kemajuan.js`.
  *
+ * Nama acara di menu samping dari pengaturan `Acara.nama` (`tata_letak/_merek`).
+ *
  * Nama admin dibaca dari sesi `admin_nama` dan menjadi tautan ke halaman
  * Akun (`/admin/akun`). Tombol Keluar mengirim `POST` ke `/admin/keluar`
  * dengan token CSRF (rutenya dibuat F1-04).
@@ -59,8 +61,7 @@ if ($judulHalaman === '') {
     <div class="admin-bingkai">
         <aside class="menu-samping d-none d-lg-flex">
             <a class="menu-samping-merek merek" href="<?= site_url('admin/dasbor') ?>">
-                <span class="merek-utama">MilkLife</span>
-                <span class="merek-sambungan">Athletics Challenge</span>
+                <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
                 <span class="menu-samping-peran">Panel admin</span>
             </a>
             <nav aria-label="Menu admin">
