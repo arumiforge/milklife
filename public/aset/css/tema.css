@@ -1,4 +1,557 @@
 /*
- * Tema bersama halaman publik, admin, dan polos.
- * Warna flyer dan penyesuaian Bootstrap diisi pada tugas F1-05.
+ * Tema bersama halaman publik, admin, dan polos. Dimuat setelah Bootstrap.
+ *
+ * Warna diambil dari flyer Seri 2 – 2026 (sumber/flyer/). Satu tema terang:
+ * tata letak memasang data-bs-theme="light" dan tidak mengikuti mode gelap
+ * sistem.
+ *
+ * Kontras (WCAG, dihitung, bukan dikira; diuji di TataLetakTemaTest):
+ *   putih di atas --ml-oranye-tombol  #C4461B  4,95 : 1
+ *   putih di atas --ml-oranye-gelap   #A93E18  6,20 : 1  (tombol disorot)
+ *   putih di atas --ml-oranye-pekat   #963714  7,36 : 1  (tombol ditekan)
+ *   putih di atas --ml-biru           #234987  8,84 : 1
+ *   putih di atas --ml-biru-tua       #021F7B 14,15 : 1
+ *   biru tua di atas --ml-biru-muda   #9BCCEC  8,25 : 1
+ *   biru muda di atas --ml-biru-tua   #021F7B  8,25 : 1
+ *   teks redup #5B6475 di atas --ml-latar #F3F6FB  5,50 : 1
+ *
+ * Oranye asli flyer (#E85F31) dengan teks putih hanya 3,44 : 1, jadi dipakai
+ * untuk hiasan (garis, pita, penanda) saja. Tombol utama memakai oranye yang
+ * digelapkan dengan rona yang sama.
+ *
+ * Peran tombol:
+ *   .btn-primary          oranye: ajakan utama (Daftar, Masuk, Simpan)
+ *   .btn-outline-primary  biru: tindakan kedua
+ * Selain tombol, "primary" Bootstrap (tautan, fokus, centang, halaman aktif)
+ * memakai biru utama.
  */
+
+:root,
+[data-bs-theme="light"] {
+    /* Warna flyer */
+    --ml-biru: #234987;
+    --ml-biru-rgb: 35, 73, 135;
+    --ml-biru-tua: #021F7B;
+    --ml-biru-tua-rgb: 2, 31, 123;
+    --ml-oranye: #E85F31;
+    --ml-oranye-tombol: #C4461B;
+    --ml-oranye-tombol-rgb: 196, 70, 27;
+    --ml-oranye-gelap: #A93E18;
+    --ml-oranye-pekat: #963714;
+    --ml-biru-muda: #9BCCEC;
+    --ml-biru-muda-pucat: #E6F2FB;
+    --ml-putih: #FFFFFF;
+
+    /* Warna pendukung */
+    --ml-latar: #F3F6FB;
+    --ml-teks: #212529;
+    --ml-teks-redup: #5B6475;
+    --ml-garis: #D6DEEA;
+    --ml-gradasi-kepala: linear-gradient(120deg, var(--ml-biru-tua) 0%, #0B2E8A 55%, var(--ml-biru) 100%);
+
+    /* Penyesuaian variabel Bootstrap 5.3 */
+    --bs-primary: var(--ml-biru);
+    --bs-primary-rgb: 35, 73, 135;
+    --bs-primary-text-emphasis: var(--ml-biru-tua);
+    --bs-primary-bg-subtle: var(--ml-biru-muda-pucat);
+    --bs-primary-border-subtle: var(--ml-biru-muda);
+    --bs-info: var(--ml-biru-muda);
+    --bs-info-rgb: 155, 204, 236;
+    --bs-info-text-emphasis: var(--ml-biru-tua);
+    --bs-info-bg-subtle: var(--ml-biru-muda-pucat);
+    --bs-info-border-subtle: var(--ml-biru-muda);
+    --bs-link-color: var(--ml-biru);
+    --bs-link-color-rgb: 35, 73, 135;
+    --bs-link-hover-color: var(--ml-biru-tua);
+    --bs-link-hover-color-rgb: 2, 31, 123;
+    --bs-secondary-color: var(--ml-teks-redup);
+    --bs-border-color: var(--ml-garis);
+    --bs-focus-ring-color: rgba(35, 73, 135, 0.4);
+    --bs-heading-color: var(--ml-biru-tua);
+}
+
+html {
+    color-scheme: light;
+}
+
+body {
+    background-color: var(--ml-latar);
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: 700;
+}
+
+/* ---------- Tombol ---------- */
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--ml-oranye-tombol);
+    --bs-btn-border-color: var(--ml-oranye-tombol);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--ml-oranye-gelap);
+    --bs-btn-hover-border-color: var(--ml-oranye-gelap);
+    --bs-btn-focus-shadow-rgb: 196, 70, 27;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--ml-oranye-pekat);
+    --bs-btn-active-border-color: var(--ml-oranye-pekat);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--ml-oranye-tombol);
+    --bs-btn-disabled-border-color: var(--ml-oranye-tombol);
+    font-weight: 600;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--ml-biru);
+    --bs-btn-border-color: var(--ml-biru);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--ml-biru);
+    --bs-btn-hover-border-color: var(--ml-biru);
+    --bs-btn-focus-shadow-rgb: 35, 73, 135;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--ml-biru-tua);
+    --bs-btn-active-border-color: var(--ml-biru-tua);
+    --bs-btn-disabled-color: var(--ml-biru);
+    --bs-btn-disabled-border-color: var(--ml-biru);
+}
+
+/* ---------- Komponen Bootstrap yang warnanya tertulis mati ---------- */
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: #7C9CCF;
+    box-shadow: 0 0 0 0.25rem rgba(35, 73, 135, 0.25);
+}
+
+.form-check-input:checked,
+.form-check-input[type="checkbox"]:indeterminate {
+    background-color: var(--ml-biru);
+    border-color: var(--ml-biru);
+}
+
+.form-range::-webkit-slider-thumb { background-color: var(--ml-biru); }
+.form-range::-moz-range-thumb { background-color: var(--ml-biru); }
+.form-range:focus::-webkit-slider-thumb { box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(35, 73, 135, 0.25); }
+.form-range:focus::-moz-range-thumb { box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(35, 73, 135, 0.25); }
+
+.nav-link:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(35, 73, 135, 0.35);
+}
+
+.nav-pills {
+    --bs-nav-pills-link-active-bg: var(--ml-biru);
+}
+
+.pagination {
+    --bs-pagination-active-bg: var(--ml-biru);
+    --bs-pagination-active-border-color: var(--ml-biru);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(35, 73, 135, 0.25);
+}
+
+.list-group {
+    --bs-list-group-active-bg: var(--ml-biru);
+    --bs-list-group-active-border-color: var(--ml-biru);
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: var(--ml-biru);
+}
+
+.progress,
+.progress-stacked {
+    --bs-progress-bar-bg: var(--ml-biru);
+}
+
+.card {
+    --bs-card-bg: var(--ml-putih);
+    --bs-card-border-color: var(--ml-garis);
+}
+
+/* ---------- Bersama ---------- */
+
+/* Tautan "Lompat ke isi": tersembunyi sampai disorot papan ketik. */
+.lompat-ke-isi:focus {
+    position: fixed !important;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 2000;
+    padding: 0.625rem 1rem;
+    background: var(--ml-putih);
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+    border-radius: 0.375rem;
+    outline: 3px solid var(--ml-oranye-tombol);
+    outline-offset: 2px;
+}
+
+/* Bidang informasi: biru muda dengan teks biru tua (8,25 : 1). */
+.bidang-info {
+    background-color: var(--ml-biru-muda);
+    color: var(--ml-biru-tua);
+    border-radius: 0.75rem;
+}
+
+.bidang-info a {
+    color: var(--ml-biru-tua);
+}
+
+/* Lingkaran ikon untuk keadaan kosong dan bidang informasi. */
+.ikon-bulat {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru);
+    font-size: 1.5rem;
+}
+
+.bidang-info .ikon-bulat {
+    background-color: var(--ml-putih);
+    color: var(--ml-biru-tua);
+}
+
+/* Label miring seperti pita "SERI 2 - 2026" di flyer. */
+.pita-miring {
+    display: inline-block;
+    padding: 0.3rem 0.9rem;
+    background-color: var(--ml-oranye-tombol);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    transform: skewX(-12deg);
+}
+
+.pita-miring > span {
+    display: inline-block;
+    transform: skewX(12deg);
+}
+
+/* ---------- Komponen "tanpa gambar" (tata_letak/_tanpa_gambar.php) ---------- */
+
+.tanpa-gambar {
+    background-color: var(--ml-biru-muda-pucat);
+    border: 2px dashed var(--ml-biru-muda);
+    border-radius: 0.75rem;
+    color: var(--ml-teks-redup);
+    overflow: hidden;
+}
+
+.tanpa-gambar-isi {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.75rem;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.tanpa-gambar-isi .bi {
+    font-size: 2rem;
+    color: var(--ml-biru);
+}
+
+.tanpa-gambar-teks {
+    font-weight: 600;
+    color: var(--ml-biru-tua);
+}
+
+.tanpa-gambar-label {
+    font-size: 0.875rem;
+}
+
+/* ---------- Tata letak publik ---------- */
+
+.tata-publik {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+.tata-publik > main {
+    flex: 1 0 auto;
+}
+
+.kepala-publik {
+    position: relative;
+    background: var(--ml-biru-tua);
+}
+
+/* Pita diagonal tipis di bawah kepala, mengikuti bidang miring flyer. */
+.kepala-publik::after {
+    content: "";
+    display: block;
+    height: 6px;
+    background: linear-gradient(100deg,
+        var(--ml-oranye) 0 62%,
+        var(--ml-biru-tua) 62% 63%,
+        var(--ml-biru-muda) 63% 80%,
+        var(--ml-biru-tua) 80% 81%,
+        var(--ml-oranye) 81% 100%);
+}
+
+.kepala-publik .navbar {
+    --bs-navbar-color: rgba(255, 255, 255, 0.88);
+    --bs-navbar-hover-color: #fff;
+    --bs-navbar-active-color: #fff;
+    --bs-navbar-disabled-color: rgba(255, 255, 255, 0.7);
+    --bs-navbar-brand-color: #fff;
+    --bs-navbar-brand-hover-color: #fff;
+    --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.5);
+    min-height: 3.75rem;
+}
+
+.merek {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.4em;
+    font-weight: 800;
+    line-height: 1.15;
+    white-space: normal;
+}
+
+.merek-utama {
+    letter-spacing: -0.01em;
+}
+
+.merek-sambungan {
+    color: var(--ml-biru-muda);
+    font-weight: 700;
+}
+
+.kepala-publik .navbar-brand {
+    font-size: 1.125rem;
+    max-width: calc(100% - 4rem);
+}
+
+.kepala-publik .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    font-weight: 500;
+}
+
+.kepala-publik .nav-link.active {
+    font-weight: 700;
+    box-shadow: inset 0 -3px 0 var(--ml-oranye);
+}
+
+.kepala-publik .nav-link:focus-visible,
+.kepala-publik .navbar-brand:focus-visible,
+.kepala-publik .navbar-toggler:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+/* Butir menu yang halamannya belum ada. */
+.menu-segera {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.15rem 0.45rem;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 1rem;
+    color: #fff;
+}
+
+@media (max-width: 767.98px) {
+    .kepala-publik .navbar-collapse {
+        padding-bottom: 0.5rem;
+    }
+
+    .kepala-publik .nav-link {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        border-radius: 0.375rem;
+    }
+
+    .kepala-publik .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.12);
+        box-shadow: inset 4px 0 0 var(--ml-oranye);
+    }
+}
+
+@media (min-width: 768px) {
+    .kepala-publik .navbar-brand {
+        font-size: 1.25rem;
+    }
+}
+
+/* Bagian pembuka halaman depan: gradasi biru dengan bidang miring. */
+.pembuka {
+    position: relative;
+    overflow: hidden;
+    background: var(--ml-gradasi-kepala);
+    color: #fff;
+    isolation: isolate;
+}
+
+.pembuka::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -20%;
+    right: -12rem;
+    width: 22rem;
+    height: 140%;
+    background: linear-gradient(90deg,
+        var(--ml-oranye) 0 18%,
+        transparent 18% 30%,
+        rgba(155, 204, 236, 0.35) 30% 38%,
+        transparent 38% 52%,
+        rgba(232, 95, 49, 0.55) 52% 60%,
+        transparent 60%);
+    transform: skewX(-24deg);
+    opacity: 0.6;
+}
+
+/* Ponsel: bidang miring hanya di pojok kanan atas, memudar sebelum judul. */
+@media (max-width: 767.98px) {
+    .pembuka::before {
+        top: -2rem;
+        right: -15rem;
+        height: 11rem;
+        -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
+        mask-image: linear-gradient(to bottom, #000 40%, transparent);
+    }
+}
+
+.bidang-info p {
+    max-width: 68ch;
+}
+
+.pembuka-judul {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #fff;
+}
+
+.pembuka-judul .merek-sambungan {
+    display: block;
+}
+
+.pembuka-waktu {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    padding: 0.75rem 1.1rem;
+    background-color: var(--ml-biru-muda);
+    color: var(--ml-biru-tua);
+    font-weight: 700;
+    border-radius: 0.25rem;
+    box-shadow: 6px 6px 0 var(--ml-biru-tua);
+}
+
+.pembuka-waktu .bi {
+    margin-right: 0.35rem;
+}
+
+@media (min-width: 768px) {
+    .pembuka::before {
+        right: -4rem;
+        width: 30rem;
+        opacity: 0.85;
+    }
+}
+
+@media (min-width: 1200px) {
+    .pembuka::before {
+        right: 4rem;
+    }
+}
+
+.kaki-publik {
+    background-color: var(--ml-biru-tua);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.9375rem;
+    border-top: 4px solid var(--ml-oranye);
+}
+
+/* ---------- Tata letak polos (halaman masuk dan galat) ---------- */
+
+.tata-polos {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--ml-gradasi-kepala);
+    background-attachment: fixed;
+}
+
+.polos-bingkai {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.polos-kolom {
+    width: 100%;
+    max-width: 420px;
+}
+
+.polos-merek {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    font-size: 1.375rem;
+    text-align: center;
+}
+
+.polos-merek a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.polos-merek a:hover {
+    text-decoration: underline;
+}
+
+.polos-merek a:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+}
+
+.polos-kartu {
+    border: 0;
+    border-top: 5px solid var(--ml-oranye);
+    border-radius: 0.75rem;
+    box-shadow: 0 1rem 2.5rem rgba(2, 31, 123, 0.35);
+}
+
+.polos-kartu > .card-body {
+    padding: 1.5rem;
+}
+
+@media (min-width: 576px) {
+    .polos-kartu > .card-body {
+        padding: 2rem;
+    }
+}
+
+/* Gerak dikurangi bila pengguna memintanya. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
