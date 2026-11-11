@@ -41,8 +41,5 @@ Diperbarui: 11 November 2026
 ## Menunggu pemilik
 
 - Konfirmasi asumsi 4–8 di rancangan bagian 17, sebelum Tahap 4.
-- Jenjang 19 SLB di data sekolah, sebelum Tahap 4.
-- Juknis resmi untuk `sumber/` (batas usia tiap kelompok umur).
-- Keputusan cara web dijangkau dari internet (domain, IP publik, atau terowongan).
-- Lisensi repo (K20: diputuskan nanti).
+- Juknis resmi untuk `sumber/` (batas usia tiap kelompok umur); menyusul (K30).
 - Mencoba pemasangan di Laragon sesuai `README.md`.

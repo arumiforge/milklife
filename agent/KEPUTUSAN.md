@@ -59,3 +59,12 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K25 | Data awal kelompok umur dan nomor lomba dari flyer Seri 2 diisi lewat perintah sekali jalan saat pemasangan | Batas usia, biaya individu, awalan nomor dada, dan jenjang tetap kosong untuk diisi admin (K12, K23). Setelah itu semua diubah dari panel |
 | K26 | Halaman Akun hanya untuk akun admin yang sedang masuk: ganti nama, nama pengguna, dan kata sandi sendiri | Akun admin lain tetap dibuat dan diubah lewat perintah `admin:buat` |
 | K27 | Revisi 1 rancangan (K23) dan rencana implementasi Tahap 2 disetujui, termasuk tujuh asumsi rencana | Rancangan revisi dipindahkan ke `dokumen/final/`. Kode Tahap 2 boleh mulai, diawali F2-01 |
+
+## 11 November 2026 — jawaban pemilik atas hal terbuka
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K28 | Sekolah Luar Biasa (SLB) tidak ikut | Menjawab pertanyaan jenjang 19 SLB di data sekolah. Penanganannya di pendaftaran (Tahap 4): SLB tidak bisa dipilih atau ditolak dengan pesan jelas |
+| K29 | Lisensi repo: proprietary | Menggantikan K20. Sesuai `"license": "proprietary"` di `composer.json` |
+| K30 | Juknis resmi masih menyusul | Batas usia kelompok umur tetap diisi admin setelah juknis ada (K12) |
+| K31 | Web dijangkau dari internet lewat Cloudflare Tunnel | Menjawab rancangan bagian 15. Akibatnya alamat IP pengunjung dibaca dari kepala `CF-Connecting-IP`, supaya pembatasan masuk dan pembatasan laju tidak menghitung semua pengunjung sebagai satu alamat; diatur di tahap pemasangan |
