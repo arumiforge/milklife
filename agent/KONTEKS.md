@@ -29,6 +29,6 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Biaya individu mengikuti **kelompok umur**, bukan jenjang sekolah seperti tertulis di flyer.
 - Nomor dada dibuat saat pendaftaran **ditandai lunas**, bukan saat mendaftar.
 - NISN yang sudah terdaftar **ditolak**, termasuk pada pendaftaran susulan.
-- Batas usia kelompok umur **tidak punya nilai awal**; admin mengisinya dari juknis.
-- Usia menentukan kelompok umur, tetapi **jenjang sekolah membatasinya**: atlet ditolak bila kelompok umurnya tidak dibuka untuk jenjang sekolahnya (K23). Jenjang yang boleh ikut diatur admin, tidak tertulis di kode.
+- Kelompok umur ditentukan **tahun lahir**, bukan usia (K36); usia hanya ditampilkan. Tidak ada tanggal patokan usia (K37).
+- Tahun lahir menentukan kelompok umur, tetapi **jenjang sekolah membatasinya**: atlet ditolak bila kelompok umurnya tidak dibuka untuk jenjang sekolahnya (K23). Jenjang yang boleh ikut diatur admin, tidak tertulis di kode.
 - Halaman cek menampilkan data siswa penuh atas persetujuan MoU. Repo ini publik, jadi data siswa tidak boleh masuk git.

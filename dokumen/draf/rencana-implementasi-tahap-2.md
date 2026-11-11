@@ -16,12 +16,12 @@ Setelah Tahap 2 selesai, admin yang sudah masuk bisa:
 
 - membuka menu **Pengaturan** dan melihat semua halaman pengaturan beserta tanda lengkap atau belum,
 - mengisi data acara, jadwal dan aturan pendaftaran, rekening pembayaran, dan isi halaman depan (teks dan gambar),
-- mengelola kelompok umur (batas usia, jenjang yang boleh ikut, biaya individu, awalan nomor dada) dan nomor lomba,
+- mengelola kelompok umur (batas tahun lahir, jenjang yang boleh ikut, biaya individu, awalan nomor dada) dan nomor lomba,
 - mengelola jadwal, berkas unduhan, narahubung, dan media sosial,
 - mengganti nama, nama pengguna, dan kata sandinya sendiri di **Akun**,
 - melihat di dasbor daftar centang hal yang belum lengkap dan keadaan pendaftaran (sedang disiapkan, belum dibuka, terbuka, ditutup).
 
-Saat pemasangan, `php spark data:awal` mengisi data acara, tanggal pendaftaran, tanggal patokan usia, lima kelompok umur, dan semua nomor lomba dari flyer Seri 2 (K25).
+Saat pemasangan, `php spark data:awal` mengisi data acara, tanggal pendaftaran, lima kelompok umur dengan batas tahun lahirnya, dan semua nomor lomba dari flyer Seri 2 (K25).
 
 Belum ada di Tahap 2: tampilan halaman depan yang memakai isi pengaturan (Tahap 3), wizard pendaftaran (Tahap 4), bukti dan cek (Tahap 5), daftar pendaftaran, rekap, dan angka ringkasan di dasbor (Tahap 6).
 
@@ -31,7 +31,7 @@ Belum ada di Tahap 2: tampilan halaman depan yang memakai isi pengaturan (Tahap 
 |---|---|---|
 | F2-01 Fondasi pengaturan | Migrasi jenjang, kelas pengaturan, semua rute, menu, halaman daftar pengaturan, potongan tampilan bersama, unggahan, perintah `data:awal` | Pertama, sendiri |
 | F2-02 Acara dan pendaftaran | `/admin/pengaturan/acara`, `/admin/pengaturan/pendaftaran`; nama acara di tata letak dan beranda diambil dari pengaturan | Paralel |
-| F2-03 Kelompok umur | `/admin/pengaturan/kelompok-umur`: batas usia, centang jenjang, biaya, awalan nomor dada | Paralel |
+| F2-03 Kelompok umur | `/admin/pengaturan/kelompok-umur`: batas tahun lahir, centang jenjang, biaya, awalan nomor dada | Paralel |
 | F2-04 Nomor lomba | `/admin/pengaturan/nomor-lomba` | Paralel |
 | F2-05 Pembayaran dan halaman depan | `/admin/pengaturan/pembayaran`, `/admin/pengaturan/halaman-depan` (dengan unggah gambar) | Paralel |
 | F2-06 Jadwal dan kontak | `/admin/pengaturan/jadwal`, `/admin/pengaturan/kontak` | Paralel |
@@ -62,8 +62,7 @@ Pengaturan kunci–nilai disimpan lewat `codeigniter4/settings`, dibaca dengan `
 | `Config\Pendaftaran` | `mulai`, `akhir` | Waktu buka dan tutup, `Y-m-d H:i:s` (WIB) | `null` |
 | | `buka_manual` | Dibuka manual oleh admin, `bool` | `false` |
 | | `buka_manual_sampai` | Batas buka manual, `Y-m-d H:i:s`, wajib bila `buka_manual` | `null` |
-| | `tanggal_patokan_usia` | `Y-m-d` | `null` |
-| | `tampilan_usia` | `tahun` atau `tahun_bulan` | `tahun` |
+| | `tampilan_usia` | `tahun` atau `tahun_bulan`; hanya tampilan, usia dihitung pada `Acara.tanggal_mulai` (K37) | `tahun` |
 | | `penanggung_jawab_minimal`, `penanggung_jawab_maksimal` | Bilangan bulat | `1`, `5` |
 | | `nomor_individu_maksimal` | Bilangan bulat | `2` |
 | `Config\Pembayaran` | `bank`, `nomor_rekening`, `pemilik_rekening` | Teks; nomor rekening hanya angka | `''` |
@@ -150,7 +149,8 @@ Halaman akun memakai dua formulir di satu halaman: `POST admin/akun` (nama dan n
   - Awalan yang sudah dipakai tidak bisa dihapus.
   - Nomor lomba hanya bisa dihapus bila belum dipakai atlet atau tim.
   - Selain itu, admin disarankan mematikan (`aktif = 0`) supaya tidak muncul di pendaftaran.
-- Rentang usia kelompok umur aktif tidak boleh tumpang tindih (rancangan 6.4).
+- Rentang tahun lahir kelompok umur aktif tidak boleh tumpang tindih (rancangan 6.4). Batas yang kosong berarti tidak terbatas di sisi itu.
+- Migrasi `2026-11-12-000200_UbahBatasUsiaMenjadiTahunLahir` (F2-03) mengganti `usia_minimal`/`usia_maksimal` dengan `tahun_lahir_awal`/`tahun_lahir_akhir` (`SMALLINT UNSIGNED`, boleh kosong) (K36).
 
 ### Aturan domain
 
@@ -197,8 +197,8 @@ Bila sebuah tugas ternyata perlu mengubah berkas di luar bagiannya, pelaksana be
 `php spark data:awal` (F2-01) dijalankan sekali saat pemasangan, setelah `migrate --all`:
 
 - Data acara: `MilkLife Athletics Challenge`, seri 2, tahun 2026, `Supersoccer Arena, Kudus`, 9–12 Desember 2026.
-- Pendaftaran: mulai 1 Oktober 2026 pukul 00.00, akhir 30 November 2026 pukul 23.59, tanggal patokan usia 30 November 2026.
-- Lima kelompok umur dan nomor lomba sesuai lampiran rancangan, dengan satu awalan nomor dada per kelompok umur: KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5 (K33). Batas usia, jenjang, biaya individu, serta batas anggota dan jumlah putra/putri nomor beregu dikosongkan untuk diisi admin.
+- Pendaftaran: mulai 1 Oktober 2026 pukul 00.00, akhir 30 November 2026 pukul 23.59.
+- Lima kelompok umur dan nomor lomba sesuai lampiran rancangan, dengan satu awalan nomor dada per kelompok umur: KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5 (K33). Batas tahun lahir (K36): KU 8 2019 ke atas, KU 10 2016–2018, KU 12 2015, KU 15 2011–2014, KU 18 2008–2010. Jenjang, biaya individu, serta batas anggota dan jumlah putra/putri nomor beregu dikosongkan untuk diisi admin.
 - Perintah menolak berjalan bila tabel `kelompok_umur` sudah berisi atau pengaturan acara sudah terisi, sehingga tidak menimpa isian admin. Hasilnya diringkas di layar.
 
 Data ini berasal dari flyer, bukan data siswa, jadi boleh ada di repo.
@@ -209,7 +209,6 @@ Data ini berasal dari flyer, bukan data siswa, jadi boleh ada di repo.
 |---|---|---|
 | Halaman depan yang memakai gambar, logo, teks, jadwal, unduhan, dan kontak dari pengaturan | 3 | Rancangan bagian 16. Tahap 2 hanya menyimpan isinya; nama, seri, tahun, tempat, dan tanggal acara di tata letak dan beranda sudah diambil dari pengaturan (F2-02) |
 | Angka ringkasan di dasbor | 6 | Baru bermakna setelah ada pendaftaran |
-| Batas usia dalam bulan atau rentang tanggal lahir | bila juknis memintanya | K12; saat ini tahun penuh |
 | Pengecilan gambar unggahan di server | 7 bila perlu | Batas 2 MB cukup untuk sekarang |
 
 ## Cara menguji di komputer pemilik
@@ -231,3 +230,11 @@ Setelah Tahap 2 digabung, di terminal Laragon pada folder proyek:
 5. Templat pesan WA pembayaran punya isi awal yang bisa diubah admin.
 6. Nomor beregu yang belum punya batas anggota, atau nomor mix yang belum punya jumlah putra dan putri, membuat pengaturan belum lengkap (rancangan revisi 6.1).
 7. Data awal mengisi juga data acara dan tanggal pendaftaran dari flyer, bukan hanya kelompok umur dan nomor lomba; admin tetap memeriksanya di halaman pengaturan.
+
+## Perubahan saat pengerjaan
+
+| Bagian | Rencana | Yang berlaku | Alasan |
+|---|---|---|---|
+| Batas kelompok umur | Usia minimal dan maksimal dalam tahun penuh, kosong pada awalnya | Tahun lahir paling awal dan paling akhir, diisi `data:awal` | K36 |
+| Tanggal patokan usia | Kunci `Pendaftaran.tanggal_patokan_usia`, diisi `data:awal`, butir kelengkapan | Dihapus; usia hanya tampilan, dihitung pada tanggal mulai acara | K37 |
+| Pembagian berkas | Migrasi, `data:awal`, dan `Config\Pendaftaran` milik F2-01 | Migrasi tahun lahir, `app/Commands/DataAwal.php`, `tests/basisdata/DataAwalTest.php`, uji migrasi terdampak: F2-03. `app/Config/Pendaftaran.php`: F2-02 | F2-01 sudah digabung saat K36–K37 diputuskan |

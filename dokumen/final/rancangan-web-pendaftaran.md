@@ -2,10 +2,11 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 disetujui 11 November 2026 (K27); **revisi 2 disetujui 11 November 2026** (K35). Semua asumsi bagian 17 sudah diputuskan |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan **revisi 3 (K38)** disetujui 11 November 2026 |
 | Tanggal | 10 November 2026, revisi 11 November 2026 |
 | Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
 | Revisi 2 | SLB tidak ikut (K28); web lewat Cloudflare Tunnel (K31); asumsi 4–7 dikonfirmasi dan asumsi 8 diganti (K32); bukti bayar diunggah admin (K34); awalan nomor dada awal per kelompok umur (K33). Bagian yang berubah: 6.2, 6.9, 9, 11, 13, 15, 17, lampiran |
+| Revisi 3 | Kelompok umur ditentukan tahun lahir, bukan usia; batas tahun lahir diisi data awal; tanggal patokan usia dihapus, usia hanya ditampilkan (K36, K37). Bagian yang berubah: 5, 6.1, 6.4, 11, 14, lampiran |
 | Acara | MilkLife Athletics Challenge Seri 2 – 2026, Supersoccer Arena, Kudus, 9–12 Desember 2026 |
 | Dasar | Wawancara sesi 1 (lihat `agent/KEPUTUSAN.md`) dan flyer di `sumber/flyer/` |
 
@@ -83,8 +84,8 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/admin/rekap` | Rekap per nomor lomba, per sekolah, per kelompok umur, keuangan |
 | `/admin/pengaturan` | Daftar semua halaman pengaturan beserta tanda lengkap atau belum |
 | `/admin/pengaturan/acara` | Nama, seri, tahun, tempat, tanggal acara |
-| `/admin/pengaturan/pendaftaran` | Jadwal buka-tutup, buka manual, batas-batas |
-| `/admin/pengaturan/kelompok-umur` | Batas usia, jenjang sekolah yang boleh ikut, biaya individu, awalan nomor dada |
+| `/admin/pengaturan/pendaftaran` | Jadwal buka-tutup, buka manual, tampilan usia, batas-batas |
+| `/admin/pengaturan/kelompok-umur` | Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya individu, awalan nomor dada |
 | `/admin/pengaturan/nomor-lomba` | Nomor lomba, jenis, jumlah anggota, biaya beregu |
 | `/admin/pengaturan/pembayaran` | Bank, rekening, WA pemilik rekening, isi pesan |
 | `/admin/pengaturan/halaman-depan` | Gambar, logo, judul, teks, tombol, footer |
@@ -106,8 +107,7 @@ Pengaturan dianggap lengkap bila semua ini terisi:
 
 - data acara (nama, seri, tahun, tempat, tanggal acara),
 - tanggal mulai dan tanggal akhir pendaftaran,
-- tanggal patokan usia,
-- minimal satu kelompok umur aktif, dan setiap kelompok umur aktif punya batas usia, minimal satu jenjang sekolah yang boleh ikut, biaya individu, dan minimal satu awalan nomor dada,
+- minimal satu kelompok umur aktif, dan setiap kelompok umur aktif punya batas tahun lahir (minimal salah satu dari tahun lahir paling awal atau paling akhir), minimal satu jenjang sekolah yang boleh ikut, biaya individu, dan minimal satu awalan nomor dada,
 - minimal satu nomor lomba aktif pada kelompok umur aktif, dan setiap nomor beregu aktif punya jumlah inti, batas anggota, dan biaya beregu (nomor mix juga jumlah putra dan putri minimal),
 - data rekening (bank, nomor rekening, nama pemilik) dan nomor WA pembayaran.
 
@@ -130,11 +130,11 @@ Nama, nomor WA, dan foto. Jumlah minimal 1 dan maksimal 5; kedua batas bisa diub
 
 - Nama lengkap (otomatis huruf besar), NISN tepat 10 digit, tanggal lahir, jenis kelamin (laki-laki/perempuan).
 - **NISN yang sudah terdaftar ditolak**, termasuk pada pendaftaran susulan. Perubahan untuk atlet yang sudah terdaftar dilakukan admin.
-- Usia dihitung pada tanggal patokan (nilai awal 30 November 2026, bisa diubah admin). Tampilan usia bisa "tahun" atau "tahun dan bulan", diatur admin.
-- Kelompok umur ditentukan otomatis dari usia. Bila usia tidak masuk kelompok umur mana pun, atlet ditolak dengan pesan jelas.
+- **Kelompok umur ditentukan otomatis dari tahun lahir** (K36), tanpa memperhatikan bulan dan tanggal. Tiap kelompok umur punya tahun lahir paling awal dan paling akhir; salah satunya boleh kosong, artinya tidak dibatasi di sisi itu (contoh KU 8: lahir 2019 ke atas). Bila tahun lahir tidak masuk kelompok umur mana pun, atlet ditolak dengan pesan jelas.
+- Usia hanya ditampilkan sebagai keterangan, tidak menentukan apa pun (K37). Usia dihitung pada tanggal mulai acara; tampilan "tahun" atau "tahun dan bulan" diatur admin. Tidak ada lagi tanggal patokan usia.
 - **Kelompok umur dibatasi jenjang sekolah** (K23). Admin mencentang jenjang yang boleh ikut pada tiap kelompok umur (K24); tidak ada nilai tertulis di kode. Bila kelompok umur atlet tidak dibuka untuk jenjang sekolah pendaftaran, atlet ditolak dengan pesan yang menyebut kelompok umurnya dan jenjang yang boleh ikut.
-- Usia tetap satu-satunya penentu kelompok umur: atlet tidak bisa dipindah ke kelompok umur lain karena jenjangnya. Karena itu rentang usia kelompok umur aktif tidak boleh tumpang tindih; halaman pengaturan menolak rentang yang bertabrakan.
-- Batas usia tiap kelompok umur **kosong pada awalnya** dan diisi admin sesuai juknis. Batas usia disimpan dalam tahun penuh; bila juknis memakai bulan atau rentang tanggal lahir, kolomnya diubah lewat migrasi baru.
+- Tahun lahir tetap satu-satunya penentu kelompok umur: atlet tidak bisa dipindah ke kelompok umur lain karena jenjangnya. Karena itu rentang tahun lahir kelompok umur aktif tidak boleh tumpang tindih; halaman pengaturan menolak rentang yang bertabrakan.
+- Batas tahun lahir diisi data awal sesuai ketetapan pemilik (K36) dan bisa diubah admin bila juknis resmi berbeda.
 
 ### 6.5 Nomor lomba
 
@@ -256,7 +256,7 @@ Nama tabel dan kolom berbahasa Indonesia.
 | `admin` | nama, nama pengguna, sandi (hash) |
 | `settings` | pengaturan kunci–nilai (dari pustaka settings) |
 | `sekolah` | npsn, nama, bentuk, jenjang, status, alamat, kecamatan, kabupaten |
-| `kelompok_umur` | nama, usia minimal, usia maksimal, biaya individu, urutan, aktif |
+| `kelompok_umur` | nama, tahun lahir paling awal, tahun lahir paling akhir (masing-masing boleh kosong), biaya individu, urutan, aktif |
 | `kelompok_umur_jenjang` | kelompok umur, jenjang (A, B, atau C); satu baris per jenjang yang boleh ikut, unik per pasangan |
 | `awalan_nomor_dada` | kelompok umur, awalan (unik), urutan, nomor terakhir |
 | `nomor_lomba` | kelompok umur, nama, jenis, kategori, jumlah inti, batas anggota, jumlah putra/putri (mix), biaya beregu, urutan, aktif |
@@ -291,7 +291,7 @@ Keunikan NISN dan nomor dada dijaga oleh basis data, bukan hanya oleh aplikasi.
 
 ## 14. Pengujian
 
-- Uji unit untuk aturan murni: usia dan kelompok umur, biaya, ID pendaftaran, nomor dada, kelengkapan tim.
+- Uji unit untuk aturan murni: tahun lahir dan kelompok umur, biaya, ID pendaftaran, nomor dada, kelengkapan tim.
 - Uji fitur untuk alur pendaftaran, cek, dan penandaan lunas.
 - Tanpa CI GitHub. Semua uji dijalankan sendiri di komputer pengembang dengan satu perintah, sebelum PR digabung.
 
@@ -333,7 +333,7 @@ Semua asumsi sudah diputuskan pemilik.
 
 ## Lampiran: data awal nomor lomba
 
-Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25). Semua bisa diubah admin. Batas usia, jenjang yang boleh ikut, dan biaya individu dikosongkan. Awalan nomor dada diisi satu per kelompok umur (K33): KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5; admin bisa mengubah atau menambahnya. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
+Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25). Semua bisa diubah admin. Jenjang yang boleh ikut dan biaya individu dikosongkan. Batas tahun lahir (K36): KU 8 lahir 2019 ke atas; KU 10 lahir 2016–2018; KU 12 lahir 2015; KU 15 lahir 2011–2014; KU 18 lahir 2008–2010. Awalan nomor dada diisi satu per kelompok umur (K33): KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5; admin bisa mengubah atau menambahnya. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
 
 | Kelompok umur | Individu (putra dan putri) | Beregu |
 |---|---|---|
