@@ -43,7 +43,7 @@
         </div>
 
         <div class="card">
-            <div class="tabel-gulir">
+            <div class="tabel-gulir position-relative">
                 <table class="table align-middle mb-0">
                     <caption class="visually-hidden">Daftar berkas unduhan</caption>
                     <thead>
