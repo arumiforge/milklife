@@ -50,7 +50,7 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
 
                     <?php if ($keadaan === BukaTutupPendaftaran::DISIAPKAN) : ?>
                         <p class="text-body-secondary">
-                            Pendaftaran baru bisa dibuka setelah semua pengaturan wajib di samping lengkap.
+                            Pendaftaran baru bisa dibuka setelah semua butir kelengkapan pengaturan bercentang.
                             Sampai saat itu, sekolah melihat keterangan "Pendaftaran sedang disiapkan".
                         </p>
                     <?php elseif ($lewatManual) : ?>
@@ -81,9 +81,14 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
                         <?php if ($semuaLengkap) : ?>
                             Semua pengaturan wajib sudah lengkap.
                         <?php else : ?>
-                            <?= $jumlahLengkap ?> dari <?= $jumlahButir ?> sudah lengkap. Lengkapi yang belum supaya pendaftaran bisa dibuka.
+                            <?= $jumlahLengkap ?> dari <?= $jumlahButir ?> sudah lengkap.
                         <?php endif ?>
                     </p>
+                    <?php if (! $semuaLengkap) : ?>
+                        <p class="small mb-2">
+                            <strong>Langkah berikutnya:</strong> buka butir yang belum bercentang dan lengkapi isinya supaya pendaftaran bisa dibuka.
+                        </p>
+                    <?php endif ?>
                     <div class="progress mb-3" role="progressbar" aria-label="Kelengkapan pengaturan" aria-valuenow="<?= $persen ?>" aria-valuemin="0" aria-valuemax="100" style="height: .5rem">
                         <div class="progress-bar <?= $semuaLengkap ? 'bg-success' : '' ?>" style="width: <?= $persen ?>%"></div>
                     </div>
