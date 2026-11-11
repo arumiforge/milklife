@@ -2,8 +2,9 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17). Delapan asumsi di bagian 17 belum dikonfirmasi |
-| Tanggal | 10 November 2026 |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); **revisi 1 disetujui 11 November 2026** (K27). Asumsi 4–8 di bagian 17 belum dikonfirmasi |
+| Tanggal | 10 November 2026, revisi 11 November 2026 |
+| Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
 | Acara | MilkLife Athletics Challenge Seri 2 – 2026, Supersoccer Arena, Kudus, 9–12 Desember 2026 |
 | Dasar | Wawancara sesi 1 (lihat `agent/KEPUTUSAN.md`) dan flyer di `sumber/flyer/` |
 
@@ -30,7 +31,7 @@ Berhasil bila:
 | Pengguna | Akses | Yang dilakukan |
 |---|---|---|
 | Official sekolah | Tanpa akun | Mendaftar, mengirim konfirmasi pembayaran lewat WA, mengunduh bukti, memeriksa rekap |
-| Admin (satu peran) | Masuk dengan nama pengguna dan kata sandi | Mengatur semua aturan, memeriksa pembayaran, mengelola data, mengunduh rekap |
+| Admin (satu peran) | Masuk dengan nama pengguna dan kata sandi | Mengatur semua aturan, memeriksa pembayaran, mengelola data, mengunduh rekap. Boleh ada lebih dari satu akun; tiap admin hanya mengubah akunnya sendiri dari panel, akun lain dibuat lewat perintah `admin:buat` (K26) |
 
 ## 4. Pendekatan teknis
 
@@ -79,16 +80,17 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/admin/pendaftaran` | Daftar dan rincian pendaftaran, tandai lunas, ubah, hapus |
 | `/admin/atlet` | Daftar semua atlet |
 | `/admin/rekap` | Rekap per nomor lomba, per sekolah, per kelompok umur, keuangan |
+| `/admin/pengaturan` | Daftar semua halaman pengaturan beserta tanda lengkap atau belum |
 | `/admin/pengaturan/acara` | Nama, seri, tahun, tempat, tanggal acara |
 | `/admin/pengaturan/pendaftaran` | Jadwal buka-tutup, buka manual, batas-batas |
-| `/admin/pengaturan/kelompok-umur` | Batas usia, biaya individu, awalan nomor dada |
+| `/admin/pengaturan/kelompok-umur` | Batas usia, jenjang sekolah yang boleh ikut, biaya individu, awalan nomor dada |
 | `/admin/pengaturan/nomor-lomba` | Nomor lomba, jenis, jumlah anggota, biaya beregu |
 | `/admin/pengaturan/pembayaran` | Bank, rekening, WA pemilik rekening, isi pesan |
 | `/admin/pengaturan/halaman-depan` | Gambar, logo, judul, teks, tombol, footer |
 | `/admin/pengaturan/jadwal` | Jadwal sosialisasi, technical meeting, dan lainnya |
 | `/admin/pengaturan/unduhan` | Berkas unduhan |
 | `/admin/pengaturan/kontak` | Narahubung dan media sosial |
-| `/admin/akun` | Ganti nama dan kata sandi |
+| `/admin/akun` | Ganti nama, nama pengguna, dan kata sandi akun sendiri |
 
 ## 6. Aturan
 
@@ -99,7 +101,14 @@ Pendaftaran dan cek pendaftaran hanya bisa dipakai bila **pengaturan lengkap**. 
 - waktu sekarang berada di antara tanggal mulai dan tanggal akhir pendaftaran, atau
 - admin membuka manual dan batas waktu buka manual belum lewat.
 
-Pengaturan dianggap lengkap bila semua ini terisi: data acara, tanggal pendaftaran, tanggal patokan usia, setiap kelompok umur aktif punya batas usia, biaya individu, dan awalan nomor dada, minimal satu nomor lomba aktif, serta data rekening dan nomor WA pembayaran.
+Pengaturan dianggap lengkap bila semua ini terisi:
+
+- data acara (nama, seri, tahun, tempat, tanggal acara),
+- tanggal mulai dan tanggal akhir pendaftaran,
+- tanggal patokan usia,
+- minimal satu kelompok umur aktif, dan setiap kelompok umur aktif punya batas usia, minimal satu jenjang sekolah yang boleh ikut, biaya individu, dan minimal satu awalan nomor dada,
+- minimal satu nomor lomba aktif pada kelompok umur aktif, dan setiap nomor beregu aktif punya jumlah inti, batas anggota, dan biaya beregu (nomor mix juga jumlah putra dan putri minimal),
+- data rekening (bank, nomor rekening, nama pemilik) dan nomor WA pembayaran.
 
 Bila belum lengkap atau belum dibuka, halaman depan menampilkan keterangan ramah, misalnya "Pendaftaran sedang disiapkan" atau "Pendaftaran dibuka 1 Oktober 2026". Dasbor admin menampilkan daftar centang hal yang belum lengkap.
 
@@ -121,12 +130,14 @@ Nama, nomor WA, dan foto. Jumlah minimal 1 dan maksimal 5; kedua batas bisa diub
 - **NISN yang sudah terdaftar ditolak**, termasuk pada pendaftaran susulan. Perubahan untuk atlet yang sudah terdaftar dilakukan admin.
 - Usia dihitung pada tanggal patokan (nilai awal 30 November 2026, bisa diubah admin). Tampilan usia bisa "tahun" atau "tahun dan bulan", diatur admin.
 - Kelompok umur ditentukan otomatis dari usia. Bila usia tidak masuk kelompok umur mana pun, atlet ditolak dengan pesan jelas.
-- Batas usia tiap kelompok umur **kosong pada awalnya** dan diisi admin sesuai juknis.
+- **Kelompok umur dibatasi jenjang sekolah** (K23). Admin mencentang jenjang yang boleh ikut pada tiap kelompok umur (K24); tidak ada nilai tertulis di kode. Bila kelompok umur atlet tidak dibuka untuk jenjang sekolah pendaftaran, atlet ditolak dengan pesan yang menyebut kelompok umurnya dan jenjang yang boleh ikut.
+- Usia tetap satu-satunya penentu kelompok umur: atlet tidak bisa dipindah ke kelompok umur lain karena jenjangnya. Karena itu rentang usia kelompok umur aktif tidak boleh tumpang tindih; halaman pengaturan menolak rentang yang bertabrakan.
+- Batas usia tiap kelompok umur **kosong pada awalnya** dan diisi admin sesuai juknis. Batas usia disimpan dalam tahun penuh; bila juknis memakai bulan atau rentang tanggal lahir, kolomnya diubah lewat migrasi baru.
 
 ### 6.5 Nomor lomba
 
 - Setiap nomor lomba milik satu kelompok umur, berjenis individu atau beregu, dan berkategori putra, putri, atau mix.
-- Pilihan nomor lomba baru muncul setelah kelompok umur atlet diketahui, dan hanya yang sesuai kelompok umur dan jenis kelaminnya.
+- Pilihan nomor lomba baru muncul setelah kelompok umur atlet diketahui dan kelompok umur itu dibuka untuk jenjang sekolah pendaftaran, dan hanya yang sesuai kelompok umur dan jenis kelaminnya.
 - Setiap atlet wajib ikut minimal 1 nomor (individu atau beregu).
 - Maksimal 2 nomor individu per atlet (bisa diubah admin). Nomor beregu tidak dibatasi.
 
@@ -166,7 +177,7 @@ Format: `MAC` + seri + kode jenjang + nomor urut 5 digit + 2 digit tahun. Contoh
 
 Wizard satu halaman dengan pil langkah bercentang:
 
-1. **Data Sekolah** — jenjang, kabupaten, NPSN atau nama sekolah.
+1. **Data Sekolah** — jenjang, kabupaten, NPSN atau nama sekolah. Jenjang yang dipilih di sini menentukan kelompok umur yang boleh diikuti atlet (6.4).
 2. **Penanggung Jawab** — 1 sampai 5 orang.
 3. **Atlet** — formulir atlet dan daftar sementara.
 4. **Biaya** — rincian dan konfirmasi.
@@ -242,6 +253,7 @@ Nama tabel dan kolom berbahasa Indonesia.
 | `settings` | pengaturan kunci–nilai (dari pustaka settings) |
 | `sekolah` | npsn, nama, bentuk, jenjang, status, alamat, kecamatan, kabupaten |
 | `kelompok_umur` | nama, usia minimal, usia maksimal, biaya individu, urutan, aktif |
+| `kelompok_umur_jenjang` | kelompok umur, jenjang (A, B, atau C); satu baris per jenjang yang boleh ikut, unik per pasangan |
 | `awalan_nomor_dada` | kelompok umur, awalan (unik), urutan, nomor terakhir |
 | `nomor_lomba` | kelompok umur, nama, jenis, kategori, jumlah inti, batas anggota, jumlah putra/putri (mix), biaya beregu, urutan, aktif |
 | `pendaftaran` | ID pendaftaran (unik), jenjang, npsn, nama sekolah, kabupaten, subtotal individu, subtotal beregu, total, status, waktu lunas |
@@ -303,18 +315,20 @@ Setiap tahap punya wawancara singkat bila perlu, rencana implementasi, dan PR se
 
 Hal berikut saya putuskan sendiri karena tidak disebut dalam wawancara. Mohon dikoreksi bila keliru.
 
-1. Kelompok umur ditentukan dari usia saja; atlet tidak bisa "naik" ke kelompok umur di atasnya, dan jenjang sekolah tidak membatasi kelompok umur.
-2. Frog Jump dan Turbo Throw (KU 10) berjenis **individu**, karena tidak ada di daftar biaya beregu.
-3. Trilomba (KU 12) adalah **satu nomor individu** dan dihitung satu dari batas dua nomor individu.
+1. ~~Kelompok umur ditentukan dari usia saja; atlet tidak bisa "naik" ke kelompok umur di atasnya, dan jenjang sekolah tidak membatasi kelompok umur.~~ **Diganti K23:** kelompok umur tetap ditentukan dari usia saja dan atlet tidak bisa "naik", tetapi jenjang sekolah membatasi kelompok umur sesuai centang admin (6.4).
+2. Frog Jump dan Turbo Throw (KU 10) berjenis **individu**. **Dikonfirmasi K21.**
+3. Trilomba (KU 12) adalah **satu nomor individu** dan dihitung satu dari batas dua nomor individu. **Dikonfirmasi K22.**
 4. Nomor urut ID pendaftaran berlaku global, bukan per jenjang.
 5. Data tersimpan di langkah Biaya (saat konfirmasi), bukan saat tombol "Pendaftaran Selesai".
 6. Official tidak bisa mengubah pendaftaran yang sudah tersimpan; perubahan lewat admin.
 7. Foto penanggung jawab tidak tampil di halaman cek.
 8. Bila admin mengubah pendaftaran yang sudah lunas sehingga totalnya berubah, status tetap Lunas dan selisihnya diurus panitia di luar sistem.
 
+Asumsi 4–8 wajib dikonfirmasi sebelum Tahap 4.
+
 ## Lampiran: data awal nomor lomba
 
-Diambil dari flyer Seri 2 – 2026. Semua bisa diubah admin. Biaya individu per kelompok umur dan batas usia dikosongkan.
+Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25). Semua bisa diubah admin. Batas usia, jenjang yang boleh ikut, biaya individu, dan awalan nomor dada dikosongkan. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
 
 | Kelompok umur | Individu (putra dan putri) | Beregu |
 |---|---|---|

@@ -17,8 +17,9 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 1 disetujui, K27).
 - Rencana implementasi Tahap 1: `dokumen/draf/rencana-implementasi-tahap-1.md`.
+- Rencana implementasi Tahap 2: `dokumen/draf/rencana-implementasi-tahap-2.md`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
 - Bahan asli: `sumber/flyer/`.
 - Data sekolah: `data/sekolah/sekolah.json`.
@@ -29,4 +30,5 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Nomor dada dibuat saat pendaftaran **ditandai lunas**, bukan saat mendaftar.
 - NISN yang sudah terdaftar **ditolak**, termasuk pada pendaftaran susulan.
 - Batas usia kelompok umur **tidak punya nilai awal**; admin mengisinya dari juknis.
+- Usia menentukan kelompok umur, tetapi **jenjang sekolah membatasinya**: atlet ditolak bila kelompok umurnya tidak dibuka untuk jenjang sekolahnya (K23). Jenjang yang boleh ikut diatur admin, tidak tertulis di kode.
 - Halaman cek menampilkan data siswa penuh atas persetujuan MoU. Repo ini publik, jadi data siswa tidak boleh masuk git.
