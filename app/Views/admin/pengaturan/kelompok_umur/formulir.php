@@ -50,7 +50,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
 
             <?= view('admin/_galat_isian', ['galat' => $galat], ['saveData' => false]) ?>
 
-            <form action="<?= $aksi ?>" method="post" novalidate>
+            <form action="<?= $aksi ?>" method="post" id="formulir-kelompok-umur" novalidate>
                 <?= csrf_field() ?>
 
                 <div class="card mb-3">
