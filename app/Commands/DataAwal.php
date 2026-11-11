@@ -15,16 +15,17 @@ use Throwable;
  *
  * Mengisi data awal dari flyer Seri 2 – 2026 (K25, rencana Tahap 2 "Data
  * awal", lampiran rancangan): data acara, tanggal pendaftaran, tanggal patokan
- * usia, lima kelompok umur, dan semua nomor lomba. Dijalankan sekali saat
- * pemasangan, setelah `php spark migrate --all`.
+ * usia, lima kelompok umur beserta satu awalan nomor dada masing-masing (K33),
+ * dan semua nomor lomba. Dijalankan sekali saat pemasangan, setelah
+ * `php spark migrate --all`.
  *
- * Batas usia, jenjang, biaya individu, awalan nomor dada, serta batas anggota
- * dan jumlah putra/putri nomor beregu dikosongkan untuk diisi admin (K12, K23).
- * Nomor individu dibuat dua kali, putra dan putri.
+ * Batas usia, jenjang, biaya individu, serta batas anggota dan jumlah
+ * putra/putri nomor beregu dikosongkan untuk diisi admin (K12, K23). Awalan
+ * nomor dada bisa diubah admin. Nomor individu dibuat dua kali, putra dan putri.
  *
- * Perintah menolak berjalan bila kelompok umur atau nomor lomba sudah ada, atau
- * pengaturan acara atau tanggal pendaftaran sudah terisi, supaya isian admin
- * tidak tertimpa. Semua ditulis dalam satu transaksi: tersimpan semua atau
+ * Perintah menolak berjalan bila kelompok umur, awalan nomor dada, atau nomor
+ * lomba sudah ada, atau pengaturan acara atau tanggal pendaftaran sudah
+ * terisi, supaya isian admin tidak tertimpa. Semua ditulis dalam satu transaksi: tersimpan semua atau
  * tidak sama sekali.
  *
  * Data ini berasal dari flyer, bukan data siswa, jadi boleh ada di repo.
@@ -62,22 +63,25 @@ class DataAwal extends BaseCommand
     /**
      * Kelompok umur dan nomor lombanya, berurutan seperti di flyer.
      *
-     * - `individu`: nama nomor; masing-masing dibuat putra dan putri.
+     * - `awalan`: awalan nomor dada (satu angka), `urutan` 1 dan `nomor_terakhir` 0 (K33).
+ * - `individu`: nama nomor; masing-masing dibuat putra dan putri.
      * - `beregu`: [nama, kategori (`putra_putri` = dibuat putra dan putri, atau `mix`), jumlah inti, biaya beregu].
      *
      * KU 8 diberi nama "KU 8 (Seneng Playon)" seperti di flyer, supaya sekolah
      * mengenalinya; admin bisa mengubahnya.
      *
-     * @var list<array{nama: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>}>
+     * @var list<array{nama: string, awalan: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>}>
      */
     public const KELOMPOK_UMUR = [
         [
             'nama'     => 'KU 8 (Seneng Playon)',
+            'awalan'   => '1',
             'individu' => ['Lari 40 m'],
             'beregu'   => [],
         ],
         [
             'nama'     => 'KU 10',
+            'awalan'   => '2',
             'individu' => ['Lari 60 m', 'Frog Jump', 'Turbo Throw'],
             'beregu'   => [
                 ["Kanga's Escape", 'putra_putri', 4, 100000],
@@ -87,6 +91,7 @@ class DataAwal extends BaseCommand
         ],
         [
             'nama'     => 'KU 12',
+            'awalan'   => '3',
             'individu' => ['Lompat Jauh', 'Tolak Peluru', 'Lari 60 m', 'Lari 1000 m', 'Trilomba'],
             'beregu'   => [
                 ['Estafet 8 × 50 m', 'mix', 8, 150000],
@@ -94,6 +99,7 @@ class DataAwal extends BaseCommand
         ],
         [
             'nama'     => 'KU 15',
+            'awalan'   => '4',
             'individu' => [
                 'Jalan Cepat 2000 m', 'Lari 80 m', 'Lari 400 m', 'Lari 800 m', 'Lari 1500 m',
                 'Lompat Jauh', 'Lompat Tinggi', 'Lempar Lembing', 'Lempar Cakram', 'Tolak Peluru',
@@ -104,6 +110,7 @@ class DataAwal extends BaseCommand
         ],
         [
             'nama'     => 'KU 18',
+            'awalan'   => '5',
             'individu' => [
                 'Jalan Cepat 3000 m', 'Lari 100 m', 'Lari 400 m', 'Lari 800 m', 'Lari 1500 m',
                 'Lompat Jauh', 'Lompat Tinggi', 'Lempar Lembing', 'Lempar Cakram', 'Tolak Peluru',
@@ -166,6 +173,12 @@ class DataAwal extends BaseCommand
             return "sudah ada {$jumlahKelompokUmur} kelompok umur di basis data.";
         }
 
+        $jumlahAwalan = $db->table('awalan_nomor_dada')->countAllResults();
+
+        if ($jumlahAwalan > 0) {
+            return "sudah ada {$jumlahAwalan} awalan nomor dada di basis data.";
+        }
+
         $jumlahNomorLomba = $db->table('nomor_lomba')->countAllResults();
 
         if ($jumlahNomorLomba > 0) {
@@ -186,7 +199,7 @@ class DataAwal extends BaseCommand
     /**
      * Isi semua data awal dalam satu transaksi.
      *
-     * @return array{kelompok_umur: int, nomor_individu: int, nomor_beregu: int, per_kelompok_umur: array<string, array{individu: int, beregu: int}>}
+     * @return array{kelompok_umur: int, nomor_individu: int, nomor_beregu: int, per_kelompok_umur: array<string, array{awalan: string, individu: int, beregu: int}>}
      *
      * @throws Throwable Bila gagal; tidak ada yang tersimpan.
      */
@@ -209,7 +222,19 @@ class DataAwal extends BaseCommand
                     throw new RuntimeException('Kelompok umur ' . $ku['nama'] . ' gagal disimpan.');
                 }
 
-                $idKu     = (int) $db->insertID();
+                $idKu = (int) $db->insertID();
+
+                if (! $db->table('awalan_nomor_dada')->insert([
+                    'kelompok_umur_id' => $idKu,
+                    'awalan'           => $ku['awalan'],
+                    'urutan'           => 1,
+                    'nomor_terakhir'   => 0,
+                    'dibuat_pada'      => $waktu,
+                    'diubah_pada'      => $waktu,
+                ])) {
+                    throw new RuntimeException('Awalan nomor dada ' . $ku['nama'] . ' gagal disimpan.');
+                }
+
                 $baris    = self::barisNomorLomba($idKu, $ku, $waktu);
                 $individu = count(array_filter($baris, static fn (array $b): bool => $b['jenis'] === 'individu'));
 
@@ -220,7 +245,7 @@ class DataAwal extends BaseCommand
                 $hasil['kelompok_umur']++;
                 $hasil['nomor_individu'] += $individu;
                 $hasil['nomor_beregu'] += count($baris) - $individu;
-                $hasil['per_kelompok_umur'][$ku['nama']] = ['individu' => $individu, 'beregu' => count($baris) - $individu];
+                $hasil['per_kelompok_umur'][$ku['nama']] = ['awalan' => $ku['awalan'], 'individu' => $individu, 'beregu' => count($baris) - $individu];
             }
 
             foreach (self::PENGATURAN as $kunci => $nilai) {
@@ -244,7 +269,7 @@ class DataAwal extends BaseCommand
      * Baris `nomor_lomba` untuk satu kelompok umur: individu (putra lalu putri
      * per nomor), lalu beregu, dengan `urutan` berjalan dari 1.
      *
-     * @param array{nama: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>} $ku
+     * @param array{nama: string, awalan: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>} $ku
      *
      * @return list<array<string, mixed>>
      */
@@ -287,7 +312,7 @@ class DataAwal extends BaseCommand
     }
 
     /**
-     * @param array{kelompok_umur: int, nomor_individu: int, nomor_beregu: int, per_kelompok_umur: array<string, array{individu: int, beregu: int}>} $hasil
+     * @param array{kelompok_umur: int, nomor_individu: int, nomor_beregu: int, per_kelompok_umur: array<string, array{awalan: string, individu: int, beregu: int}>} $hasil
      */
     private function tampilkanRingkasan(array $hasil): void
     {
@@ -303,12 +328,12 @@ class DataAwal extends BaseCommand
         CLI::write('Kelompok umur: ' . $hasil['kelompok_umur']);
 
         foreach ($hasil['per_kelompok_umur'] as $nama => $jumlah) {
-            CLI::write(sprintf('  %-21s: %2d nomor individu, %d nomor beregu', $nama, $jumlah['individu'], $jumlah['beregu']));
+            CLI::write(sprintf('  %-21s: awalan nomor dada %s, %2d nomor individu, %d nomor beregu', $nama, $jumlah['awalan'], $jumlah['individu'], $jumlah['beregu']));
         }
 
         CLI::write('Nomor lomba  : ' . ($hasil['nomor_individu'] + $hasil['nomor_beregu']) . ' (' . $hasil['nomor_individu'] . ' individu, ' . $hasil['nomor_beregu'] . ' beregu)');
         CLI::newLine();
         CLI::write('Langkah berikutnya: masuk ke panel admin, buka menu Pengaturan, lalu isi batas usia, jenjang sekolah,');
-        CLI::write('biaya individu, dan awalan nomor dada tiap kelompok umur, serta batas anggota nomor beregu.');
+        CLI::write('dan biaya individu tiap kelompok umur, serta batas anggota nomor beregu.');
     }
 }

@@ -51,13 +51,13 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
    php spark sekolah:impor
    ```
 
-7. Isi data awal dari flyer Seri 2: data acara, jadwal pendaftaran, tanggal patokan usia, lima kelompok umur, dan semua nomor lomba. Perintah ini hanya dijalankan **sekali** saat pemasangan; bila data sudah ada, perintah menolak supaya isian admin tidak tertimpa.
+7. Isi data awal dari flyer Seri 2: data acara, jadwal pendaftaran, tanggal patokan usia, lima kelompok umur beserta awalan nomor dadanya (KU 8 = 1 sampai KU 18 = 5), dan semua nomor lomba. Perintah ini hanya dijalankan **sekali** saat pemasangan; bila data sudah ada, perintah menolak supaya isian admin tidak tertimpa.
 
    ```
    php spark data:awal
    ```
 
-   Batas usia, jenjang sekolah, biaya individu, awalan nomor dada, dan batas anggota nomor beregu sengaja dikosongkan; admin mengisinya dari menu **Pengaturan**.
+   Batas usia, jenjang sekolah, biaya individu, dan batas anggota nomor beregu sengaja dikosongkan; admin mengisinya dari menu **Pengaturan**. Awalan nomor dada bisa diubah di sana juga.
 8. Buat akun admin. Perintah menanyakan nama pengguna, nama, dan kata sandi (minimal 8 karakter). Perintah yang sama dipakai untuk mengganti kata sandi.
 
    ```

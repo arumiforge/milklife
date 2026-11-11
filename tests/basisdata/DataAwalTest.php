@@ -87,7 +87,7 @@ final class DataAwalTest extends UjiBasisData
         $this->assertSame('', setting('Pembayaran.bank'));
     }
 
-    public function testLimaKelompokUmurTanpaBatasUsiaJenjangBiayaAwalan(): void
+    public function testLimaKelompokUmurTanpaBatasUsiaJenjangBiaya(): void
     {
         $this->jalankan();
 
@@ -105,7 +105,41 @@ final class DataAwalTest extends UjiBasisData
         }
 
         $this->seeNumRecords(0, 'kelompok_umur_jenjang', []);
-        $this->seeNumRecords(0, 'awalan_nomor_dada', []);
+    }
+
+    public function testSatuAwalanNomorDadaPerKelompokUmur(): void
+    {
+        $this->jalankan();
+
+        // K33: KU 8 → 1, KU 10 → 2, KU 12 → 3, KU 15 → 4, KU 18 → 5.
+        $baris = $this->db->table('awalan_nomor_dada a')
+            ->select('k.nama, a.awalan, a.urutan, a.nomor_terakhir')
+            ->join('kelompok_umur k', 'k.id = a.kelompok_umur_id')
+            ->orderBy('a.awalan')
+            ->get()->getResultArray();
+
+        $this->assertSame([
+            ['nama' => 'KU 8 (Seneng Playon)', 'awalan' => '1', 'urutan' => '1', 'nomor_terakhir' => '0'],
+            ['nama' => 'KU 10', 'awalan' => '2', 'urutan' => '1', 'nomor_terakhir' => '0'],
+            ['nama' => 'KU 12', 'awalan' => '3', 'urutan' => '1', 'nomor_terakhir' => '0'],
+            ['nama' => 'KU 15', 'awalan' => '4', 'urutan' => '1', 'nomor_terakhir' => '0'],
+            ['nama' => 'KU 18', 'awalan' => '5', 'urutan' => '1', 'nomor_terakhir' => '0'],
+        ], $baris);
+    }
+
+    public function testMenolakBilaAwalanNomorDadaSudahAda(): void
+    {
+        // Sisa awalan tanpa kelompok umur (misalnya setelah data diubah
+        // langsung di basis data) tetap membuat perintah menolak.
+        $this->db->table('kelompok_umur')->insert(['nama' => 'KU Karangan']);
+        $this->db->table('awalan_nomor_dada')->insert(['kelompok_umur_id' => $this->db->insertID(), 'awalan' => '9']);
+        $this->db->query('SET FOREIGN_KEY_CHECKS = 0');
+        $this->db->table('kelompok_umur')->truncate();
+        $this->db->query('SET FOREIGN_KEY_CHECKS = 1');
+
+        $this->assertSame('sudah ada 1 awalan nomor dada di basis data.', DataAwal::alasanMenolak($this->db));
+        $this->assertSame(EXIT_ERROR, $this->jalankan());
+        $this->seeNumRecords(1, 'awalan_nomor_dada', []);
     }
 
     public function testSemuaNomorLombaLampiran(): void
@@ -200,7 +234,7 @@ final class DataAwalTest extends UjiBasisData
         $this->assertStringContainsString('1 Oktober 2026 pukul 00.00 sampai 30 November 2026 pukul 23.59', $keluaran);
         $this->assertStringContainsString('Kelompok umur: 5', $keluaran);
         $this->assertStringContainsString('Nomor lomba  : 69 (58 individu, 11 beregu)', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 10\s+:\s+6 nomor individu, 5 nomor beregu/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 10\s+: awalan nomor dada 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
     }
 
     public function testMenolakBilaDijalankanLagi(): void
@@ -212,6 +246,7 @@ final class DataAwalTest extends UjiBasisData
 
         $this->assertStringContainsString('Data awal tidak diisi: sudah ada 5 kelompok umur di basis data.', $this->getStreamFilterBuffer());
         $this->seeNumRecords(5, 'kelompok_umur', []);
+        $this->seeNumRecords(5, 'awalan_nomor_dada', []);
         $this->seeNumRecords(69, 'nomor_lomba', []);
     }
 
@@ -272,6 +307,7 @@ final class DataAwalTest extends UjiBasisData
         }
 
         $this->seeNumRecords(0, 'kelompok_umur', []);
+        $this->seeNumRecords(0, 'awalan_nomor_dada', []);
         $this->assertSame('', setting('Acara.nama'));
         $this->seeNumRecords(0, 'settings', []);
     }
