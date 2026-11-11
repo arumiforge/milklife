@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 1 — Kerangka |
 | Dibuat | 10 November 2026 |
 
@@ -42,3 +42,4 @@ Pada basis data kosong, `php spark migrate --all` lalu `php spark sekolah:impor`
 - Bila basis data galat (misalnya tabel belum dibuat), perintah berhenti dengan pesan yang menyarankan `php spark migrate --all`, kode keluar 1. Kelompok yang sudah tersimpan tetap ada; menjalankan ulang melengkapinya.
 - Hasil pada basis data kosong: 4.729 ditambah, 0 dilewati, Blora 925, Rembang 624, Pati 1.225, Kudus 799, Jepara 1.156. Impor kedua: 0 ditambah, 4.729 diperbarui. Waktu sekitar 0,3 detik per impor.
 - Uji: `tests/unit/PemeriksaanSekolahTest.php`, `tests/basisdata/SekolahModelTest.php`, `tests/basisdata/ImporSekolahTest.php`, dengan berkas karangan `tests/_support/data/sekolah-*.json` (NPSN `99xxxxxx`). Nama uji migrasi tidak memakai awalan `Migrasi*` karena awalan itu milik F1-02.
+- Digabung lewat PR #5 pada 11 November 2026.

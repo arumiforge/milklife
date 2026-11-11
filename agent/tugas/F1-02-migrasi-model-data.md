@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 1 — Kerangka |
 | Dibuat | 10 November 2026 |
 
@@ -53,3 +53,4 @@ Migrasi dengan awalan `2026-11-11-001000_` sampai `2026-11-11-001999_`, satu ber
 - Aturan "satu tim per nomor beregu per sekolah" lintas pendaftaran tidak bisa dijaga basis data karena NPSN boleh kosong; basis data hanya menjaga satu tim per nomor dalam satu pendaftaran. Sisanya dijaga aplikasi di Tahap 3.
 - Berkas migrasi berjarak 10 (`001000`, `001010`, …, `001100`) supaya ada ruang bila nanti perlu migrasi di antaranya.
 - Uji: `tests/basisdata/MigrasiStrukturTest.php` (tabel, kolom, tipe, nilai awal, mesin dan kolasi, kunci tamu, indeks, rollback penuh) dan `tests/basisdata/MigrasiAturanDataTest.php` (keunikan, hapus berantai, larangan hapus, nilai awal, uang negatif, pilihan di luar daftar).
+- Digabung lewat PR #4 pada 11 November 2026.

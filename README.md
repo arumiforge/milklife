@@ -2,7 +2,7 @@
 
 Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Karesidenan Pati: pendaftaran, cek pendaftaran, dan rekap panitia.
 
-**Status:** Tahap 1 (kerangka) sedang dikerjakan. CodeIgniter sudah terpasang dan bisa dibuka; halaman depan dan dasbor admin masih halaman sementara.
+**Status:** Tahap 1 (kerangka) selesai. Aplikasi bisa dipasang, daftar sekolah bisa diimpor, dan admin bisa masuk. Halaman pengaturan, pendaftaran, cek, dan rekap dikerjakan di tahap berikutnya.
 
 ## Mulai dari sini
 
@@ -45,15 +45,26 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
    php spark migrate --all
    ```
 
-6. Jalankan semua uji. Hasilnya harus diakhiri `OK`:
+6. Isi daftar sekolah (4.729 sekolah di lima kabupaten). Perintah ini aman dijalankan ulang kapan saja:
+
+   ```
+   php spark sekolah:impor
+   ```
+
+7. Buat akun admin. Perintah menanyakan nama pengguna, nama, dan kata sandi (minimal 8 karakter). Perintah yang sama dipakai untuk mengganti kata sandi.
+
+   ```
+   php spark admin:buat
+   ```
+
+   Di cmd Windows kata sandi terlihat saat diketik. Supaya tersembunyi, jalankan perintah ini dari Git Bash.
+8. Jalankan semua uji. Hasilnya harus diakhiri `OK`:
 
    ```
    composer uji
    ```
 
-7. Buka `http://milklife.test`. Untuk sementara halaman ini hanya bertuliskan "Pendaftaran sedang disiapkan".
-
-Langkah impor daftar sekolah dan pembuatan akun admin ditambahkan di sini setelah fiturnya selesai.
+9. Buka `http://milklife.test` untuk halaman depan, dan `http://milklife.test/admin/masuk` untuk panel admin.
 
 ## Struktur
 

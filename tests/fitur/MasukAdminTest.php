@@ -57,6 +57,17 @@ final class MasukAdminTest extends UjiBasisData
         $this->assertStringContainsString('no-store', $hasil->response()->getHeaderLine('Cache-Control'));
     }
 
+    public function testHalamanMasukMemakaiKartuTataLetakPolos(): void
+    {
+        $html = $this->get('admin/masuk')->getBody();
+
+        // Kartu disediakan tata letak `polos`; halaman masuk tidak membawa
+        // kartu atau kisi sendiri (kartu ganda membuatnya sempit di layar lebar).
+        $this->assertSame(1, preg_match_all('/class="(?:[^"]*\s)?card(?:\s[^"]*)?"/', $html));
+        $this->assertStringContainsString('polos-kartu', $html);
+        $this->assertStringNotContainsString('class="container', $html);
+    }
+
     public function testMasukDenganTokenDariHalaman(): void
     {
         $token = $this->tokenDariFormulir($this->get('admin/masuk')->getBody());

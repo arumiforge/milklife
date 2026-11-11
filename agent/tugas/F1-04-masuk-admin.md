@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 1 — Kerangka |
 | Dibuat | 10 November 2026 |
 
@@ -50,3 +50,4 @@ Setelah `php spark admin:buat`, admin bisa masuk di `/admin/masuk`, melihat dasb
 - **Model**: nama pengguna dinormalkan (huruf kecil, tanpa spasi di tepi) di `transformDataToArray()`, yaitu sebelum validasi model berjalan, sehingga `insert()`/`update()` selalu menormalkan. Kata sandi di-hash di callback `beforeInsert`/`beforeUpdate` (`hashSandi`); `simpanSandi()` hanya memanggil `update()`. Kata sandi 8–72 karakter (batas atas mengikuti batas bcrypt 72 bita; huruf di luar ASCII bisa memakan lebih dari 1 bita). Nama paling panjang 100 karakter. Aturan `is_unique` nama pengguna belum mengecualikan baris sendiri; bila halaman `/admin/akun` (Tahap 2) mengizinkan ganti nama pengguna, aturan itu perlu disesuaikan.
 - **`admin:buat`** menanyakan nama pengguna lebih dulu, baru nama, karena bila nama pengguna sudah ada nama tidak perlu ditanyakan; perintah langsung menawarkan ganti kata sandi ("Ketik ya atau tidak"). Kata sandi tidak pernah diterima lewat argumen atau variabel lingkungan. Dari terminal Linux/macOS/Git Bash ketikan disembunyikan dengan `stty -echo` (dipulihkan juga bila dihentikan dengan Ctrl+C). Bila `stty` tidak ada (cmd Windows), perintah memperingatkan bahwa kata sandi akan terlihat. Bila masukan standar bukan terminal (skrip), tiap jawaban dibaca satu baris: [jawaban ya/tidak bila nama pengguna sudah ada], kata sandi, ulangi kata sandi. Tiap pertanyaan diulang paling banyak 3 kali. Kelompok perintah di `php spark list`: `Aplikasi`.
 - Berkas `.gitkeep` di `app/Database/Migrations/`, `app/Filters/`, dan `app/Models/` dihapus karena folder kini berisi.
+- Digabung lewat PR #6 pada 11 November 2026. Isi halaman masuk dirapikan di F1-06 supaya memakai kartu dari tata letak `polos`.

@@ -4,24 +4,13 @@ Diperbarui: 11 November 2026
 
 ## Sedang berjalan
 
-**Tahap 1 — Kerangka.** Rencana: [`dokumen/draf/rencana-implementasi-tahap-1.md`](../dokumen/draf/rencana-implementasi-tahap-1.md).
-
-| Tugas | Urutan | Status |
-|---|---|---|
-| [F1-01 Kerangka CodeIgniter](tugas/F1-01-kerangka-codeigniter.md) | pertama, sendiri | selesai (PR #3) |
-| [F1-02 Migrasi model data](tugas/F1-02-migrasi-model-data.md) | paralel setelah F1-01 | menunggu tinjauan (PR #4) |
-| [F1-03 Impor sekolah](tugas/F1-03-impor-sekolah.md) | paralel setelah F1-01 | menunggu tinjauan (PR #5) |
-| [F1-04 Masuk admin](tugas/F1-04-masuk-admin.md) | paralel setelah F1-01 | menunggu tinjauan (PR #6) |
-| [F1-05 Tata letak dan tema](tugas/F1-05-tata-letak-tema.md) | paralel setelah F1-01 | menunggu tinjauan (PR #7) |
-| [F1-06 Uji gabungan dan penutupan](tugas/F1-06-penutupan-tahap-1.md) | terakhir | rencana |
-
-Selama tugas paralel berjalan, tabel ini diperbarui oleh koordinator, bukan oleh tiap PR tugas, supaya PR paralel tidak bentrok di berkas ini.
+**Tahap 2 — Pengaturan.** Belum mulai. Menunggu konfirmasi pemilik atas asumsi rancangan bagian 17 (terutama nomor 2 dan 3, yang menentukan data awal nomor lomba).
 
 ## Berikutnya
 
 | Tahap | Hasil | Status |
 |---|---|---|
-| 2. Pengaturan | Halaman pengaturan dan data induk, daftar kelengkapan | belum mulai |
+| 2. Pengaturan | Halaman pengaturan dan data induk, daftar kelengkapan, ganti nama dan kata sandi admin | belum mulai |
 | 3. Halaman depan | Halaman depan, jadwal, unduhan, kontak | belum mulai |
 | 4. Pendaftaran | Wizard lengkap sampai tersimpan | belum mulai |
 | 5. Bukti dan cek | Bukti PDF, halaman cek, PDF dokumen | belum mulai |
@@ -31,12 +20,13 @@ Selama tugas paralel berjalan, tabel ini diperbarui oleh koordinator, bukan oleh
 ## Selesai
 
 - Tahap 0 — Fondasi: [`arsip/tahap-0.md`](arsip/tahap-0.md).
+- Tahap 1 — Kerangka: [`arsip/tahap-1.md`](arsip/tahap-1.md).
 
 ## Menunggu pemilik
 
-- Izin menggabung PR #4–#7 (F1-02 sampai F1-05).
-- Konfirmasi delapan asumsi di rancangan bagian 17, sebelum Tahap 2 dan Tahap 4.
-- Jenjang 19 SLB di data sekolah, sebelum Tahap 4 (lihat PR #5).
-- Lisensi repo (K20: diputuskan nanti).
+- Konfirmasi delapan asumsi di rancangan bagian 17: nomor 2 dan 3 sebelum Tahap 2, sisanya sebelum Tahap 4.
+- Jenjang 19 SLB di data sekolah, sebelum Tahap 4.
 - Juknis resmi untuk `sumber/` (batas usia tiap kelompok umur).
 - Keputusan cara web dijangkau dari internet (domain, IP publik, atau terowongan).
+- Lisensi repo (K20: diputuskan nanti).
+- Mencoba pemasangan di Laragon sesuai `README.md`.

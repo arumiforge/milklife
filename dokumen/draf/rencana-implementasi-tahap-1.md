@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Draf |
+| Status | Draf, sudah dilaksanakan (Tahap 1 selesai 11 November 2026) |
 | Tanggal | 10 November 2026 |
 | Dasar | Rancangan bagian 4, 9, 11, 12, 13, 14, dan 16 (`dokumen/final/rancangan-web-pendaftaran.md`); keputusan K01–K19 |
 
@@ -165,11 +165,29 @@ Setelah Tahap 1 digabung, di terminal Laragon pada folder proyek:
 7. `composer uji`
 8. Buka `http://milklife.test` dan `http://milklife.test/admin/masuk`
 
+## Perubahan saat pengerjaan
+
+Hal yang berbeda dari rencana di atas. Kode di `main` yang berlaku.
+
+| Bagian | Rencana | Yang dibuat | Alasan |
+|---|---|---|---|
+| Pengaturan PHPUnit | `phpunit.xml.dist` | `phpunit.dist.xml` | Nama bawaan appstarter 4.7; PHPUnit membaca keduanya |
+| CSRF | lewat `$methods['POST']` | filter global `before` | Permintaan yang menyamarkan metodenya ikut diperiksa |
+| Mode ketat MySQL | tidak disebut | dinyalakan untuk grup `default` dan `tests` | Data yang tidak muat ditolak, bukan dipotong diam-diam |
+| `session.savePath = null` di `.env.example` | dibaca apa adanya | `Config\Session` mengartikan "null" dan nilai kosong sebagai `writable/session` | Baris itu terbaca sebagai teks `"null"` |
+| Pilihan tetap di tabel domain | ENUM atau VARCHAR | ENUM | Nilai di luar daftar ditolak basis data |
+| `sekolah.jenjang` | `SD`/`SMP`/`SMA` | `VARCHAR(3)`, dijaga aplikasi | Diputuskan pelaksana F1-03 |
+| Pembatasan masuk | 5 percobaan per menit | pembatas bawaan CodeIgniter (ember token): 5 percobaan, lalu pulih satu tiap 12 detik; semua percobaan dihitung | Perilaku bawaan `Throttler` |
+| Tata letak admin | bagian `judul`, `isi`, `skrip` | ditambah bagian pilihan `judul_halaman` untuk judul di kepala | Judul tab dan judul halaman bisa berbeda |
+| Tata letak polos | kartu di tengah | kartu disediakan tata letak; halaman cukup berisi judul, pesan, dan formulir | Mencegah kartu ganda |
+| `data-bs-theme="light"` | tidak disebut | dipasang di `<body>` | Uji F1-01 mencocokkan `<html lang="id">` persis |
+| Nama berkas uji | `tests/**/*Sekolah*`, `TataLetak*` | uji kerangka bernama `Kerangka*`, uji migrasi sekolah tidak memakai awalan `Migrasi*` | Menghindari bentrok pola nama antartugas |
+
 ## Asumsi yang perlu ditinjau
 
 1. Boleh ada lebih dari satu akun admin (semuanya satu peran yang sama). Akun dibuat lewat perintah `admin:buat`, tidak ada akun bawaan dengan kata sandi tertulis di repo.
 2. Kata sandi admin minimal 8 karakter.
-3. Halaman masuk dibatasi 5 percobaan per menit per alamat IP.
+3. Halaman masuk dibatasi 5 percobaan per alamat IP, lalu satu percobaan lagi tiap 12 detik (lihat "Perubahan saat pengerjaan").
 4. Menu admin di Tahap 1 hanya berisi Dasbor dan Keluar; menu lain muncul bersama halamannya di tahap berikutnya.
 5. Kolom `kabupaten` di tabel `sekolah` berisi nama tanpa awalan "Kab." (Blora, Rembang, Pati, Kudus, Jepara), supaya sama dengan pilihan di formulir.
 6. Pembuatan PDF dokumen dipindah dari Tahap 1 ke Tahap 5.
