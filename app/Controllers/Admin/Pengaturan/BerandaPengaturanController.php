@@ -3,15 +3,17 @@
 namespace App\Controllers\Admin\Pengaturan;
 
 use App\Controllers\BaseController;
+use App\Libraries\DataKelengkapan;
 
 /**
  * Halaman daftar pengaturan: `GET /admin/pengaturan`.
  *
  * Menampilkan semua halaman pengaturan dan halaman Akun sebagai kartu. Daftar
  * halaman ditulis sekali di `daftarHalaman()` dan dipakai juga oleh navigasi
- * pengaturan (`admin/pengaturan/_navigasi.php`). F2-09 menambahkan tanda
- * lengkap/belum dengan mengisi `lengkap` dan `keterangan_kelengkapan` per butir
- * di `index()` (dicocokkan lewat `kunci`); tampilan sudah menyiapkan tempatnya.
+ * pengaturan (`admin/pengaturan/_navigasi.php`). Tanda lengkap/belum (F2-09)
+ * diisi di `index()` dari `KelengkapanPengaturan`, dicocokkan lewat `kunci`;
+ * halaman tanpa butir kelengkapan (Halaman Depan, Jadwal, Unduhan, Kontak,
+ * Akun) tidak diberi tanda.
  *
  * ## Pola halaman pengaturan (rencana Tahap 2, "Pola halaman")
  *
@@ -78,11 +80,17 @@ class BerandaPengaturanController extends BaseController
 {
     public function index(): string
     {
-        $halaman = self::daftarHalaman();
+        $kelengkapan = (new DataKelengkapan())->kelengkapan();
+        $halaman     = array_map(static function (array $butir) use ($kelengkapan): array {
+            $nilai = $kelengkapan->untukHalaman($butir['kunci']);
 
-        // F2-09: isi `lengkap` (bool|null) dan `keterangan_kelengkapan`
-        // (string) per butir di sini, dicocokkan dengan `kunci`. Selama
-        // `lengkap` null, tampilan tidak menampilkan tanda.
+            if ($nilai !== null) {
+                $butir['lengkap']                = $nilai['lengkap'];
+                $butir['keterangan_kelengkapan'] = $nilai['lengkap'] ? '' : $nilai['keterangan'];
+            }
+
+            return $butir;
+        }, self::daftarHalaman());
 
         return view('admin/pengaturan/index', [
             'kelompok' => self::kelompokkan($halaman),
@@ -99,8 +107,8 @@ class BerandaPengaturanController extends BaseController
      * - `alamat`: jalur untuk `site_url()`.
      * - `keterangan`: satu kalimat pendek tentang isinya.
      * - `kelompok`: judul kelompok kartu di halaman daftar.
-     * - `lengkap`: `null` (belum dinilai), `true`, atau `false`; diisi F2-09.
-     * - `keterangan_kelengkapan`: kalimat apa yang belum lengkap; diisi F2-09.
+     * - `lengkap`: `null` (tanpa butir kelengkapan), `true`, atau `false`; diisi `index()`.
+     * - `keterangan_kelengkapan`: kalimat apa yang belum lengkap; diisi `index()`.
      *
      * @return list<array{kunci: string, label: string, ikon: string, alamat: string, keterangan: string, kelompok: string, lengkap: bool|null, keterangan_kelengkapan: string}>
      */

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | rencana |
+| Status | dikerjakan |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -12,7 +12,7 @@ Dasbor menampilkan daftar centang hal yang belum lengkap dan keadaan pendaftaran
 
 ## Hasil
 
-- [ ] `KelengkapanPengaturan` (murni): butir sesuai rancangan revisi 6.1, tiap butir punya label, lengkap atau belum, keterangan yang menyebut apa yang kurang (misalnya nama kelompok umur yang belum punya jenjang), dan alamat halaman untuk melengkapinya
+- [ ] `KelengkapanPengaturan` (murni): butir sesuai rancangan revisi 3 bagian 6.1 (batas tahun lahir K36, tanpa tanggal patokan usia K37), tiap butir punya label, lengkap atau belum, keterangan yang menyebut apa yang kurang (misalnya nama kelompok umur yang belum punya jenjang), dan alamat halaman untuk melengkapinya
 - [ ] `BukaTutupPendaftaran` (murni): keadaan `disiapkan`, `belum_dibuka`, `terbuka`, `ditutup` beserta kalimat ramahnya (contoh: "Pendaftaran dibuka 1 Oktober 2026")
 - [ ] `DataKelengkapan`: mengumpulkan potret data dari pengaturan dan tabel lewat pembangun kueri
 - [ ] Dasbor: daftar centang dengan tautan, keadaan pendaftaran, keadaan kosong pendaftaran tetap ada
