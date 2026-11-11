@@ -202,7 +202,7 @@ class PembayaranController extends BaseController
      */
     public static function penandaTidakDikenal(string $templat): array
     {
-        preg_match_all('/\{[^{}\s]{1,40}\}/u', $templat, $cocok);
+        preg_match_all('/\{[^{}\n]{1,40}\}/u', $templat, $cocok);
 
         return array_values(array_unique(array_filter(
             $cocok[0],
