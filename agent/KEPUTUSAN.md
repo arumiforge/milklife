@@ -50,3 +50,11 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 - Usia dihitung per 30 November.
 - Kode jenjang pada ID pendaftaran: A (SD/MI), B (SMP/MTs), C (SMA/SMK/MA).
 - Gambar yang belum ada ditampilkan sebagai ikon "tanpa gambar", bukan gambar tiruan.
+
+## 11 November 2026 — wawancara awal Tahap 2
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K24 | Jenjang yang boleh ikut tiap kelompok umur diatur lewat kotak centang (SD/MI, SMP/MTs, SMA/SMK/MA) di formulir kelompok umur | Melaksanakan K23. Daftar kelompok umur menampilkan jenjang yang dicentang |
+| K25 | Data awal kelompok umur dan nomor lomba dari flyer Seri 2 diisi lewat perintah sekali jalan saat pemasangan | Batas usia, biaya individu, awalan nomor dada, dan jenjang tetap kosong untuk diisi admin (K12, K23). Setelah itu semua diubah dari panel |
+| K26 | Halaman Akun hanya untuk akun admin yang sedang masuk: ganti nama, nama pengguna, dan kata sandi sendiri | Akun admin lain tetap dibuat dan diubah lewat perintah `admin:buat` |
