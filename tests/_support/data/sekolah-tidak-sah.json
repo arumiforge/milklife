@@ -1,0 +1,11 @@
+[
+{"npsn": "99000011", "nama": "SD KARANGAN SEBELAS", "bentuk": "SD", "jenjang": "SD", "status": "NEGERI", "alamat": "Jl. Contoh 11", "desa_kelurahan": "Sukamaju", "kecamatan": "Kecamatan Contoh", "kabupaten_kota": "Kab. Pati"},
+{"npsn": "9900012", "nama": "SD NPSN TUJUH ANGKA", "bentuk": "SD", "jenjang": "SD", "status": "NEGERI", "alamat": "", "desa_kelurahan": "", "kecamatan": "", "kabupaten_kota": "Kab. Pati"},
+{"npsn": "99A00013", "nama": "SD NPSN HURUF", "bentuk": "SD", "jenjang": "SD", "status": "NEGERI", "alamat": "", "desa_kelurahan": "", "kecamatan": "", "kabupaten_kota": "Kab. Pati"},
+{"npsn": "99000014", "nama": "   ", "bentuk": "SD", "jenjang": "SD", "status": "NEGERI", "alamat": "", "desa_kelurahan": "", "kecamatan": "", "kabupaten_kota": "Kab. Pati"},
+{"npsn": "99000015", "nama": "PAUD KARANGAN", "bentuk": "TK", "jenjang": "PAUD", "status": "SWASTA", "alamat": "", "desa_kelurahan": "", "kecamatan": "", "kabupaten_kota": "Kab. Pati"},
+{"npsn": "99000016", "nama": "SD TANPA KABUPATEN", "bentuk": "SD", "jenjang": "SD", "status": "NEGERI", "alamat": "", "desa_kelurahan": "", "kecamatan": "", "kabupaten_kota": ""},
+{"npsn": "99000011", "nama": "SD KARANGAN SEBELAS GANDA", "bentuk": "SD", "jenjang": "SD", "status": "NEGERI", "alamat": "", "desa_kelurahan": "", "kecamatan": "", "kabupaten_kota": "Kab. Pati"},
+"bukan data sekolah",
+{"npsn": "99000017", "nama": "SMP KARANGAN TUJUH BELAS", "bentuk": "SMP", "jenjang": "SMP", "status": "NEGERI", "alamat": "", "desa_kelurahan": "", "kecamatan": "", "kabupaten_kota": "Kab. Jepara"}
+]

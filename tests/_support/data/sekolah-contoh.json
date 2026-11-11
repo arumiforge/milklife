@@ -1,0 +1,6 @@
+[
+{"npsn": "99000001", "nama": "SD KARANGAN SATU", "bentuk": "SD", "jenjang": "SD", "status": "NEGERI", "alamat": "Jl. Contoh No. 1", "desa_kelurahan": "Sukamaju", "kecamatan": "Kecamatan Contoh", "kode_kecamatan": "999901", "kabupaten_kota": "Kab. Blora", "kode_kabupaten_kota": "999900"},
+{"npsn": "99000002", "nama": "MTS KARANGAN DUA", "bentuk": "MTs", "jenjang": "SMP", "status": "SWASTA", "alamat": "Dk. Rekaan RT 01 RW 02", "desa_kelurahan": "Rekaan", "kecamatan": "Kecamatan Rekaan", "kode_kecamatan": "999902", "kabupaten_kota": "Kab. Kudus", "kode_kabupaten_kota": "999900"},
+{"npsn": "99000003", "nama": "SMA KARANGAN TIGA", "bentuk": "SMA", "jenjang": "SMA", "status": "NEGERI", "alamat": "", "desa_kelurahan": "Anggitan", "kecamatan": "Kecamatan Anggitan", "kode_kecamatan": "999903", "kabupaten_kota": "Kota Rekaan", "kode_kabupaten_kota": "999800"},
+{"npsn": "99000004", "nama": "  SMK KARANGAN EMPAT  ", "bentuk": "SMK", "jenjang": "sma", "status": "SWASTA", "alamat": "Jl. Khayalan 4", "desa_kelurahan": "Khayalan", "kecamatan": "Kecamatan Khayalan", "kode_kecamatan": "999904", "kabupaten_kota": "Kab. Blora", "kode_kabupaten_kota": "999900"}
+]
