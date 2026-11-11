@@ -152,6 +152,8 @@ final class MigrasiStrukturTest extends UjiBasisData
         'atlet_nomor.nomor_lomba_id'         => ['nomor_lomba', 'RESTRICT'],
         'pendaftaran_beregu.pendaftaran_id'  => ['pendaftaran', 'CASCADE'],
         'pendaftaran_beregu.nomor_lomba_id'  => ['nomor_lomba', 'RESTRICT'],
+        // Tahap 2 (F2-01): jenjang ikut terhapus bersama kelompok umurnya.
+        'kelompok_umur_jenjang.kelompok_umur_id' => ['kelompok_umur', 'CASCADE'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void

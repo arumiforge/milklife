@@ -31,6 +31,11 @@
 php_errors.log
 
 #-------------------------
+# Unggahan admin (gambar halaman depan, logo bank, berkas unduhan)
+#-------------------------
+/public/unggahan/
+
+#-------------------------
 # Hasil PHPUnit
 #-------------------------
 /build/

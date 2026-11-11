@@ -51,20 +51,43 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
    php spark sekolah:impor
    ```
 
-7. Buat akun admin. Perintah menanyakan nama pengguna, nama, dan kata sandi (minimal 8 karakter). Perintah yang sama dipakai untuk mengganti kata sandi.
+7. Isi data awal dari flyer Seri 2: data acara, jadwal pendaftaran, tanggal patokan usia, lima kelompok umur beserta awalan nomor dadanya (KU 8 = 1 sampai KU 18 = 5), dan semua nomor lomba. Perintah ini hanya dijalankan **sekali** saat pemasangan; bila data sudah ada, perintah menolak supaya isian admin tidak tertimpa.
+
+   ```
+   php spark data:awal
+   ```
+
+   Batas usia, jenjang sekolah, biaya individu, dan batas anggota nomor beregu sengaja dikosongkan; admin mengisinya dari menu **Pengaturan**. Awalan nomor dada bisa diubah di sana juga.
+8. Buat akun admin. Perintah menanyakan nama pengguna, nama, dan kata sandi (minimal 8 karakter). Perintah yang sama dipakai untuk mengganti kata sandi.
 
    ```
    php spark admin:buat
    ```
 
    Di cmd Windows kata sandi terlihat saat diketik. Supaya tersembunyi, jalankan perintah ini dari Git Bash.
-8. Jalankan semua uji. Hasilnya harus diakhiri `OK`:
+9. Jalankan semua uji. Hasilnya harus diakhiri `OK`:
 
    ```
    composer uji
    ```
 
-9. Buka `http://milklife.test` untuk halaman depan, dan `http://milklife.test/admin/masuk` untuk panel admin.
+10. Buka `http://milklife.test` untuk halaman depan, dan `http://milklife.test/admin/masuk` untuk panel admin.
+
+### Batas unggah berkas
+
+Admin mengunggah gambar (paling besar 2 MB) dan berkas unduhan seperti juknis (paling besar 10 MB). Batas bawaan PHP biasanya hanya 2 MB, jadi naikkan dulu:
+
+1. Di Laragon, klik kanan → **PHP** → **php.ini**.
+2. Ubah atau tambahkan dua baris ini:
+
+   ```
+   upload_max_filesize = 10M
+   post_max_size = 12M
+   ```
+
+3. Simpan, lalu tekan **Reload** di Laragon.
+
+Berkas unggahan disimpan di `public/unggahan/` (dibuat otomatis, tidak masuk git). Sertakan folder ini saat membuat cadangan.
 
 ## Struktur
 
@@ -77,6 +100,7 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
 | `app/` | Kode aplikasi: pengendali, tampilan, konfigurasi, migrasi |
 | `app/Views/tata_letak/` | Tata letak halaman: `publik.php`, `admin.php`, `polos.php` |
 | `public/` | Folder yang dibuka peramban: `index.php` dan aset |
+| `public/unggahan/` | Gambar dan berkas unggahan admin; tidak masuk git |
 | `public/aset/` | CSS, JavaScript, dan pustaka tampilan (Bootstrap, Bootstrap Icons) |
 | `tests/` | Uji: `unit/` (aturan murni), `basisdata/` (migrasi dan model), `fitur/` (halaman dan rute) |
 | `writable/` | Sesi, log, dan berkas sementara buatan aplikasi; isinya tidak masuk git |

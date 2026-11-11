@@ -20,10 +20,16 @@ use CodeIgniter\Test\DatabaseTestTrait;
  *     }
  *
  * Kelas turunan boleh mengisi `$seed` untuk menjalankan seeder.
+ *
+ * Pengaturan (`setting()`) dibaca dari tabel `settings` yang kosong di awal
+ * setiap uji, tanpa sisa dari uji sebelumnya (`PengaturanBersih`). Untuk
+ * mengirim formulir admin, tambahkan `use KirimFormulir;` (sudah termasuk
+ * `FeatureTestTrait`).
  */
 abstract class UjiBasisData extends CIUnitTestCase
 {
     use DatabaseTestTrait;
+    use PengaturanBersih;
 
     /**
      * Grup sambungan di `app/Config/Database.php`.

@@ -14,11 +14,15 @@ use CodeIgniter\Test\FeatureTestTrait;
  *     $hasil = $this->withSession(self::SESI_ADMIN)->get('admin/dasbor');
  *
  * Uji halaman yang juga butuh basis data memakai `UjiBasisData` dan
- * menambahkan `use FeatureTestTrait;` sendiri.
+ * menambahkan `use FeatureTestTrait;` (atau `use KirimFormulir;`) sendiri.
+ *
+ * Pengaturan (`setting()`) disimpan di memori, kosong di awal setiap uji,
+ * tanpa basis data (`PengaturanBersih`).
  */
 abstract class UjiHalaman extends CIUnitTestCase
 {
     use FeatureTestTrait;
+    use PengaturanBersih;
 
     /**
      * Isi sesi admin yang sudah masuk.

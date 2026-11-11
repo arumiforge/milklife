@@ -8,6 +8,8 @@
  *
  * Butir aktif ditentukan dari alamat sekarang: alamat butir itu sendiri atau
  * halaman di bawahnya (`admin/pendaftaran/…` mengaktifkan "Pendaftaran").
+ * Alamat lain yang ikut mengaktifkan butir ditulis di `aktif_juga`
+ * (halaman Akun dibuka dari daftar pengaturan, jadi ikut menandai "Pengaturan").
  * Butir baru ditambahkan bersama halamannya; ikon dari Bootstrap Icons
  * (nama tanpa awalan `bi-`). Label pendek supaya muat di menu bawah.
  *
@@ -16,11 +18,18 @@
 
 $menuAdmin = [
     ['label' => 'Dasbor', 'ikon' => 'speedometer2', 'alamat' => 'admin/dasbor'],
+    ['label' => 'Pengaturan', 'ikon' => 'gear', 'alamat' => 'admin/pengaturan', 'aktif_juga' => ['admin/akun']],
 ];
 ?>
 <ul class="menu-admin">
     <?php foreach ($menuAdmin as $butir) : ?>
-        <?php $aktif = url_is($butir['alamat']) || url_is($butir['alamat'] . '/*'); ?>
+        <?php
+        $aktif = false;
+
+        foreach ([$butir['alamat'], ...($butir['aktif_juga'] ?? [])] as $alamat) {
+            $aktif = $aktif || url_is($alamat) || url_is($alamat . '/*');
+        }
+        ?>
         <li>
             <a class="menu-admin-tautan" href="<?= site_url($butir['alamat']) ?>"<?= $aktif ? ' aria-current="page"' : '' ?>>
                 <i class="bi bi-<?= esc($butir['ikon'], 'attr') ?>" aria-hidden="true"></i>
