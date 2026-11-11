@@ -40,5 +40,6 @@ Diperbarui: 11 November 2026
 
 ## Menunggu pemilik
 
+- Persetujuan rancangan revisi 3 (K36, K37: kelompok umur menurut tahun lahir).
 - Juknis resmi untuk `sumber/` (batas usia tiap kelompok umur); menyusul (K30).
 - Mencoba pemasangan di Laragon sesuai `README.md`.

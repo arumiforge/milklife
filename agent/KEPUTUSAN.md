@@ -72,3 +72,5 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K33 | Awalan nomor dada awal: KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5 | Diisi `data:awal`; tetap bisa diubah dan ditambah admin. Mengubah K25 sebatas awalan nomor dada |
 | K34 | Bukti bayar: admin mengunggah paling banyak 5 gambar per pendaftaran di panel; gambar dikecilkan otomatis dan bisa dilihat, diunduh, dan dihapus | Official tetap mengirim bukti lewat WA dan tidak mengunggah apa pun. Dikerjakan di Tahap 6 (panel data) |
 | K35 | Rancangan revisi 2 (K28–K34) disetujui | Dipindahkan ke `dokumen/final/` |
+| K36 | Kelompok umur ditentukan tahun lahir, tanpa bulan dan tanggal: KU 8 lahir 2019 ke atas, KU 10 lahir 2016–2018, KU 12 lahir 2015, KU 15 lahir 2011–2014, KU 18 lahir 2008–2010 | Mengganti cara K12 (batas usia tahun penuh, kosong pada awalnya). Diisi `data:awal`, tetap bisa diubah admin bila juknis resmi berbeda |
+| K37 | Tanggal patokan usia dihapus. Usia tetap ditampilkan (tahun, atau tahun dan bulan) hanya sebagai keterangan | Usia dihitung pada tanggal mulai acara (keputusan koordinator, rancangan revisi 3) |
