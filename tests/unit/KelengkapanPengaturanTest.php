@@ -279,8 +279,28 @@ final class KelengkapanPengaturanTest extends CIUnitTestCase
             'Estafet 8 × 50 m mix (KU 12) belum punya jumlah inti. '
             . 'Formula 1 putra (KU 10), Formula 1 putri (KU 10) belum punya batas anggota. '
             . 'Formula 1 putri (KU 10) belum punya biaya beregu. '
-            . 'Estafet 8 × 50 m mix (KU 12) belum punya jumlah putra dan putri.',
+            . 'Estafet 8 × 50 m mix (KU 12) belum punya jumlah putra dan putri minimal.',
             $butir['keterangan'],
+        );
+    }
+
+    public function testKosongNomorBereguSamaDenganAturanF204(): void
+    {
+        // Seperti `NomorLombaModel::kekuranganTim()`: hanya null dan '' yang kosong.
+        $potret                = self::potretLengkap();
+        $potret['nomor_lomba'] = [
+            self::nomor(1, 'Formula 1', 'beregu', 'putra', ['jumlah_inti' => 0, 'batas_anggota' => '0', 'biaya_beregu' => 0]),
+        ];
+
+        $this->assertTrue((new KelengkapanPengaturan($potret))->untukHalaman('nomor-lomba')['lengkap']);
+
+        $potret['nomor_lomba'] = [
+            self::nomor(2, 'Estafet 8 × 50 m', 'beregu', 'mix', ['batas_anggota' => '', 'jumlah_putra' => '']),
+        ];
+
+        $this->assertSame(
+            'Estafet 8 × 50 m mix (KU 12) belum punya batas anggota. Estafet 8 × 50 m mix (KU 12) belum punya jumlah putra dan putri minimal.',
+            (new KelengkapanPengaturan($potret))->untukHalaman('nomor-lomba')['keterangan'],
         );
     }
 

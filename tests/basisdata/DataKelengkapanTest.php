@@ -63,7 +63,7 @@ final class DataKelengkapanTest extends UjiBasisData
         // Nomor beregu dari data awal sudah punya jumlah inti dan biaya, belum batas anggota.
         $this->assertSame(
             "Kanga's Escape putra (KU 10), Kanga's Escape putri (KU 10), Formula 1 putra (KU 10), dan 8 nomor lainnya belum punya batas anggota. "
-            . 'Estafet 8 × 50 m mix (KU 10), Estafet 8 × 50 m mix (KU 12), Estafet 4 × 400 m mix (KU 18) belum punya jumlah putra dan putri.',
+            . 'Estafet 8 × 50 m mix (KU 10), Estafet 8 × 50 m mix (KU 12), Estafet 4 × 400 m mix (KU 18) belum punya jumlah putra dan putri minimal.',
             $kelengkapan->untukHalaman('nomor-lomba')['keterangan'],
         );
     }

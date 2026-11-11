@@ -24,7 +24,8 @@ use DateTimeImmutable;
  * |                 | (minimal salah satu), minimal satu jenjang, biaya individu, dan minimal satu awalan    |
  * |                 | nomor dada                                                                             |
  * | `nomor-lomba`   | Minimal satu nomor lomba aktif pada kelompok umur aktif; tiap nomor beregu aktif punya |
- * |                 | jumlah inti, batas anggota, dan biaya beregu (mix juga jumlah putra dan putri)          |
+ * |                 | jumlah inti, batas anggota, dan biaya beregu (mix juga jumlah putra dan putri minimal); |
+ * |                 | aturannya sama dengan `NomorLombaModel::kekuranganTim()` (F2-04)                        |
  * | `pembayaran`    | Nama bank, nomor rekening, nama pemilik rekening, dan nomor WA pembayaran              |
  *
  * Tanggal patokan usia bukan lagi butir kelengkapan (K37).
@@ -320,10 +321,10 @@ final class KelengkapanPengaturan
         }
 
         $kurang = [
-            'jumlah inti'          => [],
-            'batas anggota'        => [],
-            'biaya beregu'         => [],
-            'jumlah putra dan putri' => [],
+            'jumlah inti'                    => [],
+            'batas anggota'                  => [],
+            'biaya beregu'                   => [],
+            'jumlah putra dan putri minimal' => [],
         ];
 
         foreach ($dinilai as $nomor) {
@@ -335,21 +336,22 @@ final class KelengkapanPengaturan
             $nama     = trim(self::nama($nomor['nama'] ?? null, 'Nomor tanpa nama') . ' ' . $kategori)
                 . ' (' . $kuAktif[(string) $nomor['kelompok_umur_id']] . ')';
 
-            if (! self::angkaPositif($nomor['jumlah_inti'] ?? null)) {
+            // Aturan sama persis dengan `NomorLombaModel::kekuranganTim()` (F2-04):
+            // kolom dianggap kosong hanya bila null atau teks kosong.
+            if (self::kosong($nomor, 'jumlah_inti')) {
                 $kurang['jumlah inti'][] = $nama;
             }
 
-            if (! self::angkaPositif($nomor['batas_anggota'] ?? null)) {
+            if (self::kosong($nomor, 'batas_anggota')) {
                 $kurang['batas anggota'][] = $nama;
             }
 
-            if (! self::angkaTakNegatif($nomor['biaya_beregu'] ?? null)) {
+            if (self::kosong($nomor, 'biaya_beregu')) {
                 $kurang['biaya beregu'][] = $nama;
             }
 
-            if ($kategori === 'mix'
-                && (! self::angkaTakNegatif($nomor['jumlah_putra'] ?? null) || ! self::angkaTakNegatif($nomor['jumlah_putri'] ?? null))) {
-                $kurang['jumlah putra dan putri'][] = $nama;
+            if ($kategori === 'mix' && (self::kosong($nomor, 'jumlah_putra') || self::kosong($nomor, 'jumlah_putri'))) {
+                $kurang['jumlah putra dan putri minimal'][] = $nama;
             }
         }
 
@@ -444,6 +446,16 @@ final class KelengkapanPengaturan
     private static function aktif(array $baris): bool
     {
         return (bool) (int) ($baris['aktif'] ?? 1);
+    }
+
+    /**
+     * Kolom kosong menurut aturan F2-04: `null` atau `''`.
+     *
+     * @param array<array-key, mixed> $baris
+     */
+    private static function kosong(array $baris, string $kolom): bool
+    {
+        return ($baris[$kolom] ?? null) === null || $baris[$kolom] === '';
     }
 
     private static function nama(mixed $nilai, string $cadangan): string
