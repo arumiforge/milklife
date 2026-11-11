@@ -74,3 +74,4 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K35 | Rancangan revisi 2 (K28–K34) disetujui | Dipindahkan ke `dokumen/final/` |
 | K36 | Kelompok umur ditentukan tahun lahir, tanpa bulan dan tanggal: KU 8 lahir 2019 ke atas, KU 10 lahir 2016–2018, KU 12 lahir 2015, KU 15 lahir 2011–2014, KU 18 lahir 2008–2010 | Mengganti cara K12 (batas usia tahun penuh, kosong pada awalnya). Diisi `data:awal`, tetap bisa diubah admin bila juknis resmi berbeda |
 | K37 | Tanggal patokan usia dihapus. Usia tetap ditampilkan (tahun, atau tahun dan bulan) hanya sebagai keterangan | Usia dihitung pada tanggal mulai acara (keputusan koordinator, rancangan revisi 3) |
+| K38 | Rancangan revisi 3 (K36, K37) disetujui. Sub-sesi Tahap 2 dijalankan bertahap, paling banyak 3 sekaligus | Batas pemakaian akun dipakai bersama pemilik dan semua sub-sesi; delapan sub-sesi sekaligus menghabiskannya dalam beberapa menit |
