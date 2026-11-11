@@ -44,6 +44,26 @@ final class KelengkapanPengaturanTest extends CIUnitTestCase
         );
     }
 
+    public function testTeksKosongSamaDenganNull(): void
+    {
+        // Pengaturan kosong disimpan sebagai '' (F2-05) atau null; keduanya belum diisi.
+        $kelengkapan = new KelengkapanPengaturan([
+            'acara'       => ['nama' => '', 'seri' => '', 'tahun' => null, 'tempat' => '', 'tanggal_mulai' => '', 'tanggal_selesai' => null],
+            'pendaftaran' => ['mulai' => '', 'akhir' => null],
+            'pembayaran'  => ['bank' => '', 'nomor_rekening' => null, 'pemilik_rekening' => '', 'nomor_wa' => ''],
+        ]);
+
+        $this->assertSame(0, $kelengkapan->jumlahLengkap());
+        $this->assertSame(
+            'Belum diisi: nama acara, seri, tahun, tempat, tanggal mulai acara, tanggal selesai acara.',
+            $kelengkapan->untukHalaman('acara')['keterangan'],
+        );
+        $this->assertSame(
+            'Belum diisi: nama bank, nomor rekening, nama pemilik rekening, nomor WA pembayaran.',
+            $kelengkapan->untukHalaman('pembayaran')['keterangan'],
+        );
+    }
+
     public function testPotretLengkapSemuaButirLengkap(): void
     {
         $kelengkapan = new KelengkapanPengaturan(self::potretLengkap());

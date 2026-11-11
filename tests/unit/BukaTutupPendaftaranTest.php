@@ -55,6 +55,13 @@ final class BukaTutupPendaftaranTest extends CIUnitTestCase
         $this->assertSame($harapan, $this->hitung($sekarang)->keadaan());
     }
 
+    public function testJadwalTeksKosongDisiapkan(): void
+    {
+        $hasil = new BukaTutupPendaftaran(true, '', '', true, '', self::waktu('2026-11-11 10:00:00'));
+
+        $this->assertSame(BukaTutupPendaftaran::DISIAPKAN, $hasil->keadaan());
+    }
+
     public function testBelumDibuka(): void
     {
         $hasil = $this->hitung('2026-09-15 12:00:00');

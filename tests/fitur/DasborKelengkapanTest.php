@@ -176,6 +176,17 @@ final class DasborKelengkapanTest extends UjiBasisData
         $this->assertNotNull($keterangan);
         $this->assertStringContainsString('belum punya jenjang sekolah.', $keterangan->textContent);
         $this->assertSame(0, $xpath->query('//a[@data-kunci="acara"]//*[contains(@class, "keterangan-kelengkapan")]')->length);
+
+        // Keterangan kartu mengikuti K36 dan K37 (tanpa batas usia dan patokan usia).
+        $this->assertStringContainsString(
+            'Batas tahun lahir, jenjang sekolah',
+            $xpath->query('//a[@data-kunci="kelompok-umur"]')->item(0)?->textContent ?? '',
+        );
+        $this->assertStringContainsString(
+            'Jadwal buka dan tutup, buka manual, tampilan usia, dan batas-batas pendaftaran.',
+            $xpath->query('//a[@data-kunci="pendaftaran"]')->item(0)?->textContent ?? '',
+        );
+        $this->assertStringNotContainsString('patokan', $xpath->query('//main')->item(0)?->textContent ?? '');
     }
 
     public function testTandaHalamanPengaturanSemuaLengkap(): void
