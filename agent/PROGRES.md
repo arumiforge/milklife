@@ -1,6 +1,6 @@
 # Progres
 
-Diperbarui: 10 November 2026
+Diperbarui: 11 November 2026
 
 ## Sedang berjalan
 
@@ -8,11 +8,11 @@ Diperbarui: 10 November 2026
 
 | Tugas | Urutan | Status |
 |---|---|---|
-| [F1-01 Kerangka CodeIgniter](tugas/F1-01-kerangka-codeigniter.md) | pertama, sendiri | rencana |
-| [F1-02 Migrasi model data](tugas/F1-02-migrasi-model-data.md) | paralel setelah F1-01 | rencana |
-| [F1-03 Impor sekolah](tugas/F1-03-impor-sekolah.md) | paralel setelah F1-01 | rencana |
-| [F1-04 Masuk admin](tugas/F1-04-masuk-admin.md) | paralel setelah F1-01 | rencana |
-| [F1-05 Tata letak dan tema](tugas/F1-05-tata-letak-tema.md) | paralel setelah F1-01 | rencana |
+| [F1-01 Kerangka CodeIgniter](tugas/F1-01-kerangka-codeigniter.md) | pertama, sendiri | selesai (PR #3) |
+| [F1-02 Migrasi model data](tugas/F1-02-migrasi-model-data.md) | paralel setelah F1-01 | menunggu tinjauan (PR #4) |
+| [F1-03 Impor sekolah](tugas/F1-03-impor-sekolah.md) | paralel setelah F1-01 | menunggu tinjauan (PR #5) |
+| [F1-04 Masuk admin](tugas/F1-04-masuk-admin.md) | paralel setelah F1-01 | menunggu tinjauan (PR #6) |
+| [F1-05 Tata letak dan tema](tugas/F1-05-tata-letak-tema.md) | paralel setelah F1-01 | menunggu tinjauan (PR #7) |
 | [F1-06 Uji gabungan dan penutupan](tugas/F1-06-penutupan-tahap-1.md) | terakhir | rencana |
 
 Selama tugas paralel berjalan, tabel ini diperbarui oleh koordinator, bukan oleh tiap PR tugas, supaya PR paralel tidak bentrok di berkas ini.
@@ -34,6 +34,9 @@ Selama tugas paralel berjalan, tabel ini diperbarui oleh koordinator, bukan oleh
 
 ## Menunggu pemilik
 
+- Izin menggabung PR #4–#7 (F1-02 sampai F1-05).
 - Konfirmasi delapan asumsi di rancangan bagian 17, sebelum Tahap 2 dan Tahap 4.
+- Jenjang 19 SLB di data sekolah, sebelum Tahap 4 (lihat PR #5).
+- Lisensi repo (K20: diputuskan nanti).
 - Juknis resmi untuk `sumber/` (batas usia tiap kelompok umur).
 - Keputusan cara web dijangkau dari internet (domain, IP publik, atau terowongan).

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 1 — Kerangka |
 | Dibuat | 10 November 2026 |
 
@@ -47,4 +47,5 @@ Acuan: `dokumen/draf/rencana-implementasi-tahap-1.md`, bagian "Kesepakatan bersa
 - CSRF dipasang sebagai filter global `before` (memeriksa `POST` dan metode pengubah lain), bukan lewat `$methods['POST']`, supaya permintaan yang menyamarkan metodenya tetap diperiksa.
 - Rute admin ditulis dalam grup `admin` di `app/Config/Routes.php`, sehingga F1-04 cukup menambahkan filter pada grup itu.
 - Uji tata letak kerangka bernama `tests/fitur/KerangkaTataLetakTest.php`, bukan `TataLetak*`, supaya tidak bertabrakan dengan berkas uji milik F1-05.
-- `composer.json` memakai `"license": "proprietary"`; lisensi repo belum diputuskan pemilik.
+- `composer.json` memakai `"license": "proprietary"`; lisensi repo diputuskan nanti (K20).
+- Digabung lewat PR #3 pada 11 November 2026.

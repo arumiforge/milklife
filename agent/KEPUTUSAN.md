@@ -31,6 +31,12 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K18 | Laragon pemilik memakai PHP 8.3 dan MySQL 8.x | Versi minimal di `composer.json`: PHP 8.2, sesuai syarat CodeIgniter 4.7 |
 | K19 | Tahap 2–7 dikerjakan sesuai urutan di rancangan | Pendaftaran di flyer ditutup 30 November 2026; urutan tidak diubah walau waktu sempit |
 
+## 11 November 2026
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K20 | Lisensi repo diputuskan nanti | Sementara `composer.json` menulis `"license": "proprietary"` dan repo belum punya berkas lisensi |
+
 ## Dari permintaan awal pemilik
 
 - Satu peran admin; nama dan kata sandi bisa diganti.
