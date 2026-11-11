@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <clipPath id="sudut"><rect width="32" height="32" rx="6"/></clipPath>
+  <g clip-path="url(#sudut)">
+    <rect width="32" height="32" fill="#021F7B"/>
+    <path d="M17 32 27 0h4L21 32z" fill="#E85F31"/>
+    <path d="M23 32 33 0h-1.5L21.5 32z" fill="#9BCCEC"/>
+  </g>
+  <path d="M4 23V9h3.2l3.3 7 3.3-7H17v14h-3v-8.6l-2.5 5.4h-2L7 14.4V23z" fill="#FFFFFF"/>
+</svg>

@@ -1,4 +1,392 @@
 /*
  * Gaya khusus panel admin, dimuat setelah tema.css.
- * Diisi pada tugas F1-05.
+ *
+ * Susunan (tata_letak/admin.php):
+ *   - layar ≥ lg (992 px): menu samping tetap di kiri, kepala menempel di atas;
+ *   - layar lebih kecil: menu samping hilang, menu menempel di bawah
+ *     (ikon + label), tombol Keluar tetap di kepala.
+ * Menu samping dan menu bawah memakai markup yang sama
+ * (tata_letak/_menu_admin.php); bentuknya diatur dari wadahnya di sini.
  */
+
+.tata-admin {
+    --ml-lebar-menu-samping: 15rem;
+    --ml-tinggi-kepala-admin: 4rem;
+    --ml-tinggi-menu-bawah: 4rem;
+}
+
+/* ---------- Bilah kemajuan (aset/js/kemajuan.js) ---------- */
+
+.bilah-kemajuan {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1090;
+    height: 3px;
+    pointer-events: none;
+}
+
+.bilah-kemajuan[hidden] {
+    display: none;
+}
+
+.bilah-kemajuan-isi {
+    width: 0;
+    height: 100%;
+    background-color: var(--ml-oranye);
+    box-shadow: 0 0 6px rgba(232, 95, 49, 0.6);
+    transition: width 0.25s ease-out, opacity 0.3s ease;
+}
+
+.bilah-kemajuan.selesai .bilah-kemajuan-isi {
+    opacity: 0;
+}
+
+/* ---------- Bingkai ---------- */
+
+.admin-bingkai {
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.admin-utama {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+.admin-isi {
+    flex: 1 0 auto;
+    padding-top: 1.25rem;
+    /* Ruang untuk menu bawah supaya isi tidak tertutup. */
+    padding-bottom: calc(var(--ml-tinggi-menu-bawah) + 1.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 992px) {
+    .admin-bingkai {
+        display: grid;
+        grid-template-columns: var(--ml-lebar-menu-samping) minmax(0, 1fr);
+    }
+
+    .admin-isi {
+        padding-top: 1.75rem;
+        padding-bottom: 2rem;
+    }
+}
+
+/* ---------- Menu samping ---------- */
+
+.menu-samping {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    flex-direction: column;
+    background: var(--ml-biru-tua);
+    color: #fff;
+}
+
+.menu-samping-merek {
+    display: block;
+    padding: 1.25rem 1.25rem 1rem;
+    font-size: 1.125rem;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    position: relative;
+}
+
+.menu-samping-merek::after {
+    content: "";
+    position: absolute;
+    left: 1.25rem;
+    bottom: -1px;
+    width: 3rem;
+    height: 3px;
+    background: var(--ml-oranye);
+    transform: skewX(-20deg);
+}
+
+.menu-samping-merek .merek-sambungan {
+    display: block;
+}
+
+.menu-samping-merek:hover {
+    color: #fff;
+}
+
+.menu-samping-merek:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: -3px;
+}
+
+.menu-samping-peran {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ml-biru-muda);
+}
+
+.menu-samping nav {
+    padding: 1rem 0.75rem;
+}
+
+.menu-admin {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-samping .menu-admin-tautan {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.5rem;
+    color: rgba(255, 255, 255, 0.88);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.menu-samping .menu-admin-tautan .bi {
+    font-size: 1.125rem;
+}
+
+.menu-samping .menu-admin-tautan:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.menu-samping .menu-admin-tautan[aria-current="page"] {
+    color: #fff;
+    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.14);
+    box-shadow: inset 4px 0 0 var(--ml-oranye);
+}
+
+.menu-samping .menu-admin-tautan:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 1px;
+}
+
+.menu-samping .menu-admin li + li {
+    margin-top: 0.25rem;
+}
+
+/* ---------- Kepala halaman ---------- */
+
+.kepala-admin {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: var(--ml-tinggi-kepala-admin);
+    padding: 0.5rem 1rem;
+    background-color: var(--ml-putih);
+    border-bottom: 1px solid var(--ml-garis);
+    box-shadow: 0 1px 3px rgba(2, 31, 123, 0.06);
+}
+
+@media (min-width: 992px) {
+    .kepala-admin {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+.kepala-admin-judul {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-size: 1.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.kepala-admin-pengguna {
+    display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.kepala-admin-nama {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    color: var(--ml-teks-redup);
+    font-weight: 500;
+}
+
+.kepala-admin-nama .bi {
+    font-size: 1.25rem;
+    color: var(--ml-biru);
+}
+
+.kepala-admin-nama-teks {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 14rem;
+}
+
+.tombol-keluar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    white-space: nowrap;
+}
+
+.tombol-keluar {
+    flex: none;
+}
+
+@media (max-width: 575.98px) {
+    .kepala-admin {
+        gap: 0.5rem;
+    }
+
+    .kepala-admin-pengguna {
+        gap: 0.5rem;
+    }
+
+    .kepala-admin-nama .bi {
+        display: none;
+    }
+}
+
+/* ---------- Menu bawah (ponsel dan tablet) ---------- */
+
+.menu-bawah {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1030;
+    background-color: var(--ml-putih);
+    border-top: 1px solid var(--ml-garis);
+    box-shadow: 0 -2px 8px rgba(2, 31, 123, 0.08);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.menu-bawah .menu-admin {
+    display: flex;
+    justify-content: center;
+    max-width: 40rem;
+    margin: 0 auto;
+}
+
+.menu-bawah .menu-admin > li {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 7.5rem;
+}
+
+.menu-bawah .menu-admin-tautan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    min-height: var(--ml-tinggi-menu-bawah);
+    padding: 0.375rem 0.25rem;
+    color: var(--ml-teks-redup);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.menu-bawah .menu-admin-tautan .bi {
+    font-size: 1.375rem;
+    line-height: 1;
+}
+
+.menu-bawah .menu-admin-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.menu-bawah .menu-admin-tautan[aria-current="page"] {
+    color: var(--ml-biru);
+    font-weight: 700;
+}
+
+.menu-bawah .menu-admin-tautan[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 25%;
+    right: 25%;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--ml-oranye);
+}
+
+.menu-bawah .menu-admin-tautan:focus-visible {
+    outline: 3px solid var(--ml-biru);
+    outline-offset: -3px;
+}
+
+/* ---------- Isi ---------- */
+
+.kartu-kosong .ikon-bulat {
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 2rem;
+}
+
+.kartu-kosong p {
+    max-width: 36rem;
+}
+
+.daftar-langkah {
+    counter-reset: langkah;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.daftar-langkah > li {
+    counter-increment: langkah;
+    position: relative;
+    padding-left: 2.75rem;
+    min-height: 2rem;
+}
+
+.daftar-langkah > li + li {
+    margin-top: 0.875rem;
+}
+
+.daftar-langkah > li::before {
+    content: counter(langkah);
+    position: absolute;
+    left: 0;
+    top: -0.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: 50%;
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru-tua);
+    font-weight: 700;
+    font-size: 0.875rem;
+}

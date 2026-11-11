@@ -1,25 +1,15 @@
-<!doctype html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="robots" content="noindex">
+<?php
+/**
+ * Galat umum di mode produksi (rincian galat tidak ditampilkan).
+ * Tampilan ada di `_galat.php`. Mode pengembangan memakai `error_exception.php`.
+ */
 
-    <title><?= lang('Errors.whoops') ?></title>
+$galat = [
+    'judul' => 'Maaf, ada kendala',
+    'pesan' => [
+        'Halaman ini sedang tidak bisa ditampilkan karena ada kendala di sistem kami.',
+        'Coba muat ulang halaman ini beberapa menit lagi. Bila kendala masih muncul, hubungi panitia.',
+    ],
+];
 
-    <style>
-        <?= preg_replace('#[\r\n\t ]+#', ' ', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'debug.css')) ?>
-    </style>
-</head>
-<body>
-
-    <div class="container text-center">
-
-        <h1 class="headline"><?= lang('Errors.whoops') ?></h1>
-
-        <p class="lead"><?= lang('Errors.weHitASnag') ?></p>
-
-    </div>
-
-</body>
-
-</html>
+require __DIR__ . '/_galat.php';
