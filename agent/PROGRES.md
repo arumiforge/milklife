@@ -4,9 +4,9 @@ Diperbarui: 11 November 2026
 
 ## Sedang berjalan
 
-**Tahap 2 — Pengaturan.** Wawancara awal selesai (K24–K26). Revisi rancangan untuk K23 dan rencana implementasi Tahap 2 menunggu persetujuan pemilik; kode belum ditulis.
+**Tahap 2 — Pengaturan.** Wawancara awal selesai (K24–K26). Revisi rancangan untuk K23 dan rencana implementasi Tahap 2 disetujui (K27). F2-01 Fondasi dikerjakan lebih dulu, lalu F2-02 sampai F2-09 paralel.
 
-- Rancangan revisi 1: [`dokumen/draf/rancangan-web-pendaftaran.md`](../dokumen/draf/rancangan-web-pendaftaran.md)
+- Rancangan revisi 1: [`dokumen/final/rancangan-web-pendaftaran.md`](../dokumen/final/rancangan-web-pendaftaran.md)
 - Rencana: [`dokumen/draf/rencana-implementasi-tahap-2.md`](../dokumen/draf/rencana-implementasi-tahap-2.md)
 
 | Tugas | Status | PR |
@@ -40,7 +40,6 @@ Diperbarui: 11 November 2026
 
 ## Menunggu pemilik
 
-- Persetujuan revisi rancangan (K23) dan rencana implementasi Tahap 2, sebelum kode Tahap 2 ditulis.
 - Konfirmasi asumsi 4–8 di rancangan bagian 17, sebelum Tahap 4.
 - Jenjang 19 SLB di data sekolah, sebelum Tahap 4.
 - Juknis resmi untuk `sumber/` (batas usia tiap kelompok umur).

@@ -58,3 +58,4 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K24 | Jenjang yang boleh ikut tiap kelompok umur diatur lewat kotak centang (SD/MI, SMP/MTs, SMA/SMK/MA) di formulir kelompok umur | Melaksanakan K23. Daftar kelompok umur menampilkan jenjang yang dicentang |
 | K25 | Data awal kelompok umur dan nomor lomba dari flyer Seri 2 diisi lewat perintah sekali jalan saat pemasangan | Batas usia, biaya individu, awalan nomor dada, dan jenjang tetap kosong untuk diisi admin (K12, K23). Setelah itu semua diubah dari panel |
 | K26 | Halaman Akun hanya untuk akun admin yang sedang masuk: ganti nama, nama pengguna, dan kata sandi sendiri | Akun admin lain tetap dibuat dan diubah lewat perintah `admin:buat` |
+| K27 | Revisi 1 rancangan (K23) dan rencana implementasi Tahap 2 disetujui, termasuk tujuh asumsi rencana | Rancangan revisi dipindahkan ke `dokumen/final/`. Kode Tahap 2 boleh mulai, diawali F2-01 |

@@ -17,7 +17,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 1 disetujui, K27).
 - Rencana implementasi Tahap 1: `dokumen/draf/rencana-implementasi-tahap-1.md`.
 - Rencana implementasi Tahap 2: `dokumen/draf/rencana-implementasi-tahap-2.md`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.

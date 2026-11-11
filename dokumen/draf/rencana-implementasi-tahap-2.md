@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Status | Draf, menunggu persetujuan pemilik |
+| Status | Disetujui pemilik 11 November 2026 (K27), termasuk asumsi di bagian akhir |
 | Tanggal | 11 November 2026 |
-| Dasar | Rancangan revisi 1 (`dokumen/draf/rancangan-web-pendaftaran.md`) bagian 5, 6, 9, 10, 11, 16, 17 dan lampiran; keputusan K01–K26; hasil Tahap 1 (`agent/arsip/tahap-1.md`) |
+| Dasar | Rancangan revisi 1 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6, 9, 10, 11, 16, 17 dan lampiran; keputusan K01–K26; hasil Tahap 1 (`agent/arsip/tahap-1.md`) |
 
 ## Tujuan
 
