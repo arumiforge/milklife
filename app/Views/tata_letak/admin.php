@@ -14,8 +14,12 @@
  * - `isi`: isi halaman, di dalam `<main id="isi">`; bungkus dengan `container-fluid`.
  * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap dan `aset/js/kemajuan.js`.
  *
- * Nama admin dibaca dari sesi `admin_nama`. Tombol Keluar mengirim `POST`
- * ke `/admin/keluar` dengan token CSRF (rutenya dibuat F1-04).
+ * Nama admin dibaca dari sesi `admin_nama` dan menjadi tautan ke halaman
+ * Akun (`/admin/akun`). Tombol Keluar mengirim `POST` ke `/admin/keluar`
+ * dengan token CSRF (rutenya dibuat F1-04).
+ *
+ * Pesan kilat `pesan_sukses` dan `pesan_galat` ditampilkan di atas isi lewat
+ * `admin/_pesan.php`; halaman tidak menampilkannya sendiri.
  *
  * Bilah kemajuan di atas halaman dinyalakan dari JavaScript halaman:
  * `Kemajuan.mulai()` lalu `Kemajuan.selesai()`.
@@ -68,11 +72,12 @@ if ($judulHalaman === '') {
             <header class="kepala-admin">
                 <h1 class="kepala-admin-judul"><?= $judulHalaman ?></h1>
                 <div class="kepala-admin-pengguna">
-                    <span class="kepala-admin-nama">
+                    <a class="kepala-admin-nama" href="<?= site_url('admin/akun') ?>" title="Buka Akun: ganti nama dan kata sandi">
                         <i class="bi bi-person-circle" aria-hidden="true"></i>
                         <span class="visually-hidden">Masuk sebagai</span>
                         <span class="kepala-admin-nama-teks"><?= esc((string) session('admin_nama')) ?></span>
-                    </span>
+                        <span class="visually-hidden">(buka Akun)</span>
+                    </a>
                     <form action="<?= site_url('admin/keluar') ?>" method="post" class="m-0">
                         <?= csrf_field() ?>
                         <button type="submit" class="btn btn-outline-primary tombol-keluar">
@@ -84,6 +89,7 @@ if ($judulHalaman === '') {
             </header>
 
             <main id="isi" class="admin-isi">
+                <?= $this->include('admin/_pesan') ?>
                 <?= $this->renderSection('isi') ?>
             </main>
         </div>

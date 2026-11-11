@@ -113,7 +113,10 @@ final class TataLetakHalamanTest extends UjiHalaman
 
         // Kedua menu berasal dari daftar yang sama.
         $this->assertSame($this->daftarMenu($xpath, $samping), $this->daftarMenu($xpath, $bawah));
-        $this->assertSame([['Dasbor', site_url('admin/dasbor'), 'page']], $this->daftarMenu($xpath, $samping));
+        $this->assertSame([
+            ['Dasbor', site_url('admin/dasbor'), 'page'],
+            ['Pengaturan', site_url('admin/pengaturan'), ''],
+        ], $this->daftarMenu($xpath, $samping));
 
         // Ikon dekoratif disembunyikan dari pembaca layar.
         foreach ($xpath->query('//nav[contains(@class, "menu-bawah")]//i[contains(@class, "bi")]') as $ikon) {
@@ -149,7 +152,7 @@ final class TataLetakHalamanTest extends UjiHalaman
         // Halaman lain tidak menandai Dasbor.
         $xpath = $this->xpath($this->renderDiAlamat('admin/lain', 'Tests\Support\Views\contoh_admin'));
         $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
-        $this->assertSame(2, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
+        $this->assertSame(4, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));
