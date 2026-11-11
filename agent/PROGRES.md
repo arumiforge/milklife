@@ -40,6 +40,5 @@ Diperbarui: 11 November 2026
 
 ## Menunggu pemilik
 
-- Persetujuan rancangan revisi 2 (K28–K34).
 - Juknis resmi untuk `sumber/` (batas usia tiap kelompok umur); menyusul (K30).
 - Mencoba pemasangan di Laragon sesuai `README.md`.

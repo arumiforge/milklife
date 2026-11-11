@@ -71,3 +71,4 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K32 | Asumsi 4–7 rancangan bagian 17 dikonfirmasi. Asumsi 8 diganti: bila admin mengubah pendaftaran yang sudah Lunas dan totalnya berubah (naik atau turun), status kembali ke Menunggu dan admin menandai Lunas lagi | Selisih tetap diurus panitia di luar sistem. Nomor dada yang sudah dibagikan tetap dipegang atlet |
 | K33 | Awalan nomor dada awal: KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5 | Diisi `data:awal`; tetap bisa diubah dan ditambah admin. Mengubah K25 sebatas awalan nomor dada |
 | K34 | Bukti bayar: admin mengunggah paling banyak 5 gambar per pendaftaran di panel; gambar dikecilkan otomatis dan bisa dilihat, diunduh, dan dihapus | Official tetap mengirim bukti lewat WA dan tidak mengunggah apa pun. Dikerjakan di Tahap 6 (panel data) |
+| K35 | Rancangan revisi 2 (K28–K34) disetujui | Dipindahkan ke `dokumen/final/` |
