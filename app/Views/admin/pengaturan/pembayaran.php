@@ -89,7 +89,7 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
                                 <div id="logo_bank-galat" class="invalid-feedback"><?= esc($galat['logo_bank']) ?></div>
                             <?php endif ?>
                             <div id="logo_bank-bantuan" class="form-text">
-                                JPG, PNG, atau WEBP, paling besar <?= Unggahan::ukuranTeks(Unggahan::BATAS_GAMBAR) ?>. Boleh dikosongkan; tanpa logo, nama bank yang tampil.
+                                JPG, PNG, atau WEBP, paling besar <?= Unggahan::ukuranTeks(Unggahan::BATAS_GAMBAR) ?>. Boleh dikosongkan.
                             </div>
                             <?php if ($logo !== '') : ?>
                                 <div class="form-check mt-2">
@@ -144,7 +144,7 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
                         <div class="border rounded bg-body-tertiary p-3 small" id="contoh-pesan" style="white-space: pre-wrap; overflow-wrap: anywhere;"
                             data-contoh="<?= esc(json_encode($dataContoh, JSON_UNESCAPED_UNICODE), 'attr') ?>" aria-live="polite"><?= esc($contohPesan) ?></div>
 
-                        <?php if ($nomorWaTersimpan !== '') : ?>
+                        <?php if ($nomorWaTersimpan !== '' && $galat === []) : ?>
                             <p class="small mt-2 mb-0">
                                 <a href="https://wa.me/<?= esc($nomorWaTersimpan, 'attr') ?>?text=<?= rawurlencode($contohPesan) ?>" target="_blank" rel="noopener">
                                     <i class="bi bi-whatsapp" aria-hidden="true"></i> Coba buka contoh pesan di WA
@@ -192,10 +192,16 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
         kotak.focus();
     });
 
+    // Penanda disisipkan di posisi kursor terakhir; bila kotak pesan belum
+    // pernah disentuh, di akhir pesan.
+    var disentuh = false;
+    kotak.addEventListener('focus', function () { disentuh = true; });
+
     document.querySelectorAll('[data-penanda]').forEach(function (tombol) {
         tombol.addEventListener('click', function () {
             var penanda = tombol.getAttribute('data-penanda');
-            var awal = kotak.selectionStart, akhir = kotak.selectionEnd;
+            var awal = disentuh ? kotak.selectionStart : kotak.value.length;
+            var akhir = disentuh ? kotak.selectionEnd : kotak.value.length;
             kotak.value = kotak.value.slice(0, awal) + penanda + kotak.value.slice(akhir);
             kotak.focus();
             kotak.selectionStart = kotak.selectionEnd = awal + penanda.length;

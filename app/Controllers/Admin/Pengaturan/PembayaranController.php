@@ -120,7 +120,7 @@ class PembayaranController extends BaseController
 
             if ($tidakDikenal !== []) {
                 $galat['templat_pesan'] = 'Penanda ' . implode(', ', $tidakDikenal) . ' tidak dikenal. '
-                    . 'Pakai penanda dari daftar di samping kotak pesan, ditulis persis sama termasuk kurung kurawalnya, '
+                    . 'Pakai penanda dari daftar di bawah kotak pesan, ditulis persis sama termasuk kurung kurawalnya, '
                     . 'atau hapus penanda itu.';
             }
         }
