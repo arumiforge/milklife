@@ -36,6 +36,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K20 | Lisensi repo diputuskan nanti | Sementara `composer.json` menulis `"license": "proprietary"` dan repo belum punya berkas lisensi |
+| K21 | Frog Jump dan Turbo Throw (KU 10) adalah nomor individu | Mengonfirmasi asumsi 2 rancangan bagian 17 |
+| K22 | Trilomba (KU 12) adalah satu nomor individu: dibayar sekali dan dihitung satu dari batas dua nomor individu | Mengonfirmasi asumsi 3 rancangan bagian 17 |
+| K23 | Kelompok umur dibatasi jenjang sekolah. Jenjang yang boleh ikut tiap kelompok umur diatur admin, tanpa nilai tertulis di kode | Mengganti asumsi 1 rancangan bagian 17 (sebelumnya: jenjang tidak membatasi kelompok umur). Usia tetap menentukan kelompok umur; atlet ditolak bila kelompok umurnya tidak dibuka untuk jenjang sekolahnya. Rancangan bagian 6.4, 11, dan 17 perlu direvisi lewat draf sebelum Tahap 2 |
 
 ## Dari permintaan awal pemilik
 
