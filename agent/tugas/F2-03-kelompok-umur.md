@@ -50,4 +50,4 @@ Admin bisa mengelola kelompok umur lengkap dengan batas tahun lahir (K36), jenja
 ### Untuk koordinator (di luar bagian F2-03, tidak diubah)
 
 - Teks "Batas usia" masih tertulis di `BerandaPengaturanController::daftarHalaman()` (keterangan kartu Kelompok Umur dan kartu Pendaftaran menyebut "tanggal patokan usia") beserta ujinya `tests/fitur/BerandaPengaturanTest.php`, dan di `app/Views/admin/dasbor.php` ("Batas usia, biaya, dan awalan nomor dada"). Perlu diganti ke "batas tahun lahir" oleh pemilik berkasnya (F2-09).
-- Komentar migrasi lama `2026-11-11-001000_BuatTabelKelompokUmur.php` masih menyebut batas usia; tidak diubah karena migrasi yang sudah berjalan sebaiknya tidak disunting.
+- Komentar migrasi lama `2026-11-11-001000_BuatTabelKelompokUmur.php` masih menyebut batas usia dan tanggal patokan; migrasi itu tidak diubah (sudah pernah dijalankan). Penjelasan penggantinya (K36, K37) ada di komentar kepala migrasi `2026-11-12-000200_UbahBatasUsiaMenjadiTahunLahir`, atas permintaan koordinator.

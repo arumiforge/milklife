@@ -13,9 +13,16 @@ use CodeIgniter\Database\Migration;
  * di sisi itu, misalnya KU 8 "lahir 2019 ke atas" punya awal 2019 dan akhir
  * kosong. Bulan dan tanggal lahir tidak diperhatikan.
  *
+ * Migrasi ini menggantikan keterangan di komentar migrasi
+ * `2026-11-11-001000_BuatTabelKelompokUmur` (batas usia dalam tahun penuh pada
+ * tanggal patokan usia, K12). Migrasi lama itu tidak diubah karena sudah
+ * pernah dijalankan. Tanggal patokan usia dihapus (K37): usia atlet hanya
+ * ditampilkan sebagai keterangan, dihitung pada tanggal mulai acara, dan tidak
+ * menentukan kelompok umur.
+ *
  * Isi kolom lama tidak dipindahkan: usia tidak bisa diubah menjadi tahun lahir
- * tanpa tanggal patokan (K37), dan sampai migrasi ini kolom lama belum pernah
- * diisi (`data:awal` mengosongkannya). `down()` mengembalikan kolom lama dalam
+ * tanpa tanggal patokan, dan sampai migrasi ini kolom lama belum pernah diisi
+ * (`data:awal` mengosongkannya). `down()` mengembalikan kolom lama dalam
  * keadaan kosong.
  */
 class UbahBatasUsiaMenjadiTahunLahir extends Migration
