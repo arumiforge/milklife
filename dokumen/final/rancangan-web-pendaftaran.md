@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | **Draf, menunggu tinjauan pemilik** |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17). Delapan asumsi di bagian 17 belum dikonfirmasi |
 | Tanggal | 10 November 2026 |
 | Acara | MilkLife Athletics Challenge Seri 2 – 2026, Supersoccer Arena, Kudus, 9–12 Desember 2026 |
 | Dasar | Wawancara sesi 1 (lihat `agent/KEPUTUSAN.md`) dan flyer di `sumber/flyer/` |

@@ -22,6 +22,15 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K14 | Cabang utama adalah `main` | |
 | K15 | Tanpa CI GitHub; uji dijalankan sendiri | Membatalkan rencana GitHub Actions di rancangan awal |
 
+## 10 November 2026 — wawancara sesi 2 (awal Tahap 1)
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K16 | "Pakai CI sendiri, jangan GitHub" berarti dua hal: CodeIgniter 4 dipasang baru dari sumber resmi lewat Composer, dan uji dijalankan sendiri tanpa GitHub Actions | Mempertegas K15. Tidak ada `.github/workflows` |
+| K17 | Rancangan web disetujui dan dipindahkan ke `dokumen/final/` | Delapan asumsi di bagian 17 belum dikonfirmasi; wajib dikonfirmasi sebelum Tahap 2 dan Tahap 4 |
+| K18 | Laragon pemilik memakai PHP 8.3 dan MySQL 8.x | Versi minimal di `composer.json`: PHP 8.2, sesuai syarat CodeIgniter 4.7 |
+| K19 | Tahap 2–7 dikerjakan sesuai urutan di rancangan | Pendaftaran di flyer ditutup 30 November 2026; urutan tidak diubah walau waktu sempit |
+
 ## Dari permintaan awal pemilik
 
 - Satu peran admin; nama dan kata sandi bisa diganti.
