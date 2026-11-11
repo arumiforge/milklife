@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 1 — Kerangka |
 | Dibuat | 10 November 2026 |
 
@@ -54,3 +54,4 @@ Halaman depan, dasbor, dan 404 tampil rapi pada lebar 390 dan 1440 piksel tanpa 
 - **Ruang menu bawah.** Isi admin diberi ruang bawah `tinggi menu + env(safe-area-inset-bottom)`. `viewport-fit=cover` tidak dipasang karena uji F1-01 mencocokkan meta viewport persis; tanpa itu peramban sendiri menjaga area aman, dan `env()` bernilai 0.
 - **Ikon tab**: `public/aset/gambar/ikon.svg`, bentuk sederhana buatan sendiri (bukan dari flyer).
 - **Isi tertulis langsung** (nama acara, seri, tanggal, tempat, tahun di footer) diberi komentar bahwa Tahap 2–3 menggantinya dengan pengaturan admin.
+- Digabung lewat PR #7 pada 11 November 2026.
