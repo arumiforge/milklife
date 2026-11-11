@@ -2,9 +2,10 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17); **revisi 1 disetujui 11 November 2026** (K27). Asumsi 4–8 di bagian 17 belum dikonfirmasi |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 disetujui 11 November 2026 (K27); **revisi 2 disetujui 11 November 2026** (K35). Semua asumsi bagian 17 sudah diputuskan |
 | Tanggal | 10 November 2026, revisi 11 November 2026 |
 | Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
+| Revisi 2 | SLB tidak ikut (K28); web lewat Cloudflare Tunnel (K31); asumsi 4–7 dikonfirmasi dan asumsi 8 diganti (K32); bukti bayar diunggah admin (K34); awalan nomor dada awal per kelompok umur (K33). Bagian yang berubah: 6.2, 6.9, 9, 11, 13, 15, 17, lampiran |
 | Acara | MilkLife Athletics Challenge Seri 2 – 2026, Supersoccer Arena, Kudus, 9–12 Desember 2026 |
 | Dasar | Wawancara sesi 1 (lihat `agent/KEPUTUSAN.md`) dan flyer di `sumber/flyer/` |
 
@@ -115,6 +116,7 @@ Bila belum lengkap atau belum dibuka, halaman depan menampilkan keterangan ramah
 ### 6.2 Sekolah
 
 - Official memilih jenjang (SD/MI, SMP/MTs, SMA/SMK/MA) dan kabupaten (Blora, Rembang, Pati, Kudus, Jepara).
+- Sekolah Luar Biasa (SLB) tidak ikut (K28): NPSN SLB ditolak dengan pesan yang jelas.
 - Official mengetik NPSN, sistem menampilkan nama sekolah dari data referensi. Bila tidak ditemukan, nama sekolah diisi manual.
 - Sekolah tanpa NPSN tetap bisa mendaftar dengan nama sekolah saja.
 - Satu NPSN boleh mendaftar lebih dari sekali. Semua pendaftaran dengan NPSN yang sama dianggap satu sekolah.
@@ -171,6 +173,7 @@ Format: `MAC` + seri + kode jenjang + nomor urut 5 digit + 2 digit tahun. Contoh
 - Tiap kelompok umur boleh punya lebih dari satu awalan. Bila awalan pertama penuh, nomor berlanjut ke awalan berikutnya.
 - Bila semua awalan sebuah kelompok umur penuh, penandaan Lunas dibatalkan seluruhnya dan admin diminta menambah awalan.
 - Nomor dada tidak dipakai ulang. Mengembalikan status ke Menunggu tidak menghapus nomor dada.
+- **Bila admin mengubah pendaftaran yang sudah Lunas dan totalnya berubah (naik atau turun), status kembali ke Menunggu Konfirmasi Pembayaran** (K32). Admin menandai Lunas lagi setelah selisihnya diurus panitia di luar sistem. Atlet yang sudah punya nomor dada tetap memegangnya; atlet baru mendapat nomor saat ditandai Lunas lagi. Jendela konfirmasi simpan menyebut akibat ini.
 - Tidak ada status "dibatalkan". Pendaftaran yang batal dihapus admin, sehingga NISN-nya bisa didaftarkan lagi.
 
 ## 7. Alur pendaftaran
@@ -225,6 +228,7 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 - **Pemuatan:** bilah kemajuan di atas halaman saat data dimuat.
 - **Tindakan berisiko** (hapus, tandai lunas): jendela konfirmasi yang menyebut apa yang akan terjadi.
 - **Ubah pendaftaran:** admin bisa mengubah data sekolah, penanggung jawab, atlet, dan nomor lomba. Aturan pada bagian 6 tetap berlaku dan biaya dihitung ulang.
+- **Bukti bayar** (K34): admin mengunggah bukti transfer yang dikirim official lewat WA ke pendaftaran yang bersangkutan, paling banyak 5 gambar per pendaftaran. Gambar dikecilkan otomatis sebelum disimpan (sisi terpanjang 1600 piksel, JPEG). Admin bisa melihat, mengunduh, dan menghapus tiap gambar. Official tidak mengunggah apa pun.
 - **Rekap:** peserta per nomor lomba, tim beregu, per sekolah, per kelompok umur, dan keuangan (tagihan, lunas, belum). Tersedia Excel dan PDF.
 - **Gambar belum ada:** kotak ikon "tanpa gambar", bukan gambar tiruan.
 
@@ -261,6 +265,7 @@ Nama tabel dan kolom berbahasa Indonesia.
 | `atlet` | pendaftaran, nama, NISN (unik), tanggal lahir, jenis kelamin, kelompok umur, nomor dada (unik) |
 | `atlet_nomor` | atlet, nomor lomba, biaya (terisi untuk individu) |
 | `pendaftaran_beregu` | pendaftaran, nomor lomba, biaya tim |
+| `bukti_bayar` | pendaftaran, berkas, ukuran, waktu unggah (paling banyak 5 per pendaftaran, dijaga aplikasi) |
 | `jadwal` | judul, keterangan, waktu, tempat atau tautan, urutan, tampil |
 | `unduhan` | judul, keterangan, berkas, urutan, tampil |
 | `tautan` | jenis (narahubung/media sosial), label, nilai, urutan |
@@ -279,7 +284,7 @@ Keunikan NISN dan nomor dada dijaga oleh basis data, bukan hanya oleh aplikasi.
 - Perlindungan CSRF pada semua formulir.
 - Pembatasan laju pada cek pendaftaran, bukti, pencarian NPSN, simpan pendaftaran, dan halaman masuk.
 - Semua keluaran di-escape; semua masukan divalidasi di server.
-- Foto disimpan di luar folder publik dan hanya disajikan ke admin.
+- Foto penanggung jawab dan bukti bayar disimpan di luar folder publik dan hanya disajikan ke admin.
 - Sandi admin di-hash; sesi admin berakhir otomatis.
 
 **Risiko yang diterima pemilik:** NPSN bersifat publik dan ID pendaftaran berurutan, jadi orang yang menebaknya bisa melihat data siswa (nama, NISN, tanggal lahir). Pemilik memilih tampilan penuh berdasarkan MoU dengan sekolah. Pembatasan laju mengurangi pengambilan massal, tetapi tidak menutup risikonya.
@@ -294,7 +299,7 @@ Keunikan NISN dan nomor dada dijaga oleh basis data, bukan hanya oleh aplikasi.
 
 Laragon dipakai untuk pengembangan dan produksi. Panduan pemasangan produksi ditulis pada tahap akhir dan mencakup: virtual host Nginx ke folder `public/`, HTTPS, mode produksi di `.env`, dan cadangan basis data terjadwal.
 
-Cara peserta menjangkau komputer Laragon dari internet (domain, IP publik, atau terowongan) **belum diputuskan** dan berada di luar kode aplikasi.
+Peserta menjangkau komputer Laragon dari internet lewat **Cloudflare Tunnel** (K31). Pengaturannya berada di luar kode aplikasi, kecuali satu hal: alamat IP pengunjung dibaca dari kepala `CF-Connecting-IP` yang hanya dipercaya dari terowongan, supaya pembatasan laju tetap menghitung per pengunjung.
 
 ## 16. Tahapan
 
@@ -318,17 +323,17 @@ Hal berikut saya putuskan sendiri karena tidak disebut dalam wawancara. Mohon di
 1. ~~Kelompok umur ditentukan dari usia saja; atlet tidak bisa "naik" ke kelompok umur di atasnya, dan jenjang sekolah tidak membatasi kelompok umur.~~ **Diganti K23:** kelompok umur tetap ditentukan dari usia saja dan atlet tidak bisa "naik", tetapi jenjang sekolah membatasi kelompok umur sesuai centang admin (6.4).
 2. Frog Jump dan Turbo Throw (KU 10) berjenis **individu**. **Dikonfirmasi K21.**
 3. Trilomba (KU 12) adalah **satu nomor individu** dan dihitung satu dari batas dua nomor individu. **Dikonfirmasi K22.**
-4. Nomor urut ID pendaftaran berlaku global, bukan per jenjang.
-5. Data tersimpan di langkah Biaya (saat konfirmasi), bukan saat tombol "Pendaftaran Selesai".
-6. Official tidak bisa mengubah pendaftaran yang sudah tersimpan; perubahan lewat admin.
-7. Foto penanggung jawab tidak tampil di halaman cek.
-8. Bila admin mengubah pendaftaran yang sudah lunas sehingga totalnya berubah, status tetap Lunas dan selisihnya diurus panitia di luar sistem.
+4. Nomor urut ID pendaftaran berlaku global, bukan per jenjang. **Dikonfirmasi K32.**
+5. Data tersimpan di langkah Biaya (saat konfirmasi), bukan saat tombol "Pendaftaran Selesai". **Dikonfirmasi K32.**
+6. Official tidak bisa mengubah pendaftaran yang sudah tersimpan; perubahan lewat admin. **Dikonfirmasi K32.**
+7. Foto penanggung jawab tidak tampil di halaman cek. **Dikonfirmasi K32.**
+8. ~~Bila admin mengubah pendaftaran yang sudah lunas sehingga totalnya berubah, status tetap Lunas dan selisihnya diurus panitia di luar sistem.~~ **Diganti K32:** status kembali ke Menunggu dan admin menandai Lunas lagi (6.9).
 
-Asumsi 4–8 wajib dikonfirmasi sebelum Tahap 4.
+Semua asumsi sudah diputuskan pemilik.
 
 ## Lampiran: data awal nomor lomba
 
-Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25). Semua bisa diubah admin. Batas usia, jenjang yang boleh ikut, biaya individu, dan awalan nomor dada dikosongkan. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
+Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25). Semua bisa diubah admin. Batas usia, jenjang yang boleh ikut, dan biaya individu dikosongkan. Awalan nomor dada diisi satu per kelompok umur (K33): KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5; admin bisa mengubah atau menambahnya. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
 
 | Kelompok umur | Individu (putra dan putri) | Beregu |
 |---|---|---|
