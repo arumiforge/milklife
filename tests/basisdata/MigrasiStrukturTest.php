@@ -17,15 +17,16 @@ final class MigrasiStrukturTest extends UjiBasisData
      */
     private const KOLOM = [
         'kelompok_umur' => [
-            'id'             => ['int unsigned', false, null],
-            'nama'           => ['varchar(50)', false, null],
-            'usia_minimal'   => ['tinyint unsigned', true, null],
-            'usia_maksimal'  => ['tinyint unsigned', true, null],
-            'biaya_individu' => ['int unsigned', true, null],
-            'urutan'         => ['smallint unsigned', false, '0'],
-            'aktif'          => ['tinyint unsigned', false, '1'],
-            'dibuat_pada'    => ['datetime', true, null],
-            'diubah_pada'    => ['datetime', true, null],
+            'id'                => ['int unsigned', false, null],
+            'nama'              => ['varchar(50)', false, null],
+            // Batas tahun lahir (K36, migrasi 2026-11-12-000200) menggantikan batas usia.
+            'tahun_lahir_awal'  => ['smallint unsigned', true, null],
+            'tahun_lahir_akhir' => ['smallint unsigned', true, null],
+            'biaya_individu'    => ['int unsigned', true, null],
+            'urutan'            => ['smallint unsigned', false, '0'],
+            'aktif'             => ['tinyint unsigned', false, '1'],
+            'dibuat_pada'       => ['datetime', true, null],
+            'diubah_pada'       => ['datetime', true, null],
         ],
         'awalan_nomor_dada' => [
             'id'               => ['int unsigned', false, null],

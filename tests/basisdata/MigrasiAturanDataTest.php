@@ -327,17 +327,17 @@ final class MigrasiAturanDataTest extends UjiBasisData
         $this->assertSame('0', $this->db->table('tautan')->get()->getRowArray()['urutan']);
     }
 
-    public function testBatasUsiaDanBiayaIndividuBolehKosong(): void
+    public function testBatasTahunLahirDanBiayaIndividuBolehKosong(): void
     {
         $ku = $this->buatKelompokUmur([
-            'usia_minimal'   => null,
-            'usia_maksimal'  => null,
-            'biaya_individu' => null,
+            'tahun_lahir_awal'  => null,
+            'tahun_lahir_akhir' => null,
+            'biaya_individu'    => null,
         ]);
 
         $baris = $this->db->table('kelompok_umur')->where('id', $ku)->get()->getRowArray();
-        $this->assertNull($baris['usia_minimal']);
-        $this->assertNull($baris['usia_maksimal']);
+        $this->assertNull($baris['tahun_lahir_awal']);
+        $this->assertNull($baris['tahun_lahir_akhir']);
         $this->assertNull($baris['biaya_individu']);
     }
 
