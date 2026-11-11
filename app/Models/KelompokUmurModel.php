@@ -309,6 +309,10 @@ class KelompokUmurModel extends Model
             }
         }
 
+        // Ringkasan galat mengikuti urutan kotak di formulir.
+        $urutanKotak = array_flip(['nama', 'tahun_lahir_awal', 'tahun_lahir_akhir', 'jenjang', 'biaya_individu', 'awalan', 'urutan']);
+        uksort($galat, static fn (string $a, string $b): int => ($urutanKotak[$a] ?? 99) <=> ($urutanKotak[$b] ?? 99));
+
         return [$data, $galat];
     }
 

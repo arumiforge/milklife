@@ -75,7 +75,6 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                                     <input type="text" inputmode="numeric" maxlength="4" autocomplete="off"
                                         class="form-control<?= $tahunSalah ? ' is-invalid' : '' ?>" id="tahun_lahir_awal" name="tahun_lahir_awal"
                                         value="<?= esc((string) $isian['tahun_lahir_awal'], 'attr') ?>" placeholder="Contoh: 2016"<?= $jelaskan('tahun_lahir_awal', 'tahun-lahir-bantuan') ?>>
-                                    <?= $pesan('tahun_lahir_awal') ?>
                                 </div>
                                 <div class="col-auto d-none d-sm-flex align-self-center pt-4 text-body-secondary">sampai</div>
                                 <div class="col-12 col-sm-5">
@@ -83,9 +82,13 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                                     <input type="text" inputmode="numeric" maxlength="4" autocomplete="off"
                                         class="form-control<?= $tahunSalah ? ' is-invalid' : '' ?>" id="tahun_lahir_akhir" name="tahun_lahir_akhir"
                                         value="<?= esc((string) $isian['tahun_lahir_akhir'], 'attr') ?>" placeholder="Contoh: 2018"<?= $jelaskan('tahun_lahir_akhir', 'tahun-lahir-bantuan') ?>>
-                                    <?= $pesan('tahun_lahir_akhir') ?>
                                 </div>
                             </div>
+                            <?php foreach (['tahun_lahir_awal', 'tahun_lahir_akhir'] as $kotak) : ?>
+                                <?php if (isset($galat[$kotak])) : ?>
+                                    <div id="<?= $kotak ?>-galat" class="invalid-feedback d-block"><?= esc($galat[$kotak]) ?></div>
+                                <?php endif ?>
+                            <?php endforeach; ?>
                         </fieldset>
 
                         <fieldset class="mb-4" id="jenjang" tabindex="-1" aria-describedby="jenjang-bantuan<?= isset($galat['jenjang']) ? ' jenjang-galat' : '' ?>">
