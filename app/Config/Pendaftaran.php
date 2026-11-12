@@ -7,6 +7,10 @@ use CodeIgniter\Config\BaseConfig;
 /**
  * Pengaturan jadwal dan aturan pendaftaran (rancangan 6.1, 6.3–6.5).
  *
+ * Tidak ada tanggal patokan usia (K37): kelompok umur ditentukan tahun lahir
+ * (K36), dan usia hanya ditampilkan sebagai keterangan, dihitung pada tanggal
+ * mulai acara (`Acara.tanggal_mulai`).
+ *
  * Nilai di sini hanya nilai awal; baca dan tulis lewat
  * `setting('Pendaftaran.<kunci>')` (lihat `Config\Acara`). Waktu dalam WIB
  * (`app.appTimezone` = `Asia/Jakarta`).
@@ -34,12 +38,8 @@ class Pendaftaran extends BaseConfig
     public ?string $buka_manual_sampai = null;
 
     /**
-     * Tanggal patokan penghitungan usia atlet, `Y-m-d`.
-     */
-    public ?string $tanggal_patokan_usia = null;
-
-    /**
-     * Tampilan usia: `tahun` atau `tahun_bulan`.
+     * Tampilan usia sebagai keterangan: `tahun` atau `tahun_bulan`. Usia
+     * dihitung pada tanggal mulai acara dan tidak menentukan kelompok umur.
      */
     public string $tampilan_usia = 'tahun';
 

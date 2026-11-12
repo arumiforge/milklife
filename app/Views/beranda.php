@@ -3,27 +3,48 @@
  * Halaman depan sementara. Isi jadinya (gambar kepala, logo, kelompok umur,
  * jadwal, unduhan, kontak) dikerjakan di Tahap 3.
  *
- * Nama acara, seri, tanggal, dan tempat ditulis langsung dulu;
- * Tahap 2–3 menggantinya dengan pengaturan admin.
+ * Nama, seri, tahun, tempat, dan tanggal acara diambil dari pengaturan admin
+ * (Data Acara). Bagian yang belum diisi tidak ditampilkan; bila tanggal dan
+ * tempat sama-sama belum diisi, tampil "segera diumumkan". Nama yang belum
+ * diisi diganti `AcaraController::NAMA_PENGGANTI`.
  *
  * @var CodeIgniter\View\View $this
  */
+
+use App\Controllers\Admin\Pengaturan\AcaraController;
+
+$seri         = trim((string) setting('Acara.seri'));
+$tahun        = trim((string) setting('Acara.tahun'));
+$tempat       = trim((string) setting('Acara.tempat'));
+$tanggalAcara = rentang_tanggal_id(setting('Acara.tanggal_mulai'), setting('Acara.tanggal_selesai'));
+
+// "Seri 2 – 2026", "Seri 2", "2026", atau kosong.
+$seriTahun = implode(' – ', array_filter([$seri !== '' ? 'Seri ' . $seri : '', $tahun]));
 ?>
 <?= $this->extend('tata_letak/publik') ?>
 
-<?= $this->section('judul') ?>MilkLife Athletics Challenge Seri 2 – 2026<?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= esc(trim(AcaraController::namaTampil() . ' ' . $seriTahun)) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <section class="pembuka" aria-labelledby="judul-acara">
     <div class="container py-5">
-        <p class="pita-miring fs-5 mb-3"><span>Seri 2 – 2026</span></p>
+        <?php if ($seriTahun !== '') : ?>
+            <p class="pita-miring fs-5 mb-3"><span><?= esc($seriTahun) ?></span></p>
+        <?php endif ?>
         <h1 id="judul-acara" class="pembuka-judul mb-4">
-            MilkLife
-            <span class="merek-sambungan">Athletics Challenge</span>
+            <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
         </h1>
         <p class="pembuka-waktu mb-2">
-            <span><i class="bi bi-calendar-event" aria-hidden="true"></i>9–12 Desember 2026</span>
-            <span><i class="bi bi-geo-alt" aria-hidden="true"></i>Supersoccer Arena, Kudus</span>
+            <?php if ($tanggalAcara === '' && $tempat === '') : ?>
+                <span><i class="bi bi-calendar-event" aria-hidden="true"></i>Tanggal dan tempat acara segera diumumkan</span>
+            <?php else : ?>
+                <?php if ($tanggalAcara !== '') : ?>
+                    <span><i class="bi bi-calendar-event" aria-hidden="true"></i><?= esc($tanggalAcara) ?></span>
+                <?php endif ?>
+                <?php if ($tempat !== '') : ?>
+                    <span><i class="bi bi-geo-alt" aria-hidden="true"></i><?= esc($tempat) ?></span>
+                <?php endif ?>
+            <?php endif ?>
         </p>
     </div>
 </section>
