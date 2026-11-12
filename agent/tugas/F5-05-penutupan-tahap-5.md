@@ -25,5 +25,5 @@ PR penutupan digabung.
 Rincian di `dokumen/draf/rencana-implementasi-tahap-5.md`.
 
 - Tahap 4 belum masuk `main` saat Tahap 5 ditutup (hanya rencananya, PR #33). Uji gabungan wizard → cek → bukti diserahkan ke penutupan Tahap 4 (kesepakatan dua sesi 7); daftar periksanya ada di `agent/arsip/tahap-5.md` bagian "Menunggu Tahap 4".
-- Tinjauan pemilik atas bukti (K52): logo transparan dan tidak gepeng, penanggung jawab (official) sebaris dengan ikon WA, tanpa tanggal lahir dan nomor dada, anggota tim sebaris, status berbingkai warna. PDF contoh diperiksa sebagai gambar.
+- Tinjauan pemilik atas bukti (K52): logo transparan dan tidak gepeng, penanggung jawab (official) sebaris dengan ikon WA, tanpa tanggal lahir dan nomor dada, anggota tim sebaris, status berbingkai warna. PDF contoh diperiksa sebagai gambar. Halaman cek juga tidak lagi menampilkan tanggal lahir dan nomor dada.
 - Pengganti uji gabungan: cek dan bukti diuji dengan data karangan yang diisi langsung ke tabel dalam bentuk yang dipakai rencana Tahap 4, termasuk tim susulan dengan dan tanpa baris `pendaftaran_beregu`. Halaman cek juga diperiksa di peramban (390 dan 1440 piksel), dan bukti PDF diperiksa sebagai gambar.

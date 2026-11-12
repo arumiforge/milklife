@@ -16,7 +16,7 @@ Catatan: PR #32 berisi rencana, K48 (Tahap 4 dan 5 bersamaan), dan K49 (jawaban 
 
 ## Hasil
 
-- `/cek-pendaftaran`: NPSN menampilkan semua pendaftaran sekolah itu secara berurutan, satu kartu per pendaftaran, dengan total keseluruhan (K49). ID pendaftaran menampilkan satu kartu. Data tampil penuh tanpa foto penanggung jawab. Halaman hanya bisa dipakai bila pengaturan lengkap. Batas laju 10 pencarian per menit per alamat IP. Pesan galat menyebut cara memperbaikinya.
+- `/cek-pendaftaran`: NPSN menampilkan semua pendaftaran sekolah itu secara berurutan, satu kartu per pendaftaran, dengan total keseluruhan (K49). ID pendaftaran menampilkan satu kartu. Data tampil tanpa foto penanggung jawab, tanggal lahir, dan nomor dada (K52). Halaman hanya bisa dipakai bila pengaturan lengkap. Batas laju 10 pencarian per menit per alamat IP. Pesan galat menyebut cara memperbaikinya.
 - Tombol Cek di halaman depan aktif bila pengaturan lengkap; menu Cek selalu menaut.
 - `/bukti/{id}`: PDF A4 mendatar sesuai rancangan 8, K49, dan K52: logo transparan, penanggung jawab (official) sebaris dengan ikon WA, tabel individu tanpa tanggal lahir dan nomor dada, anggota tim sebaris, status berbingkai warna. Nama berkas `BuktiPendaftaran_<NamaAcara>Seri<seri>_<NamaSekolah>_<tahun>.pdf` dari pengaturan. Batas laju 10 bukti per menit per alamat IP; 404 untuk ID yang tidak ada.
 - Semua angka biaya dibaca dari nilai tersimpan (6.7) lewat `App\Libraries\DataPendaftaran` (baca-saja, tanpa model Tahap 4).
@@ -34,6 +34,8 @@ Tahap 5 ditutup lebih dulu. Sesuai kesepakatan dua sesi nomor 7, **Tahap 4 menja
 - Bila pembaca pendaftaran Tahap 4 lebih lengkap, `DataPendaftaran` boleh diganti dengan model Tahap 4, asalkan bentuk lariknya sama (lihat komentar kelas).
 
 ## Yang dibawa ke tahap berikutnya
+
+- **Revisi rancangan berikutnya:** bagian 8 (cek dan bukti) disesuaikan dengan K49 dan K52: cek dan bukti tidak menampilkan tanggal lahir dan nomor dada.
 
 - **Tahap 6:** rekap PDF panel admin bisa memakai mPDF dan pola `BuktiPendaftaran`. Pendaftaran yang diubah admin langsung tampil di cek dan bukti, karena keduanya membaca nilai tersimpan.
 - **Tahap 7:** keluaran PDF tidak boleh ikut diperkecil oleh filter HTML produksi. Uji lokal di lingkungan tanpa MySQL 8 (MariaDB) menggagalkan 4 uji struktur migrasi karena penulisan tipe kolom berbeda; CI tetap menjadi acuan.
