@@ -10,7 +10,7 @@ Diperbarui: 12 November 2026
 |---|---|---|---|
 | [F7-01 Minify dan pengecilan gambar](tugas/F7-01-minify-pengecilan-gambar.md) | rencana | 1 | |
 | [F7-02 Keamanan dan mode produksi](tugas/F7-02-keamanan-mode-produksi.md) | rencana | 1 | |
-| [F7-04 Rancangan revisi 4](tugas/F7-04-rancangan-revisi-4.md) | rencana | 1 | |
+| [F7-04 Rancangan revisi 4](tugas/F7-04-rancangan-revisi-4.md) | menunggu tinjauan | 1 | PR_NOMOR |
 | [F7-03 Tim tanpa pembayar](tugas/F7-03-tim-tanpa-pembayar.md) | rencana | 2 | |
 | [F7-05 Cadangan dan panduan produksi](tugas/F7-05-cadangan-panduan-produksi.md) | rencana | 2 | |
 | [F7-06 Uji menyeluruh](tugas/F7-06-uji-menyeluruh.md) | rencana | 3 | |
