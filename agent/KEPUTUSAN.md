@@ -111,3 +111,10 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 |---|---|---|
 | K48 | Tahap 4 dan Tahap 5 dikerjakan bersamaan di dua sesi berbeda tempat, dengan pembagian berkas sesuai kesepakatan dua sesi | Kesepakatan disalin ke `dokumen/draf/rencana-implementasi-tahap-5.md` bagian "Kesepakatan bersama". Titik temu satu-satunya adalah `main` |
 | K49 | Wawancara Tahap 5: (1) cek lewat NPSN menampilkan pendaftaran sekolah itu berurutan per pendaftaran (data sekolah sekali di atas, satu kartu per pendaftaran, total keseluruhan di bawah); (2) bukti PDF juga mencetak nama anggota tiap tim beregu, nomor dada (tertulis "–" sampai Lunas), dan tanggal lahir atlet; (3) nama berkas bukti memakai seluruh nama acara tanpa spasi, misalnya `BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_<NamaSekolah>_2026.pdf` | Rancangan bagian 8 hanya memberi contoh nama berkas dan tidak merinci isi tabel bukti maupun arti "digabung" |
+
+## 12 November 2026 — wawancara awal Tahap 4
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K50 | Foto penanggung jawab wajib diisi di wizard pendaftaran | Menjawab rancangan 6.3. Foto diperkecil di peramban (800 piksel, JPEG), disimpan di luar `public/`, dan hanya dilihat admin. Kolom `penanggung_jawab.foto` tetap boleh kosong di basis data |
+| K51 | Ada batas jumlah atlet per sekolah pada satu nomor individu, diatur admin di pengaturan Pendaftaran; berlaku juga untuk pendaftaran susulan dari NPSN yang sama | Kunci baru `Pendaftaran.atlet_per_nomor_maksimal`. Pemilik tidak menyebut angkanya: nilai awal 2 (contoh di pertanyaan wawancara), kosong berarti tidak dibatasi. Pendaftaran tanpa NPSN dihitung sendiri. Disesuaikan bila juknis resmi (K30) berbeda |
