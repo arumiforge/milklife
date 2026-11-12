@@ -3,6 +3,7 @@
 namespace Config;
 
 use App\Filters\AdminFilter;
+use App\Filters\BatasUnggahFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -36,6 +37,7 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'admin'         => AdminFilter::class,
+        'batasunggah'   => BatasUnggahFilter::class,
     ];
 
     /**
@@ -75,6 +77,9 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
+            // Harus sebelum `csrf`: kiriman `POST` yang melebihi `post_max_size`
+            // kehilangan token CSRF, jadi dialihkan dulu dengan pesan ramah.
+            'batasunggah',
             'csrf',
             // 'invalidchars',
         ],

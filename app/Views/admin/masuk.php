@@ -8,14 +8,16 @@
  * @var string|null           $info         pesan pemberitahuan (misalnya setelah keluar)
  * @var string                $namaPengguna nama pengguna yang tadi diketik
  */
+
+use App\Controllers\Admin\Pengaturan\AcaraController;
 ?>
 <?= $this->extend('tata_letak/polos') ?>
 
-<?= $this->section('judul') ?>Masuk Admin – MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Masuk Admin<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <h1 class="h4 mb-1">Masuk Admin</h1>
-<p class="text-body-secondary mb-4">Panel panitia MilkLife Athletics Challenge</p>
+<p class="text-body-secondary mb-4">Panel panitia <?= esc(AcaraController::namaTampil()) ?></p>
 
 <?php if (! empty($galat)) : ?>
     <div class="alert alert-danger d-flex gap-2" role="alert">

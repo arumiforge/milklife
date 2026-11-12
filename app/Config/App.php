@@ -178,9 +178,20 @@ class App extends BaseConfig
      *         '192.168.5.0/24' => 'X-Real-IP',
      *     ]
      *
+     * MilkLife (K31): web dijangkau dari internet lewat Cloudflare Tunnel.
+     * `cloudflared` berjalan di komputer server yang sama dan meneruskan
+     * pengunjung ke Nginx lokal, jadi semua permintaan datang dari 127.0.0.1
+     * atau ::1. Alamat pengunjung yang asli dibaca dari kepala
+     * `CF-Connecting-IP`, tetapi hanya bila permintaan datang dari komputer
+     * itu sendiri. Pengunjung yang langsung datang dari alamat lain tidak bisa
+     * memalsukan alamatnya lewat kepala ini. Lihat README, bagian Cloudflare Tunnel.
+     *
      * @var array<string, string>
      */
-    public array $proxyIPs = [];
+    public array $proxyIPs = [
+        '127.0.0.1' => 'CF-Connecting-IP',
+        '::1'       => 'CF-Connecting-IP',
+    ];
 
     /**
      * --------------------------------------------------------------------------

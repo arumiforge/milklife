@@ -10,7 +10,7 @@
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Unduhan – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Unduhan<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Unduhan<?= $this->endSection() ?>
 

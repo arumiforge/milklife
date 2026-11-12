@@ -28,7 +28,7 @@ $pesan  = static fn (string $kotak): string => isset($galat[$kotak])
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?><?= esc(ucfirst($judul)) ?> – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= esc(ucfirst($judul)) ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Kontak<?= $this->endSection() ?>
 

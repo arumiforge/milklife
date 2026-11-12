@@ -30,7 +30,7 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Dasbor – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Dasbor<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Dasbor<?= $this->endSection() ?>
 

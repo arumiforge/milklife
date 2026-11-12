@@ -36,7 +36,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?><?= esc($judul) ?> – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= esc($judul) ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Kelompok Umur<?= $this->endSection() ?>
 

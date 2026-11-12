@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\Admin\Pengaturan\AcaraController;
 use App\Controllers\Admin\Pengaturan\BerandaPengaturanController;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -58,7 +59,7 @@ final class BerandaPengaturanTest extends UjiHalaman
 
         $xpath = $this->xpathDari($hasil);
         $this->assertSame('Pengaturan', $this->teks($xpath->query('//header//h1')->item(0)));
-        $this->assertSame('Pengaturan – Admin MilkLife', $this->teks($xpath->query('//title')->item(0)));
+        $this->assertSame('Pengaturan – Admin ' . AcaraController::NAMA_PENGGANTI, $this->teks($xpath->query('//title')->item(0)));
 
         // Sepuluh kartu: sembilan halaman pengaturan dan Akun, berurutan, bertautan.
         $kartu = [];

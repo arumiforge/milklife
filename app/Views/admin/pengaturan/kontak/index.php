@@ -38,7 +38,7 @@ $bagian = [
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Kontak – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Kontak<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Kontak<?= $this->endSection() ?>
 

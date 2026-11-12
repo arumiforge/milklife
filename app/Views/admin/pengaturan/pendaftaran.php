@@ -38,7 +38,7 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Pengaturan Pendaftaran – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Pengaturan Pendaftaran<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Pendaftaran<?= $this->endSection() ?>
 

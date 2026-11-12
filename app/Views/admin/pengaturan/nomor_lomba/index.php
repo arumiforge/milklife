@@ -48,7 +48,7 @@ $ringkasTim = static function (array $nomor): string {
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Nomor Lomba – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Nomor Lomba<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Nomor Lomba<?= $this->endSection() ?>
 

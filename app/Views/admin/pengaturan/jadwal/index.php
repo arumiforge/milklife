@@ -11,7 +11,7 @@ use App\Models\TautanModel;
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Jadwal – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Jadwal<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Jadwal<?= $this->endSection() ?>
 

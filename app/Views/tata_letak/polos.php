@@ -8,7 +8,10 @@
  * dirender saat sistem bermasalah, tetapi tampil selaras dengannya.
  *
  * Bagian yang diisi tampilan:
- * - `judul`: judul halaman untuk tab peramban. Isi yang berasal dari data wajib di-escape (`esc()`).
+ * - `judul`: judul halaman, cukup nama halamannya (misalnya `Masuk Admin`). Tab
+ *   peramban menampilkan `<judul> – <nama acara>`; nama acara dari
+ *   `AcaraController::namaTampil()` ditambahkan di sini. Isi yang berasal dari
+ *   data wajib di-escape (`esc()`).
  * - `isi`: isi kartu. Kartu dan jaraknya sudah disediakan (`.card.polos-kartu > .card-body`),
  *   jadi isi cukup heading (`<h1 class="h4">`), pesan, dan formulir Bootstrap biasa,
  *   tanpa `.card` atau `.container` lagi.
@@ -16,6 +19,12 @@
  *
  * @var CodeIgniter\View\View $this
  */
+
+use App\Controllers\Admin\Pengaturan\AcaraController;
+
+$judul     = trim($this->renderSection('judul'));
+$namaAcara = esc(AcaraController::namaTampil());
+$judulTab  = $judul === '' ? $namaAcara : $judul . ' – ' . $namaAcara;
 ?>
 <!doctype html>
 <html lang="id">
@@ -24,7 +33,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#021F7B">
-    <title><?= $this->renderSection('judul') ?></title>
+    <title><?= $judulTab ?></title>
     <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap/css/bootstrap.min.css') ?>">
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap-icons/bootstrap-icons.min.css') ?>">

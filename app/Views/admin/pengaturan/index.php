@@ -14,7 +14,7 @@
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Pengaturan – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Pengaturan<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Pengaturan<?= $this->endSection() ?>
 
