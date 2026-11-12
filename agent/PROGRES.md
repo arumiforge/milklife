@@ -6,12 +6,14 @@ Diperbarui: 12 November 2026
 
 **Tahap 4 — Pendaftaran.** Belum mulai. Tahap 3 selesai 12 November 2026.
 
+**Tahap 5 — Bukti dan cek.** Dikerjakan bersamaan dengan Tahap 4 di sesi lain (K48). Rencana: `dokumen/draf/rencana-implementasi-tahap-5.md`. Tugas F5-01 sampai F5-05 berstatus rencana.
+
 ## Berikutnya
 
 | Tahap | Hasil | Status |
 |---|---|---|
 | 4. Pendaftaran | Wizard lengkap sampai tersimpan | belum mulai |
-| 5. Bukti dan cek | Bukti PDF, halaman cek, PDF dokumen | belum mulai |
+| 5. Bukti dan cek | Bukti PDF, halaman cek, PDF dokumen | dikerjakan |
 | 6. Panel data | Daftar pendaftaran, lunas dan nomor dada, ubah, hapus, rekap, ekspor | belum mulai |
 | 7. Penyelesaian | Minify, uji menyeluruh, panduan pemasangan produksi | belum mulai |
 
