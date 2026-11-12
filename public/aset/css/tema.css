@@ -752,6 +752,178 @@ h1, h2, h3, h4, h5, h6,
 
 /* ---------- Bagian lomba (F3-02) ---------- */
 
+/* Latar putih supaya terpisah dari kepala biru dan bagian berikutnya. */
+.bagian-lomba {
+    background-color: var(--ml-putih);
+    border-bottom: 1px solid var(--ml-garis);
+}
+
+.lomba-judul {
+    font-weight: 800;
+}
+
+.lomba-pengantar {
+    max-width: 68ch;
+    margin-bottom: 1.5rem;
+    color: var(--ml-teks-redup);
+}
+
+/* Kartu kelompok umur: garis oranye di atas seperti kartu masuk. */
+.lomba-ku {
+    padding: 1.1rem 1.1rem 0.9rem;
+    background-color: var(--ml-latar);
+    border: 1px solid var(--ml-garis);
+    border-top: 5px solid var(--ml-oranye);
+    border-radius: 0.75rem;
+    overflow-wrap: anywhere;
+}
+
+.lomba-ku-nama {
+    margin-bottom: 0.75rem;
+    font-size: 1.375rem;
+    font-weight: 800;
+}
+
+.lomba-ku-info {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+}
+
+.lomba-ku-info dt {
+    color: var(--ml-teks-redup);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.lomba-ku-info dt .bi {
+    color: var(--ml-biru);
+}
+
+.lomba-ku-info dd {
+    margin-bottom: 0;
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
+.lomba-kosong {
+    margin-bottom: 0;
+    color: var(--ml-teks-redup);
+}
+
+/* Daftar nomor yang bisa dilipat. */
+.lomba-nomor {
+    border-top: 1px solid var(--ml-garis);
+}
+
+.lomba-nomor > summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    padding: 0.75rem 0 0.15rem;
+    color: var(--ml-biru);
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+
+.lomba-nomor > summary::-webkit-details-marker {
+    display: none;
+}
+
+.lomba-nomor > summary:hover .lomba-nomor-label {
+    text-decoration: underline;
+}
+
+.lomba-nomor > summary:focus-visible {
+    outline: 3px solid var(--ml-oranye-tombol);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+}
+
+.lomba-nomor-jumlah {
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.lomba-nomor-panah {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+}
+
+.lomba-nomor[open] .lomba-nomor-panah {
+    transform: rotate(180deg);
+}
+
+/* Tulisan ringkasan berganti saat daftar dibuka. */
+.lomba-nomor[open] .lomba-nomor-buka,
+.lomba-nomor:not([open]) .lomba-nomor-tutup {
+    display: none;
+}
+
+.lomba-nomor-judul {
+    margin: 1rem 0 0.5rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.lomba-daftar {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.5rem;
+}
+
+.lomba-daftar > li {
+    padding: 0.5rem 0.75rem;
+}
+
+.lomba-daftar > li + li {
+    border-top: 1px solid var(--ml-garis);
+}
+
+.lomba-daftar-individu > li,
+.lomba-beregu-kepala {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.125rem 0.75rem;
+}
+
+.lomba-nama-nomor {
+    color: var(--ml-teks);
+    font-weight: 600;
+}
+
+.lomba-kategori {
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+}
+
+.lomba-beregu-info {
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+}
+
+.lomba-beregu-info .bi {
+    color: var(--ml-biru);
+}
+
+.lomba-biaya-beregu {
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
 /* ---------- Akhir bagian lomba ---------- */
 
 /*
