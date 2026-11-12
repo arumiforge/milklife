@@ -172,3 +172,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K68 | Bila tim beregu kehilangan pendaftaran yang membayar biaya timnya (pendaftaran dihapus atau timnya dihapus lewat Ubah), biaya **tidak dipindah otomatis**. Rincian pendaftaran, dasbor, dan rekap keuangan menandai tim tanpa pembayar supaya admin menagih lewat Ubah | Menjawab batasan F6-04 di arsip Tahap 6 |
 | K69 | Rencana implementasi Tahap 7 disetujui, termasuk delapan asumsinya | Kode Tahap 7 boleh mulai, diawali gelombang 1 (F7-01, F7-02, F7-04) |
 | K70 | Koordinator Tahap 7 boleh menggabungkan (*squash*) PR rencana dan PR sub-sesi Tahap 7 setelah uji lokal dan CI lulus | Kecuali persetujuan isi dokumen (rancangan revisi 4, panduan pemasangan produksi), yang tetap diberikan pemilik di PR |
+
+## 12 November 2026 — rancangan revisi 4 (F7-04)
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K71 | Rancangan revisi 4 (K49–K68) disetujui dan dipindahkan ke `dokumen/final/`; PDF dibuat ulang | Disetujui pemilik di sesi F7-04 setelah draf [#57](https://github.com/arumiforge/milklife/pull/57) digabung; dipindahkan lewat [#59](https://github.com/arumiforge/milklife/pull/59). Dicatat koordinator |
