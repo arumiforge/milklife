@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -41,3 +41,4 @@ Admin bisa mengelola jadwal (sosialisasi, technical meeting, dan lainnya) serta 
 - **Aturan murni tanpa basis data** (alamat web, ikon, waktu jadwal) ditaruh sebagai metode statis di `TautanModel` dan `JadwalModel`, karena pembagian berkas tidak memberi F2-06 tempat di `app/Libraries/`. Uji unitnya `tests/unit/KontakAlamatWebTest.php`. Uji model tabel `tautan` bernama `KontakTautanModelTest.php` supaya cocok pola `*Kontak*`.
 - Uji: `tests/unit/KontakAlamatWebTest.php`, `tests/basisdata/JadwalModelTest.php`, `tests/basisdata/KontakTautanModelTest.php`, `tests/fitur/PengaturanJadwalTest.php`, `tests/fitur/PengaturanKontakTest.php` (83 uji baru; `composer uji`: 379 uji, 2.732 asersi, lulus). Tampilan diperiksa di Chromium pada lebar 390 dan 1440 piksel: daftar, formulir tambah/ubah, isian salah, dan jendela konfirmasi hapus, tanpa gulir mendatar halaman.
 - Cabang ini sudah menggabungkan `main` terbaru (K36–K38); tidak ada perubahan isi F2-06 karenanya.
+- Digabung lewat PR #20 pada 12 November 2026.

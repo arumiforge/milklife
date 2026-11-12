@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -47,4 +47,4 @@ Dasbor menampilkan daftar centang hal yang belum lengkap dan keadaan pendaftaran
 - **Halaman daftar pengaturan**: hanya lima kartu wajib yang diberi tanda; Halaman Depan, Jadwal, Unduhan, Kontak, dan Akun tanpa tanda (`lengkap` tetap `null`). Keterangan kartu disesuaikan K36/K37: Kelompok Umur "Batas tahun lahir, …", Pendaftaran "Jadwal buka dan tutup, buka manual, tampilan usia, dan batas-batas pendaftaran." (atas permintaan koordinator). Nilai pengaturan `''` dan `null` sama-sama dianggap belum diisi (F2-05 menyimpan kosong sebagai `''`).
 - **Uji di luar bagian tugas (disetujui koordinator)**: `tests/fitur/BerandaPengaturanTest.php` — pemeriksaan "0 tanda-kelengkapan" diganti pemeriksaan bahwa tanda hanya ada pada lima kartu wajib, dan teks kartu Kelompok Umur menjadi "Batas tahun lahir, …".
 - **Uji bergantung pada F2-03**: `tests/basisdata/DataKelengkapanTest.php` dan `tests/fitur/DasborKelengkapanTest.php` menambahkan kolom `tahun_lahir_awal`/`tahun_lahir_akhir` sendiri di persiapan bila migrasi F2-03 belum ada (dicek dengan `SHOW COLUMNS`, karena `fieldExists()` menyimpan hasil lama). Pemeriksaan "setelah `data:awal`" tidak bergantung pada apakah data awal sudah mengisi tahun lahir. Setelah F2-03 digabung, persiapan itu tidak melakukan apa-apa dan bisa dihapus di F2-10.
-
+- Digabung lewat PR #19 pada 12 November 2026.

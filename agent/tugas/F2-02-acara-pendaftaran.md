@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -44,3 +44,4 @@ Admin bisa mengisi data acara serta jadwal dan aturan pendaftaran, dan nama acar
 
 - `BerandaPengaturanController::daftarHalaman()` (milik F2-09 sekarang) masih menulis keterangan kartu Pendaftaran "Jadwal buka dan tutup, tanggal patokan usia, dan batas-batas pendaftaran." Usul: "Jadwal buka dan tutup, buka manual, tampilan usia, dan batas-batas pendaftaran."
 - Komentar migrasi `2026-11-11-001000_BuatTabelKelompokUmur.php` masih menyebut tanggal patokan usia; mungkin dirapikan F2-03 bersama migrasi tahun lahir.
+- Digabung lewat PR #16 pada 12 November 2026.

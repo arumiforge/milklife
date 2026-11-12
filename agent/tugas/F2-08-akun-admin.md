@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -40,3 +40,4 @@ Admin yang sedang masuk bisa mengganti nama, nama pengguna, dan kata sandinya se
 ### Ditunda
 
 - Mengeluarkan sesi lain milik akun yang sama setelah kata sandi diganti. Sesi disimpan di berkas dan tidak dicatat per akun, jadi perlu kolom atau penanda baru (misalnya versi kata sandi di tabel `admin` yang dicocokkan penjaga `AdminFilter`); itu migrasi dan berkas di luar bagian F2-08. Sesi lain tetap berakhir sendiri setelah 2 jam (`session.expiration`).
+- Digabung lewat PR #22 pada 12 November 2026.

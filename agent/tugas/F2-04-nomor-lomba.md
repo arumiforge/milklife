@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -43,3 +43,4 @@ Admin bisa mengelola nomor lomba per kelompok umur, termasuk nomor beregu dan mi
 - **Aturan isian** ada di `NomorLombaModel` sebagai fungsi statis tanpa basis data (`rapikanIsian()`, `periksaIsian()`, `untukDisimpan()`, `isianDariBaris()`, `kekuranganTim()`), dengan uji unit, karena `app/Libraries/` di luar bagian F2-04.
 - **Uji**: `tests/unit/NomorLombaAturanTest.php`, `tests/basisdata/NomorLombaModelTest.php`, `tests/fitur/PengaturanNomorLombaTest.php` (memakai `data:awal` untuk menguji 69 nomor), dengan pembuat baris uji `tests/_support/BarisUjiNomorLomba.php` (nama sekolah, atlet, dan NISN karangan).
 - Belum dicegah: mengubah jumlah inti atau batas anggota nomor yang sudah dipakai, sehingga tim yang sudah terdaftar bisa tidak lagi memenuhi. Pemeriksaannya di tahap pendaftaran dan panel data (Tahap 4 dan 6).
+- Digabung lewat PR #15 pada 12 November 2026.

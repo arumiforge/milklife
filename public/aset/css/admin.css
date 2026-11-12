@@ -585,7 +585,10 @@ a.kepala-admin-nama:focus-visible {
 }
 
 /* Tabel daftar data: digulir mendatar di dalam kartunya, bukan halamannya. */
+/* position: relative menahan teks khusus pembaca layar (visually-hidden)
+   di dalam tabel, supaya halaman tidak ikut bergeser mendatar di ponsel. */
 .tabel-gulir {
+    position: relative;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
