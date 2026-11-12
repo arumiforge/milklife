@@ -10,28 +10,28 @@
  *
  * Menu publik ditulis di `$menuPublik` di bawah. Butir tanpa `alamat` belum
  * punya halaman: tampil non-aktif (`aria-disabled`, tanpa tautan) dengan
- * keterangan "Segera". Saat halamannya dibuat, isi `alamat`-nya.
+ * keterangan "Segera". Alamat Pendaftaran dan Cek Pendaftaran diambil dari
+ * `IsiHalamanDepan` (satu tempat dengan tombol di halaman depan); alamat
+ * Unduhan diisi di sini saat halamannya dibuat.
  *
- * Nama acara di kepala (`tata_letak/_merek`) dan kaki diambil dari pengaturan
- * `Acara.nama` dan `Acara.tahun`.
+ * Nama acara di kepala diambil dari pengaturan `Acara.nama`
+ * (`tata_letak/_merek`). Teks kaki dari `IsiHalamanDepan::kaki()`:
+ * `HalamanDepan.footer` (baris baru menjadi `<br>`), atau "nama acara tahun"
+ * bila kosong.
  *
  * @var CodeIgniter\View\View $this
  */
 
-use App\Controllers\Admin\Pengaturan\AcaraController;
+use App\Libraries\IsiHalamanDepan;
 
 $menuPublik = [
     ['label' => 'Beranda', 'alamat' => '/'],
-    ['label' => 'Pendaftaran', 'alamat' => null],
-    ['label' => 'Cek Pendaftaran', 'alamat' => null],
+    ['label' => 'Pendaftaran', 'alamat' => IsiHalamanDepan::ALAMAT_PENDAFTARAN],
+    ['label' => 'Cek Pendaftaran', 'alamat' => IsiHalamanDepan::ALAMAT_CEK_PENDAFTARAN],
     ['label' => 'Unduhan', 'alamat' => null],
 ];
 
-// Nama dan tahun acara dari pengaturan admin (Data Acara). Selama nama belum
-// diisi, merek dan kaki memakai `AcaraController::NAMA_PENGGANTI`; tahun yang
-// belum diisi tidak ditampilkan.
-$namaAcara  = AcaraController::namaTampil();
-$tahunAcara = trim((string) setting('Acara.tahun'));
+$kaki = IsiHalamanDepan::kaki();
 ?>
 <!doctype html>
 <html lang="id">
@@ -86,7 +86,7 @@ $tahunAcara = trim((string) setting('Acara.tahun'));
 
     <footer class="kaki-publik">
         <div class="container py-4">
-            <p class="mb-0"><?= esc(trim($namaAcara . ' ' . $tahunAcara)) ?></p>
+            <p class="mb-0"><?= nl2br(esc($kaki), false) ?></p>
         </div>
     </footer>
 

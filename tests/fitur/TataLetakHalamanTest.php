@@ -43,13 +43,13 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertNotNull($kaki);
         $this->assertSame('MilkLife Athletics Challenge 2026', $this->teks($kaki));
 
-        // Isi sementara.
+        // Kepala halaman depan (sejak F3-01; rinciannya di HalamanDepanKepalaTest).
         $this->assertSame(1, $xpath->query('//main//h1')->length, 'Halaman depan punya tepat satu h1.');
-        $hasil->assertSee('Pendaftaran sedang disiapkan');
+        $hasil->assertSee('Pendaftaran sedang disiapkan.');
         $hasil->assertSee('Seri 2 – 2026');
         $hasil->assertSee('9–12 Desember 2026');
         $hasil->assertSee('Supersoccer Arena, Kudus');
-        $this->assertSame(1, $xpath->query('//*[contains(@class, "bidang-info")]')->length);
+        $this->assertSame(1, $xpath->query('//main/section[@id="pembuka"]')->length);
     }
 
     public function testMenuPublikDenganButirNonAktif(): void

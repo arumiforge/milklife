@@ -12,6 +12,10 @@ use CodeIgniter\Router\RouteCollection;
 // Publik
 $routes->get('/', 'BerandaController::index');
 
+// Semua berkas unduhan (K40). Pengendalinya dibuat F3-03; selama belum ada,
+// alamatnya menampilkan halaman tidak ditemukan.
+$routes->get('unduhan', 'UnduhanController::index');
+
 // Admin. Semua rute dijaga filter `admin` (`App\Filters\AdminFilter`):
 // yang belum masuk hanya bisa membuka halaman masuk.
 $routes->get('admin', static fn () => redirect()->to('admin/dasbor'), ['filter' => 'admin']);

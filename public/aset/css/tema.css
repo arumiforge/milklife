@@ -481,6 +481,188 @@ h1, h2, h3, h4, h5, h6,
     border-top: 4px solid var(--ml-oranye);
 }
 
+/* ---------- Kepala halaman depan (beranda/_kepala.php) ---------- */
+
+/* Gambar kepala selebar layar, di atas judul. Rasio dari ukuran aslinya
+   (atribut width/height), dibatasi supaya judul tetap terlihat. */
+.pembuka-gambar {
+    background-color: var(--ml-biru-tua);
+}
+
+.pembuka-gambar img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: cover;
+}
+
+/* Logo di atas kartu putih, sama tinggi, bentuk asli tidak berubah. */
+.pembuka-logo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+}
+
+.pembuka-logo-butir {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    height: 3.5rem;
+    padding: 0.4rem 0.6rem;
+    background-color: var(--ml-putih);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(2, 31, 123, 0.25);
+}
+
+.pembuka-logo-butir img {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* Nama acara kecil di atas judul dari pengaturan. */
+.pembuka-nama {
+    color: var(--ml-biru-muda);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+/* Judul dari pengaturan bisa panjang: sedikit lebih kecil dari nama acara. */
+.pembuka-judul-teks {
+    font-size: clamp(1.75rem, 6.5vw, 3rem);
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.pembuka-teks {
+    max-width: 68ch;
+    font-size: 1.0625rem;
+    color: rgba(255, 255, 255, 0.92);
+    overflow-wrap: anywhere;
+}
+
+.pembuka-teks p:last-child {
+    margin-bottom: 0;
+}
+
+.pembuka-pendaftaran {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Keadaan pendaftaran: kartu putih dengan garis dan ikon berwarna per keadaan. */
+.keadaan-pendaftaran {
+    --keadaan-garis: var(--ml-biru-muda);
+    --keadaan-ikon-latar: var(--ml-biru-muda-pucat);
+    --keadaan-ikon-warna: var(--ml-biru);
+    --keadaan-label: var(--ml-teks-redup);
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    max-width: 36rem;
+    padding: 0.875rem 1.1rem;
+    background-color: var(--ml-putih);
+    color: var(--ml-biru-tua);
+    border-left: 6px solid var(--keadaan-garis);
+    border-radius: 0.75rem;
+}
+
+.keadaan-belum-dibuka {
+    --keadaan-garis: var(--ml-biru);
+    --keadaan-label: var(--ml-biru);
+}
+
+.keadaan-terbuka {
+    --keadaan-garis: var(--ml-oranye);
+    --keadaan-ikon-latar: var(--ml-oranye-tombol);
+    --keadaan-ikon-warna: #fff;
+    --keadaan-label: var(--ml-oranye-gelap);
+}
+
+.keadaan-ditutup {
+    --keadaan-garis: var(--ml-teks-redup);
+    --keadaan-ikon-latar: var(--ml-latar);
+    --keadaan-ikon-warna: var(--ml-teks-redup);
+}
+
+.keadaan-ikon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: var(--keadaan-ikon-latar);
+    color: var(--keadaan-ikon-warna);
+    font-size: 1.25rem;
+}
+
+.keadaan-label {
+    color: var(--keadaan-label);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.keadaan-kalimat {
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+/* Tombol Pendaftaran dan Cek Pendaftaran. */
+.pembuka-tombol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.pembuka-tombol .btn {
+    display: inline-flex;
+    flex: 1 1 13rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Tombol yang halamannya belum ada (K39): tetap terbaca, tidak bisa ditekan. */
+.pembuka-tombol .tombol-nonaktif {
+    --bs-btn-disabled-opacity: 0.8;
+}
+
+.tombol-segera {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.15rem 0.45rem;
+    border: 1px solid currentColor;
+    border-radius: 1rem;
+}
+
+@media (min-width: 768px) {
+    .pembuka-logo-butir {
+        height: 4.25rem;
+    }
+
+    .pembuka-pendaftaran {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .pembuka-tombol .btn {
+        flex: 0 0 auto;
+    }
+}
+
 /* ---------- Tata letak polos (halaman masuk dan galat) ---------- */
 
 .tata-polos {
@@ -555,3 +737,27 @@ h1, h2, h3, h4, h5, h6,
         animation-iteration-count: 1 !important;
     }
 }
+
+/*
+ * ================================================================
+ * Wilayah bagian halaman depan Tahap 3.
+ *
+ * Tiap tugas hanya menulis di dalam wilayahnya sendiri (rencana Tahap 3,
+ * "CSS"), supaya gabungan cabang tidak bentrok. Gaya kepala dan tata letak
+ * publik ada di atas (F3-01).
+ * ================================================================
+ */
+
+/* ---------- Bagian lomba (F3-02) ---------- */
+
+/* ---------- Akhir bagian lomba ---------- */
+
+/*
+ * ----------------------------------------------------------------
+ * Pemisah wilayah: jangan menulis di antara dua wilayah ini.
+ * ----------------------------------------------------------------
+ */
+
+/* ---------- Bagian jadwal, unduhan, kontak (F3-03) ---------- */
+
+/* ---------- Akhir bagian jadwal, unduhan, kontak ---------- */
