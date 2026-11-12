@@ -145,12 +145,30 @@ final class IsiHalamanDepanTest extends UjiBasisData
         $this->assertSame($isi->bukaTutup(), $isi->bukaTutup(), 'Keadaan dibaca sekali per objek.');
     }
 
-    public function testTombolBelumPunyaAlamat(): void
+    public function testTombolMengikutiKeadaanPendaftaran(): void
     {
+        // Pengaturan belum lengkap: keduanya nonaktif, Pendaftaran "Segera".
         $this->assertSame([
-            ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => null, 'utama' => true],
+            ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => null, 'utama' => true, 'keterangan' => 'Segera'],
             ['kunci' => 'cek', 'label' => 'Cek Pendaftaran', 'alamat' => null, 'utama' => false],
         ], (new IsiHalamanDepan())->tombol());
+
+        // Terbuka: Pendaftaran menaut ke wizard (Tahap 4), Cek ke halaman cek (Tahap 5).
+        $this->lengkapiPengaturan();
+        $this->assertSame([
+            ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => 'pendaftaran', 'utama' => true, 'keterangan' => null],
+            ['kunci' => 'cek', 'label' => 'Cek Pendaftaran', 'alamat' => 'cek-pendaftaran', 'utama' => false],
+        ], (new IsiHalamanDepan())->tombol());
+
+        // Belum dibuka dan ditutup: Pendaftaran nonaktif dengan keterangannya, Cek tetap aktif.
+        foreach (['2026-09-30 12:00:00' => 'Belum dibuka', '2026-12-01 00:00:00' => 'Ditutup'] as $waktu => $keterangan) {
+            Time::setTestNow($waktu, 'Asia/Jakarta');
+            $tombol = (new IsiHalamanDepan())->tombol();
+
+            $this->assertNull($tombol[0]['alamat'], $keterangan);
+            $this->assertSame($keterangan, $tombol[0]['keterangan']);
+            $this->assertSame('cek-pendaftaran', $tombol[1]['alamat']);
+        }
     }
 
     // ---------- Kelompok umur dan nomor lomba ----------

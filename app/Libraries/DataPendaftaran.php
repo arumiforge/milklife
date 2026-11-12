@@ -2,6 +2,7 @@
 
 namespace App\Libraries;
 
+use App\Models\NomorLombaModel;
 use CodeIgniter\Database\BaseConnection;
 
 /**
@@ -37,20 +38,20 @@ use CodeIgniter\Database\BaseConnection;
  *         'subtotal_individu' => 300000,
  *         'subtotal_beregu'   => 200000,
  *         'total'             => 500000,
- *         'penanggung_jawab'  => [['nama' => 'Ibu Contoh', 'nomor_wa' => '081234567890']],
+ *         'penanggung_jawab'  => [['nama' => 'Ibu Contoh', 'nomor_wa' => '0812-3456-7890']], // NomorWa::tampilan()
  *         'atlet'             => [[
  *             'nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'tanggal_lahir' => '2016-05-01',
  *             'jenis_kelamin' => 'L', 'jenis_kelamin_label' => 'Laki-laki',
  *             'kelompok_umur' => 'KU 10', 'nomor_dada' => null,  // '1001' setelah Lunas
- *             'nomor_lomba' => ['Lari 60 m', 'Estafet 4 × 50 m'],
+ *             'nomor_lomba' => ['Lari 60 m putra', 'Estafet 4 × 50 m mix'], // NomorLombaModel::namaLengkap()
  *         ]],
  *         'individu'          => [[                 // satu baris per atlet per nomor individu
  *             'nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'tanggal_lahir' => '2016-05-01',
  *             'kelompok_umur' => 'KU 10', 'nomor_dada' => null,
- *             'nomor_lomba' => 'Lari 60 m', 'biaya' => 150000,
+ *             'nomor_lomba' => 'Lari 60 m putra', 'biaya' => 150000,
  *         ]],
  *         'beregu'            => [[                 // satu baris per nomor beregu
- *             'nomor_lomba' => 'Estafet 4 × 50 m',
+ *             'nomor_lomba' => 'Estafet 4 × 50 m mix',
  *             'biaya_tim'   => 200000,               // null: pendaftaran susulan yang hanya menambah anggota
  *             'anggota'     => [['nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'nomor_dada' => null]],
  *         ]],
@@ -131,7 +132,7 @@ final class DataPendaftaran
             ->get()->getResultArray();
 
         $nomor = $this->db->table('atlet_nomor an')
-            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya, nl.nama, nl.jenis, nl.urutan')
+            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya, nl.nama, nl.kategori, nl.jenis, nl.urutan')
             ->join('atlet a', 'a.id = an.atlet_id')
             ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
             ->whereIn('a.pendaftaran_id', $ids)
@@ -139,7 +140,7 @@ final class DataPendaftaran
             ->get()->getResultArray();
 
         $tim = $this->db->table('pendaftaran_beregu pb')
-            ->select('pb.pendaftaran_id, pb.nomor_lomba_id, pb.biaya_tim, nl.nama, nl.urutan')
+            ->select('pb.pendaftaran_id, pb.nomor_lomba_id, pb.biaya_tim, nl.nama, nl.kategori, nl.urutan')
             ->join('nomor_lomba nl', 'nl.id = pb.nomor_lomba_id')
             ->whereIn('pb.pendaftaran_id', $ids)
             ->get()->getResultArray();
@@ -170,7 +171,7 @@ final class DataPendaftaran
         foreach ($pj as $baris) {
             $hasil[(int) $baris['pendaftaran_id']]['penanggung_jawab'][] = [
                 'nama'     => (string) $baris['nama'],
-                'nomor_wa' => (string) $baris['nomor_wa'],
+                'nomor_wa' => NomorWa::tampilan((string) $baris['nomor_wa']),
             ];
         }
 
@@ -179,7 +180,7 @@ final class DataPendaftaran
 
         foreach ($tim as $baris) {
             $regu[(int) $baris['pendaftaran_id']][(int) $baris['nomor_lomba_id']] = [
-                'nomor_lomba' => (string) $baris['nama'],
+                'nomor_lomba' => NomorLombaModel::namaLengkap($baris),
                 'biaya_tim'   => (int) $baris['biaya_tim'],
                 'anggota'     => [],
                 'urutan'      => [(int) $baris['urutan'], (int) $baris['nomor_lomba_id']],
@@ -198,13 +199,13 @@ final class DataPendaftaran
             $a = $atletPerId[(int) $baris['atlet_id']];
             $p = (int) $a['pendaftaran_id'];
 
-            $nomorPerAtlet[(int) $baris['atlet_id']][] = (string) $baris['nama'];
+            $nomorPerAtlet[(int) $baris['atlet_id']][] = NomorLombaModel::namaLengkap($baris);
 
             if ($baris['jenis'] === 'beregu') {
                 $n = (int) $baris['nomor_lomba_id'];
 
                 $regu[$p][$n] ??= [
-                    'nomor_lomba' => (string) $baris['nama'],
+                    'nomor_lomba' => NomorLombaModel::namaLengkap($baris),
                     'biaya_tim'   => null,
                     'anggota'     => [],
                     'urutan'      => [(int) $baris['urutan'], $n],
@@ -224,7 +225,7 @@ final class DataPendaftaran
                 'tanggal_lahir' => (string) $a['tanggal_lahir'],
                 'kelompok_umur' => (string) $a['kelompok_umur'],
                 'nomor_dada'    => $a['nomor_dada'],
-                'nomor_lomba'   => (string) $baris['nama'],
+                'nomor_lomba'   => NomorLombaModel::namaLengkap($baris),
                 'biaya'         => $baris['biaya'] === null ? null : (int) $baris['biaya'],
             ];
         }

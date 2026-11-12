@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Draf, dikerjakan atas penugasan pemilik 12 November 2026 (K48); menunggu tinjauan pemilik |
+| Status | Draf, dikerjakan atas penugasan pemilik 12 November 2026 (K48), sudah dilaksanakan (Tahap 4 selesai 12 November 2026); menunggu tinjauan pemilik |
 | Tanggal | 12 November 2026 |
 | Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6, 7, 11, 13, 14; keputusan K01–K51; hasil Tahap 3 (`agent/arsip/tahap-3.md`) |
 
@@ -210,3 +210,10 @@ Setelah Tahap 4 digabung, di terminal Laragon pada folder proyek:
 
 | Bagian | Rencana | Yang berlaku | Alasan |
 |---|---|---|---|
+| Nomor keputusan | K49 foto wajib, K50 kuota | K50 foto wajib, K51 kuota | PR Tahap 5 lebih dulu memakai K48 dan K49 (kesepakatan butir 5) |
+| `.gitignore` | Tidak disebut | Ditambah `/writable/unggahan/` | Foto penanggung jawab adalah data pribadi dan tidak boleh masuk git (F4-01) |
+| Pengumpul data | `induk()` dan `ada()` | Ditambah `dataSekolah()` (data susulan untuk pencarian NPSN) dan `untukWizard()` (JSON halaman); kelas tidak `final` supaya uji bisa menirukan kiriman bersamaan | F4-01–F4-03 |
+| Tata letak publik | Pesan kilat dan butir menu Pendaftaran | Juga bagian `kepala` di `<head>` untuk CSS dan `<meta>` CSRF halaman wizard | Aset sendiri halaman pendaftaran (F4-03) |
+| Tombol dan menu nonaktif | Keterangan label keadaan | "Segera" selama pengaturan belum lengkap (seperti K39), "Belum dibuka", atau "Ditutup" (`IsiHalamanDepan::keteranganPendaftaran()`); `_kepala.php` membaca `keterangan` tombol | Label "Sedang disiapkan" terlalu panjang untuk menu (F4-05) |
+| Tabel langkah 4 | Tabel | Di bawah 576 piksel tiap baris bertumpuk dengan label kolom | Enam kolom tidak muat di 390 piksel (F4-04) |
+| Cek dan bukti (Tahap 5) | Tidak disentuh | `DataPendaftaran` menulis nama nomor beserta kategori ("Lari 60 m putra") dan nomor WA bentuk tampilan ("0812-0000-0001"); asersi uji Tahap 5 disesuaikan | Sambungan dari uji gabungan (kesepakatan butir 7): "Lari 60 m" untuk putra dan putri tidak bisa dibedakan, dan nomor WA tersimpan dalam bentuk baku `628…` |

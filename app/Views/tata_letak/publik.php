@@ -9,11 +9,15 @@
  * - `kepala`: tag tambahan di `<head>` (misalnya `<link>` CSS atau `<meta>` halaman itu).
  * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap.
  *
- * Menu publik ditulis di `$menuPublik` di bawah. Butir tanpa `alamat` belum
- * punya halaman: tampil non-aktif (`aria-disabled`, tanpa tautan) dengan
- * keterangan "Segera". Alamat Pendaftaran dan Cek Pendaftaran diambil dari
- * `IsiHalamanDepan` (satu tempat dengan tombol di halaman depan); alamat
- * Unduhan diisi di sini saat halamannya dibuat.
+ * Menu publik ditulis di `$menuPublik` di bawah. Butir tanpa `alamat` tampil
+ * non-aktif (`aria-disabled`, tanpa tautan) dengan `keterangan`-nya, atau
+ * "Segera" bila tanpa keterangan. Alamat Pendaftaran dan Cek Pendaftaran
+ * diambil dari `IsiHalamanDepan` (satu tempat dengan tombol di halaman
+ * depan). Pendaftaran hanya menaut saat pendaftaran terbuka (rancangan 6.1);
+ * selain itu keterangannya `IsiHalamanDepan::keteranganPendaftaran()`.
+ *
+ * Pesan kilat `pesan_sukses` dan `pesan_galat` (misalnya dari filter batas
+ * unggah) tampil di atas isi halaman (`tata_letak/_pesan_publik`).
  *
  * Nama acara di kepala diambil dari pengaturan `Acara.nama`
  * (`tata_letak/_merek`). Teks kaki dari `IsiHalamanDepan::kaki()`:
@@ -25,9 +29,11 @@
 
 use App\Libraries\IsiHalamanDepan;
 
+$bukaTutup = (new IsiHalamanDepan())->bukaTutup();
+
 $menuPublik = [
     ['label' => 'Beranda', 'alamat' => '/'],
-    ['label' => 'Pendaftaran', 'alamat' => IsiHalamanDepan::ALAMAT_PENDAFTARAN],
+    ['label' => 'Pendaftaran', 'alamat' => $bukaTutup->terbuka() ? IsiHalamanDepan::ALAMAT_PENDAFTARAN : null, 'keterangan' => IsiHalamanDepan::keteranganPendaftaran($bukaTutup)],
     ['label' => 'Cek Pendaftaran', 'alamat' => IsiHalamanDepan::ALAMAT_CEK_PENDAFTARAN],
     ['label' => 'Unduhan', 'alamat' => 'unduhan'],
 ];
@@ -67,7 +73,7 @@ $kaki = IsiHalamanDepan::kaki();
                                 <?php if ($butir['alamat'] === null) : ?>
                                     <a class="nav-link disabled" aria-disabled="true">
                                         <?= esc($butir['label']) ?>
-                                        <span class="menu-segera">Segera</span>
+                                        <span class="menu-segera"><?= esc($butir['keterangan'] ?? 'Segera') ?></span>
                                     </a>
                                 <?php elseif (url_is($butir['alamat'])) : ?>
                                     <a class="nav-link active" aria-current="page" href="<?= site_url($butir['alamat']) ?>"><?= esc($butir['label']) ?></a>
@@ -83,6 +89,7 @@ $kaki = IsiHalamanDepan::kaki();
     </header>
 
     <main id="isi">
+        <?= view('tata_letak/_pesan_publik', [], ['saveData' => false]) ?>
         <?= $this->renderSection('isi') ?>
     </main>
 
