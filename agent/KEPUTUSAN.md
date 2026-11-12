@@ -84,3 +84,4 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K40 | Unduhan punya halaman sendiri (`/unduhan`) dan juga tampil di halaman depan | Sesuai peta halaman rancangan bagian 5; menu Unduhan di kepala aktif |
 | K41 | Gambar kepala dan logo yang belum diunggah disembunyikan di halaman depan | Pengunjung tidak melihat kotak kosong. Di panel admin kotak "tanpa gambar" tetap tampil (permintaan awal pemilik berlaku untuk panel) |
 | K42 | Urutan halaman depan: kepala (gambar, logo, judul, data acara, keadaan pendaftaran, tombol) → kelompok umur, nomor lomba, dan biaya → jadwal → unduhan → kontak dan tombol WA → footer | Yang paling dicari sekolah tampil lebih dulu |
+| K43 | Rencana implementasi Tahap 3 disetujui, termasuk enam asumsinya | Kode Tahap 3 boleh mulai, diawali F3-01 dan F3-04 bersamaan |

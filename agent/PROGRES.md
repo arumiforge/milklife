@@ -4,7 +4,7 @@ Diperbarui: 12 November 2026
 
 ## Sedang berjalan
 
-**Tahap 3 — Halaman depan.** Rencana menunggu persetujuan pemilik: [`dokumen/draf/rencana-implementasi-tahap-3.md`](../dokumen/draf/rencana-implementasi-tahap-3.md). Wawancara awal: K39–K42.
+**Tahap 3 — Halaman depan.** Rencana disetujui pemilik (K43): [`dokumen/draf/rencana-implementasi-tahap-3.md`](../dokumen/draf/rencana-implementasi-tahap-3.md). Wawancara awal: K39–K42.
 
 | Tugas | Status |
 |---|---|

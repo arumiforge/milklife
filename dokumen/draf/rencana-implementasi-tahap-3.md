@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Status | Draf |
+| Status | Disetujui pemilik 12 November 2026 (K43) |
 | Tanggal | 12 November 2026 |
-| Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.1, 10, 12, 13, 15, 16; keputusan K01–K42; hasil Tahap 2 (`agent/arsip/tahap-2.md`) |
+| Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.1, 10, 12, 13, 15, 16; keputusan K01–K43; hasil Tahap 2 (`agent/arsip/tahap-2.md`) |
 
 ## Tujuan
 
