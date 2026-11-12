@@ -161,3 +161,12 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K63 | ID pendaftaran tidak berubah saat admin mengubah pendaftaran, juga bila jenjang sekolahnya diubah. Kode jenjang di ID (rancangan 6.8) tetap mengikuti data saat mendaftar | Supaya lebih aman dan sederhana: ID yang sudah dipegang sekolah, tercetak di bukti, dan dipakai di halaman cek tidak berganti. Dikonfirmasi pemilik di sesi F6-04 ([#52](https://github.com/arumiforge/milklife/pull/52)) dan dicatat sesi koordinator |
+
+## 12 November 2026 — wawancara awal Tahap 7
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K65 | Tahap 7 dikerjakan sesi koordinator yang **membuat sendiri** sub-sesi paralel per tugas, memantau PR-nya, lalu menjalankan penutupan | Kembali ke cara K56 (bukan K64). Batas K38 tetap: paling banyak 3 sub-sesi sekaligus |
+| K66 | Cadangan produksi dibuat **harian** oleh Penjadwal Tugas Windows ke folder di luar proyek, berisi basis data serta foto penanggung jawab, bukti bayar, dan unggahan admin. Cadangan yang lebih tua dari **14 hari** dihapus otomatis | Menjawab rancangan 15 ("cadangan basis data terjadwal") |
+| K67 | Cakupan Tahap 7 ditambah: revisi rancangan ke-4 (K49–K63 dan keputusan Tahap 7), ganti kata sandi admin mengeluarkan sesi lain milik akun yang sama, halaman galat ramah di mode produksi, dan aturan tim susulan tanpa pembayar (K68) | Selain isi rancangan 16: minify, uji menyeluruh, panduan pemasangan produksi |
+| K68 | Bila tim beregu kehilangan pendaftaran yang membayar biaya timnya (pendaftaran dihapus atau timnya dihapus lewat Ubah), biaya **tidak dipindah otomatis**. Rincian pendaftaran, dasbor, dan rekap keuangan menandai tim tanpa pembayar supaya admin menagih lewat Ubah | Menjawab batasan F6-04 di arsip Tahap 6 |

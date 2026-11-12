@@ -4,13 +4,21 @@ Diperbarui: 12 November 2026
 
 ## Sedang berjalan
 
-Belum ada. Tahap 6 ditutup; menunggu tinjauan PR penutupan F6-08.
+**Tahap 7 — Penyelesaian**, dikerjakan sesi koordinator yang membuat sub-sesi paralel sendiri (K65), paling banyak 3 sekaligus (K38). Rencana: [`dokumen/draf/rencana-implementasi-tahap-7.md`](../dokumen/draf/rencana-implementasi-tahap-7.md), menunggu persetujuan pemilik.
+
+| Tugas | Status | Gelombang | PR |
+|---|---|---|---|
+| [F7-01 Minify dan pengecilan gambar](tugas/F7-01-minify-pengecilan-gambar.md) | rencana | 1 | |
+| [F7-02 Keamanan dan mode produksi](tugas/F7-02-keamanan-mode-produksi.md) | rencana | 1 | |
+| [F7-04 Rancangan revisi 4](tugas/F7-04-rancangan-revisi-4.md) | rencana | 1 | |
+| [F7-03 Tim tanpa pembayar](tugas/F7-03-tim-tanpa-pembayar.md) | rencana | 2 | |
+| [F7-05 Cadangan dan panduan produksi](tugas/F7-05-cadangan-panduan-produksi.md) | rencana | 2 | |
+| [F7-06 Uji menyeluruh](tugas/F7-06-uji-menyeluruh.md) | rencana | 3 | |
+| [F7-07 Penutupan](tugas/F7-07-penutupan-tahap-7.md) | rencana | 4 | |
 
 ## Berikutnya
 
-| Tahap | Hasil | Status |
-|---|---|---|
-| 7. Penyelesaian | Minify (termasuk aset Tahap 6), uji menyeluruh, panduan pemasangan produksi | belum mulai, berikutnya |
+Tidak ada tahap lain di rancangan. Setelah Tahap 7: pemasangan di komputer produksi oleh pemilik mengikuti panduan F7-05.
 
 ## Selesai
 
@@ -24,4 +32,4 @@ Belum ada. Tahap 6 ditutup; menunggu tinjauan PR penutupan F6-08.
 
 ## Menunggu pemilik
 
-Belum ada.
+- Persetujuan rencana Tahap 7 beserta delapan asumsinya.
