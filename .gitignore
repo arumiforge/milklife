@@ -40,6 +40,14 @@ php_errors.log
 /public/unggahan/
 
 #-------------------------
+# Versi kecil aset aplikasi, dibuat di server dengan `php spark aset:minify`.
+# Pustaka di public/aset/vendor/ tetap menyimpan versi kecilnya sendiri.
+#-------------------------
+/public/aset/**/*.min.css
+/public/aset/**/*.min.js
+!/public/aset/vendor/**
+
+#-------------------------
 # Hasil PHPUnit
 #-------------------------
 /build/
