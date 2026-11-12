@@ -243,10 +243,13 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
     public function testPotonganBagianMenerimaDatanya(): void
     {
-        // Potongan F3-02 dan F3-03 menerima data kosong tanpa galat dan tanpa isi.
-        $this->assertSame('', trim(view('beranda/_lomba', ['kelompokUmur' => []], ['saveData' => false])));
-        $this->assertSame('', trim(view('beranda/_jadwal', ['jadwal' => []], ['saveData' => false])));
-        $this->assertSame('', trim(view('beranda/_unduhan', ['unduhan' => []], ['saveData' => false])));
+        // Potongan F3-02 dan F3-03 menerima data kosong tanpa galat dan tanpa isi
+        // (komentar penanda tampilan dari bilah debug dibuang).
+        $isi = static fn (string $potongan, array $data): string => trim((string) preg_replace('/<!--.*?-->/s', '', view($potongan, $data, ['saveData' => false])));
+
+        $this->assertSame('', $isi('beranda/_lomba', ['kelompokUmur' => []]));
+        $this->assertSame('', $isi('beranda/_jadwal', ['jadwal' => []]));
+        $this->assertSame('', $isi('beranda/_unduhan', ['unduhan' => []]));
     }
 
     public function testRuteUnduhanTerdaftar(): void

@@ -534,6 +534,7 @@ h1, h2, h3, h4, h5, h6,
 
 /* Judul dari pengaturan bisa panjang: sedikit lebih kecil dari nama acara. */
 .pembuka-judul-teks {
+    max-width: 15em;
     font-size: clamp(1.75rem, 6.5vw, 3rem);
     line-height: 1.1;
     overflow-wrap: anywhere;
@@ -630,6 +631,7 @@ h1, h2, h3, h4, h5, h6,
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    font-weight: 600;
 }
 
 /* Tombol yang halamannya belum ada (K39): tetap terbaca, tidak bisa ditekan. */

@@ -65,6 +65,8 @@ final class TataLetakTemaTest extends UjiHalaman
             'teks redup di kartu'       => ['teks-redup', 'putih'],
             'teks redup tanpa gambar'   => ['teks-redup', 'biru-muda-pucat'],
             'judul tanpa gambar'        => ['biru-tua', 'biru-muda-pucat'],
+            'kalimat keadaan di kartu'  => ['biru-tua', 'putih'],
+            'label keadaan terbuka'     => ['oranye-gelap', 'putih'],
         ];
     }
 
