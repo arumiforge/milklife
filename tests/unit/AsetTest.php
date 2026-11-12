@@ -57,10 +57,13 @@ final class AsetTest extends CIUnitTestCase
         $this->buatBerkas(self::FOLDER_UJI . '/contoh.min.css');
         $this->buatBerkas(self::FOLDER_UJI . '/contoh.js');
         $this->buatBerkas(self::FOLDER_UJI . '/contoh.min.js');
+        $this->buatBerkas(self::FOLDER_UJI . '/contoh.svg');
+        $this->buatBerkas(self::FOLDER_UJI . '/contoh.min.svg');
         config('Aplikasi')->minify = true;
 
         $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.css'), aset(self::FOLDER_UJI . '/contoh.css'));
         $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.js'), aset(self::FOLDER_UJI . '/contoh.js'));
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.svg'), aset(self::FOLDER_UJI . '/contoh.svg'));
     }
 
     public function testMinifyAktifTanpaBerkasMinTidakBerubah(): void

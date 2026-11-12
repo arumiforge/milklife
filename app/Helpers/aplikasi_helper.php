@@ -14,7 +14,8 @@ if (! function_exists('aset')) {
      * Alamat lengkap sebuah berkas di `public/aset/`.
      *
      * Bila `aplikasi.minify` aktif dan berkas `.min` padanannya ada
-     * (`css/tema.css` → `css/tema.min.css`), alamat berkas `.min` yang dipakai.
+     * (`css/tema.css` → `css/tema.min.css`, juga `.js` dan `.svg`), alamat
+     * berkas `.min` yang dipakai.
      * Jalur yang sudah `.min` atau berada di `vendor/` tidak diubah.
      *
      * @param string $jalur Jalur relatif terhadap `public/aset/`, misalnya `css/tema.css`.
@@ -24,7 +25,7 @@ if (! function_exists('aset')) {
         $jalur = ltrim($jalur, '/');
 
         if (config('Aplikasi')->minify && ! str_starts_with($jalur, 'vendor/')) {
-            $jalurMin = preg_replace('/(?<!\.min)\.(css|js)$/', '.min.$1', $jalur);
+            $jalurMin = preg_replace('/(?<!\.min)\.(css|js|svg)$/', '.min.$1', $jalur);
 
             if ($jalurMin !== null && $jalurMin !== $jalur && is_file(FCPATH . 'aset/' . $jalurMin)) {
                 $jalur = $jalurMin;

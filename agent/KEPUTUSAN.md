@@ -178,3 +178,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K71 | Rancangan revisi 4 (K49–K68) disetujui dan dipindahkan ke `dokumen/final/`; PDF dibuat ulang | Disetujui pemilik di sesi F7-04 setelah draf [#57](https://github.com/arumiforge/milklife/pull/57) digabung; dipindahkan lewat [#59](https://github.com/arumiforge/milklife/pull/59). Dicatat koordinator |
+
+## 12 November 2026 — cakupan minify
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K72 | Minify berlaku untuk seluruh aset aplikasi, tidak hanya HTML, dan berkas asli tidak dihapus | `php spark aset:minify` kini juga membuat `.min.svg` dari SVG di `public/aset/` (aturan perkecil HTML dipakai ulang), dan `aset()` memilihnya bila `aplikasi.minify` aktif. CSS/JS sudah sejak F7-01. Gambar unggahan tetap dikecilkan saat disimpan (F7-01); `favicon.ico` dan `robots.txt` tidak diolah |

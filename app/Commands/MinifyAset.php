@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Filters\PerkecilHtml;
 use App\Libraries\Unggahan;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
@@ -17,8 +18,9 @@ use SplFileInfo;
 /**
  * `php spark aset:minify`
  *
- * Membuat versi kecil (`.min.css`, `.min.js`) dari setiap berkas CSS dan
- * JavaScript milik aplikasi di `public/aset/`, di sebelah berkas aslinya.
+ * Membuat versi kecil (`.min.css`, `.min.js`, `.min.svg`) dari setiap berkas
+ * CSS, JavaScript, dan SVG milik aplikasi di `public/aset/`, di sebelah berkas
+ * aslinya. Berkas asli tidak diubah.
  * Folder `vendor/` (pustaka yang sudah memakai versi kecilnya sendiri) dan
  * berkas yang sudah berakhiran `.min` dilewati.
  *
@@ -31,7 +33,7 @@ class MinifyAset extends BaseCommand
 {
     protected $group       = 'Aset';
     protected $name        = 'aset:minify';
-    protected $description = 'Membuat versi kecil (.min.css, .min.js) dari CSS dan JavaScript aplikasi di public/aset/. Aman dijalankan berulang kali.';
+    protected $description = 'Membuat versi kecil (.min.css, .min.js, .min.svg) dari CSS, JavaScript, dan SVG aplikasi di public/aset/. Berkas asli tetap ada. Aman dijalankan berulang kali.';
     protected $usage       = 'aset:minify';
 
     /**
@@ -50,7 +52,7 @@ class MinifyAset extends BaseCommand
         }
 
         if ($hasil === []) {
-            CLI::write('Tidak ada berkas CSS atau JavaScript aplikasi di public/aset/.');
+            CLI::write('Tidak ada berkas CSS, JavaScript, atau SVG aplikasi di public/aset/.');
 
             return EXIT_SUCCESS;
         }
@@ -81,7 +83,7 @@ class MinifyAset extends BaseCommand
     }
 
     /**
-     * Tulis berkas `.min` untuk setiap `*.css` dan `*.js` di bawah `$folder`,
+     * Tulis berkas `.min` untuk setiap `*.css`, `*.js`, dan `*.svg` di bawah `$folder`,
      * kecuali di folder `vendor/` dan berkas yang sudah `.min`.
      *
      * @return list<array{berkas: string, sebelum: int, sesudah: int}> Berurutan menurut jalur; `berkas` relatif terhadap `$folder`, pemisah `/`.
@@ -102,8 +104,12 @@ class MinifyAset extends BaseCommand
             $asli     = $folder . DIRECTORY_SEPARATOR . $relatif;
             $ekstensi = strtolower(pathinfo($asli, PATHINFO_EXTENSION));
             $tujuan   = substr($asli, 0, -strlen($ekstensi)) . 'min.' . $ekstensi;
-            $pengecil = $ekstensi === 'css' ? new CSS($asli) : new JS($asli);
-            $isi      = $pengecil->minify();
+            $isi      = match ($ekstensi) {
+                'css' => (new CSS($asli))->minify(),
+                'js'  => (new JS($asli))->minify(),
+                // SVG adalah markup: aturan perkecil HTML berlaku (spasi dirapatkan, komentar dibuang, tag utuh).
+                default => PerkecilHtml::perkecil((string) file_get_contents($asli)),
+            };
 
             if (@file_put_contents($tujuan, $isi) === false) {
                 throw new RuntimeException('Berkas ' . $tujuan . ' gagal ditulis. Pastikan folder public/aset boleh ditulisi, lalu jalankan perintah ini lagi.');
@@ -120,7 +126,7 @@ class MinifyAset extends BaseCommand
     }
 
     /**
-     * Berkas CSS/JS asli di bawah `$folder`, relatif dan berurutan.
+     * Berkas CSS/JS/SVG asli di bawah `$folder`, relatif dan berurutan.
      *
      * @return list<string>
      */
@@ -137,7 +143,7 @@ class MinifyAset extends BaseCommand
             /** @var SplFileInfo $berkas */
             $nama = strtolower($berkas->getFilename());
 
-            if (! $berkas->isFile() || preg_match('/\.(css|js)$/', $nama) !== 1 || preg_match('/\.min\.(css|js)$/', $nama) === 1) {
+            if (! $berkas->isFile() || preg_match('/\.(css|js|svg)$/', $nama) !== 1 || preg_match('/\.min\.(css|js|svg)$/', $nama) === 1) {
                 continue;
             }
 
