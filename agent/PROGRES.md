@@ -4,13 +4,23 @@ Diperbarui: 12 November 2026
 
 ## Sedang berjalan
 
-Belum ada. Tahap 4 dan Tahap 5 selesai 12 November 2026; berikutnya Tahap 6 — Panel data, dikerjakan sesi koordinator dengan sub-sesi paralel (K56).
+**Tahap 6 — Panel data**, dikerjakan sesi koordinator dengan sub-sesi paralel, paling banyak 3 sekaligus (K56, K38). Rencana: [`dokumen/draf/rencana-implementasi-tahap-6.md`](../dokumen/draf/rencana-implementasi-tahap-6.md), disetujui pemilik (K61).
+
+| Tugas | Status | Gelombang | PR |
+|---|---|---|---|
+| [F6-01 Fondasi panel data](tugas/F6-01-fondasi-panel-data.md) | dikerjakan | 1 | |
+| [F6-02 Daftar, rincian, lunas, dan hapus](tugas/F6-02-daftar-rincian-lunas-hapus.md) | rencana | 2 | |
+| [F6-03 Bukti bayar dan daftar atlet](tugas/F6-03-bukti-bayar-daftar-atlet.md) | rencana | 2 | |
+| [F6-05 Konfirmasi tim susulan](tugas/F6-05-konfirmasi-tim-susulan.md) | rencana | 2 | |
+| [F6-04 Ubah pendaftaran](tugas/F6-04-ubah-pendaftaran.md) | rencana | 3 | |
+| [F6-06 Rekap dan dasbor](tugas/F6-06-rekap-dasbor.md) | rencana | 3 | |
+| [F6-07 Pengaturan terlindung](tugas/F6-07-pengaturan-terlindung.md) | rencana | 3 | |
+| [F6-08 Penutupan](tugas/F6-08-penutupan-tahap-6.md) | rencana | 4 | |
 
 ## Berikutnya
 
 | Tahap | Hasil | Status |
 |---|---|---|
-| 6. Panel data | Daftar pendaftaran, lunas dan nomor dada, ubah, hapus, rekap, ekspor | belum mulai |
 | 7. Penyelesaian | Minify, uji menyeluruh, panduan pemasangan produksi | belum mulai |
 
 ## Selesai
@@ -24,4 +34,4 @@ Belum ada. Tahap 4 dan Tahap 5 selesai 12 November 2026; berikutnya Tahap 6 — 
 
 ## Menunggu pemilik
 
-- Asumsi 3 rencana Tahap 4: atlet susulan di nomor beregu otomatis menjadi tambahan anggota tim yang sudah ada, tanpa biaya tim (K54). Asumsi lain sudah dijawab (K53, K54); juknis tidak ditunggu (K55).
+Belum ada.
