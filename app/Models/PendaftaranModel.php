@@ -24,7 +24,7 @@ class PendaftaranModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $allowedFields    = [
-        'id_pendaftaran', 'jenjang', 'npsn', 'nama_sekolah', 'kabupaten',
+        'id_pendaftaran', 'kode_bukti', 'jenjang', 'npsn', 'nama_sekolah', 'kabupaten',
         'subtotal_individu', 'subtotal_beregu', 'total', 'status', 'waktu_lunas',
     ];
 

@@ -4,9 +4,11 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Libraries\Jenjang;
+use App\Models\PendaftaranModel;
 use App\Libraries\Panel\DataPanelPendaftaran;
 use App\Libraries\Panel\EksporExcel;
 use App\Libraries\Panel\HapusPendaftaran;
+use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Panel\StatusPembayaran;
 use App\Libraries\Panel\TimTanpaPembayar;
 use App\Libraries\Panel\UbahPendaftaran;
@@ -27,6 +29,10 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   untuk admin (rute dijaga filter admin).
  * - `lunas`, `menunggu`: status pembayaran dan nomor dada (`StatusPembayaran`).
  * - `hapus`: pendaftaran beserta berkasnya (`HapusPendaftaran`).
+ * - `ekspor`: zip semua data pendaftaran beserta foto dan bukti bayar untuk
+ *   pindah server (`PaketPendaftaran`, K76).
+ * - `massal`: lunas, menunggu, atau hapus untuk pendaftaran yang dicentang di
+ *   daftar (K76), satu per satu dengan aturan yang sama.
  *
  * `ubah` dan `perbarui` ditambahkan F6-04. Rincian, hapus, dan perbarui
  * menyebut tim tanpa pembayar (K68, `TimTanpaPembayar`).
@@ -34,6 +40,11 @@ use CodeIgniter\HTTP\ResponseInterface;
 class PendaftaranController extends BaseController
 {
     private const ALAMAT = 'admin/pendaftaran';
+
+    /**
+     * Paling banyak pendaftaran per tindakan massal (sama dengan baris per halaman terbesar).
+     */
+    public const MASSAL_MAKSIMAL = 100;
 
     private const PESAN_SIBUK = 'Data sedang dipakai admin lain pada saat yang sama. Tunggu beberapa detik, lalu coba lagi.';
 
@@ -59,6 +70,29 @@ class PendaftaranController extends BaseController
         $excel->tambahBaris($data->tabel()->semuaBaris($data->pembuat(), $this->request->getGet()));
 
         return $excel->unduh('Pendaftaran_' . date('Ymd_His') . '.xlsx');
+    }
+
+    /**
+     * Unduh paket semua pendaftaran (`PaketPendaftaran::ekspor()`). Berkas
+     * sementara dihapus setelah isinya dibaca.
+     */
+    public function ekspor(): ResponseInterface
+    {
+        $sementara = tempnam(sys_get_temp_dir(), 'ekspor');
+
+        try {
+            (new PaketPendaftaran())->ekspor((string) $sementara);
+            $isi = (string) file_get_contents((string) $sementara);
+        } catch (\RuntimeException $e) {
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', $e->getMessage());
+        } finally {
+            @unlink((string) $sementara);
+        }
+
+        return $this->response
+            ->setContentType('application/zip')
+            ->setHeader('Content-Disposition', 'attachment; filename="Backup_Pendaftaran_' . date('Ymd_His') . '.zip"')
+            ->setBody($isi);
     }
 
     public function rincian(int $id): string
@@ -161,6 +195,102 @@ class PendaftaranController extends BaseController
             . $hasil['jumlah_atlet'] . ' atlet. NISN atletnya bisa didaftarkan lagi.'
             . ($tinggal === [] ? '' : ' ' . TimTanpaPembayar::kalimatSesudah($tinggal)),
         );
+    }
+
+    /**
+     * Tindakan untuk pendaftaran yang dicentang di daftar (K76): `lunas`,
+     * `menunggu`, atau `hapus`. Tiap pendaftaran diproses sendiri dengan aturan
+     * yang sama seperti tombol di rinciannya; yang gagal disebut dengan ID-nya,
+     * yang lain tetap diproses.
+     */
+    public function massal(): RedirectResponse
+    {
+        $tindakan = (string) $this->request->getPost('tindakan');
+        $id       = array_values(array_unique(array_filter(
+            array_map('intval', (array) ($this->request->getPost('id') ?? [])),
+            static fn (int $id): bool => $id > 0,
+        )));
+
+        if (! in_array($tindakan, ['lunas', 'menunggu', 'hapus'], true)) {
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Tindakan tidak dikenal. Pilih Tandai Lunas, Kembalikan ke Menunggu, atau Hapus.');
+        }
+
+        if ($id === []) {
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Belum ada pendaftaran yang dicentang. Centang pendaftarannya dulu, lalu pilih tindakan.');
+        }
+
+        if (count($id) > self::MASSAL_MAKSIMAL) {
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Paling banyak ' . self::MASSAL_MAKSIMAL . ' pendaftaran sekaligus. Kurangi centangnya, lalu coba lagi.');
+        }
+
+        $kode = array_column(model(PendaftaranModel::class)->select('id, id_pendaftaran')->whereIn('id', $id)->findAll(), 'id_pendaftaran', 'id');
+
+        $status   = new StatusPembayaran();
+        $berhasil = 0;
+        $nomor    = 0;
+        $gagal    = [];
+        $tinggal  = [];
+
+        foreach ($id as $satu) {
+            if (! isset($kode[$satu])) {
+                $gagal[] = 'satu pendaftaran tidak ditemukan (mungkin sudah dihapus)';
+
+                continue;
+            }
+
+            try {
+                if ($tindakan === 'hapus') {
+                    $tim   = (new TimTanpaPembayar())->ditinggalkan($satu);
+                    $hasil = (new HapusPendaftaran())->hapus($satu);
+
+                    if ($hasil === null) {
+                        $gagal[] = $kode[$satu] . ': tidak ditemukan';
+
+                        continue;
+                    }
+
+                    $tinggal = array_merge($tinggal, $tim);
+                    $berhasil++;
+
+                    continue;
+                }
+
+                $hasil = $tindakan === 'lunas' ? $status->tandaiLunas($satu) : $status->kembaliMenunggu($satu);
+            } catch (DatabaseException $e) {
+                log_message('error', 'Tindakan massal {tindakan} pendaftaran {id} gagal: {pesan}', ['tindakan' => $tindakan, 'id' => $satu, 'pesan' => $e->getMessage()]);
+                $gagal[] = $kode[$satu] . ': data sedang dipakai, coba lagi';
+
+                continue;
+            }
+
+            if (! $hasil['berhasil']) {
+                $gagal[] = $kode[$satu] . ': ' . rtrim((string) $hasil['pesan'], '.');
+
+                continue;
+            }
+
+            $berhasil++;
+            $nomor += count($hasil['nomor'] ?? []);
+        }
+
+        $pesan = match ($tindakan) {
+            'lunas'    => $berhasil . ' pendaftaran ditandai Lunas.' . ($nomor > 0 ? ' ' . $nomor . ' atlet mendapat nomor dada baru.' : ''),
+            'menunggu' => $berhasil . ' pendaftaran kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.',
+            default    => $berhasil . ' pendaftaran dihapus beserta atlet dan berkasnya. NISN atletnya bisa didaftarkan lagi.'
+                . ($tinggal === [] ? '' : ' ' . TimTanpaPembayar::kalimatSesudah($tinggal)),
+        };
+
+        $alihkan = redirect()->to(self::ALAMAT);
+
+        if ($berhasil > 0) {
+            $alihkan->with('pesan_sukses', $pesan);
+        }
+
+        if ($gagal !== []) {
+            $alihkan->with('pesan_galat', count($gagal) . ' pendaftaran tidak diubah: ' . implode('; ', $gagal) . '.');
+        }
+
+        return $alihkan;
     }
 
     /**

@@ -25,7 +25,7 @@ use App\Controllers\Admin\AtletController;
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
-    <p class="text-body-secondary">
+    <p class="teks-info mb-4">
         Semua atlet dari setiap pendaftaran. Untuk mengubah data atlet, buka rincian pendaftarannya lewat ID pendaftaran.
     </p>
 
@@ -90,6 +90,7 @@ use App\Controllers\Admin\AtletController;
                 <caption class="visually-hidden">Daftar atlet</caption>
                 <thead>
                     <tr>
+                        <th data-bentuk="nomor" class="text-end">No</th>
                         <th data-kolom="nomor_dada">Nomor dada</th>
                         <th data-kolom="nama">Nama</th>
                         <th data-kolom="nisn">NISN</th>

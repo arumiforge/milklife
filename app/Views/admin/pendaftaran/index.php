@@ -5,8 +5,10 @@
  * tombol Excel yang mengikuti saringan aktif. Data dari
  * `PendaftaranController::index()`.
  *
- * Bentuk kolom tambahan (`idPendaftaran`, `rincian`) didaftarkan
- * `aset/js/admin-pendaftaran.js`.
+ * Bentuk kolom tambahan (`pilih`, `idPendaftaran`, `rincian`) didaftarkan
+ * `aset/js/admin-pendaftaran.js`. Kotak centang tiap baris milik formulir
+ * `#form-massal` (atribut `form`): Tandai Lunas, Kembalikan ke Menunggu, atau
+ * Hapus untuk yang dicentang di halaman tabel ini (K76).
  *
  * @var CodeIgniter\View\View  $this
  * @var array<string, string>  $jenjang   kode => label
@@ -23,7 +25,7 @@
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
-    <p class="text-body-secondary mb-4 pengaturan-pengantar">
+    <p class="teks-info mb-4">
         Semua pendaftaran yang masuk lewat halaman Pendaftaran. Buka rinciannya untuk melihat atlet,
         menandai Lunas setelah transfer diperiksa, atau menghapus pendaftaran yang batal.
     </p>
@@ -68,6 +70,31 @@
                         <i class="bi bi-file-earmark-spreadsheet" aria-hidden="true"></i>
                         Unduh Excel
                     </a>
+                    <a id="ekspor-pendaftaran" class="btn btn-outline-primary" href="<?= site_url('admin/pendaftaran/ekspor') ?>"
+                        title="Semua pendaftaran, foto, dan bukti bayar dalam satu zip, misalnya untuk pindah server">
+                        <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+                        Backup data
+                    </a>
+                </div>
+            </form>
+
+            <form id="form-massal" class="bilah-massal" action="<?= site_url('admin/pendaftaran/massal') ?>" method="post"
+                data-konfirmasi="" aria-label="Tindakan untuk pendaftaran yang dicentang">
+                <?= csrf_field() ?>
+                <p class="bilah-massal-jumlah mb-0" aria-live="polite">
+                    <i class="bi bi-check2-square" aria-hidden="true"></i>
+                    <span id="jumlah-dipilih">0</span> pendaftaran dicentang
+                </p>
+                <div class="bilah-massal-tombol">
+                    <button type="submit" class="btn btn-sm btn-outline-success" name="tindakan" value="lunas" disabled>
+                        <i class="bi bi-check-circle" aria-hidden="true"></i> Tandai Lunas
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-outline-secondary" name="tindakan" value="menunggu" disabled>
+                        <i class="bi bi-hourglass-split" aria-hidden="true"></i> Kembalikan ke Menunggu
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger" name="tindakan" value="hapus" disabled>
+                        <i class="bi bi-trash" aria-hidden="true"></i> Hapus
+                    </button>
                 </div>
             </form>
 
@@ -78,6 +105,10 @@
                 data-kosong-saring="Tidak ada pendaftaran yang cocok dengan pencarian atau saringan. Ubah atau kosongkan saringan.">
                 <thead>
                     <tr>
+                        <th data-kolom="id" data-bentuk="pilih" data-urut="tidak" class="kolom-pilih">
+                            <input class="form-check-input" type="checkbox" id="pilih-semua" aria-label="Centang semua pendaftaran di halaman ini">
+                        </th>
+                        <th data-bentuk="nomor" class="text-end">No</th>
                         <th data-kolom="id_pendaftaran" data-bentuk="idPendaftaran">ID</th>
                         <th data-kolom="tanggal" data-bentuk="tanggal">Tanggal</th>
                         <th data-kolom="nama_sekolah">Sekolah</th>
@@ -94,13 +125,16 @@
         </div>
     </section>
 
-    <p class="text-body-secondary small mt-3 mb-0">
+    <p class="teks-catatan mt-3 mb-0">
         Pencarian mencocokkan ID pendaftaran, nama sekolah, dan NPSN. Excel memuat semua baris yang cocok
-        dengan pencarian dan saringan, tanpa batas halaman.
+        dengan pencarian dan saringan, tanpa batas halaman. Centang hanya berlaku untuk halaman tabel yang sedang tampil.
+        Backup data selalu memuat semua pendaftaran (tanpa saringan) beserta foto dan bukti bayar;
+        untuk memasukkannya di server baru, jalankan <code>php spark pendaftaran:impor &lt;berkas.zip&gt;</code>.
     </p>
 </div>
 <?= $this->endSection() ?>
 
 <?= $this->section('skrip') ?>
+<script src="<?= aset('js/konfirmasi.js') ?>"></script>
 <script src="<?= aset('js/admin-pendaftaran.js') ?>"></script>
 <?= $this->endSection() ?>

@@ -6,7 +6,7 @@
  */
 
 .pendaftaran-kepala {
-    padding: 1.75rem 0;
+    padding: 1.75rem 0 4.5rem;
     background: var(--ml-gradasi-kepala);
     color: rgba(255, 255, 255, 0.88);
 }
@@ -22,24 +22,30 @@
 }
 
 .pendaftaran-isi {
-    max-width: 52rem;
-    padding-top: 1.5rem;
+    max-width: 58rem;
+    padding-top: 0;
     padding-bottom: 3rem;
 }
 
-.pendaftaran-tertutup {
-    max-width: 36rem;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
+/* Desain ulang K77: pil langkah di kartu putih yang menumpang di bawah kepala,
+   garis kemajuan antarlangkah, kartu isian bergaris oranye, kotak isian lebih
+   tinggi, dan pilihan jenjang berupa tombol besar. */
+.wizard > nav {
+    position: relative;
+    margin-top: -3rem;
+    margin-bottom: 1.75rem;
+    padding: 1rem 0.75rem 0.75rem;
     background-color: var(--ml-putih);
-    border: 1px solid var(--ml-garis);
-    border-radius: 0.75rem;
+    border-radius: 1rem;
+    box-shadow: 0 1rem 2.5rem rgba(2, 31, 123, 0.15);
 }
 
-.pendaftaran-tertutup p {
-    color: var(--ml-teks-redup);
+.pendaftaran-isi > .pendaftaran-tertutup {
+    position: relative;
+    margin-top: -3rem;
 }
+
+/* Kotak .pendaftaran-tertutup memakai gaya keadaan kosong bersama di tema.css. */
 
 /* ---------- Pil langkah ---------- */
 
@@ -47,7 +53,7 @@
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.25rem;
-    margin: 0 0 1.5rem;
+    margin: 0;
     padding: 0;
     list-style: none;
     counter-reset: langkah;
@@ -82,12 +88,38 @@
     opacity: 0.65;
 }
 
+.pil-langkah > li {
+    position: relative;
+}
+
+/* Garis penghubung ke langkah berikutnya, di belakang lingkaran nomor. */
+.pil-langkah > li + li::before {
+    content: "";
+    position: absolute;
+    top: 1.55rem;
+    right: 50%;
+    left: -50%;
+    height: 3px;
+    border-radius: 2px;
+    background-color: var(--ml-garis);
+}
+
+.pil-langkah > li:has(.pil-selesai) + li::before,
+.pil-langkah > li:has(.pil-selesai) + li:has(.pil-aktif)::before {
+    background-color: var(--ml-biru);
+}
+
+.pil {
+    position: relative;
+    z-index: 1;
+}
+
 .pil-nomor {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border: 2px solid var(--ml-garis);
     border-radius: 50%;
     background-color: var(--ml-putih);
@@ -107,6 +139,7 @@
     border-color: var(--ml-oranye-tombol);
     background-color: var(--ml-oranye-tombol);
     color: #fff;
+    box-shadow: 0 0 0 0.3rem rgba(232, 95, 49, 0.2);
 }
 
 .pil-selesai {
@@ -137,7 +170,8 @@
 
 .langkah h2 {
     margin-bottom: 0.25rem;
-    font-size: 1.4rem;
+    font-size: clamp(1.4rem, 4vw, 1.75rem);
+    font-weight: 800;
 }
 
 .langkah h2:focus {
@@ -156,16 +190,41 @@
 
 .kartu-isian {
     margin-bottom: 1rem;
-    padding: 1rem;
+    padding: 1.1rem;
     background-color: var(--ml-putih);
     border: 1px solid var(--ml-garis);
-    border-radius: 0.75rem;
+    border-top: 5px solid var(--ml-oranye);
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(2, 31, 123, 0.06);
 }
 
 @media (min-width: 576px) {
     .kartu-isian {
-        padding: 1.5rem;
+        padding: 1.75rem;
     }
+}
+
+.halaman-pendaftaran .form-label,
+.halaman-pendaftaran legend.form-label {
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
+.halaman-pendaftaran .form-control,
+.halaman-pendaftaran .form-select,
+.halaman-pendaftaran .input-group > .btn {
+    min-height: 3rem;
+}
+
+.halaman-pendaftaran .form-control,
+.halaman-pendaftaran .form-select {
+    border-radius: 0.6rem;
+    font-size: 1.0625rem;
+}
+
+.halaman-pendaftaran .input-group > .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .langkah-tombol {
@@ -185,6 +244,14 @@
 
 .pilihan-tombol .btn {
     flex: 1 1 auto;
+    padding: 0.8rem 1rem;
+    border-width: 2px;
+    border-radius: 0.75rem;
+    font-weight: 700;
+}
+
+.pilihan-tombol .btn-check:checked + .btn {
+    box-shadow: 0 0.35rem 1rem rgba(35, 73, 135, 0.3);
 }
 
 fieldset.is-invalid .btn-outline-primary {

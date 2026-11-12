@@ -40,3 +40,5 @@ Keputusan kecil:
 
 
 Pemeriksaan tampilan (Chromium, kontainer cloud, `CI_ENVIRONMENT = production`, basis data pengembangan berisi `data:awal` dan pengaturan lengkap): halaman depan, wizard (dibuka dan diisi langkah 1), cek pendaftaran, unduhan, serta panel (dasbor, daftar pendaftaran, rekap, pengaturan halaman depan, jadwal) ditangkap di ukuran ponsel (390 piksel) dan komputer (1366 piksel), sekali dengan `aplikasi.minify = false` dan sekali dengan `true` setelah `php spark aset:minify`. Semua tangkapan sama persis, kecuali dua halaman yang berbeda paling banyak 2 tingkat warna di sebagian piksel (gambar latar dan bayangan kotak isian, perbedaan gambar biasa dari peramban, tidak terlihat mata). Tidak ada galat JavaScript. Halaman depan 41 KB menjadi 19 KB, halaman pendaftaran 43 KB menjadi 37 KB (belum termasuk CSS/JS yang ikut mengecil).
+
+Tambahan setelah selesai (K72): `aset:minify` juga memperkecil SVG aplikasi menjadi `.min.svg` (berkas asli tetap ada, `.min.svg` diabaikan git), dan `aset()` memilihnya bila minify aktif. `ikon.svg` tampil sama persis sebelum dan sesudah (dibandingkan di Chromium).

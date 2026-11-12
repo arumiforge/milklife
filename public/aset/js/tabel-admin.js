@@ -20,7 +20,7 @@
  *   data-panjang="25"            baris per halaman (bawaan 25)
  *
  * Atribut pada setiap <th> di <thead>:
- *   data-kolom="nama_sekolah"    kunci data di JSON (wajib)
+ *   data-kolom="nama_sekolah"    kunci data di JSON (wajib, kecuali bentuk nomor)
  *   data-bentuk="rupiah"         cara menampilkan (pilihan): teks (bawaan), angka,
  *                                rupiah, tanggal, status, tautan, html, atau nama
  *                                yang didaftarkan halaman di TabelAdmin.bentuk
@@ -35,6 +35,8 @@
  *   status  lencana Lunas (hijau) atau Menunggu (kuning) dari lunas/menunggu
  *   tautan  nilai {alamat, teks} menjadi <a>; teks di-escape
  *   html    disisipkan apa adanya; hanya untuk HTML yang sudah di-escape server
+ *   nomor   nomor urut baris (1, 2, …) yang berlanjut antarhalaman; tanpa
+ *           data-kolom, tidak bisa diurutkan
  *
  * Halaman bisa menambah bentuk sendiri sebelum DOMContentLoaded selesai:
  *   TabelAdmin.bentuk.aksi = function (nilai, baris) { return '…'; };
@@ -207,14 +209,18 @@
         var kolom = [];
         tabel.querySelectorAll('thead th').forEach(function (th) {
             var namaBentuk = th.getAttribute('data-bentuk') || 'teks';
+            var nomorUrut = namaBentuk === 'nomor';
             var kelas = (th.className || '').split(/\s+/).filter(function (k) {
                 return /^text-/.test(k);
             }).join(' ');
             kolom.push({
-                data: th.getAttribute('data-kolom'),
-                orderable: th.getAttribute('data-urut') !== 'tidak',
-                className: kelas,
-                render: function (nilai, jenis, baris) {
+                data: nomorUrut ? null : th.getAttribute('data-kolom'),
+                orderable: !nomorUrut && th.getAttribute('data-urut') !== 'tidak',
+                className: nomorUrut ? 'text-end text-body-secondary' : kelas,
+                render: function (nilai, jenis, baris, meta) {
+                    if (nomorUrut) {
+                        return jenis === 'display' ? String(meta.settings._iDisplayStart + meta.row + 1) : null;
+                    }
                     var fungsi = bentuk[namaBentuk] || bentuk.teks;
                     if (jenis !== 'display') {
                         return nilai;

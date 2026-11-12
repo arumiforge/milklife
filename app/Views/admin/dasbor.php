@@ -173,7 +173,7 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
                     <?php else : ?>
                         <?= view('tata_letak/_tanpa_gambar', ['rasio' => '21x9', 'label' => 'Gambar kepala halaman depan'], ['saveData' => false]) ?>
                     <?php endif ?>
-                    <p class="text-body-secondary small mt-3 mb-0">
+                    <p class="teks-catatan mt-3 mb-0">
                         Gambar kepala dan logo diatur di
                         <a href="<?= site_url('admin/pengaturan/halaman-depan') ?>">Pengaturan Halaman Depan</a>.
                     </p>

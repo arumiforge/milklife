@@ -280,22 +280,24 @@ h1, h2, h3, h4, h5, h6,
     flex: 1 0 auto;
 }
 
+/* Kepala lengket: tujuan tautan jangkar tidak tertutup kepala. */
+html:has(.tata-publik) {
+    scroll-padding-top: 5rem;
+}
+
 .kepala-publik {
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
     background: var(--ml-biru-tua);
 }
 
-/* Pita diagonal tipis di bawah kepala, mengikuti bidang miring flyer. */
+/* Pita oranye penuh di bawah kepala (K75). */
 .kepala-publik::after {
     content: "";
     display: block;
     height: 6px;
-    background: linear-gradient(100deg,
-        var(--ml-oranye) 0 62%,
-        var(--ml-biru-tua) 62% 63%,
-        var(--ml-biru-muda) 63% 80%,
-        var(--ml-biru-tua) 80% 81%,
-        var(--ml-oranye) 81% 100%);
+    background: var(--ml-oranye);
 }
 
 .kepala-publik .navbar {
@@ -343,7 +345,7 @@ h1, h2, h3, h4, h5, h6,
 
 .kepala-publik .nav-link.active {
     font-weight: 700;
-    box-shadow: inset 0 -3px 0 var(--ml-oranye);
+    box-shadow: inset 0 3px 0 var(--ml-oranye);
 }
 
 .kepala-publik .nav-link:focus-visible,
@@ -529,7 +531,7 @@ h1, h2, h3, h4, h5, h6,
     }
 }
 
-/* Logo di atas kartu putih, sama tinggi, bentuk asli tidak berubah. */
+/* Logo langsung di atas latar, tanpa kartu putih (K75); sama tinggi, bentuk asli tidak berubah. */
 .pembuka-logo {
     display: flex;
     flex-wrap: wrap;
@@ -543,10 +545,6 @@ h1, h2, h3, h4, h5, h6,
     align-items: center;
     max-width: 100%;
     height: 3.5rem;
-    padding: 0.4rem 0.6rem;
-    background-color: var(--ml-putih);
-    border-radius: 0.5rem;
-    box-shadow: 0 0.25rem 0.75rem rgba(2, 31, 123, 0.25);
 }
 
 .pembuka-logo-butir img {
@@ -581,12 +579,6 @@ h1, h2, h3, h4, h5, h6,
 
 .pembuka-teks p:last-child {
     margin-bottom: 0;
-}
-
-.pembuka-pendaftaran {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 }
 
 /* Keadaan pendaftaran: kartu putih dengan garis dan ikon berwarna per keadaan. */
@@ -650,24 +642,67 @@ h1, h2, h3, h4, h5, h6,
     font-weight: 600;
 }
 
-/* Tombol Pendaftaran dan Cek Pendaftaran. */
-.pembuka-tombol {
-    display: flex;
-    flex-wrap: wrap;
+/* Tombol Pendaftaran dan Cek Pendaftaran (beranda/_tombol.php, K75): ajakan
+   utama di atas bagian lomba. Ponsel bertumpuk; layar lebar membagi dua
+   lebar halaman. */
+.bagian-tombol {
+    padding: 1.5rem 0 0;
+    background-color: var(--ml-putih);
+}
+
+.bagian-tombol + .bagian-lomba > .container {
+    padding-top: 2rem !important;
+}
+
+.tombol-utama {
+    display: grid;
     gap: 0.75rem;
 }
 
-.pembuka-tombol .btn {
+.tombol-utama .btn {
     display: inline-flex;
-    flex: 1 1 13rem;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    font-weight: 600;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 0.375rem 1rem rgba(2, 31, 123, 0.18);
+}
+
+@media (min-width: 768px) {
+    .tombol-utama {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .tombol-utama .btn {
+        padding-top: 1.1rem;
+        padding-bottom: 1.1rem;
+        font-size: 1.25rem;
+    }
+}
+
+/* Tombol biru pekat: ajakan setara tombol oranye (putih di atas biru tua 14,15 : 1). */
+.btn-biru {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--ml-biru-tua);
+    --bs-btn-border-color: var(--ml-biru-tua);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--ml-biru);
+    --bs-btn-hover-border-color: var(--ml-biru);
+    --bs-btn-focus-shadow-rgb: 35, 73, 135;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--ml-biru);
+    --bs-btn-active-border-color: var(--ml-biru);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: var(--ml-biru-tua);
+    --bs-btn-disabled-border-color: var(--ml-biru-tua);
 }
 
 /* Tombol yang halamannya belum ada (K39): tetap terbaca, tidak bisa ditekan. */
-.pembuka-tombol .tombol-nonaktif {
+.tombol-utama .tombol-nonaktif {
     --bs-btn-disabled-opacity: 0.8;
 }
 
@@ -690,15 +725,6 @@ h1, h2, h3, h4, h5, h6,
         height: 8rem;
     }
 
-    .pembuka-pendaftaran {
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .pembuka-tombol .btn {
-        flex: 0 0 auto;
-    }
 }
 
 /* ---------- Tata letak polos (halaman masuk dan galat) ---------- */
@@ -795,18 +821,25 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .lomba-judul {
+    font-size: clamp(1.75rem, 4.5vw, 2.5rem);
     font-weight: 800;
 }
 
+/* Pengantar selebar halaman, sebagai kotak keterangan (K76). */
 .lomba-pengantar {
-    max-width: 68ch;
-    margin-bottom: 1.5rem;
-    color: var(--ml-teks-redup);
+    margin-bottom: 1.75rem;
+    padding: 0.875rem 1.1rem;
+    background-color: var(--ml-biru-muda-pucat);
+    border-left: 5px solid var(--ml-biru);
+    border-radius: 0.5rem;
+    color: var(--ml-biru-tua);
+    font-size: 1.125rem;
 }
 
 /* Kartu kelompok umur: garis oranye di atas seperti kartu masuk. */
 .lomba-ku {
-    padding: 1.1rem 1.1rem 0.9rem;
+    padding: 1.4rem 1.4rem 1.1rem;
+    font-size: 1.0625rem;
     background-color: var(--ml-latar);
     border: 1px solid var(--ml-garis);
     border-top: 5px solid var(--ml-oranye);
@@ -815,20 +848,21 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .lomba-ku-nama {
-    margin-bottom: 0.75rem;
-    font-size: 1.375rem;
+    margin-bottom: 1rem;
+    font-size: clamp(1.5rem, 4vw, 1.875rem);
     font-weight: 800;
 }
 
 .lomba-ku-info {
     display: grid;
-    gap: 0.5rem;
-    margin-bottom: 0.9rem;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
 }
 
 .lomba-ku-info dt {
     color: var(--ml-teks-redup);
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     font-weight: 600;
 }
 
@@ -839,12 +873,26 @@ h1, h2, h3, h4, h5, h6,
 .lomba-ku-info dd {
     margin-bottom: 0;
     color: var(--ml-biru-tua);
-    font-weight: 600;
+    font-size: 1.1875rem;
+    font-weight: 700;
 }
 
 .lomba-kosong {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
     margin-bottom: 0;
-    color: var(--ml-teks-redup);
+    padding: 0.75rem 0.875rem;
+    background-color: var(--ml-biru-muda-pucat);
+    border-left: 4px solid var(--ml-biru);
+    border-radius: 0.5rem;
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
+.lomba-kosong .bi {
+    color: var(--ml-biru);
+    font-size: 1.25rem;
 }
 
 /* Daftar nomor yang bisa dilipat. */
@@ -857,7 +905,8 @@ h1, h2, h3, h4, h5, h6,
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.75rem 0 0.15rem;
+    padding: 0.9rem 0 0.25rem;
+    font-size: 1.125rem;
     color: var(--ml-biru);
     font-weight: 700;
     cursor: pointer;
@@ -889,7 +938,7 @@ h1, h2, h3, h4, h5, h6,
 
 .lomba-nomor-jumlah {
     color: var(--ml-teks-redup);
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 600;
 }
 
@@ -909,9 +958,9 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .lomba-nomor-judul {
-    margin: 1rem 0 0.5rem;
+    margin: 1.25rem 0 0.5rem;
     color: var(--ml-teks-redup);
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -927,7 +976,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .lomba-daftar > li {
-    padding: 0.5rem 0.75rem;
+    padding: 0.7rem 0.9rem;
 }
 
 .lomba-daftar > li + li {
@@ -938,26 +987,55 @@ h1, h2, h3, h4, h5, h6,
 .lomba-beregu-kepala {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-    gap: 0.125rem 0.75rem;
+    gap: 0.375rem 0.75rem;
 }
 
 .lomba-nama-nomor {
     color: var(--ml-teks);
+    font-size: 1.0625rem;
     font-weight: 600;
 }
 
+/* Kategori sebagai lencana berwarna (K76): putra biru, putri oranye, mix biru muda. */
 .lomba-kategori {
-    color: var(--ml-teks-redup);
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+}
+
+.kategori {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 1rem;
     font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+}
+
+.kategori-putra {
+    background-color: var(--ml-biru);
+    color: #fff;
+}
+
+.kategori-putri {
+    background-color: var(--ml-oranye-tombol);
+    color: #fff;
+}
+
+.kategori-mix {
+    background-color: var(--ml-biru-muda);
+    color: var(--ml-biru-tua);
 }
 
 .lomba-beregu-info {
-    margin: 0.25rem 0 0;
+    margin: 0.4rem 0 0;
     padding: 0;
     list-style: none;
     color: var(--ml-teks-redup);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
 }
 
 .lomba-beregu-info .bi {
@@ -1006,16 +1084,6 @@ h1, h2, h3, h4, h5, h6,
     font-size: clamp(1.5rem, 5vw, 2rem);
     font-weight: 800;
     color: var(--ml-biru-tua);
-}
-
-.bagian-tambahan-judul::after {
-    content: "";
-    flex: none;
-    width: 2.5rem;
-    height: 4px;
-    margin-left: 0.25rem;
-    background-color: var(--ml-oranye);
-    transform: skewX(-24deg);
 }
 
 /* Judul tanpa kalimat pengantar (jadwal) diberi jarak sendiri ke daftar. */
@@ -1228,17 +1296,48 @@ h1, h2, h3, h4, h5, h6,
     padding-bottom: 3rem;
 }
 
-.unduhan-kosong {
-    max-width: 36rem;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem;
+/* Keadaan kosong (unduhan, cek, pendaftaran tertutup, bukti; K75): kartu
+   putih bergaris oranye tegas di atas, ikon besar biru di dalam cincin, judul
+   biru tua tebal, dan kalimat redup. */
+.unduhan-kosong,
+.cek-belum-siap,
+.pendaftaran-tertutup {
+    max-width: 38rem;
+    margin: 0 auto 2rem;
+    padding: 2.75rem 1.5rem 2.25rem;
     text-align: center;
     background-color: var(--ml-putih);
     border: 1px solid var(--ml-garis);
-    border-radius: 0.75rem;
+    border-top: 6px solid var(--ml-oranye);
+    border-radius: 1rem;
+    box-shadow: 0 0.75rem 2rem rgba(2, 31, 123, 0.08);
 }
 
-.unduhan-kosong p {
+.unduhan-kosong .ikon-bulat,
+.cek-belum-siap .ikon-bulat,
+.pendaftaran-tertutup .ikon-bulat {
+    width: 5rem;
+    height: 5rem;
+    margin-bottom: 1.25rem !important;
+    background: var(--ml-gradasi-kepala);
+    color: #fff;
+    font-size: 2.25rem;
+    box-shadow: 0 0 0 0.5rem var(--ml-biru-muda-pucat);
+}
+
+.unduhan-kosong :is(h1, h2),
+.cek-belum-siap :is(h1, h2),
+.pendaftaran-tertutup :is(h1, h2) {
+    font-weight: 800;
+    color: var(--ml-biru-tua);
+}
+
+.unduhan-kosong p,
+.cek-belum-siap p,
+.pendaftaran-tertutup p {
+    max-width: 30rem;
+    margin-left: auto;
+    margin-right: auto;
     color: var(--ml-teks-redup);
 }
 
@@ -1378,10 +1477,10 @@ h1, h2, h3, h4, h5, h6,
 
 /* ---------- Akhir bagian jadwal, unduhan, kontak ---------- */
 
-/* ---------- Halaman cek (Tahap 5) ---------- */
+/* ---------- Halaman cek (Tahap 5; desain ulang K77) ---------- */
 
 .halaman-cek-kepala {
-    padding: 2rem 0;
+    padding: 2rem 0 4.5rem;
     background: var(--ml-gradasi-kepala);
     color: rgba(255, 255, 255, 0.88);
 }
@@ -1397,22 +1496,77 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .halaman-cek-isi {
-    padding-top: 2rem;
+    padding-top: 0;
     padding-bottom: 3rem;
 }
 
-.cek-formulir,
-.cek-belum-siap {
-    max-width: 40rem;
-    margin: 0 auto 2rem;
+/* Formulir cari: kartu putih menumpang di bawah kepala biru. */
+.cek-formulir {
+    position: relative;
+    max-width: 44rem;
+    margin: -3rem auto 2rem;
+    padding: 1.25rem;
+    background-color: var(--ml-putih);
+    border-top: 5px solid var(--ml-oranye);
+    border-radius: 1rem;
+    box-shadow: 0 1rem 2.5rem rgba(2, 31, 123, 0.15);
 }
 
-.cek-belum-siap {
-    padding: 2.5rem 1.5rem;
-    text-align: center;
+.cek-formulir .form-label {
+    color: var(--ml-biru-tua);
+    font-size: 1.0625rem;
+}
+
+.halaman-cek .cek-belum-siap {
+    position: relative;
+    margin-top: -3rem;
+}
+
+/* Ringkasan sekolah. */
+.cek-sekolah {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
     background-color: var(--ml-putih);
     border: 1px solid var(--ml-garis);
+    border-left: 6px solid var(--ml-biru);
     border-radius: 1rem;
+}
+
+.cek-sekolah-ikon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 0.875rem;
+    background: var(--ml-gradasi-kepala);
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.cek-sekolah-isi {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cek-sekolah-label,
+.cek-kartu-urutan {
+    margin-bottom: 0.15rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.cek-sekolah h2 {
+    margin-bottom: 0.75rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
 }
 
 .cek-sekolah-data,
@@ -1420,23 +1574,40 @@ h1, h2, h3, h4, h5, h6,
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
     gap: 0.5rem 1rem;
+    margin-bottom: 0;
+}
+
+.cek-sekolah-data > div {
+    padding: 0.5rem 0.75rem;
+    background-color: var(--ml-latar);
+    border-radius: 0.5rem;
 }
 
 .cek-sekolah-data dt,
 .cek-biaya dt {
-    font-weight: 400;
-    font-size: 0.875rem;
+    font-weight: 500;
+    font-size: 0.8125rem;
     color: var(--ml-teks-redup);
 }
 
 .cek-sekolah-data dd,
 .cek-biaya dd {
     margin-bottom: 0;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--ml-biru-tua);
 }
 
+/* Kartu pendaftaran: garis kiri hijau (Lunas) atau kuning (Menunggu). */
 .cek-kartu {
     margin-bottom: 1.5rem;
+    overflow: hidden;
+    border-radius: 1rem;
+    border-left: 6px solid #E0A800;
+    box-shadow: 0 0.5rem 1.5rem rgba(2, 31, 123, 0.06);
+}
+
+.cek-kartu-lunas {
+    border-left-color: #198754;
 }
 
 .cek-kartu-kepala {
@@ -1445,6 +1616,16 @@ h1, h2, h3, h4, h5, h6,
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--ml-biru-muda-pucat);
+    border-bottom: 1px solid var(--ml-garis);
+}
+
+.cek-kartu-id {
+    margin-bottom: 0.15rem;
+    font-size: 1.375rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
 }
 
 .cek-kartu-tindakan {
@@ -1454,33 +1635,160 @@ h1, h2, h3, h4, h5, h6,
     gap: 0.5rem;
 }
 
-.cek-kartu-tindakan .badge {
+.cek-status {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.875rem;
     white-space: normal;
 }
 
-.cek-tabel {
-    font-size: 0.875rem;
+.cek-kartu > .card-body {
+    padding: 1.25rem;
 }
 
-.cek-tabel td,
-.cek-tabel th {
+.cek-subjudul {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.25rem 0 0.75rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.cek-subjudul .bi {
+    color: var(--ml-oranye-tombol);
+}
+
+.cek-jumlah {
+    padding: 0.1rem 0.55rem;
+    border-radius: 1rem;
+    background-color: var(--ml-biru);
+    color: #fff;
+    font-size: 0.8125rem;
+}
+
+.cek-penanggung-jawab,
+.cek-tim {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+}
+
+.cek-penanggung-jawab li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    padding: 0.6rem 0.85rem;
+    background-color: var(--ml-latar);
+    border-radius: 0.6rem;
+}
+
+.cek-penanggung-jawab .bi-person-circle {
+    color: var(--ml-biru);
+}
+
+.cek-penanggung-jawab .bi-whatsapp {
+    color: #198754;
+}
+
+.cek-tabel {
+    margin-bottom: 1.25rem;
+    font-size: 0.9375rem;
+}
+
+.cek-tabel thead th {
+    background-color: var(--ml-biru-tua);
+    color: #fff;
+    font-weight: 600;
     white-space: nowrap;
+}
+
+.cek-tabel td {
+    white-space: nowrap;
+}
+
+.cek-tabel abbr.kategori {
+    text-decoration: none;
+    cursor: help;
+}
+
+.cek-tim li {
+    padding: 0.75rem 0.9rem;
+    background-color: var(--ml-latar);
+    border-left: 4px solid var(--ml-oranye);
+    border-radius: 0.6rem;
+}
+
+.cek-tim-kepala {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.cek-tim-biaya {
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
+.cek-tim-anggota {
+    color: var(--ml-teks-redup);
+    font-size: 0.9375rem;
+}
+
+/* Biaya: strip ringkasan, total menonjol. */
+.cek-biaya {
+    padding: 0.85rem 1rem;
+    background-color: var(--ml-latar);
+    border-radius: 0.75rem;
 }
 
 .cek-biaya-total dd,
 .cek-total-semua strong {
-    font-size: 1.25rem;
+    font-size: 1.375rem;
     color: var(--ml-biru-tua);
 }
 
 .cek-total-semua {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    padding: 1rem 1.25rem;
-    background-color: var(--ml-biru-muda-pucat);
+    padding: 1.1rem 1.4rem;
+    background: var(--ml-gradasi-kepala);
+    color: #fff;
     border-radius: 1rem;
+    font-weight: 600;
+}
+
+.cek-total-semua strong {
+    color: #fff;
+}
+
+@media (max-width: 575.98px) {
+    .cek-sekolah-ikon {
+        display: none;
+    }
+
+    .cek-sekolah-data {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .cek-formulir {
+        padding: 1.75rem 2rem;
+    }
+
+    .cek-sekolah,
+    .cek-kartu-kepala,
+    .cek-kartu > .card-body {
+        padding: 1.5rem 1.75rem;
+    }
 }
 
 /* ---------- Akhir halaman cek ---------- */

@@ -14,28 +14,33 @@ use Throwable;
 /**
  * `php spark data:awal`
  *
- * Mengisi data awal dari flyer Seri 2 – 2026 (K25, rencana Tahap 2 "Data
- * awal", lampiran rancangan): data acara, tanggal pendaftaran, lima kelompok
- * umur beserta batas tahun lahir (K36) dan satu awalan nomor dada masing-masing
- * (K33), dan semua nomor lomba. Dijalankan sekali saat pemasangan, setelah
- * `php spark migrate --all`.
+ * Mengisi data awal yang lengkap (K25, diperluas K73): data acara, jadwal
+ * pendaftaran, lima kelompok umur beserta batas tahun lahir (K36), jenjang,
+ * biaya individu, dan satu awalan nomor dada masing-masing (K33), semua nomor
+ * lomba beserta aturan timnya, rekening pembayaran, isi halaman depan, jadwal,
+ * narahubung, media sosial, dan berkas unduhan. Dijalankan sekali saat
+ * pemasangan, setelah `php spark migrate --all`.
  *
- * Jenjang, biaya individu, serta batas anggota dan jumlah putra/putri nomor
- * beregu dikosongkan untuk diisi admin (K23). Batas tahun lahir dan awalan
- * nomor dada bisa diubah admin. Nomor individu dibuat dua kali, putra dan putri.
+ * Isinya dari flyer Seri 2 – 2026 dan permintaan pemilik. Rekening, nomor WA,
+ * tautan Zoom, media sosial, dan sebagian berkas unduhan masih **contoh**
+ * (berkas kosong) yang harus diganti admin dengan data sebenarnya.
+ * Semua bisa diubah lewat panel admin. Nomor individu dibuat dua kali, putra
+ * dan putri.
  *
  * Perintah menolak berjalan bila kelompok umur, awalan nomor dada, atau nomor
  * lomba sudah ada, atau pengaturan acara atau tanggal pendaftaran sudah
- * terisi, supaya isian admin tidak tertimpa. Semua ditulis dalam satu transaksi: tersimpan semua atau
- * tidak sama sekali.
+ * terisi, supaya isian admin tidak tertimpa. Pengaturan lain, jadwal,
+ * kontak, gambar, dan unduhan yang sudah diisi admin dilewati, tidak ditimpa.
+ * Isian basis data ditulis dalam satu transaksi: tersimpan semua atau tidak
+ * sama sekali.
  *
- * Data ini berasal dari flyer, bukan data siswa, jadi boleh ada di repo.
+ * Data ini bukan data siswa, jadi boleh ada di repo.
  */
 class DataAwal extends BaseCommand
 {
     protected $group       = 'Aplikasi';
     protected $name        = 'data:awal';
-    protected $description = 'Mengisi data acara, jadwal pendaftaran, kelompok umur, dan nomor lomba dari flyer Seri 2. Sekali jalan saat pemasangan.';
+    protected $description = 'Mengisi data awal lengkap Seri 2: acara, pendaftaran, kelompok umur, nomor lomba, pembayaran, halaman depan, jadwal, kontak, dan unduhan. Sekali jalan saat pemasangan.';
     protected $usage       = 'data:awal';
 
     /**
@@ -53,6 +58,73 @@ class DataAwal extends BaseCommand
     ];
 
     /**
+     * Pengaturan yang diisi hanya bila masih kosong; isian admin tidak ditimpa
+     * dan tidak membuat perintah menolak. Nomor WA dalam bentuk baku `628…`.
+     * Rekening dan nomor WA masih contoh (K73).
+     */
+    public const PENGATURAN_TAMBAHAN = [
+        'Pembayaran.bank'             => 'BANK BPD JATENG',
+        'Pembayaran.nomor_rekening'   => '0123456789',
+        'Pembayaran.pemilik_rekening' => 'Nama Panitia',
+        'Pembayaran.nomor_wa'         => '628123456789',
+        'HalamanDepan.judul'          => 'MilkLife Athletics Challenge!',
+        'HalamanDepan.teks'           => 'A youth sports event organized by the Bakti Olahraga Djarum Foundation and MilkLife to discover and train young track and field athletes in Indonesia.',
+        'HalamanDepan.footer'         => 'Bakti Olahraga Djarum Foundation dan MilkLife',
+        'HalamanDepan.nomor_wa_tanya' => '628123456789',
+        'HalamanDepan.pesan_tanya'    => 'Tanya admin',
+        'HalamanDepan.pesan_bagikan'  => 'Bagikan ke WA',
+    ];
+
+    /**
+     * Batas anggota nomor beregu = jumlah inti × angka ini (K73).
+     */
+    public const KALI_BATAS_ANGGOTA = 2;
+
+    /**
+     * Contoh jadwal (diisi bila tabel `jadwal` masih kosong):
+     * [judul, waktu `Y-m-d H:i:s` WIB, tempat, tautan, keterangan].
+     *
+     * @var list<array{0: string, 1: string, 2: string, 3: string, 4: string}>
+     */
+    public const JADWAL = [
+        ['Zoom Meeting Sosialisasi', '2026-10-05 19:00:00', 'Zoom Meeting', 'https://zoom.us/j/1234567890', "Penjelasan aturan lomba dan cara mendaftar untuk guru dan official sekolah.\nTautan Zoom di atas masih contoh."],
+        ['Batas akhir pendaftaran dan pembayaran', '2026-11-30 23:59:00', 'Web pendaftaran', '', 'Pendaftaran ditutup otomatis. Pastikan bukti transfer sudah dikirim lewat WA sebelum batas ini.'],
+        ['Technical Meeting', '2026-12-05 09:00:00', 'Supersoccer Arena, Kudus', '', "Pembahasan teknis lomba bersama official sekolah.\nWajib dihadiri minimal satu penanggung jawab tiap sekolah."],
+        ['Pengambilan nomor dada', '2026-12-08 13:00:00', 'Supersoccer Arena, Kudus', '', 'Bawa bukti pendaftaran (PDF atau cetak) dengan status Lunas.'],
+        ['Pelaksanaan lomba', '2026-12-09 07:00:00', 'Supersoccer Arena, Kudus', '', 'Lomba berlangsung 9–12 Desember 2026. Jadwal per nomor lomba diumumkan saat technical meeting.'],
+    ];
+
+    /**
+     * Narahubung (dari flyer) dan media sosial (contoh), diisi bila tabel
+     * `tautan` masih kosong: [jenis, label, nilai].
+     *
+     * @var list<array{0: string, 1: string, 2: string}>
+     */
+    public const TAUTAN = [
+        ['narahubung', 'Just', '085601137077'],
+        ['narahubung', 'Iqbal', '088215277227'],
+        ['media_sosial', 'Instagram', 'https://www.instagram.com/milklife.athletics'],
+        ['media_sosial', 'TikTok', 'https://www.tiktok.com/@milklife.athletics'],
+        ['media_sosial', 'YouTube', 'https://www.youtube.com/@milklifeathletics'],
+    ];
+
+    /**
+     * Berkas unduhan, diisi bila tabel `unduhan` masih kosong:
+     * [judul, keterangan, berkas relatif terhadap folder proyek].
+     * Berkas di `data/unduhan/` masih contoh kosong (K73).
+     *
+     * @var list<array{0: string, 1: string, 2: string}>
+     */
+    public const UNDUHAN = [
+        ['Flyer Seri 2 – 2026', 'Kategori, nomor lomba, jadwal, dan biaya pendaftaran.', 'sumber/flyer/flyer-seri2-2026.jpg'],
+        ['Banner Seri 2 – 2026', 'Gambar untuk dibagikan di media sosial sekolah.', 'sumber/flyer/banner-seri2-2026.jpg'],
+        ['Petunjuk teknis lomba', 'Aturan lomba tiap kelompok umur dan nomor lomba.', 'data/unduhan/petunjuk-teknis.pdf'],
+        ['Surat keterangan sekolah', 'Templat surat keterangan siswa aktif dari kepala sekolah.', 'data/unduhan/surat-keterangan-sekolah.docx'],
+        ['Daftar atlet sekolah', 'Templat untuk menyiapkan data atlet sebelum mengisi formulir pendaftaran.', 'data/unduhan/daftar-atlet.xlsx'],
+        ['Denah lokasi', 'Denah Supersoccer Arena, Kudus.', 'data/unduhan/denah-lokasi.png'],
+    ];
+
+    /**
      * Kunci pengaturan yang, bila sudah terisi, membuat perintah menolak berjalan.
      */
     private const PENGATURAN_PENJAGA = [
@@ -65,19 +137,25 @@ class DataAwal extends BaseCommand
      *
      * - `lahir`: [tahun lahir paling awal, tahun lahir paling akhir] (K36);
      *   `null` = tidak dibatasi di sisi itu (KU 8: lahir 2019 ke atas).
+     * - `jenjang`: kode jenjang yang boleh ikut (`App\Libraries\Jenjang`).
+     * - `biaya`: biaya individu, rupiah per atlet per nomor (K73).
      * - `awalan`: awalan nomor dada (satu angka), `urutan` 1 dan `nomor_terakhir` 0 (K33).
      * - `individu`: nama nomor; masing-masing dibuat putra dan putri.
      * - `beregu`: [nama, kategori (`putra_putri` = dibuat putra dan putri, atau `mix`), jumlah inti, biaya beregu].
+     *   Batas anggota = jumlah inti × `KALI_BATAS_ANGGOTA`; nomor mix minimal
+     *   separuh inti putra dan sisanya putri.
      *
      * KU 8 diberi nama "KU 8 (Seneng Playon)" seperti di flyer, supaya sekolah
      * mengenalinya; admin bisa mengubahnya.
      *
-     * @var list<array{nama: string, lahir: array{0: int|null, 1: int|null}, awalan: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>}>
+     * @var list<array{nama: string, lahir: array{0: int|null, 1: int|null}, jenjang: list<string>, biaya: int, awalan: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>}>
      */
     public const KELOMPOK_UMUR = [
         [
             'nama'     => 'KU 8 (Seneng Playon)',
             'lahir'    => [2019, null],
+            'jenjang'  => ['A'],
+            'biaya'    => 25000,
             'awalan'   => '1',
             'individu' => ['Lari 40 m'],
             'beregu'   => [],
@@ -85,6 +163,8 @@ class DataAwal extends BaseCommand
         [
             'nama'     => 'KU 10',
             'lahir'    => [2016, 2018],
+            'jenjang'  => ['A'],
+            'biaya'    => 25000,
             'awalan'   => '2',
             'individu' => ['Lari 60 m', 'Frog Jump', 'Turbo Throw'],
             'beregu'   => [
@@ -96,6 +176,8 @@ class DataAwal extends BaseCommand
         [
             'nama'     => 'KU 12',
             'lahir'    => [2015, 2015],
+            'jenjang'  => ['A'],
+            'biaya'    => 25000,
             'awalan'   => '3',
             'individu' => ['Lompat Jauh', 'Tolak Peluru', 'Lari 60 m', 'Lari 1000 m', 'Trilomba'],
             'beregu'   => [
@@ -105,6 +187,8 @@ class DataAwal extends BaseCommand
         [
             'nama'     => 'KU 15',
             'lahir'    => [2011, 2014],
+            'jenjang'  => ['B'],
+            'biaya'    => 35000,
             'awalan'   => '4',
             'individu' => [
                 'Jalan Cepat 2000 m', 'Lari 80 m', 'Lari 400 m', 'Lari 800 m', 'Lari 1500 m',
@@ -117,6 +201,8 @@ class DataAwal extends BaseCommand
         [
             'nama'     => 'KU 18',
             'lahir'    => [2008, 2010],
+            'jenjang'  => ['C'],
+            'biaya'    => 50000,
             'awalan'   => '5',
             'individu' => [
                 'Jalan Cepat 3000 m', 'Lari 100 m', 'Lari 400 m', 'Lari 800 m', 'Lari 1500 m',
@@ -167,27 +253,40 @@ class DataAwal extends BaseCommand
         $this->tampilkanRingkasan($hasil);
 
         foreach (self::pasangGambarBawaan() as $kunci => $terpasang) {
-            $nama = $kunci === 'HalamanDepan.logo_persegi' ? 'Logo persegi' : 'Gambar kepala';
+            $nama    = self::GAMBAR_BAWAAN[$kunci][1];
+            $halaman = str_starts_with($kunci, 'Pembayaran.') ? 'Pengaturan > Pembayaran' : 'Pengaturan > Halaman Depan';
 
             if ($terpasang) {
-                CLI::write($nama . ' bawaan dipasang di halaman depan (bisa diganti di Pengaturan > Halaman Depan).');
+                CLI::write($nama . ' bawaan dipasang (bisa diganti di ' . $halaman . ').');
             } else {
-                CLI::error($nama . ' bawaan gagal disalin. Pastikan folder public/unggahan boleh ditulisi, lalu unggah gambarnya lewat Pengaturan > Halaman Depan.');
+                CLI::error($nama . ' bawaan gagal disalin. Pastikan folder public/unggahan boleh ditulisi, lalu unggah gambarnya lewat ' . $halaman . '.');
             }
+        }
+
+        $unduhan = self::pasangUnduhanBawaan($db);
+
+        if ($unduhan['tersimpan'] > 0) {
+            CLI::write($unduhan['tersimpan'] . ' berkas unduhan dipasang (bisa diganti di Pengaturan > Unduhan).');
+        }
+
+        if ($unduhan['gagal'] !== []) {
+            CLI::error('Berkas unduhan gagal disalin: ' . implode(', ', $unduhan['gagal']) . '. Pastikan folder public/unggahan boleh ditulisi, lalu unggah berkasnya lewat Pengaturan > Unduhan.');
         }
 
         return EXIT_SUCCESS;
     }
 
     /**
-     * Gambar bawaan halaman depan dari pemilik (K47), disalin ke folder
-     * unggahan supaya admin tetap bisa mengganti atau menghapusnya di panel.
+     * Gambar bawaan dari pemilik (K47, K73), disalin ke folder unggahan
+     * supaya admin tetap bisa mengganti atau menghapusnya di panel. Folder
+     * unggahannya sama dengan folder berkas di `data/`.
      *
-     * @var array<string, string> kunci `setting()` => berkas di `data/halaman-depan/`
+     * @var array<string, array{0: string, 1: string}> kunci `setting()` => [berkas di `data/`, nama untuk pesan]
      */
     public const GAMBAR_BAWAAN = [
-        'HalamanDepan.gambar_kepala' => 'gambar-kepala.webp',
-        'HalamanDepan.logo_persegi'  => 'logo-persegi.webp',
+        'HalamanDepan.gambar_kepala' => ['halaman-depan/gambar-kepala.webp', 'Gambar kepala'],
+        'HalamanDepan.logo_persegi'  => ['halaman-depan/logo-persegi.webp', 'Logo persegi'],
+        'Pembayaran.logo_bank'       => ['pembayaran/logo-bank.png', 'Logo bank'],
     ];
 
     /**
@@ -200,28 +299,75 @@ class DataAwal extends BaseCommand
     {
         $hasil = [];
 
-        foreach (self::GAMBAR_BAWAAN as $kunci => $berkas) {
+        foreach (self::GAMBAR_BAWAAN as $kunci => [$berkas]) {
             if (trim((string) setting($kunci)) !== '') {
                 continue;
             }
 
-            $sumber = ROOTPATH . 'data' . DIRECTORY_SEPARATOR . 'halaman-depan' . DIRECTORY_SEPARATOR . $berkas;
-            $folder = Unggahan::folderDasar() . 'halaman-depan';
-            $nama   = bin2hex(random_bytes(16)) . '.' . pathinfo($berkas, PATHINFO_EXTENSION);
+            $jalur = self::salinKeUnggahan(ROOTPATH . 'data/' . $berkas, dirname($berkas));
 
-            $berhasil = is_file($sumber)
-                && (is_dir($folder) || @mkdir($folder, 0755, true))
-                && @copy($sumber, $folder . DIRECTORY_SEPARATOR . $nama);
-
-            if ($berhasil) {
-                @chmod($folder . DIRECTORY_SEPARATOR . $nama, 0644);
-                setting($kunci, 'unggahan/halaman-depan/' . $nama);
+            if ($jalur !== null) {
+                setting($kunci, $jalur);
             }
 
-            $hasil[$kunci] = $berhasil;
+            $hasil[$kunci] = $jalur !== null;
         }
 
         return $hasil;
+    }
+
+    /**
+     * Salin berkas `UNDUHAN` ke `unggahan/unduhan/` dan catat di tabel
+     * `unduhan`, hanya bila tabelnya masih kosong. Berkas yang gagal disalin
+     * dilewati.
+     *
+     * @return array{tersimpan: int, gagal: list<string>} `gagal` berisi judul berkas
+     */
+    public static function pasangUnduhanBawaan(BaseConnection $db): array
+    {
+        $hasil = ['tersimpan' => 0, 'gagal' => []];
+
+        if ($db->table('unduhan')->countAllResults() > 0) {
+            return $hasil;
+        }
+
+        $waktu = Time::now()->format('Y-m-d H:i:s');
+
+        foreach (self::UNDUHAN as $urutan => [$judul, $keterangan, $berkas]) {
+            $jalur = self::salinKeUnggahan(ROOTPATH . $berkas, 'unduhan');
+
+            if ($jalur === null || ! $db->table('unduhan')->insert([
+                'judul' => $judul, 'keterangan' => $keterangan, 'berkas' => $jalur, 'urutan' => $urutan + 1, 'tampil' => 1,
+                'dibuat_pada' => $waktu, 'diubah_pada' => $waktu,
+            ])) {
+                $hasil['gagal'][] = $judul;
+
+                continue;
+            }
+
+            $hasil['tersimpan']++;
+        }
+
+        return $hasil;
+    }
+
+    /**
+     * Salin satu berkas ke `unggahan/<folder>/` dengan nama acak.
+     *
+     * @return string|null Jalur relatif (`unggahan/<folder>/….ext`), atau `null` bila gagal.
+     */
+    private static function salinKeUnggahan(string $sumber, string $folder): ?string
+    {
+        $tujuan = Unggahan::folderDasar() . $folder;
+        $nama   = bin2hex(random_bytes(16)) . '.' . strtolower(pathinfo($sumber, PATHINFO_EXTENSION));
+
+        if (! is_file($sumber) || (! is_dir($tujuan) && ! @mkdir($tujuan, 0755, true)) || ! @copy($sumber, $tujuan . DIRECTORY_SEPARATOR . $nama)) {
+            return null;
+        }
+
+        @chmod($tujuan . DIRECTORY_SEPARATOR . $nama, 0644);
+
+        return 'unggahan/' . $folder . '/' . $nama;
     }
 
     /**
@@ -278,6 +424,7 @@ class DataAwal extends BaseCommand
                     'nama'              => $ku['nama'],
                     'tahun_lahir_awal'  => $ku['lahir'][0],
                     'tahun_lahir_akhir' => $ku['lahir'][1],
+                    'biaya_individu'    => $ku['biaya'],
                     'urutan'            => $urutanKu + 1,
                     'aktif'             => 1,
                     'dibuat_pada'       => $waktu,
@@ -287,6 +434,12 @@ class DataAwal extends BaseCommand
                 }
 
                 $idKu = (int) $db->insertID();
+
+                foreach ($ku['jenjang'] as $jenjang) {
+                    if (! $db->table('kelompok_umur_jenjang')->insert(['kelompok_umur_id' => $idKu, 'jenjang' => $jenjang, 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu])) {
+                        throw new RuntimeException('Jenjang ' . $ku['nama'] . ' gagal disimpan.');
+                    }
+                }
 
                 if (! $db->table('awalan_nomor_dada')->insert([
                     'kelompok_umur_id' => $idKu,
@@ -314,6 +467,38 @@ class DataAwal extends BaseCommand
 
             foreach (self::PENGATURAN as $kunci => $nilai) {
                 setting($kunci, $nilai);
+            }
+
+            foreach (self::PENGATURAN_TAMBAHAN as $kunci => $nilai) {
+                if (trim((string) setting($kunci)) === '') {
+                    setting($kunci, $nilai);
+                }
+            }
+
+            if ($db->table('jadwal')->countAllResults() === 0) {
+                foreach (self::JADWAL as $urutan => [$judul, $waktuJadwal, $tempat, $tautan, $keterangan]) {
+                    if (! $db->table('jadwal')->insert([
+                        'judul'       => $judul,
+                        'keterangan'  => $keterangan,
+                        'waktu'       => $waktuJadwal,
+                        'tempat'      => $tempat,
+                        'tautan'      => $tautan === '' ? null : $tautan,
+                        'urutan'      => $urutan + 1,
+                        'tampil'      => 1,
+                        'dibuat_pada' => $waktu,
+                        'diubah_pada' => $waktu,
+                    ])) {
+                        throw new RuntimeException('Jadwal ' . $judul . ' gagal disimpan.');
+                    }
+                }
+            }
+
+            if ($db->table('tautan')->countAllResults() === 0) {
+                foreach (self::TAUTAN as $urutan => [$jenis, $label, $nilai]) {
+                    if (! $db->table('tautan')->insert(['jenis' => $jenis, 'label' => $label, 'nilai' => $nilai, 'urutan' => $urutan + 1, 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu])) {
+                        throw new RuntimeException('Kontak ' . $label . ' gagal disimpan.');
+                    }
+                }
             }
 
             $db->transCommit();
@@ -351,7 +536,7 @@ class DataAwal extends BaseCommand
      * Baris `nomor_lomba` untuk satu kelompok umur: individu (putra lalu putri
      * per nomor), lalu beregu, dengan `urutan` berjalan dari 1.
      *
-     * @param array{nama: string, lahir: array{0: int|null, 1: int|null}, awalan: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>} $ku
+     * @param array{nama: string, lahir: array{0: int|null, 1: int|null}, jenjang: list<string>, biaya: int, awalan: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>} $ku
      *
      * @return list<array<string, mixed>>
      */
@@ -384,8 +569,11 @@ class DataAwal extends BaseCommand
                     'jenis'        => 'beregu',
                     'kategori'     => $k,
                     'urutan'       => ++$urutan,
-                    'jumlah_inti'  => $inti,
-                    'biaya_beregu' => $biaya,
+                    'jumlah_inti'   => $inti,
+                    'batas_anggota' => $inti * self::KALI_BATAS_ANGGOTA,
+                    'jumlah_putra'  => $k === 'mix' ? intdiv($inti, 2) : null,
+                    'jumlah_putri'  => $k === 'mix' ? $inti - intdiv($inti, 2) : null,
+                    'biaya_beregu'  => $biaya,
                 ] + $dasar;
             }
         }
@@ -417,7 +605,7 @@ class DataAwal extends BaseCommand
 
         CLI::write('Nomor lomba  : ' . ($hasil['nomor_individu'] + $hasil['nomor_beregu']) . ' (' . $hasil['nomor_individu'] . ' individu, ' . $hasil['nomor_beregu'] . ' beregu)');
         CLI::newLine();
-        CLI::write('Langkah berikutnya: masuk ke panel admin, buka menu Pengaturan, lalu periksa batas tahun lahir dan isi');
-        CLI::write('jenjang sekolah dan biaya individu tiap kelompok umur, serta batas anggota nomor beregu.');
+        CLI::write('Langkah berikutnya: masuk ke panel admin, buka menu Pengaturan, lalu ganti data contoh dengan data sebenarnya:');
+        CLI::write('nomor rekening, nomor WA pembayaran dan tanya admin, tautan Zoom, media sosial, dan berkas unduhan yang masih kosong.');
     }
 }

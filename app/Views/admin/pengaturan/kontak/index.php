@@ -73,14 +73,17 @@ $bagian = [
                                 <table class="table align-middle mb-0">
                                     <thead>
                                         <tr>
+                                            <th scope="col" class="text-end">No</th>
                                             <th scope="col" class="text-center">Urutan</th>
                                             <th scope="col"><?= esc($b['judul']) ?></th>
                                             <th scope="col"><span class="visually-hidden">Tindakan</span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php $no = 0; ?>
                                         <?php foreach ($b['daftar'] as $kontak) : ?>
                                             <tr data-id="<?= (int) $kontak['id'] ?>">
+                                                <td class="text-end text-body-secondary"><?= ++$no ?></td>
                                                 <td class="text-center"><?= (int) $kontak['urutan'] ?></td>
                                                 <td style="min-width: 12rem">
                                                     <?php if ($kontak['jenis'] === TautanModel::NARAHUBUNG) : ?>

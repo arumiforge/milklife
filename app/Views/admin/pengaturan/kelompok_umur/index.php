@@ -29,7 +29,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3 mb-4">
-        <p class="text-body-secondary mb-0 pengaturan-pengantar">
+        <p class="teks-info mb-0 flex-grow-1">
             Kelompok umur atlet ditentukan dari tahun lahirnya. Tiap kelompok umur aktif perlu batas tahun lahir,
             jenjang sekolah yang boleh ikut, biaya per nomor individu, dan awalan nomor dada.
         </p>
@@ -62,7 +62,8 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
                     <table class="table align-middle mb-0" id="tabel-kelompok-umur">
                         <thead>
                             <tr>
-                                <th scope="col" class="ps-3 ps-lg-4">Kelompok umur</th>
+                                <th scope="col" class="ps-3 ps-lg-4 text-end">No</th>
+                                <th scope="col">Kelompok umur</th>
                                 <th scope="col">Tahun lahir</th>
                                 <th scope="col">Jenjang yang boleh ikut</th>
                                 <th scope="col" class="text-end">Biaya per nomor</th>
@@ -72,13 +73,15 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $no = 0; ?>
                             <?php foreach ($daftar as $ku) : ?>
                                 <?php
                                 $tahunLahir = KelompokUmurModel::teksTahunLahir($ku['tahun_lahir_awal'], $ku['tahun_lahir_akhir']);
                                 $bisaHapus  = $ku['alasan_tidak_bisa_dihapus'] === null;
                                 ?>
                                 <tr data-id="<?= (int) $ku['id'] ?>"<?= (int) $ku['aktif'] === 1 ? '' : ' class="text-body-secondary"' ?>>
-                                    <th scope="row" class="ps-3 ps-lg-4 text-nowrap"><?= esc($ku['nama']) ?></th>
+                                    <td class="ps-3 ps-lg-4 text-end text-body-secondary"><?= ++$no ?></td>
+                                    <th scope="row" class="text-nowrap"><?= esc($ku['nama']) ?></th>
                                     <td class="text-nowrap"><?= $tahunLahir === '' ? $belumDiisi() : esc($tahunLahir) ?></td>
                                     <td>
                                         <?php if ($ku['jenjang'] === []) : ?>
@@ -129,7 +132,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
                 </div>
             </div>
         </section>
-        <p class="text-body-secondary small mt-3 mb-0">
+        <p class="teks-catatan mt-3 mb-0">
             Kelompok umur yang sudah punya nomor lomba, atlet, atau nomor dada tidak bisa dihapus.
             Ubah statusnya menjadi mati supaya tidak muncul di pendaftaran.
         </p>

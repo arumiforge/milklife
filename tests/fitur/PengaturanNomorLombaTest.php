@@ -33,6 +33,15 @@ final class PengaturanNomorLombaTest extends UjiBasisData
         $this->resetStreamFilterBuffer();
     }
 
+    /**
+     * Data awal kini mengisi aturan tim (K73); kosongkan lagi batas anggota
+     * dan jumlah putra/putri supaya tampilan "belum lengkap" tetap teruji.
+     */
+    private function kosongkanAturanTim(): void
+    {
+        $this->db->query("UPDATE nomor_lomba SET batas_anggota = NULL, jumlah_putra = NULL, jumlah_putri = NULL WHERE jenis = 'beregu'");
+    }
+
     private function idNomor(string $nama, string $kategori, string $ku): int
     {
         $baris = $this->db->table('nomor_lomba')
@@ -149,6 +158,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
     public function testDaftarDataAwalDikelompokkanPerKelompokUmur(): void
     {
         $this->jalankanDataAwal();
+        $this->kosongkanAturanTim();
 
         $hasil = $this->bukaSebagaiAdmin(self::ALAMAT);
         $hasil->assertOK();
@@ -163,7 +173,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
             ),
         );
 
-        // Sebelas nomor beregu data awal belum punya batas anggota.
+        // Sebelas nomor beregu tanpa batas anggota.
         $this->assertSame(11, $xpath->query('//tr[@data-belum-lengkap="1"]')->length);
         $hasil->assertSee('11 nomor beregu belum lengkap.');
         $hasil->assertSee('Belum lengkap: batas anggota belum diisi.');
@@ -186,6 +196,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
     public function testSaringPerKelompokUmurDanBelumLengkap(): void
     {
         $this->jalankanDataAwal();
+        $this->kosongkanAturanTim();
         $ku10 = (int) $this->db->table('kelompok_umur')->where('nama', 'KU 10')->get()->getRow()->id;
 
         $hasil = $this->bukaSebagaiAdmin(self::ALAMAT . '?kelompok-umur=' . $ku10);
@@ -404,6 +415,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
     public function testFormulirUbahNomorDataAwalBelumLengkap(): void
     {
         $this->jalankanDataAwal();
+        $this->kosongkanAturanTim();
         $id = $this->idNomor('Estafet 8 × 50 m', 'mix', 'KU 12');
 
         $hasil = $this->bukaSebagaiAdmin(self::ALAMAT . "/{$id}/ubah");
@@ -438,6 +450,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
     public function testLengkapiNomorDataAwal(): void
     {
         $this->jalankanDataAwal();
+        $this->kosongkanAturanTim();
         $id    = $this->idNomor('Estafet 8 × 50 m', 'mix', 'KU 10');
         $lama  = $this->baris($id);
         $ku    = (int) $lama['kelompok_umur_id'];

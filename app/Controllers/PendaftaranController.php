@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libraries\BuktiPendaftaran;
 use App\Libraries\IsiHalamanDepan;
 use App\Libraries\Jenjang;
 use App\Libraries\Pendaftaran\DataIndukPendaftaran;
@@ -198,7 +199,7 @@ class PendaftaranController extends BaseController
      * POST pendaftaran/simpan
      *
      *     201 ['status' => 'tersimpan', 'pesan' => '…', 'id_pendaftaran' => 'MAC2A0000126',
-     *          'rincian' => [...], 'wa' => 'https://wa.me/…' atau null, 'bukti' => 'http://…/bukti/MAC2A0000126']
+     *          'rincian' => [...], 'wa' => 'https://wa.me/…' atau null, 'bukti' => 'http://…/bukti/<kode acak>/MAC2A0000126']
      *     422, 400, 409, 429 seperti `periksa()`.
      */
     public function simpan(): ResponseInterface
@@ -238,7 +239,7 @@ class PendaftaranController extends BaseController
             'id_pendaftaran' => $id,
             'rincian'        => $rincian,
             'wa'             => PesanKonfirmasi::alamat((string) setting('Pembayaran.nomor_wa'), $teks),
-            'bukti'          => site_url('bukti/' . $id),
+            'bukti'          => BuktiPendaftaran::alamat(['id' => (int) $hasil['pendaftaran']['id'], 'id_pendaftaran' => $id]),
         ]);
     }
 

@@ -90,7 +90,7 @@ final class CekPendaftaranTest extends UjiBasisData
         $hasil->assertSee('tanpa biaya tim, tim sudah terdaftar');
         $hasil->assertSee('Ibu Karangan');
         $this->assertStringContainsString('Rp650.000', $xpath->query('//*[contains(@class, "cek-total-semua")]')->item(0)->textContent);
-        $this->assertSame(site_url('bukti/MAC2A0000226'), $xpath->query('//a[contains(., "Cetak bukti")]')->item(1)->getAttribute('href'));
+        $this->assertSame(site_url('bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', 'MAC2A0000226')->get()->getRow()->kode_bukti . '/MAC2A0000226'), $xpath->query('//a[contains(., "Cetak bukti")]')->item(1)->getAttribute('href'));
 
         // Tanggal lahir dan nomor dada tidak tampil (K52).
         $hasil->assertDontSee('1 Mei 2016');

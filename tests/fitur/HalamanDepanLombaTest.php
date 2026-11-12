@@ -37,6 +37,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
     public function testDataAwalLimaKelompokUmurDan69Nomor(): void
     {
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:awal', []));
+        setting('HalamanDepan.tampilkan_biaya', true);
 
         $hasil = $this->get('/');
         $hasil->assertOK();
@@ -58,9 +59,12 @@ final class HalamanDepanLombaTest extends UjiBasisData
             $this->daftarTeks($xpath, '//*[contains(@class, "lomba-tahun-lahir")]'),
         );
 
-        // Jenjang dan biaya individu masih kosong setelah data awal.
-        $this->assertSame(array_fill(0, 5, 'Jenjang sekolah segera diumumkan'), $this->daftarTeks($xpath, '//*[contains(@class, "lomba-jenjang")]'));
-        $this->assertSame(array_fill(0, 5, 'Biaya segera diumumkan'), $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'));
+        // Jenjang dan biaya individu dari data awal (K73).
+        $this->assertSame(['SD/MI', 'SD/MI', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-jenjang")]'));
+        $this->assertSame(
+            ['Rp25.000 per atlet per nomor', 'Rp25.000 per atlet per nomor', 'Rp25.000 per atlet per nomor', 'Rp35.000 per atlet per nomor', 'Rp50.000 per atlet per nomor'],
+            $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'),
+        );
 
         // Ringkasan jumlah per kelompok umur; totalnya 69 nomor.
         $jumlah = $this->daftarTeks($xpath, '//*[contains(@class, "lomba-nomor-jumlah")]');
@@ -82,7 +86,10 @@ final class HalamanDepanLombaTest extends UjiBasisData
             ['Rp100.000 per tim', 'Rp100.000 per tim', 'Rp150.000 per tim'],
             $this->daftarTeks($xpath, $ku10 . '//*[contains(@class, "lomba-biaya-beregu")]'),
         );
-        $this->assertSame(['4 atlet per tim', '4 atlet per tim', '8 atlet per tim'], $this->daftarTeks($xpath, $ku10 . '//ul[contains(@class, "lomba-beregu-info")]/li[1]'));
+        $this->assertSame(
+            ['4 atlet inti, paling banyak 8 anggota', '4 atlet inti, paling banyak 8 anggota', '8 atlet inti, paling banyak 16 anggota'],
+            $this->daftarTeks($xpath, $ku10 . '//ul[contains(@class, "lomba-beregu-info")]/li[1]'),
+        );
 
         // KU 8 tanpa nomor beregu: tanpa judul "Nomor beregu".
         $this->assertSame(0, $xpath->query('(//article[contains(@class, "lomba-ku")])[1]//ul[contains(@class, "lomba-daftar-beregu")]')->length);
@@ -134,6 +141,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
     public function testTahunLahirJenjangDanBiayaIndividu(): void
     {
+        setting('HalamanDepan.tampilkan_biaya', true);
         $belum  = $this->tambahKu(['nama' => 'KU Belum', 'urutan' => 1, 'tahun_lahir_awal' => null, 'tahun_lahir_akhir' => null, 'biaya_individu' => null]);
         $gratis = $this->tambahKu(['nama' => 'KU Gratis', 'urutan' => 2, 'tahun_lahir_awal' => 2016, 'tahun_lahir_akhir' => 2018, 'biaya_individu' => 0]);
         $bayar  = $this->tambahKu(['nama' => 'KU Bayar', 'urutan' => 3, 'tahun_lahir_awal' => 2011, 'tahun_lahir_akhir' => 2014, 'biaya_individu' => 150000]);
@@ -156,6 +164,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
     public function testNomorBereguDanMix(): void
     {
+        setting('HalamanDepan.tampilkan_biaya', true);
         $ku = $this->tambahKu(['nama' => 'KU Regu']);
 
         // Putra dan putri dengan aturan sama digabung; mix dengan jumlah putra/putri.
@@ -189,6 +198,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
     public function testMixDenganSatuJumlahSaja(): void
     {
+        setting('HalamanDepan.tampilkan_biaya', true);
         $ku = $this->tambahKu(['nama' => 'KU Mix']);
         $this->tambahNomor($ku, ['nama' => 'Estafet Putra Saja', 'jenis' => 'beregu', 'kategori' => 'mix', 'batas_anggota' => 6, 'jumlah_putra' => 2, 'biaya_beregu' => 50000]);
 
@@ -229,13 +239,21 @@ final class HalamanDepanLombaTest extends UjiBasisData
         }
     }
 
-    public function testBiayaTampilSecaraBawaan(): void
+    public function testBiayaDisembunyikanSecaraBawaan(): void
     {
+        // K74: rincian biaya halaman depan disembunyikan sampai admin menyalakannya.
         $ku = $this->tambahKu(['nama' => 'KU Terbuka', 'biaya_individu' => 150000]);
         $this->tambahNomor($ku, ['nama' => 'Lari Karangan']);
 
-        $xpath = $this->xpathDari($this->get('/'));
+        $hasil = $this->get('/');
+        $xpath = $this->xpathDari($hasil);
 
+        $this->assertSame([], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'));
+        $hasil->assertDontSee('Rp150.000');
+        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran', $this->teks($xpath, '//*[contains(@class, "lomba-pengantar")]'));
+
+        setting('HalamanDepan.tampilkan_biaya', true);
+        $xpath = $this->xpathDari($this->get('/'));
         $this->assertSame(['Rp150.000 per atlet per nomor'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'));
         $this->assertStringContainsString('Biaya individu dihitung per atlet', $this->teks($xpath, '//*[contains(@class, "lomba-pengantar")]'));
     }
@@ -245,12 +263,14 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $alamat  = 'admin/pengaturan/halaman-depan';
         $sakelar = '//input[@type="checkbox" and @name="tampilkan_biaya" and @value="1"]';
 
-        // Bawaan: menyala.
+        // Bawaan: mati (K74).
         $kotak = $this->xpathDari($this->bukaSebagaiAdmin($alamat))->query($sakelar)->item(0);
         $this->assertNotNull($kotak);
-        $this->assertTrue($kotak->hasAttribute('checked'));
+        $this->assertFalse($kotak->hasAttribute('checked'));
 
-        // Tidak dicentang: dimatikan.
+        // Dicentang lalu tidak dicentang: dimatikan.
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin($alamat, ['tampilkan_biaya' => '1']), $alamat, 'Isi halaman depan tersimpan.');
+        $this->assertTrue($this->xpathDari($this->bukaSebagaiAdmin($alamat))->query($sakelar)->item(0)->hasAttribute('checked'));
         $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin($alamat, []), $alamat, 'Isi halaman depan tersimpan.');
         $this->assertFalse(setting('HalamanDepan.tampilkan_biaya'));
         $this->assertFalse($this->xpathDari($this->bukaSebagaiAdmin($alamat))->query($sakelar)->item(0)->hasAttribute('checked'));

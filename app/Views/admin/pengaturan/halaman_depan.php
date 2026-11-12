@@ -43,7 +43,7 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
 <div class="container-fluid px-3 px-lg-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="text-body-secondary mb-4">
+    <p class="teks-info mb-4">
         Isi yang tampil di halaman depan web pendaftaran. Semua boleh diisi bertahap.
         Nama, seri, tahun, tempat, dan tanggal acara diatur di <a href="<?= site_url('admin/pengaturan/acara') ?>">Data Acara</a>.
     </p>

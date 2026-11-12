@@ -457,10 +457,6 @@ a.kepala-admin-nama:focus-visible {
 
 /* ---------- Daftar pengaturan (admin/pengaturan/index.php) ---------- */
 
-.pengaturan-pengantar {
-    max-width: 48rem;
-}
-
 .judul-kelompok-pengaturan {
     letter-spacing: 0.04em;
     font-size: 0.8125rem;
@@ -694,3 +690,203 @@ div.dt-container .page-link {
 }
 
 /* ---------- Akhir wilayah Tahap 6 ---------- */
+
+/* ---------- Teks info dan catatan panel (K76) ---------- */
+
+/* Pengantar di atas halaman: kotak biru muda selebar halaman dengan ikon
+   info. Catatan di bawah bagian: kotak putih bergaris oranye dengan ikon
+   bohlam. Ikon lewat ::before supaya isi paragraf (teks dan tautan) tetap
+   satu aliran. */
+.teks-info,
+.teks-catatan {
+    position: relative;
+    display: block;
+    padding: 0.875rem 1rem 0.875rem 3rem;
+    border-radius: 0.75rem;
+    line-height: 1.55;
+}
+
+.teks-info {
+    background-color: var(--ml-biru-muda-pucat);
+    border: 1px solid var(--ml-biru-muda);
+    border-left: 5px solid var(--ml-biru);
+    color: var(--ml-biru-tua);
+}
+
+.teks-catatan {
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-left: 5px solid var(--ml-oranye);
+    color: var(--ml-teks);
+    font-size: 0.9375rem;
+}
+
+.teks-info::before,
+.teks-catatan::before {
+    position: absolute;
+    top: 0.85rem;
+    left: 1rem;
+    font-family: "bootstrap-icons";
+    font-size: 1.15rem;
+    line-height: 1.3;
+}
+
+.teks-info::before {
+    content: "\f430";
+    color: var(--ml-biru);
+}
+
+.teks-catatan::before {
+    content: "\f46b";
+    color: var(--ml-oranye-tombol);
+}
+
+.teks-info a,
+.teks-catatan a {
+    font-weight: 600;
+}
+
+/* ---------- Pilih massal di daftar pendaftaran (K76) ---------- */
+
+.bilah-massal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    padding: 0.625rem 0.875rem;
+    background-color: var(--ml-latar);
+    border: 1px dashed var(--ml-garis);
+    border-radius: 0.75rem;
+    color: var(--ml-teks-redup);
+}
+
+.bilah-massal-aktif {
+    background-color: var(--ml-biru-muda-pucat);
+    border: 1px solid var(--ml-biru-muda);
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
+.bilah-massal-jumlah .bi {
+    margin-right: 0.25rem;
+}
+
+.bilah-massal-tombol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.kolom-pilih {
+    width: 2.5rem;
+}
+
+#tabel-pendaftaran .form-check-input {
+    width: 1.15rem;
+    height: 1.15rem;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* ---------- Rincian pendaftaran: foto dan bukti bayar (K76) ---------- */
+
+.foto-pj {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.foto-pj-perbesar {
+    position: absolute;
+    right: 0.35rem;
+    bottom: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background-color: rgba(2, 31, 123, 0.8);
+    color: #fff;
+    font-size: 0.875rem;
+}
+
+.foto-pj:hover img,
+.foto-pj:focus-visible img {
+    outline: 3px solid var(--ml-biru-muda);
+}
+
+.bukti-kosong {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 12rem;
+    padding: 1.5rem;
+    text-align: center;
+    background-color: var(--ml-latar);
+    border: 2px dashed var(--ml-biru-muda);
+    border-radius: 0.75rem;
+}
+
+.bukti-kosong-ikon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 0.75rem;
+    border-radius: 50%;
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru);
+    font-size: 1.6rem;
+}
+
+.bukti-kosong-judul {
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+    color: var(--ml-biru-tua);
+}
+
+.bukti-kosong-teks {
+    max-width: 30rem;
+    margin-bottom: 0;
+    color: var(--ml-teks-redup);
+}
+
+.bukti-unggah {
+    height: 100%;
+    padding: 1rem 1.1rem;
+    background-color: var(--ml-latar);
+    border: 1px solid var(--ml-garis);
+    border-top: 4px solid var(--ml-oranye);
+    border-radius: 0.75rem;
+}
+
+/* Gambar besar di jendela (foto penanggung jawab, bukti bayar) muat setinggi layar. */
+.modal-body > img.img-fluid {
+    max-height: 75vh;
+    object-fit: contain;
+}
+
+/* Tabel data yang lebih lebar dari layar bisa digeser, bukan terpotong. */
+div.dt-container .dt-layout-table {
+    overflow-x: auto;
+}
+
+/* Jendela foto penanggung jawab: kecil di tengah layar, foto tidak selebar aslinya (K77). */
+.modal-foto-pj {
+    max-width: 26rem;
+}
+
+.foto-pj-besar {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 60vh;
+    margin: 0 auto;
+    object-fit: contain;
+}

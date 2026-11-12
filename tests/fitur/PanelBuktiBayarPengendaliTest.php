@@ -368,7 +368,8 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
         $xpath = $this->xpathPotongan(['pendaftaran' => ['id' => $p['id'], 'id_pendaftaran' => $p['id_pendaftaran']]]);
 
         $this->assertSame('0', $xpath->query('//*[@id="bukti-bayar"]/@data-jumlah-bukti')->item(0)?->nodeValue);
-        $this->assertSame(1, $xpath->query('//*[contains(@class, "tanpa-gambar")][@role="img"]')->length);
+        // Kotak kosong berikon (K76), tanpa gambar.
+        $this->assertSame(1, $xpath->query('//*[@class="bukti-kosong"]')->length);
         $this->assertSame(0, $xpath->query('//img')->length);
 
         $formulir = $xpath->query('//form[@id="unggah-bukti-bayar"]')->item(0);

@@ -127,7 +127,7 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  *     // ikon: nama Bootstrap Icons tanpa awalan "bi-".
  *
  * `tampilkanBiaya()`: `true` bila biaya individu dan biaya tim ditampilkan di
- * bagian lomba (`HalamanDepan.tampilkan_biaya`, nilai awal `true`). Bila
+ * bagian lomba (`HalamanDepan.tampilkan_biaya`, nilai awal `false`, K74). Bila
  * `false`, bagian lomba tidak menulis biaya sama sekali; datanya tetap ada di
  * `kelompokUmur()`.
  *

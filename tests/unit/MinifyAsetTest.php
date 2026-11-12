@@ -58,7 +58,14 @@ final class MinifyAsetTest extends CIUnitTestCase
         $this->tulis('vendor/pustaka/pustaka.css', ".pustaka {\n    color: red;\n}\n");
         $this->tulis('vendor/pustaka/pustaka.js', "function pustaka() {\n    return 1;\n}\n");
         $this->tulis('js/sudah.min.js', 'var sudah=1;');
-        $this->tulis('gambar/ikon.svg', '<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+        $this->tulis('gambar/ikon.svg', <<<'SVG'
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!-- Ikon aplikasi -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <rect width="32" height="32"   fill="#021F7B"/>
+              <text x="4" y="20">M  L</text>
+            </svg>
+            SVG);
     }
 
     protected function tearDown(): void
@@ -72,7 +79,7 @@ final class MinifyAsetTest extends CIUnitTestCase
     {
         $hasil = MinifyAset::perkecil($this->folder);
 
-        $this->assertSame(['css/tema.css', 'js/pendaftaran.js'], array_column($hasil, 'berkas'));
+        $this->assertSame(['css/tema.css', 'gambar/ikon.svg', 'js/pendaftaran.js'], array_column($hasil, 'berkas'));
 
         foreach ($hasil as $baris) {
             $this->assertLessThan($baris['sebelum'], $baris['sesudah'], $baris['berkas']);
@@ -89,6 +96,12 @@ final class MinifyAsetTest extends CIUnitTestCase
             $this->assertStringContainsString($aturan, $css);
         }
 
+        $svg = (string) file_get_contents($this->folder . '/gambar/ikon.min.svg');
+        $this->assertSame(
+            '<?xml version="1.0" encoding="UTF-8"?> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"> <rect width="32" height="32"   fill="#021F7B"/> <text x="4" y="20">M L</text> </svg>',
+            $svg,
+        );
+
         $js = (string) file_get_contents($this->folder . '/js/pendaftaran.min.js');
         $this->assertStringNotContainsString('Hitung jumlah', $js);
         $this->assertStringContainsString('function hitungAtlet(daftar)', $js);
@@ -98,15 +111,19 @@ final class MinifyAsetTest extends CIUnitTestCase
     public function testVendorDanBerkasMinDilewati(): void
     {
         $sebelum = (string) file_get_contents($this->folder . '/js/sudah.min.js');
+        $asli    = (string) file_get_contents($this->folder . '/gambar/ikon.svg');
 
         MinifyAset::perkecil($this->folder);
+
+        // Berkas asli tidak diubah.
+        $this->assertSame($asli, file_get_contents($this->folder . '/gambar/ikon.svg'));
 
         $this->assertFileDoesNotExist($this->folder . '/vendor/pustaka/pustaka.min.css');
         $this->assertFileDoesNotExist($this->folder . '/vendor/pustaka/pustaka.min.js');
         $this->assertFileDoesNotExist($this->folder . '/js/sudah.min.min.js');
         $this->assertSame($sebelum, file_get_contents($this->folder . '/js/sudah.min.js'));
         $this->assertSame(
-            ['css/tema.css', 'css/tema.min.css', 'gambar/ikon.svg', 'js/pendaftaran.js', 'js/pendaftaran.min.js', 'js/sudah.min.js', 'vendor/pustaka/pustaka.css', 'vendor/pustaka/pustaka.js'],
+            ['css/tema.css', 'css/tema.min.css', 'gambar/ikon.min.svg', 'gambar/ikon.svg', 'js/pendaftaran.js', 'js/pendaftaran.min.js', 'js/sudah.min.js', 'vendor/pustaka/pustaka.css', 'vendor/pustaka/pustaka.js'],
             $this->isiFolder(),
         );
     }
@@ -120,7 +137,7 @@ final class MinifyAsetTest extends CIUnitTestCase
 
         $this->assertSame($pertama, $kedua);
         $this->assertSame($isi, file_get_contents($this->folder . '/css/tema.min.css'));
-        $this->assertCount(8, $this->isiFolder());
+        $this->assertCount(9, $this->isiFolder());
 
         // Berkas asli yang berubah menghasilkan berkas kecil baru.
         $this->tulis('css/tema.css', ".baru {\n    margin: 0;\n}\n");
@@ -138,13 +155,13 @@ final class MinifyAsetTest extends CIUnitTestCase
 
     public function testAsetAplikasiYangAdaBisaDiperkecil(): void
     {
-        // Semua CSS/JS aplikasi sungguhan bisa diolah tanpa galat; hasilnya
+        // Semua CSS/JS/SVG aplikasi sungguhan bisa diolah tanpa galat; hasilnya
         // ditulis ke salinan di folder sementara.
         $salinan = $this->folder . '/salinan';
 
-        foreach (['css', 'js'] as $sub) {
-            foreach (glob(FCPATH . 'aset/' . $sub . '/*.' . $sub) ?: [] as $berkas) {
-                if (! str_ends_with($berkas, '.min.' . $sub)) {
+        foreach (['css' => 'css', 'js' => 'js', 'gambar' => 'svg'] as $sub => $ekstensi) {
+            foreach (glob(FCPATH . 'aset/' . $sub . '/*.' . $ekstensi) ?: [] as $berkas) {
+                if (! str_ends_with($berkas, '.min.' . $ekstensi)) {
                     $this->tulis('salinan/' . $sub . '/' . basename($berkas), (string) file_get_contents($berkas));
                 }
             }
@@ -155,6 +172,7 @@ final class MinifyAsetTest extends CIUnitTestCase
         $this->assertNotEmpty($hasil);
         $this->assertContains('css/tema.css', array_column($hasil, 'berkas'));
         $this->assertContains('js/pendaftaran.js', array_column($hasil, 'berkas'));
+        $this->assertContains('gambar/ikon.svg', array_column($hasil, 'berkas'));
 
         foreach ($hasil as $baris) {
             $this->assertLessThan($baris['sebelum'], $baris['sesudah'], $baris['berkas']);

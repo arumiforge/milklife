@@ -82,13 +82,87 @@ final class DataAwalTest extends UjiBasisData
         $this->assertSame(2, setting('Acara.seri'));
         $this->seeInDatabase('settings', ['class' => 'Config\Acara', 'key' => 'nama', 'value' => 'MilkLife Athletics Challenge']);
 
-        // Yang tidak disebut flyer tetap bernilai awal.
+        // Yang tidak disebut tetap bernilai awal.
         $this->assertFalse(setting('Pendaftaran.buka_manual'));
         $this->assertSame(2, setting('Pendaftaran.nomor_individu_maksimal'));
-        $this->assertSame('', setting('Pembayaran.bank'));
+        $this->assertFalse(setting('HalamanDepan.tampilkan_biaya'));
     }
 
-    public function testLimaKelompokUmurDenganTahunLahirTanpaJenjangBiaya(): void
+    public function testMengisiPembayaranDanHalamanDepan(): void
+    {
+        $this->jalankan();
+
+        foreach (DataAwal::PENGATURAN_TAMBAHAN as $kunci => $nilai) {
+            $this->assertSame($nilai, setting($kunci), $kunci);
+        }
+
+        $this->assertSame('BANK BPD JATENG', setting('Pembayaran.bank'));
+        $this->assertSame('628123456789', App\Libraries\NomorWa::normalkan('08123456789'));
+        $this->assertSame('628123456789', setting('Pembayaran.nomor_wa'));
+
+        // Pengaturan lengkap: pendaftaran bisa dibuka sesuai jadwal.
+        $this->assertSame([], (new App\Libraries\DataKelengkapan())->kelengkapan()->belumLengkap());
+    }
+
+    public function testMengisiJadwalDanKontak(): void
+    {
+        $this->jalankan();
+
+        $jadwal = $this->db->table('jadwal')->orderBy('urutan')->get()->getResultArray();
+        $this->assertSame(array_column(DataAwal::JADWAL, 0), array_column($jadwal, 'judul'));
+        $this->assertSame('Zoom Meeting Sosialisasi', $jadwal[0]['judul']);
+        $this->assertSame('https://zoom.us/j/1234567890', $jadwal[0]['tautan']);
+        $this->assertNull($jadwal[1]['tautan']);
+        $this->assertStringContainsString("\n", $jadwal[0]['keterangan']);
+        $this->assertSame([], array_diff(array_column($jadwal, 'tampil'), ['1']));
+
+        $tautan = $this->db->table('tautan')->orderBy('urutan')->get()->getResultArray();
+        $this->assertSame(
+            [['narahubung', 'Just', '085601137077'], ['narahubung', 'Iqbal', '088215277227']],
+            array_map(static fn (array $b): array => [$b['jenis'], $b['label'], $b['nilai']], array_slice($tautan, 0, 2)),
+        );
+        $this->assertSame(['Instagram', 'TikTok', 'YouTube'], array_column(array_slice($tautan, 2), 'label'));
+    }
+
+    public function testIsianAdminTidakDitimpa(): void
+    {
+        setting('HalamanDepan.judul', 'Judul Admin');
+        $this->db->table('jadwal')->insert(['judul' => 'Jadwal Admin']);
+        $this->db->table('tautan')->insert(['jenis' => 'narahubung', 'label' => 'Admin', 'nilai' => '081234567890']);
+
+        $this->assertSame(EXIT_SUCCESS, $this->jalankan());
+
+        $this->assertSame('Judul Admin', setting('HalamanDepan.judul'));
+        $this->assertSame('Bakti Olahraga Djarum Foundation dan MilkLife', setting('HalamanDepan.footer'));
+        $this->seeNumRecords(1, 'jadwal', []);
+        $this->seeNumRecords(1, 'tautan', []);
+    }
+
+    public function testMemasangUnduhanBawaan(): void
+    {
+        $this->assertSame(['tersimpan' => count(DataAwal::UNDUHAN), 'gagal' => []], DataAwal::pasangUnduhanBawaan($this->db));
+
+        $baris = $this->db->table('unduhan')->orderBy('urutan')->get()->getResultArray();
+        $this->assertSame(array_column(DataAwal::UNDUHAN, 0), array_column($baris, 'judul'));
+
+        $unggahan = new Unggahan();
+
+        foreach ($baris as $b) {
+            $this->assertMatchesRegularExpression('#^unggahan/unduhan/[0-9a-f]{32}\.(jpg|pdf|docx|xlsx|png)$#', $b['berkas']);
+            $this->assertTrue($unggahan->ada($b['berkas']), $b['judul']);
+            $this->assertStringStartsWith($this->folderUnggahan, (string) $unggahan->jalurPenuh($b['berkas']), 'Uji tidak menulis ke public/unggahan.');
+        }
+
+        // Flyer berisi gambar asli; contoh dokumen berupa berkas kosong.
+        $this->assertSame(filesize(ROOTPATH . 'sumber/flyer/flyer-seri2-2026.jpg'), $unggahan->ukuran($baris[0]['berkas']));
+        $this->assertSame(0, $unggahan->ukuran($baris[2]['berkas']));
+
+        // Tabel yang sudah berisi tidak ditambah lagi.
+        $this->assertSame(['tersimpan' => 0, 'gagal' => []], DataAwal::pasangUnduhanBawaan($this->db));
+        $this->seeNumRecords(count(DataAwal::UNDUHAN), 'unduhan', []);
+    }
+
+    public function testLimaKelompokUmurDenganTahunLahirJenjangDanBiaya(): void
     {
         $this->jalankan();
 
@@ -104,13 +178,21 @@ final class DataAwalTest extends UjiBasisData
             array_map(static fn (array $ku): array => [$ku['tahun_lahir_awal'], $ku['tahun_lahir_akhir']], $baris),
         );
 
+        // K73: KU 8–12 Rp25.000 (SD), KU 15 Rp35.000 (SMP), KU 18 Rp50.000 (SMA).
+        $this->assertSame(['25000', '25000', '25000', '35000', '50000'], array_column($baris, 'biaya_individu'));
+
         foreach ($baris as $ku) {
-            $this->assertNull($ku['biaya_individu'], $ku['nama']);
             $this->assertSame('1', $ku['aktif'], $ku['nama']);
             $this->assertNotNull($ku['dibuat_pada']);
         }
 
-        $this->seeNumRecords(0, 'kelompok_umur_jenjang', []);
+        $jenjang = $this->db->table('kelompok_umur_jenjang j')
+            ->select('k.nama, j.jenjang')->join('kelompok_umur k', 'k.id = j.kelompok_umur_id')
+            ->orderBy('k.urutan')->get()->getResultArray();
+        $this->assertSame(
+            [['KU 8 (Seneng Playon)', 'A'], ['KU 10', 'A'], ['KU 12', 'A'], ['KU 15', 'B'], ['KU 18', 'C']],
+            array_map(static fn (array $b): array => [$b['nama'], $b['jenjang']], $jenjang),
+        );
     }
 
     public function testSatuAwalanNomorDadaPerKelompokUmur(): void
@@ -210,7 +292,8 @@ final class DataAwalTest extends UjiBasisData
                 }
             }
 
-            // Beregu: jumlah inti dan biaya dari flyer; batas anggota dan jumlah putra/putri kosong.
+            // Beregu: jumlah inti dan biaya dari flyer; batas anggota dua kali
+            // inti; mix minimal separuh putra, separuh putri (K73).
             $this->assertSame(
                 $nomor['beregu'],
                 array_map(static fn (array $b): string => "{$b['nama']} {$b['kategori']} {$b['jumlah_inti']} {$b['biaya_beregu']}", $beregu),
@@ -218,9 +301,15 @@ final class DataAwalTest extends UjiBasisData
             );
 
             foreach ($beregu as $b) {
-                $this->assertNull($b['batas_anggota']);
-                $this->assertNull($b['jumlah_putra']);
-                $this->assertNull($b['jumlah_putri']);
+                $this->assertSame((int) $b['jumlah_inti'] * 2, (int) $b['batas_anggota']);
+
+                if ($b['kategori'] === 'mix') {
+                    $this->assertSame((int) $b['jumlah_inti'], (int) $b['jumlah_putra'] + (int) $b['jumlah_putri']);
+                    $this->assertSame((int) $b['jumlah_inti'] / 2, (int) $b['jumlah_putra']);
+                } else {
+                    $this->assertNull($b['jumlah_putra']);
+                    $this->assertNull($b['jumlah_putri']);
+                }
             }
 
             // Urutan berjalan dari 1 tanpa lompatan; semua aktif.
@@ -246,6 +335,9 @@ final class DataAwalTest extends UjiBasisData
         $this->assertStringNotContainsString('Patokan usia', $keluaran);
         $this->assertStringContainsString('Gambar kepala bawaan dipasang', $keluaran);
         $this->assertStringContainsString('Logo persegi bawaan dipasang', $keluaran);
+        $this->assertStringContainsString('Logo bank bawaan dipasang (bisa diganti di Pengaturan > Pembayaran)', $keluaran);
+        $this->assertStringContainsString(count(DataAwal::UNDUHAN) . ' berkas unduhan dipasang', $keluaran);
+        $this->assertStringContainsString('ganti data contoh dengan data sebenarnya', $keluaran);
     }
 
     public function testMenolakBilaDijalankanLagi(): void
@@ -321,13 +413,16 @@ final class DataAwalTest extends UjiBasisData
         $this->seeNumRecords(0, 'awalan_nomor_dada', []);
         $this->assertSame('', setting('Acara.nama'));
         $this->seeNumRecords(0, 'settings', []);
+        $this->seeNumRecords(0, 'jadwal', []);
+        $this->seeNumRecords(0, 'tautan', []);
     }
 
     public function testMemasangGambarBawaanHalamanDepan(): void
     {
         setting('HalamanDepan.logo_persegi', 'unggahan/halaman-depan/' . str_repeat('a', 32) . '.png');
 
-        $this->assertSame(['HalamanDepan.gambar_kepala' => true], DataAwal::pasangGambarBawaan());
+        $this->assertSame(['HalamanDepan.gambar_kepala' => true, 'Pembayaran.logo_bank' => true], DataAwal::pasangGambarBawaan());
+        $this->assertMatchesRegularExpression('#^unggahan/pembayaran/[0-9a-f]{32}\.png$#', (string) setting('Pembayaran.logo_bank'));
 
         $jalur = (string) setting('HalamanDepan.gambar_kepala');
         $this->assertMatchesRegularExpression('#^unggahan/halaman-depan/[0-9a-f]{32}\.webp$#', $jalur);

@@ -11,36 +11,35 @@
 $idJudul = 'pendaftaran-' . $urutan;
 $lunas   = $p['status'] === 'lunas';
 ?>
-<article class="card cek-kartu" aria-labelledby="<?= $idJudul ?>">
+<article class="card cek-kartu <?= $lunas ? 'cek-kartu-lunas' : 'cek-kartu-menunggu' ?>" aria-labelledby="<?= $idJudul ?>">
     <div class="card-header cek-kartu-kepala">
         <div>
-            <h3 class="h5 mb-1" id="<?= $idJudul ?>">
-                <?= $banyak ? 'Pendaftaran ' . $urutan . ' · ' : '' ?>ID <?= esc($p['id_pendaftaran']) ?>
-            </h3>
-            <p class="mb-0 small">Didaftarkan <?= esc(tanggal_id($p['dibuat_pada'], true)) ?></p>
+            <?php if ($banyak) : ?><p class="cek-kartu-urutan">Pendaftaran <?= $urutan ?></p><?php endif ?>
+            <h3 class="cek-kartu-id" id="<?= $idJudul ?>"><span class="visually-hidden">ID </span><?= esc($p['id_pendaftaran']) ?></h3>
+            <p class="mb-0 small"><i class="bi bi-clock" aria-hidden="true"></i> Didaftarkan <?= esc(tanggal_id($p['dibuat_pada'], true)) ?></p>
         </div>
         <div class="cek-kartu-tindakan">
-            <span class="badge <?= $lunas ? 'text-bg-success' : 'text-bg-warning' ?>">
+            <span class="badge rounded-pill cek-status <?= $lunas ? 'text-bg-success' : 'text-bg-warning' ?>">
                 <i class="bi <?= $lunas ? 'bi-check-circle-fill' : 'bi-hourglass-split' ?>" aria-hidden="true"></i>
                 <?= esc($p['status_label']) ?>
             </span>
-            <a class="btn btn-sm btn-outline-primary" href="<?= site_url('bukti/' . rawurlencode($p['id_pendaftaran'])) ?>" target="_blank" rel="noopener">
+            <a class="btn btn-primary" href="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p), 'attr') ?>" target="_blank" rel="noopener">
                 <i class="bi bi-printer" aria-hidden="true"></i> Cetak bukti
             </a>
         </div>
     </div>
 
     <div class="card-body">
-        <h4 class="h6">Penanggung jawab</h4>
+        <h4 class="cek-subjudul"><i class="bi bi-person-badge" aria-hidden="true"></i> Penanggung jawab</h4>
         <ul class="cek-penanggung-jawab">
             <?php foreach ($p['penanggung_jawab'] as $pj) : ?>
-                <li><?= esc($pj['nama']) ?> · <?= esc($pj['nomor_wa']) ?></li>
+                <li><i class="bi bi-person-circle" aria-hidden="true"></i> <strong><?= esc($pj['nama']) ?></strong> <span><i class="bi bi-whatsapp" aria-hidden="true"></i> <?= esc($pj['nomor_wa']) ?></span></li>
             <?php endforeach ?>
         </ul>
 
-        <h4 class="h6">Atlet (<?= count($p['atlet']) ?>)</h4>
+        <h4 class="cek-subjudul"><i class="bi bi-people" aria-hidden="true"></i> Atlet <span class="cek-jumlah"><?= count($p['atlet']) ?></span></h4>
         <div class="table-responsive">
-            <table class="table table-sm table-striped align-middle cek-tabel">
+            <table class="table table-hover align-middle cek-tabel">
                 <thead>
                     <tr>
                         <th scope="col">No</th>
@@ -54,10 +53,10 @@ $lunas   = $p['status'] === 'lunas';
                 <tbody>
                     <?php foreach ($p['atlet'] as $i => $a) : ?>
                         <tr>
-                            <td><?= $i + 1 ?></td>
-                            <td><?= esc($a['nama']) ?></td>
+                            <td class="text-body-secondary"><?= $i + 1 ?></td>
+                            <td class="fw-semibold"><?= esc($a['nama']) ?></td>
                             <td><?= esc($a['nisn']) ?></td>
-                            <td><abbr title="<?= esc($a['jenis_kelamin_label'], 'attr') ?>"><?= esc($a['jenis_kelamin']) ?></abbr></td>
+                            <td><abbr class="kategori kategori-<?= $a['jenis_kelamin'] === 'P' ? 'putri' : 'putra' ?>" title="<?= esc($a['jenis_kelamin_label'], 'attr') ?>"><?= esc($a['jenis_kelamin']) ?></abbr></td>
                             <td><?= esc($a['kelompok_umur']) ?></td>
                             <td><?= esc(implode(', ', $a['nomor_lomba'])) ?></td>
                         </tr>
@@ -67,13 +66,15 @@ $lunas   = $p['status'] === 'lunas';
         </div>
 
         <?php if ($p['beregu'] !== []) : ?>
-            <h4 class="h6">Tim beregu</h4>
+            <h4 class="cek-subjudul"><i class="bi bi-flag" aria-hidden="true"></i> Tim beregu <span class="cek-jumlah"><?= count($p['beregu']) ?></span></h4>
             <ul class="cek-tim">
                 <?php foreach ($p['beregu'] as $tim) : ?>
                     <li>
-                        <strong><?= esc($tim['nomor_lomba']) ?></strong>
-                        (<?= $tim['biaya_tim'] === null ? 'tanpa biaya tim, tim sudah terdaftar' : esc(rupiah($tim['biaya_tim'])) ?>):
-                        <?= esc(implode(', ', array_column($tim['anggota'], 'nama'))) ?>
+                        <div class="cek-tim-kepala">
+                            <strong><?= esc($tim['nomor_lomba']) ?></strong>
+                            <span class="cek-tim-biaya"><?= $tim['biaya_tim'] === null ? 'tanpa biaya tim, tim sudah terdaftar' : esc(rupiah($tim['biaya_tim'])) ?></span>
+                        </div>
+                        <span class="cek-tim-anggota"><?= esc(implode(', ', array_column($tim['anggota'], 'nama'))) ?></span>
                     </li>
                 <?php endforeach ?>
             </ul>

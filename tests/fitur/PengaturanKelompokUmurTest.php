@@ -89,8 +89,8 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $baris = $this->barisTabel($hasil);
         $this->assertSame(['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 0));
         $this->assertSame(['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2015', 'Lahir 2011–2014', 'Lahir 2008–2010'], array_column($baris, 1));
-        $this->assertSame(['Belum dipilih'], array_values(array_unique(array_column($baris, 2))));
-        $this->assertSame(['Belum diisi'], array_values(array_unique(array_column($baris, 3))));
+        $this->assertSame(['SD/MI', 'SD/MI', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], array_column($baris, 2));
+        $this->assertSame(['Rp25.000', 'Rp25.000', 'Rp25.000', 'Rp35.000', 'Rp50.000'], array_column($baris, 3));
         $this->assertSame(['1', '2', '3', '4', '5'], array_column($baris, 4));
         $this->assertSame(['Aktif'], array_values(array_unique(array_column($baris, 5))));
     }
@@ -468,6 +468,8 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
                 $sel[] = trim((string) preg_replace('/\s+/u', ' ', $td->textContent));
             }
 
+            // Sel pertama nomor urut (K76): 1, 2, …
+            $this->assertSame((string) (count($baris) + 1), array_shift($sel));
             $baris[] = $sel;
         }
 

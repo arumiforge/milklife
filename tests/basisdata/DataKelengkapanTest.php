@@ -43,24 +43,31 @@ final class DataKelengkapanTest extends UjiBasisData
         $this->assertSame(BukaTutupPendaftaran::DISIAPKAN, $data->bukaTutup(self::wib('2026-11-11 10:00:00'))->keadaan());
     }
 
-    public function testSetelahDataAwalSebagianLengkap(): void
+    public function testSetelahDataAwalSemuaLengkap(): void
     {
         $this->jalankanDataAwal();
 
+        // Data awal mengisi semua butir (K73), termasuk jenjang, biaya, batas anggota, dan rekening.
+        $this->assertSame(
+            ['acara' => true, 'pendaftaran' => true, 'kelompok-umur' => true, 'nomor-lomba' => true, 'pembayaran' => true],
+            array_column((new DataKelengkapan())->kelengkapan()->butir(), 'lengkap', 'kunci'),
+        );
+    }
+
+    public function testKelompokUmurDanNomorBelumLengkapDisebutSpesifik(): void
+    {
+        $this->jalankanDataAwal();
+        $this->db->query('DELETE FROM kelompok_umur_jenjang');
+        $this->db->query('UPDATE kelompok_umur SET biaya_individu = NULL');
+        $this->db->query("UPDATE nomor_lomba SET batas_anggota = NULL, jumlah_putra = NULL, jumlah_putri = NULL WHERE jenis = 'beregu'");
+
         $kelengkapan = (new DataKelengkapan())->kelengkapan();
 
-        $this->assertSame(
-            ['acara' => true, 'pendaftaran' => true, 'kelompok-umur' => false, 'nomor-lomba' => false, 'pembayaran' => false],
-            array_column($kelengkapan->butir(), 'lengkap', 'kunci'),
-        );
-
-        // Awalan nomor dada sudah diisi data awal (K33), jenjang dan biaya belum.
         $ku = $kelengkapan->untukHalaman('kelompok-umur')['keterangan'];
         $this->assertStringContainsString('KU 8 (Seneng Playon), KU 10, KU 12, KU 15, KU 18 belum punya jenjang sekolah.', $ku);
         $this->assertStringContainsString('KU 8 (Seneng Playon), KU 10, KU 12, KU 15, KU 18 belum punya biaya individu.', $ku);
         $this->assertStringNotContainsString('awalan', $ku);
 
-        // Nomor beregu dari data awal sudah punya jumlah inti dan biaya, belum batas anggota.
         $this->assertSame(
             "Kanga's Escape putra (KU 10), Kanga's Escape putri (KU 10), Formula 1 putra (KU 10), dan 8 nomor lainnya belum punya batas anggota. "
             . 'Estafet 8 × 50 m mix (KU 10), Estafet 8 × 50 m mix (KU 12), Estafet 4 × 400 m mix (KU 18) belum punya jumlah putra dan putri minimal.',
@@ -171,7 +178,7 @@ final class DataKelengkapanTest extends UjiBasisData
         $db->query("UPDATE nomor_lomba SET jumlah_putra = jumlah_inti DIV 2, jumlah_putri = jumlah_inti DIV 2 WHERE kategori = 'mix'");
 
         foreach ($db->table('kelompok_umur')->select('id')->get()->getResultArray() as $ku) {
-            $db->table('kelompok_umur_jenjang')->insert(['kelompok_umur_id' => $ku['id'], 'jenjang' => 'A']);
+            $db->table('kelompok_umur_jenjang')->ignore(true)->insert(['kelompok_umur_id' => $ku['id'], 'jenjang' => 'A']);
         }
 
         setting('Pembayaran.bank', 'Bank Karangan');

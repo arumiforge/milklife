@@ -54,7 +54,7 @@ $atributKotak = static function (string $kotak, array $galat, bool $adaPetunjuk)
 <div class="container-fluid px-3 px-lg-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="text-body-secondary mb-4">
+    <p class="teks-info mb-4">
         Perubahan di halaman ini hanya berlaku untuk akun Anda sendiri.
     </p>
 

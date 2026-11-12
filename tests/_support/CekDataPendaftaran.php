@@ -33,7 +33,7 @@ trait CekDataPendaftaran
         $this->db->query("UPDATE nomor_lomba SET jumlah_putra = jumlah_inti DIV 2, jumlah_putri = jumlah_inti DIV 2 WHERE kategori = 'mix'");
 
         foreach ($this->db->table('kelompok_umur')->select('id')->get()->getResultArray() as $ku) {
-            $this->db->table('kelompok_umur_jenjang')->insert(['kelompok_umur_id' => $ku['id'], 'jenjang' => 'A']);
+            $this->db->table('kelompok_umur_jenjang')->ignore(true)->insert(['kelompok_umur_id' => $ku['id'], 'jenjang' => 'A']);
         }
 
         setting('Pembayaran.bank', 'Bank Karangan');

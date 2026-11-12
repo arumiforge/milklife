@@ -118,7 +118,7 @@ final class PerkecilHtmlHalamanTest extends UjiBasisData
     private static function ringkasan(TestResponse $hasil): array
     {
         $html = (string) preg_replace('/[a-f0-9]{32}/', 'TOKEN', $hasil->getBody());
-        $html = (string) preg_replace('#(/aset/(?:css|js)/[^"\']+)\.min\.(css|js)#', '$1.$2', $html);
+        $html = (string) preg_replace('#(/aset/(?:css|js|gambar)/[^"\']+)\.min\.(css|js|svg)#', '$1.$2', $html);
         $dom  = new DOMDocument();
         libxml_use_internal_errors(true);
         $dom->loadHTML('<?xml encoding="utf-8"?>' . $html);

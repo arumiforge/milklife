@@ -35,6 +35,25 @@ Gambar bawaan halaman depan dari pemilik (K47), dipasang `php spark data:awal` b
 | `gambar-kepala.webp` | Gambar kepala (latar di belakang judul) | 1874 × 839 piksel |
 | `logo-persegi.webp` | Logo persegi MilkLife Athletics Challenge | 657 × 682 piksel |
 
+## `pembayaran/`
+
+Logo bank bawaan dari pemilik (K73), dipasang `php spark data:awal` sebagai logo bank bila pengaturannya masih kosong.
+
+| Berkas | Dipakai sebagai | Ukuran |
+|---|---|---|
+| `logo-bank.png` | Logo bank (Bank Jateng) di langkah pembayaran | 628 × 318 piksel |
+
+## `unduhan/`
+
+Contoh berkas unduhan (K73), **berkas kosong** yang dipasang `php spark data:awal` bila tabel unduhan masih kosong, bersama flyer dan banner asli dari `sumber/flyer/`. Admin mengganti isinya lewat Pengaturan > Unduhan sebelum produksi.
+
+| Berkas | Judul unduhan |
+|---|---|
+| `petunjuk-teknis.pdf` | Petunjuk teknis lomba |
+| `surat-keterangan-sekolah.docx` | Surat keterangan sekolah |
+| `daftar-atlet.xlsx` | Daftar atlet sekolah |
+| `denah-lokasi.png` | Denah lokasi |
+
 ## Memperbarui
 
 Butuh Python 3. Memakan waktu sekitar 10 menit (152 halaman, dengan jeda antar-permintaan).

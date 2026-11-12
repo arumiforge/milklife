@@ -45,6 +45,7 @@ php_errors.log
 #-------------------------
 /public/aset/**/*.min.css
 /public/aset/**/*.min.js
+/public/aset/**/*.min.svg
 !/public/aset/vendor/**
 
 #-------------------------

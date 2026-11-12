@@ -149,7 +149,9 @@ final class DataPendaftaran
 
         foreach ($kepala as $baris) {
             $hasil[(int) $baris['id']] = [
+                'id'                => (int) $baris['id'],
                 'id_pendaftaran'    => (string) $baris['id_pendaftaran'],
+                'kode_bukti'        => $baris['kode_bukti'] ?? null,
                 'jenjang'           => (string) $baris['jenjang'],
                 'jenjang_label'     => Jenjang::label($baris['jenjang']) ?? (string) $baris['jenjang'],
                 'npsn'              => $baris['npsn'] === null || $baris['npsn'] === '' ? null : (string) $baris['npsn'],

@@ -40,7 +40,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->lengkapiPengaturanCek();
         $this->isiDataCek();
 
-        $hasil = $this->get('bukti/MAC2A0000126');
+        $hasil = $this->get($this->alamatBukti('MAC2A0000126'));
         $hasil->assertOK();
         $this->assertStringStartsWith('application/pdf', $hasil->response()->getHeaderLine('Content-Type'));
         $this->assertSame('inline; filename="BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_SDNEGERICONTOH1_2026.pdf"', $hasil->response()->getHeaderLine('Content-Disposition'));
@@ -67,13 +67,13 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000126')))->html();
 
         foreach ([
-            'MILKLIFE ATHLETICS CHALLENGE', 'Seri 2 Tahun 2026',
-            'Nama Sekolah : <b>SD NEGERI CONTOH 1</b>', 'Tanggal Pendaftaran : <b>12 November 2026</b>',
-            'Kabupaten / Kota : <b>Kudus</b>', 'ID Pendaftaran : <b>MAC2A0000126</b>',
-            'Penanggung Jawab (Official) :', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
+            'BUKTI PENDAFTARAN', 'MILKLIFE ATHLETICS CHALLENGE', 'Seri 2 Tahun 2026',
+            'Nama Sekolah</div><div class="info-isi">SD NEGERI CONTOH 1</div>', 'Tanggal Pendaftaran</div><div class="info-isi">12 November 2026</div>',
+            'Kabupaten / Kota</div><div class="info-isi">Kudus</div>', 'ID Pendaftaran</div><div class="info-isi">MAC2A0000126</div>',
+            'Penanggung Jawab (Official)', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
             'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp150.000',
             'Estafet 4 × 50 m putra', 'BUDI KARANGAN, CANDRA REKAAN, DIMAS CONTOH, EKO KARANGAN', 'Rp200.000',
-            'Rp450.000', 'Rp650.000', 'lencana-menunggu">Menunggu Konfirmasi Pembayaran',
+            'Rp450.000', 'Rp650.000', 'stempel stempel-menunggu', 'Status Pembayaran</div><div class="info-isi">Menunggu Konfirmasi Pembayaran',
         ] as $teks) {
             $this->assertStringContainsString($teks, $html);
         }
@@ -84,8 +84,11 @@ final class BuktiPendaftaranTest extends UjiBasisData
         // Tanggal lahir dan nomor dada tidak dicetak (K52).
         $this->assertStringNotContainsString('1 Mei 2016', $html);
         $this->assertStringNotContainsString('Nomor Dada', $html);
-        // Logo persegi bawaan (K47) disisipkan sebagai PNG transparan.
+        // Logo persegi bawaan (K47) disisipkan sebagai PNG transparan; kode QR di kanan (K77).
         $this->assertStringContainsString('<img src="var:logo"', $html);
+        $this->assertStringContainsString('<img src="var:qr"', $html);
+        // Kepala tabel diulang di setiap halaman.
+        $this->assertStringContainsString('<thead>', $html);
     }
 
     public function testSusulanLunasDanTeksDiEscape(): void
@@ -97,7 +100,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->assertStringNotContainsString('1001', $html);
         $this->assertStringContainsString('Tanpa biaya (tim sudah terdaftar)', $html);
         $this->assertStringContainsString('Tidak ada nomor individu', $html);
-        $this->assertStringContainsString('lencana-lunas">Lunas', $html);
+        $this->assertStringContainsString('stempel stempel-lunas', $html);
         $this->assertStringNotContainsString('var:logo', $html, 'Tanpa logo bila belum diunggah.');
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2B0000326')))->html();
@@ -106,18 +109,49 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->assertStringNotContainsString('<SCRIPT>', $html);
     }
 
-    public function testIdTidakAdaMenghasilkan404(): void
+    public function testIdTidakAdaAtauKodeSalahMenghasilkan404(): void
     {
         $this->isiDataCek();
+        $benar = $this->alamatBukti('MAC2A0000126');
+        $kode  = explode('/', $benar)[1];
 
-        foreach (['MAC2A9999926', 'bukan-id'] as $id) {
+        foreach (['bukti/' . $kode . '/MAC2A9999926', 'bukti/' . $kode . '/bukan-id', 'bukti/' . str_repeat('0', 24) . '/MAC2A0000126', 'bukti/' . $kode . '/MAC2A0000226'] as $alamat) {
             try {
-                $this->get('bukti/' . $id);
-                $this->fail('Seharusnya 404: ' . $id);
+                $this->get($alamat);
+                $this->fail('Seharusnya 404: ' . $alamat);
             } catch (PageNotFoundException $e) {
                 $this->assertStringContainsString('tidak ditemukan', $e->getMessage());
             }
         }
+    }
+
+    public function testAlamatLamaTanpaKodeTidakAdaLagi(): void
+    {
+        $this->isiDataCek();
+
+        try {
+            $this->get('bukti/MAC2A0000126');
+            $this->fail('Alamat tanpa kode seharusnya tidak ditemukan.');
+        } catch (PageNotFoundException) {
+            $this->addToAssertionCount(1);
+        }
+    }
+
+    public function testKodeQrBerisiAlamatBuktiDanKertasF4(): void
+    {
+        $this->lengkapiPengaturanCek();
+        $this->isiDataCek();
+
+        $alamat = $this->alamatBukti('MAC2A0000126');
+        $this->assertMatchesRegularExpression('#^bukti/[0-9a-f]{24}/MAC2A0000126$#', $alamat);
+        $this->assertSame($alamat, $this->alamatBukti('MAC2A0000126'), 'Kode tetap untuk pendaftaran yang sama.');
+
+        $png = App\Libraries\KodeQr::png($alamat, (string) file_get_contents(ROOTPATH . 'data/halaman-depan/logo-persegi.webp'));
+        $this->assertSame($alamat, (new chillerlan\QRCode\QRCode())->readFromBlob($png)->data, 'Kode QR berlogo tetap terbaca.');
+
+        // F4 tegak: 215 × 330 mm = 609,45 × 935,43 pt.
+        $pdf = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000126')))->pdf();
+        $this->assertMatchesRegularExpression('#/MediaBox \[0 0 609\.4\d+ 935\.4\d+\]#', $pdf);
     }
 
     public function testPembatasanLaju(): void
@@ -126,15 +160,25 @@ final class BuktiPendaftaranTest extends UjiBasisData
 
         for ($ke = 1; $ke <= BuktiController::BATAS_PERMINTAAN; $ke++) {
             try {
-                $this->get('bukti/MAC2A9999926');
+                $this->get('bukti/' . str_repeat('a', 24) . '/MAC2A9999926');
             } catch (PageNotFoundException) {
                 // Permintaan yang tidak ditemukan tetap dihitung.
             }
         }
 
-        $hasil = $this->get('bukti/MAC2A0000126');
+        $hasil = $this->get('bukti/' . str_repeat('a', 24) . '/MAC2A0000126');
         $hasil->assertStatus(429);
         $hasil->assertHeader('Retry-After', '6');
         $hasil->assertSee('Tunggu 6 detik lagi');
+    }
+
+    /**
+     * Alamat bukti (dengan kode acak) untuk ID pendaftaran, tanpa awalan situs.
+     */
+    private function alamatBukti(string $id): string
+    {
+        $p = (new DataPendaftaran())->cariId($id);
+
+        return substr(BuktiPendaftaran::alamat($p), strlen(rtrim(site_url('/'), '/')) + 1);
     }
 }

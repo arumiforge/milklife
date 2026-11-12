@@ -84,6 +84,7 @@ final class DasborKelengkapanTest extends UjiBasisData
     public function testDasborSetelahDataAwal(): void
     {
         $this->jalankanDataAwal();
+        $this->kosongkanSebagian();
 
         $hasil = $this->bukaSebagaiAdmin('admin/dasbor');
         $xpath = $this->xpathDari($hasil);
@@ -150,6 +151,7 @@ final class DasborKelengkapanTest extends UjiBasisData
     public function testTandaHalamanPengaturanSetelahDataAwal(): void
     {
         $this->jalankanDataAwal();
+        $this->kosongkanSebagian();
 
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/pengaturan'));
         $tanda = [];
@@ -218,6 +220,21 @@ final class DasborKelengkapanTest extends UjiBasisData
         return $hasil;
     }
 
+    /**
+     * Data awal kini lengkap (K73); kosongkan lagi jenjang, biaya, aturan tim,
+     * dan rekening supaya tampilan "belum lengkap" tetap teruji.
+     */
+    private function kosongkanSebagian(): void
+    {
+        $this->db->query('DELETE FROM kelompok_umur_jenjang');
+        $this->db->query('UPDATE kelompok_umur SET biaya_individu = NULL');
+        $this->db->query("UPDATE nomor_lomba SET batas_anggota = NULL, jumlah_putra = NULL, jumlah_putri = NULL WHERE jenis = 'beregu'");
+
+        foreach (['bank', 'nomor_rekening', 'pemilik_rekening', 'nomor_wa'] as $kunci) {
+            setting('Pembayaran.' . $kunci, '');
+        }
+    }
+
     private function jalankanDataAwal(): void
     {
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:awal', []));
@@ -233,7 +250,7 @@ final class DasborKelengkapanTest extends UjiBasisData
         $this->db->query("UPDATE nomor_lomba SET jumlah_putra = jumlah_inti DIV 2, jumlah_putri = jumlah_inti DIV 2 WHERE kategori = 'mix'");
 
         foreach ($this->db->table('kelompok_umur')->select('id')->get()->getResultArray() as $ku) {
-            $this->db->table('kelompok_umur_jenjang')->insert(['kelompok_umur_id' => $ku['id'], 'jenjang' => 'A']);
+            $this->db->table('kelompok_umur_jenjang')->ignore(true)->insert(['kelompok_umur_id' => $ku['id'], 'jenjang' => 'A']);
         }
 
         setting('Pembayaran.bank', 'Bank Karangan');

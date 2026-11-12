@@ -55,6 +55,9 @@ $sekolah = $hasil[0] ?? null;
             <?php if ($sekolah !== null) : ?>
                 <section class="cek-hasil" aria-labelledby="cek-sekolah">
                     <div class="cek-sekolah">
+                        <span class="cek-sekolah-ikon" aria-hidden="true"><i class="bi bi-building"></i></span>
+                        <div class="cek-sekolah-isi">
+                        <p class="cek-sekolah-label">Sekolah</p>
                         <h2 class="h3" id="cek-sekolah"><?= esc($sekolah['nama_sekolah']) ?></h2>
                         <dl class="cek-sekolah-data">
                             <div><dt>NPSN</dt><dd><?= esc($sekolah['npsn'] ?? 'Tanpa NPSN') ?></dd></div>
@@ -62,6 +65,7 @@ $sekolah = $hasil[0] ?? null;
                             <div><dt>Kabupaten / Kota</dt><dd><?= esc($sekolah['kabupaten']) ?></dd></div>
                             <div><dt>Jumlah pendaftaran</dt><dd><?= count($hasil) ?></dd></div>
                         </dl>
+                        </div>
                     </div>
 
                     <?php foreach ($hasil as $nomor => $pendaftaran) : ?>
@@ -70,7 +74,7 @@ $sekolah = $hasil[0] ?? null;
 
                     <?php if (count($hasil) > 1) : ?>
                         <div class="cek-total-semua">
-                            <span>Total semua pendaftaran</span>
+                            <span><i class="bi bi-wallet2" aria-hidden="true"></i> Total semua pendaftaran</span>
                             <strong><?= rupiah(array_sum(array_column($hasil, 'total'))) ?></strong>
                         </div>
                     <?php endif ?>

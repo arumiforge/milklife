@@ -84,7 +84,7 @@ $ringkasTim = static function (array $nomor): string {
         </section>
     <?php else : ?>
         <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
-            <p class="text-body-secondary mb-0 pengaturan-pengantar">
+            <p class="teks-info mb-0 flex-grow-1">
                 <?= $jumlahSemua ?> nomor lomba di <?= count($kelompokUmur) ?> kelompok umur.
                 Nomor yang tidak aktif tidak muncul di pendaftaran.
             </p>
@@ -170,6 +170,7 @@ $ringkasTim = static function (array $nomor): string {
                             <caption class="visually-hidden">Nomor lomba <?= esc($ku['nama']) ?></caption>
                             <thead>
                                 <tr>
+                                    <th scope="col" class="text-end">No</th>
                                     <th scope="col" class="d-none d-md-table-cell text-end">Urutan</th>
                                     <th scope="col">Nomor</th>
                                     <th scope="col" class="d-none d-md-table-cell">Jenis</th>
@@ -181,6 +182,7 @@ $ringkasTim = static function (array $nomor): string {
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php $no = 0; ?>
                                 <?php foreach ($ku['nomor'] as $nomor) : ?>
                                     <?php
                                     $id          = (int) $nomor['id'];
@@ -190,6 +192,7 @@ $ringkasTim = static function (array $nomor): string {
                                     $belum       = $nomor['kekurangan'] !== [];
                                     ?>
                                     <tr id="nomor-<?= $id ?>" data-id="<?= $id ?>"<?= $belum ? ' data-belum-lengkap="1"' : '' ?>>
+                                        <td class="text-end text-body-secondary"><?= ++$no ?></td>
                                         <td class="d-none d-md-table-cell text-end text-body-secondary"><?= (int) $nomor['urutan'] ?></td>
                                         <td>
                                             <span class="fw-semibold"><?= esc($nomor['nama']) ?></span>
