@@ -111,7 +111,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $this->assertSame('Juknis: Lomba/Seri 2', $this->teks($xpath, './/h3', $butir->item(0)));
         $this->assertSame('Wajib dibaca. Versi terbaru.', $this->teks($xpath, './/*[contains(@class, "unduhan-keterangan")]', $butir->item(0)));
         $this->assertSame(1, $xpath->query('.//*[contains(@class, "unduhan-keterangan")]/br', $butir->item(0))->length);
-        $this->assertMatchesRegularExpression('/^PDF · \d+ (B|KB)$/u', $this->teks($xpath, './/*[contains(@class, "unduhan-rincian")]', $butir->item(0)));
+        $this->assertMatchesRegularExpression('/^PDF · \d+ (bita|KB)$/u', $this->teks($xpath, './/*[contains(@class, "unduhan-rincian")]', $butir->item(0)));
         $this->assertSame(1, $xpath->query('.//i[contains(@class, "bi-file-earmark-pdf")]', $butir->item(0))->length);
 
         $tombol = $xpath->query('.//a[contains(@class, "unduhan-tombol")]', $butir->item(0))->item(0);

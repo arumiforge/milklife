@@ -801,6 +801,11 @@ h1, h2, h3, h4, h5, h6,
     transform: skewX(-24deg);
 }
 
+/* Judul tanpa kalimat pengantar (jadwal) diberi jarak sendiri ke daftar. */
+.bagian-tambahan-judul + :not(.bagian-tambahan-pengantar) {
+    margin-top: 1.25rem;
+}
+
 .bagian-tambahan-judul .bi {
     color: var(--ml-oranye-tombol);
 }
