@@ -15,7 +15,8 @@ final class HalamanKerangkaTest extends UjiHalaman
         $hasil = $this->get('/');
 
         $hasil->assertOK();
-        $hasil->assertSee('Pendaftaran sedang disiapkan');
+        // Keadaan pendaftaran dari pengaturan (F3-01): belum lengkap = sedang disiapkan.
+        $hasil->assertSee('Pendaftaran sedang disiapkan.');
     }
 
     public function testAdminDialihkanKeDasbor(): void
