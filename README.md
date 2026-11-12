@@ -12,11 +12,11 @@ Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Ka
 | Sampai mana pengerjaannya | [`agent/PROGRES.md`](agent/PROGRES.md) |
 | Aturan kerja di repo ini | [`agent/ALUR-KERJA.md`](agent/ALUR-KERJA.md) |
 | Keputusan yang sudah diambil | [`agent/KEPUTUSAN.md`](agent/KEPUTUSAN.md) |
-| Memasang di komputer server produksi | [`dokumen/draf/panduan-pemasangan-produksi.md`](dokumen/draf/panduan-pemasangan-produksi.md) |
+| Memasang di komputer server produksi | [`dokumen/final/panduan-pemasangan-produksi.md`](dokumen/final/panduan-pemasangan-produksi.md) |
 
 ## Memasang di Laragon
 
-Langkah di bawah untuk komputer pengembangan. Untuk komputer server produksi (HTTPS lewat Cloudflare Tunnel, `.env` produksi, cadangan harian, pemulihan, dan pembaruan versi), ikuti [panduan pemasangan produksi](dokumen/draf/panduan-pemasangan-produksi.md).
+Langkah di bawah untuk komputer pengembangan. Untuk komputer server produksi (HTTPS lewat Cloudflare Tunnel, `.env` produksi, cadangan harian, pemulihan, dan pembaruan versi), ikuti [panduan pemasangan produksi](dokumen/final/panduan-pemasangan-produksi.md).
 
 Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 8, dan Composer (sudah ada di Laragon).
 

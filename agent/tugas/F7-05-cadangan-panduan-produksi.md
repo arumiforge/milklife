@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 7 — Penyelesaian |
 | Dibuat | 12 November 2026 |
 
@@ -16,7 +16,7 @@ Pemilik bisa memasang web di komputer produksi Laragon tanpa bantuan, dan data p
 - [x] `Config\Cadangan` dan bagian Cadangan di `.env.example`; sandi basis data tidak terlihat di baris perintah
 - [x] `dokumen/draf/panduan-pemasangan-produksi.md`: Laragon dan `php.ini`, `.env` produksi, perintah pemasangan, `aset:minify`, virtual host Nginx ke `public/`, Cloudflare Tunnel, Penjadwal Tugas harian, pemulihan, pembaruan versi, daftar periksa sebelum membuka pendaftaran
 - [x] `README.md`: tautan ke panduan dan baris Status diperbarui
-- [ ] Setelah disetujui pemilik: panduan dipindahkan ke `dokumen/final/` dan PDF dibuat dengan `php spark dokumen:pdf` di PR yang sama
+- [x] Setelah disetujui pemilik: panduan dipindahkan ke `dokumen/final/` dan PDF dibuat dengan `php spark dokumen:pdf` di PR yang sama
 
 ## Selesai bila
 
@@ -36,4 +36,4 @@ Rencana: `dokumen/draf/rencana-implementasi-tahap-7.md` bagian "Cadangan" dan "P
 
 ## Pertanyaan untuk pemilik
 
-Ditulis juga di deskripsi PR; lihat bagian "Asumsi yang perlu ditinjau" di panduan.
+Ditulis juga di deskripsi PR; lihat bagian "Asumsi yang perlu ditinjau" di panduan. Pemilik menyetujui panduan beserta asumsinya pada 12 November 2026 (dicatat koordinator); panduan dipindahkan ke `dokumen/final/` dan PDF-nya dibuat di PR yang sama.

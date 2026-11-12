@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Draf |
+| Status | **Disetujui pemilik pada 12 November 2026** |
 | Tanggal | 12 November 2026 |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
