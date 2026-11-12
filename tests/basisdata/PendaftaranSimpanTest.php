@@ -272,6 +272,7 @@ final class PendaftaranSimpanTest extends UjiBasisData
 
     public function testKuotaDihitungLintasPendaftaranNpsnYangSama(): void
     {
+        setting('Pendaftaran.atlet_per_nomor_maksimal', 2);
         $kiriman            = self::kirimanContoh();
         $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => ''];
         $kiriman['atlet']   = [self::atletContoh('9900000041', [10]), self::atletContoh('9900000042', [10])];
