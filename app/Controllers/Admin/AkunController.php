@@ -3,7 +3,9 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Libraries\SesiAdmin;
 use App\Models\AdminModel;
+use CodeIgniter\Config\Factories;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /**
@@ -16,7 +18,8 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   wajib bila nama pengguna diganti; mengganti nama tampilan saja tidak.
  * - `POST admin/akun/sandi` → `simpanSandi`: kata sandi saat ini, kata sandi
  *   baru, dan ulangannya. Setelah berhasil, ID sesi dibuat ulang dan admin
- *   tetap masuk.
+ *   tetap masuk; sesi lain milik akun yang sama diminta masuk lagi pada
+ *   permintaan berikutnya (K67, `SesiAdmin`).
  *
  * Percobaan yang memeriksa kata sandi saat ini dibatasi per akun, seperti
  * halaman masuk: 5 percobaan, lalu satu percobaan baru tiap 12 detik.
@@ -40,6 +43,8 @@ class AkunController extends BaseController
     private const PANJANG_SANDI_DIPERIKSA = 255;
 
     private const ALAMAT = 'admin/akun';
+
+    public const PESAN_SANDI_DIGANTI = 'Kata sandi sudah diganti. Perangkat lain yang masuk dengan akun ini akan diminta masuk lagi. Pakai kata sandi baru saat masuk berikutnya.';
 
     public const PESAN_SANDI_SALAH = 'Kata sandi saat ini salah. Tulis kata sandi yang Anda pakai untuk masuk ke panel ini.';
 
@@ -107,7 +112,7 @@ class AkunController extends BaseController
             return $this->tampilkan($admin, isianAkun: $isian, galatAkun: $model->errors());
         }
 
-        session()->set('admin_nama', $isian['nama']);
+        session()->set(SesiAdmin::KUNCI_NAMA, $isian['nama']);
 
         return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Data akun tersimpan.');
     }
@@ -172,10 +177,12 @@ class AkunController extends BaseController
             return $this->tampilkan($admin, galatSandi: ['sandi_baru' => (string) ($model->errors()['sandi'] ?? 'Kata sandi belum bisa disimpan. Coba sekali lagi.')]);
         }
 
-        // ID sesi baru, isi sesi (admin tetap masuk) dipertahankan.
+        // ID sesi baru, isi sesi (admin tetap masuk) dipertahankan. Sidik
+        // diperbarui ke hash baru supaya hanya sesi lain yang dikeluarkan.
+        Factories::libraries(SesiAdmin::class)->perbaruiSidik((int) $admin['id']);
         session()->regenerate(true);
 
-        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Kata sandi sudah diganti. Pakai kata sandi baru saat masuk berikutnya.');
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', self::PESAN_SANDI_DIGANTI);
     }
 
     /**
@@ -185,7 +192,7 @@ class AkunController extends BaseController
      */
     private function adminMasuk(): ?array
     {
-        $id = session('admin_id');
+        $id = session(SesiAdmin::KUNCI_ID);
 
         if (! is_int($id) || $id < 1) {
             return null;
@@ -200,14 +207,9 @@ class AkunController extends BaseController
      */
     private function akunTidakDitemukan(): ResponseInterface
     {
-        $sesi = session();
-        $sesi->remove(array_keys($_SESSION ?? []));
-        $sesi->regenerate(true);
+        SesiAdmin::akhiri();
 
-        return redirect()->to('admin/masuk')->with(
-            'pesan_masuk',
-            'Akun Anda tidak ditemukan lagi, jadi Anda dikeluarkan. Masuk dengan akun lain atau hubungi pengelola web.',
-        );
+        return redirect()->to('admin/masuk')->with('pesan_masuk', SesiAdmin::PESAN_AKUN_HILANG);
     }
 
     /**

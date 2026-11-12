@@ -2,6 +2,8 @@
 
 namespace App\Filters;
 
+use App\Libraries\SesiAdmin;
+use CodeIgniter\Config\Factories;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -19,7 +21,13 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   supaya tombol kembali di peramban tidak menampilkan halaman admin
  *   setelah keluar.
  *
- * Penjaga hanya memeriksa sesi (ada `admin_id`), tidak membaca basis data.
+ * - Sudah masuk tetapi kata sandi akunnya diganti sejak sesi ini masuk (sidik
+ *   di sesi tidak cocok lagi dengan hash tersimpan, K67), atau akunnya sudah
+ *   tidak ada: sesi diakhiri lalu dialihkan ke `/admin/masuk` dengan pesan
+ *   yang menjelaskannya. Lihat `SesiAdmin`.
+ *
+ * Pemeriksaan sidik membaca satu kolom dari tabel `admin` di setiap
+ * permintaan halaman admin.
  */
 class AdminFilter implements FilterInterface
 {
@@ -33,18 +41,28 @@ class AdminFilter implements FilterInterface
     public function before(RequestInterface $request, $arguments = null): ?RedirectResponse
     {
         $jalur        = $request instanceof IncomingRequest ? trim($request->getPath(), '/') : '';
-        $sudahMasuk   = self::sudahMasuk();
         $halamanMasuk = $jalur === self::HALAMAN_MASUK;
+        $pesan        = 'Silakan masuk dulu untuk membuka halaman admin.';
 
-        if ($halamanMasuk) {
-            return $sudahMasuk ? redirect()->to('admin/dasbor') : null;
-        }
+        if (self::sudahMasuk()) {
+            $hasil = Factories::libraries(SesiAdmin::class)->periksa((int) session(SesiAdmin::KUNCI_ID), session(SesiAdmin::KUNCI_SIDIK));
 
-        if ($sudahMasuk) {
+            if ($hasil === SesiAdmin::SAH) {
+                return $halamanMasuk ? redirect()->to('admin/dasbor') : null;
+            }
+
+            SesiAdmin::akhiri();
+            $pesan = SesiAdmin::pesan($hasil);
+
+            // Kiriman formulir masuk tetap diproses dengan sesi yang sudah kosong.
+            if ($halamanMasuk && $request instanceof IncomingRequest && $request->getMethod() === 'POST') {
+                return null;
+            }
+        } elseif ($halamanMasuk) {
             return null;
         }
 
-        if ($request instanceof IncomingRequest && $request->getMethod() === 'GET') {
+        if (! $halamanMasuk && $request instanceof IncomingRequest && $request->getMethod() === 'GET') {
             $kueri  = $request->getUri()->getQuery();
             $tujuan = self::tujuanAman($jalur . ($kueri === '' ? '' : '?' . $kueri));
 
@@ -53,8 +71,7 @@ class AdminFilter implements FilterInterface
             }
         }
 
-        return redirect()->to(self::HALAMAN_MASUK)
-            ->with('pesan_masuk', 'Silakan masuk dulu untuk membuka halaman admin.');
+        return redirect()->to(self::HALAMAN_MASUK)->with('pesan_masuk', $pesan);
     }
 
     /**
@@ -70,11 +87,12 @@ class AdminFilter implements FilterInterface
     }
 
     /**
-     * Apakah sesi ini milik admin yang sudah masuk.
+     * Apakah sesi ini memuat admin yang sudah masuk (hanya isi sesi; sidik
+     * kata sandi diperiksa di `before()`).
      */
     public static function sudahMasuk(): bool
     {
-        $id = session('admin_id');
+        $id = session(SesiAdmin::KUNCI_ID);
 
         return is_int($id) && $id > 0;
     }

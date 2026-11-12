@@ -115,7 +115,7 @@ $atributKotak = static function (string $kotak, array $galat, bool $adaPetunjuk)
             <section class="card h-100" aria-labelledby="judul-kata-sandi">
                 <div class="card-body p-4">
                     <h2 id="judul-kata-sandi" class="h5 mb-1">Kata sandi</h2>
-                    <p class="text-body-secondary small mb-4">Setelah diganti, Anda tetap masuk. Pakai kata sandi baru saat masuk berikutnya.</p>
+                    <p class="text-body-secondary small mb-4">Setelah diganti, Anda tetap masuk di perangkat ini. Perangkat lain yang masuk dengan akun ini akan diminta masuk lagi.</p>
 
                     <?= view('admin/_galat_isian', ['galat' => $galatSandi], ['saveData' => false]) ?>
 

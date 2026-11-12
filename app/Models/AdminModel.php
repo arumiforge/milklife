@@ -117,6 +117,22 @@ class AdminModel extends Model
     }
 
     /**
+     * Hash kata sandi yang tersimpan untuk satu admin, atau `null` bila
+     * akunnya tidak ada. Hanya membaca kolom `sandi` (dipakai `SesiAdmin` di
+     * setiap permintaan halaman admin).
+     */
+    public function sandiTersimpan(int $id): ?string
+    {
+        if ($id < 1) {
+            return null;
+        }
+
+        $baris = $this->builder()->select('sandi')->where($this->primaryKey, $id)->get()->getRowArray();
+
+        return is_array($baris) && is_string($baris['sandi'] ?? null) ? $baris['sandi'] : null;
+    }
+
+    /**
      * Ganti kata sandi seorang admin. Kata sandi diberikan sebagai teks asli
      * dan di-hash oleh model.
      */

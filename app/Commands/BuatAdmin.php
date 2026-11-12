@@ -8,7 +8,8 @@ use CodeIgniter\CLI\CLI;
 
 /**
  * `php spark admin:buat` — membuat akun admin, atau mengganti kata sandi
- * admin yang nama penggunanya sudah ada.
+ * admin yang nama penggunanya sudah ada. Mengganti kata sandi lewat perintah
+ * ini mengeluarkan semua sesi akun itu (`SesiAdmin`).
  *
  * Kata sandi tidak pernah diterima lewat argumen baris perintah (akan
  * tersimpan di riwayat terminal). Dari terminal, kata sandi dibaca tanpa
@@ -74,7 +75,9 @@ class BuatAdmin extends BaseCommand
 
         if ($admin !== null) {
             $galat = $this->gantiSandi($model, (int) $admin['id'], $sandi);
-            $pesan = 'Kata sandi admin "' . $namaPengguna . '" sudah diganti.';
+            // Hash baru membuat sidik di semua sesi akun ini tidak cocok lagi,
+            // jadi setiap sesi yang sedang masuk diminta masuk ulang (K67).
+            $pesan = 'Kata sandi admin "' . $namaPengguna . '" sudah diganti. Semua sesi yang sedang masuk dengan akun ini akan diminta masuk lagi.';
         } else {
             $galat = $this->simpanAdmin($model, $nama, $namaPengguna, $sandi);
             $pesan = 'Admin "' . $namaPengguna . '" sudah dibuat. Silakan masuk di /admin/masuk.';

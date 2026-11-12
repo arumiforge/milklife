@@ -17,15 +17,18 @@ use CodeIgniter\Test\FeatureTestTrait;
  * menambahkan `use FeatureTestTrait;` (atau `use KirimFormulir;`) sendiri.
  *
  * Pengaturan (`setting()`) disimpan di memori, kosong di awal setiap uji,
- * tanpa basis data (`PengaturanBersih`).
+ * tanpa basis data (`PengaturanBersih`). Sidik kata sandi di sesi admin
+ * diperiksa dengan tiruan (`SesiAdminUji`).
  */
 abstract class UjiHalaman extends CIUnitTestCase
 {
     use FeatureTestTrait;
     use PengaturanBersih;
+    use SesiAdminUji;
 
     /**
-     * Isi sesi admin yang sudah masuk.
+     * Isi sesi admin yang sudah masuk. Sidiknya diterima `SesiAdminTiruan`
+     * yang dipasang `SesiAdminUji` di setiap uji.
      */
-    public const SESI_ADMIN = ['admin_id' => 1, 'admin_nama' => 'Admin Uji'];
+    public const SESI_ADMIN = ['admin_id' => 1, 'admin_nama' => 'Admin Uji', 'admin_sidik' => SesiAdminTiruan::SIDIK];
 }
