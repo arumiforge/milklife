@@ -200,6 +200,72 @@ final class HalamanDepanLombaTest extends UjiBasisData
         );
     }
 
+    // ---------- Sakelar biaya ----------
+
+    public function testBiayaDisembunyikanLewatPengaturan(): void
+    {
+        setting('HalamanDepan.tampilkan_biaya', false);
+
+        $ku = $this->tambahKu(['nama' => 'KU Rahasia', 'biaya_individu' => 150000]);
+        $this->tambahNomor($ku, ['nama' => 'Lari Karangan']);
+        // Hanya biayanya yang berbeda: digabung karena biaya tidak tampil.
+        $this->tambahNomor($ku, ['nama' => 'Estafet Rusa', 'jenis' => 'beregu', 'kategori' => 'putra', 'jumlah_inti' => 4, 'biaya_beregu' => 100000]);
+        $this->tambahNomor($ku, ['nama' => 'Estafet Rusa', 'jenis' => 'beregu', 'kategori' => 'putri', 'jumlah_inti' => 4, 'biaya_beregu' => 120000]);
+        // Tanpa keterangan lain: daftar keterangan tidak dibuat.
+        $this->tambahNomor($ku, ['nama' => 'Estafet Kosong', 'jenis' => 'beregu', 'kategori' => 'mix', 'biaya_beregu' => 90000]);
+
+        $hasil = $this->get('/');
+        $xpath = $this->xpathDari($hasil);
+
+        $this->assertSame(['KU Rahasia'], $this->daftarTeks($xpath, '//article[contains(@class, "lomba-ku")]/h3'));
+        $this->assertSame(0, $xpath->query('//*[contains(@class, "lomba-biaya-individu") or contains(@class, "lomba-biaya-beregu")]')->length);
+        $this->assertSame(['Tahun lahir', 'Jenjang sekolah'], $this->daftarTeks($xpath, '//dl[contains(@class, "lomba-ku-info")]//dt'));
+        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran saat mendaftar.', $this->teks($xpath, '//*[contains(@class, "lomba-pengantar")]'));
+        $this->assertSame(['Estafet Rusa — Putra, Putri', 'Estafet Kosong — Mix'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-beregu-kepala")]'));
+        $this->assertSame(['4 atlet per tim'], $this->daftarTeks($xpath, '//ul[contains(@class, "lomba-beregu-info")]/li'));
+
+        foreach (['Rp', 'Gratis', 'Biaya segera diumumkan', 'Biaya tim', 'Biaya individu'] as $teks) {
+            $hasil->assertDontSee($teks);
+        }
+    }
+
+    public function testBiayaTampilSecaraBawaan(): void
+    {
+        $ku = $this->tambahKu(['nama' => 'KU Terbuka', 'biaya_individu' => 150000]);
+        $this->tambahNomor($ku, ['nama' => 'Lari Karangan']);
+
+        $xpath = $this->xpathDari($this->get('/'));
+
+        $this->assertSame(['Rp150.000 per atlet per nomor'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'));
+        $this->assertStringContainsString('Biaya individu dihitung per atlet', $this->teks($xpath, '//*[contains(@class, "lomba-pengantar")]'));
+    }
+
+    public function testSakelarBiayaDiPanelAdmin(): void
+    {
+        $alamat  = 'admin/pengaturan/halaman-depan';
+        $sakelar = '//input[@type="checkbox" and @name="tampilkan_biaya" and @value="1"]';
+
+        // Bawaan: menyala.
+        $kotak = $this->xpathDari($this->bukaSebagaiAdmin($alamat))->query($sakelar)->item(0);
+        $this->assertNotNull($kotak);
+        $this->assertTrue($kotak->hasAttribute('checked'));
+
+        // Tidak dicentang: dimatikan.
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin($alamat, []), $alamat, 'Isi halaman depan tersimpan.');
+        $this->assertFalse(setting('HalamanDepan.tampilkan_biaya'));
+        $this->assertFalse($this->xpathDari($this->bukaSebagaiAdmin($alamat))->query($sakelar)->item(0)->hasAttribute('checked'));
+
+        // Isian lain salah: tidak tersimpan, centang yang dipilih tetap terlihat.
+        $hasil = $this->kirimSebagaiAdmin($alamat, ['tampilkan_biaya' => '1', 'judul' => str_repeat('a', 151)]);
+        $hasil->assertOK();
+        $this->assertTrue($this->xpathDari($hasil)->query($sakelar)->item(0)->hasAttribute('checked'));
+        $this->assertFalse(setting('HalamanDepan.tampilkan_biaya'));
+
+        // Dicentang: dinyalakan lagi.
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin($alamat, ['tampilkan_biaya' => '1']), $alamat, 'Isi halaman depan tersimpan.');
+        $this->assertTrue(setting('HalamanDepan.tampilkan_biaya'));
+    }
+
     // ---------- Escape ----------
 
     public function testTeksAdminDiEscape(): void

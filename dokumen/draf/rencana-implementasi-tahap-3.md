@@ -4,7 +4,7 @@
 |---|---|
 | Status | Disetujui pemilik 12 November 2026 (K43), sudah dilaksanakan (Tahap 3 selesai 12 November 2026) |
 | Tanggal | 12 November 2026 |
-| Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.1, 10, 12, 13, 15, 16; keputusan K01–K44; hasil Tahap 2 (`agent/arsip/tahap-2.md`) |
+| Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.1, 10, 12, 13, 15, 16; keputusan K01–K45; hasil Tahap 2 (`agent/arsip/tahap-2.md`) |
 
 ## Tujuan
 
@@ -170,3 +170,4 @@ Setelah Tahap 3 digabung, di terminal Laragon pada folder proyek:
 | Halaman asal filter batas unggah | `redirect()->back()` | Sesi `_ci_previous_url`, lalu `Referer`, keduanya hanya bila masih di situs sendiri; cadangan dasbor admin atau halaman depan | Mencegah pengalihan ke situs lain (F3-04) |
 | Keterangan kotak "Teks pengantar" (panel Halaman Depan) | Tidak disebut | "Tekan Enter dua kali untuk membuat paragraf baru." | Paragraf dipecah pada baris kosong (laporan F3-01, diubah F3-05) |
 | Gambar kepala | Gambar kepala selebar layar di kepala halaman | Gambar kepala menjadi latar di belakang judul dengan lapisan biru tua; keterangan unggahnya di panel disesuaikan | K44, tinjauan pemilik setelah F3-03 (diubah F3-05) |
+| Biaya di bagian lomba | Selalu tampil | Sakelar admin `HalamanDepan.tampilkan_biaya` (nilai awal tampil) di pengaturan Halaman Depan; bila mati, biaya tidak ditulis di halaman depan | K45, permintaan pemilik ke F3-02 setelah PR #27 digabung (dibawa F3-05). Kunci baru di luar tabel Tahap 2 |

@@ -14,6 +14,9 @@
  *     nomor_individu: list<array{id: int, nama: string, kategori: string, kategori_label: string}>,
  *     nomor_beregu: list<array{id: int, nama: string, kategori: string, kategori_label: string, jumlah_inti: int|null, batas_anggota: int|null, jumlah_putra: int|null, jumlah_putri: int|null, biaya_beregu: int|null}>
  * }> $kelompokUmur Kelompok umur aktif dengan nomor aktifnya; [] bila belum ada.
+ * @var bool $tampilkanBiaya Sakelar admin `HalamanDepan.tampilkan_biaya`
+ *     (`IsiHalamanDepan::tampilkanBiaya()`); bila `false`, biaya individu dan
+ *     biaya tim tidak ditulis sama sekali. Nilai awal `true`.
  *
  * Kesepakatan (rencana Tahap 3, "Halaman depan"):
  * - Bagian tidak ditampilkan bila `$kelompokUmur === []`.
@@ -22,7 +25,7 @@
  * - Gaya hanya di wilayah "Bagian lomba (F3-02)" di `tema.css`.
  *
  * Susunan: satu kartu per kelompok umur (`#lomba-ku-<id>`). Tahun lahir,
- * jenjang, dan biaya individu selalu terlihat; daftar nomornya dilipat dalam
+ * jenjang, dan biaya individu (bila ditampilkan) selalu terlihat; daftar nomornya dilipat dalam
  * `<details>` (asumsi rencana 5) supaya halaman tidak terlalu panjang di
  * ponsel, tanpa tabel lebar dan tanpa skrip.
  *
@@ -34,6 +37,8 @@
 if ($kelompokUmur === []) {
     return;
 }
+
+$tampilkanBiaya = (bool) ($tampilkanBiaya ?? true);
 
 /** Teks biaya: `null` belum diisi, `0` gratis, selain itu rupiah dengan satuannya. */
 $teksBiaya = static fn (?int $biaya, string $satuan, string $belum): string => match (true) {
@@ -95,16 +100,23 @@ $keteranganTim = static function (array $nomor): array {
     <div class="container py-5">
         <h2 id="judul-lomba" class="lomba-judul">Kelompok umur dan nomor lomba</h2>
         <p class="lomba-pengantar">
-            Kelompok umur ditentukan dari tahun lahir atlet. Biaya individu dihitung per atlet untuk tiap nomor yang diikuti; biaya beregu dihitung per tim.
+            Kelompok umur ditentukan dari tahun lahir atlet.
+            <?php if ($tampilkanBiaya) : ?>
+                Biaya individu dihitung per atlet untuk tiap nomor yang diikuti; biaya beregu dihitung per tim.
+            <?php else : ?>
+                Rincian biaya ditampilkan di bagian pembayaran saat mendaftar.
+            <?php endif ?>
         </p>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 align-items-start">
             <?php foreach ($kelompokUmur as $ku) : ?>
                 <?php
                 $individu = $gabung($ku['nomor_individu'], static fn (array $n): string => $n['nama']);
-                $beregu   = $gabung($ku['nomor_beregu'], static fn (array $n): string => implode('|', [
+                // Biaya ikut menentukan penggabungan hanya bila biaya ditampilkan.
+                $beregu = $gabung($ku['nomor_beregu'], static fn (array $n): string => implode('|', [
                     $n['nama'], $n['kategori'] === 'mix' ? 'mix' : 'tunggal',
-                    $n['jumlah_inti'] ?? '-', $n['batas_anggota'] ?? '-', $n['jumlah_putra'] ?? '-', $n['jumlah_putri'] ?? '-', $n['biaya_beregu'] ?? '-',
+                    $n['jumlah_inti'] ?? '-', $n['batas_anggota'] ?? '-', $n['jumlah_putra'] ?? '-', $n['jumlah_putri'] ?? '-',
+                    $tampilkanBiaya ? ($n['biaya_beregu'] ?? '-') : '',
                 ]));
                 $jumlahIndividu = count($ku['nomor_individu']);
                 $jumlahBeregu   = count($ku['nomor_beregu']);
@@ -123,10 +135,12 @@ $keteranganTim = static function (array $nomor): array {
                                 <dt><i class="bi bi-mortarboard" aria-hidden="true"></i> Jenjang sekolah</dt>
                                 <dd class="lomba-jenjang"><?= esc($ku['jenjang'] !== '' ? $ku['jenjang'] : 'Jenjang sekolah segera diumumkan') ?></dd>
                             </div>
-                            <div>
-                                <dt><i class="bi bi-cash-coin" aria-hidden="true"></i> Biaya individu</dt>
-                                <dd class="lomba-biaya-individu"><?= esc($teksBiaya($ku['biaya_individu'], 'per atlet per nomor', 'Biaya segera diumumkan')) ?></dd>
-                            </div>
+                            <?php if ($tampilkanBiaya) : ?>
+                                <div>
+                                    <dt><i class="bi bi-cash-coin" aria-hidden="true"></i> Biaya individu</dt>
+                                    <dd class="lomba-biaya-individu"><?= esc($teksBiaya($ku['biaya_individu'], 'per atlet per nomor', 'Biaya segera diumumkan')) ?></dd>
+                                </div>
+                            <?php endif ?>
                         </dl>
 
                         <?php if ($jumlahIndividu + $jumlahBeregu === 0) : ?>
@@ -162,18 +176,26 @@ $keteranganTim = static function (array $nomor): array {
                                     <h4 class="lomba-nomor-judul">Nomor beregu</h4>
                                     <ul class="lomba-daftar lomba-daftar-beregu">
                                         <?php foreach ($beregu as $butir) : ?>
-                                            <?php $nomor = $butir['nomor']; ?>
+                                            <?php
+                                            $nomor = $butir['nomor'];
+                                            $info  = $keteranganTim($nomor);
+
+                                            if ($tampilkanBiaya) {
+                                                $info[] = ['ikon' => 'cash-coin', 'teks' => $teksBiaya($nomor['biaya_beregu'], 'per tim', 'Biaya tim segera diumumkan'), 'kelas' => 'lomba-biaya-beregu'];
+                                            }
+                                            ?>
                                             <li>
                                                 <div class="lomba-beregu-kepala">
                                                     <span class="lomba-nama-nomor"><?= esc($nomor['nama']) ?></span>
                                                     <span class="lomba-kategori"><span class="visually-hidden">— </span><?= esc(implode(', ', $butir['kategori'])) ?></span>
                                                 </div>
-                                                <ul class="lomba-beregu-info">
-                                                    <?php foreach ($keteranganTim($nomor) as $info) : ?>
-                                                        <li><i class="bi bi-<?= $info['ikon'] ?>" aria-hidden="true"></i> <?= esc($info['teks']) ?></li>
-                                                    <?php endforeach ?>
-                                                    <li class="lomba-biaya-beregu"><i class="bi bi-cash-coin" aria-hidden="true"></i> <?= esc($teksBiaya($nomor['biaya_beregu'], 'per tim', 'Biaya tim segera diumumkan')) ?></li>
-                                                </ul>
+                                                <?php if ($info !== []) : ?>
+                                                    <ul class="lomba-beregu-info">
+                                                        <?php foreach ($info as $butirInfo) : ?>
+                                                            <li<?= isset($butirInfo['kelas']) ? ' class="' . $butirInfo['kelas'] . '"' : '' ?>><i class="bi bi-<?= $butirInfo['ikon'] ?>" aria-hidden="true"></i> <?= esc($butirInfo['teks']) ?></li>
+                                                        <?php endforeach ?>
+                                                    </ul>
+                                                <?php endif ?>
                                             </li>
                                         <?php endforeach ?>
                                     </ul>

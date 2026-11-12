@@ -91,3 +91,4 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K44 | Gambar kepala halaman depan menjadi latar di belakang judul, bukan pita gambar terpisah di atas judul | Gambar diberi lapisan biru tua supaya tulisan tetap terbaca. Keterangan unggah gambar kepala di panel menyarankan foto tanpa tulisan. Dikerjakan di F3-05 |
+| K45 | Rincian biaya di bagian lomba halaman depan bisa disembunyikan atau ditampilkan lewat panel admin (sakelar "Tampilkan biaya di halaman depan" di pengaturan Halaman Depan, nilai awal tampil) | Alasan pemilik: rincian biaya tetap muncul di bagian pembayaran saat mendaftar (Tahap 4). Kunci baru `HalamanDepan.tampilkan_biaya`. Diminta langsung ke sub-sesi F3-02, dibawa lewat PR penutupan F3-05 |
