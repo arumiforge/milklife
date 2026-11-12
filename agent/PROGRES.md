@@ -4,7 +4,7 @@ Diperbarui: 12 November 2026
 
 ## Sedang berjalan
 
-**Tahap 6 — Panel data**, dikerjakan sesi koordinator dengan sub-sesi paralel, paling banyak 3 sekaligus (K56, K38). Rencana: [`dokumen/draf/rencana-implementasi-tahap-6.md`](../dokumen/draf/rencana-implementasi-tahap-6.md), disetujui pemilik (K61).
+**Tahap 6 — Panel data**, F6-01 dijalankan sesi koordinator (K56); gelombang berikutnya dijalankan pemilik di sesi berbeda (K62), paling banyak 3 sekaligus (K38). Rencana: [`dokumen/draf/rencana-implementasi-tahap-6.md`](../dokumen/draf/rencana-implementasi-tahap-6.md), disetujui pemilik (K61).
 
 | Tugas | Status | Gelombang | PR |
 |---|---|---|---|
