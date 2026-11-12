@@ -24,4 +24,4 @@ Belum ada. Tahap 6 ditutup; menunggu tinjauan PR penutupan F6-08.
 
 ## Menunggu pemilik
 
-- Dua entri bernomor K62 di `KEPUTUSAN.md` (persiapan sesi cloud dan pelaksanaan gelombang Tahap 6): cara membedakannya. Lihat [`arsip/tahap-6.md`](arsip/tahap-6.md) bagian "Perlu diputuskan pemilik".
+Belum ada.

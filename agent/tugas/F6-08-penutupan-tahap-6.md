@@ -31,4 +31,4 @@ Dikerjakan koordinator Tahap 6.
 - Halaman panel dicoba di Chromium terhadap `php spark serve` pada 1440 dan 390 piksel (mode production supaya bilah debug tidak ikut).
 - Perbaikan sambungan: dua baris di wilayah Tahap 6 `public/aset/css/admin.css` (milik F6-01). Di 390 piksel halaman Pendaftaran bergulir mendatar karena teks `visually-hidden` judul kolom Tindakan (berposisi absolut) lolos dari wadah gulir tabel; wadah itu kini `position: relative`. Tombol saringan (Kosongkan, Unduh Excel) kini boleh membungkus supaya tidak keluar kartu.
 - Arsip `agent/arsip/tahap-6.md`, `PROGRES.md`, `KONTEKS.md`, dan tabel "Perubahan saat pengerjaan" rencana Tahap 6 dari penyimpangan di berkas tugas dan PR #47–#54. Status berkas tugas F6-01 sampai F6-07 menjadi "selesai".
-- Tidak ada rute, paket Composer, atau nomor keputusan baru. Dua entri bernomor K62 di `KEPUTUSAN.md` dicatat sebagai hal yang perlu diputuskan pemilik (arsip bagian "Perlu diputuskan pemilik").
+- Tidak ada rute atau paket Composer baru. `KEPUTUSAN.md` punya dua entri bernomor K62; atas keputusan pemilik, entri kedua (pelaksanaan gelombang Tahap 6) dinomori ulang menjadi K64 dengan catatan nomor lamanya.

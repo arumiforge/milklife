@@ -2,7 +2,7 @@
 
 Selesai: 12 November 2026
 
-Rencana: [`dokumen/draf/rencana-implementasi-tahap-6.md`](../../dokumen/draf/rencana-implementasi-tahap-6.md), disetujui pemilik beserta delapan asumsinya (K61), termasuk bagian "Perubahan saat pengerjaan". F6-01 dijalankan sesi koordinator (K56); gelombang 2–4 dijalankan pemilik di sesi berbeda (K62, pelaksanaan gelombang), paling banyak 3 sekaligus (K38).
+Rencana: [`dokumen/draf/rencana-implementasi-tahap-6.md`](../../dokumen/draf/rencana-implementasi-tahap-6.md), disetujui pemilik beserta delapan asumsinya (K61), termasuk bagian "Perubahan saat pengerjaan". F6-01 dijalankan sesi koordinator (K56); gelombang 2–4 dijalankan pemilik di sesi berbeda (K64), paling banyak 3 sekaligus (K38).
 
 | Tugas | Status | Gelombang | PR |
 |---|---|---|---|
@@ -38,9 +38,9 @@ Catatan: keputusan wawancara awal Tahap 6 K57–K60 dan persetujuan rencana K61.
 - Sambungan yang diperbaiki (dua baris CSS di wilayah Tahap 6 `admin.css`, milik F6-01): di 390 piksel halaman Pendaftaran bergulir mendatar karena teks `visually-hidden` judul kolom Tindakan (berposisi absolut) lolos dari wadah gulir tabel, dan tombol Unduh Excel keluar dari kartu. Wadah gulir kini `position: relative` dan tombol saringan boleh membungkus.
 - `composer uji` pada salinan `main` terbaru (fd10055) bersama cabang penutupan: 1135 uji, 7.646 asersi, lulus.
 
-## Perlu diputuskan pemilik
+## Penomoran keputusan
 
-- `agent/KEPUTUSAN.md` punya **dua entri bernomor K62**: "Sesi agen di cloud disiapkan oleh Setup script" (persiapan sesi cloud) dan "Gelombang Tahap 6 setelah F6-01 dijalankan pemilik sendiri" (pelaksanaan gelombang). Nomor lama tidak diubah di penutupan ini. Pemilik memutuskan cara membedakannya, misalnya memberi salah satunya nomor baru lewat baris pengganti, atau membiarkannya dan selalu menyebut judul bagiannya. Sampai diputuskan, rujukan di dokumen Tahap 6 menyebut "K62 (persiapan sesi cloud)" atau "K62 (pelaksanaan gelombang)".
+`agent/KEPUTUSAN.md` sempat punya dua entri bernomor K62: persiapan sesi agen di cloud dan pelaksanaan gelombang Tahap 6. Pemilik memutuskan di penutupan ini: entri kedua (pelaksanaan gelombang) menjadi **K64**, dengan catatan nomor lamanya. K62 kini hanya untuk persiapan sesi agen di cloud.
 
 ## Yang dibawa ke tahap berikutnya
 

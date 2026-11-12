@@ -177,5 +177,5 @@ Setelah Tahap 6 digabung, di terminal Laragon pada folder proyek:
 | Rekap (F6-06) | Pola `BuktiPendaftaran` | Pembacaan logo disalin ke `RekapPdf` | Berkas Tahap 5 hanya dibaca (#54) |
 | Dasbor (F6-06) | Bagian angka saja | Kartu "Belum ada pendaftaran" hanya tampil bila memang belum ada pendaftaran | Disesuaikan dengan angka dasbor yang baru (#54) |
 | Pengaturan terlindung (F6-07) | Semua isian tim terkunci bila dipakai | Isian tim yang masih kosong boleh dilengkapi; batas tahun lahir dibandingkan dengan atlet tertua dan termuda, batas kosong selalu diterima | Nomor dari data awal tidak terkunci dalam keadaan belum lengkap (#53) |
-| Gelombang | Koordinator menjalankan gelombang 2–4 (K56) | Pemilik menjalankan gelombang 2–4 di sesi berbeda | **K62** (pelaksanaan gelombang) |
+| Gelombang | Koordinator menjalankan gelombang 2–4 (K56) | Pemilik menjalankan gelombang 2–4 di sesi berbeda | **K64** (semula tercatat ganda sebagai K62) |
 | Penutupan (F6-08) | — | Dua baris CSS di wilayah Tahap 6 `admin.css` (milik F6-01): wadah gulir tabel `position: relative`, tombol saringan boleh membungkus | Di Chromium 390 piksel halaman Pendaftaran bergulir mendatar (teks `visually-hidden` judul kolom lolos dari wadah gulir) dan tombol Unduh Excel keluar kartu |
