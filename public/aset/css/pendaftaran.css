@@ -392,3 +392,184 @@ fieldset.is-invalid > .invalid-feedback,
     color: var(--ml-teks-redup);
     font-size: 0.875rem;
 }
+
+/* ---------- Langkah 4 ---------- */
+
+.tabel-biaya .table {
+    font-size: 0.875rem;
+}
+
+.tabel-biaya tfoot th,
+.tabel-biaya tfoot td {
+    border-bottom: 0;
+}
+
+.total-biaya {
+    background-color: var(--ml-biru-muda-pucat);
+    border-color: var(--ml-biru-muda);
+}
+
+.total-baris {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.2rem 0;
+}
+
+.total-baris dt {
+    font-weight: 400;
+}
+
+.total-baris dd {
+    margin: 0;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.total-akhir {
+    margin-top: 0.4rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--ml-biru-muda);
+    color: var(--ml-biru-tua);
+    font-size: 1.15rem;
+}
+
+.total-akhir dt,
+.total-akhir dd {
+    font-weight: 800;
+}
+
+/* ---------- Langkah 5 ---------- */
+
+.tersimpan-kotak {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.tersimpan-kotak > .bi {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.id-pendaftaran {
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    overflow-wrap: anywhere;
+}
+
+.logo-bank {
+    display: block;
+    max-width: 10rem;
+    max-height: 3.5rem;
+    margin-bottom: 1rem;
+    object-fit: contain;
+}
+
+.data-rekening {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.15rem;
+    margin-bottom: 0.75rem;
+}
+
+.data-rekening dt {
+    margin-top: 0.5rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+.data-rekening dd {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.nomor-rekening {
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+}
+
+.total-bayar {
+    color: var(--ml-oranye-tombol);
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.cara-bayar {
+    margin: 1.25rem 0;
+    padding-left: 1.25rem;
+}
+
+.cara-bayar li + li {
+    margin-top: 0.35rem;
+}
+
+.tombol-bayar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.tombol-bayar .btn {
+    flex: 1 1 15rem;
+}
+
+.pendaftaran-selesai {
+    padding: 2rem 1rem;
+    text-align: center;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.75rem;
+}
+
+/* Tabel biaya di ponsel: tiap baris menjadi kartu kecil berlabel kolom. */
+@media (max-width: 575.98px) {
+    .tabel-tumpuk thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    .tabel-tumpuk tbody tr {
+        display: block;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--ml-garis);
+    }
+
+    .tabel-tumpuk tbody td {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.1rem 0;
+        border: 0;
+        text-align: right;
+        white-space: normal;
+    }
+
+    .tabel-tumpuk tbody td::before {
+        content: attr(data-label);
+        flex: none;
+        color: var(--ml-teks-redup);
+        text-align: left;
+    }
+
+    .tabel-tumpuk tfoot tr {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .tabel-tumpuk tfoot th,
+    .tabel-tumpuk tfoot td {
+        padding: 0.5rem 0 0;
+    }
+}

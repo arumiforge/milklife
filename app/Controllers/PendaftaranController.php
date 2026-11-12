@@ -7,7 +7,11 @@ use App\Libraries\Jenjang;
 use App\Libraries\Pendaftaran\DataIndukPendaftaran;
 use App\Libraries\Pendaftaran\Kabupaten;
 use App\Libraries\Pendaftaran\PemeriksaPendaftaran;
+use App\Libraries\Pendaftaran\PesanKonfirmasi;
+use App\Libraries\Pendaftaran\SimpanPendaftaran;
+use App\Libraries\Unggahan;
 use App\Models\SekolahModel;
+use CodeIgniter\I18n\Time;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /**
@@ -17,6 +21,14 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   pendaftaran belum terbuka (rancangan 6.1).
  * - `GET pendaftaran/sekolah?npsn=…` (F4-02): data sekolah referensi untuk
  *   langkah 1, penolakan SLB (K28), dan data susulan NPSN itu.
+ * - `POST pendaftaran/periksa` (F4-04): pemeriksaan server seluruh kiriman
+ *   dan rincian biaya untuk langkah 4.
+ * - `POST pendaftaran/simpan` (F4-04): simpan dalam satu transaksi
+ *   (`SimpanPendaftaran`), ID pendaftaran, dan alamat WA konfirmasi.
+ *
+ * Kiriman `periksa` dan `simpan` berupa JSON (bentuknya di komentar
+ * `PemeriksaPendaftaran`) dengan token CSRF di kepala `X-CSRF-TOKEN`. Keduanya
+ * ditolak bila pendaftaran tidak sedang terbuka (6.1).
  *
  * Setiap titik akhir dibatasi lajunya per alamat IP pengunjung
  * (`$this->request->getIPAddress()`, sudah membaca `CF-Connecting-IP`, K31)
@@ -30,6 +42,14 @@ class PendaftaranController extends BaseController
     public const BATAS_SEKOLAH = 60;
 
     public const JENDELA_SEKOLAH = 60;
+
+    public const BATAS_PERIKSA = 30;
+
+    public const JENDELA_PERIKSA = 60;
+
+    public const BATAS_SIMPAN = 10;
+
+    public const JENDELA_SIMPAN = 600;
 
     /**
      * Kunci `localStorage` draf wizard di peramban.
@@ -55,8 +75,12 @@ class PendaftaranController extends BaseController
                 'kunci_draf' => self::KUNCI_DRAF,
                 'alamat'     => [
                     'sekolah' => site_url('pendaftaran/sekolah'),
+                    'periksa' => site_url('pendaftaran/periksa'),
+                    'simpan'  => site_url('pendaftaran/simpan'),
                     'beranda' => site_url('/'),
+                    'cek'     => site_url('cek-pendaftaran'),
                 ],
+                'pembayaran' => self::rekening(),
             ];
         }
 
@@ -132,6 +156,153 @@ class PendaftaranController extends BaseController
                 'kabupaten'     => Kabupaten::baku($sekolah['kabupaten'] ?? null),
             ],
             'susulan' => $susulan,
+        ]);
+    }
+
+    /**
+     * POST pendaftaran/periksa
+     *
+     *     200 ['status' => 'sah', 'pesan' => '…', 'rincian' => [...]]       // rincian: PemeriksaPendaftaran
+     *     422 ['status' => 'galat', 'pesan' => '…', 'galat' => [{langkah, jalur, pesan}]]
+     *     400 ['status' => 'tidak_sah', …]   409 ['status' => 'ditutup', …]   429 ['status' => 'terlalu_sering', …]
+     */
+    public function periksa(): ResponseInterface
+    {
+        $tolak = $this->batasiLaju('periksa', self::BATAS_PERIKSA, self::JENDELA_PERIKSA) ?? $this->tolakBilaTertutup();
+
+        if ($tolak !== null) {
+            return $tolak;
+        }
+
+        $kiriman = $this->kiriman();
+
+        if ($kiriman === null) {
+            return $this->kirimanTidakSah();
+        }
+
+        $data  = new DataIndukPendaftaran();
+        $hasil = (new PemeriksaPendaftaran(
+            $data->induk(),
+            $data->ada(PemeriksaPendaftaran::npsnKiriman($kiriman), PemeriksaPendaftaran::nisnKiriman($kiriman)),
+            Time::now(config('App')->appTimezone)->format('Y-m-d'),
+        ))->periksa($kiriman);
+
+        if ($hasil['galat'] !== []) {
+            return $this->galat($hasil['galat']);
+        }
+
+        return $this->json(200, ['status' => 'sah', 'pesan' => 'Isian sudah benar.', 'rincian' => $hasil['rincian']]);
+    }
+
+    /**
+     * POST pendaftaran/simpan
+     *
+     *     201 ['status' => 'tersimpan', 'pesan' => '…', 'id_pendaftaran' => 'MAC2A0000126',
+     *          'rincian' => [...], 'wa' => 'https://wa.me/…' atau null, 'bukti' => 'http://…/bukti/MAC2A0000126']
+     *     422, 400, 409, 429 seperti `periksa()`.
+     */
+    public function simpan(): ResponseInterface
+    {
+        $tolak = $this->batasiLaju('simpan', self::BATAS_SIMPAN, self::JENDELA_SIMPAN) ?? $this->tolakBilaTertutup();
+
+        if ($tolak !== null) {
+            return $tolak;
+        }
+
+        $kiriman = $this->kiriman();
+
+        if ($kiriman === null) {
+            return $this->kirimanTidakSah();
+        }
+
+        $hasil = (new SimpanPendaftaran())->simpan($kiriman);
+
+        if ($hasil['galat'] !== []) {
+            return $this->galat($hasil['galat']);
+        }
+
+        $id      = $hasil['pendaftaran']['id_pendaftaran'];
+        $rincian = $hasil['rincian'];
+        $teks    = PesanKonfirmasi::teks((string) setting('Pembayaran.templat_pesan'), [
+            'nama_sekolah'      => $rincian['sekolah']['nama'],
+            'npsn'              => $rincian['sekolah']['npsn'],
+            'id_pendaftaran'    => $id,
+            'subtotal_individu' => $rincian['subtotal_individu'],
+            'subtotal_beregu'   => $rincian['subtotal_beregu'],
+            'total'             => $rincian['total'],
+        ]);
+
+        return $this->json(201, [
+            'status'         => 'tersimpan',
+            'pesan'          => 'Pendaftaran tersimpan dengan ID ' . $id . '.',
+            'id_pendaftaran' => $id,
+            'rincian'        => $rincian,
+            'wa'             => PesanKonfirmasi::alamat((string) setting('Pembayaran.nomor_wa'), $teks),
+            'bukti'          => site_url('bukti/' . $id),
+        ]);
+    }
+
+    /**
+     * Data rekening untuk langkah 5.
+     *
+     * @return array{bank: string, nomor_rekening: string, pemilik_rekening: string, logo_bank: string|null}
+     */
+    private static function rekening(): array
+    {
+        $logo = trim((string) setting('Pembayaran.logo_bank'));
+
+        return [
+            'bank'             => trim((string) setting('Pembayaran.bank')),
+            'nomor_rekening'   => trim((string) setting('Pembayaran.nomor_rekening')),
+            'pemilik_rekening' => trim((string) setting('Pembayaran.pemilik_rekening')),
+            'logo_bank'        => $logo !== '' && (new Unggahan())->ada($logo) ? base_url($logo) : null,
+        ];
+    }
+
+    /**
+     * Kiriman JSON sebagai larik, atau `null` bila bukan JSON objek.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function kiriman(): ?array
+    {
+        try {
+            $isi = $this->request->getJSON(true);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return is_array($isi) ? $isi : null;
+    }
+
+    private function kirimanTidakSah(): ResponseInterface
+    {
+        return $this->json(400, [
+            'status' => 'tidak_sah',
+            'pesan'  => 'Isian tidak terbaca. Muat ulang halaman (isian tetap tersimpan), lalu coba lagi.',
+        ]);
+    }
+
+    private function tolakBilaTertutup(): ?ResponseInterface
+    {
+        $bukaTutup = (new IsiHalamanDepan())->bukaTutup();
+
+        if ($bukaTutup->terbuka()) {
+            return null;
+        }
+
+        return $this->json(409, ['status' => 'ditutup', 'pesan' => $bukaTutup->kalimat() . ' Pendaftaran tidak bisa disimpan sekarang.']);
+    }
+
+    /**
+     * @param list<array{langkah: int, jalur: string, pesan: string}> $galat
+     */
+    private function galat(array $galat): ResponseInterface
+    {
+        return $this->json(422, [
+            'status' => 'galat',
+            'pesan'  => count($galat) === 1 ? 'Ada 1 isian yang perlu diperbaiki.' : 'Ada ' . count($galat) . ' isian yang perlu diperbaiki.',
+            'galat'  => $galat,
         ]);
     }
 

@@ -134,6 +134,9 @@
     }
 
     function simpanDraf() {
+        if (sudahSelesai) {
+            return;
+        }
         var peringatan = $('#peringatan-draf');
         try {
             window.localStorage.setItem(DATA.kunci_draf, JSON.stringify(draf));
@@ -185,8 +188,8 @@
     function perbaruiPil() {
         $$('.pil', akar).forEach(function (pil) {
             var ke = Number(pil.getAttribute('data-ke-langkah'));
-            var selesai = ke < draf.terjauh || (draf.tersimpan && ke < 5);
-            var aktif = ke === draf.langkah;
+            var selesai = ke < draf.terjauh || (draf.tersimpan && ke < 5) || sudahSelesai;
+            var aktif = ke === draf.langkah && !sudahSelesai;
             var terkunci = draf.tersimpan ? ke !== 5 : ke > draf.terjauh;
 
             pil.classList.toggle('pil-selesai', !!selesai && !aktif);
@@ -1189,6 +1192,331 @@
         isiPilihanNomor();
         tampilkanDaftarAtlet();
     };
+
+
+    // ------------------------------------------------------------------
+    // Kiriman ke server (langkah 4)
+    // ------------------------------------------------------------------
+
+    var csrfKepala = ($('meta[name="csrf-kepala"]') || {}).content || 'X-CSRF-TOKEN';
+    var csrfToken = ($('meta[name="csrf-token"]') || {}).content || '';
+    var rincian = null;
+    var sudahSelesai = false;
+
+    function kiriman() {
+        return {
+            sekolah: {
+                jenjang: jenjangSekolah(),
+                kabupaten: kabupatenSekolah(),
+                npsn: npsnSekolah(),
+                nama: draf.sekolah.nama
+            },
+            penanggung_jawab: draf.penanggungJawab.map(function (o) {
+                return { nama: o.nama, nomor_wa: o.nomor_wa, foto: o.foto };
+            }),
+            atlet: draf.atlet.map(function (a) {
+                return { nama: a.nama, nisn: a.nisn, tanggal_lahir: a.tanggal_lahir, jenis_kelamin: a.jenis_kelamin, nomor: a.nomor };
+            })
+        };
+    }
+
+    /**
+     * POST JSON dengan token CSRF. Hasil: `{kode, isi}`; `isi` null bila
+     * jawaban bukan JSON (misalnya sesi halaman habis).
+     */
+    function kirim(alamat) {
+        var kepala = { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+        kepala[csrfKepala] = csrfToken;
+
+        return fetch(alamat, {
+            method: 'POST',
+            headers: kepala,
+            credentials: 'same-origin',
+            body: JSON.stringify(kiriman())
+        }).then(function (jawaban) {
+            return jawaban.json().then(function (isi) {
+                if (isi && isi.csrf) {
+                    csrfToken = isi.csrf;
+                }
+                return { kode: jawaban.status, isi: isi };
+            }, function () {
+                return { kode: jawaban.status, isi: null };
+            });
+        }, function () {
+            return { kode: 0, isi: null };
+        });
+    }
+
+    function pesanGagalKirim(hasil) {
+        if (hasil.kode === 0) {
+            return 'Belum tersambung ke server. Periksa sambungan internet, lalu coba lagi. Isian tetap tersimpan.';
+        }
+        if (!hasil.isi) {
+            return 'Halaman ini sudah terlalu lama terbuka. Muat ulang halaman (isian tetap tersimpan), lalu coba lagi.';
+        }
+        return hasil.isi.pesan || 'Terjadi kendala. Coba lagi beberapa saat lagi.';
+    }
+
+    /**
+     * Galat dari server: buka langkah pertama yang salah dan tandai isiannya.
+     */
+    function tampilkanGalatServer(galat) {
+        var langkah = Math.min.apply(null, galat.map(function (g) { return g.langkah; }));
+        langkah = Math.max(1, Math.min(langkah, 4));
+        tampilkanLangkah(langkah, false);
+        tampilkanGalat(langkah, galat.filter(function (g) { return g.langkah === langkah; }));
+    }
+
+    function periksaServer() {
+        return kirim(DATA.alamat.periksa).then(function (hasil) {
+            if (hasil.kode === 200 && hasil.isi && hasil.isi.status === 'sah') {
+                rincian = hasil.isi.rincian;
+                return [];
+            }
+            if (hasil.kode === 422 && hasil.isi && Array.isArray(hasil.isi.galat)) {
+                tampilkanGalatServer(hasil.isi.galat);
+                return false;
+            }
+            return [{ jalur: 'periksa', pesan: pesanGagalKirim(hasil) }];
+        });
+    }
+
+    var pemeriksaLokal3 = pemeriksaLangkah[3];
+    pemeriksaLangkah[3] = function () {
+        var galat = pemeriksaLokal3();
+        if (galat.length > 0) {
+            return galat;
+        }
+        var tombol = $('#langkah-3 [data-lanjut]');
+        tombol.disabled = true;
+        return periksaServer().then(function (hasil) {
+            tombol.disabled = false;
+            return hasil;
+        });
+    };
+
+    function tabel(judul, kolom, baris, subtotalLabel, subtotal) {
+        var wadah = buat('div', 'kartu-isian tabel-biaya');
+        wadah.appendChild(buat('h3', 'h6', judul));
+        var gulir = buat('div', 'table-responsive');
+        var t = buat('table', 'table table-sm align-middle mb-0 tabel-tumpuk');
+        var kepala = buat('thead');
+        var tr = buat('tr');
+        kolom.forEach(function (k, i) {
+            var th = buat('th', i === kolom.length - 1 ? 'text-end' : null, k);
+            th.scope = 'col';
+            tr.appendChild(th);
+        });
+        kepala.appendChild(tr);
+        t.appendChild(kepala);
+        var badan = buat('tbody');
+        baris.forEach(function (sel) {
+            var r = buat('tr');
+            sel.forEach(function (isi, i) {
+                var td = buat('td', i === sel.length - 1 ? 'text-end text-nowrap' : null, isi);
+                td.setAttribute('data-label', kolom[i]);
+                r.appendChild(td);
+            });
+            badan.appendChild(r);
+        });
+        t.appendChild(badan);
+        var kaki = buat('tfoot');
+        var rk = buat('tr');
+        var label = buat('th', null, subtotalLabel);
+        label.colSpan = kolom.length - 1;
+        label.scope = 'row';
+        rk.appendChild(label);
+        rk.appendChild(buat('td', 'text-end text-nowrap fw-bold', rupiah(subtotal)));
+        kaki.appendChild(rk);
+        t.appendChild(kaki);
+        gulir.appendChild(t);
+        wadah.appendChild(gulir);
+        return wadah;
+    }
+
+    function tampilkanRincian() {
+        var wadah = $('#rincian-biaya');
+        var simpan = $('#tombol-simpan');
+        wadah.textContent = '';
+        simpan.disabled = !rincian;
+
+        if (!rincian) {
+            wadah.appendChild(buat('p', 'text-body-secondary', 'Menghitung biaya…'));
+            return;
+        }
+
+        var s = rincian.sekolah;
+        var sekolah = buat('div', 'kartu-isian ringkasan-sekolah');
+        sekolah.appendChild(buat('strong', 'd-block', s.nama));
+        sekolah.appendChild(buat('span', 'small text-body-secondary', [s.npsn ? 'NPSN ' + s.npsn : 'Tanpa NPSN', s.jenjang_label, s.kabupaten].filter(Boolean).join(' · ')
+            + ' · ' + draf.penanggungJawab.length + ' penanggung jawab · ' + draf.atlet.length + ' atlet'));
+        wadah.appendChild(sekolah);
+
+        if (rincian.individu.length > 0) {
+            wadah.appendChild(tabel('Individu', ['No', 'Nama', 'NISN', 'Kelompok Umur', 'Nomor Lomba', 'Biaya'],
+                rincian.individu.map(function (b, i) { return [String(i + 1), b.nama, b.nisn, b.kelompok_umur, b.nomor, rupiah(b.biaya)]; }),
+                'Subtotal individu', rincian.subtotal_individu));
+        }
+
+        if (rincian.beregu.length > 0) {
+            wadah.appendChild(tabel('Beregu', ['No', 'Nomor Lomba Beregu', 'Biaya'],
+                rincian.beregu.map(function (b, i) {
+                    return [String(i + 1), b.nomor + ' (' + b.kelompok_umur + ', ' + b.anggota + ' atlet' + (b.susulan ? ', tambahan anggota tim yang sudah terdaftar' : '') + ')', b.susulan ? 'Rp0' : rupiah(b.biaya)];
+                }),
+                'Subtotal beregu', rincian.subtotal_beregu));
+        }
+
+        var total = buat('div', 'kartu-isian total-biaya');
+        var dl = buat('dl', 'mb-0');
+        [['Subtotal individu', rincian.subtotal_individu], ['Subtotal beregu', rincian.subtotal_beregu], ['Total pembayaran', rincian.total]].forEach(function (b, i) {
+            var baris = buat('div', i === 2 ? 'total-baris total-akhir' : 'total-baris');
+            baris.appendChild(buat('dt', null, b[0]));
+            baris.appendChild(buat('dd', null, rupiah(b[1])));
+            dl.appendChild(baris);
+        });
+        total.appendChild(dl);
+        wadah.appendChild(total);
+    }
+
+    penyiapLangkah[4] = function () {
+        if (rincian) {
+            tampilkanRincian();
+            return;
+        }
+        tampilkanRincian();
+        periksaServer().then(function (galat) {
+            if (galat === false) {
+                return;
+            }
+            if (galat.length > 0) {
+                tampilkanGalat(4, galat);
+            }
+            tampilkanRincian();
+        });
+    };
+
+    // Isian yang berubah membuat rincian lama tidak berlaku.
+    akar.addEventListener('input', function () { rincian = null; });
+    akar.addEventListener('change', function () { rincian = null; });
+
+    var jendela = $('#konfirmasi-simpan');
+
+    $('#tombol-simpan').addEventListener('click', function () {
+        if (!rincian) {
+            return;
+        }
+        $('#konfirmasi-sekolah').textContent = rincian.sekolah.nama;
+        $('#konfirmasi-atlet').textContent = draf.atlet.length + ' atlet';
+        $('#konfirmasi-total').textContent = rupiah(rincian.total);
+        if (window.bootstrap && window.bootstrap.Modal) {
+            window.bootstrap.Modal.getOrCreateInstance(jendela).show();
+        } else if (window.confirm('Simpan pendaftaran? Setelah disimpan, data tidak bisa diubah lewat halaman ini.')) {
+            simpanPendaftaran();
+        }
+    });
+
+    $('#konfirmasi-ya').addEventListener('click', function () {
+        if (window.bootstrap && window.bootstrap.Modal) {
+            window.bootstrap.Modal.getOrCreateInstance(jendela).hide();
+        }
+        simpanPendaftaran();
+    });
+
+    function simpanPendaftaran() {
+        var tombol = $('#tombol-simpan');
+        tombol.disabled = true;
+        tombol.lastChild.textContent = ' Menyimpan…';
+
+        kirim(DATA.alamat.simpan).then(function (hasil) {
+            tombol.lastChild.textContent = ' Simpan Pendaftaran';
+            tombol.disabled = false;
+
+            if (hasil.kode === 201 && hasil.isi && hasil.isi.status === 'tersimpan') {
+                var r = hasil.isi.rincian;
+                draf.tersimpan = {
+                    id_pendaftaran: hasil.isi.id_pendaftaran,
+                    nama_sekolah: r.sekolah.nama,
+                    npsn: r.sekolah.npsn,
+                    subtotal_individu: r.subtotal_individu,
+                    subtotal_beregu: r.subtotal_beregu,
+                    total: r.total,
+                    wa: hasil.isi.wa,
+                    bukti: hasil.isi.bukti
+                };
+                // Foto tidak dibutuhkan lagi di peramban setelah tersimpan.
+                draf.penanggungJawab.forEach(function (o) { o.foto = ''; });
+                rincian = null;
+                simpanDraf();
+                tampilkanLangkah(5);
+                return;
+            }
+
+            if (hasil.kode === 422 && hasil.isi && Array.isArray(hasil.isi.galat)) {
+                rincian = null;
+                tampilkanGalatServer(hasil.isi.galat);
+                return;
+            }
+
+            tampilkanGalat(4, [{ jalur: 'simpan', pesan: pesanGagalKirim(hasil) }]);
+        });
+    }
+
+    // ------------------------------------------------------------------
+    // Langkah 5: Pembayaran
+    // ------------------------------------------------------------------
+
+    penyiapLangkah[5] = function () {
+        var t = draf.tersimpan;
+        if (!t) {
+            tampilkanLangkah(4, false);
+            return;
+        }
+        var bayar = DATA.pembayaran;
+        $('#bayar-sekolah').textContent = t.nama_sekolah;
+        $('#bayar-id').textContent = t.id_pendaftaran;
+        $('#bayar-bank').textContent = bayar.bank;
+        $('#bayar-rekening').textContent = bayar.nomor_rekening;
+        $('#bayar-pemilik').textContent = bayar.pemilik_rekening;
+        $('#bayar-total').textContent = rupiah(t.total);
+        $('#bayar-rincian').textContent = 'Subtotal individu ' + rupiah(t.subtotal_individu) + ' · subtotal beregu ' + rupiah(t.subtotal_beregu) + '.';
+        var logo = $('#bayar-logo');
+        logo.hidden = !bayar.logo_bank;
+        if (bayar.logo_bank) {
+            logo.src = bayar.logo_bank;
+            logo.alt = 'Logo ' + bayar.bank;
+        }
+        var wa = $('#bayar-wa');
+        wa.hidden = !t.wa;
+        if (t.wa) {
+            wa.href = t.wa;
+        }
+        $('#cetak-bukti').href = t.bukti;
+        $('#selesai-keterangan').textContent = 'Bukti juga bisa dicetak lagi kapan saja lewat menu Cek Pendaftaran dengan ID ' + t.id_pendaftaran
+            + (t.npsn ? ' atau NPSN ' + t.npsn : '') + '.';
+        $('#bayar-isi').hidden = sudahSelesai;
+        $('#selesai').hidden = !sudahSelesai;
+        $('#tombol-mulai-ulang').closest('.mulai-ulang').hidden = true;
+    };
+
+    $('#bayar-salin').addEventListener('click', function () {
+        var teks = DATA.pembayaran.nomor_rekening;
+        var label = $('#bayar-salin span');
+        var tandai = function () {
+            label.textContent = 'Tersalin';
+            window.setTimeout(function () { label.textContent = 'Salin'; }, 2000);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(teks).then(tandai, function () {});
+        }
+    });
+
+    $('#bayar-selesai').addEventListener('click', function () {
+        sudahSelesai = true;
+        hapusDraf();
+        penyiapLangkah[5]();
+        perbaruiPil();
+        $('#cetak-bukti').focus();
+    });
 
     // ------------------------------------------------------------------
     // Tombol bersama dan mulai
