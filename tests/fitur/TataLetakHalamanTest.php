@@ -61,31 +61,32 @@ final class TataLetakHalamanTest extends UjiHalaman
             $butir[$this->teks($tautan)] = $tautan;
         }
 
-        $this->assertSame(
-            ['Beranda', 'Pendaftaran Segera', 'Cek Pendaftaran', 'Unduhan'],
-            array_keys($butir),
-        );
+        // K81: menu mengikuti konsep visual; Pendaftaran dan Cek ada di tombol pembuka.
+        $this->assertSame(['Tentang', 'Kategori', 'Jadwal', 'Unduhan'], array_keys($butir));
+        $this->assertSame(site_url('/') . '#pembuka', $butir['Tentang']->getAttribute('href'));
+        $this->assertSame(site_url('/') . '#lomba', $butir['Kategori']->getAttribute('href'));
+        $this->assertSame(site_url('/') . '#jadwal', $butir['Jadwal']->getAttribute('href'));
 
-        // Beranda aktif dan bertautan.
-        $this->assertSame('page', $butir['Beranda']->getAttribute('aria-current'));
-        $this->assertSame(site_url('/'), $butir['Beranda']->getAttribute('href'));
-
-        // Unduhan sudah punya halaman (F3-03, K40): bertautan, tidak aktif di halaman depan.
+        // Unduhan punya halaman sendiri (F3-03, K40): bertautan, tidak aktif di halaman depan.
         $this->assertSame(site_url('unduhan'), $butir['Unduhan']->getAttribute('href'));
-        $this->assertFalse($butir['Unduhan']->hasAttribute('aria-disabled'));
         $this->assertFalse($butir['Unduhan']->hasAttribute('aria-current'));
 
-        // Cek Pendaftaran sudah punya halaman (Tahap 5): menu selalu bertautan.
-        $this->assertSame(site_url('cek-pendaftaran'), $butir['Cek Pendaftaran']->getAttribute('href'));
-        $this->assertFalse($butir['Cek Pendaftaran']->hasAttribute('aria-disabled'));
-
-        // Yang halamannya belum ada: non-aktif, tanpa tautan (bukan tautan mati ke 404).
-        foreach (['Pendaftaran Segera'] as $label) {
-            $this->assertSame('true', $butir[$label]->getAttribute('aria-disabled'), $label);
-            $this->assertFalse($butir[$label]->hasAttribute('href'), $label . ' tidak boleh bertautan.');
-            $this->assertStringContainsString('disabled', $butir[$label]->getAttribute('class'));
-            $this->assertFalse($butir[$label]->hasAttribute('aria-current'));
+        foreach ($butir as $label => $tautan) {
+            $this->assertFalse($tautan->hasAttribute('aria-disabled'), $label);
         }
+
+        // Tombol Panitia ke halaman masuk admin, tanpa ikon panah.
+        $panitia = $xpath->query('//nav[@aria-label="Menu utama"]//a[contains(@class, "tombol-panitia")]')->item(0);
+        $this->assertNotNull($panitia);
+        $this->assertSame('Panitia', $this->teks($panitia));
+        $this->assertSame(site_url('admin/masuk'), $panitia->getAttribute('href'));
+        $this->assertSame(0, $xpath->query('.//i', $panitia)->length);
+
+        // Halaman depan memakai kepala terang; halaman lain tetap biru dan Unduhan aktif di halamannya.
+        $this->assertSame(1, $xpath->query('//header[contains(@class, "kepala-beranda")]')->length);
+        $unduhan = $this->xpath($this->get('unduhan')->getBody());
+        $this->assertSame(0, $unduhan->query('//header[contains(@class, "kepala-beranda")]')->length);
+        $this->assertSame('page', $unduhan->query('//nav[@aria-label="Menu utama"]//a[normalize-space()="Unduhan"]')->item(0)?->getAttribute('aria-current'));
 
         // Menu melipat di ponsel.
         $tombol = $xpath->query('//button[@data-bs-toggle="collapse"][@data-bs-target="#menu-publik"]')->item(0);

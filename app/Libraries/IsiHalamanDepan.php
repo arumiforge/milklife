@@ -69,7 +69,7 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  * `tombol()`: tombol utama di kepala halaman depan.
  *
  *     [
- *         ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => 'pendaftaran', 'utama' => true, 'keterangan' => null],
+ *         ['kunci' => 'pendaftaran', 'label' => 'Daftar Sekarang', 'alamat' => 'pendaftaran', 'utama' => true, 'keterangan' => null],
  *         ['kunci' => 'cek',         'label' => 'Cek Pendaftaran', 'alamat' => null, 'utama' => false],
  *     ]
  *
@@ -161,6 +161,48 @@ final class IsiHalamanDepan
      */
     public const GAMBAR = ['gambar_kepala', 'logo_persegi', 'logo_persegi_panjang', 'logo_djarum'];
 
+    /**
+     * Logo yang tampil di kepala halaman depan (K81): logo persegi panjang,
+     * atau logo persegi bila yang persegi panjang belum ada. `null` bila
+     * keduanya belum diunggah; kepala lalu menulis nama acara.
+     *
+     * @param array<string, mixed> $tampilan hasil `tampilan()`
+     */
+    public static function logoKepala(array $tampilan): ?string
+    {
+        foreach (['logo_persegi_panjang', 'logo_persegi'] as $kunci) {
+            if (($tampilan[$kunci] ?? null) !== null) {
+                return $kunci;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Logo yang sudah diunggah, berurutan seperti di pengaturan.
+     *
+     * @param array<string, mixed> $tampilan hasil `tampilan()`
+     *
+     * @return list<array{kunci: string, alamat: string, alt: string, ukuran: array{lebar: int, tinggi: int}|null}>
+     */
+    public static function logoPembuka(array $tampilan, string $namaAcara): array
+    {
+        $logo = [];
+
+        foreach ([
+            'logo_persegi'         => 'Logo ' . $namaAcara,
+            'logo_persegi_panjang' => 'Logo ' . $namaAcara,
+            'logo_djarum'          => 'Logo Bakti Olahraga Djarum Foundation',
+        ] as $kunci => $alt) {
+            if (($tampilan[$kunci] ?? null) !== null) {
+                $logo[] = ['kunci' => $kunci, 'alamat' => $tampilan[$kunci], 'alt' => $alt, 'ukuran' => $tampilan['ukuran'][$kunci] ?? null];
+            }
+        }
+
+        return $logo;
+    }
+
     private Unggahan $unggahan;
 
     private ?BukaTutupPendaftaran $bukaTutup = null;
@@ -248,9 +290,12 @@ final class IsiHalamanDepan
      */
     public function tombol(): array
     {
+        $terbuka = $this->bukaTutup()->terbuka();
+
         return [
             // Pendaftaran hanya bisa dipakai saat terbuka (rancangan 6.1); selain itu nonaktif dengan keterangan keadaannya.
-            ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => $this->bukaTutup()->terbuka() ? self::ALAMAT_PENDAFTARAN : null, 'utama' => true, 'keterangan' => self::keteranganPendaftaran($this->bukaTutup())],
+            // Saat terbuka berbunyi "Daftar Sekarang" seperti konsep visual (K81).
+            ['kunci' => 'pendaftaran', 'label' => $terbuka ? 'Daftar Sekarang' : 'Pendaftaran', 'alamat' => $terbuka ? self::ALAMAT_PENDAFTARAN : null, 'utama' => true, 'keterangan' => self::keteranganPendaftaran($this->bukaTutup())],
             // Cek hanya bisa dipakai bila pengaturan lengkap (rancangan 6.1).
             ['kunci' => 'cek', 'label' => 'Cek Pendaftaran', 'alamat' => $this->bukaTutup()->keadaan() === BukaTutupPendaftaran::DISIAPKAN ? null : self::ALAMAT_CEK_PENDAFTARAN, 'utama' => false],
         ];

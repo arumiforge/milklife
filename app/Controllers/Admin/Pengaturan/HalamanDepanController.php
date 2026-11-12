@@ -40,7 +40,7 @@ class HalamanDepanController extends BaseController
         'gambar_kepala' => [
             'label' => 'Gambar kepala',
             'rasio' => '21x9',
-            'saran' => 'Tampil selebar layar sebagai latar di belakang judul halaman depan, diberi lapisan biru supaya tulisan tetap terbaca. Pilih foto tanpa tulisan, misalnya 1920 × 1080 piksel.',
+            'saran' => 'Foto di sisi kanan bagian atas halaman depan, memudar ke latar krem. Foto dipotong otomatis supaya memenuhi bingkainya, jadi letakkan atlet di tengah foto. Pilih foto mendatar tanpa tulisan, paling kecil 1600 × 900 piksel.',
         ],
         'logo_persegi' => [
             'label' => 'Logo persegi',

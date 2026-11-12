@@ -356,19 +356,7 @@ html:has(.tata-publik) {
     box-shadow: none;
 }
 
-/* Butir menu yang halamannya belum ada. */
-.menu-segera {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 0.15rem 0.45rem;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    border-radius: 1rem;
-    color: #fff;
-}
-
-@media (max-width: 767.98px) {
+@media (max-width: 991.98px) {
     .kepala-publik .navbar-collapse {
         padding-bottom: 0.5rem;
     }
@@ -391,114 +379,31 @@ html:has(.tata-publik) {
     }
 }
 
-/* Bagian pembuka halaman depan: gradasi biru dengan bidang miring. */
-.pembuka {
-    position: relative;
-    overflow: hidden;
-    background: var(--ml-gradasi-kepala);
-    color: #fff;
-    isolation: isolate;
+/* Tombol Panitia ke halaman masuk admin (K81): bukan oranye supaya tidak
+   bersaing dengan ajakan mendaftar. Di kepala biru berwarna putih. */
+.tombol-panitia {
+    --bs-btn-color: var(--ml-biru-tua);
+    --bs-btn-bg: #fff;
+    --bs-btn-border-color: #fff;
+    --bs-btn-hover-color: var(--ml-biru-tua);
+    --bs-btn-hover-bg: var(--ml-biru-muda);
+    --bs-btn-hover-border-color: var(--ml-biru-muda);
+    --bs-btn-active-color: var(--ml-biru-tua);
+    --bs-btn-active-bg: var(--ml-biru-muda);
+    --bs-btn-active-border-color: var(--ml-biru-muda);
+    padding: 0.55rem 1.6rem;
+    border-radius: 999px;
+    font-weight: 700;
 }
 
-.pembuka::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: -20%;
-    right: -12rem;
-    width: 22rem;
-    height: 140%;
-    background: linear-gradient(90deg,
-        var(--ml-oranye) 0 18%,
-        transparent 18% 30%,
-        rgba(155, 204, 236, 0.35) 30% 38%,
-        transparent 38% 52%,
-        rgba(232, 95, 49, 0.55) 52% 60%,
-        transparent 60%);
-    transform: skewX(-24deg);
-    opacity: 0.6;
-}
-
-/* Ponsel: bidang miring hanya di pojok kanan atas, memudar sebelum judul. */
-@media (max-width: 767.98px) {
-    .pembuka::before {
-        top: -2rem;
-        right: -15rem;
-        height: 11rem;
-        -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
-        mask-image: linear-gradient(to bottom, #000 40%, transparent);
+@media (max-width: 991.98px) {
+    .tombol-panitia {
+        margin: 0.25rem 0 0.75rem;
     }
 }
 
 .bidang-info p {
     max-width: 68ch;
-}
-
-.pembuka-judul {
-    font-size: clamp(2rem, 8vw, 3.5rem);
-    font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: #fff;
-}
-
-.pembuka-judul .merek-sambungan {
-    display: block;
-}
-
-/* Waktu acara dan keadaan pendaftaran: dua kartu serupa, bertumpuk di ponsel
-   dan sejajar dengan tinggi sama di layar lebar (K80). */
-.pembuka-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 36rem;
-}
-
-.pembuka-waktu {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.35rem;
-    margin: 0;
-    padding: 0.875rem 1.25rem;
-    background-color: var(--ml-biru-muda);
-    color: var(--ml-biru-tua);
-    font-size: 1.0625rem;
-    font-weight: 700;
-    border-left: 6px solid var(--ml-putih);
-    border-radius: 0.75rem;
-    box-shadow: 0 0.5rem 1.5rem rgba(var(--ml-biru-tua-rgb), 0.25);
-}
-
-.pembuka-waktu .bi {
-    margin-right: 0.5rem;
-}
-
-@media (min-width: 768px) {
-    .pembuka-info {
-        flex-direction: row;
-        max-width: none;
-    }
-
-    .pembuka-waktu,
-    .pembuka-info .keadaan-pendaftaran {
-        flex: 0 1 auto;
-    }
-}
-
-@media (min-width: 768px) {
-    .pembuka::before {
-        right: -4rem;
-        width: 30rem;
-        opacity: 0.85;
-    }
-}
-
-@media (min-width: 1200px) {
-    .pembuka::before {
-        right: 4rem;
-    }
 }
 
 .kaki-publik {
@@ -508,16 +413,131 @@ html:has(.tata-publik) {
     border-top: 4px solid var(--ml-oranye);
 }
 
-/* ---------- Kepala halaman depan (beranda/_kepala.php) ---------- */
+/* ---------- Halaman depan: kepala terang dan bagian pembuka (K81) ----------
+   Mengikuti konsep visual pemilik: latar krem, biru tua, oranye, dan hijau
+   muda. Hanya halaman depan; halaman lain tetap memakai kepala biru.
 
-/* Gambar kepala menjadi latar di belakang judul (K44): mengisi seluruh
-   bagian pembuka, di bawah bidang miring, dengan lapisan biru tua supaya
-   tulisan putih tetap terbaca di atas gambar apa pun. */
+   Kontras di atas krem #FBF3E8: biru tua 12,86 : 1; oranye judul #D9531F
+   3,67 : 1 (hanya untuk huruf sangat besar, batas 3 : 1); teks redup 5,42 : 1.
+   Hijau muda #C9E265 hanya hiasan. */
+
+:root {
+    --ml-krem: #FBF3E8;
+    --ml-hijau-muda: #C9E265;
+    --ml-oranye-judul: #D9531F;
+    --ml-tinggi-kepala-beranda: 5rem;
+}
+
+.kepala-beranda {
+    background: var(--ml-krem);
+    box-shadow: 0 1px 0 rgba(var(--ml-biru-tua-rgb), 0.1);
+}
+
+.kepala-beranda::after {
+    display: none;
+}
+
+.kepala-beranda .navbar {
+    --bs-navbar-color: var(--ml-biru-tua);
+    --bs-navbar-hover-color: var(--ml-oranye-tombol);
+    --bs-navbar-active-color: var(--ml-biru-tua);
+    --bs-navbar-brand-color: var(--ml-biru-tua);
+    --bs-navbar-brand-hover-color: var(--ml-biru-tua);
+    --bs-navbar-toggler-border-color: rgba(var(--ml-biru-tua-rgb), 0.4);
+    min-height: var(--ml-tinggi-kepala-beranda);
+}
+
+.kepala-beranda .nav-link {
+    font-weight: 600;
+    font-size: 1.0625rem;
+}
+
+.kepala-beranda .nav-link:focus-visible,
+.kepala-beranda .navbar-brand:focus-visible,
+.kepala-beranda .navbar-toggler:focus-visible {
+    outline-color: var(--ml-biru-tua);
+}
+
+.kepala-beranda .merek-sambungan {
+    color: var(--ml-oranye-tombol);
+}
+
+.kepala-logo {
+    display: block;
+    width: auto;
+    height: 3rem;
+}
+
+/* Label seri miring bergaris bawah oranye, dipisah garis tegak dari logo. */
+.kepala-seri {
+    margin: 0 auto 0 0.25rem;
+    padding: 0.2rem 0 0.2rem 1rem;
+    border-left: 2px solid var(--ml-biru-tua);
+    color: var(--ml-biru-tua);
+    font-size: 0.9375rem;
+    font-style: italic;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.kepala-beranda .tombol-panitia {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--ml-biru-tua);
+    --bs-btn-border-color: var(--ml-biru-tua);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--ml-biru);
+    --bs-btn-hover-border-color: var(--ml-biru);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--ml-biru);
+    --bs-btn-active-border-color: var(--ml-biru);
+}
+
+@media (min-width: 992px) {
+    .kepala-beranda .navbar {
+        height: var(--ml-tinggi-kepala-beranda);
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .kepala-logo {
+        height: 3.5rem;
+    }
+
+    .kepala-seri {
+        margin-left: 1rem;
+        padding-left: 1.5rem;
+        font-size: 1.0625rem;
+    }
+
+    .kepala-seri::after {
+        content: "";
+        display: block;
+        height: 3px;
+        margin-top: 0.15rem;
+        background: var(--ml-oranye);
+    }
+}
+
+/* Bagian pembuka. Di layar lebar mengisi tepat satu layar di bawah kepala. */
+.pembuka {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--ml-krem);
+    color: var(--ml-biru-tua);
+}
+
+.pembuka-utama {
+    position: relative;
+}
+
+/* Foto dipotong otomatis supaya selalu memenuhi bingkainya, berapa pun
+   ukuran dan bentuk foto yang diunggah; titik fokus sedikit di atas tengah. */
 .pembuka-gambar {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    background-color: var(--ml-biru-tua);
+    height: 15rem;
+    -webkit-mask-image: linear-gradient(to bottom, #000 65%, transparent);
+    mask-image: linear-gradient(to bottom, #000 65%, transparent);
 }
 
 .pembuka-gambar img {
@@ -525,121 +545,131 @@ html:has(.tata-publik) {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: 50% 30%;
 }
 
-.pembuka-gambar::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(2, 31, 123, 0.8);
-}
-
-/* Gambar latar biasanya sudah punya hiasan sendiri; bidang miring tema
-   disembunyikan supaya tidak menumpuk. */
-.pembuka-dengan-gambar::before {
+.pembuka-lengkung,
+.pembuka-nomor-seri {
     display: none;
 }
 
-/* Logo persegi (logo utama acara) tampil lebih besar dari logo lain. */
-.pembuka-logo-butir.pembuka-logo-persegi {
-    height: 6rem;
+.pembuka-gelombang {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2.5rem;
+    z-index: 0;
 }
 
-@media (min-width: 768px) {
-    .pembuka-dengan-gambar > .container {
-        min-height: 32rem;
-    }
-
-    /* Layar lebar: lapisan pekat di sisi tulisan, gambar lebih terlihat di kanan. */
-    .pembuka-gambar::after {
-        background: linear-gradient(90deg, rgba(2, 31, 123, 0.92) 0%, rgba(2, 31, 123, 0.8) 45%, rgba(2, 31, 123, 0.35) 100%);
-    }
+.pembuka-isi {
+    position: relative;
+    z-index: 1;
+    padding-top: 1.5rem;
+    padding-bottom: 3.5rem;
 }
 
-/* Logo langsung di atas latar, tanpa kartu putih (K75); sama tinggi, bentuk asli tidak berubah. */
-.pembuka-logo {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.625rem;
-    margin: 0 0 1.5rem;
-    padding: 0;
-}
-
-.pembuka-logo-butir {
-    display: flex;
-    align-items: center;
-    max-width: 100%;
-    height: 3.5rem;
-}
-
-.pembuka-logo-butir img {
+.pembuka-garis {
     display: block;
-    height: 100%;
-    width: auto;
-    max-width: 100%;
-    object-fit: contain;
+    width: 5.5rem;
+    height: 0.5rem;
+    margin-bottom: 1rem;
+    background: var(--ml-hijau-muda);
+    transform: skewX(-24deg);
 }
 
-/* Nama acara kecil di atas judul dari pengaturan. */
-.pembuka-nama {
-    color: var(--ml-biru-muda);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-}
-
-/* Judul dari pengaturan bisa panjang: sedikit lebih kecil dari nama acara. */
-.pembuka-judul-teks {
-    max-width: 15em;
-    font-size: clamp(1.75rem, 6.5vw, 3rem);
-    line-height: 1.1;
+.pembuka-judul {
+    margin-bottom: 1rem;
+    color: var(--ml-biru-tua);
+    font-size: clamp(2.5rem, 11vw, 4rem);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
     overflow-wrap: anywhere;
+}
+
+.pembuka-judul-baris {
+    display: block;
+}
+
+.pembuka-judul-sorot,
+.pembuka-judul .merek-sambungan {
+    display: block;
+    color: var(--ml-oranye-judul);
 }
 
 .pembuka-teks {
-    max-width: 68ch;
-    font-size: 1.0625rem;
-    color: rgba(255, 255, 255, 0.92);
+    max-width: 40rem;
+    margin-bottom: 1.25rem;
+    font-size: 1.125rem;
+    font-weight: 600;
     overflow-wrap: anywhere;
+}
+
+.pembuka-teks p {
+    margin-bottom: 0.5rem;
 }
 
 .pembuka-teks p:last-child {
     margin-bottom: 0;
 }
 
-/* Keadaan pendaftaran: kartu putih dengan garis dan ikon berwarna per keadaan. */
-.keadaan-pendaftaran {
-    --keadaan-garis: var(--ml-biru-muda);
-    --keadaan-ikon-latar: var(--ml-biru-muda-pucat);
-    --keadaan-ikon-warna: var(--ml-biru);
-    --keadaan-label: var(--ml-teks-redup);
+/* Kartu info: tanggal dan tempat di baris putih, keadaan pendaftaran di
+   pita bawah berwarna per keadaan. */
+.pembuka-info {
+    display: flex;
+    flex-direction: column;
+    max-width: 36rem;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 1.25rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(var(--ml-biru-tua-rgb), 0.12);
+}
+
+.pembuka-waktu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0.9rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.pembuka-waktu > span {
     display: flex;
     align-items: center;
-    gap: 0.875rem;
-    max-width: 36rem;
-    padding: 0.875rem 1.1rem;
-    background-color: var(--ml-putih);
-    color: var(--ml-biru-tua);
-    border-left: 6px solid var(--keadaan-garis);
-    border-radius: 0.75rem;
-    box-shadow: 0 0.5rem 1.5rem rgba(var(--ml-biru-tua-rgb), 0.25);
+}
+
+.pembuka-waktu .bi {
+    margin-right: 0.6rem;
+    font-size: 1.375rem;
+}
+
+.keadaan-pendaftaran {
+    --keadaan-latar: var(--ml-biru);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.25rem;
+    background: var(--keadaan-latar);
+    color: #fff;
 }
 
 .keadaan-belum-dibuka {
-    --keadaan-garis: var(--ml-biru);
-    --keadaan-label: var(--ml-biru);
+    --keadaan-latar: var(--ml-biru-tua);
 }
 
 .keadaan-terbuka {
-    --keadaan-garis: var(--ml-oranye);
-    --keadaan-ikon-latar: var(--ml-oranye-tombol);
-    --keadaan-ikon-warna: #fff;
-    --keadaan-label: var(--ml-oranye-gelap);
+    --keadaan-latar: var(--ml-oranye-tombol);
 }
 
 .keadaan-ditutup {
-    --keadaan-garis: var(--ml-teks-redup);
-    --keadaan-ikon-latar: var(--ml-latar);
-    --keadaan-ikon-warna: var(--ml-teks-redup);
+    --keadaan-latar: var(--ml-teks-redup);
 }
 
 .keadaan-ikon {
@@ -647,110 +677,431 @@ html:has(.tata-publik) {
     flex: none;
     align-items: center;
     justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
-    background-color: var(--keadaan-ikon-latar);
-    color: var(--keadaan-ikon-warna);
-    font-size: 1.25rem;
+    background-color: rgba(255, 255, 255, 0.18);
+    font-size: 1.2rem;
 }
 
 .keadaan-label {
-    color: var(--keadaan-label);
-    font-size: 0.8125rem;
-    font-weight: 700;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
 }
 
 .keadaan-kalimat {
-    font-size: 1.0625rem;
-    font-weight: 600;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
-/* Tombol Pendaftaran dan Cek Pendaftaran (beranda/_tombol.php, K75): ajakan
-   utama di atas bagian lomba. Ponsel bertumpuk; layar lebar membagi dua
-   lebar halaman. */
-.bagian-tombol {
-    padding: 1.5rem 0 0;
-    background-color: var(--ml-putih);
-}
-
-.bagian-tombol + .bagian-lomba > .container {
-    padding-top: 2rem !important;
-}
-
+/* Tombol ajakan: kapsul miring huruf besar. */
 .tombol-utama {
-    display: grid;
-    gap: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
 }
 
 .tombol-utama .btn {
     display: inline-flex;
+    flex: 1 1 100%;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding-top: 0.9rem;
-    padding-bottom: 0.9rem;
-    font-weight: 700;
-    box-shadow: 0 0.375rem 1rem rgba(2, 31, 123, 0.18);
+    gap: 0.6rem;
+    padding: 0.85rem 1.75rem;
+    border-radius: 999px;
+    font-size: 1.0625rem;
+    font-style: italic;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
-@media (min-width: 768px) {
-    .tombol-utama {
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
-
-    .tombol-utama .btn {
-        padding-top: 1.1rem;
-        padding-bottom: 1.1rem;
-        font-size: 1.25rem;
-    }
+.tombol-utama .btn-primary {
+    box-shadow: 0 0.5rem 1.25rem rgba(var(--ml-oranye-tombol-rgb), 0.3);
 }
 
-/* Tombol biru pekat: ajakan setara tombol oranye (putih di atas biru tua 14,15 : 1). */
-.btn-biru {
-    --bs-btn-color: #fff;
-    --bs-btn-bg: var(--ml-biru-tua);
+.btn-garis-biru {
+    --bs-btn-color: var(--ml-biru-tua);
+    --bs-btn-bg: transparent;
     --bs-btn-border-color: var(--ml-biru-tua);
     --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: var(--ml-biru);
-    --bs-btn-hover-border-color: var(--ml-biru);
-    --bs-btn-focus-shadow-rgb: 35, 73, 135;
+    --bs-btn-hover-bg: var(--ml-biru-tua);
+    --bs-btn-hover-border-color: var(--ml-biru-tua);
     --bs-btn-active-color: #fff;
     --bs-btn-active-bg: var(--ml-biru);
     --bs-btn-active-border-color: var(--ml-biru);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: var(--ml-biru-tua);
+    --bs-btn-disabled-color: var(--ml-biru-tua);
     --bs-btn-disabled-border-color: var(--ml-biru-tua);
+    border-width: 2px;
 }
 
-/* Tombol yang halamannya belum ada (K39): tetap terbaca, tidak bisa ditekan. */
+/* Tombol yang belum bisa dipakai (K39): tetap terbaca, tidak bisa ditekan. */
 .tombol-utama .tombol-nonaktif {
     --bs-btn-disabled-opacity: 0.8;
 }
 
 .tombol-segera {
     font-size: 0.6875rem;
+    font-style: normal;
     font-weight: 600;
-    text-transform: uppercase;
     letter-spacing: 0.04em;
     padding: 0.15rem 0.45rem;
     border: 1px solid currentColor;
     border-radius: 1rem;
 }
 
+.pembuka-logo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+}
+
+.pembuka-logo-butir {
+    display: flex;
+    align-items: center;
+    height: 2.75rem;
+}
+
+.pembuka-logo-butir img {
+    display: block;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* Deret kartu kelompok umur di bawah pembuka, menaut ke rinciannya. */
+.pembuka-ku {
+    position: relative;
+    z-index: 1;
+    padding: 0.5rem 0 1.75rem;
+}
+
+.pembuka-ku-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0 0 0.35rem;
+}
+
+.pembuka-ku-label::before,
+.pembuka-ku-label::after {
+    content: "";
+    flex: 0 1 9rem;
+    height: 2px;
+    background: var(--ml-biru-tua);
+}
+
+.pembuka-ku-label span {
+    flex: none;
+    padding: 0.15rem 1rem;
+    border: 2px solid var(--ml-biru-tua);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-style: italic;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.pembuka-ku-judul {
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: clamp(1.25rem, 5vw, 2.25rem);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.pembuka-ku-daftar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pembuka-ku-kartu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 100%;
+    padding: 0.85rem 0.9rem 1.6rem;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(var(--ml-biru-tua-rgb), 0.12);
+    border-radius: 1rem;
+    box-shadow: 0 0.375rem 1rem rgba(var(--ml-biru-tua-rgb), 0.08);
+    color: var(--ml-biru-tua);
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Sapuan warna di bawah kartu, hijau muda dan oranye bergantian. */
+.pembuka-ku-kartu::after {
+    content: "";
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    bottom: -1.5rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background: var(--ml-hijau-muda);
+    transform: rotate(-4deg);
+}
+
+.pembuka-ku-kartu-oranye::after {
+    background: var(--ml-oranye);
+}
+
+.pembuka-ku-kartu:hover {
+    color: var(--ml-biru-tua);
+    transform: translateY(-3px);
+    box-shadow: 0 0.75rem 1.5rem rgba(var(--ml-biru-tua-rgb), 0.14);
+}
+
+.pembuka-ku-kartu:focus-visible {
+    outline: 3px solid var(--ml-oranye-tombol);
+    outline-offset: 2px;
+}
+
+.ku-pelari {
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+}
+
+.pembuka-ku-nama {
+    font-size: 1.25rem;
+    font-style: italic;
+    font-weight: 900;
+    line-height: 1.05;
+    text-transform: uppercase;
+}
+
+.pembuka-ku-julukan {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 700;
+    text-transform: none;
+}
+
+@media (min-width: 576px) {
+    .pembuka-waktu {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .pembuka-waktu > span {
+        white-space: nowrap;
+    }
+
+    .pembuka-waktu > span + span {
+        padding-left: 1.25rem;
+        border-left: 2px solid rgba(var(--ml-biru-tua-rgb), 0.25);
+    }
+
+    .tombol-utama .btn {
+        flex: 0 1 auto;
+    }
+}
+
 @media (min-width: 768px) {
-    .pembuka-logo-butir {
-        height: 4.25rem;
+    .pembuka-ku-daftar {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 992px) {
+    .pembuka {
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - var(--ml-tinggi-kepala-beranda));
+        min-height: calc(100svh - var(--ml-tinggi-kepala-beranda));
     }
 
-    .pembuka-logo-butir.pembuka-logo-persegi {
-        height: 8rem;
+    .pembuka-utama {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: center;
     }
 
+    .pembuka-gambar {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        width: 60%;
+        height: auto;
+        -webkit-mask-image: linear-gradient(to right, transparent 0, #000 30%);
+        mask-image: linear-gradient(to right, transparent 0, #000 30%);
+    }
+
+    .pembuka-lengkung {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: -1;
+        width: 58%;
+        height: 100%;
+        opacity: 0.9;
+    }
+
+    .pembuka-dengan-gambar .pembuka-lengkung {
+        z-index: 0;
+        opacity: 0.55;
+    }
+
+    .pembuka-nomor-seri {
+        display: block;
+        position: absolute;
+        top: 0.5rem;
+        right: 2.5%;
+        z-index: 0;
+        color: transparent;
+        font-size: clamp(7rem, 22vh, 14rem);
+        font-style: italic;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        -webkit-text-stroke: 3px rgba(var(--ml-biru-tua-rgb), 0.2);
+    }
+
+    .pembuka-dengan-gambar .pembuka-nomor-seri {
+        -webkit-text-stroke-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .pembuka-gelombang {
+        height: 3rem;
+    }
+
+    .pembuka-isi {
+        padding-top: 1.25rem;
+        padding-bottom: 3.25rem;
+    }
+
+    .pembuka-kiri {
+        width: 54%;
+    }
+
+    .pembuka-judul {
+        font-size: clamp(2.75rem, min(6.4vw, 8.2vh), 7rem);
+    }
+
+    .pembuka-teks {
+        font-size: clamp(1.125rem, 2.6vh, 1.5rem);
+    }
+
+    .pembuka-ku {
+        padding: 0 0 1.25rem;
+    }
+
+    .pembuka-ku-judul {
+        margin-bottom: 0.75rem;
+        font-size: clamp(1.25rem, 3.4vh, 2.25rem);
+    }
+
+    .pembuka-ku-daftar {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .pembuka-ku-kartu {
+        gap: 0.9rem;
+        padding: 0.9rem 1.25rem 1.6rem;
+    }
+
+    .ku-pelari {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+
+    .pembuka-ku-nama {
+        font-size: 1.625rem;
+    }
+}
+
+/* Layar lebar yang pendek (misalnya 1366 × 768): dirapatkan supaya pembuka
+   dan deret kelompok umur tetap muat satu layar. */
+@media (min-width: 992px) and (max-height: 900px) {
+    .pembuka-isi {
+        padding-top: 0.75rem;
+        padding-bottom: 2.75rem;
+    }
+
+    .pembuka-garis {
+        height: 0.4rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .pembuka-judul {
+        margin-bottom: 0.6rem;
+        font-size: clamp(2.5rem, min(6.4vw, 7.4vh), 7rem);
+    }
+
+    .pembuka-teks {
+        margin-bottom: 0.85rem;
+        font-size: 1.125rem;
+    }
+
+    .pembuka-info {
+        margin-bottom: 0.85rem;
+    }
+
+    .pembuka-waktu {
+        padding: 0.6rem 1.1rem;
+    }
+
+    .keadaan-pendaftaran {
+        padding: 0.5rem 1.1rem;
+    }
+
+    .keadaan-ikon {
+        width: 2.1rem;
+        height: 2.1rem;
+        font-size: 1rem;
+    }
+
+    .tombol-utama .btn {
+        padding: 0.7rem 1.5rem;
+    }
+
+    .pembuka-ku-label {
+        margin-bottom: 0.15rem;
+    }
+
+    .pembuka-ku-judul {
+        margin-bottom: 0.5rem;
+        font-size: clamp(1.25rem, 3vh, 2rem);
+    }
+
+    .pembuka-ku-kartu {
+        padding: 0.6rem 1rem 1.35rem;
+    }
+
+    .ku-pelari {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    .pembuka-ku-nama {
+        font-size: 1.375rem;
+    }
 }
 
 /* ---------- Tata letak polos (halaman masuk dan galat) ---------- */

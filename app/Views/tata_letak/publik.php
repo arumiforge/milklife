@@ -9,12 +9,14 @@
  * - `kepala`: tag tambahan di `<head>` (misalnya `<link>` CSS atau `<meta>` halaman itu).
  * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap.
  *
- * Menu publik ditulis di `$menuPublik` di bawah. Butir tanpa `alamat` tampil
- * non-aktif (`aria-disabled`, tanpa tautan) dengan `keterangan`-nya, atau
- * "Segera" bila tanpa keterangan. Alamat Pendaftaran dan Cek Pendaftaran
- * diambil dari `IsiHalamanDepan` (satu tempat dengan tombol di halaman
- * depan). Pendaftaran hanya menaut saat pendaftaran terbuka (rancangan 6.1);
- * selain itu keterangannya `IsiHalamanDepan::keteranganPendaftaran()`.
+ * Menu publik ditulis di `$menuPublik` di bawah (K81): Tentang, Kategori,
+ * dan Jadwal melompat ke bagian halaman depan, Unduhan ke halaman unduhan,
+ * lalu tombol Panitia ke halaman masuk admin. Pendaftaran dan Cek
+ * Pendaftaran dibuka dari dua tombol besar di bagian pembuka halaman depan.
+ *
+ * Di halaman depan kepala memakai gaya terang (`kepala-beranda`) dengan logo
+ * acara (`IsiHalamanDepan::logoKepala()`) dan label seri; halaman lain tetap
+ * memakai kepala biru dengan nama acara.
  *
  * Pesan kilat `pesan_sukses` dan `pesan_galat` (misalnya dari filter batas
  * unggah) tampil di atas isi halaman (`tata_letak/_pesan_publik`).
@@ -29,14 +31,27 @@
 
 use App\Libraries\IsiHalamanDepan;
 
-$bukaTutup = (new IsiHalamanDepan())->bukaTutup();
+$beranda = url_is('/');
 
 $menuPublik = [
-    ['label' => 'Beranda', 'alamat' => '/'],
-    ['label' => 'Pendaftaran', 'alamat' => $bukaTutup->terbuka() ? IsiHalamanDepan::ALAMAT_PENDAFTARAN : null, 'keterangan' => IsiHalamanDepan::keteranganPendaftaran($bukaTutup)],
-    ['label' => 'Cek Pendaftaran', 'alamat' => IsiHalamanDepan::ALAMAT_CEK_PENDAFTARAN],
-    ['label' => 'Unduhan', 'alamat' => 'unduhan'],
+    ['label' => 'Tentang', 'alamat' => site_url('/') . '#pembuka'],
+    ['label' => 'Kategori', 'alamat' => site_url('/') . '#lomba'],
+    ['label' => 'Jadwal', 'alamat' => site_url('/') . '#jadwal'],
+    ['label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan')],
 ];
+
+// Logo dan label seri hanya di kepala halaman depan.
+$logoKepala = null;
+$seriTahun  = '';
+
+if ($beranda) {
+    $isiDepan   = new IsiHalamanDepan();
+    $tampilan   = $isiDepan->tampilan();
+    $kunciLogo  = IsiHalamanDepan::logoKepala($tampilan);
+    $acara      = $isiDepan->acara();
+    $seriTahun  = $acara['seri_tahun'];
+    $logoKepala = $kunciLogo === null ? null : ['alamat' => $tampilan[$kunciLogo], 'ukuran' => $tampilan['ukuran'][$kunciLogo] ?? null];
+}
 
 $kaki = IsiHalamanDepan::kaki();
 ?>
@@ -57,32 +72,35 @@ $kaki = IsiHalamanDepan::kaki();
 <body class="tata-publik" data-bs-theme="light">
     <a class="lompat-ke-isi visually-hidden-focusable" href="#isi">Lompat ke isi</a>
 
-    <header class="kepala-publik">
-        <nav class="navbar navbar-expand-md navbar-dark" aria-label="Menu utama">
+    <header class="kepala-publik<?= $beranda ? ' kepala-beranda' : '' ?>">
+        <nav class="navbar navbar-expand-lg <?= $beranda ? 'navbar-light' : 'navbar-dark' ?>" aria-label="Menu utama">
             <div class="container">
                 <a class="navbar-brand merek py-2" href="<?= site_url('/') ?>">
-                    <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
+                    <?php if ($logoKepala !== null) : ?>
+                        <img class="kepala-logo" src="<?= esc($logoKepala['alamat'], 'attr') ?>" alt="<?= esc('Logo ' . $acara['nama'], 'attr') ?>"<?= $logoKepala['ukuran'] === null ? '' : ' width="' . $logoKepala['ukuran']['lebar'] . '" height="' . $logoKepala['ukuran']['tinggi'] . '"' ?>>
+                    <?php else : ?>
+                        <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
+                    <?php endif ?>
                 </a>
+                <?php if ($seriTahun !== '') : ?>
+                    <p class="kepala-seri"><?= esc($seriTahun) ?></p>
+                <?php endif ?>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu-publik" aria-controls="menu-publik" aria-expanded="false" aria-label="Buka atau tutup menu">
                     <span class="navbar-toggler-icon" aria-hidden="true"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="menu-publik">
-                    <ul class="navbar-nav ms-auto gap-md-1">
+                    <ul class="navbar-nav ms-lg-auto gap-lg-2">
                         <?php foreach ($menuPublik as $butir) : ?>
                             <li class="nav-item">
-                                <?php if ($butir['alamat'] === null) : ?>
-                                    <a class="nav-link disabled" aria-disabled="true">
-                                        <?= esc($butir['label']) ?>
-                                        <span class="menu-segera"><?= esc($butir['keterangan'] ?? 'Segera') ?></span>
-                                    </a>
-                                <?php elseif (url_is($butir['alamat'])) : ?>
-                                    <a class="nav-link active" aria-current="page" href="<?= site_url($butir['alamat']) ?>"><?= esc($butir['label']) ?></a>
+                                <?php if ($butir['aktif'] ?? false) : ?>
+                                    <a class="nav-link active" aria-current="page" href="<?= $butir['alamat'] ?>"><?= esc($butir['label']) ?></a>
                                 <?php else : ?>
-                                    <a class="nav-link" href="<?= site_url($butir['alamat']) ?>"><?= esc($butir['label']) ?></a>
-                                <?php endif; ?>
+                                    <a class="nav-link" href="<?= $butir['alamat'] ?>"><?= esc($butir['label']) ?></a>
+                                <?php endif ?>
                             </li>
-                        <?php endforeach; ?>
+                        <?php endforeach ?>
                     </ul>
+                    <a class="btn tombol-panitia ms-lg-4" href="<?= site_url('admin/masuk') ?>">Panitia</a>
                 </div>
             </div>
         </nav>

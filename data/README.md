@@ -32,7 +32,7 @@ Gambar bawaan halaman depan dari pemilik (K47), dipasang `php spark data:awal` b
 
 | Berkas | Dipakai sebagai | Ukuran |
 |---|---|---|
-| `gambar-kepala.webp` | Gambar kepala (latar di belakang judul) | 1874 × 839 piksel |
+| `gambar-kepala.webp` | Gambar kepala (foto di sisi kanan bagian pembuka, K81) | 1874 × 839 piksel |
 | `logo-persegi.webp` | Logo persegi MilkLife Athletics Challenge | 657 × 682 piksel |
 
 ## `pembayaran/`

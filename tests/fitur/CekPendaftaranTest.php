@@ -47,10 +47,9 @@ final class CekPendaftaranTest extends UjiBasisData
         $hasil->assertDontSee('SD NEGERI CONTOH 1');
         $this->assertSame(0, $this->xpathDari($hasil)->query('//form[@role="search"]')->length);
 
-        // Tombol di halaman depan nonaktif, menu tetap menaut.
+        // Tombol di halaman depan nonaktif (menu tidak memuat Cek Pendaftaran, K81).
         $xpath = $this->xpathDari($this->get('/'));
         $this->assertSame('true', $xpath->query('//*[contains(@class, "tombol-cek")]')->item(0)->getAttribute('aria-disabled'));
-        $this->assertSame(site_url('cek-pendaftaran'), $xpath->query('//nav[@aria-label="Menu utama"]//a[contains(., "Cek Pendaftaran")]')->item(0)->getAttribute('href'));
     }
 
     public function testFormulirKosongDanTombolAktif(): void

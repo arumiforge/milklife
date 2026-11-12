@@ -156,7 +156,7 @@ final class IsiHalamanDepanTest extends UjiBasisData
         // Terbuka: Pendaftaran menaut ke wizard (Tahap 4), Cek ke halaman cek (Tahap 5).
         $this->lengkapiPengaturan();
         $this->assertSame([
-            ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => 'pendaftaran', 'utama' => true, 'keterangan' => null],
+            ['kunci' => 'pendaftaran', 'label' => 'Daftar Sekarang', 'alamat' => 'pendaftaran', 'utama' => true, 'keterangan' => null],
             ['kunci' => 'cek', 'label' => 'Cek Pendaftaran', 'alamat' => 'cek-pendaftaran', 'utama' => false],
         ], (new IsiHalamanDepan())->tombol());
 
