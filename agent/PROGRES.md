@@ -4,7 +4,7 @@ Diperbarui: 12 November 2026
 
 ## Sedang berjalan
 
-**Tahap 7 — Penyelesaian**, dikerjakan sesi koordinator yang membuat sub-sesi paralel sendiri (K65), paling banyak 3 sekaligus (K38). Rencana: [`dokumen/draf/rencana-implementasi-tahap-7.md`](../dokumen/draf/rencana-implementasi-tahap-7.md), menunggu persetujuan pemilik.
+**Tahap 7 — Penyelesaian**, dikerjakan sesi koordinator yang membuat sub-sesi paralel sendiri (K65), paling banyak 3 sekaligus (K38). Rencana: [`dokumen/draf/rencana-implementasi-tahap-7.md`](../dokumen/draf/rencana-implementasi-tahap-7.md), disetujui pemilik (K69).
 
 | Tugas | Status | Gelombang | PR |
 |---|---|---|---|
@@ -32,4 +32,4 @@ Tidak ada tahap lain di rancangan. Setelah Tahap 7: pemasangan di komputer produ
 
 ## Menunggu pemilik
 
-- Persetujuan rencana Tahap 7 beserta delapan asumsinya.
+Belum ada.

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Draf, menunggu persetujuan pemilik |
+| Status | Draf, **disetujui pemilik 12 November 2026 termasuk delapan asumsinya (K69)** |
 | Tanggal | 12 November 2026 |
 | Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 4, 13, 14, 15, 16; keputusan K01–K68, terutama K31, K46, K62, K65–K68; arsip Tahap 1–6 bagian "Yang dibawa ke tahap berikutnya" |
 
