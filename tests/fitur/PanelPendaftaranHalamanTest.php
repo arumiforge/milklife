@@ -222,7 +222,8 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
         // Foto penanggung jawab lewat rute admin.
         $foto = site_url('admin/pendaftaran/' . $p['id'] . '/foto/' . $p['penanggung_jawab'][0]);
         $this->assertSame(1, $xpath->query('//img[@src="' . $foto . '"]')->length);
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "tanpa-gambar")]')->length);
+        // Kotak "tanpa gambar" bukti bayar (F6-03) tidak dihitung.
+        $this->assertSame(0, $xpath->query('//*[contains(@class, "tanpa-gambar")][not(ancestor::section[@id="bukti-bayar"])]')->length);
 
         // Tombol tindakan dengan jendela konfirmasi.
         $lunas = $xpath->query('//form[@action="' . site_url('admin/pendaftaran/' . $p['id'] . '/lunas') . '"]')->item(0);
@@ -286,7 +287,8 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
         $hasil = $this->bukaSebagaiAdmin('admin/pendaftaran/' . $p['id']);
         $xpath = $this->xpathDari($hasil);
 
-        $this->assertSame(2, $xpath->query('//*[contains(@class, "tanpa-gambar ")]')->length);
+        // Kotak "tanpa gambar" bukti bayar (F6-03) tidak dihitung.
+        $this->assertSame(2, $xpath->query('//*[contains(@class, "tanpa-gambar ")][not(ancestor::section[@id="bukti-bayar"])]')->length);
         $this->assertSame(0, $xpath->query('//img[contains(@src, "/foto/")]')->length);
         $hasil->assertSee('Foto Ibu Tanpa Foto');
 

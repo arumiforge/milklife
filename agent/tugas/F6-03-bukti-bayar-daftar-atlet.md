@@ -36,3 +36,4 @@ PR: [#49](https://github.com/arumiforge/milklife/pull/49). Bergantung pada F6-01
 
 - Unggah satu gambar per kiriman (kotak `bukti`), bukan beberapa sekaligus, sesuai contoh pemakaian `BerkasBuktiBayar`.
 - Baris di `rincian.php` memakai `view(…, ['pendaftaran' => $p])`, bukan `$this->include()`, karena rincian menamai datanya `$p`.
+- Dua kueri di `tests/fitur/PanelPendaftaranHalamanTest.php` (milik F6-02) yang menghitung kotak "tanpa gambar" di rincian kini tidak menghitung bagian `#bukti-bayar`, karena potongan bukti bayar menampilkan kotak itu bila belum ada bukti.
