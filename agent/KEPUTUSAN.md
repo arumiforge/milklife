@@ -133,3 +133,12 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K54 | Asumsi rencana Tahap 4 nomor 1 (data referensi NPSN menentukan nama, kabupaten, jenjang), 2 (pemeriksaan server saat pindah ke langkah 4 dan saat simpan), 5 (batas laju 60/30/10) dan 6 (nama penanggung jawab disimpan seperti diketik) disetujui | Asumsi 4 digantikan K53. Asumsi 3 (atlet susulan di nomor beregu otomatis menjadi tambahan anggota tim yang sudah ada, tanpa biaya tim) belum dijawab |
 | K55 | Juknis resmi tidak ditunggu. Batas yang sudah disepakati dipakai (tahun lahir K36, kuota K53); perubahan aturan berikutnya lewat wawancara dengan pemilik | Menggantikan K30. Pemasangan di Laragon sesuai `README.md` sudah dicoba pemilik dan berjalan |
 | K56 | Tahap 6 dikerjakan sesi koordinator baru yang membagi tugas ke sub-sesi paralel | Batas K38 tetap berlaku: paling banyak 3 sub-sesi sekaligus, karena batas pemakaian akun dipakai bersama |
+
+## 12 November 2026 — wawancara awal Tahap 6
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K57 | Asumsi 3 rencana Tahap 4 **tidak disetujui apa adanya**: atlet pendaftaran susulan di nomor beregu yang timnya sudah terdaftar tetap menjadi tambahan anggota tim itu tanpa biaya tim (K07), tetapi official harus **mengonfirmasinya sendiri** sebelum lanjut. Wizard menampilkan kotak centang per tim susulan, dan server menolak kiriman yang belum mengonfirmasi | Menjawab K54 (asumsi 3 terbuka). Dikerjakan di Tahap 6 sebagai perubahan wizard (F6-05). Admin yang mengubah pendaftaran di panel tidak perlu konfirmasi ini |
+| K58 | Admin **tidak** membuat pendaftaran baru dari panel. Sekolah yang terlambat didaftarkan lewat wizard setelah admin memakai buka manual | Panel hanya melihat, menandai Lunas, mengubah, dan menghapus pendaftaran yang sudah ada (rancangan 9) |
+| K59 | Atlet yang ditambahkan admin ke pendaftaran Lunas yang totalnya tidak berubah (misalnya tambahan anggota tim beregu) **langsung mendapat nomor dada saat disimpan** | Melengkapi K32: bila total berubah, status kembali ke Menunggu dan nomor dada atlet baru dibuat saat ditandai Lunas lagi |
+| K60 | Rekap peserta (per nomor lomba, tim beregu, per sekolah, per kelompok umur) beserta Excel dan PDF-nya memuat **semua pendaftaran**, dengan saringan status (semua, Lunas, Menunggu). Rekap keuangan selalu memuat keduanya | |
