@@ -125,8 +125,17 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 |---|---|---|
 | K52 | Bukti pendaftaran PDF dirapikan: logo persegi tampil transparan (bukan berlatar hitam) dan tidak gepeng; penanggung jawab ditulis sebaris "Penanggung Jawab (Official) : Nama (ikon WA nomor WA)", dipisah koma bila lebih dari satu, tanpa tabel; tanggal lahir dan nomor dada **tidak** dicetak; anggota tim beregu ditulis dalam satu baris dipisah koma; status pembayaran diberi bingkai berwarna seperti tombol (Lunas hijau, Menunggu Konfirmasi Pembayaran kuning) | Menggantikan K49 butir 2 (anggota tim tetap dicetak, nomor dada dan tanggal lahir tidak). **Halaman cek juga tidak menampilkan tanggal lahir dan nomor dada**; ini menyimpang dari daftar isi cek di rancangan 8 dan dimasukkan ke revisi rancangan berikutnya. Nomor dada tetap tersimpan dan terlihat di panel admin (Tahap 6). Tinjauan pemilik atas bukti F5-03, dibawa PR penutupan F5-05 |
 
+## 12 November 2026 — tinjauan Tahap 4 dan arah Tahap 6
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K53 | Jumlah atlet satu sekolah pada satu nomor individu **tidak dibatasi**. Yang dibatasi adalah jumlah nomor individu per atlet: satu nama siswa paling banyak 2 nomor individu. Keduanya tetap bisa diatur admin di pengaturan Pendaftaran | Menggantikan nilai awal 2 di K51: `Pendaftaran.atlet_per_nomor_maksimal` kini bawaannya kosong (tidak dibatasi), pengaturannya tetap ada. Batas per atlet memakai `Pendaftaran.nomor_individu_maksimal` (nilai awal 2, sudah ada sejak Tahap 2). Pemasangan yang pernah menyimpan pengaturan Pendaftaran tetap memakai angka tersimpan; kosongkan kotak "Atlet per sekolah pada satu nomor individu" di panel |
+| K54 | Asumsi rencana Tahap 4 nomor 1 (data referensi NPSN menentukan nama, kabupaten, jenjang), 2 (pemeriksaan server saat pindah ke langkah 4 dan saat simpan), 5 (batas laju 60/30/10) dan 6 (nama penanggung jawab disimpan seperti diketik) disetujui | Asumsi 4 digantikan K53. Asumsi 3 (atlet susulan di nomor beregu otomatis menjadi tambahan anggota tim yang sudah ada, tanpa biaya tim) belum dijawab |
+| K55 | Juknis resmi tidak ditunggu. Batas yang sudah disepakati dipakai (tahun lahir K36, kuota K53); perubahan aturan berikutnya lewat wawancara dengan pemilik | Menggantikan K30. Pemasangan di Laragon sesuai `README.md` sudah dicoba pemilik dan berjalan |
+| K56 | Tahap 6 dikerjakan sesi koordinator baru yang membagi tugas ke sub-sesi paralel | Batas K38 tetap berlaku: paling banyak 3 sub-sesi sekaligus, karena batas pemakaian akun dipakai bersama |
+
 ## 12 November 2026 — persiapan sesi agen di cloud
 
 | No | Keputusan | Catatan |
 |---|---|---|
-| K53 | Sesi agen di cloud disiapkan oleh Setup script di setelan lingkungan cloud: MySQL 8, basis data `milklife_uji`, `.env`, dan `composer install` dipasang sekali di awal sesi. Agen tidak memasang ulang selama sesi, cukup `composer uji` | Pemilik melihat pemasangan berulang di sesi cloud. Isi skrip ada di `agent/ALUR-KERJA.md` bagian "Sesi agen di cloud". Diuji di sesi ini: pemasangan pertama sekitar 7,5 menit, jalan ulang 1 detik, 929 uji lulus. Unduhan zip dari GitHub ditolak jaringan sesi, jadi Composer mengambil lewat git dan lebih lambat |
+| K57 | Sesi agen di cloud disiapkan oleh Setup script di setelan lingkungan cloud: MySQL 8, basis data `milklife_uji`, `.env`, dan `composer install` dipasang sekali di awal sesi. Agen tidak memasang ulang selama sesi, cukup `composer uji` | Pemilik melihat pemasangan berulang di sesi cloud. Isi skrip ada di `agent/ALUR-KERJA.md` bagian "Sesi agen di cloud". Diuji di sesi ini: pemasangan pertama sekitar 7,5 menit, jalan ulang 1 detik, 929 uji lulus. Unduhan zip dari GitHub ditolak jaringan sesi, jadi Composer mengambil lewat git dan lebih lambat |

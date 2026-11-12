@@ -88,9 +88,10 @@ final class PendaftaranSimpanTest extends UjiBasisData
         );
     }
 
-    public function testKuotaBawaanDua(): void
+    public function testKuotaBawaanTidakDibatasi(): void
     {
-        $this->assertSame(2, DataIndukPendaftaran::aturan()['atlet_per_nomor_maksimal']);
+        // K53: kuota atlet per sekolah per nomor individu bawaannya tidak dibatasi.
+        $this->assertNull(DataIndukPendaftaran::aturan()['atlet_per_nomor_maksimal']);
     }
 
     // Simpan
@@ -271,6 +272,7 @@ final class PendaftaranSimpanTest extends UjiBasisData
 
     public function testKuotaDihitungLintasPendaftaranNpsnYangSama(): void
     {
+        setting('Pendaftaran.atlet_per_nomor_maksimal', 2);
         $kiriman            = self::kirimanContoh();
         $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => ''];
         $kiriman['atlet']   = [self::atletContoh('9900000041', [10]), self::atletContoh('9900000042', [10])];

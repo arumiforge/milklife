@@ -10,7 +10,7 @@ Rencana: [`dokumen/draf/rencana-implementasi-tahap-4.md`](../../dokumen/draf/ren
 | [F4-02 Pencarian NPSN](../tugas/F4-02-pencarian-npsn.md) | selesai | #40 |
 | [F4-03 Langkah 1–3, daftar sementara, draf, dan foto](../tugas/F4-03-langkah-1-3.md) | selesai | #41 |
 | [F4-04 Langkah 4–5](../tugas/F4-04-langkah-4-5.md) | selesai | #42 |
-| [F4-05 Tombol, menu, pesan kilat, dan penutupan](../tugas/F4-05-penutupan-tahap-4.md) | selesai | PR penutupan |
+| [F4-05 Tombol, menu, pesan kilat, dan penutupan](../tugas/F4-05-penutupan-tahap-4.md) | selesai | #43 |
 
 Catatan: PR #33 berisi rencana dan keputusan wawancara awal Tahap 4, K50 (foto penanggung jawab wajib) dan K51 (batas atlet per sekolah per nomor individu). Nomornya digeser dari K49–K50 karena PR Tahap 5 lebih dulu memakai K48 dan K49.
 
@@ -33,5 +33,5 @@ Catatan: PR #33 berisi rencana dan keputusan wawancara awal Tahap 4, K50 (foto p
 
 - **Tahap 6:** foto penanggung jawab disajikan ke admin lewat `FotoPenanggungJawab::jalurPenuh()` (jalur di `penanggung_jawab.foto`, relatif terhadap `writable/unggahan/`). Hapus pendaftaran sebaiknya ikut menghapus berkas foto. Ubah pendaftaran oleh admin bisa memakai `PemeriksaPendaftaran` dan `KelengkapanTim` (atlet yang sedang diubah dikeluarkan dari data "sudah ada"). Mengubah jumlah inti atau batas anggota nomor beregu yang sudah dipakai belum dicegah (catatan Tahap 3).
 - **Tahap 7:** minify `pendaftaran.css` dan `pendaftaran.js`. Tata letak publik kini membaca keadaan pendaftaran di setiap halaman (beberapa kueri kecil).
-- **Revisi rancangan berikutnya:** bagian 6.3 foto wajib (K50); bagian 6 kuota atlet per nomor individu (K51); bagian 8 nama nomor dengan kategori di cek dan bukti.
-- Juknis resmi masih menyusul (K30). Nilai awal kuota K51 (2) belum dikonfirmasi pemilik.
+- **Revisi rancangan berikutnya:** bagian 6.3 foto wajib (K50); bagian 6 kuota (K51, K53); bagian 8 nama nomor dengan kategori di cek dan bukti.
+- Setelah penutupan: kuota atlet per sekolah per nomor individu bawaannya tidak dibatasi; batas yang berlaku adalah 2 nomor individu per atlet (K53). Juknis tidak ditunggu (K55).
