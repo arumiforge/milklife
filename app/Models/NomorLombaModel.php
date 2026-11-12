@@ -19,8 +19,9 @@ use CodeIgniter\Model;
  *   menyebut apa yang belum diisi, untuk tanda "belum lengkap" di daftar.
  *
  * Nomor yang sudah dipakai atlet (`atlet_nomor`) atau tim
- * (`pendaftaran_beregu`) tidak bisa dihapus, dan kelompok umur, jenis, serta
- * kategorinya tidak bisa diubah (`dipakai()`).
+ * (`pendaftaran_beregu`) tidak bisa dihapus, dan kelompok umur, jenis,
+ * kategori, serta isian timnya (selain biaya) tidak bisa diubah (`dipakai()`,
+ * `TERKUNCI_BILA_DIPAKAI`).
  */
 class NomorLombaModel extends Model
 {
@@ -47,6 +48,23 @@ class NomorLombaModel extends Model
      * @var list<string>
      */
     public const KOLOM_TIM = ['jumlah_inti', 'batas_anggota', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu'];
+
+    /**
+     * Isian yang terkunci begitu nomor dipakai atlet atau tim (F6-07), dengan
+     * lanjutan pesan galatnya (`%s` = nilai lama). Nama, biaya beregu,
+     * urutan, dan aktif tetap bisa diubah.
+     *
+     * @var array<string, string>
+     */
+    public const TERKUNCI_BILA_DIPAKAI = [
+        'kelompok_umur_id' => 'kelompok umurnya tidak bisa dipindah. Buat nomor baru di kelompok umur lain bila perlu.',
+        'jenis'            => 'jenisnya tidak bisa diubah. Buat nomor baru bila perlu.',
+        'kategori'         => 'kategorinya tidak bisa diubah. Buat nomor baru bila perlu.',
+        'jumlah_inti'      => 'jumlah anggota intinya tetap %s. Buat nomor baru bila aturan timnya berubah.',
+        'batas_anggota'    => 'batas anggotanya tetap %s. Buat nomor baru bila aturan timnya berubah.',
+        'jumlah_putra'     => 'jumlah putra minimalnya tetap %s. Buat nomor baru bila aturan timnya berubah.',
+        'jumlah_putri'     => 'jumlah putri minimalnya tetap %s. Buat nomor baru bila aturan timnya berubah.',
+    ];
 
     public const INTI_MINIMAL     = 2;
     public const ANGGOTA_MAKSIMAL = 50;

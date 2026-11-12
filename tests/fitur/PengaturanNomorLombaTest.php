@@ -537,6 +537,64 @@ final class PengaturanNomorLombaTest extends UjiBasisData
         $this->seeInDatabase('nomor_lomba', ['id' => $id, 'nama' => 'Lari 60 Meter', 'urutan' => 3, 'aktif' => 0]);
     }
 
+    public function testNomorBereguDipakaiTerkunciIsianTim(): void
+    {
+        $ku = $this->buatKelompokUmur('KU 10');
+        $id = $this->buatNomorLomba($ku, [
+            'nama' => 'Estafet 4 × 100 m', 'jenis' => 'beregu', 'kategori' => 'mix',
+            'jumlah_inti' => 4, 'batas_anggota' => 6, 'jumlah_putra' => 2, 'jumlah_putri' => 2, 'biaya_beregu' => 100000,
+        ]);
+        $this->pakaiOlehTim($id);
+
+        // Isian tim tampil hanya-baca; nama, biaya, urutan, dan aktif tidak.
+        $xpath = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT . "/{$id}/ubah"));
+        foreach (['jumlah_inti', 'batas_anggota', 'jumlah_putra', 'jumlah_putri'] as $kotak) {
+            $this->assertSame('readonly', $xpath->query("//input[@name=\"{$kotak}\"]")->item(0)?->getAttribute('readonly'), $kotak);
+        }
+        foreach (['nama', 'biaya_beregu', 'urutan'] as $kotak) {
+            $this->assertFalse($xpath->query("//input[@name=\"{$kotak}\"]")->item(0)?->hasAttribute('readonly'), $kotak);
+        }
+
+        // Setiap isian tim yang diubah ditolak sendiri-sendiri.
+        foreach (['jumlah_inti' => '5', 'batas_anggota' => '8', 'jumlah_putra' => '1', 'jumlah_putri' => '3'] as $kotak => $nilai) {
+            $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", self::isianBeregu($ku, [$kotak => $nilai]));
+            $this->assertIsianSalahDitampilkanUlang($hasil, [$kotak]);
+            $hasil->assertSee('Nomor ini sudah dipakai atlet atau tim, jadi');
+        }
+        $this->seeInDatabase('nomor_lomba', ['id' => $id, 'jumlah_inti' => 4, 'batas_anggota' => 6, 'jumlah_putra' => 2, 'jumlah_putri' => 2]);
+
+        // Nama, biaya beregu, urutan, dan aktif tetap bisa diubah.
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", self::isianBeregu($ku, ['nama' => 'Estafet 4 × 50 m', 'biaya_beregu' => '120000', 'urutan' => '7', 'aktif' => '0']));
+        $this->assertDialihkanKeKelompokUmur($hasil, $ku, $id, 'Perubahan nomor Estafet 4 × 50 m mix di KU 10 tersimpan.');
+        $this->seeInDatabase('nomor_lomba', ['id' => $id, 'nama' => 'Estafet 4 × 50 m', 'biaya_beregu' => 120000, 'urutan' => 7, 'aktif' => 0, 'jumlah_inti' => 4]);
+    }
+
+    public function testNomorBereguBelumDipakaiIsianTimBebas(): void
+    {
+        $ku = $this->buatKelompokUmur('KU 10');
+        $id = $this->buatNomorLomba($ku, [
+            'nama' => 'Estafet 4 × 100 m', 'jenis' => 'beregu', 'kategori' => 'mix',
+            'jumlah_inti' => 4, 'batas_anggota' => 6, 'jumlah_putra' => 2, 'jumlah_putri' => 2, 'biaya_beregu' => 100000,
+        ]);
+
+        $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT . "/{$id}/ubah"))->query('//input[@readonly]')->length);
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", self::isianBeregu($ku, ['jumlah_inti' => '5', 'batas_anggota' => '8', 'jumlah_putra' => '1', 'jumlah_putri' => '3']));
+        $this->assertTrue($hasil->isRedirect());
+        $this->seeInDatabase('nomor_lomba', ['id' => $id, 'jumlah_inti' => 5, 'batas_anggota' => 8, 'jumlah_putra' => 1, 'jumlah_putri' => 3]);
+    }
+
+    public function testNomorDipakaiYangBelumLengkapBolehDilengkapi(): void
+    {
+        $ku = $this->buatKelompokUmur('KU 10');
+        $id = $this->buatNomorLomba($ku, ['nama' => 'Estafet 4 × 100 m', 'jenis' => 'beregu', 'kategori' => 'mix', 'jumlah_inti' => 4]);
+        $this->pakaiOlehTim($id);
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", self::isianBeregu($ku));
+        $this->assertTrue($hasil->isRedirect());
+        $this->seeInDatabase('nomor_lomba', ['id' => $id, 'jumlah_inti' => 4, 'batas_anggota' => 6, 'jumlah_putra' => 2]);
+    }
+
     public function testUbahMenjadiKembarDitolak(): void
     {
         $ku = $this->buatKelompokUmur('KU 10');

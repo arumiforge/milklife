@@ -14,7 +14,7 @@ Diperbarui: 12 November 2026
 | [F6-05 Konfirmasi tim susulan](tugas/F6-05-konfirmasi-tim-susulan.md) | menunggu tinjauan | 2 | [#51](https://github.com/arumiforge/milklife/pull/51) |
 | [F6-04 Ubah pendaftaran](tugas/F6-04-ubah-pendaftaran.md) | rencana | 3 | |
 | [F6-06 Rekap dan dasbor](tugas/F6-06-rekap-dasbor.md) | rencana | 3 | |
-| [F6-07 Pengaturan terlindung](tugas/F6-07-pengaturan-terlindung.md) | rencana | 3 | |
+| [F6-07 Pengaturan terlindung](tugas/F6-07-pengaturan-terlindung.md) | menunggu tinjauan | 3 | [#53](https://github.com/arumiforge/milklife/pull/53) |
 | [F6-08 Penutupan](tugas/F6-08-penutupan-tahap-6.md) | rencana | 4 | |
 
 ## Berikutnya
