@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libraries\IsiHalamanDepan;
 use App\Libraries\Jenjang;
 use App\Libraries\Pendaftaran\DataIndukPendaftaran;
 use App\Libraries\Pendaftaran\Kabupaten;
@@ -12,6 +13,8 @@ use CodeIgniter\HTTP\ResponseInterface;
 /**
  * Wizard pendaftaran publik (Tahap 4, rancangan 7) dan titik akhir JSON-nya.
  *
+ * - `GET pendaftaran` (F4-03): halaman wizard, atau keterangan ramah bila
+ *   pendaftaran belum terbuka (rancangan 6.1).
  * - `GET pendaftaran/sekolah?npsn=…` (F4-02): data sekolah referensi untuk
  *   langkah 1, penolakan SLB (K28), dan data susulan NPSN itu.
  *
@@ -27,6 +30,42 @@ class PendaftaranController extends BaseController
     public const BATAS_SEKOLAH = 60;
 
     public const JENDELA_SEKOLAH = 60;
+
+    /**
+     * Kunci `localStorage` draf wizard di peramban.
+     */
+    public const KUNCI_DRAF = 'milklife-pendaftaran-draf';
+
+    /**
+     * GET pendaftaran
+     *
+     * Wizard hanya tampil bila pendaftaran terbuka; selain itu halaman
+     * menampilkan `BukaTutupPendaftaran::kalimat()` sebagai alasannya. Data
+     * yang dibutuhkan wizard disematkan sebagai JSON (`DataIndukPendaftaran::untukWizard()`
+     * ditambah `alamat` dan `kunci_draf`).
+     */
+    public function index(): string
+    {
+        $isi       = new IsiHalamanDepan();
+        $bukaTutup = $isi->bukaTutup();
+        $wizard    = null;
+
+        if ($bukaTutup->terbuka()) {
+            $wizard = (new DataIndukPendaftaran())->untukWizard() + [
+                'kunci_draf' => self::KUNCI_DRAF,
+                'alamat'     => [
+                    'sekolah' => site_url('pendaftaran/sekolah'),
+                    'beranda' => site_url('/'),
+                ],
+            ];
+        }
+
+        return view('pendaftaran', [
+            'namaAcara' => $isi->acara()['nama'],
+            'bukaTutup' => $bukaTutup,
+            'wizard'    => $wizard,
+        ]);
+    }
 
     /**
      * GET pendaftaran/sekolah?npsn=…

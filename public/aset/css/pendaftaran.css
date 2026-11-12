@@ -1,0 +1,394 @@
+/*
+ * Halaman pendaftaran (`/pendaftaran`, Tahap 4). Dimuat setelah `tema.css`
+ * dan hanya di halaman pendaftaran. Memakai variabel warna tema (`--ml-…`);
+ * tanpa warna baru di luar rancangan 12. Dirancang dari ponsel lebih dulu:
+ * tanpa gulir mendatar pada lebar 390 piksel.
+ */
+
+.pendaftaran-kepala {
+    padding: 1.75rem 0;
+    background: var(--ml-gradasi-kepala);
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.pendaftaran-kepala h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+    font-weight: 800;
+    color: #fff;
+}
+
+.pendaftaran-isi {
+    max-width: 52rem;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+.pendaftaran-tertutup {
+    max-width: 36rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.75rem;
+}
+
+.pendaftaran-tertutup p {
+    color: var(--ml-teks-redup);
+}
+
+/* ---------- Pil langkah ---------- */
+
+.pil-langkah {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.25rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    counter-reset: langkah;
+}
+
+.pil {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    width: 100%;
+    padding: 0.35rem 0.15rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--ml-teks-redup);
+    font-size: 0.72rem;
+    line-height: 1.15;
+    text-align: center;
+}
+
+.pil:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(35, 73, 135, 0.35);
+}
+
+.pil:not(:disabled):hover {
+    background-color: var(--ml-biru-muda-pucat);
+}
+
+.pil:disabled {
+    opacity: 0.65;
+}
+
+.pil-nomor {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--ml-garis);
+    border-radius: 50%;
+    background-color: var(--ml-putih);
+    font-weight: 700;
+}
+
+.pil-centang {
+    display: none;
+}
+
+.pil-aktif {
+    color: var(--ml-biru-tua);
+    font-weight: 700;
+}
+
+.pil-aktif .pil-nomor {
+    border-color: var(--ml-oranye-tombol);
+    background-color: var(--ml-oranye-tombol);
+    color: #fff;
+}
+
+.pil-selesai {
+    color: var(--ml-biru);
+}
+
+.pil-selesai .pil-nomor {
+    border-color: var(--ml-biru);
+    background-color: var(--ml-biru);
+    color: #fff;
+}
+
+.pil-selesai .pil-angka {
+    display: none;
+}
+
+.pil-selesai .pil-centang {
+    display: inline;
+}
+
+@media (min-width: 576px) {
+    .pil {
+        font-size: 0.85rem;
+    }
+}
+
+/* ---------- Langkah ---------- */
+
+.langkah h2 {
+    margin-bottom: 0.25rem;
+    font-size: 1.4rem;
+}
+
+.langkah h2:focus {
+    outline: 0;
+}
+
+.langkah legend.form-label {
+    float: none;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.langkah-keterangan {
+    color: var(--ml-teks-redup);
+}
+
+.kartu-isian {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.75rem;
+}
+
+@media (min-width: 576px) {
+    .kartu-isian {
+        padding: 1.5rem;
+    }
+}
+
+.langkah-tombol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.pilihan-tombol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pilihan-tombol .btn {
+    flex: 1 1 auto;
+}
+
+fieldset.is-invalid .btn-outline-primary {
+    border-color: var(--bs-form-invalid-border-color);
+}
+
+fieldset.is-invalid > .invalid-feedback,
+.foto-kotak.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+.ringkasan-galat ul {
+    padding-left: 1.2rem;
+}
+
+.galat-baris {
+    margin: 0.35rem 0 0;
+    color: var(--bs-form-invalid-color);
+    font-size: 0.875rem;
+}
+
+.mulai-ulang {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+/* ---------- Langkah 1 ---------- */
+
+.sekolah-ditemukan {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.sekolah-ditemukan > .bi {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+/* ---------- Langkah 2 ---------- */
+
+.kartu-orang-kepala {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.foto-kotak {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+}
+
+.foto-kotak.is-invalid {
+    box-shadow: 0 0 0 1px var(--bs-form-invalid-border-color);
+}
+
+.foto-pratinjau,
+.foto-kosong {
+    flex: none;
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
+
+.foto-kosong {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru);
+    font-size: 2rem;
+}
+
+.foto-kosong[hidden],
+.foto-pratinjau[hidden] {
+    display: none;
+}
+
+.foto-tombol {
+    flex: 1 1 12rem;
+    min-width: 0;
+}
+
+/* ---------- Langkah 3 ---------- */
+
+.huruf-besar {
+    text-transform: uppercase;
+}
+
+.info-ku {
+    margin-top: 1rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 0.5rem;
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
+.info-ku-galat {
+    background-color: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger-text-emphasis);
+    font-weight: 400;
+}
+
+.daftar-pilihan-nomor {
+    display: grid;
+    gap: 0.4rem;
+}
+
+@media (min-width: 576px) {
+    .daftar-pilihan-nomor {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.keterangan-nomor {
+    color: var(--ml-teks-redup);
+    font-size: 0.85rem;
+}
+
+.formulir-atlet-tombol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+}
+
+.daftar-sementara {
+    margin-top: 1.5rem;
+}
+
+.daftar-judul {
+    margin-top: 1.25rem;
+    color: var(--ml-biru);
+}
+
+.daftar-atlet {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.baris-atlet {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.5rem;
+}
+
+.baris-atlet + .baris-atlet {
+    margin-top: 0.5rem;
+}
+
+.baris-atlet-isi {
+    flex: 1 1 14rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.baris-atlet-keterangan,
+.baris-atlet-nomor {
+    display: block;
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+}
+
+.baris-atlet-nomor {
+    color: var(--ml-biru-tua);
+}
+
+.baris-atlet-tombol {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.kartu-tim {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: var(--ml-biru-muda-pucat);
+    border-radius: 0.75rem;
+}
+
+.kartu-tim-kepala {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.kartu-tim-keterangan {
+    margin: 0.25rem 0 0.5rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+}
