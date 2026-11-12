@@ -12,7 +12,8 @@ use DateTimeImmutable;
  *
  * Menyimpan kunci `Pendaftaran.*` (rencana Tahap 2, "Kunci pengaturan"):
  * waktu buka dan tutup, buka manual beserta batasnya, tampilan usia, batas
- * penanggung jawab, dan batas nomor individu per atlet.
+ * penanggung jawab, batas nomor individu per atlet, dan batas atlet per
+ * sekolah pada satu nomor individu (K51; kosong = tidak dibatasi).
  *
  * - Waktu diketik di kotak `datetime-local` (`Y-m-d\TH:i`, WIB) dan disimpan
  *   `Y-m-d H:i:00`, teliti sampai menit.
@@ -38,6 +39,7 @@ class PendaftaranController extends BaseController
      */
     private const PENANGGUNG_JAWAB_PALING_BANYAK = 20;
     private const NOMOR_INDIVIDU_PALING_BANYAK   = 10;
+    private const ATLET_PER_NOMOR_PALING_BANYAK  = 100;
 
     public function index(): string
     {
@@ -50,6 +52,7 @@ class PendaftaranController extends BaseController
             'penanggung_jawab_minimal'  => (string) setting('Pendaftaran.penanggung_jawab_minimal'),
             'penanggung_jawab_maksimal' => (string) setting('Pendaftaran.penanggung_jawab_maksimal'),
             'nomor_individu_maksimal'   => (string) setting('Pendaftaran.nomor_individu_maksimal'),
+            'atlet_per_nomor_maksimal'  => (string) setting('Pendaftaran.atlet_per_nomor_maksimal'),
         ]);
     }
 
@@ -60,6 +63,7 @@ class PendaftaranController extends BaseController
         foreach ([
             'mulai', 'akhir', 'buka_manual_sampai', 'tampilan_usia',
             'penanggung_jawab_minimal', 'penanggung_jawab_maksimal', 'nomor_individu_maksimal',
+            'atlet_per_nomor_maksimal',
         ] as $kotak) {
             $isian[$kotak] = trim((string) $this->request->getPost($kotak));
         }
@@ -80,6 +84,7 @@ class PendaftaranController extends BaseController
         setting('Pendaftaran.penanggung_jawab_minimal', (int) $isian['penanggung_jawab_minimal']);
         setting('Pendaftaran.penanggung_jawab_maksimal', (int) $isian['penanggung_jawab_maksimal']);
         setting('Pendaftaran.nomor_individu_maksimal', (int) $isian['nomor_individu_maksimal']);
+        setting('Pendaftaran.atlet_per_nomor_maksimal', $isian['atlet_per_nomor_maksimal'] === '' ? null : (int) $isian['atlet_per_nomor_maksimal']);
 
         return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Pengaturan pendaftaran tersimpan.');
     }
@@ -160,11 +165,20 @@ class PendaftaranController extends BaseController
             $galat['nomor_individu_maksimal'] = "Batas nomor individu harus angka 1 sampai {$batasNomor}, misalnya 2.";
         }
 
+        if ($isian['atlet_per_nomor_maksimal'] !== '') {
+            $kuota      = self::bilangan($isian['atlet_per_nomor_maksimal']);
+            $batasKuota = self::ATLET_PER_NOMOR_PALING_BANYAK;
+
+            if ($kuota === null || $kuota < 1 || $kuota > $batasKuota) {
+                $galat['atlet_per_nomor_maksimal'] = "Batas atlet per sekolah harus angka 1 sampai {$batasKuota}, misalnya 2. Kosongkan bila tidak dibatasi.";
+            }
+        }
+
         // Urutkan pesan seperti urutan kotak di formulir, supaya ringkasan mudah diikuti.
         $urutan = array_flip([
             'mulai', 'akhir', 'buka_manual_sampai',
             'penanggung_jawab_minimal', 'penanggung_jawab_maksimal', 'nomor_individu_maksimal',
-            'tampilan_usia',
+            'atlet_per_nomor_maksimal', 'tampilan_usia',
         ]);
         uksort($galat, static fn (string $a, string $b): int => $urutan[$a] <=> $urutan[$b]);
 

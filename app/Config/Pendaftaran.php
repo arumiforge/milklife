@@ -57,4 +57,11 @@ class Pendaftaran extends BaseConfig
      * Jumlah nomor individu paling banyak per atlet.
      */
     public int $nomor_individu_maksimal = 2;
+
+    /**
+     * Jumlah atlet satu sekolah pada satu nomor individu paling banyak (K51),
+     * dihitung bersama pendaftaran sebelumnya dari NPSN yang sama.
+     * `null` = tidak dibatasi.
+     */
+    public ?int $atlet_per_nomor_maksimal = 2;
 }

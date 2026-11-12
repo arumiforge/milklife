@@ -108,6 +108,9 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
                             <div class="col-12 col-sm-6">
                                 <?= $kotak('nomor_individu_maksimal', 'Nomor individu paling banyak per atlet', 'number', 'Nomor beregu tidak dibatasi.', $angka + ['max' => '10']) ?>
                             </div>
+                            <div class="col-12 col-sm-6">
+                                <?= $kotak('atlet_per_nomor_maksimal', 'Atlet per sekolah pada satu nomor individu, paling banyak', 'number', 'Dihitung bersama pendaftaran sebelumnya dari NPSN yang sama. Kosongkan bila tidak dibatasi.', $angka + ['max' => '100']) ?>
+                            </div>
                         </div>
                     </div>
                 </div>
