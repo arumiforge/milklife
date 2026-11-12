@@ -259,6 +259,10 @@ trait PendaftaranContoh
             $kiriman['atlet'][$i]['nomor'] = array_map(static fn (int $n): int => $peta[$n], $atlet['nomor']);
         }
 
+        if (isset($kiriman['konfirmasi_susulan'])) {
+            $kiriman['konfirmasi_susulan'] = array_map(static fn (int $n): int => $peta[$n], $kiriman['konfirmasi_susulan']);
+        }
+
         return $kiriman;
     }
 }

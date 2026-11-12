@@ -27,7 +27,18 @@ use DateTimeImmutable;
  *             ['nama' => 'Budi Contoh', 'nisn' => '0012345678', 'tanggal_lahir' => '2016-05-01',
  *              'jenis_kelamin' => 'L', 'nomor' => [12, 40]],   // id nomor lomba
  *         ],
+ *         'konfirmasi_susulan' => [40],   // pilihan: id nomor beregu yang tim susulannya dikonfirmasi (K57)
  *     ]
+ *
+ * ## Konfirmasi tim susulan (K57)
+ *
+ * Bila kiriman membawa kunci `konfirmasi_susulan` (list id nomor lomba),
+ * setiap tim susulan (sekolah sudah punya tim di nomor itu) yang id nomornya
+ * tidak ada di list ditolak dengan galat langkah 3, jalur `konfirmasi.<id>`.
+ * Tanpa kunci itu tidak ada pemeriksaan konfirmasi, jadi pemanggil admin
+ * (ubah pendaftaran, F6-04) tidak memintanya. Titik akhir publik wizard
+ * memakai `wajibKonfirmasiSusulan()` supaya kunci itu selalu ada, termasuk
+ * bila peramban tidak mengirimnya.
  *
  * ## Induk (`DataIndukPendaftaran::induk()`)
  *
@@ -77,7 +88,13 @@ final class PemeriksaPendaftaran
      */
     public const JENJANG_REFERENSI = ['SD' => 'A', 'SMP' => 'B', 'SMA' => 'C'];
 
-    private const LANGKAH = ['sekolah' => 1, 'penanggung_jawab' => 2, 'atlet' => 3, 'beregu' => 3, 'individu' => 3];
+    /**
+     * Kunci kiriman berisi id nomor beregu yang tim susulannya sudah
+     * dikonfirmasi official (K57).
+     */
+    public const KUNCI_KONFIRMASI = 'konfirmasi_susulan';
+
+    private const LANGKAH = ['sekolah' => 1, 'penanggung_jawab' => 2, 'atlet' => 3, 'beregu' => 3, 'individu' => 3, 'konfirmasi' => 3];
 
     private const JENIS_KELAMIN_KATEGORI = ['putra' => 'L', 'putri' => 'P'];
 
@@ -170,9 +187,42 @@ final class PemeriksaPendaftaran
     }
 
     /**
-     * Periksa kiriman.
+     * Kiriman wizard publik dengan kunci `konfirmasi_susulan` yang pasti ada
+     * dan rapi (list id bilangan bulat positif), supaya pemeriksaan
+     * konfirmasi tim susulan (K57) selalu berjalan. Isian yang bukan id
+     * diabaikan; kunci yang hilang menjadi list kosong.
      *
      * @param array<string, mixed> $kiriman
+     *
+     * @return array<string, mixed>
+     */
+    public static function wajibKonfirmasiSusulan(array $kiriman): array
+    {
+        $kiriman[self::KUNCI_KONFIRMASI] = self::idKonfirmasi($kiriman[self::KUNCI_KONFIRMASI] ?? null);
+
+        return $kiriman;
+    }
+
+    /**
+     * @return list<int>
+     */
+    private static function idKonfirmasi(mixed $nilai): array
+    {
+        $hasil = [];
+
+        foreach (self::daftar($nilai) as $id) {
+            if ((is_int($id) || (is_string($id) && ctype_digit($id))) && (int) $id > 0) {
+                $hasil[(int) $id] = (int) $id;
+            }
+        }
+
+        return array_values($hasil);
+    }
+
+    /**
+     * Periksa kiriman.
+     *
+     * @param array<string, mixed> $kiriman     Kunci `konfirmasi_susulan` bersifat pilihan (lihat komentar kelas).
      * @param bool                 $periksaFoto false = foto hanya diperiksa ada atau tidak
      *                                          (dipakai bila isi foto tidak ikut dikirim)
      *
@@ -182,11 +232,13 @@ final class PemeriksaPendaftaran
     {
         $this->galat = [];
 
+        $konfirmasi = array_key_exists(self::KUNCI_KONFIRMASI, $kiriman) ? self::idKonfirmasi($kiriman[self::KUNCI_KONFIRMASI]) : null;
+
         $sekolah         = $this->periksaSekolah(is_array($kiriman['sekolah'] ?? null) ? $kiriman['sekolah'] : []);
         $penanggungJawab = $this->periksaPenanggungJawab(self::daftar($kiriman['penanggung_jawab'] ?? null), $periksaFoto);
         [$atlet, $individu, $regu] = $this->periksaAtlet(self::daftar($kiriman['atlet'] ?? null), $sekolah['jenjang']);
 
-        $beregu = $this->periksaTim($regu, $sekolah['npsn']);
+        $beregu = $this->periksaTim($regu, $sekolah['npsn'], $konfirmasi);
         $this->periksaKuota($individu, $sekolah['npsn']);
 
         if ($this->galat !== []) {
@@ -482,10 +534,11 @@ final class PemeriksaPendaftaran
 
     /**
      * @param array<int, list<string>> $regu
+     * @param list<int>|null           $konfirmasi id nomor yang tim susulannya dikonfirmasi; null = tidak diperiksa (K57)
      *
      * @return list<array{nomor: array<string, mixed>, susulan: bool, anggota: int, anggota_lama: int|null}>
      */
-    private function periksaTim(array $regu, ?string $npsn): array
+    private function periksaTim(array $regu, ?string $npsn, ?array $konfirmasi = null): array
     {
         $timAda = $npsn !== null ? ($this->ada['tim'] ?? []) : [];
         $hasil  = [];
@@ -496,6 +549,12 @@ final class PemeriksaPendaftaran
 
             foreach (KelengkapanTim::periksa($nomor, $jenisKelamin, $lama) as $pesan) {
                 $this->tambah("beregu.{$nomorId}", $pesan);
+            }
+
+            if ($lama !== null && $konfirmasi !== null && ! in_array($nomorId, $konfirmasi, true)) {
+                $this->tambah("konfirmasi.{$nomorId}", 'Tim ' . NomorLombaModel::namaLengkap($nomor) . ": sekolah ini sudah punya tim di nomor ini ({$lama} atlet dari pendaftaran sebelumnya), "
+                    . 'jadi atlet yang dipilih menjadi tambahan anggota tim itu tanpa biaya tim. '
+                    . 'Centang kotak konfirmasi pada tim ini di daftar sementara, lalu lanjutkan lagi.');
             }
 
             $hasil[] = ['nomor' => $nomor, 'susulan' => $lama !== null, 'anggota' => count($jenisKelamin), 'anggota_lama' => $lama];

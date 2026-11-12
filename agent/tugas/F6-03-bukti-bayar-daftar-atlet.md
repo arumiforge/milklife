@@ -23,7 +23,7 @@ Admin menyimpan bukti transfer yang dikirim official lewat WA ke pendaftaran yan
 
 ## Catatan
 
-PR: [#49](https://github.com/arumiforge/milklife/pull/49). Bergantung pada F6-01. Potongan `app/Views/admin/pendaftaran/_bukti_bayar.php` milik tugas ini; satu baris `include` di `rincian.php` ditambahkan setelah F6-02 digabung (rebase). Asumsi 7 rencana Tahap 6.
+PR: [#49](https://github.com/arumiforge/milklife/pull/49). Bergantung pada F6-01. Potongan `app/Views/admin/pendaftaran/_bukti_bayar.php` milik tugas ini; satu baris di `rincian.php` (`view('admin/pendaftaran/_bukti_bayar', ['pendaftaran' => $p], …)`) ditambahkan setelah F6-02 digabung. Asumsi 7 rencana Tahap 6.
 
 ### Yang dibuat
 
@@ -35,4 +35,4 @@ PR: [#49](https://github.com/arumiforge/milklife/pull/49). Bergantung pada F6-01
 ### Penyimpangan dari rencana
 
 - Unggah satu gambar per kiriman (kotak `bukti`), bukan beberapa sekaligus, sesuai contoh pemakaian `BerkasBuktiBayar`.
-- Baris `include` di `rincian.php` menunggu F6-02 (lihat deskripsi PR).
+- Baris di `rincian.php` memakai `view(…, ['pendaftaran' => $p])`, bukan `$this->include()`, karena rincian menamai datanya `$p`.

@@ -393,6 +393,32 @@ fieldset.is-invalid > .invalid-feedback,
     font-size: 0.875rem;
 }
 
+/* Konfirmasi tim susulan (K57): kotak centang dengan teks panjang yang
+   membungkus rapi di ponsel. */
+.konfirmasi-susulan {
+    margin: 0.75rem 0 0;
+    padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    overflow-wrap: anywhere;
+}
+
+.konfirmasi-susulan .form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+    margin-left: -1.5rem;
+}
+
+.konfirmasi-susulan .form-check-label {
+    font-size: 0.9375rem;
+}
+
+.konfirmasi-susulan:has(.is-invalid) {
+    border-color: var(--bs-form-invalid-border-color);
+}
+
 /* ---------- Langkah 4 ---------- */
 
 .tabel-biaya .table {

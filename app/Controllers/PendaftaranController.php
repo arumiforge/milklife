@@ -262,6 +262,9 @@ class PendaftaranController extends BaseController
     /**
      * Kiriman JSON sebagai larik, atau `null` bila bukan JSON objek.
      *
+     * Kunci `konfirmasi_susulan` selalu diisi (kosong bila tidak dikirim),
+     * supaya tim susulan yang belum dikonfirmasi official ditolak (K57).
+     *
      * @return array<string, mixed>|null
      */
     private function kiriman(): ?array
@@ -272,7 +275,7 @@ class PendaftaranController extends BaseController
             return null;
         }
 
-        return is_array($isi) ? $isi : null;
+        return is_array($isi) ? PemeriksaPendaftaran::wajibKonfirmasiSusulan($isi) : null;
     }
 
     private function kirimanTidakSah(): ResponseInterface

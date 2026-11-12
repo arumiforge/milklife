@@ -435,6 +435,28 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
         $this->assertStringContainsString('5 dari 5 gambar', $xpath->query('//*[@id="jumlah-bukti-bayar"]')->item(0)->textContent);
     }
 
+    public function testRincianPendaftaranMemuatBuktiBayarDanPesanSetelahUnggah(): void
+    {
+        $p = $this->buatPendaftaranPanel();
+        $this->buatBuktiBayarPanel($p['id'], 2);
+
+        $hasil = $this->unggah($p['id'], self::gambarPanel(200, 100));
+        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran/' . $p['id']);
+
+        $halaman = $this->bukaSebagaiAdmin('admin/pendaftaran/' . $p['id'], ['pesan_sukses' => 'Bukti bayar tersimpan.', '__ci_vars' => ['pesan_sukses' => 'new']]);
+        $halaman->assertOK();
+        $xpath = $this->xpathDari($halaman);
+
+        $this->assertSame(1, $xpath->query('//section[@id="bukti-bayar"]')->length);
+        $this->assertSame('3', $xpath->query('//section[@id="bukti-bayar"]/@data-jumlah-bukti')->item(0)?->nodeValue);
+        $this->assertSame(3, $xpath->query('//section[@id="bukti-bayar"]//li[@data-bukti-id]')->length);
+        $this->assertSame(1, $xpath->query('//form[@id="unggah-bukti-bayar"]')->length);
+        $this->assertStringContainsString('Bukti bayar tersimpan.', (string) $xpath->query('//*[@data-pesan="pesan_sukses"]')->item(0)?->textContent);
+
+        // konfirmasi.js dimuat sekali oleh rincian.
+        $this->assertSame(1, $xpath->query('//script[contains(@src, "js/konfirmasi.js")]')->length);
+    }
+
     public function testPotonganHanyaMenampilkanBuktiPendaftaranItu(): void
     {
         $a = $this->buatPendaftaranPanel();

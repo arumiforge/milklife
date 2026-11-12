@@ -9,9 +9,10 @@
  * Pengendalinya `App\Controllers\Admin\BuktiBayarController`; setelah unggah
  * atau hapus, admin kembali ke rincian dengan pesan kilat.
  *
- * Pemakaian di rincian pendaftaran, di dalam bagian `isi`:
+ * Pemakaian di rincian pendaftaran, di dalam bagian `isi` (`$p` baris
+ * pendaftaran dari `DataPanelPendaftaran::rincian()`):
  *
- *     <?= $this->include('admin/pendaftaran/_bukti_bayar') ?>
+ *     <?= view('admin/pendaftaran/_bukti_bayar', ['pendaftaran' => $p], ['saveData' => false]) ?>
  *
  * Data yang dibaca:
  * - `$pendaftaran` (array) dengan kunci `id` (`pendaftaran.id`) dan, bila

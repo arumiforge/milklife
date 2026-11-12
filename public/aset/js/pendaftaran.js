@@ -117,6 +117,7 @@
             },
             penanggungJawab: [{ nama: '', nomor_wa: '', foto: '' }],
             atlet: [],
+            konfirmasiSusulan: [],
             tersimpan: null
         };
     }
@@ -125,6 +126,10 @@
         try {
             var isi = JSON.parse(window.localStorage.getItem(DATA.kunci_draf) || 'null');
             if (isi && isi.versi === VERSI_DRAF && isi.sekolah && Array.isArray(isi.atlet) && Array.isArray(isi.penanggungJawab)) {
+                // Draf lama belum punya konfirmasi tim susulan (K57): kotaknya tampil belum tercentang.
+                isi.konfirmasiSusulan = Array.isArray(isi.konfirmasiSusulan)
+                    ? isi.konfirmasiSusulan.map(Number).filter(function (id) { return id > 0; })
+                    : [];
                 return isi;
             }
         } catch (e) {
@@ -260,8 +265,13 @@
         var sasaran = $('[data-jalur="' + jalur + '"]', bagian);
 
         if (!sasaran) {
-            // Galat atlet dan tim ditulis di baris daftar sementara.
-            var baris = $('[data-baris-jalur="' + jalur.split('.').slice(0, 2).join('.') + '"]', bagian);
+            // Galat atlet dan tim ditulis di baris daftar sementara. Galat konfirmasi
+            // tim susulan yang kotaknya belum tampil ditulis di kartu timnya.
+            var akarJalur = jalur.split('.').slice(0, 2);
+            if (akarJalur[0] === 'konfirmasi') {
+                akarJalur[0] = 'beregu';
+            }
+            var baris = $('[data-baris-jalur="' + akarJalur.join('.') + '"]', bagian);
             if (baris) {
                 baris.appendChild(buat('p', 'galat-baris', pesan));
             }
@@ -339,7 +349,8 @@
             var tim = Object.keys(s.susulan.tim || {}).length;
             if (tim > 0) {
                 L1.hasil.appendChild(buat('div', 'alert alert-info small',
-                    'Sekolah ini sudah pernah mendaftar dan sudah punya tim di ' + tim + ' nomor beregu. Atlet yang ditambahkan ke nomor itu menjadi tambahan anggota tim, tanpa biaya tim lagi.'));
+                    'Sekolah ini sudah pernah mendaftar dan sudah punya tim di ' + tim + ' nomor beregu. Atlet yang ditambahkan ke nomor itu menjadi tambahan anggota tim, tanpa biaya tim lagi. '
+                    + 'Di langkah 3 (Atlet), centang konfirmasinya pada setiap tim itu.'));
             }
         } else if (!s.tanpaNpsn && s.status === 'tidak_ditemukan') {
             L1.hasil.appendChild(buat('div', 'alert alert-info small', 'NPSN ' + s.dicari + ' tidak ada di data sekolah kami. Tulis nama sekolah secara lengkap di bawah.'));
@@ -347,6 +358,14 @@
     }
 
     function setelSekolah(perubahan) {
+        if (Object.prototype.hasOwnProperty.call(perubahan, 'susulan')) {
+            // Konfirmasi tim susulan hanya berlaku untuk tim yang jumlah anggota lamanya tidak berubah.
+            var timLama = (draf.sekolah.susulan && draf.sekolah.susulan.tim) || {};
+            var timBaru = (perubahan.susulan && perubahan.susulan.tim) || {};
+            draf.konfirmasiSusulan = draf.konfirmasiSusulan.filter(function (id) {
+                return Object.prototype.hasOwnProperty.call(timBaru, id) && Number(timBaru[id]) === Number(timLama[id]);
+            });
+        }
         Object.keys(perubahan).forEach(function (k) { draf.sekolah[k] = perubahan[k]; });
         simpanDraf();
         tampilkanSekolah();
@@ -1010,6 +1029,7 @@
             var namaTim = 'Tim ' + n.nama_lengkap;
             t.susulan = Object.prototype.hasOwnProperty.call(lama, id);
             t.lama = t.susulan ? Number(lama[id]) : 0;
+            t.dikonfirmasi = t.susulan && draf.konfirmasiSusulan.indexOf(Number(id)) !== -1;
             t.pesan = [];
 
             if (t.susulan) {
@@ -1109,6 +1129,52 @@
         return li;
     }
 
+    /**
+     * Teks lencana kartu tim beregu.
+     */
+    function lencanaTim(lencana, t) {
+        var perluKonfirmasi = t.susulan && !t.dikonfirmasi;
+        lencana.className = 'badge ' + (t.pesan.length || perluKonfirmasi ? 'text-bg-warning' : 'text-bg-success');
+        lencana.textContent = t.pesan.length ? 'Belum lengkap' : (perluKonfirmasi ? 'Perlu dicentang' : (t.susulan ? 'Tambahan anggota' : 'Lengkap'));
+    }
+
+    /**
+     * Kotak centang konfirmasi tim susulan (K57): official menyatakan sendiri
+     * bahwa atletnya menjadi tambahan anggota tim sekolah yang sudah
+     * terdaftar, tanpa biaya tim.
+     */
+    function kotakKonfirmasi(n, t, lencana) {
+        var nomorId = Number(n.id);
+        var kotak = buat('div', 'form-check konfirmasi-susulan');
+        var masukan = buat('input', 'form-check-input');
+        masukan.type = 'checkbox';
+        masukan.id = 'konfirmasi-susulan-' + nomorId;
+        masukan.checked = t.dikonfirmasi;
+        masukan.setAttribute('data-jalur', 'konfirmasi.' + nomorId);
+        var label = buat('label', 'form-check-label',
+            'Saya mengerti ' + (t.anggota.length === 1 ? 'atlet ini' : t.anggota.length + ' atlet ini') + ' ditambahkan ke tim ' + n.nama_lengkap
+            + ' sekolah yang sudah terdaftar (' + t.lama + ' atlet), tanpa biaya tim');
+        label.htmlFor = masukan.id;
+        var umpan = buat('div', 'invalid-feedback');
+
+        masukan.addEventListener('change', function () {
+            draf.konfirmasiSusulan = draf.konfirmasiSusulan.filter(function (id) { return id !== nomorId; });
+            if (masukan.checked) {
+                draf.konfirmasiSusulan.push(nomorId);
+                masukan.classList.remove('is-invalid');
+                umpan.textContent = '';
+            }
+            t.dikonfirmasi = masukan.checked;
+            lencanaTim(lencana, t);
+            simpanDraf();
+        });
+
+        kotak.appendChild(masukan);
+        kotak.appendChild(label);
+        kotak.appendChild(umpan);
+        return kotak;
+    }
+
     function tampilkanDaftarAtlet() {
         var individu = $('#daftar-individu');
         var beregu = $('#daftar-beregu');
@@ -1144,8 +1210,8 @@
             kartu.setAttribute('data-baris-jalur', 'beregu.' + n.id);
             var kepala = buat('div', 'kartu-tim-kepala');
             kepala.appendChild(buat('strong', null, n.nama_lengkap));
-            var lencana = buat('span', 'badge ' + (t.pesan.length ? 'text-bg-warning' : 'text-bg-success'),
-                t.pesan.length ? 'Belum lengkap' : (t.susulan ? 'Tambahan anggota' : 'Lengkap'));
+            var lencana = buat('span');
+            lencanaTim(lencana, t);
             kepala.appendChild(lencana);
             kartu.appendChild(kepala);
             kartu.appendChild(buat('p', 'kartu-tim-keterangan', t.anggota.length + ' atlet'
@@ -1156,6 +1222,9 @@
                 ul.appendChild(barisAtlet(a.atlet, a.indeks, 'atlet.' + a.indeks));
             });
             kartu.appendChild(ul);
+            if (t.susulan) {
+                kartu.appendChild(kotakKonfirmasi(n, t, lencana));
+            }
             beregu.appendChild(kartu);
         });
         $('#bagian-beregu').hidden = urutan.length === 0;
@@ -1179,6 +1248,13 @@
         var tim = keadaanTim();
         Object.keys(tim).forEach(function (id) {
             tim[id].pesan.forEach(function (p) { galat.push({ jalur: 'beregu.' + id, pesan: p }); });
+            if (tim[id].susulan && !tim[id].dikonfirmasi) {
+                galat.push({
+                    jalur: 'konfirmasi.' + id,
+                    pesan: 'Tim ' + tim[id].nomor.nama_lengkap + ': sekolah ini sudah punya tim di nomor ini, jadi atlet yang dipilih menjadi tambahan anggota tanpa biaya tim. '
+                        + 'Centang kotak "Saya mengerti …" pada tim ini.'
+                });
+            }
         });
         var kuota = masalahKuota();
         Object.keys(kuota).forEach(function (id) {
@@ -1216,8 +1292,18 @@
             }),
             atlet: draf.atlet.map(function (a) {
                 return { nama: a.nama, nisn: a.nisn, tanggal_lahir: a.tanggal_lahir, jenis_kelamin: a.jenis_kelamin, nomor: a.nomor };
-            })
+            }),
+            konfirmasi_susulan: konfirmasiTerkirim()
         };
+    }
+
+    /**
+     * ID nomor beregu yang tim susulannya sudah dicentang (K57). Hanya tim
+     * yang memang susulan menurut data sekolah saat ini.
+     */
+    function konfirmasiTerkirim() {
+        var tim = keadaanTim();
+        return Object.keys(tim).filter(function (id) { return tim[id].dikonfirmasi; }).map(Number);
     }
 
     /**
@@ -1263,8 +1349,47 @@
     function tampilkanGalatServer(galat) {
         var langkah = Math.min.apply(null, galat.map(function (g) { return g.langkah; }));
         langkah = Math.max(1, Math.min(langkah, 4));
+        var galatLangkah = galat.filter(function (g) { return g.langkah === langkah; });
         tampilkanLangkah(langkah, false);
-        tampilkanGalat(langkah, galat.filter(function (g) { return g.langkah === langkah; }));
+        tampilkanGalat(langkah, galatLangkah);
+
+        // Server menemukan tim susulan yang belum diketahui wizard (misalnya sekolah
+        // yang sama baru saja mendaftar lagi): perbarui data sekolah supaya kotak
+        // konfirmasinya tampil.
+        var timLama = susulan().tim || {};
+        var basi = langkah === 3 && npsnSekolah() !== '' && galatLangkah.some(function (g) {
+            var bagian = String(g.jalur).split('.');
+            return bagian[0] === 'konfirmasi' && !Object.prototype.hasOwnProperty.call(timLama, bagian[1]);
+        });
+        if (basi) {
+            perbaruiSusulan().then(function (berhasil) {
+                if (berhasil && draf.langkah === 3) {
+                    tampilkanDaftarAtlet();
+                    tampilkanGalat(3, galatLangkah);
+                }
+            });
+        }
+    }
+
+    /**
+     * Ambil ulang data tim dan kuota sekolah (NPSN yang sudah dicari).
+     */
+    function perbaruiSusulan() {
+        var npsn = draf.sekolah.dicari;
+        return fetch(DATA.alamat.sekolah + '?npsn=' + encodeURIComponent(npsn), {
+            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin'
+        }).then(function (jawaban) {
+            return jawaban.json();
+        }).then(function (isi) {
+            if (isi && isi.susulan && draf.sekolah.dicari === npsn) {
+                setelSekolah({ susulan: isi.susulan });
+                return true;
+            }
+            return false;
+        }).catch(function () {
+            return false;
+        });
     }
 
     function periksaServer() {
