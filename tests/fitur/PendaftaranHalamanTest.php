@@ -85,7 +85,7 @@ final class PendaftaranHalamanTest extends UjiBasisData
         $this->assertSame(150000, $data['kelompok_umur'][0]['biaya_individu']);
         $this->assertSame('2026-12-09', $data['tanggal_acara']);
         $this->assertSame('tahun', $data['tampilan_usia']);
-        $this->assertSame(['penanggung_jawab_minimal' => 1, 'penanggung_jawab_maksimal' => 5, 'nomor_individu_maksimal' => 2, 'atlet_per_nomor_maksimal' => 2], $data['aturan']);
+        $this->assertSame(['penanggung_jawab_minimal' => 1, 'penanggung_jawab_maksimal' => 5, 'nomor_individu_maksimal' => 2, 'atlet_per_nomor_maksimal' => null], $data['aturan']);
 
         $kanga = array_values(array_filter($data['nomor_lomba'], static fn (array $n): bool => $n['id'] === $id['kanga']))[0];
         $this->assertSame("Kanga's Escape putra", $kanga['nama_lengkap']);
