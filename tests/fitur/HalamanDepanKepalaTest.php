@@ -164,30 +164,50 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
     // ---------- Tombol ----------
 
-    public function testTombolNonaktifSegera(): void
+    public function testTombolPendaftaranMengikutiKeadaan(): void
     {
         $this->lengkapiPengaturan();
 
-        $xpath  = $this->xpathDari($this->get('/'));
+        // Terbuka (11 November 2026): Pendaftaran menaut ke wizard (Tahap 4).
+        // Cek sudah punya halaman (Tahap 5) dan aktif karena pengaturan lengkap.
+        $tombol = $this->tombolKepala();
+        $this->assertSame(['Pendaftaran', 'Cek Pendaftaran'], array_keys($tombol));
+        $this->assertSame(site_url('pendaftaran'), $tombol['Pendaftaran']->getAttribute('href'));
+        $this->assertStringContainsString('btn-primary', $tombol['Pendaftaran']->getAttribute('class'));
+        $this->assertSame(site_url('cek-pendaftaran'), $tombol['Cek Pendaftaran']->getAttribute('href'));
+
+        // Belum dibuka dan sudah ditutup: nonaktif dengan keterangannya.
+        foreach (['2026-09-30 12:00:00' => 'Pendaftaran Belum dibuka', '2026-12-01 00:00:00' => 'Pendaftaran Ditutup'] as $waktu => $label) {
+            Time::setTestNow($waktu, 'Asia/Jakarta');
+            $tombol = $this->tombolKepala();
+
+            $this->assertArrayHasKey($label, $tombol);
+            $this->assertSame('true', $tombol[$label]->getAttribute('aria-disabled'), $label);
+            $this->assertFalse($tombol[$label]->hasAttribute('href'), $label . ' tidak boleh bertautan.');
+            $this->assertStringContainsString('disabled', $tombol[$label]->getAttribute('class'));
+        }
+    }
+
+    public function testTombolPendaftaranSegeraSaatPengaturanBelumLengkap(): void
+    {
+        $tombol = $this->tombolKepala();
+
+        $this->assertSame(['Pendaftaran Segera', 'Cek Pendaftaran Segera'], array_keys($tombol));
+        $this->assertFalse($tombol['Pendaftaran Segera']->hasAttribute('href'));
+    }
+
+    /**
+     * @return array<string, DOMElement> teks tombol => simpul
+     */
+    private function tombolKepala(): array
+    {
         $tombol = [];
 
-        foreach ($xpath->query('//*[contains(@class, "pembuka-tombol")]/*') as $simpul) {
+        foreach ($this->xpathDari($this->get('/'))->query('//*[contains(@class, "pembuka-tombol")]/*') as $simpul) {
             $tombol[$this->teksSimpul($simpul)] = $simpul;
         }
 
-        // Tetap nonaktif walau pendaftaran terbuka, sampai halamannya ada (K39).
-        // Cek sudah punya halaman (Tahap 5) dan aktif karena pengaturan lengkap.
-        $this->assertSame(['Pendaftaran Segera', 'Cek Pendaftaran'], array_keys($tombol));
-        $this->assertSame(site_url('cek-pendaftaran'), $tombol['Cek Pendaftaran']->getAttribute('href'));
-        unset($tombol['Cek Pendaftaran']);
-
-        foreach ($tombol as $label => $simpul) {
-            $this->assertSame('true', $simpul->getAttribute('aria-disabled'), $label);
-            $this->assertFalse($simpul->hasAttribute('href'), $label . ' tidak boleh bertautan.');
-            $this->assertStringContainsString('disabled', $simpul->getAttribute('class'));
-        }
-
-        $this->assertStringContainsString('btn-primary', $tombol['Pendaftaran Segera']->getAttribute('class'));
+        return $tombol;
     }
 
     // ---------- Footer ----------

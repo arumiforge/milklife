@@ -69,11 +69,13 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  * `tombol()`: tombol utama di kepala halaman depan.
  *
  *     [
- *         ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => null, 'utama' => true],
+ *         ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => 'pendaftaran', 'utama' => true, 'keterangan' => null],
  *         ['kunci' => 'cek',         'label' => 'Cek Pendaftaran', 'alamat' => null, 'utama' => false],
  *     ]
  *
- *     // alamat null = halamannya belum ada: tombol nonaktif "Segera" (K39).
+ *     // alamat null = tombol nonaktif dengan `keterangan` ("Segera", "Belum dibuka",
+ *     // "Ditutup"), atau "Segera" bila tanpa keterangan (K39). Pendaftaran
+ *     // menaut hanya saat terbuka; Cek hanya saat pengaturan lengkap.
  *     // Alamat diisi di ALAMAT_PENDAFTARAN dan ALAMAT_CEK_PENDAFTARAN (Tahap 4 dan 5).
  *
  * `kelompokUmur()`: kelompok umur aktif, berurutan seperti di panel admin.
@@ -143,10 +145,10 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
 final class IsiHalamanDepan
 {
     /**
-     * Alamat halaman Pendaftaran (Tahap 4). `null` = belum ada: tombol di
-     * halaman depan tampil nonaktif "Segera" (K39).
+     * Alamat halaman Pendaftaran (Tahap 4). Tombol dan menu Pendaftaran hanya
+     * menaut ke sini bila pendaftaran terbuka (rancangan 6.1).
      */
-    public const ALAMAT_PENDAFTARAN = null;
+    public const ALAMAT_PENDAFTARAN = 'pendaftaran';
 
     /**
      * Alamat halaman Cek Pendaftaran (Tahap 5). Menu selalu menaut ke sini;
@@ -238,19 +240,35 @@ final class IsiHalamanDepan
     /**
      * Tombol Pendaftaran dan Cek Pendaftaran di kepala halaman depan.
      *
-     * Selama alamatnya `null`, tombol tampil nonaktif "Segera" (K39). Aturan
-     * setelah halamannya ada (Pendaftaran hanya aktif bila `terbuka()`, Cek
-     * hanya bila pengaturan lengkap; rancangan 6.1) ditambahkan Tahap 4 dan 5.
+     * Tombol tanpa alamat tampil nonaktif dengan `keterangan`, atau "Segera"
+     * bila tidak ada keterangan. Pendaftaran hanya aktif bila `terbuka()`
+     * (Tahap 4), Cek hanya bila pengaturan lengkap (Tahap 5); rancangan 6.1.
      *
-     * @return list<array{kunci: string, label: string, alamat: string|null, utama: bool}>
+     * @return list<array{kunci: string, label: string, alamat: string|null, utama: bool, keterangan?: string|null}>
      */
     public function tombol(): array
     {
         return [
-            ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => self::ALAMAT_PENDAFTARAN, 'utama' => true],
+            // Pendaftaran hanya bisa dipakai saat terbuka (rancangan 6.1); selain itu nonaktif dengan keterangan keadaannya.
+            ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => $this->bukaTutup()->terbuka() ? self::ALAMAT_PENDAFTARAN : null, 'utama' => true, 'keterangan' => self::keteranganPendaftaran($this->bukaTutup())],
             // Cek hanya bisa dipakai bila pengaturan lengkap (rancangan 6.1).
             ['kunci' => 'cek', 'label' => 'Cek Pendaftaran', 'alamat' => $this->bukaTutup()->keadaan() === BukaTutupPendaftaran::DISIAPKAN ? null : self::ALAMAT_CEK_PENDAFTARAN, 'utama' => false],
         ];
+    }
+
+    /**
+     * Keterangan tombol dan menu Pendaftaran yang nonaktif: "Segera" selama
+     * pengaturan belum lengkap, "Belum dibuka", atau "Ditutup". `null` bila
+     * pendaftaran terbuka.
+     */
+    public static function keteranganPendaftaran(BukaTutupPendaftaran $bukaTutup): ?string
+    {
+        return match ($bukaTutup->keadaan()) {
+            BukaTutupPendaftaran::TERBUKA      => null,
+            BukaTutupPendaftaran::BELUM_DIBUKA => 'Belum dibuka',
+            BukaTutupPendaftaran::DITUTUP      => 'Ditutup',
+            default                            => 'Segera',
+        };
     }
 
     /**

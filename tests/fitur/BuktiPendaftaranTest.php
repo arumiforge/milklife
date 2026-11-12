@@ -67,9 +67,9 @@ final class BuktiPendaftaranTest extends UjiBasisData
             'MILKLIFE ATHLETICS CHALLENGE', 'Seri 2 Tahun 2026',
             'Nama Sekolah : <b>SD NEGERI CONTOH 1</b>', 'Tanggal Pendaftaran : <b>12 November 2026</b>',
             'Kabupaten / Kota : <b>Kudus</b>', 'ID Pendaftaran : <b>MAC2A0000126</b>',
-            'Penanggung Jawab (Official) :', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '081200000002',
-            'CANDRA REKAAN', '9900000002', 'Lompat Jauh', 'Rp150.000',
-            'Estafet 4 × 50 m', 'BUDI KARANGAN, CANDRA REKAAN, DIMAS CONTOH, EKO KARANGAN', 'Rp200.000',
+            'Penanggung Jawab (Official) :', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
+            'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp150.000',
+            'Estafet 4 × 50 m putra', 'BUDI KARANGAN, CANDRA REKAAN, DIMAS CONTOH, EKO KARANGAN', 'Rp200.000',
             'Rp450.000', 'Rp650.000', 'lencana-menunggu">Menunggu Konfirmasi Pembayaran',
         ] as $teks) {
             $this->assertStringContainsString($teks, $html);

@@ -10,12 +10,13 @@
  * - Judul dari pengaturan Halaman Depan; bila kosong, nama acara menjadi
  *   judul. Satu-satunya `<h1>` halaman ada di sini (`#judul-acara`).
  * - Teks admin di-escape; baris baru di dalam paragraf menjadi `<br>`.
- * - Tombol tanpa alamat tampil nonaktif dengan tulisan "Segera" (K39).
+ * - Tombol tanpa alamat tampil nonaktif dengan `keterangan`-nya, atau "Segera"
+ *   bila tanpa keterangan (K39; Pendaftaran hanya menaut saat terbuka).
  *
  * @var array{nama: string, seri_tahun: string, tempat: string, tanggal: string} $acara
  * @var array<string, mixed>                                                       $tampilan  lihat IsiHalamanDepan::tampilan()
  * @var App\Libraries\BukaTutupPendaftaran                                         $bukaTutup
- * @var list<array{kunci: string, label: string, alamat: string|null, utama: bool}> $tombol
+ * @var list<array{kunci: string, label: string, alamat: string|null, utama: bool, keterangan?: string|null}> $tombol
  */
 
 use App\Libraries\BukaTutupPendaftaran;
@@ -112,7 +113,7 @@ $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : '
                     <?php if ($butir['alamat'] === null) : ?>
                         <a class="<?= $kelas ?> disabled tombol-nonaktif" role="link" aria-disabled="true">
                             <?= esc($butir['label']) ?>
-                            <span class="tombol-segera">Segera</span>
+                            <span class="tombol-segera"><?= esc($butir['keterangan'] ?? 'Segera') ?></span>
                         </a>
                     <?php else : ?>
                         <a class="<?= $kelas ?>" href="<?= site_url($butir['alamat']) ?>"><?= esc($butir['label']) ?></a>
