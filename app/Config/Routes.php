@@ -26,6 +26,8 @@ $routes->get('bukti/(:segment)', 'BuktiController::index/$1');
 // pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.
 $routes->get('pendaftaran', 'PendaftaranController::index');
 $routes->get('pendaftaran/sekolah', 'PendaftaranController::sekolah');
+$routes->post('pendaftaran/periksa', 'PendaftaranController::periksa');
+$routes->post('pendaftaran/simpan', 'PendaftaranController::simpan');
 // ---------- Akhir pendaftaran ----------
 
 // Admin. Semua rute dijaga filter `admin` (`App\Filters\AdminFilter`):
