@@ -27,6 +27,8 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
    composer install
    ```
 
+   Perintah ini memasang versi pustaka yang persis sama dengan yang tercatat di `composer.lock`, jadi hasilnya sama di semua komputer. Jangan hapus `composer.lock`; untuk memperbarui pustaka lihat [Memperbarui pustaka](#memperbarui-pustaka).
+
 3. Salin `.env.example` menjadi `.env`, lalu buat kunci rahasia:
 
    ```
@@ -105,6 +107,31 @@ Web dibuka dari internet lewat Cloudflare Tunnel (K31). Susunannya:
 
 Jangan jalankan `cloudflared` di komputer lain yang meneruskan ke server ini; bila terpaksa, alamat komputer itu harus ditambahkan ke `$proxyIPs`.
 
+## Perintah
+
+Semua dijalankan dari folder proyek dengan `php spark <perintah>`.
+
+| Perintah | Kegunaan |
+|---|---|
+| `sekolah:impor [berkas]` | Mengisi atau memperbarui daftar sekolah. Aman diulang |
+| `data:awal` | Mengisi data awal Seri 2. Sekali saat pemasangan |
+| `admin:buat` | Membuat akun admin atau mengganti kata sandinya |
+| `aset:minify` | Membuat versi kecil CSS, JavaScript, dan SVG. Wajib di produksi setiap memperbarui versi |
+| `cadangan:buat` | Mencadangkan basis data dan unggahan ke satu berkas zip |
+| `pendaftaran:impor <berkas.zip>` | Memasukkan zip dari tombol **Backup data** di panel ke server baru yang belum punya pendaftaran |
+| `dokumen:pdf` | Membuat ulang PDF di `dokumen/pdf/` dari dokumen final |
+
+## Memperbarui pustaka
+
+`composer.lock` mencatat versi pasti setiap pustaka dan ikut masuk git. Untuk memperbarui:
+
+```
+composer update
+composer uji
+```
+
+`composer update` hanya menaikkan versi di dalam batas `composer.json` (misalnya CodeIgniter tetap 4.x, PhpSpreadsheet tetap 5.x), lalu menulis ulang `composer.lock`. Bila semua uji `OK`, commit `composer.lock` lewat PR. Jalankan di komputer dengan versi PHP terendah yang dipakai (8.2 bila masih ada), supaya pustaka yang terpilih tetap jalan di semua komputer.
+
 ## Struktur
 
 | Folder | Isi |
@@ -125,3 +152,5 @@ Jangan jalankan `cloudflared` di komputer lain yang meneruskan ke server ini; bi
 ## Teknologi
 
 CodeIgniter 4.7, PHP 8.2+, MySQL 8, Nginx (Laragon), Bootstrap 5.3 dan Bootstrap Icons (disimpan lokal, tanpa CDN).
+
+Pustaka Composer: mPDF (bukti dan rekap PDF), PhpSpreadsheet (ekspor Excel), chillerlan/php-qrcode (kode QR di bukti), matthiasmullie/minify (`aset:minify`), dan CodeIgniter Settings. Untuk uji: PHPUnit 10, Faker, vfsStream.
