@@ -16,7 +16,7 @@ use CodeIgniter\HTTP\ResponseInterface;
  * - Nomor beregu yang disimpan lewat formulir wajib lengkap; nomor beregu dari
  *   `data:awal` yang belum lengkap ditandai di daftar.
  * - Nomor yang sudah dipakai atlet atau tim tidak bisa dihapus, dan kelompok
- *   umur, jenis, serta kategorinya tidak bisa diubah.
+ *   umur, jenis, kategori, dan isian timnya (selain biaya) tidak bisa diubah.
  *
  * Kelompok umur dibaca dengan pembangun kueri (`kelompok_umur` milik F2-03).
  */
@@ -235,16 +235,13 @@ class NomorLombaController extends BaseController
         if ($lama !== null && $this->model->dipakai((int) $lama['id'])) {
             $sebab = 'Nomor ini sudah dipakai atlet atau tim, jadi ';
 
-            if ($isian['kelompok_umur_id'] !== (string) $lama['kelompok_umur_id']) {
-                $galat['kelompok_umur_id'] = $sebab . 'kelompok umurnya tidak bisa dipindah. Buat nomor baru di kelompok umur lain bila perlu.';
-            }
+            foreach (NomorLombaModel::TERKUNCI_BILA_DIPAKAI as $kolom => $alasan) {
+                $nilaiLama = (string) ($lama[$kolom] ?? '');
 
-            if ($isian['jenis'] !== (string) $lama['jenis']) {
-                $galat['jenis'] = $sebab . 'jenisnya tidak bisa diubah. Buat nomor baru bila perlu.';
-            }
-
-            if ($isian['kategori'] !== (string) $lama['kategori']) {
-                $galat['kategori'] = $sebab . 'kategorinya tidak bisa diubah. Buat nomor baru bila perlu.';
+                // Isian tim yang masih kosong (data awal) boleh dilengkapi.
+                if ($nilaiLama !== '' && $isian[$kolom] !== $nilaiLama) {
+                    $galat[$kolom] = $sebab . sprintf($alasan, $nilaiLama);
+                }
             }
         }
 

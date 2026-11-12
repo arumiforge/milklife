@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | rencana |
+| Status | menunggu tinjauan |
 | Tahap | 6 — Panel data |
 | Dibuat | 12 November 2026 |
 
@@ -12,8 +12,8 @@ Admin tidak bisa tanpa sengaja merusak pendaftaran yang sudah ada dengan menguba
 
 ## Hasil
 
-- [ ] Nomor lomba yang sudah dipakai atlet atau tim: kelompok umur, jenis, kategori, jumlah inti, batas anggota, dan jumlah putra/putri minimal tampil terkunci dengan keterangan, dan server menolak perubahannya. Nama, biaya beregu, urutan, dan aktif tetap bisa diubah
-- [ ] Kelompok umur yang sudah dipakai atlet tidak bisa dihapus (sudah dijaga kunci asing; pesan ramah) dan batas tahun lahirnya tidak bisa diubah sehingga ada atlet terdaftar yang keluar dari rentang
+- [x] Nomor lomba yang sudah dipakai atlet atau tim: kelompok umur, jenis, kategori, jumlah inti, batas anggota, dan jumlah putra/putri minimal tampil terkunci dengan keterangan, dan server menolak perubahannya. Nama, biaya beregu, urutan, dan aktif tetap bisa diubah
+- [x] Kelompok umur yang sudah dipakai atlet tidak bisa dihapus (sudah dijaga kunci asing; pesan ramah) dan batas tahun lahirnya tidak bisa diubah sehingga ada atlet terdaftar yang keluar dari rentang
 
 ## Selesai bila
 
@@ -22,3 +22,5 @@ Admin tidak bisa tanpa sengaja merusak pendaftaran yang sudah ada dengan menguba
 ## Catatan
 
 Tidak bergantung pada tugas lain. Asumsi 8 rencana Tahap 6.
+
+Kunci kelompok umur, jenis, dan kategori sudah ada sejak F2-04; tugas ini menambah jumlah inti, batas anggota, dan jumlah putra/putri minimal (`NomorLombaModel::TERKUNCI_BILA_DIPAKAI`). Isian tim yang masih kosong pada nomor dari data awal tetap boleh dilengkapi walau nomornya sudah dipakai, supaya nomor itu tidak terkunci dalam keadaan belum lengkap. Batas tahun lahir kelompok umur diperiksa terhadap tahun lahir atlet tertua dan termuda yang sudah terdaftar di kelompok umur itu; batas yang dikosongkan selalu diterima.

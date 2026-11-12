@@ -289,6 +289,46 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $this->seeInDatabase('kelompok_umur', ['id' => $id, 'nama' => 'KU 10', 'tahun_lahir_awal' => 2016]);
     }
 
+    public function testBatasTahunLahirTidakBisaMengeluarkanAtletTerdaftar(): void
+    {
+        $id = $this->buatKu(['nama' => 'KU 10', 'tahun_lahir_awal' => '2015', 'tahun_lahir_akhir' => '2018']);
+        $this->db->table('pendaftaran')->insert(['jenjang' => 'A', 'nama_sekolah' => 'SD KARANGAN', 'kabupaten' => 'Kudus', 'subtotal_individu' => 0, 'subtotal_beregu' => 0, 'total' => 0]);
+        $pendaftaran = $this->db->insertID();
+
+        foreach (['9900000001' => '2016-05-17', '9900000002' => '2017-01-02'] as $nisn => $lahir) {
+            $this->db->table('atlet')->insert([
+                'pendaftaran_id' => $pendaftaran, 'nama' => 'ATLET KARANGAN', 'nisn' => $nisn,
+                'tanggal_lahir'  => $lahir, 'jenis_kelamin' => 'P', 'kelompok_umur_id' => $id,
+            ]);
+        }
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2016']));
+        $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_awal']);
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2018']));
+        $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_awal']);
+        $hasil->assertSee('Sudah ada atlet terdaftar di kelompok umur ini yang lahir tahun 2016. Tulis 2016 atau lebih kecil, atau kosongkan.');
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10', 'tahun_lahir_awal' => '2015', 'tahun_lahir_akhir' => '2016']));
+        $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_akhir']);
+        $hasil->assertSee('Sudah ada atlet terdaftar di kelompok umur ini yang lahir tahun 2017. Tulis 2017 atau lebih besar, atau kosongkan.');
+        $this->seeInDatabase('kelompok_umur', ['id' => $id, 'tahun_lahir_awal' => 2015, 'tahun_lahir_akhir' => 2018]);
+
+        // Rentang yang tetap mencakup semua atletnya, atau batas kosong, diterima.
+        $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2017']))->assertRedirect();
+        $this->seeInDatabase('kelompok_umur', ['id' => $id, 'tahun_lahir_awal' => 2016, 'tahun_lahir_akhir' => 2017]);
+        $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10', 'tahun_lahir_awal' => '', 'tahun_lahir_akhir' => '2017']))->assertRedirect();
+        $this->seeInDatabase('kelompok_umur', ['id' => $id, 'tahun_lahir_awal' => null, 'tahun_lahir_akhir' => 2017]);
+    }
+
+    public function testBatasTahunLahirBebasDiubahBilaBelumAdaAtlet(): void
+    {
+        $id = $this->buatKu(['nama' => 'KU 10', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2018']);
+
+        $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10', 'tahun_lahir_awal' => '2019', 'tahun_lahir_akhir' => '2020']))->assertRedirect();
+        $this->seeInDatabase('kelompok_umur', ['id' => $id, 'tahun_lahir_awal' => 2019, 'tahun_lahir_akhir' => 2020]);
+    }
+
     public function testMengaktifkanYangBertabrakanDitolak(): void
     {
         DataAwal::isi($this->db);
