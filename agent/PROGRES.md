@@ -12,7 +12,7 @@ Diperbarui: 12 November 2026
 | [F6-02 Daftar, rincian, lunas, dan hapus](tugas/F6-02-daftar-rincian-lunas-hapus.md) | menunggu tinjauan | 2 | [#50](https://github.com/arumiforge/milklife/pull/50) |
 | [F6-03 Bukti bayar dan daftar atlet](tugas/F6-03-bukti-bayar-daftar-atlet.md) | menunggu tinjauan | 2 | [#49](https://github.com/arumiforge/milklife/pull/49) |
 | [F6-05 Konfirmasi tim susulan](tugas/F6-05-konfirmasi-tim-susulan.md) | menunggu tinjauan | 2 | [#51](https://github.com/arumiforge/milklife/pull/51) |
-| [F6-04 Ubah pendaftaran](tugas/F6-04-ubah-pendaftaran.md) | rencana | 3 | |
+| [F6-04 Ubah pendaftaran](tugas/F6-04-ubah-pendaftaran.md) | menunggu tinjauan | 3 | |
 | [F6-06 Rekap dan dasbor](tugas/F6-06-rekap-dasbor.md) | rencana | 3 | |
 | [F6-07 Pengaturan terlindung](tugas/F6-07-pengaturan-terlindung.md) | rencana | 3 | |
 | [F6-08 Penutupan](tugas/F6-08-penutupan-tahap-6.md) | rencana | 4 | |

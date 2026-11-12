@@ -9,7 +9,7 @@
  * jendela konfirmasi `aset/js/konfirmasi.js`.
  *
  * Tempat yang disisakan untuk tugas lain (ditandai komentar):
- * - F6-04: tombol Ubah di deretan tombol tindakan.
+ * - F6-04: tombol Ubah di deretan tombol tindakan (menuju `admin/pendaftaran/<id>/ubah`).
  * - F6-03: satu baris include `admin/pendaftaran/_bukti_bayar` setelah kartu biaya.
  *
  * @var CodeIgniter\View\View $this
@@ -90,7 +90,10 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                         </form>
                     <?php endif ?>
 
-                    <?php /* F6-04: tombol Ubah pendaftaran ditambahkan di sini. */ ?>
+                    <a class="btn btn-outline-primary" href="<?= site_url($alamat . '/ubah') ?>" id="tombol-ubah">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                        Ubah
+                    </a>
 
                     <form action="<?= site_url($alamat . '/hapus') ?>" method="post" class="m-0"
                         data-konfirmasi="<?= esc($kalimatHapus, 'attr') ?>"
