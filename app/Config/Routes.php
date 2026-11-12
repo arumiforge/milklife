@@ -21,6 +21,12 @@ $routes->get('cek-pendaftaran', 'CekPendaftaranController::index');
 $routes->get('bukti/(:segment)', 'BuktiController::index/$1');
 // Akhir blok Tahap 5
 
+// ---------- Pendaftaran (Tahap 4) ----------
+// Wizard pendaftaran dan titik akhir JSON-nya (rencana Tahap 4, "Rute dan
+// pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.
+$routes->get('pendaftaran/sekolah', 'PendaftaranController::sekolah');
+// ---------- Akhir pendaftaran ----------
+
 // Admin. Semua rute dijaga filter `admin` (`App\Filters\AdminFilter`):
 // yang belum masuk hanya bisa membuka halaman masuk.
 $routes->get('admin', static fn () => redirect()->to('admin/dasbor'), ['filter' => 'admin']);
