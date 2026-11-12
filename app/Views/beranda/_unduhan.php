@@ -1,8 +1,8 @@
 <?php
 /**
- * Bagian unduhan halaman depan (`#unduhan`). Diisi F3-03, bersama potongan
- * daftar unduhan yang juga dipakai halaman `/unduhan`. Sampai saat itu
- * potongan ini tidak menampilkan apa pun.
+ * Bagian unduhan halaman depan (`#unduhan`): daftar berkas (potongan
+ * bersama `beranda/_daftar_unduhan`, juga dipakai halaman `/unduhan`) dan
+ * tautan ke halaman semua unduhan.
  *
  * Data yang tersedia (dari `IsiHalamanDepan::unduhan()`):
  *
@@ -16,3 +16,22 @@
  * - Tautan ke halaman semua unduhan: `site_url('unduhan')`.
  * - Gaya hanya di wilayah "Bagian jadwal, unduhan, kontak (F3-03)" di `tema.css`.
  */
+
+if ($unduhan === []) {
+    return;
+}
+?>
+<section id="unduhan" class="bagian-tambahan bagian-unduhan" aria-labelledby="judul-unduhan">
+    <div class="container">
+        <h2 id="judul-unduhan" class="bagian-tambahan-judul"><i class="bi bi-download" aria-hidden="true"></i> Unduhan</h2>
+        <p class="bagian-tambahan-pengantar">Flyer, petunjuk teknis, dan berkas lain dari panitia.</p>
+
+        <?= view('beranda/_daftar_unduhan', ['unduhan' => $unduhan, 'tingkatJudul' => 'h3'], ['saveData' => false]) ?>
+
+        <p class="unduhan-semua">
+            <a class="btn btn-outline-primary" href="<?= site_url('unduhan') ?>">
+                Lihat semua unduhan <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </p>
+    </div>
+</section>

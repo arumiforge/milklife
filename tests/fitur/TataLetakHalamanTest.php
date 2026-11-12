@@ -62,7 +62,7 @@ final class TataLetakHalamanTest extends UjiHalaman
         }
 
         $this->assertSame(
-            ['Beranda', 'Pendaftaran Segera', 'Cek Pendaftaran Segera', 'Unduhan Segera'],
+            ['Beranda', 'Pendaftaran Segera', 'Cek Pendaftaran Segera', 'Unduhan'],
             array_keys($butir),
         );
 
@@ -70,8 +70,13 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame('page', $butir['Beranda']->getAttribute('aria-current'));
         $this->assertSame(site_url('/'), $butir['Beranda']->getAttribute('href'));
 
+        // Unduhan sudah punya halaman (F3-03, K40): bertautan, tidak aktif di halaman depan.
+        $this->assertSame(site_url('unduhan'), $butir['Unduhan']->getAttribute('href'));
+        $this->assertFalse($butir['Unduhan']->hasAttribute('aria-disabled'));
+        $this->assertFalse($butir['Unduhan']->hasAttribute('aria-current'));
+
         // Yang halamannya belum ada: non-aktif, tanpa tautan (bukan tautan mati ke 404).
-        foreach (['Pendaftaran Segera', 'Cek Pendaftaran Segera', 'Unduhan Segera'] as $label) {
+        foreach (['Pendaftaran Segera', 'Cek Pendaftaran Segera'] as $label) {
             $this->assertSame('true', $butir[$label]->getAttribute('aria-disabled'), $label);
             $this->assertFalse($butir[$label]->hasAttribute('href'), $label . ' tidak boleh bertautan.');
             $this->assertStringContainsString('disabled', $butir[$label]->getAttribute('class'));
