@@ -124,3 +124,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K52 | Bukti pendaftaran PDF dirapikan: logo persegi tampil transparan (bukan berlatar hitam) dan tidak gepeng; penanggung jawab ditulis sebaris "Penanggung Jawab (Official) : Nama (ikon WA nomor WA)", dipisah koma bila lebih dari satu, tanpa tabel; tanggal lahir dan nomor dada **tidak** dicetak; anggota tim beregu ditulis dalam satu baris dipisah koma; status pembayaran diberi bingkai berwarna seperti tombol (Lunas hijau, Menunggu Konfirmasi Pembayaran kuning) | Menggantikan K49 butir 2 (anggota tim tetap dicetak, nomor dada dan tanggal lahir tidak). **Halaman cek juga tidak menampilkan tanggal lahir dan nomor dada**; ini menyimpang dari daftar isi cek di rancangan 8 dan dimasukkan ke revisi rancangan berikutnya. Nomor dada tetap tersimpan dan terlihat di panel admin (Tahap 6). Tinjauan pemilik atas bukti F5-03, dibawa PR penutupan F5-05 |
+
+## 12 November 2026 — persiapan sesi agen di cloud
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K53 | Sesi agen di cloud disiapkan oleh Setup script di setelan lingkungan cloud: MySQL 8, basis data `milklife_uji`, `.env`, dan `composer install` dipasang sekali di awal sesi. Agen tidak memasang ulang selama sesi, cukup `composer uji` | Pemilik melihat pemasangan berulang di sesi cloud. Isi skrip ada di `agent/ALUR-KERJA.md` bagian "Sesi agen di cloud". Diuji di sesi ini: pemasangan pertama sekitar 7,5 menit, jalan ulang 1 detik, 929 uji lulus. Unduhan zip dari GitHub ditolak jaringan sesi, jadi Composer mengambil lewat git dan lebih lambat |
