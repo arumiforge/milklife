@@ -104,3 +104,10 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K47 | Gambar latar dan logo MilkLife Athletics Challenge dari pemilik disimpan di repo (`data/halaman-depan/`) dan dipasang `php spark data:awal` sebagai gambar kepala dan logo persegi | Repo publik; pemilik menyatakan tidak masalah. Disalin ke `public/unggahan/halaman-depan/` supaya admin tetap bisa mengganti atau menghapusnya. Pengaturan yang sudah diisi admin tidak ditimpa. Bila gambar latar terpasang, bidang miring tema disembunyikan karena gambarnya sudah punya hiasan sendiri; logo persegi tampil lebih besar dari logo lain |
+
+## 12 November 2026 — Tahap 4 dan 5 bersamaan
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K48 | Tahap 4 dan Tahap 5 dikerjakan bersamaan di dua sesi berbeda tempat, dengan pembagian berkas sesuai kesepakatan dua sesi | Kesepakatan disalin ke `dokumen/draf/rencana-implementasi-tahap-5.md` bagian "Kesepakatan bersama". Titik temu satu-satunya adalah `main` |
+| K49 | Wawancara Tahap 5: (1) cek lewat NPSN menampilkan pendaftaran sekolah itu berurutan per pendaftaran (data sekolah sekali di atas, satu kartu per pendaftaran, total keseluruhan di bawah); (2) bukti PDF juga mencetak nama anggota tiap tim beregu, nomor dada (tertulis "–" sampai Lunas), dan tanggal lahir atlet; (3) nama berkas bukti memakai seluruh nama acara tanpa spasi, misalnya `BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_<NamaSekolah>_2026.pdf` | Rancangan bagian 8 hanya memberi contoh nama berkas dan tidak merinci isi tabel bukti maupun arti "digabung" |
