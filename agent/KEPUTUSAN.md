@@ -134,8 +134,18 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K55 | Juknis resmi tidak ditunggu. Batas yang sudah disepakati dipakai (tahun lahir K36, kuota K53); perubahan aturan berikutnya lewat wawancara dengan pemilik | Menggantikan K30. Pemasangan di Laragon sesuai `README.md` sudah dicoba pemilik dan berjalan |
 | K56 | Tahap 6 dikerjakan sesi koordinator baru yang membagi tugas ke sub-sesi paralel | Batas K38 tetap berlaku: paling banyak 3 sub-sesi sekaligus, karena batas pemakaian akun dipakai bersama |
 
+## 12 November 2026 — wawancara awal Tahap 6
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K57 | Asumsi 3 rencana Tahap 4 **tidak disetujui apa adanya**: atlet pendaftaran susulan di nomor beregu yang timnya sudah terdaftar tetap menjadi tambahan anggota tim itu tanpa biaya tim (K07), tetapi official harus **mengonfirmasinya sendiri** sebelum lanjut. Wizard menampilkan kotak centang per tim susulan, dan server menolak kiriman yang belum mengonfirmasi | Menjawab K54 (asumsi 3 terbuka). Dikerjakan di Tahap 6 sebagai perubahan wizard (F6-05). Admin yang mengubah pendaftaran di panel tidak perlu konfirmasi ini |
+| K58 | Admin **tidak** membuat pendaftaran baru dari panel. Sekolah yang terlambat didaftarkan lewat wizard setelah admin memakai buka manual | Panel hanya melihat, menandai Lunas, mengubah, dan menghapus pendaftaran yang sudah ada (rancangan 9) |
+| K59 | Atlet yang ditambahkan admin ke pendaftaran Lunas yang totalnya tidak berubah (misalnya tambahan anggota tim beregu) **langsung mendapat nomor dada saat disimpan** | Melengkapi K32: bila total berubah, status kembali ke Menunggu dan nomor dada atlet baru dibuat saat ditandai Lunas lagi |
+| K60 | Rekap peserta (per nomor lomba, tim beregu, per sekolah, per kelompok umur) beserta Excel dan PDF-nya memuat **semua pendaftaran**, dengan saringan status (semua, Lunas, Menunggu). Rekap keuangan selalu memuat keduanya | |
+| K61 | Rencana implementasi Tahap 6 disetujui, termasuk delapan asumsinya | Kode Tahap 6 boleh mulai, diawali F6-01 (gelombang 1) |
+
 ## 12 November 2026 — persiapan sesi agen di cloud
 
 | No | Keputusan | Catatan |
 |---|---|---|
-| K57 | Sesi agen di cloud disiapkan oleh Setup script di setelan lingkungan cloud: MySQL 8, basis data `milklife_uji`, `.env`, dan `composer install` dipasang sekali di awal sesi. Agen tidak memasang ulang selama sesi, cukup `composer uji` | Pemilik melihat pemasangan berulang di sesi cloud. Isi skrip ada di `agent/ALUR-KERJA.md` bagian "Sesi agen di cloud". Diuji di sesi ini: pemasangan pertama sekitar 7,5 menit, jalan ulang 1 detik, 929 uji lulus. Unduhan zip dari GitHub ditolak jaringan sesi, jadi Composer mengambil lewat git dan lebih lambat |
+| K62 | Sesi agen di cloud disiapkan oleh Setup script di setelan lingkungan cloud: MySQL 8, basis data `milklife_uji`, `.env`, dan `composer install` dipasang sekali di awal sesi. Agen tidak memasang ulang selama sesi, cukup `composer uji` | Pemilik melihat pemasangan berulang di sesi cloud. Isi skrip ada di `agent/ALUR-KERJA.md` bagian "Sesi agen di cloud". Diuji di sesi ini: pemasangan pertama sekitar 7,5 menit, jalan ulang 1 detik, 929 uji lulus. Unduhan zip dari GitHub ditolak jaringan sesi, jadi Composer mengambil lewat git dan lebih lambat |

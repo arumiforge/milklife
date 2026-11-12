@@ -66,7 +66,7 @@ Bila sebuah tahap punya pilihan yang hanya bisa dijawab pemilik, tanyakan di awa
   Contoh: `fitur(pendaftaran): hitung biaya individu per kelompok umur`.
 - CI GitHub boleh dipakai (K46). Uji dijalankan sendiri di komputer pengembang (`composer uji`) sebelum PR dibuka, lalu GitHub Actions (`.github/workflows/uji.yml`) menjalankan uji yang sama di setiap PR dan push ke `main`. PR digabung dengan *squash* setelah uji lokal dan CI lulus.
 
-## Sesi agen di cloud (K57)
+## Sesi agen di cloud (K62)
 
 Kontainer sesi cloud selalu baru, jadi pustaka dan MySQL dipasang sekali di awal setiap sesi oleh **Setup script** di setelan lingkungan cloud, bukan oleh agen di tengah kerja.
 
