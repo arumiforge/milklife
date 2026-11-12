@@ -39,7 +39,7 @@ Bergantung pada F6-02 (rincian, `StatusPembayaran`) dan F6-05 (parameter konfirm
 ## Penyimpangan dan catatan
 
 - K32 dijaga juga di server: bila status Lunas dan total berubah, simpan hanya berjalan dengan `setuju_menunggu=1` (dikirim jendela konfirmasi). Tanpa itu formulir ditampilkan ulang dengan penjelasannya.
-- ID pendaftaran tidak diubah walau jenjang sekolah diubah, supaya bukti dan cek yang dipegang official tetap berlaku.
+- ID pendaftaran tidak diubah walau jenjang sekolah diubah. **Dikonfirmasi pemilik 12 November 2026:** ID pendaftaran memakai data saat mendaftar, supaya lebih aman dan sederhana. Keputusan ini dicatat koordinator di `agent/KEPUTUSAN.md` (sub-sesi tidak menambah nomor K).
 - Pendaftaran Lunas yang totalnya tetap: atlet tanpa nomor dada langsung diberi nomor (K59). Bila awalan penuh, seluruh perubahan dibatalkan dengan pesan untuk menambah awalan.
 - Nomor lomba yang sudah tidak aktif tampil tercentang dengan keterangan; pemeriksa menolaknya sampai centangnya dihapus.
 - `ubah()` menerima dua parameter pilihan (kiriman dan galat) supaya `perbarui()` bisa menampilkan ulang formulir; rute tetap hanya memberi id.
