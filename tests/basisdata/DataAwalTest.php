@@ -1,8 +1,10 @@
 <?php
 
 use App\Commands\DataAwal;
+use App\Libraries\Unggahan;
 use CodeIgniter\Test\StreamFilterTrait;
 use Tests\Support\UjiBasisData;
+use Tests\Support\UnggahanSementara;
 
 /**
  * Perintah `php spark data:awal` (F2-01) dan nilai awal kelas pengaturan.
@@ -12,6 +14,7 @@ use Tests\Support\UjiBasisData;
 final class DataAwalTest extends UjiBasisData
 {
     use StreamFilterTrait;
+    use UnggahanSementara;
 
     public function testNilaiAwalPengaturanSebelumDataAwal(): void
     {
@@ -241,6 +244,8 @@ final class DataAwalTest extends UjiBasisData
         $this->assertMatchesRegularExpression('/KU 8 \(Seneng Playon\)\s+: lahir 2019 ke atas,\s+awalan nomor dada 1/', $keluaran);
         $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2015,\s+awalan nomor dada 3/', $keluaran);
         $this->assertStringNotContainsString('Patokan usia', $keluaran);
+        $this->assertStringContainsString('Gambar kepala bawaan dipasang', $keluaran);
+        $this->assertStringContainsString('Logo persegi bawaan dipasang', $keluaran);
     }
 
     public function testMenolakBilaDijalankanLagi(): void
@@ -316,6 +321,19 @@ final class DataAwalTest extends UjiBasisData
         $this->seeNumRecords(0, 'awalan_nomor_dada', []);
         $this->assertSame('', setting('Acara.nama'));
         $this->seeNumRecords(0, 'settings', []);
+    }
+
+    public function testMemasangGambarBawaanHalamanDepan(): void
+    {
+        setting('HalamanDepan.logo_persegi', 'unggahan/halaman-depan/' . str_repeat('a', 32) . '.png');
+
+        $this->assertSame(['HalamanDepan.gambar_kepala' => true], DataAwal::pasangGambarBawaan());
+
+        $jalur = (string) setting('HalamanDepan.gambar_kepala');
+        $this->assertMatchesRegularExpression('#^unggahan/halaman-depan/[0-9a-f]{32}\.webp$#', $jalur);
+        $this->assertTrue((new Unggahan())->ada($jalur));
+        $this->assertStringStartsWith($this->folderUnggahan, (string) (new Unggahan())->jalurPenuh($jalur), 'Uji tidak menulis ke public/unggahan.');
+        $this->assertSame('unggahan/halaman-depan/' . str_repeat('a', 32) . '.png', setting('HalamanDepan.logo_persegi'), 'Logo yang sudah diunggah admin tidak ditimpa.');
     }
 
     private function jalankan(): int

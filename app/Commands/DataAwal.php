@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Libraries\Unggahan;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Config\Services;
@@ -165,7 +166,62 @@ class DataAwal extends BaseCommand
 
         $this->tampilkanRingkasan($hasil);
 
+        foreach (self::pasangGambarBawaan() as $kunci => $terpasang) {
+            $nama = $kunci === 'HalamanDepan.logo_persegi' ? 'Logo persegi' : 'Gambar kepala';
+
+            if ($terpasang) {
+                CLI::write($nama . ' bawaan dipasang di halaman depan (bisa diganti di Pengaturan > Halaman Depan).');
+            } else {
+                CLI::error($nama . ' bawaan gagal disalin. Pastikan folder public/unggahan boleh ditulisi, lalu unggah gambarnya lewat Pengaturan > Halaman Depan.');
+            }
+        }
+
         return EXIT_SUCCESS;
+    }
+
+    /**
+     * Gambar bawaan halaman depan dari pemilik (K47), disalin ke folder
+     * unggahan supaya admin tetap bisa mengganti atau menghapusnya di panel.
+     *
+     * @var array<string, string> kunci `setting()` => berkas di `data/halaman-depan/`
+     */
+    public const GAMBAR_BAWAAN = [
+        'HalamanDepan.gambar_kepala' => 'gambar-kepala.webp',
+        'HalamanDepan.logo_persegi'  => 'logo-persegi.webp',
+    ];
+
+    /**
+     * Salin gambar bawaan ke `unggahan/halaman-depan/` dan isi pengaturannya.
+     * Pengaturan yang sudah terisi (admin sudah mengunggah) tidak ditimpa.
+     *
+     * @return array<string, bool> kunci => berhasil; kunci yang dilewati tidak ada
+     */
+    public static function pasangGambarBawaan(): array
+    {
+        $hasil = [];
+
+        foreach (self::GAMBAR_BAWAAN as $kunci => $berkas) {
+            if (trim((string) setting($kunci)) !== '') {
+                continue;
+            }
+
+            $sumber = ROOTPATH . 'data' . DIRECTORY_SEPARATOR . 'halaman-depan' . DIRECTORY_SEPARATOR . $berkas;
+            $folder = Unggahan::folderDasar() . 'halaman-depan';
+            $nama   = bin2hex(random_bytes(16)) . '.' . pathinfo($berkas, PATHINFO_EXTENSION);
+
+            $berhasil = is_file($sumber)
+                && (is_dir($folder) || @mkdir($folder, 0755, true))
+                && @copy($sumber, $folder . DIRECTORY_SEPARATOR . $nama);
+
+            if ($berhasil) {
+                @chmod($folder . DIRECTORY_SEPARATOR . $nama, 0644);
+                setting($kunci, 'unggahan/halaman-depan/' . $nama);
+            }
+
+            $hasil[$kunci] = $berhasil;
+        }
+
+        return $hasil;
     }
 
     /**

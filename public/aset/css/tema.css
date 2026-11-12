@@ -507,6 +507,17 @@ h1, h2, h3, h4, h5, h6,
     background: rgba(2, 31, 123, 0.8);
 }
 
+/* Gambar latar biasanya sudah punya hiasan sendiri; bidang miring tema
+   disembunyikan supaya tidak menumpuk. */
+.pembuka-dengan-gambar::before {
+    display: none;
+}
+
+/* Logo persegi (logo utama acara) tampil lebih besar dari logo lain. */
+.pembuka-logo-butir.pembuka-logo-persegi {
+    height: 6rem;
+}
+
 @media (min-width: 768px) {
     .pembuka-dengan-gambar > .container {
         min-height: 32rem;
@@ -673,6 +684,10 @@ h1, h2, h3, h4, h5, h6,
 @media (min-width: 768px) {
     .pembuka-logo-butir {
         height: 4.25rem;
+    }
+
+    .pembuka-logo-butir.pembuka-logo-persegi {
+        height: 8rem;
     }
 
     .pembuka-pendaftaran {
