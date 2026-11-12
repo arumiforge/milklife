@@ -24,6 +24,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Rencana implementasi Tahap 4: `dokumen/draf/rencana-implementasi-tahap-4.md`.
 - Rencana implementasi Tahap 5: `dokumen/draf/rencana-implementasi-tahap-5.md`.
 - Rencana implementasi Tahap 6: `dokumen/draf/rencana-implementasi-tahap-6.md`.
+- Arsip tahap selesai: `agent/arsip/`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
 - Bahan asli: `sumber/flyer/`.
 - Data sekolah: `data/sekolah/sekolah.json`.
@@ -36,3 +37,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Kelompok umur ditentukan **tahun lahir**, bukan usia (K36); usia hanya ditampilkan. Tidak ada tanggal patokan usia (K37).
 - Tahun lahir menentukan kelompok umur, tetapi **jenjang sekolah membatasinya**: atlet ditolak bila kelompok umurnya tidak dibuka untuk jenjang sekolahnya (K23). Jenjang yang boleh ikut diatur admin, tidak tertulis di kode.
 - Halaman cek menampilkan data siswa penuh atas persetujuan MoU. Repo ini publik, jadi data siswa tidak boleh masuk git.
+- Nomor dada dibuat saat ditandai Lunas dan **tidak pernah dipakai ulang**, juga setelah pendaftaran dihapus atau dikembalikan ke Menunggu.
+- Admin yang mengubah pendaftaran Lunas: bila total berubah, status kembali ke Menunggu (K32); bila tetap, atlet baru langsung mendapat nomor dada (K59). ID pendaftaran tidak berubah (K63).
+- Pendaftaran susulan ke tim beregu sekolah yang sudah terdaftar wajib dikonfirmasi official di wizard (K57), tanpa biaya tim. Admin tidak membuat pendaftaran baru dari panel (K58).
+- Foto penanggung jawab dan bukti bayar disimpan di `writable/unggahan/` (di luar `public/`) dan hanya disajikan lewat rute admin.

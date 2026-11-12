@@ -154,7 +154,7 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 
 | No | Keputusan | Catatan |
 |---|---|---|
-| K62 | Gelombang Tahap 6 setelah F6-01 dijalankan pemilik sendiri di sesi berbeda, bukan oleh sesi koordinator | Mengubah cara kerja K56 untuk gelombang 2–4. Rencana, pembagian berkas, dan batas 3 sesi sekaligus (K38) tetap berlaku |
+| K64 | Gelombang Tahap 6 setelah F6-01 dijalankan pemilik sendiri di sesi berbeda, bukan oleh sesi koordinator | Mengubah cara kerja K56 untuk gelombang 2–4. Rencana, pembagian berkas, dan batas 3 sesi sekaligus (K38) tetap berlaku. **Semula tercatat sebagai K62**, sama dengan nomor keputusan persiapan sesi agen di cloud; dinomori ulang menjadi K64 atas keputusan pemilik 12 November 2026 di penutupan Tahap 6 ([#55](https://github.com/arumiforge/milklife/pull/55)). K62 kini hanya untuk persiapan sesi agen di cloud |
 
 ## 12 November 2026 — ubah pendaftaran (F6-04)
 

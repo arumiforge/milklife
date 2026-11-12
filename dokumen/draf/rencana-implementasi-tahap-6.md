@@ -155,3 +155,27 @@ Setelah Tahap 6 digabung, di terminal Laragon pada folder proyek:
 
 | Bagian | Rencana | Yang berlaku | Alasan |
 |---|---|---|---|
+| Pembagian berkas F6-01 | DataTables 2 di `public/aset/vendor/datatables/` | jQuery 3.7.1 ikut disimpan di `public/aset/vendor/jquery/`, dimuat hanya di halaman bertabel | DataTables 2 membutuhkan jQuery (F6-01, #47) |
+| Tabel dan ekspor | Format rupiah Excel `Rp#,##0` | `"Rp"#,##0` | Huruf diberi tanda kutip supaya tidak dibaca sebagai kode format (F6-01) |
+| Uji F6-01 | Pembantu uji `tests/_support/Panel*` | Halaman contoh tabel di `tests/_support/Views/PanelContohTabel.php`; uji kueri bernama `PanelTabelSisiServerQueryTest` | Kelas uji tanpa namespace tidak boleh bernama sama dengan uji unitnya (F6-01) |
+| Rute | Alamat rekap tidak dirinci | `/admin/rekap/<jenis>` per jenis, selain `/admin/rekap`; foto penanggung jawab `/admin/pendaftaran/<id>/foto/<id penanggung jawab>` | Asumsi F6-01, dipakai F6-02 dan F6-06 |
+| Bukti bayar | Batas ukuran dan jenis berkas tidak disebut | Paling besar 10 MB sebelum dikecilkan; JPG, PNG, WEBP | Asumsi F6-01 |
+| Nomor dada (F6-02) | Galat "awalan penuh" | `StatusPembayaran::beriNomorDada()` mengembalikan hasil berisi `penuh`, tanpa melempar galat; pemanggil bertransaksi membatalkan sendiri | Kelas galat baru di luar daftar berkas F6-02 (#50) |
+| Nomor dada (F6-02) | Nomor dari `nomor_terakhir` | Nomor baru juga selalu di atas nomor tertinggi yang tersimpan di `atlet.nomor_dada` dengan awalan sama | Pengaman bila `nomor_terakhir` tertinggal (#50) |
+| Hapus (F6-02) | Berkas dihapus setelah transaksi | `BerkasBuktiBayar::berkasMilik()` + `hapusBerkas()`, bukan `hapusMilik()`; daftar berkas dibaca setelah baris pendaftaran dikunci | `hapusMilik()` menghapus sebelum transaksi selesai (#50) |
+| Excel pendaftaran | Kolom sama dengan tabel | Ditambah subtotal individu, subtotal beregu, waktu lunas; status ditulis lengkap | Ditambahkan F6-02 (#50) |
+| Bukti bayar (F6-03) | Unggah beberapa gambar | Satu gambar per kiriman | Mengikuti `BerkasBuktiBayar` (#49) |
+| Bukti bayar (F6-03) | `include` di `rincian.php` | `view('admin/pendaftaran/_bukti_bayar', ['pendaftaran' => $p])`; dua kueri di uji milik F6-02 tidak menghitung `#bukti-bayar` | Rincian menamai datanya `$p` (#49) |
+| Atlet (F6-03) | — | Tanggal lahir di Excel ditulis teks (`12 April 2017`) | `EksporExcel` hanya punya jenis teks, angka, rupiah (#49) |
+| Konfirmasi tim susulan (F6-05) | Parameter konfirmasi pada pemeriksa | Kunci `konfirmasi_susulan` di dalam kiriman JSON; titik akhir publik mewajibkannya lewat `wajibKonfirmasiSusulan()`; `PendaftaranController::kiriman()` berubah satu baris | `SimpanPendaftaran` hanya dibaca dan meneruskan kiriman di dalam kunci per NPSN, jadi tidak ada celah balapan (#51) |
+| Konfirmasi tim susulan (F6-05) | Kalimat "atlet ini" | "<k> atlet ini" bila tambahan lebih dari satu; tidak ada perubahan di `app/Views/pendaftaran/*` | Kalimat tetap benar; kotak dibuat skrip (#51) |
+| Ubah (F6-04) | K32 lewat jendela konfirmasi | K32 juga dijaga server: simpan hanya berjalan dengan `setuju_menunggu=1` | Supaya status tidak berubah tanpa persetujuan (#52) |
+| Ubah (F6-04) | Rancangan 6.8: kode jenjang di ID | ID pendaftaran tidak berubah walau jenjang diubah | **K63** (#52) |
+| Ubah (F6-04) | — | Nomor lomba tidak aktif tampil tercentang dengan keterangan dan ditolak sampai centangnya dihapus; `ubah()` punya dua parameter pilihan | Nomor tidak hilang diam-diam; formulir bisa ditampilkan ulang (#52) |
+| Ubah (F6-04) | — | **Batasan:** bila pendaftaran pemilik tim pertama menghapus timnya, tim susulan di pendaftaran lain dengan NPSN sama tetap Rp0 | Di luar cakupan F6-04; dibawa ke tahap berikutnya (#52) |
+| Rekap (F6-06) | Rekap lewat tabel | Tabel biasa tanpa DataTables; satu pustaka `Rekap` untuk halaman, JSON, Excel, PDF; tim dihitung per NPSN per nomor; saringan status per atlet | Baris sedikit; angka selalu sama; K07 (#54) |
+| Rekap (F6-06) | Pola `BuktiPendaftaran` | Pembacaan logo disalin ke `RekapPdf` | Berkas Tahap 5 hanya dibaca (#54) |
+| Dasbor (F6-06) | Bagian angka saja | Kartu "Belum ada pendaftaran" hanya tampil bila memang belum ada pendaftaran | Disesuaikan dengan angka dasbor yang baru (#54) |
+| Pengaturan terlindung (F6-07) | Semua isian tim terkunci bila dipakai | Isian tim yang masih kosong boleh dilengkapi; batas tahun lahir dibandingkan dengan atlet tertua dan termuda, batas kosong selalu diterima | Nomor dari data awal tidak terkunci dalam keadaan belum lengkap (#53) |
+| Gelombang | Koordinator menjalankan gelombang 2–4 (K56) | Pemilik menjalankan gelombang 2–4 di sesi berbeda | **K64** (semula tercatat ganda sebagai K62) |
+| Penutupan (F6-08) | — | Dua baris CSS di wilayah Tahap 6 `admin.css` (milik F6-01): wadah gulir tabel `position: relative`, tombol saringan boleh membungkus | Di Chromium 390 piksel halaman Pendaftaran bergulir mendatar (teks `visually-hidden` judul kolom lolos dari wadah gulir) dan tombol Unduh Excel keluar kartu |

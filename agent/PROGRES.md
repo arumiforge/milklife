@@ -4,24 +4,13 @@ Diperbarui: 12 November 2026
 
 ## Sedang berjalan
 
-**Tahap 6 — Panel data**, F6-01 dijalankan sesi koordinator (K56); gelombang berikutnya dijalankan pemilik di sesi berbeda (K62), paling banyak 3 sekaligus (K38). Rencana: [`dokumen/draf/rencana-implementasi-tahap-6.md`](../dokumen/draf/rencana-implementasi-tahap-6.md), disetujui pemilik (K61).
-
-| Tugas | Status | Gelombang | PR |
-|---|---|---|---|
-| [F6-01 Fondasi panel data](tugas/F6-01-fondasi-panel-data.md) | menunggu tinjauan | 1 | [#47](https://github.com/arumiforge/milklife/pull/47) |
-| [F6-02 Daftar, rincian, lunas, dan hapus](tugas/F6-02-daftar-rincian-lunas-hapus.md) | menunggu tinjauan | 2 | [#50](https://github.com/arumiforge/milklife/pull/50) |
-| [F6-03 Bukti bayar dan daftar atlet](tugas/F6-03-bukti-bayar-daftar-atlet.md) | menunggu tinjauan | 2 | [#49](https://github.com/arumiforge/milklife/pull/49) |
-| [F6-05 Konfirmasi tim susulan](tugas/F6-05-konfirmasi-tim-susulan.md) | menunggu tinjauan | 2 | [#51](https://github.com/arumiforge/milklife/pull/51) |
-| [F6-04 Ubah pendaftaran](tugas/F6-04-ubah-pendaftaran.md) | menunggu tinjauan | 3 | [#52](https://github.com/arumiforge/milklife/pull/52) |
-| [F6-06 Rekap dan dasbor](tugas/F6-06-rekap-dasbor.md) | menunggu tinjauan | 3 | [#54](https://github.com/arumiforge/milklife/pull/54) |
-| [F6-07 Pengaturan terlindung](tugas/F6-07-pengaturan-terlindung.md) | menunggu tinjauan | 3 | [#53](https://github.com/arumiforge/milklife/pull/53) |
-| [F6-08 Penutupan](tugas/F6-08-penutupan-tahap-6.md) | rencana | 4 | |
+Belum ada. Tahap 6 ditutup; menunggu tinjauan PR penutupan F6-08.
 
 ## Berikutnya
 
 | Tahap | Hasil | Status |
 |---|---|---|
-| 7. Penyelesaian | Minify, uji menyeluruh, panduan pemasangan produksi | belum mulai |
+| 7. Penyelesaian | Minify (termasuk aset Tahap 6), uji menyeluruh, panduan pemasangan produksi | belum mulai, berikutnya |
 
 ## Selesai
 
@@ -31,6 +20,7 @@ Diperbarui: 12 November 2026
 - Tahap 3 — Halaman depan: [`arsip/tahap-3.md`](arsip/tahap-3.md).
 - Tahap 4 — Pendaftaran: [`arsip/tahap-4.md`](arsip/tahap-4.md).
 - Tahap 5 — Bukti dan cek: [`arsip/tahap-5.md`](arsip/tahap-5.md). Selesai 12 November 2026, lebih dulu dari Tahap 4; uji gabungan wizard → cek → bukti dijalankan penutupan Tahap 4.
+- Tahap 6 — Panel data: [`arsip/tahap-6.md`](arsip/tahap-6.md). Selesai 12 November 2026; F6-01 sampai F6-07 (#47, #50, #49, #51, #52, #54, #53) dan penutupan F6-08.
 
 ## Menunggu pemilik
 
