@@ -118,3 +118,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 |---|---|---|
 | K50 | Foto penanggung jawab wajib diisi di wizard pendaftaran | Menjawab rancangan 6.3. Foto diperkecil di peramban (800 piksel, JPEG), disimpan di luar `public/`, dan hanya dilihat admin. Kolom `penanggung_jawab.foto` tetap boleh kosong di basis data |
 | K51 | Ada batas jumlah atlet per sekolah pada satu nomor individu, diatur admin di pengaturan Pendaftaran; berlaku juga untuk pendaftaran susulan dari NPSN yang sama | Kunci baru `Pendaftaran.atlet_per_nomor_maksimal`. Pemilik tidak menyebut angkanya: nilai awal 2 (contoh di pertanyaan wawancara), kosong berarti tidak dibatasi. Pendaftaran tanpa NPSN dihitung sendiri. Disesuaikan bila juknis resmi (K30) berbeda |
+
+## 12 November 2026 — tinjauan bukti pendaftaran
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K52 | Bukti pendaftaran PDF dirapikan: logo persegi tampil transparan (bukan berlatar hitam) dan tidak gepeng; penanggung jawab ditulis sebaris "Penanggung Jawab (Official) : Nama (ikon WA nomor WA)", dipisah koma bila lebih dari satu, tanpa tabel; tanggal lahir dan nomor dada **tidak** dicetak; anggota tim beregu ditulis dalam satu baris dipisah koma; status pembayaran diberi bingkai berwarna seperti tombol (Lunas hijau, Menunggu Konfirmasi Pembayaran kuning) | Menggantikan K49 butir 2 (anggota tim tetap dicetak, nomor dada dan tanggal lahir tidak). Halaman cek tidak berubah: tetap menampilkan tanggal lahir dan nomor dada (rancangan 8). Tinjauan pemilik atas bukti F5-03, dibawa PR penutupan F5-05 |

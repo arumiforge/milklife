@@ -20,6 +20,11 @@ use Mpdf\Mpdf;
 final class BuktiPendaftaran
 {
     /**
+     * Logo PNG yang sudah dibaca (`false` = belum dibaca).
+     */
+    private string|false|null $logo = false;
+
+    /**
      * @param array<string, mixed> $pendaftaran
      */
     public function __construct(private readonly array $pendaftaran, private readonly Unggahan $unggahan = new Unggahan())
@@ -51,14 +56,38 @@ final class BuktiPendaftaran
         $seri  = trim((string) setting('Acara.seri'));
         $tahun = trim((string) setting('Acara.tahun'));
 
-        $logo = trim((string) setting('HalamanDepan.logo_persegi'));
-
         return view('bukti/pdf', [
             'p'         => $this->pendaftaran,
             'namaAcara' => mb_strtoupper(AcaraController::namaTampil()),
             'seriTahun' => trim(($seri !== '' ? 'Seri ' . $seri : '') . ($tahun !== '' ? ' Tahun ' . $tahun : '')),
-            'logo'      => $logo !== '' && $this->unggahan->ada($logo) ? $this->unggahan->jalurPenuh($logo) : null,
+            'logo'      => $this->logoPng() !== null,
         ], ['saveData' => false]);
+    }
+
+    /**
+     * Logo persegi sebagai PNG, atau `null` bila belum ada atau tidak terbaca.
+     * mPDF mengubah WebP menjadi JPG (latar transparan jadi hitam), jadi
+     * gambar diubah ke PNG yang tetap transparan.
+     */
+    private function logoPng(): ?string
+    {
+        if ($this->logo !== false) {
+            return $this->logo;
+        }
+
+        $jalur  = trim((string) setting('HalamanDepan.logo_persegi'));
+        $penuh  = $jalur !== '' && $this->unggahan->ada($jalur) ? $this->unggahan->jalurPenuh($jalur) : null;
+        $gambar = $penuh === null ? false : @imagecreatefromstring((string) file_get_contents($penuh));
+
+        if ($gambar === false) {
+            return $this->logo = null;
+        }
+
+        imagesavealpha($gambar, true);
+        ob_start();
+        imagepng($gambar);
+
+        return $this->logo = (string) ob_get_clean();
     }
 
     /**
@@ -74,6 +103,9 @@ final class BuktiPendaftaran
             'margin_top'    => 10,
             'margin_bottom' => 10,
         ]);
+        if ($this->logoPng() !== null) {
+            $mpdf->imageVars['logo'] = $this->logoPng();
+        }
         $mpdf->SetTitle('Bukti Pendaftaran ' . $this->pendaftaran['id_pendaftaran']);
         $mpdf->WriteHTML($this->html());
 
