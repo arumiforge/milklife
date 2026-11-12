@@ -4,13 +4,21 @@ Diperbarui: 12 November 2026
 
 ## Sedang berjalan
 
-**Tahap 3 — Halaman depan.** Belum mulai. Tahap 2 selesai 12 November 2026.
+**Tahap 3 — Halaman depan.** Rencana menunggu persetujuan pemilik: [`dokumen/draf/rencana-implementasi-tahap-3.md`](../dokumen/draf/rencana-implementasi-tahap-3.md). Wawancara awal: K39–K42.
+
+| Tugas | Status |
+|---|---|
+| [F3-01 Fondasi halaman depan](tugas/F3-01-fondasi-halaman-depan.md) | rencana |
+| [F3-02 Bagian lomba](tugas/F3-02-bagian-lomba.md) | rencana |
+| [F3-03 Jadwal, unduhan, dan kontak](tugas/F3-03-jadwal-unduhan-kontak.md) | rencana |
+| [F3-04 Perapian sisa Tahap 2](tugas/F3-04-perapian-tahap-2.md) | rencana |
+| [F3-05 Uji gabungan dan penutupan](tugas/F3-05-penutupan-tahap-3.md) | rencana |
 
 ## Berikutnya
 
 | Tahap | Hasil | Status |
 |---|---|---|
-| 3. Halaman depan | Halaman depan, jadwal, unduhan, kontak | belum mulai |
+| 3. Halaman depan | Halaman depan, jadwal, unduhan, kontak | berjalan |
 | 4. Pendaftaran | Wizard lengkap sampai tersimpan | belum mulai |
 | 5. Bukti dan cek | Bukti PDF, halaman cek, PDF dokumen | belum mulai |
 | 6. Panel data | Daftar pendaftaran, lunas dan nomor dada, ubah, hapus, rekap, ekspor | belum mulai |
