@@ -23,7 +23,7 @@ Admin menyimpan bukti transfer yang dikirim official lewat WA ke pendaftaran yan
 
 ## Catatan
 
-Bergantung pada F6-01. Potongan `app/Views/admin/pendaftaran/_bukti_bayar.php` milik tugas ini; satu baris `include` di `rincian.php` ditambahkan setelah F6-02 digabung (rebase). Asumsi 7 rencana Tahap 6.
+PR: [#49](https://github.com/arumiforge/milklife/pull/49). Bergantung pada F6-01. Potongan `app/Views/admin/pendaftaran/_bukti_bayar.php` milik tugas ini; satu baris `include` di `rincian.php` ditambahkan setelah F6-02 digabung (rebase). Asumsi 7 rencana Tahap 6.
 
 ### Yang dibuat
 
