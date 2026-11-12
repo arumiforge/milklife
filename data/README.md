@@ -26,6 +26,15 @@ Kunci tiap sekolah: `npsn`, `nama`, `bentuk`, `jenjang`, `status`, `alamat`, `de
 - `jenjang` ditambahkan saat pengambilan: `SD`, `SMP`, atau `SMA`. Untuk SLB (19 sekolah) nilainya mengikuti halaman sumber dan belum tentu tepat.
 - Kode wilayah memakai kode Dapodik, bukan kode Kemendagri.
 
+## `halaman-depan/`
+
+Gambar bawaan halaman depan dari pemilik (K47), dipasang `php spark data:awal` bila pengaturannya masih kosong. Admin bisa mengganti atau menghapusnya di Pengaturan > Halaman Depan.
+
+| Berkas | Dipakai sebagai | Ukuran |
+|---|---|---|
+| `gambar-kepala.webp` | Gambar kepala (latar di belakang judul) | 1874 × 839 piksel |
+| `logo-persegi.webp` | Logo persegi MilkLife Athletics Challenge | 657 × 682 piksel |
+
 ## Memperbarui
 
 Butuh Python 3. Memakan waktu sekitar 10 menit (152 halaman, dengan jeda antar-permintaan).

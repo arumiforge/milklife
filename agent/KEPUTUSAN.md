@@ -98,3 +98,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K46 | Repo ini boleh memakai CI GitHub (GitHub Actions). Sekarang dipakai untuk menjalankan `composer uji` (PHP 8.3, MySQL 8) pada setiap PR ke `main` dan setiap push ke `main`; uji lokal tetap dijalankan sebelum PR | Menggantikan K15 dan bagian "uji tanpa GitHub Actions" di K16; bagian K16 tentang pemasangan CodeIgniter 4 lewat Composer tetap berlaku. Menggantikan juga kalimat "Tanpa CI GitHub" di rancangan bagian 14. Workflow hanya berlaku untuk repo ini, jadi tidak mengganggu CI repo lain di akun yang sama |
+
+## 12 November 2026 — gambar dari pemilik
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K47 | Gambar latar dan logo MilkLife Athletics Challenge dari pemilik disimpan di repo (`data/halaman-depan/`) dan dipasang `php spark data:awal` sebagai gambar kepala dan logo persegi | Repo publik; pemilik menyatakan tidak masalah. Disalin ke `public/unggahan/halaman-depan/` supaya admin tetap bisa mengganti atau menghapusnya. Pengaturan yang sudah diisi admin tidak ditimpa. Bila gambar latar terpasang, bidang miring tema disembunyikan karena gambarnya sudah punya hiasan sendiri; logo persegi tampil lebih besar dari logo lain |
