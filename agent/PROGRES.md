@@ -8,7 +8,7 @@ Diperbarui: 12 November 2026
 
 | Tugas | Status | Gelombang | PR |
 |---|---|---|---|
-| [F7-01 Minify dan pengecilan gambar](tugas/F7-01-minify-pengecilan-gambar.md) | menunggu tinjauan | 1 | PR_F701 |
+| [F7-01 Minify dan pengecilan gambar](tugas/F7-01-minify-pengecilan-gambar.md) | menunggu tinjauan | 1 | [#60](https://github.com/arumiforge/milklife/pull/60) |
 | [F7-02 Keamanan dan mode produksi](tugas/F7-02-keamanan-mode-produksi.md) | rencana | 1 | |
 | [F7-04 Rancangan revisi 4](tugas/F7-04-rancangan-revisi-4.md) | rencana | 1 | |
 | [F7-03 Tim tanpa pembayar](tugas/F7-03-tim-tanpa-pembayar.md) | rencana | 2 | |

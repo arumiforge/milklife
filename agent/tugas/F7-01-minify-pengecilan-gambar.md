@@ -26,6 +26,8 @@ Halaman lebih ringan dibuka dari ponsel: CSS, JavaScript, dan HTML diperkecil di
 
 Rencana: `dokumen/draf/rencana-implementasi-tahap-7.md` bagian "Minify" dan "Pengecilan gambar". Asumsi 1 dan 2. Gelombang 1.
 
+PR: [#60](https://github.com/arumiforge/milklife/pull/60).
+
 Keputusan kecil:
 
 - Paket: `matthiasmullie/minify` 1.3.76 (beserta `matthiasmullie/path-converter` 1.1.3). Tidak ada paket lain yang ikut diperbarui di `composer.lock`.
