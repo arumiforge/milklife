@@ -20,6 +20,8 @@ use Throwable;
  * - Rentang tahun lahir kelompok umur aktif tidak boleh tumpang tindih.
  *   Kelompok umur yang kedua batasnya masih kosong belum punya rentang, jadi
  *   tidak dibandingkan (pengaturannya dianggap belum lengkap oleh F2-09).
+ * - Batas tahun lahir tidak bisa diubah sehingga atlet yang sudah terdaftar
+ *   di kelompok umur itu keluar dari rentangnya (F6-07).
  * - Batas tahun lahir, jenjang, biaya individu, dan awalan boleh kosong saat
  *   disimpan supaya admin bisa mengisi bertahap; bila diisi harus sah.
  * - Kelompok umur hanya bisa dihapus bila belum punya nomor lomba dan atlet,
@@ -247,6 +249,22 @@ class KelompokUmurModel extends Model
 
         if ($data['tahun_lahir_awal'] !== null && $data['tahun_lahir_akhir'] !== null && $data['tahun_lahir_awal'] > $data['tahun_lahir_akhir']) {
             $galat['tahun_lahir_awal'] = 'Tahun lahir paling awal tidak boleh lebih besar dari tahun lahir paling akhir. Contoh KU 10: lahir 2016 sampai 2018.';
+        }
+
+        // Atlet yang sudah terdaftar tidak boleh keluar dari rentangnya (F6-07).
+        if ($id !== null && ! isset($galat['tahun_lahir_awal']) && ! isset($galat['tahun_lahir_akhir'])) {
+            $rentang = $this->db->table('atlet')
+                ->select('MIN(YEAR(tanggal_lahir)) AS tertua, MAX(YEAR(tanggal_lahir)) AS termuda')
+                ->where('kelompok_umur_id', $id)
+                ->get()->getRowArray();
+
+            if ($rentang['tertua'] !== null && $data['tahun_lahir_awal'] !== null && $data['tahun_lahir_awal'] > (int) $rentang['tertua']) {
+                $galat['tahun_lahir_awal'] = "Sudah ada atlet terdaftar di kelompok umur ini yang lahir tahun {$rentang['tertua']}. Tulis {$rentang['tertua']} atau lebih kecil, atau kosongkan.";
+            }
+
+            if ($rentang['termuda'] !== null && $data['tahun_lahir_akhir'] !== null && $data['tahun_lahir_akhir'] < (int) $rentang['termuda']) {
+                $galat['tahun_lahir_akhir'] = "Sudah ada atlet terdaftar di kelompok umur ini yang lahir tahun {$rentang['termuda']}. Tulis {$rentang['termuda']} atau lebih besar, atau kosongkan.";
+            }
         }
 
         // Jenjang
