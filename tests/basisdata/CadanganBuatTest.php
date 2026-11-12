@@ -114,11 +114,12 @@ final class CadanganBuatTest extends UjiBasisData
     public function testPenggunaKhususDenganSandiBerkarakterKhusus(): void
     {
         // Sandi lewat berkas opsi sementara, bukan baris perintah; pengguna
-        // hanya punya hak atas basis datanya sendiri seperti di produksi.
+        // hanya punya hak atas basis datanya sendiri seperti di produksi. Host
+        // '%' karena di CI MySQL berjalan di kontainer Docker (bukan 127.0.0.1).
         $basisData = $this->sambungan()['database'];
         $sandi     = 'sandi "karangan" #1 \\ \'kutip\'';
-        $this->db->query("CREATE USER 'milklife_cadangan'@'127.0.0.1' IDENTIFIED BY " . $this->db->escape($sandi));
-        $this->db->query("GRANT ALL PRIVILEGES ON `{$basisData}`.* TO 'milklife_cadangan'@'127.0.0.1'");
+        $this->db->query("CREATE USER 'milklife_cadangan'@'%' IDENTIFIED BY " . $this->db->escape($sandi));
+        $this->db->query("GRANT ALL PRIVILEGES ON `{$basisData}`.* TO 'milklife_cadangan'@'%'");
 
         try {
             $sambungan = ['username' => 'milklife_cadangan', 'password' => $sandi] + $this->sambungan();
@@ -126,7 +127,7 @@ final class CadanganBuatTest extends UjiBasisData
 
             $this->assertFileExists($hasil['berkas']);
         } finally {
-            $this->db->query("DROP USER IF EXISTS 'milklife_cadangan'@'127.0.0.1'");
+            $this->db->query("DROP USER IF EXISTS 'milklife_cadangan'@'%'");
         }
     }
 
