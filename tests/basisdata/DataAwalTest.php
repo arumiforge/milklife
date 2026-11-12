@@ -26,7 +26,6 @@ final class DataAwalTest extends UjiBasisData
             'Pendaftaran.akhir'                     => null,
             'Pendaftaran.buka_manual'               => false,
             'Pendaftaran.buka_manual_sampai'        => null,
-            'Pendaftaran.tanggal_patokan_usia'      => null,
             'Pendaftaran.tampilan_usia'             => 'tahun',
             'Pendaftaran.penanggung_jawab_minimal'  => 1,
             'Pendaftaran.penanggung_jawab_maksimal' => 5,
@@ -74,7 +73,6 @@ final class DataAwalTest extends UjiBasisData
         $this->assertSame('2026-12-12', setting('Acara.tanggal_selesai'));
         $this->assertSame('2026-10-01 00:00:00', setting('Pendaftaran.mulai'));
         $this->assertSame('2026-11-30 23:59:00', setting('Pendaftaran.akhir'));
-        $this->assertSame('2026-11-30', setting('Pendaftaran.tanggal_patokan_usia'));
 
         // Tersimpan di basis data (bukan hanya di memori) dengan tipe yang benar.
         Config\Services::resetSingle('settings');
@@ -87,7 +85,7 @@ final class DataAwalTest extends UjiBasisData
         $this->assertSame('', setting('Pembayaran.bank'));
     }
 
-    public function testLimaKelompokUmurTanpaBatasUsiaJenjangBiaya(): void
+    public function testLimaKelompokUmurDenganTahunLahirTanpaJenjangBiaya(): void
     {
         $this->jalankan();
 
@@ -96,9 +94,14 @@ final class DataAwalTest extends UjiBasisData
         $this->assertSame(['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 'nama'));
         $this->assertSame(['1', '2', '3', '4', '5'], array_column($baris, 'urutan'));
 
+        // K36: KU 8 lahir 2019 ke atas (akhir kosong), KU 10 2016–2018,
+        // KU 12 2015, KU 15 2011–2014, KU 18 2008–2010.
+        $this->assertSame(
+            [['2019', null], ['2016', '2018'], ['2015', '2015'], ['2011', '2014'], ['2008', '2010']],
+            array_map(static fn (array $ku): array => [$ku['tahun_lahir_awal'], $ku['tahun_lahir_akhir']], $baris),
+        );
+
         foreach ($baris as $ku) {
-            $this->assertNull($ku['usia_minimal'], $ku['nama']);
-            $this->assertNull($ku['usia_maksimal'], $ku['nama']);
             $this->assertNull($ku['biaya_individu'], $ku['nama']);
             $this->assertSame('1', $ku['aktif'], $ku['nama']);
             $this->assertNotNull($ku['dibuat_pada']);
@@ -234,7 +237,10 @@ final class DataAwalTest extends UjiBasisData
         $this->assertStringContainsString('1 Oktober 2026 pukul 00.00 sampai 30 November 2026 pukul 23.59', $keluaran);
         $this->assertStringContainsString('Kelompok umur: 5', $keluaran);
         $this->assertStringContainsString('Nomor lomba  : 69 (58 individu, 11 beregu)', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 10\s+: awalan nomor dada 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 10\s+: lahir 2016–2018,\s+awalan nomor dada 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 8 \(Seneng Playon\)\s+: lahir 2019 ke atas,\s+awalan nomor dada 1/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2015,\s+awalan nomor dada 3/', $keluaran);
+        $this->assertStringNotContainsString('Patokan usia', $keluaran);
     }
 
     public function testMenolakBilaDijalankanLagi(): void
