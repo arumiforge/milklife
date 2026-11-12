@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -68,3 +68,4 @@ Menyiapkan semua yang dipakai bersama halaman pengaturan, supaya tujuh tugas ber
 - Uji fungsi bantu bernama `tests/unit/FungsiBantuRupiahTanggalTest.php` karena tidak ada pola nama untuk `aplikasi_helper` di rencana.
 - Pengendali contoh khusus uji ada di `tests/_support/Controllers/`, dipasang lewat `withRoutes()` hanya di ujinya; rute dan penentu rute dibuat ulang setelahnya.
 - Bila unggahan melebihi `post_max_size` PHP, isian formulir (termasuk token CSRF) kosong, sehingga ditolak pemeriksaan CSRF sebelum sampai ke pengendali. Pemeriksaan `data-ukuran-maksimal` di peramban mencegahnya untuk pengguna biasa; penanganan di server memerlukan perubahan filter di luar bagian F2-01 (dilaporkan ke koordinator).
+- Digabung lewat PR #13 pada 11 November 2026.

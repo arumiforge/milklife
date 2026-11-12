@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Disetujui pemilik 11 November 2026 (K27), termasuk asumsi di bagian akhir |
+| Status | Disetujui pemilik 11 November 2026 (K27), sudah dilaksanakan (Tahap 2 selesai 12 November 2026) |
 | Tanggal | 11 November 2026 |
 | Dasar | Rancangan revisi 1 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6, 9, 10, 11, 16, 17 dan lampiran; keputusan K01–K26; hasil Tahap 1 (`agent/arsip/tahap-1.md`) |
 
@@ -238,3 +238,11 @@ Setelah Tahap 2 digabung, di terminal Laragon pada folder proyek:
 | Batas kelompok umur | Usia minimal dan maksimal dalam tahun penuh, kosong pada awalnya | Tahun lahir paling awal dan paling akhir, diisi `data:awal` | K36 |
 | Tanggal patokan usia | Kunci `Pendaftaran.tanggal_patokan_usia`, diisi `data:awal`, butir kelengkapan | Dihapus; usia hanya tampilan, dihitung pada tanggal mulai acara | K37 |
 | Pembagian berkas | Migrasi, `data:awal`, dan `Config\Pendaftaran` milik F2-01 | Migrasi tahun lahir, `app/Commands/DataAwal.php`, `tests/basisdata/DataAwalTest.php`, uji migrasi terdampak: F2-03. `app/Config/Pendaftaran.php`: F2-02 | F2-01 sudah digabung saat K36–K37 diputuskan |
+| Awalan nomor dada di data awal | Dikosongkan | KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5 | K33 |
+| Fungsi bantu | `rupiah()`, `tanggal_id()` | Ditambah `angka_rupiah()` dan `rentang_tanggal_id()` | Satu aturan isian uang untuk semua halaman; tanggal acara di tata letak |
+| Nama acara di tata letak | Langsung di tiap tata letak | Potongan `tata_letak/_merek.php`; teks pengganti "Pendaftaran Lomba" bila belum diisi | Satu tempat untuk tiga tata letak |
+| Uji milik tugas lain | Tidak diubah | `BerandaPengaturanTest` disesuaikan F2-09; `MigrasiStrukturTest`, `MigrasiAturanDataTest`, `MigrasiTahap2Test` disesuaikan F2-03; `TataLetakHalamanTest` disesuaikan F2-01 dan F2-02 | Terdampak langsung; disetujui koordinator |
+| `.tabel-gulir` | `overflow-x: auto` | Ditambah `position: relative` (F2-10) | Teks khusus pembaca layar di dalam tabel membuat halaman bergeser mendatar di ponsel (laporan F2-06) |
+| Nomor lomba yang sudah dipakai | Kelompok umurnya dikunci | Kelompok umur, jenis, dan kategori dikunci | Mencegah data pendaftaran tidak cocok (F2-04) |
+| Pembatasan kata sandi di halaman Akun | Tidak disebut | 5 percobaan lalu satu tiap 12 detik, per akun | Mencegah tebakan kata sandi dari sesi yang terbuka (F2-08) |
+| Sub-sesi paralel | Delapan sekaligus | Paling banyak tiga sekaligus | K38: batas pemakaian akun habis dalam beberapa menit |

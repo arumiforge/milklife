@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -39,3 +39,4 @@ Admin bisa mengunggah dan mengelola berkas unduhan (flyer, juknis, dan lainnya).
 - **Gulir mendatar di ponsel:** teks khusus pembaca layar (`visually-hidden`, posisi absolut) di dalam tabel ikut melebarkan halaman ke 619 piksel karena `.tabel-gulir` tidak berposisi. Diatasi di tampilan ini dengan kelas Bootstrap `position-relative` pada pembungkus tabel. Halaman daftar lain yang memakai `visually-hidden` di dalam tabel akan kena hal yang sama; perbaikan umumnya (`position: relative` pada `.tabel-gulir` di `admin.css`) di luar bagian F2-07 dan dilaporkan ke koordinator.
 - **Uji:** `tests/fitur/PengaturanUnduhanTest.php` (akses, CSRF, daftar, tambah, berkas ditolak: skrip PHP bernama `.pdf`, teks, kosong, di atas batas PHP, terputus, di atas 10 MB; isian salah, ubah, ganti berkas, hapus, dan jalur gagal simpan/perbarui/hapus lewat model tiruan `Factories::injectMock`) dan `tests/basisdata/UnduhanModelTest.php`.
 - Diperiksa di peramban pada 390 dan 1440 piksel: daftar kosong, daftar berisi, tambah, berkas ditolak (termasuk `.ico`), ubah, dan jendela konfirmasi hapus; berkas terbuka lewat tautannya (200, `application/pdf`).
+- Digabung lewat PR #21 pada 12 November 2026.

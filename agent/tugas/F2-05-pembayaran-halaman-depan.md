@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 
@@ -43,3 +43,4 @@ Admin bisa mengisi rekening dan WA pembayaran beserta pesan konfirmasinya, serta
 
 - Tidak ada berkas di luar bagian F2-05 yang diubah.
 - Untuk F2-09 dan Tahap 3–4: nomor rekening dan nomor WA disimpan `''` bila kosong; logo dan gambar `''` bila tidak ada.
+- Digabung lewat PR #17 pada 12 November 2026.
