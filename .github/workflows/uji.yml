@@ -1,0 +1,77 @@
+# Menjalankan semua uji (composer uji) di GitHub Actions.
+# Keputusan K46: repo ini boleh memakai CI GitHub (menggantikan K15 dan K16).
+#
+# Workflow ini hanya berlaku untuk repo ini. CI di repo lain milik akun yang
+# sama tidak ikut terpicu dan tidak terganggu.
+
+name: Uji
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Push beruntun ke cabang yang sama membatalkan run sebelumnya.
+concurrency:
+  group: uji-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  uji:
+    name: PHPUnit (PHP 8.3, MySQL 8)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          # Sandi karangan untuk basis data uji sekali pakai, bukan rahasia.
+          MYSQL_ROOT_PASSWORD: sandi-uji
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -psandi-uji"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Pasang PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: intl, mbstring, mysqli, gd, fileinfo, exif
+          coverage: none
+          tools: composer:v2
+
+      - name: Simpan cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Pasang pustaka
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Buat basis data uji
+        run: >-
+          mysql -h 127.0.0.1 -u root -psandi-uji -e
+          "CREATE DATABASE milklife_uji CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+
+      - name: Siapkan .env
+        run: |
+          cp .env.example .env
+          sed -i 's/^database.tests.password =.*/database.tests.password = sandi-uji/' .env
+
+      - name: Jalankan uji
+        run: composer uji

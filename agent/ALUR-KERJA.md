@@ -64,7 +64,7 @@ Bila sebuah tahap punya pilihan yang hanya bisa dijawab pemilik, tanyakan di awa
 - Nama cabang: `fitur/<ID>-<slug>`, `perbaikan/<slug>`, atau `dokumen/<slug>`. Cabang yang dibuat otomatis oleh sesi agen boleh memakai nama bawaannya.
 - Pesan commit: `<jenis>(<lingkup>): <ringkasan>`. Jenis: `fitur`, `perbaikan`, `dokumen`, `data`, `uji`, `rapikan`, `alat`.
   Contoh: `fitur(pendaftaran): hitung biaya individu per kelompok umur`.
-- Tanpa CI GitHub. Uji dijalankan sendiri di komputer pengembang; PR digabung dengan *squash* setelah uji lulus.
+- CI GitHub boleh dipakai (K46). Uji dijalankan sendiri di komputer pengembang (`composer uji`) sebelum PR dibuka, lalu GitHub Actions (`.github/workflows/uji.yml`) menjalankan uji yang sama di setiap PR dan push ke `main`. PR digabung dengan *squash* setelah uji lokal dan CI lulus.
 
 ## Kode (mulai Tahap 1)
 
