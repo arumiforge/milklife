@@ -20,6 +20,7 @@
  * @var App\Libraries\BukaTutupPendaftaran          $bukaTutup
  * @var list<array<string, mixed>>                  $tombol
  * @var list<array<string, mixed>>                  $kelompokUmur
+ * @var bool                                        $tampilkanBiaya
  * @var list<array<string, mixed>>                  $jadwal
  * @var list<array<string, mixed>>                  $unduhan
  * @var list<array<string, string>>                 $narahubung
@@ -34,7 +35,7 @@
 
 <?= $this->section('isi') ?>
 <?= view('beranda/_kepala', ['acara' => $acara, 'tampilan' => $tampilan, 'bukaTutup' => $bukaTutup, 'tombol' => $tombol], ['saveData' => false]) ?>
-<?= view('beranda/_lomba', ['kelompokUmur' => $kelompokUmur], ['saveData' => false]) ?>
+<?= view('beranda/_lomba', ['kelompokUmur' => $kelompokUmur, 'tampilkanBiaya' => $tampilkanBiaya], ['saveData' => false]) ?>
 <?= view('beranda/_jadwal', ['jadwal' => $jadwal], ['saveData' => false]) ?>
 <?= view('beranda/_unduhan', ['unduhan' => $unduhan], ['saveData' => false]) ?>
 <?= view('beranda/_kontak', ['narahubung' => $narahubung, 'mediaSosial' => $mediaSosial, 'waTanya' => $waTanya, 'waBagikan' => $waBagikan], ['saveData' => false]) ?>
