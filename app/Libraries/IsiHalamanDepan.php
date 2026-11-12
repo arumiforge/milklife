@@ -124,6 +124,11 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  *
  *     // ikon: nama Bootstrap Icons tanpa awalan "bi-".
  *
+ * `tampilkanBiaya()`: `true` bila biaya individu dan biaya tim ditampilkan di
+ * bagian lomba (`HalamanDepan.tampilkan_biaya`, nilai awal `true`). Bila
+ * `false`, bagian lomba tidak menulis biaya sama sekali; datanya tetap ada di
+ * `kelompokUmur()`.
+ *
  * `waTanya()`: `'https://wa.me/6281234567890?text=…'` (tanpa `?text=` bila
  * pesan tanya kosong), atau `null` bila nomor WA tanya admin belum diisi.
  *
@@ -307,6 +312,14 @@ final class IsiHalamanDepan
         }
 
         return $hasil;
+    }
+
+    /**
+     * Apakah biaya individu dan biaya tim ditampilkan di bagian lomba.
+     */
+    public function tampilkanBiaya(): bool
+    {
+        return (bool) setting('HalamanDepan.tampilkan_biaya');
     }
 
     /**

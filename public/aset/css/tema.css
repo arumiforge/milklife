@@ -483,18 +483,39 @@ h1, h2, h3, h4, h5, h6,
 
 /* ---------- Kepala halaman depan (beranda/_kepala.php) ---------- */
 
-/* Gambar kepala selebar layar, di atas judul. Rasio dari ukuran aslinya
-   (atribut width/height), dibatasi supaya judul tetap terlihat. */
+/* Gambar kepala menjadi latar di belakang judul (K44): mengisi seluruh
+   bagian pembuka, di bawah bidang miring, dengan lapisan biru tua supaya
+   tulisan putih tetap terbaca di atas gambar apa pun. */
 .pembuka-gambar {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
     background-color: var(--ml-biru-tua);
 }
 
 .pembuka-gambar img {
     display: block;
     width: 100%;
-    height: auto;
-    max-height: 70vh;
+    height: 100%;
     object-fit: cover;
+}
+
+.pembuka-gambar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 31, 123, 0.8);
+}
+
+@media (min-width: 768px) {
+    .pembuka-dengan-gambar > .container {
+        min-height: 32rem;
+    }
+
+    /* Layar lebar: lapisan pekat di sisi tulisan, gambar lebih terlihat di kanan. */
+    .pembuka-gambar::after {
+        background: linear-gradient(90deg, rgba(2, 31, 123, 0.92) 0%, rgba(2, 31, 123, 0.8) 45%, rgba(2, 31, 123, 0.35) 100%);
+    }
 }
 
 /* Logo di atas kartu putih, sama tinggi, bentuk asli tidak berubah. */

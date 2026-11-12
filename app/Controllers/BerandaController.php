@@ -18,17 +18,18 @@ class BerandaController extends BaseController
         $isi = new IsiHalamanDepan();
 
         return view('beranda', [
-            'acara'        => $isi->acara(),
-            'tampilan'     => $isi->tampilan(),
-            'bukaTutup'    => $isi->bukaTutup(),
-            'tombol'       => $isi->tombol(),
-            'kelompokUmur' => $isi->kelompokUmur(),
-            'jadwal'       => $isi->jadwal(),
-            'unduhan'      => $isi->unduhan(),
-            'narahubung'   => $isi->narahubung(),
-            'mediaSosial'  => $isi->mediaSosial(),
-            'waTanya'      => $isi->waTanya(),
-            'waBagikan'    => $isi->waBagikan(),
+            'acara'          => $isi->acara(),
+            'tampilan'       => $isi->tampilan(),
+            'bukaTutup'      => $isi->bukaTutup(),
+            'tombol'         => $isi->tombol(),
+            'kelompokUmur'   => $isi->kelompokUmur(),
+            'tampilkanBiaya' => $isi->tampilkanBiaya(),
+            'jadwal'         => $isi->jadwal(),
+            'unduhan'        => $isi->unduhan(),
+            'narahubung'     => $isi->narahubung(),
+            'mediaSosial'    => $isi->mediaSosial(),
+            'waTanya'        => $isi->waTanya(),
+            'waBagikan'      => $isi->waBagikan(),
         ]);
     }
 }

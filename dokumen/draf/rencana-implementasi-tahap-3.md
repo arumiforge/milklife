@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Status | Disetujui pemilik 12 November 2026 (K43) |
+| Status | Disetujui pemilik 12 November 2026 (K43), sudah dilaksanakan (Tahap 3 selesai 12 November 2026) |
 | Tanggal | 12 November 2026 |
-| Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.1, 10, 12, 13, 15, 16; keputusan K01–K43; hasil Tahap 2 (`agent/arsip/tahap-2.md`) |
+| Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.1, 10, 12, 13, 15, 16; keputusan K01–K45; hasil Tahap 2 (`agent/arsip/tahap-2.md`) |
 
 ## Tujuan
 
@@ -156,3 +156,18 @@ Setelah Tahap 3 digabung, di terminal Laragon pada folder proyek:
 4. Menu kepala tidak ditambah butir Jadwal dan Kontak; bagian itu bisa dibuka dengan menggulir atau lewat jangkar (`/#jadwal`, `/#kontak`).
 5. Daftar nomor lomba per kelompok umur dilipat (bisa dibuka satu per satu) supaya halaman tidak terlalu panjang di ponsel.
 6. Alamat IP dari `CF-Connecting-IP` dikerjakan sekarang (F3-04), bukan Tahap 7, karena pembatasan masuk admin sudah memakainya dan Tahap 4–5 menambah pembatasan laju.
+
+## Perubahan saat pengerjaan
+
+| Bagian | Rencana | Yang berlaku | Alasan |
+|---|---|---|---|
+| Pengumpul data | Metode di tabel "Pengumpul data publik" | Ditambah `tombol()` (tombol Pendaftaran dan Cek), `kaki()` (statis, dipakai tata letak publik), dan kunci `ukuran` di `tampilan()` (lebar dan tinggi asli gambar) | Satu tempat untuk alamat tombol dan menu; `width`/`height` supaya halaman tidak melompat saat gambar dimuat (F3-01) |
+| Alamat tombol Pendaftaran dan Cek | "Di satu tempat" | Konstanta `IsiHalamanDepan::ALAMAT_PENDAFTARAN` dan `ALAMAT_CEK_PENDAFTARAN`, dipakai tombol di kepala dan menu publik | Tahap 4–5 cukup mengisi konstanta (F3-01) |
+| Judul halaman depan | Judul atau nama acara | Bila judul diisi, judul menjadi `<h1>` dan nama acara tampil kecil di atasnya | Nama acara tetap terbaca (F3-01) |
+| Bagian kontak | Bagian tanpa isi tidak ditampilkan | Bagian kontak selalu tampil karena tombol bagikan selalu ada | Asumsi 3 (F3-03, disetujui koordinator) |
+| Uji milik tugas lain | Hanya uji di pembagian berkas | F3-03 menyesuaikan `HalamanDepanKepalaTest` (bagian kosong kini juga `kontak`) serta pemeriksaan "tanpa alamat luar" di `TataLetakHalamanTest` dan `KerangkaTataLetakTest` (hanya aset yang dimuat: `src`, `<link href>`, `url()`; tautan biasa seperti WA tidak dihitung). F3-04 menyesuaikan pola judul di `KerangkaTataLetakTest` dan `tests/_support/Views/tata_letak_polos_formulir.php` | Terdampak langsung; disetujui koordinator |
+| Judul tab admin | Tidak dirinci | Halaman cukup menulis nama halamannya; tata letak admin menambah " – Admin <nama acara>", tata letak polos " – <nama acara>" | Satu tempat (F3-04) |
+| Halaman asal filter batas unggah | `redirect()->back()` | Sesi `_ci_previous_url`, lalu `Referer`, keduanya hanya bila masih di situs sendiri; cadangan dasbor admin atau halaman depan | Mencegah pengalihan ke situs lain (F3-04) |
+| Keterangan kotak "Teks pengantar" (panel Halaman Depan) | Tidak disebut | "Tekan Enter dua kali untuk membuat paragraf baru." | Paragraf dipecah pada baris kosong (laporan F3-01, diubah F3-05) |
+| Gambar kepala | Gambar kepala selebar layar di kepala halaman | Gambar kepala menjadi latar di belakang judul dengan lapisan biru tua; keterangan unggahnya di panel disesuaikan | K44, tinjauan pemilik setelah F3-03 (diubah F3-05) |
+| Biaya di bagian lomba | Selalu tampil | Sakelar admin `HalamanDepan.tampilkan_biaya` (nilai awal tampil) di pengaturan Halaman Depan; bila mati, biaya tidak ditulis di halaman depan | K45, permintaan pemilik ke F3-02 setelah PR #27 digabung (dibawa F3-05). Kunci baru di luar tabel Tahap 2 |

@@ -7,6 +7,7 @@
  * @var array<string, string>                                                      $galat
  * @var array<string, array{label: string, rasio: string, saran: string, jalur: string}> $gambar kunci => keterangan dan jalur tersimpan ('' bila belum ada)
  * @var list<string>                                                               $gambarPerluDipilihLagi
+ * @var bool                                                                       $tampilkanBiaya sakelar `HalamanDepan.tampilkan_biaya`
  */
 
 use App\Libraries\Unggahan;
@@ -114,7 +115,7 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
                     <div class="card-body p-3 p-md-4">
                         <h2 id="judul-teks" class="h5 mb-3">Teks</h2>
                         <?= $kotak('judul', 'Judul', 'Judul besar di bagian atas, misalnya "Ayo ikut MilkLife Athletics Challenge!".', $isian, $galat, 0, ['maxlength' => '150']) ?>
-                        <?= $kotak('teks', 'Teks pengantar', 'Beberapa kalimat di bawah judul. Tekan Enter untuk membuat paragraf baru.', $isian, $galat, 6, ['maxlength' => '2000']) ?>
+                        <?= $kotak('teks', 'Teks pengantar', 'Beberapa kalimat di bawah judul. Tekan Enter dua kali untuk membuat paragraf baru.', $isian, $galat, 6, ['maxlength' => '2000']) ?>
                         <?= $kotak('footer', 'Teks kaki halaman', 'Tampil di bagian paling bawah, misalnya nama penyelenggara dan tahun.', $isian, $galat, 3, ['maxlength' => '500']) ?>
                     </div>
                 </section>
@@ -131,6 +132,20 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
                 </section>
             </div>
         </div>
+
+        <section class="card mt-4" aria-labelledby="judul-lomba">
+            <div class="card-body p-3 p-md-4">
+                <h2 id="judul-lomba" class="h5 mb-3">Bagian lomba</h2>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="tampilkan_biaya" name="tampilkan_biaya" value="1"
+                        aria-describedby="tampilkan_biaya-bantuan"<?= $tampilkanBiaya ? ' checked' : '' ?>>
+                    <label class="form-check-label fw-semibold" for="tampilkan_biaya">Tampilkan biaya di halaman depan</label>
+                </div>
+                <div id="tampilkan_biaya-bantuan" class="form-text">
+                    Biaya individu tiap kelompok umur dan biaya tiap tim beregu. Bila dimatikan, biaya tidak tampil di halaman depan; rinciannya tetap muncul di bagian pembayaran saat sekolah mendaftar.
+                </div>
+            </div>
+        </section>
 
         <div class="d-flex flex-wrap gap-2 mt-4 mb-2">
             <button type="submit" class="btn btn-primary">

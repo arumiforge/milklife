@@ -65,4 +65,11 @@ class HalamanDepan extends BaseConfig
      * Isi pesan WA untuk tombol "bagikan".
      */
     public string $pesan_bagikan = '';
+
+    /**
+     * Tampilkan biaya individu dan biaya tim di bagian lomba halaman depan.
+     * Bila dimatikan, rincian biaya hanya muncul di bagian pembayaran saat
+     * sekolah mendaftar.
+     */
+    public bool $tampilkan_biaya = true;
 }

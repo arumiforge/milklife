@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 3 — Halaman depan |
 | Dibuat | 12 November 2026 |
 
@@ -40,3 +40,4 @@ Pengunjung melihat jadwal, mengunduh berkas, menghubungi narahubung, membuka med
 - Teks panjang tanpa spasi dipatahkan (`overflow-wrap: anywhere`) supaya tidak ada gulir mendatar.
 - Uji baru: `tests/fitur/HalamanDepanJadwalKontakTest.php` (10 uji) dan `tests/fitur/HalamanUnduhanTest.php` (4 uji); pemeriksaan menu Unduhan di `TataLetakHalamanTest` disesuaikan. `composer uji`: 790 uji, 5.135 asersi, lulus.
 - Diperiksa di Chromium pada lebar 390 dan 1440 piksel (halaman depan dan `/unduhan`) dengan data karangan yang diisi lewat panel admin (tiga jadwal, dua PDF contoh, dua narahubung, tiga media sosial, nomor dan pesan WA tanya admin, pesan bagikan), juga keadaan kosong (hanya tombol bagikan; `/unduhan` kosong); tanpa gulir mendatar.
+- Digabung lewat PR #28 pada 12 November 2026.
