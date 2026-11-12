@@ -8,7 +8,7 @@
 ?>
 <?= $this->extend('tata_letak/polos') ?>
 
-<?= $this->section('judul') ?>Masuk Admin – MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Masuk Admin<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <h1 class="h4 mb-1" id="judul-contoh-formulir">Masuk admin</h1>

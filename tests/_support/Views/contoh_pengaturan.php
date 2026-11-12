@@ -12,7 +12,7 @@
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Contoh Pengaturan – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Contoh Pengaturan<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Contoh Pengaturan<?= $this->endSection() ?>
 

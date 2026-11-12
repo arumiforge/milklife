@@ -89,6 +89,19 @@ Admin mengunggah gambar (paling besar 2 MB) dan berkas unduhan seperti juknis (p
 
 Berkas unggahan disimpan di `public/unggahan/` (dibuat otomatis, tidak masuk git). Sertakan folder ini saat membuat cadangan.
 
+Bila admin mengunggah berkas yang lebih besar dari `post_max_size`, halaman kembali ke formulir dengan pesan yang menyebut batasnya, bukan halaman galat.
+
+### Cloudflare Tunnel
+
+Web dibuka dari internet lewat Cloudflare Tunnel (K31). Susunannya:
+
+- `cloudflared` dipasang di **komputer server yang sama** dengan Laragon, dan meneruskan alamat publik ke Nginx lokal, misalnya `http://milklife.test` atau `http://127.0.0.1:80`.
+- Di mata aplikasi, semua pengunjung lewat tunnel datang dari komputer itu sendiri (`127.0.0.1` atau `::1`). Alamat pengunjung yang asli dikirim Cloudflare dalam kepala `CF-Connecting-IP`.
+- Aplikasi memercayai kepala `CF-Connecting-IP` **hanya** dari `127.0.0.1` dan `::1` (`app/Config/App.php`, `$proxyIPs`). Permintaan dari alamat lain, misalnya komputer lain di jaringan sekolah, tetap dicatat dengan alamatnya sendiri walaupun membawa kepala itu, jadi alamat tidak bisa dipalsukan.
+- Dengan begitu, pembatasan percobaan masuk admin (dan nanti pembatasan laju di halaman pendaftaran dan cek) dihitung per pengunjung, bukan semua pengunjung dianggap satu alamat.
+
+Jangan jalankan `cloudflared` di komputer lain yang meneruskan ke server ini; bila terpaksa, alamat komputer itu harus ditambahkan ke `$proxyIPs`.
+
 ## Struktur
 
 | Folder | Isi |

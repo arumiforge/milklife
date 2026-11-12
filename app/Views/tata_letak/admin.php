@@ -8,7 +8,10 @@
  * Kedua menu memakai daftar yang sama: `tata_letak/_menu_admin.php`.
  *
  * Bagian yang diisi tampilan:
- * - `judul`: judul halaman untuk tab peramban. Isi yang berasal dari data wajib di-escape (`esc()`).
+ * - `judul`: judul halaman, cukup nama halamannya (misalnya `Dasbor`). Tab
+ *   peramban menampilkan `<judul> – Admin <nama acara>`; nama acara dari
+ *   `AcaraController::namaTampil()` ditambahkan di sini, jadi halaman tidak
+ *   menulisnya sendiri. Isi yang berasal dari data wajib di-escape (`esc()`).
  * - `judul_halaman` (pilihan): judul pendek di kepala halaman, tampil sebagai
  *   `<h1>`. Bila kosong, isi `judul` yang dipakai. Isi halaman dimulai dari `<h2>`.
  * - `isi`: isi halaman, di dalam `<main id="isi">`; bungkus dengan `container-fluid`.
@@ -29,12 +32,16 @@
  * @var CodeIgniter\View\View $this
  */
 
+use App\Controllers\Admin\Pengaturan\AcaraController;
+
 // Dibaca sekali lalu dipakai di <title> dan di kepala halaman.
-$judul        = $this->renderSection('judul');
+$judul        = trim($this->renderSection('judul'));
 $judulHalaman = trim($this->renderSection('judul_halaman'));
 if ($judulHalaman === '') {
     $judulHalaman = $judul;
 }
+
+$judulTab = ($judul === '' ? '' : $judul . ' – ') . 'Admin ' . esc(AcaraController::namaTampil());
 ?>
 <!doctype html>
 <html lang="id">
@@ -44,7 +51,7 @@ if ($judulHalaman === '') {
     <meta name="robots" content="noindex, nofollow">
     <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#021F7B">
-    <title><?= $judul ?></title>
+    <title><?= $judulTab ?></title>
     <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap/css/bootstrap.min.css') ?>">
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap-icons/bootstrap-icons.min.css') ?>">

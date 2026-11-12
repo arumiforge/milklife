@@ -41,7 +41,7 @@ $kunci = $dipakai ? ' disabled' : '';
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?><?= $baru ? 'Tambah Nomor Lomba' : 'Ubah Nomor Lomba' ?> – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= $baru ? 'Tambah Nomor Lomba' : 'Ubah Nomor Lomba' ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Nomor Lomba<?= $this->endSection() ?>
 

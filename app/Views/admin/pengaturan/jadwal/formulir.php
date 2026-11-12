@@ -27,7 +27,7 @@ $pesan = static fn (string $kotak): string => isset($galat[$kotak])
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?><?= $baru ? 'Tambah Jadwal' : 'Ubah Jadwal' ?> – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= $baru ? 'Tambah Jadwal' : 'Ubah Jadwal' ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Jadwal<?= $this->endSection() ?>
 

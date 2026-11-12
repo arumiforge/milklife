@@ -37,7 +37,7 @@ $uraian     = static function (string $kotak, string $bantuan = '') use ($galat)
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?><?= esc($judulForm) ?> – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= esc($judulForm) ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?><?= esc($judulForm) ?><?= $this->endSection() ?>
 

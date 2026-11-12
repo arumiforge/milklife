@@ -34,7 +34,7 @@ $kotak = static function (string $nama, string $label, string $jenis, string $ke
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Data Acara – Admin MilkLife<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Data Acara<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Data Acara<?= $this->endSection() ?>
 

@@ -30,7 +30,8 @@ final class KerangkaTataLetakTest extends UjiHalaman
 
         $this->assertMatchesRegularExpression('/<html lang="id">/', $html);
         $this->assertStringContainsString('<meta name="viewport" content="width=device-width, initial-scale=1">', $html);
-        $this->assertMatchesRegularExpression('#<title>Judul Contoh ' . $nama . '</title>#', $html);
+        // Tata letak admin dan polos menambahkan nama acara di judul tab (F3-04).
+        $this->assertMatchesRegularExpression('#<title>Judul Contoh ' . $nama . '( – .+)?</title>#', $html);
         $this->assertStringContainsString('<p id="isi-contoh">Isi contoh ' . $nama . '</p>', $html);
 
         // Skrip halaman dimuat setelah Bootstrap.
