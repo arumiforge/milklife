@@ -2,6 +2,7 @@
 
 namespace App\Libraries\Pendaftaran;
 
+use App\Libraries\Jenjang;
 use App\Models\AtletModel;
 use App\Models\AtletNomorModel;
 use App\Models\KelompokUmurModel;
@@ -85,6 +86,47 @@ class DataIndukPendaftaran
             'kelompok_umur' => $kelompokUmur,
             'nomor_lomba'   => $nomorLomba,
             'aturan'        => self::aturan(),
+        ];
+    }
+
+    /**
+     * Data yang disematkan di halaman wizard (F4-03) sebagai JSON. Hanya data
+     * yang boleh dilihat pengunjung: kelompok umur dan nomor aktif, biaya,
+     * batas-batas, dan tanggal acara untuk usia.
+     *
+     *     [
+     *         'jenjang'       => ['A' => 'SD/MI', …],
+     *         'kabupaten'     => ['Blora', …],
+     *         'kelompok_umur' => [['id' => 2, 'nama' => 'KU 10', 'tahun_lahir_awal' => 2016, 'tahun_lahir_akhir' => 2018,
+     *                              'teks_tahun_lahir' => 'Lahir 2016–2018', 'biaya_individu' => 150000, 'jenjang' => ['A']]],
+     *         'nomor_lomba'   => [['id' => 7, 'kelompok_umur_id' => 2, 'nama' => 'Lari 60 m', 'nama_lengkap' => 'Lari 60 m putra',
+     *                              'jenis' => 'individu', 'kategori' => 'putra', 'kategori_label' => 'Putra',
+     *                              'jumlah_inti' => null, 'batas_anggota' => null, 'jumlah_putra' => null,
+     *                              'jumlah_putri' => null, 'biaya_beregu' => null]],
+     *         'aturan'        => aturan(),
+     *         'tampilan_usia' => 'tahun',            // atau 'tahun_bulan'
+     *         'tanggal_acara' => '2026-12-09',       // Acara.tanggal_mulai, atau null
+     *     ]
+     *
+     * @return array<string, mixed>
+     */
+    public function untukWizard(): array
+    {
+        $induk = $this->induk();
+
+        return [
+            'jenjang'       => Jenjang::semua(),
+            'kabupaten'     => Kabupaten::semua(),
+            'kelompok_umur' => array_map(static fn (array $ku): array => $ku + [
+                'teks_tahun_lahir' => KelompokUmurModel::teksTahunLahir($ku['tahun_lahir_awal'], $ku['tahun_lahir_akhir']),
+            ], $induk['kelompok_umur']),
+            'nomor_lomba' => array_map(static fn (array $nomor): array => $nomor + [
+                'nama_lengkap'   => NomorLombaModel::namaLengkap($nomor),
+                'kategori_label' => NomorLombaModel::KATEGORI[$nomor['kategori']] ?? $nomor['kategori'],
+            ], $induk['nomor_lomba']),
+            'aturan'        => $induk['aturan'],
+            'tampilan_usia' => setting('Pendaftaran.tampilan_usia') === 'tahun_bulan' ? 'tahun_bulan' : 'tahun',
+            'tanggal_acara' => is_string($tanggal = setting('Acara.tanggal_mulai')) && $tanggal !== '' ? substr($tanggal, 0, 10) : null,
         ];
     }
 

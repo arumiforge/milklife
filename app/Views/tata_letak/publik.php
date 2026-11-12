@@ -6,6 +6,7 @@
  * - `judul`: judul halaman untuk tab peramban. Isi yang berasal dari data wajib di-escape (`esc()`).
  * - `isi`: isi halaman, berada di dalam `<main id="isi">`. Halaman menulis
  *   `<h1>`-nya sendiri; kepala dan kaki tidak memakai heading.
+ * - `kepala`: tag tambahan di `<head>` (misalnya `<link>` CSS atau `<meta>` halaman itu).
  * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap.
  *
  * Menu publik ditulis di `$menuPublik` di bawah. Butir tanpa `alamat` belum
@@ -45,6 +46,7 @@ $kaki = IsiHalamanDepan::kaki();
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap/css/bootstrap.min.css') ?>">
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap-icons/bootstrap-icons.min.css') ?>">
     <link rel="stylesheet" href="<?= aset('css/tema.css') ?>">
+    <?= $this->renderSection('kepala') ?>
 </head>
 <body class="tata-publik" data-bs-theme="light">
     <a class="lompat-ke-isi visually-hidden-focusable" href="#isi">Lompat ke isi</a>

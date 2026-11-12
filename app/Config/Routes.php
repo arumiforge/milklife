@@ -24,6 +24,7 @@ $routes->get('bukti/(:segment)', 'BuktiController::index/$1');
 // ---------- Pendaftaran (Tahap 4) ----------
 // Wizard pendaftaran dan titik akhir JSON-nya (rencana Tahap 4, "Rute dan
 // pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.
+$routes->get('pendaftaran', 'PendaftaranController::index');
 $routes->get('pendaftaran/sekolah', 'PendaftaranController::sekolah');
 // ---------- Akhir pendaftaran ----------
 

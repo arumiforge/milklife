@@ -215,6 +215,32 @@ trait PendaftaranContoh
     }
 
     /**
+     * Lengkapi pengaturan supaya pendaftaran terbuka (rancangan 6.1): data
+     * induk `isiDataIndukPendaftaran()`, awalan nomor dada, rekening karangan,
+     * dan jadwal pendaftaran yang sedang berjalan.
+     *
+     * @return array<string, int> Hasil `isiDataIndukPendaftaran()`.
+     */
+    protected function bukaPendaftaranUji(): array
+    {
+        $id = $this->isiDataIndukPendaftaran();
+
+        foreach (['ku10' => 2, 'ku12' => 3, 'ku15' => 4] as $kunci => $awalan) {
+            $this->db->table('awalan_nomor_dada')->insert(['kelompok_umur_id' => $id[$kunci], 'awalan' => $awalan, 'urutan' => 1]);
+        }
+
+        setting('Acara.tempat', 'Stadion Karangan');
+        setting('Pendaftaran.mulai', '2026-01-01 00:00:00');
+        setting('Pendaftaran.akhir', '2099-12-31 23:59:00');
+        setting('Pembayaran.bank', 'Bank Karangan');
+        setting('Pembayaran.nomor_rekening', '1234567890');
+        setting('Pembayaran.pemilik_rekening', 'Panitia Karangan');
+        setting('Pembayaran.nomor_wa', '6281200000099');
+
+        return $id;
+    }
+
+    /**
      * Ganti id nomor lomba `indukContoh()` dengan id di basis data.
      *
      * @param array<string, mixed> $kiriman
