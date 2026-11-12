@@ -149,3 +149,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K62 | Sesi agen di cloud disiapkan oleh Setup script di setelan lingkungan cloud: MySQL 8, basis data `milklife_uji`, `.env`, dan `composer install` dipasang sekali di awal sesi. Agen tidak memasang ulang selama sesi, cukup `composer uji` | Pemilik melihat pemasangan berulang di sesi cloud. Isi skrip ada di `agent/ALUR-KERJA.md` bagian "Sesi agen di cloud". Diuji di sesi ini: pemasangan pertama sekitar 7,5 menit, jalan ulang 1 detik, 929 uji lulus. Unduhan zip dari GitHub ditolak jaringan sesi, jadi Composer mengambil lewat git dan lebih lambat |
+
+## 12 November 2026 — pelaksanaan gelombang Tahap 6
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K62 | Gelombang Tahap 6 setelah F6-01 dijalankan pemilik sendiri di sesi berbeda, bukan oleh sesi koordinator | Mengubah cara kerja K56 untuk gelombang 2–4. Rencana, pembagian berkas, dan batas 3 sesi sekaligus (K38) tetap berlaku |
