@@ -28,6 +28,10 @@
 /writable/debugbar/*
 !/writable/debugbar/index.html
 
+# Foto penanggung jawab (Tahap 4) dan unggahan lain di luar folder publik.
+# Data pribadi: tidak pernah masuk git.
+/writable/unggahan/
+
 php_errors.log
 
 #-------------------------

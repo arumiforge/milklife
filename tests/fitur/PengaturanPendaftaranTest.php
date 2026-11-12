@@ -48,6 +48,7 @@ final class PengaturanPendaftaranTest extends UjiBasisData
             'penanggung_jawab_minimal'  => '1',
             'penanggung_jawab_maksimal' => '5',
             'nomor_individu_maksimal'   => '2',
+            'atlet_per_nomor_maksimal'  => '2',
         ];
     }
 
@@ -88,6 +89,7 @@ final class PengaturanPendaftaranTest extends UjiBasisData
         $this->assertSame('1', $this->nilai($xpath, 'penanggung_jawab_minimal'));
         $this->assertSame('5', $this->nilai($xpath, 'penanggung_jawab_maksimal'));
         $this->assertSame('2', $this->nilai($xpath, 'nomor_individu_maksimal'));
+        $this->assertSame('2', $this->nilai($xpath, 'atlet_per_nomor_maksimal'));
         $this->assertSame(0, $xpath->query('//input[@name="buka_manual"][@checked]')->length);
         $this->assertSame(['tahun'], $this->nilaiTercentang($xpath, 'tampilan_usia'));
         $this->assertSame(2, $xpath->query('//input[@type="radio"][@name="tampilan_usia"]')->length);
@@ -147,6 +149,7 @@ final class PengaturanPendaftaranTest extends UjiBasisData
         $this->assertSame(2, setting('Pendaftaran.penanggung_jawab_minimal'));
         $this->assertSame(4, setting('Pendaftaran.penanggung_jawab_maksimal'));
         $this->assertSame(3, setting('Pendaftaran.nomor_individu_maksimal'));
+        $this->assertSame(2, setting('Pendaftaran.atlet_per_nomor_maksimal'));
     }
 
     public function testDetikDibuang(): void
@@ -288,6 +291,27 @@ final class PengaturanPendaftaranTest extends UjiBasisData
         }
 
         $this->assertSame(2, setting('Pendaftaran.nomor_individu_maksimal'));
+    }
+
+    public function testBatasAtletPerNomor(): void
+    {
+        // K51: nilai awal 2, kosong berarti tidak dibatasi.
+        $this->assertSame(2, setting('Pendaftaran.atlet_per_nomor_maksimal'));
+
+        foreach (['0', '101', '-1', 'dua'] as $nilai) {
+            $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['atlet_per_nomor_maksimal' => $nilai] + self::isianBenar());
+
+            $this->assertIsianSalahDitampilkanUlang($hasil, ['atlet_per_nomor_maksimal']);
+            $hasil->assertSee('Batas atlet per sekolah harus angka 1 sampai 100, misalnya 2. Kosongkan bila tidak dibatasi.');
+        }
+
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, ['atlet_per_nomor_maksimal' => '3'] + self::isianBenar()), self::ALAMAT);
+        $this->assertSame(3, setting('Pendaftaran.atlet_per_nomor_maksimal'));
+
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, ['atlet_per_nomor_maksimal' => ''] + self::isianBenar()), self::ALAMAT);
+        $this->assertNull(setting('Pendaftaran.atlet_per_nomor_maksimal'));
+
+        $this->assertSame('', $this->nilai($this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT)), 'atlet_per_nomor_maksimal'));
     }
 
     public function testTokenCsrfWajib(): void
