@@ -56,7 +56,7 @@ use App\Libraries\DataKelengkapan;
  * Tampilannya:
  *
  *     <?= $this->extend('tata_letak/admin') ?>
- *     <?= $this->section('judul') ?>Data Acara – Admin MilkLife<?= $this->endSection() ?>
+ *     <?= $this->section('judul') ?>Data Acara<?= $this->endSection() ?>
  *     <?= $this->section('judul_halaman') ?>Data Acara<?= $this->endSection() ?>
  *     <?= $this->section('isi') ?>
  *     <div class="container-fluid px-3 px-lg-4">

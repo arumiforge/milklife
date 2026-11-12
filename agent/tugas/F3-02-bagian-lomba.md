@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 3 — Halaman depan |
 | Dibuat | 12 November 2026 |
 
@@ -36,3 +36,4 @@ Sekolah bisa melihat di halaman depan siapa yang boleh ikut tiap kelompok umur, 
 - **Gaya**: latar putih untuk bagian, kartu latar biru pucat dengan garis oranye di atas (seperti kartu masuk), hanya variabel `--ml-…` yang ada; semuanya di wilayah lomba `tema.css`.
 - Uji `tests/fitur/HalamanDepanLombaTest.php`: 8 uji (bagian kosong, data awal lima KU dan 69 nomor, KU dan nomor mati, KU tanpa nomor aktif, tahun lahir–jenjang–biaya, beregu dan mix, mix dengan satu jumlah, escape). `composer uji`: 784 uji, 5.042 asersi, lulus.
 - Diperiksa di Chromium pada lebar 390 dan 1440 piksel setelah `php spark data:awal`, dengan jenjang dan biaya KU 10, KU 15 (gratis), dan KU 18 diisi lewat `/admin/pengaturan/kelompok-umur`: kelima kelompok umur dan 69 nomor tampil (daftar tertutup dan terbuka), tanpa gulir mendatar.
+- Digabung lewat PR #27 pada 12 November 2026.

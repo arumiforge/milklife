@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 3 — Halaman depan |
 | Dibuat | 12 November 2026 |
 
@@ -84,3 +84,4 @@ Halaman depan memakai isi pengaturan: gambar dan logo, judul dan teks, data acar
 ### Untuk koordinator
 
 - Keterangan kotak "Teks pengantar" di halaman pengaturan Halaman Depan (milik F2-05) berbunyi "Tekan Enter untuk membuat paragraf baru.", sedangkan kesepakatan Tahap 3 memecah paragraf pada baris kosong (satu Enter = baris baru di paragraf yang sama). Tampilannya mirip, tetapi kalimatnya bisa diganti "Tekan Enter dua kali untuk membuat paragraf baru." oleh pemilik berkasnya.
+- Digabung lewat PR #25 pada 12 November 2026.

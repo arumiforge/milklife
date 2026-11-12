@@ -2,7 +2,7 @@
 
 Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Karesidenan Pati: pendaftaran, cek pendaftaran, dan rekap panitia.
 
-**Status:** Tahap 1 (kerangka) selesai. Aplikasi bisa dipasang, daftar sekolah bisa diimpor, dan admin bisa masuk. Halaman pengaturan, pendaftaran, cek, dan rekap dikerjakan di tahap berikutnya.
+**Status:** Tahap 3 (halaman depan) selesai. Admin bisa mengisi semua pengaturan, dan halaman depan serta `/unduhan` menampilkan isinya. Pendaftaran, cek, dan rekap dikerjakan di tahap berikutnya.
 
 ## Mulai dari sini
 
