@@ -127,9 +127,7 @@
 
     <p class="teks-catatan mt-3 mb-0">
         Pencarian mencocokkan ID pendaftaran, nama sekolah, dan NPSN. Excel memuat semua baris yang cocok
-        dengan pencarian dan saringan, tanpa batas halaman. Centang hanya berlaku untuk halaman tabel yang sedang tampil.
-        Backup data selalu memuat semua pendaftaran (tanpa saringan) beserta foto dan bukti bayar;
-        untuk memasukkannya di server baru, jalankan <code>php spark pendaftaran:impor &lt;berkas.zip&gt;</code>.
+        dengan pencarian dan saringan, tanpa batas halaman.
     </p>
 </div>
 <?= $this->endSection() ?>
