@@ -292,6 +292,57 @@ final class UnggahanTest extends CIUnitTestCase
     /**
      * Berkas unggahan tiruan dengan isi tertentu.
      */
+    public function testGambarPngBesarDikecilkanDanTetapTransparan(): void
+    {
+        $jalur = $this->unggahan->simpanGambar($this->berkas('kepala.png', self::gambar('png', 2400, 1200)), 'halaman-depan');
+        $penuh = $this->jalurUnggahan($jalur);
+
+        $this->assertStringEndsWith('.png', $jalur);
+        $info = getimagesize($penuh);
+        $this->assertSame([1920, 960, IMAGETYPE_PNG], [$info[0], $info[1], $info[2]]);
+
+        $gambar = imagecreatefrompng($penuh);
+        // Sudut kiri atas bening, tengah merah pekat.
+        $this->assertSame(127, imagecolorsforindex($gambar, imagecolorat($gambar, 5, 5))['alpha']);
+        $tengah = imagecolorsforindex($gambar, imagecolorat($gambar, 960, 480));
+        $this->assertSame([255, 0, 0, 0], [$tengah['red'], $tengah['green'], $tengah['blue'], $tengah['alpha']]);
+        $this->assertSame(filesize($penuh), $this->unggahan->ukuran($jalur));
+    }
+
+    public function testGambarJpgDanWebpBesarDikecilkanDenganFormatAsli(): void
+    {
+        $jpg = $this->jalurUnggahan($this->unggahan->simpanGambar($this->berkas('kepala.jpg', self::gambar('jpg', 1500, 3000)), 'halaman-depan'));
+        $info = getimagesize($jpg);
+        $this->assertSame([960, 1920, IMAGETYPE_JPEG], [$info[0], $info[1], $info[2]]);
+
+        $webp = $this->jalurUnggahan($this->unggahan->simpanGambar($this->berkas('logo.webp', self::gambar('webp', 2000, 2000)), 'pembayaran'));
+        $info = getimagesize($webp);
+        $this->assertSame([1920, 1920, IMAGETYPE_WEBP], [$info[0], $info[1], $info[2]]);
+        // WEBP lossy: sudut tetap (hampir) bening.
+        $gambar = imagecreatefromwebp($webp);
+        $this->assertGreaterThanOrEqual(120, imagecolorsforindex($gambar, imagecolorat($gambar, 5, 5))['alpha']);
+    }
+
+    public function testGambarKecilDisimpanApaAdanya(): void
+    {
+        foreach (['png' => [1920, 1080], 'jpg' => [800, 600], 'webp' => [1080, 1920]] as $jenis => [$lebar, $tinggi]) {
+            $isi   = self::gambar($jenis, $lebar, $tinggi);
+            $jalur = $this->unggahan->simpanGambar($this->berkas('gambar.' . $jenis, $isi), 'halaman-depan');
+
+            $this->assertSame($isi, file_get_contents($this->jalurUnggahan($jalur)), $jenis);
+        }
+
+        $this->assertFalse(Unggahan::kecilkanGambar($this->folderUnggahan . 'tidak-ada.png'));
+    }
+
+    public function testBerkasUnduhanBergambarTidakDikecilkan(): void
+    {
+        $isi   = self::gambar('png', 2400, 1200);
+        $jalur = $this->unggahan->simpanBerkas($this->berkas('denah.png', $isi), 'unduhan');
+
+        $this->assertSame($isi, file_get_contents($this->jalurUnggahan($jalur)));
+    }
+
     private function berkas(string $nama, string $isi, int $galat = UPLOAD_ERR_OK): UploadedFile
     {
         $this->siapkanBerkas('sementara', $nama, $isi, $galat);
@@ -319,5 +370,27 @@ final class UnggahanTest extends CIUnitTestCase
         unlink($jalur);
 
         return $isi;
+    }
+
+    /**
+     * Gambar karangan: latar bening (JPG: putih) dengan kotak merah di tengah.
+     */
+    private static function gambar(string $jenis, int $lebar, int $tinggi): string
+    {
+        $gambar = imagecreatetruecolor($lebar, $tinggi);
+        imagealphablending($gambar, false);
+        imagesavealpha($gambar, true);
+        imagefill($gambar, 0, 0, $jenis === 'jpg' ? imagecolorallocate($gambar, 255, 255, 255) : imagecolorallocatealpha($gambar, 0, 0, 0, 127));
+        imagefilledrectangle($gambar, intdiv($lebar, 4), intdiv($tinggi, 4), intdiv($lebar * 3, 4), intdiv($tinggi * 3, 4), imagecolorallocate($gambar, 255, 0, 0));
+
+        ob_start();
+        match ($jenis) {
+            'png'  => imagepng($gambar, null, 9),
+            'jpg'  => imagejpeg($gambar, null, 85),
+            'webp' => imagewebp($gambar, null, 85),
+        };
+        imagedestroy($gambar);
+
+        return (string) ob_get_clean();
     }
 }
