@@ -97,7 +97,7 @@ final class HalamanUnduhanTest extends UjiBasisData
     {
         $menu = $this->menu($this->xpathDari($this->get('unduhan')));
 
-        $this->assertSame(['Beranda', 'Pendaftaran Segera', 'Cek Pendaftaran Segera', 'Unduhan'], array_keys($menu));
+        $this->assertSame(['Beranda', 'Pendaftaran Segera', 'Cek Pendaftaran', 'Unduhan'], array_keys($menu));
         $this->assertSame(site_url('unduhan'), $menu['Unduhan']->getAttribute('href'));
         $this->assertSame('page', $menu['Unduhan']->getAttribute('aria-current'));
         $this->assertStringContainsString('active', $menu['Unduhan']->getAttribute('class'));
