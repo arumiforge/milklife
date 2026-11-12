@@ -23,6 +23,18 @@ $ikonWa = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w
 
 $lunas = $p['status'] === 'lunas';
 
+// Stempel status (K78): bingkai ganda miring, hijau "LUNAS" atau oranye "BELUM LUNAS", sebagai SVG.
+$warnaStempel = $lunas ? '#198754' : '#C4461B';
+$stempel      = 'data:image/svg+xml;base64,' . base64_encode(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">'
+    . '<g transform="rotate(-7 120 60)">'
+    . '<rect x="14" y="20" width="212" height="80" rx="12" fill="none" stroke="' . $warnaStempel . '" stroke-width="4.5"/>'
+    . '<rect x="22" y="28" width="196" height="64" rx="7" fill="none" stroke="' . $warnaStempel . '" stroke-width="1.6"/>'
+    . '<text x="120" y="66" font-family="dejavusans" font-weight="bold" font-size="' . ($lunas ? 34 : 22) . '" fill="' . $warnaStempel . '" text-anchor="middle">' . ($lunas ? 'LUNAS' : 'BELUM LUNAS') . '</text>'
+    . '<text x="120" y="84" font-family="dejavusans" font-weight="bold" font-size="10.5" fill="' . $warnaStempel . '" text-anchor="middle">' . ($lunas ? 'PEMBAYARAN DITERIMA' : 'MENUNGGU KONFIRMASI') . '</text>'
+    . '</g></svg>',
+);
+
 // Nomor individu digabung per atlet: satu baris per atlet, nomor dipisah koma, biaya dijumlah.
 $perAtlet = [];
 
@@ -47,7 +59,6 @@ foreach ($p['individu'] as $baris) {
     .label-bukti { font-size: 8pt; font-weight: bold; color: #C4461B; letter-spacing: 1.5pt; }
     .nama-acara { font-size: 17pt; font-weight: bold; color: #021F7B; }
     .seri-tahun { font-size: 10.5pt; font-weight: bold; color: #234987; }
-    .qr-keterangan { font-size: 6pt; color: #5B6475; text-align: center; }
 
     table.info { width: 100%; margin-top: 4mm; border-collapse: separate; border-spacing: 1.2mm; }
     table.info td { background: #F3F6FB; border-left: 0.8mm solid #9BCCEC; padding: 1.6mm 2.2mm; vertical-align: top; }
@@ -66,12 +77,10 @@ foreach ($p['individu'] as $baris) {
     .kecil { font-size: 7.5pt; color: #5B6475; }
     .kosong { color: #5B6475; font-style: italic; margin: 0; }
 
-    table.akhir { width: 100%; margin-top: 5mm; }
+    table.akhir { width: 100%; margin-top: 8mm; }
     table.akhir td { vertical-align: top; }
-    .lencana { padding: 1.4mm 3.5mm; font-weight: bold; font-size: 9pt; border: 0.4mm solid; border-radius: 2mm; }
-    .lencana-lunas { color: #0F5132; background: #D1E7DD; border-color: #198754; }
-    .lencana-menunggu { color: #664D03; background: #FFF3CD; border-color: #E0A800; }
-    .catatan { font-size: 7pt; color: #5B6475; margin-top: 2.5mm; }
+    td.stempel { padding-right: 8mm; }
+    .catatan { font-size: 7.5pt; line-height: 1.5; color: #5B6475; margin-top: 4mm; }
     table.total { width: 100%; border-collapse: collapse; }
     table.total td { padding: 1mm 1.5mm; }
     table.total tr.akhir td { font-size: 11pt; font-weight: bold; color: #ffffff; background: #021F7B; padding: 1.8mm 2mm; }
@@ -88,8 +97,7 @@ foreach ($p['individu'] as $baris) {
             <?php if ($seriTahun !== '') : ?><div class="seri-tahun"><?= esc($seriTahun) ?></div><?php endif ?>
         </td>
         <td width="26mm" style="text-align: right;">
-            <img src="var:qr" width="22mm" height="22mm">
-            <div class="qr-keterangan">Pindai untuk membuka bukti ini</div>
+            <img src="var:qr" width="24mm" height="24mm">
         </td>
     </tr>
 </table>
@@ -160,10 +168,9 @@ foreach ($p['individu'] as $baris) {
 
 <table class="akhir">
     <tr>
-        <td width="55%">
-            <div class="info-label" style="margin-bottom: 2mm;">Status Pembayaran</div>
-            <span class="lencana <?= $lunas ? 'lencana-lunas' : 'lencana-menunggu' ?>"><?= esc($p['status_label']) ?></span>
-            <div class="catatan">Bukti ini dibuat otomatis dan sah tanpa tanda tangan. Keasliannya dapat diperiksa dengan memindai kode QR di pojok kanan atas.</div>
+        <td width="55%" class="stempel stempel-<?= $lunas ? 'lunas' : 'menunggu' ?>">
+            <img src="<?= $stempel ?>" width="58mm" alt="<?= esc($p['status_label'], 'attr') ?>">
+            <div class="catatan">Bukti ini dibuat otomatis dan sah tanpa tanda tangan.<br>Keasliannya dapat diperiksa dengan memindai kode QR di pojok kanan atas.</div>
         </td>
         <td width="45%">
             <table class="total">

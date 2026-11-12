@@ -73,7 +73,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
             'Penanggung Jawab (Official)', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
             'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp150.000',
             'Estafet 4 × 50 m putra', 'BUDI KARANGAN, CANDRA REKAAN, DIMAS CONTOH, EKO KARANGAN', 'Rp200.000',
-            'Rp450.000', 'Rp650.000', 'lencana-menunggu">Menunggu Konfirmasi Pembayaran',
+            'Rp450.000', 'Rp650.000', 'stempel stempel-menunggu', 'Status Pembayaran</div><div class="info-isi">Menunggu Konfirmasi Pembayaran',
         ] as $teks) {
             $this->assertStringContainsString($teks, $html);
         }
@@ -100,7 +100,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->assertStringNotContainsString('1001', $html);
         $this->assertStringContainsString('Tanpa biaya (tim sudah terdaftar)', $html);
         $this->assertStringContainsString('Tidak ada nomor individu', $html);
-        $this->assertStringContainsString('lencana-lunas">Lunas', $html);
+        $this->assertStringContainsString('stempel stempel-lunas', $html);
         $this->assertStringNotContainsString('var:logo', $html, 'Tanpa logo bila belum diunggah.');
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2B0000326')))->html();

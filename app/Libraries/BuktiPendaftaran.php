@@ -6,7 +6,7 @@ use App\Controllers\Admin\Pengaturan\AcaraController;
 use Mpdf\Mpdf;
 
 /**
- * Bukti pendaftaran PDF, kertas F4 tegak dengan margin atas-bawah 2 cm (K77;
+ * Bukti pendaftaran PDF, kertas F4 tegak dengan margin atas 1,5 cm dan bawah 2 cm (K77, K78;
  * sebelumnya A4 mendatar, rancangan 8, K49).
  *
  * Alamatnya `/bukti/<kode acak>/<ID pendaftaran>` (`alamat()`, K77): kode
@@ -143,7 +143,7 @@ final class BuktiPendaftaran
             'tempDir'       => WRITEPATH . 'cache/mpdf',
             'margin_left'   => 15,
             'margin_right'  => 15,
-            'margin_top'    => 20,
+            'margin_top'    => 15,
             'margin_bottom' => 20,
             'margin_footer' => 8,
         ]);
