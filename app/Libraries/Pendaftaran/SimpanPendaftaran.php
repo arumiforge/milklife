@@ -2,6 +2,7 @@
 
 namespace App\Libraries\Pendaftaran;
 
+use App\Libraries\BuktiPendaftaran;
 use App\Models\AtletModel;
 use App\Models\AtletNomorModel;
 use App\Models\PenanggungJawabModel;
@@ -127,6 +128,7 @@ final class SimpanPendaftaran
                 'subtotal_beregu'   => $data['subtotal_beregu'],
                 'total'             => $data['total'],
                 'status'            => 'menunggu',
+                'kode_bukti'        => BuktiPendaftaran::kodeBaru(),
             ], true);
             self::pastikan($id);
 

@@ -18,7 +18,8 @@ $routes->get('unduhan', 'UnduhanController::index');
 
 // Cek pendaftaran dan bukti (Tahap 5). Blok milik sesi Tahap 5 (K48).
 $routes->get('cek-pendaftaran', 'CekPendaftaranController::index');
-$routes->get('bukti/(:segment)', 'BuktiController::index/$1');
+// Bukti PDF: kode acak lalu ID pendaftaran (K77); alamat tanpa kode tidak ada lagi.
+$routes->get('bukti/([0-9a-f]{24})/(:segment)', 'BuktiController::index/$1/$2');
 // Akhir blok Tahap 5
 
 // ---------- Pendaftaran (Tahap 4) ----------

@@ -94,6 +94,7 @@ final class PaketPendaftaran
             $data[] = [
                 'id'                => $id,
                 'id_pendaftaran'    => $p['id_pendaftaran'],
+                'kode_bukti'        => $p['kode_bukti'] ?? null,
                 'jenjang'           => $p['jenjang'],
                 'npsn'              => $p['npsn'],
                 'nama_sekolah'      => $p['nama_sekolah'],
@@ -194,7 +195,7 @@ final class PaketPendaftaran
             $isi = json_decode((string) $zip->getFromName('data.json'), true);
 
             if (! is_array($isi) || ($isi['versi'] ?? null) !== self::VERSI || ! is_array($isi['pendaftaran'] ?? null)) {
-                throw new RuntimeException('Isi zip bukan ekspor pendaftaran yang dikenal. Ekspor ulang dari panel admin server lama.');
+                throw new RuntimeException('Isi zip bukan ekspor pendaftaran yang dikenal. Buat ulang lewat tombol Backup data di panel admin server lama.');
             }
 
             $ada = $this->db->table('pendaftaran')->countAllResults();
@@ -376,6 +377,8 @@ final class PaketPendaftaran
             $id = $tabel('pendaftaran', [
                 'id'                => (int) $p['id'],
                 'id_pendaftaran'    => (string) $p['id_pendaftaran'],
+                // Kode bukti tetap supaya kode QR di bukti yang sudah dicetak tetap berlaku (K77).
+                'kode_bukti'        => is_string($p['kode_bukti'] ?? null) && preg_match('/^[0-9a-f]{24}$/D', $p['kode_bukti']) === 1 ? $p['kode_bukti'] : null,
                 'jenjang'           => (string) $p['jenjang'],
                 'npsn'              => $p['npsn'],
                 'nama_sekolah'      => (string) $p['nama_sekolah'],

@@ -876,3 +876,17 @@ div.dt-container .page-link {
 div.dt-container .dt-layout-table {
     overflow-x: auto;
 }
+
+/* Jendela foto penanggung jawab: kecil di tengah layar, foto tidak selebar aslinya (K77). */
+.modal-foto-pj {
+    max-width: 26rem;
+}
+
+.foto-pj-besar {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 60vh;
+    margin: 0 auto;
+    object-fit: contain;
+}

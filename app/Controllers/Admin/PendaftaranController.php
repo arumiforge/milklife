@@ -91,7 +91,7 @@ class PendaftaranController extends BaseController
 
         return $this->response
             ->setContentType('application/zip')
-            ->setHeader('Content-Disposition', 'attachment; filename="Ekspor_Pendaftaran_' . date('Ymd_His') . '.zip"')
+            ->setHeader('Content-Disposition', 'attachment; filename="Backup_Pendaftaran_' . date('Ymd_His') . '.zip"')
             ->setBody($isi);
     }
 

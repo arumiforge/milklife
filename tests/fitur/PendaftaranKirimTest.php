@@ -116,7 +116,9 @@ final class PendaftaranKirimTest extends UjiBasisData
 
         $this->assertSame('tersimpan', $isi['status']);
         $this->assertMatchesRegularExpression('/^MAC2A\d{5}26$/', $id);
-        $this->assertSame(site_url('bukti/' . $id), $isi['bukti']);
+        // Alamat bukti memakai kode acak tersimpan (K77).
+        $this->assertSame(site_url('bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', $id)->get()->getRow()->kode_bukti . '/' . $id), $isi['bukti']);
+        $this->assertMatchesRegularExpression('#/bukti/[0-9a-f]{24}/#', $isi['bukti']);
         $this->assertSame('https://wa.me/6281200000099?text=' . rawurlencode("Konfirmasi {$id} SD Karangan Maju total Rp450.000"), $isi['wa']);
         $this->assertSame(450000, $isi['rincian']['total']);
 

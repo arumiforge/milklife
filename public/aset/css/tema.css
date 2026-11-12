@@ -1477,10 +1477,10 @@ html:has(.tata-publik) {
 
 /* ---------- Akhir bagian jadwal, unduhan, kontak ---------- */
 
-/* ---------- Halaman cek (Tahap 5) ---------- */
+/* ---------- Halaman cek (Tahap 5; desain ulang K77) ---------- */
 
 .halaman-cek-kepala {
-    padding: 2rem 0;
+    padding: 2rem 0 4.5rem;
     background: var(--ml-gradasi-kepala);
     color: rgba(255, 255, 255, 0.88);
 }
@@ -1496,13 +1496,77 @@ html:has(.tata-publik) {
 }
 
 .halaman-cek-isi {
-    padding-top: 2rem;
+    padding-top: 0;
     padding-bottom: 3rem;
 }
 
+/* Formulir cari: kartu putih menumpang di bawah kepala biru. */
 .cek-formulir {
-    max-width: 40rem;
-    margin: 0 auto 2rem;
+    position: relative;
+    max-width: 44rem;
+    margin: -3rem auto 2rem;
+    padding: 1.25rem;
+    background-color: var(--ml-putih);
+    border-top: 5px solid var(--ml-oranye);
+    border-radius: 1rem;
+    box-shadow: 0 1rem 2.5rem rgba(2, 31, 123, 0.15);
+}
+
+.cek-formulir .form-label {
+    color: var(--ml-biru-tua);
+    font-size: 1.0625rem;
+}
+
+.halaman-cek .cek-belum-siap {
+    position: relative;
+    margin-top: -3rem;
+}
+
+/* Ringkasan sekolah. */
+.cek-sekolah {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-left: 6px solid var(--ml-biru);
+    border-radius: 1rem;
+}
+
+.cek-sekolah-ikon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 0.875rem;
+    background: var(--ml-gradasi-kepala);
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.cek-sekolah-isi {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cek-sekolah-label,
+.cek-kartu-urutan {
+    margin-bottom: 0.15rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.cek-sekolah h2 {
+    margin-bottom: 0.75rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
 }
 
 .cek-sekolah-data,
@@ -1510,23 +1574,40 @@ html:has(.tata-publik) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
     gap: 0.5rem 1rem;
+    margin-bottom: 0;
+}
+
+.cek-sekolah-data > div {
+    padding: 0.5rem 0.75rem;
+    background-color: var(--ml-latar);
+    border-radius: 0.5rem;
 }
 
 .cek-sekolah-data dt,
 .cek-biaya dt {
-    font-weight: 400;
-    font-size: 0.875rem;
+    font-weight: 500;
+    font-size: 0.8125rem;
     color: var(--ml-teks-redup);
 }
 
 .cek-sekolah-data dd,
 .cek-biaya dd {
     margin-bottom: 0;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--ml-biru-tua);
 }
 
+/* Kartu pendaftaran: garis kiri hijau (Lunas) atau kuning (Menunggu). */
 .cek-kartu {
     margin-bottom: 1.5rem;
+    overflow: hidden;
+    border-radius: 1rem;
+    border-left: 6px solid #E0A800;
+    box-shadow: 0 0.5rem 1.5rem rgba(2, 31, 123, 0.06);
+}
+
+.cek-kartu-lunas {
+    border-left-color: #198754;
 }
 
 .cek-kartu-kepala {
@@ -1535,6 +1616,16 @@ html:has(.tata-publik) {
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--ml-biru-muda-pucat);
+    border-bottom: 1px solid var(--ml-garis);
+}
+
+.cek-kartu-id {
+    margin-bottom: 0.15rem;
+    font-size: 1.375rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
 }
 
 .cek-kartu-tindakan {
@@ -1544,33 +1635,160 @@ html:has(.tata-publik) {
     gap: 0.5rem;
 }
 
-.cek-kartu-tindakan .badge {
+.cek-status {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.875rem;
     white-space: normal;
 }
 
-.cek-tabel {
-    font-size: 0.875rem;
+.cek-kartu > .card-body {
+    padding: 1.25rem;
 }
 
-.cek-tabel td,
-.cek-tabel th {
+.cek-subjudul {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.25rem 0 0.75rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.cek-subjudul .bi {
+    color: var(--ml-oranye-tombol);
+}
+
+.cek-jumlah {
+    padding: 0.1rem 0.55rem;
+    border-radius: 1rem;
+    background-color: var(--ml-biru);
+    color: #fff;
+    font-size: 0.8125rem;
+}
+
+.cek-penanggung-jawab,
+.cek-tim {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+}
+
+.cek-penanggung-jawab li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    padding: 0.6rem 0.85rem;
+    background-color: var(--ml-latar);
+    border-radius: 0.6rem;
+}
+
+.cek-penanggung-jawab .bi-person-circle {
+    color: var(--ml-biru);
+}
+
+.cek-penanggung-jawab .bi-whatsapp {
+    color: #198754;
+}
+
+.cek-tabel {
+    margin-bottom: 1.25rem;
+    font-size: 0.9375rem;
+}
+
+.cek-tabel thead th {
+    background-color: var(--ml-biru-tua);
+    color: #fff;
+    font-weight: 600;
     white-space: nowrap;
+}
+
+.cek-tabel td {
+    white-space: nowrap;
+}
+
+.cek-tabel abbr.kategori {
+    text-decoration: none;
+    cursor: help;
+}
+
+.cek-tim li {
+    padding: 0.75rem 0.9rem;
+    background-color: var(--ml-latar);
+    border-left: 4px solid var(--ml-oranye);
+    border-radius: 0.6rem;
+}
+
+.cek-tim-kepala {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.cek-tim-biaya {
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
+.cek-tim-anggota {
+    color: var(--ml-teks-redup);
+    font-size: 0.9375rem;
+}
+
+/* Biaya: strip ringkasan, total menonjol. */
+.cek-biaya {
+    padding: 0.85rem 1rem;
+    background-color: var(--ml-latar);
+    border-radius: 0.75rem;
 }
 
 .cek-biaya-total dd,
 .cek-total-semua strong {
-    font-size: 1.25rem;
+    font-size: 1.375rem;
     color: var(--ml-biru-tua);
 }
 
 .cek-total-semua {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    padding: 1rem 1.25rem;
-    background-color: var(--ml-biru-muda-pucat);
+    padding: 1.1rem 1.4rem;
+    background: var(--ml-gradasi-kepala);
+    color: #fff;
     border-radius: 1rem;
+    font-weight: 600;
+}
+
+.cek-total-semua strong {
+    color: #fff;
+}
+
+@media (max-width: 575.98px) {
+    .cek-sekolah-ikon {
+        display: none;
+    }
+
+    .cek-sekolah-data {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .cek-formulir {
+        padding: 1.75rem 2rem;
+    }
+
+    .cek-sekolah,
+    .cek-kartu-kepala,
+    .cek-kartu > .card-body {
+        padding: 1.5rem 1.75rem;
+    }
 }
 
 /* ---------- Akhir halaman cek ---------- */

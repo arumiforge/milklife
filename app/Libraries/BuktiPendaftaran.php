@@ -6,7 +6,13 @@ use App\Controllers\Admin\Pengaturan\AcaraController;
 use Mpdf\Mpdf;
 
 /**
- * Bukti pendaftaran PDF, A4 mendatar (rancangan 8, K49).
+ * Bukti pendaftaran PDF, kertas F4 tegak dengan margin atas-bawah 2 cm (K77;
+ * sebelumnya A4 mendatar, rancangan 8, K49).
+ *
+ * Alamatnya `/bukti/<kode acak>/<ID pendaftaran>` (`alamat()`, K77): kode
+ * 24 huruf heksadesimal di `pendaftaran.kode_bukti`, supaya bukti tidak bisa
+ * dibuka hanya dengan menebak ID yang berurutan. Kode QR di pojok kanan atas
+ * PDF berisi alamat itu (`KodeQr`), dengan logo persegi di tengahnya.
  *
  * Menerima satu pendaftaran dari `DataPendaftaran` dan menyusun HTML-nya
  * (`app/Views/bukti/pdf.php`), PDF-nya (mPDF), dan nama berkasnya. Nama
@@ -19,6 +25,42 @@ use Mpdf\Mpdf;
  */
 final class BuktiPendaftaran
 {
+    /**
+     * Ukuran kertas F4 (lebar, tinggi) dalam milimeter.
+     */
+    public const KERTAS = [215, 330];
+
+    /**
+     * Kode acak baru untuk `pendaftaran.kode_bukti`.
+     */
+    public static function kodeBaru(): string
+    {
+        return bin2hex(random_bytes(12));
+    }
+
+    /**
+     * Alamat lengkap bukti satu pendaftaran. Pendaftaran yang belum punya
+     * kode (misalnya dibuat sebelum kolomnya ada) langsung diberi kode.
+     *
+     * @param array<string, mixed> $pendaftaran Minimal `id` dan `id_pendaftaran`; `kode_bukti` bila ada.
+     */
+    public static function alamat(array $pendaftaran): string
+    {
+        $kode = (string) ($pendaftaran['kode_bukti'] ?? '');
+
+        if (preg_match('/^[0-9a-f]{24}$/D', $kode) !== 1) {
+            $db   = db_connect();
+            $kode = (string) ($db->table('pendaftaran')->select('kode_bukti')->where('id', (int) $pendaftaran['id'])->get()->getRow()->kode_bukti ?? '');
+
+            if ($kode === '') {
+                $kode = self::kodeBaru();
+                $db->table('pendaftaran')->where('id', (int) $pendaftaran['id'])->where('kode_bukti', null)->update(['kode_bukti' => $kode]);
+            }
+        }
+
+        return site_url('bukti/' . $kode . '/' . rawurlencode((string) $pendaftaran['id_pendaftaran']));
+    }
+
     /**
      * Logo PNG yang sudah dibaca (`false` = belum dibaca).
      */
@@ -96,16 +138,22 @@ final class BuktiPendaftaran
     public function pdf(): string
     {
         $mpdf = new Mpdf([
-            'format'        => 'A4-L',
+            'format'        => self::KERTAS,
+            'orientation'   => 'P',
             'tempDir'       => WRITEPATH . 'cache/mpdf',
-            'margin_left'   => 12,
-            'margin_right'  => 12,
-            'margin_top'    => 10,
-            'margin_bottom' => 10,
+            'margin_left'   => 15,
+            'margin_right'  => 15,
+            'margin_top'    => 20,
+            'margin_bottom' => 20,
+            'margin_footer' => 8,
         ]);
         if ($this->logoPng() !== null) {
             $mpdf->imageVars['logo'] = $this->logoPng();
         }
+        $mpdf->imageVars['qr'] = KodeQr::png(self::alamat($this->pendaftaran), $this->logoPng());
+        $mpdf->SetHTMLFooter('<table width="100%" style="font-family: dejavusans; font-size: 7pt; color: #5B6475; border-top: 0.2mm solid #D6DEEA;"><tr>'
+            . '<td style="padding-top: 1.5mm;">' . esc($this->pendaftaran['id_pendaftaran']) . ' · dicetak ' . esc(tanggal_id(date('Y-m-d H:i:s'), true)) . '</td>'
+            . '<td style="padding-top: 1.5mm; text-align: right;">Halaman {PAGENO} dari {nbpg}</td></tr></table>');
         $mpdf->SetTitle('Bukti Pendaftaran ' . $this->pendaftaran['id_pendaftaran']);
         $mpdf->WriteHTML($this->html());
 

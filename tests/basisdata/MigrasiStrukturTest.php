@@ -56,6 +56,7 @@ final class MigrasiStrukturTest extends UjiBasisData
         'pendaftaran' => [
             'id'                => ['int unsigned', false, null],
             'id_pendaftaran'    => ['varchar(20)', true, null],
+            'kode_bukti'        => ['char(24)', true, null],
             'jenjang'           => ["enum('A','B','C')", false, null],
             'npsn'              => ['char(8)', true, null],
             'nama_sekolah'      => ['varchar(150)', false, null],

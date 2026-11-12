@@ -161,14 +161,14 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                                 <span class="visually-hidden">Perbesar foto <?= esc($orang['nama']) ?></span>
                                             </button>
                                             <div class="modal fade" id="<?= $idFoto ?>" tabindex="-1" aria-labelledby="<?= $idFoto ?>-judul" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-dialog modal-dialog-centered modal-foto-pj">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h3 class="modal-title h5" id="<?= $idFoto ?>-judul">Foto <?= esc($orang['nama']) ?></h3>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                                                         </div>
                                                         <div class="modal-body text-center bg-body-tertiary">
-                                                            <img class="img-fluid rounded" loading="lazy" src="<?= $alamatFoto ?>" alt="<?= esc('Foto ' . $orang['nama'], 'attr') ?>">
+                                                            <img class="foto-pj-besar rounded" loading="lazy" src="<?= $alamatFoto ?>" alt="<?= esc('Foto ' . $orang['nama'], 'attr') ?>">
                                                         </div>
                                                         <div class="modal-footer">
                                                             <a class="btn btn-outline-primary" href="<?= $alamatFoto ?>" target="_blank" rel="noopener">

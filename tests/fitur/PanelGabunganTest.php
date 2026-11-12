@@ -328,7 +328,7 @@ final class PanelGabunganTest extends UjiBasisData
         $this->assertStringContainsString('Rp400.000', $html);
         $this->assertStringContainsString('lencana-menunggu', $html);
 
-        $pdf = $this->get('bukti/' . $a['id_pendaftaran']);
+        $pdf = $this->get('bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', $a['id_pendaftaran'])->get()->getRow()->kode_bukti . '/' . $a['id_pendaftaran']);
         $pdf->assertOK();
         $this->assertStringStartsWith('%PDF', (string) $pdf->response()->getBody());
 

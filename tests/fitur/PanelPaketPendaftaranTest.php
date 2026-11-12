@@ -111,7 +111,7 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
 
         $hasil = $this->bukaSebagaiAdmin('admin/pendaftaran/ekspor');
         $hasil->assertOK();
-        $this->assertStringContainsString('Ekspor_Pendaftaran_', $hasil->response()->getHeaderLine('Content-Disposition'));
+        $this->assertStringContainsString('Backup_Pendaftaran_', $hasil->response()->getHeaderLine('Content-Disposition'));
         file_put_contents($this->zip, (string) $hasil->response()->getBody());
 
         $this->db->query('DELETE FROM pendaftaran');
@@ -132,7 +132,7 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $baris = fn (string $sql): array => $this->db->query($sql)->getResultArray();
 
         return [
-            'pendaftaran' => $baris('SELECT id, id_pendaftaran, jenjang, npsn, nama_sekolah, kabupaten, subtotal_individu, subtotal_beregu, total, status, waktu_lunas, dibuat_pada FROM pendaftaran ORDER BY id'),
+            'pendaftaran' => $baris('SELECT id, id_pendaftaran, kode_bukti, jenjang, npsn, nama_sekolah, kabupaten, subtotal_individu, subtotal_beregu, total, status, waktu_lunas, dibuat_pada FROM pendaftaran ORDER BY id'),
             'pj'          => $baris('SELECT p.id_pendaftaran, j.nama, j.nomor_wa, j.foto FROM penanggung_jawab j JOIN pendaftaran p ON p.id = j.pendaftaran_id ORDER BY j.id'),
             'atlet'       => $baris('SELECT p.id_pendaftaran, a.nama, a.nisn, a.tanggal_lahir, a.jenis_kelamin, k.nama ku, a.nomor_dada FROM atlet a JOIN pendaftaran p ON p.id = a.pendaftaran_id JOIN kelompok_umur k ON k.id = a.kelompok_umur_id ORDER BY a.id'),
             'nomor'       => $baris('SELECT a.nisn, n.nama, n.kategori, an.biaya FROM atlet_nomor an JOIN atlet a ON a.id = an.atlet_id JOIN nomor_lomba n ON n.id = an.nomor_lomba_id ORDER BY a.nisn, n.id'),

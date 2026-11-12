@@ -71,9 +71,9 @@
                         Unduh Excel
                     </a>
                     <a id="ekspor-pendaftaran" class="btn btn-outline-primary" href="<?= site_url('admin/pendaftaran/ekspor') ?>"
-                        title="Semua pendaftaran, foto, dan bukti bayar dalam satu zip untuk dipindah ke server lain">
-                        <i class="bi bi-box-arrow-up" aria-hidden="true"></i>
-                        Ekspor untuk pindah server
+                        title="Semua pendaftaran, foto, dan bukti bayar dalam satu zip, misalnya untuk pindah server">
+                        <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+                        Backup data
                     </a>
                 </div>
             </form>
@@ -128,8 +128,8 @@
     <p class="teks-catatan mt-3 mb-0">
         Pencarian mencocokkan ID pendaftaran, nama sekolah, dan NPSN. Excel memuat semua baris yang cocok
         dengan pencarian dan saringan, tanpa batas halaman. Centang hanya berlaku untuk halaman tabel yang sedang tampil.
-        Ekspor untuk pindah server selalu memuat semua pendaftaran (tanpa saringan) beserta foto dan bukti bayar;
-        di server baru, masukkan dengan perintah <code>php spark pendaftaran:impor &lt;berkas.zip&gt;</code>.
+        Backup data selalu memuat semua pendaftaran (tanpa saringan) beserta foto dan bukti bayar;
+        untuk memasukkannya di server baru, jalankan <code>php spark pendaftaran:impor &lt;berkas.zip&gt;</code>.
     </p>
 </div>
 <?= $this->endSection() ?>

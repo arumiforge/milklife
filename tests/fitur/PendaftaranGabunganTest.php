@@ -110,8 +110,9 @@ final class PendaftaranGabunganTest extends UjiBasisData
         $this->assertStringContainsString('Rp400.000', $teks, 'Total keseluruhan dua pendaftaran.');
 
         // Tautan cetak bukti dari langkah 5 membuka PDF pendaftaran itu.
-        $this->assertSame(site_url('bukti/' . $dua['id_pendaftaran']), $dua['bukti']);
-        $bukti = $this->get('bukti/' . $dua['id_pendaftaran']);
+        $alamatBukti = 'bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', $dua['id_pendaftaran'])->get()->getRow()->kode_bukti . '/' . $dua['id_pendaftaran'];
+        $this->assertSame(site_url($alamatBukti), $dua['bukti']);
+        $bukti = $this->get($alamatBukti);
         $bukti->assertOK();
         $this->assertStringStartsWith('application/pdf', $bukti->response()->getHeaderLine('Content-Type'));
         $this->assertStringStartsWith('%PDF', (string) $bukti->response()->getBody());

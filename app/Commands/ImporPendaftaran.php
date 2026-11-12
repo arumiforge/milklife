@@ -10,7 +10,7 @@ use RuntimeException;
 /**
  * `php spark pendaftaran:impor <berkas.zip>` (K76)
  *
- * Memasukkan zip dari tombol "Ekspor untuk pindah server" di panel
+ * Memasukkan zip dari tombol "Backup data" di panel
  * Pendaftaran ke server ini: pendaftaran, penanggung jawab, atlet, nomor
  * lomba, tim beregu, foto, dan bukti bayar, dengan ID pendaftaran, status, dan
  * nomor dada yang sama. Aturannya di `App\Libraries\Panel\PaketPendaftaran`:
@@ -21,7 +21,7 @@ class ImporPendaftaran extends BaseCommand
 {
     protected $group       = 'Aplikasi';
     protected $name        = 'pendaftaran:impor';
-    protected $description = 'Memasukkan zip ekspor pendaftaran dari server lama (tombol "Ekspor untuk pindah server" di panel).';
+    protected $description = 'Memasukkan zip ekspor pendaftaran dari server lama (tombol "Backup data" di panel).';
     protected $usage       = 'pendaftaran:impor <berkas.zip>';
     protected $arguments   = ['berkas.zip' => 'Jalur zip hasil ekspor dari panel Pendaftaran server lama.'];
 
@@ -33,7 +33,7 @@ class ImporPendaftaran extends BaseCommand
         $berkas = (string) ($params[0] ?? '');
 
         if ($berkas === '') {
-            CLI::error('Sebutkan berkas zipnya, contoh: php spark pendaftaran:impor D:\Ekspor_Pendaftaran.zip');
+            CLI::error('Sebutkan berkas zipnya, contoh: php spark pendaftaran:impor D:\Backup_Pendaftaran.zip');
 
             return EXIT_ERROR;
         }

@@ -9,7 +9,10 @@ use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /**
- * Bukti pendaftaran PDF (`/bukti/{id-pendaftaran}`, rancangan 8).
+ * Bukti pendaftaran PDF (`/bukti/{kode acak}/{id-pendaftaran}`, rancangan 8, K77).
+ *
+ * Kode acak harus cocok dengan `pendaftaran.kode_bukti`; tanpa kode yang
+ * benar, bukti tidak ditemukan walau ID-nya benar.
  *
  * Tidak dibatasi kelengkapan pengaturan: pendaftaran yang sudah tersimpan
  * tetap bisa dicetak. Setiap permintaan dihitung pembatas laju per alamat IP
@@ -27,7 +30,7 @@ class BuktiController extends BaseController
      */
     public const JENDELA_DETIK = 60;
 
-    public function index(string $id): ResponseInterface
+    public function index(string $kode, string $id): ResponseInterface
     {
         $pembatas = service('throttler');
         if (! $pembatas->check('bukti-' . hash('sha256', $this->request->getIPAddress()), self::BATAS_PERMINTAAN, self::JENDELA_DETIK)) {
@@ -44,8 +47,8 @@ class BuktiController extends BaseController
 
         $pendaftaran = preg_match('/^MAC[0-9A-Za-z]{1,17}$/', $id) === 1 ? (new DataPendaftaran())->cariId($id) : null;
 
-        if ($pendaftaran === null) {
-            throw PageNotFoundException::forPageNotFound('Bukti pendaftaran dengan ID ini tidak ditemukan. Periksa lagi ID pendaftaran Anda, atau cari lewat halaman Cek Pendaftaran.');
+        if ($pendaftaran === null || ! hash_equals((string) ($pendaftaran['kode_bukti'] ?? ''), $kode)) {
+            throw PageNotFoundException::forPageNotFound('Bukti pendaftaran tidak ditemukan. Buka bukti lewat tombol di halaman Cek Pendaftaran, atau pindai kode QR di bukti yang sudah dicetak.');
         }
 
         $bukti = new BuktiPendaftaran($pendaftaran);
