@@ -134,6 +134,74 @@ final class AdminModelTest extends UjiBasisData
         $this->assertSame(1, $this->db->table('admin')->countAllResults());
     }
 
+    public function testUbahDenganNamaPenggunaSendiriTidakDitolak(): void
+    {
+        $id = $this->buatAdmin();
+
+        $this->assertTrue($this->model->update($id, ['nama' => 'Nama Baru', 'nama_pengguna' => ' Admin.Uji ']));
+
+        $baris = $this->model->find($id);
+        $this->assertSame('Nama Baru', $baris['nama']);
+        $this->assertSame('admin.uji', $baris['nama_pengguna']);
+    }
+
+    public function testUbahKeNamaPenggunaAdminLainDitolak(): void
+    {
+        $id = $this->buatAdmin();
+        $this->buatAdmin('admin.lain');
+
+        $this->assertFalse($this->model->update($id, ['nama_pengguna' => 'ADMIN.LAIN']));
+        $this->assertSame('Nama pengguna ini sudah dipakai. Pilih nama pengguna lain.', $this->model->errors()['nama_pengguna']);
+        $this->assertSame('admin.uji', $this->model->find($id)['nama_pengguna']);
+    }
+
+    public function testUbahKeNamaPenggunaBaruBerhasilDanIdTidakBerubah(): void
+    {
+        $id = $this->buatAdmin();
+
+        $this->assertTrue($this->model->update($id, ['nama_pengguna' => 'panitia.kudus']));
+        $this->assertSame($id, (int) $this->model->cariNamaPengguna('panitia.kudus')['id']);
+        $this->assertSame(1, $this->db->table('admin')->countAllResults());
+    }
+
+    public function testUbahBanyakBarisTetapMenolakNamaPenggunaDipakai(): void
+    {
+        $id   = $this->buatAdmin();
+        $lain = $this->buatAdmin('admin.lain');
+
+        // Tanpa satu ID yang jelas, tidak ada baris yang dikecualikan.
+        $this->assertFalse($this->model->update([$id, $lain], ['nama_pengguna' => 'admin.uji']));
+        $this->assertArrayHasKey('nama_pengguna', $this->model->errors());
+    }
+
+    public function testIdTidakIkutDisimpanDariIsian(): void
+    {
+        $id = $this->buatAdmin();
+
+        $this->assertTrue($this->model->update($id, ['id' => 999, 'nama' => 'Nama Baru']));
+        $this->assertSame('Nama Baru', $this->model->find($id)['nama']);
+        $this->assertNull($this->model->find(999));
+    }
+
+    public function testPeriksaIsianMengecualikanBarisSendiri(): void
+    {
+        $id   = $this->buatAdmin();
+        $lain = $this->buatAdmin('admin.lain');
+
+        $this->assertSame([], $this->model->periksaIsian(['nama_pengguna' => 'Admin.Uji'], false, $id));
+        $this->assertArrayHasKey('nama_pengguna', $this->model->periksaIsian(['nama_pengguna' => 'admin.uji'], false, $lain));
+        $this->assertArrayHasKey('nama_pengguna', $this->model->periksaIsian(['nama_pengguna' => 'admin.uji', 'id' => (string) $id]));
+        $this->assertSame([], $this->model->periksaIsian(['nama' => 'Nama Baru'], false, $id));
+    }
+
+    public function testSimpanSandiTidakTerkenaAturanNamaPengguna(): void
+    {
+        $id = $this->buatAdmin();
+
+        $this->assertTrue($this->model->simpanSandi($id, 'sandi-uji-baru-2'));
+        $this->assertSame('admin.uji', $this->model->find($id)['nama_pengguna']);
+    }
+
     private function buatAdmin(string $namaPengguna = 'admin.uji'): int
     {
         $id = $this->model->insert([
