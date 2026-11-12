@@ -46,7 +46,7 @@ Baca berurutan:
 - Dokumen baru ditulis di `dokumen/draf/` dari `dokumen/templat/dokumen.md`.
 - Hanya pemilik yang menyetujui dokumen. Setelah disetujui, berkas dipindahkan ke `dokumen/final/` dengan nama yang sama.
 - Dokumen final tidak diubah diam-diam. Perubahan dimulai lagi dari draf dan disetujui ulang.
-- PDF di `dokumen/pdf/` dibuat dari dokumen final dan tidak disunting tangan.
+- PDF di `dokumen/pdf/` dibuat dari dokumen final dengan `php spark dokumen:pdf` dan tidak disunting tangan. Setiap dokumen final berubah, PDF dibuat ulang dalam PR yang sama.
 
 ## Keputusan
 
