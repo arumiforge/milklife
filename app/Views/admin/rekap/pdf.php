@@ -6,6 +6,8 @@
  *
  * @var array{kolom: array<string, array{judul: string, jenis: string}>, baris: list<array<string, mixed>>, jumlah: array<string, mixed>|null} $rekap
  * @var string $judul     'Rekap Per Sekolah'
+ *
+ * Rekap keuangan ditambah tabel tim tanpa pembayar biaya tim (K68).
  * @var string $status    'Lunas', 'Menunggu', 'Semua status', atau 'Lunas dan Menunggu'
  * @var string $namaAcara nama acara berhuruf besar
  * @var string $seriTahun 'Seri 2 Tahun 2026'
@@ -88,6 +90,33 @@ $sel = static function (array $kolom, mixed $nilai): string {
             <?php endif ?>
         </tbody>
     </table>
+<?php endif ?>
+
+<?php if (isset($rekap['tim_tanpa_pembayar'])) : ?>
+    <h1>Tim Tanpa Pembayar Biaya Tim</h1>
+    <?php if ($rekap['tim_tanpa_pembayar']['baris'] === []) : ?>
+        <div class="keterangan">Semua tim beregu sudah punya pembayar biaya tim.</div>
+    <?php else : ?>
+        <div class="keterangan">Biaya tim belum ditagih ke pendaftaran mana pun; tagihkan lewat Ubah di salah satu pendaftaran anggotanya.</div>
+        <table class="data">
+            <thead>
+                <tr>
+                    <?php foreach ($rekap['tim_tanpa_pembayar']['kolom'] as $kolom) : ?>
+                        <th<?= $kolom['jenis'] === 'teks' ? '' : ' class="angka"' ?>><?= esc($kolom['judul']) ?></th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rekap['tim_tanpa_pembayar']['baris'] as $baris) : ?>
+                    <tr>
+                        <?php foreach ($rekap['tim_tanpa_pembayar']['kolom'] as $kunci => $kolom) : ?>
+                            <?= $sel($kolom, $baris[$kunci] ?? null) ?>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif ?>
 <?php endif ?>
 
 </body>

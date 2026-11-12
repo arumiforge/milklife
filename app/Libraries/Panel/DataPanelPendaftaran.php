@@ -164,7 +164,7 @@ final class DataPanelPendaftaran
      *             'nomor_lomba' => [['nama' => 'Lari 60 m putra', 'jenis' => 'individu', 'biaya' => 150000]],
      *         ]],
      *         'beregu' => [[
-     *             'nomor_lomba' => "Kanga's Escape putra", 'biaya_tim' => 100000,   // 0 atau null: tanpa biaya tim (susulan)
+     *             'nomor_lomba_id' => 12, 'nomor_lomba' => "Kanga's Escape putra", 'biaya_tim' => 100000,   // 0 atau null: tanpa biaya tim (susulan)
      *             'anggota' => [['nama' => '…', 'nisn' => '…', 'nomor_dada' => null]],
      *         ]],
      *         'jumlah_atlet' => 2, 'tanpa_nomor_dada' => 2,
@@ -308,6 +308,7 @@ final class DataPanelPendaftaran
         usort($regu, static fn (array $x, array $y): int => $x['urutan'] <=> $y['urutan']);
 
         $hasil['beregu'] = array_map(static function (array $r): array {
+            $r = ['nomor_lomba_id' => $r['urutan'][1]] + $r;
             unset($r['urutan']);
 
             return $r;

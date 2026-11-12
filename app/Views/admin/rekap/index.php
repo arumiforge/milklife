@@ -2,7 +2,8 @@
 /**
  * Rekap panitia (F6-06): tab jenis rekap, saringan status (K60), tabel, dan
  * tombol unduh Excel dan PDF yang membawa saringan yang sama. Data dari
- * `RekapController::index()`; angkanya dari `Rekap::susun()`.
+ * `RekapController::index()`; angkanya dari `Rekap::susun()`. Rekap keuangan
+ * ditambah tabel tim tanpa pembayar biaya tim (K68).
  *
  * @var CodeIgniter\View\View                                                                                                                         $this
  * @var string                                                                                                                                        $jenis
@@ -25,6 +26,40 @@ $sel      = static function (array $kolom, mixed $nilai): string {
         'angka'  => '<td class="text-end">' . (int) $nilai . '</td>',
         default  => '<td>' . esc((string) $nilai) . '</td>',
     };
+};
+$tabel = static function (array $bagian, string $id, string $keterangan) use ($sel): string {
+    $html = '<div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0" id="' . esc($id, 'attr') . '">'
+        . '<caption class="visually-hidden">' . esc($keterangan) . '</caption><thead><tr>';
+
+    foreach ($bagian['kolom'] as $kunci => $kolom) {
+        $html .= '<th scope="col" data-kolom="' . esc($kunci, 'attr') . '"' . ($kolom['jenis'] === 'teks' ? '' : ' class="text-end"') . '>' . esc($kolom['judul']) . '</th>';
+    }
+
+    $html .= '</tr></thead><tbody>';
+
+    foreach ($bagian['baris'] as $baris) {
+        $html .= '<tr>';
+
+        foreach ($bagian['kolom'] as $kunci => $kolom) {
+            $html .= $sel($kolom, $baris[$kunci] ?? null);
+        }
+
+        $html .= '</tr>';
+    }
+
+    $html .= '</tbody>';
+
+    if (($bagian['jumlah'] ?? null) !== null) {
+        $html .= '<tfoot class="fw-semibold"><tr>';
+
+        foreach ($bagian['kolom'] as $kunci => $kolom) {
+            $html .= $sel($kolom, $bagian['jumlah'][$kunci] ?? null);
+        }
+
+        $html .= '</tr></tfoot>';
+    }
+
+    return $html . '</table></div>';
 };
 ?>
 <?= $this->extend('tata_letak/admin') ?>
@@ -77,38 +112,26 @@ $sel      = static function (array $kolom, mixed $nilai): string {
                     <?php endif ?>
                 </p>
             <?php else : ?>
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover align-middle mb-0" id="tabel-rekap">
-                        <caption class="visually-hidden">Rekap <?= esc(Rekap::JENIS[$jenis]) ?></caption>
-                        <thead>
-                            <tr>
-                                <?php foreach ($rekap['kolom'] as $kunci => $kolom) : ?>
-                                    <th scope="col" data-kolom="<?= esc($kunci, 'attr') ?>"<?= $kolom['jenis'] === 'teks' ? '' : ' class="text-end"' ?>><?= esc($kolom['judul']) ?></th>
-                                <?php endforeach; ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($rekap['baris'] as $baris) : ?>
-                                <tr>
-                                    <?php foreach ($rekap['kolom'] as $kunci => $kolom) : ?>
-                                        <?= $sel($kolom, $baris[$kunci] ?? null) ?>
-                                    <?php endforeach; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                        <?php if ($rekap['jumlah'] !== null) : ?>
-                            <tfoot class="fw-semibold">
-                                <tr>
-                                    <?php foreach ($rekap['kolom'] as $kunci => $kolom) : ?>
-                                        <?= $sel($kolom, $rekap['jumlah'][$kunci] ?? null) ?>
-                                    <?php endforeach; ?>
-                                </tr>
-                            </tfoot>
-                        <?php endif ?>
-                    </table>
-                </div>
+                <?= $tabel($rekap, 'tabel-rekap', 'Rekap ' . Rekap::JENIS[$jenis]) ?>
             <?php endif ?>
         </div>
     </div>
+
+    <?php if (isset($rekap['tim_tanpa_pembayar'])) : ?>
+        <section class="card mt-4" aria-labelledby="judul-tim-tanpa-pembayar">
+            <div class="card-body">
+                <h2 id="judul-tim-tanpa-pembayar" class="h5 mb-1">Tim tanpa pembayar biaya tim</h2>
+                <?php if ($rekap['tim_tanpa_pembayar']['baris'] === []) : ?>
+                    <p class="text-body-secondary mb-0" id="tim-tanpa-pembayar-kosong">Semua tim beregu sudah punya pembayar biaya tim.</p>
+                <?php else : ?>
+                    <p class="small text-body-secondary mb-3">
+                        Pendaftaran yang membayar biaya tim ini sudah dihapus atau diubah, dan biayanya tidak dipindah otomatis.
+                        Tagihkan lewat Ubah di salah satu pendaftaran anggotanya dengan mencentang "Bebankan biaya tim ke pendaftaran ini".
+                    </p>
+                    <?= $tabel($rekap['tim_tanpa_pembayar'], 'tabel-tim-tanpa-pembayar', 'Tim tanpa pembayar biaya tim') ?>
+                <?php endif ?>
+            </div>
+        </section>
+    <?php endif ?>
 </div>
 <?= $this->endSection() ?>

@@ -21,6 +21,9 @@ use InvalidArgumentException;
  * - Satu tim = satu sekolah di satu nomor beregu: anggota dari pendaftaran
  *   susulan ber-NPSN sama ikut tim yang sama (K07). Sekolah tanpa NPSN
  *   dihitung per pendaftaran.
+ * - Rekap keuangan punya bagian kedua `tim_tanpa_pembayar` (`kolom`,
+ *   `baris`) dari `TimTanpaPembayar` (K68), ikut di halaman, Excel (lembar
+ *   kedua), dan PDF; `ringkasan()['tim_tanpa_pembayar']` jumlahnya.
  */
 final class Rekap
 {
@@ -73,7 +76,7 @@ final class Rekap
      * Angka dasbor: jumlah pendaftaran, atlet, tim, dan sekolah, serta
      * tagihan, lunas, dan belum dibayar (rupiah).
      *
-     * @return array{pendaftaran: int, atlet: int, tim: int, sekolah: int, tagihan: int, lunas: int, belum: int}
+     * @return array{pendaftaran: int, atlet: int, tim: int, sekolah: int, tagihan: int, lunas: int, belum: int, tim_tanpa_pembayar: int}
      */
     public function ringkasan(): array
     {
@@ -96,6 +99,8 @@ final class Rekap
             'tagihan'     => (int) $p['tagihan'],
             'lunas'       => (int) $p['lunas'],
             'belum'       => (int) $p['tagihan'] - (int) $p['lunas'],
+
+            'tim_tanpa_pembayar' => (new TimTanpaPembayar($this->db))->jumlah(),
         ];
     }
 
@@ -251,6 +256,22 @@ final class Rekap
             ]),
             'baris'  => $baris,
             'jumlah' => $baris === [] ? null : ['id_pendaftaran' => 'Jumlah'] + self::jumlahkan($baris, ['subtotal_individu', 'subtotal_beregu', 'total', 'lunas', 'belum']),
+
+            'tim_tanpa_pembayar' => [
+                'kolom' => self::kolom([
+                    'kelompok_umur'  => 'Kelompok Umur',
+                    'nomor_lomba'    => 'Nomor Lomba',
+                    'nama_sekolah'   => 'Sekolah',
+                    'kabupaten'      => 'Kabupaten',
+                    'jumlah_anggota' => ['judul' => 'Anggota', 'jenis' => 'angka'],
+                    'tarif'          => ['judul' => 'Biaya Tim Belum Ditagih', 'jenis' => 'rupiah'],
+                    'pendaftaran'    => 'Pendaftaran Anggota',
+                ]),
+                'baris' => array_map(static fn (array $t): array => [
+                    'pendaftaran' => implode('; ', array_map(static fn (array $p): string => $p['id_pendaftaran']
+                        . ' (' . (self::STATUS[$p['status']] ?? $p['status']) . ', ' . $p['jumlah_anggota'] . ' anggota)', $t['pendaftaran'])),
+                ] + $t, (new TimTanpaPembayar($this->db))->daftar()),
+            ],
         ];
     }
 
