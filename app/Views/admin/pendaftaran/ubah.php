@@ -23,7 +23,12 @@
  * @var array<string, mixed>                     $isian
  * @var array<string, mixed>                     $induk
  * @var list<array{jalur: string, pesan: string}> $galat
+ *
+ * Tim tanpa pembayar (K68): kotak centang `bebankan_tim[]` per tim yang
+ * ditandai (`isian['tim_tanpa_pembayar']`).
  */
+
+use App\Libraries\Panel\UbahPendaftaran;
 
 $p      = $isian['pendaftaran'];
 $alamat = 'admin/pendaftaran/' . (int) $p['id'];
@@ -370,6 +375,27 @@ $galatSekolah = [
                 </button>
             </div>
         </section>
+
+        <?php if ($isian['tim_tanpa_pembayar'] !== []) : ?>
+            <section class="card border-warning mb-4" aria-labelledby="judul-tim-tanpa-pembayar" id="tim-tanpa-pembayar">
+                <div class="card-body p-3 p-lg-4">
+                    <h2 id="judul-tim-tanpa-pembayar" class="h5 mb-1">Tim tanpa pembayar biaya tim</h2>
+                    <p class="small text-body-secondary mb-3">
+                        Pendaftaran yang membayar biaya tim ini sudah dihapus atau diubah. Biayanya tidak dipindah otomatis.
+                        Centang untuk menagihkannya ke pendaftaran ini dengan tarif saat ini; total dihitung ulang saat disimpan.
+                    </p>
+                    <?php foreach ($isian['tim_tanpa_pembayar'] as $nomorId => $tim) : ?>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="<?= esc(UbahPendaftaran::KUNCI_BEBANKAN, 'attr') ?>[]" value="<?= (int) $nomorId ?>"
+                                id="bebankan-tim-<?= (int) $nomorId ?>"<?= $tim['dibebankan'] ? ' checked' : '' ?>>
+                            <label class="form-check-label" for="bebankan-tim-<?= (int) $nomorId ?>">
+                                Bebankan biaya tim ke pendaftaran ini: <?= esc($tim['nomor_lomba']) ?>, <?= esc(rupiah((int) $tim['tarif'])) ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endif ?>
 
         <div class="d-flex flex-wrap gap-2 mb-5">
             <button type="submit" class="btn btn-primary" id="simpan-ubah">

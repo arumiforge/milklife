@@ -39,7 +39,9 @@ use Throwable;
  *
  * Penanggung jawab dan atlet tersimpan yang tidak ada di kiriman dihapus.
  * Kunci `konfirmasi_susulan` diabaikan: admin tidak diminta mengonfirmasi
- * tim susulan (K57).
+ * tim susulan (K57). Kunci `bebankan_tim` (`KUNCI_BEBANKAN`) berisi nomor
+ * beregu tim tanpa pembayar yang biaya timnya dibebankan ke pendaftaran ini
+ * (K68).
  *
  * ## Aturan
  *
@@ -52,6 +54,11 @@ use Throwable;
  *   nomor yang sama) dan tim (nomor beregu yang sama) yang tetap ada
  *   mempertahankan biaya tersimpan; baris baru memakai tarif saat ini (tim
  *   susulan tetap Rp0, K07). Subtotal dan total dihitung ulang dari baris itu.
+ * - Tim tanpa pembayar (K68, `TimTanpaPembayar`): nomor di `bebankan_tim`
+ *   yang tim pendaftaran ini dan biaya timnya Rp0 diberi tarif saat ini;
+ *   bila tim itu sudah punya pembayar lain, kiriman ditolak. Nomor lain
+ *   diabaikan. `tim_ditinggalkan` menyebut tim yang kehilangan pembayar
+ *   karena perubahan ini (untuk jendela konfirmasi dan pesan sesudahnya).
  * - K32: pendaftaran Lunas yang totalnya berubah kembali ke Menunggu.
  *   Perubahan ini hanya disimpan bila `$setujuMenunggu` (admin sudah melihat
  *   jendela konfirmasinya); tanpa itu hasilnya `perlu_setuju` dan tidak ada
@@ -90,6 +97,8 @@ use Throwable;
  *         'subtotal_individu' => 300000, 'subtotal_beregu' => 100000, 'total' => 400000,
  *         'atlet_baru'        => 1,       // atlet tanpa id di kiriman
  *         'nomor_dada'        => [21 => '2005'],   // nomor dada yang baru dibagikan (K59), hanya simpan()
+ *         'tim_dibebankan'    => [12],    // nomor beregu yang biaya timnya baru dibebankan (K68)
+ *         'tim_ditinggalkan'  => [ … ],   // `TimTanpaPembayar::ditinggalkan()` untuk perubahan ini
  *     ]
  */
 final class UbahPendaftaran
@@ -98,6 +107,11 @@ final class UbahPendaftaran
      * Lama menunggu kunci per NPSN, dalam detik.
      */
     public const TUNGGU_KUNCI = 10;
+
+    /**
+     * Kunci kiriman: nomor beregu yang biaya timnya dibebankan ke pendaftaran ini (K68).
+     */
+    public const KUNCI_BEBANKAN = 'bebankan_tim';
 
     /**
      * Isi `foto` pengganti untuk pemeriksa bila fotonya tidak dikirim ulang.
@@ -129,6 +143,7 @@ final class UbahPendaftaran
      *         'penanggung_jawab' => [['id' => 7, 'nama' => '…', 'nomor_wa' => '0812-…', 'foto' => '', 'ada_foto' => true]],
      *         'atlet'            => [['id' => 11, 'nama' => '…', 'nisn' => '…', 'tanggal_lahir' => '2017-04-12',
      *                                 'jenis_kelamin' => 'L', 'nomor' => [3, 7], 'nomor_dada' => '2001']],
+     *         'tim_tanpa_pembayar' => [12 => [… bentuk TimTanpaPembayar …, 'dibebankan' => false]],
      *     ]
      *
      * `id` bernilai `null` untuk baris baru; `foto` berisi data URL foto baru
@@ -156,7 +171,14 @@ final class UbahPendaftaran
                 'subtotal_beregu'   => (int) $p['subtotal_beregu'],
                 'total'             => (int) $p['total'],
             ],
+            'tim_tanpa_pembayar' => [],
         ];
+
+        $bebankan = self::nomorBebankan($kiriman ?? []);
+
+        foreach ((new TimTanpaPembayar($this->db))->untukPendaftaran($id) as $nomorId => $tim) {
+            $hasil['tim_tanpa_pembayar'][$nomorId] = $tim + ['dibebankan' => in_array($nomorId, $bebankan, true)];
+        }
 
         if ($kiriman === null) {
             $hasil['sekolah'] = [
@@ -475,6 +497,9 @@ final class UbahPendaftaran
                         'dibuat_pada'    => $sekarang,
                         'diubah_pada'    => $sekarang,
                     ]));
+                } elseif (in_array($nomorId, $rencana['tim_dibebankan'], true)) {
+                    $this->pastikan($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->where('nomor_lomba_id', $nomorId)
+                        ->update(['biaya_tim' => $biaya, 'diubah_pada' => $sekarang]));
                 }
             }
 
@@ -549,7 +574,8 @@ final class UbahPendaftaran
         $idAtlet = [];
         $fotoIsi = [];
 
-        unset($kiriman[PemeriksaPendaftaran::KUNCI_KONFIRMASI]);
+        $bebankan = self::nomorBebankan($kiriman);
+        unset($kiriman[PemeriksaPendaftaran::KUNCI_KONFIRMASI], $kiriman[self::KUNCI_BEBANKAN]);
 
         foreach ($pj as $i => $orang) {
             $orang = is_array($orang) ? $orang : [];
@@ -624,6 +650,8 @@ final class UbahPendaftaran
             'total'             => $totalLama,
             'atlet_baru'        => count(array_filter($idAtlet, static fn (?int $id): bool => $id === null)),
             'nomor_dada'        => [],
+            'tim_dibebankan'    => [],
+            'tim_ditinggalkan'  => [],
         ];
 
         if ($galat !== []) {
@@ -653,17 +681,40 @@ final class UbahPendaftaran
             $data['atlet'][$i]['id'] = $idAtlet[$i];
         }
 
-        // Biaya tim: tim tersimpan dipertahankan, tim baru tarif saat ini (susulan Rp0).
+        // Biaya tim: tim tersimpan dipertahankan, tim baru tarif saat ini (susulan Rp0);
+        // tim tanpa pembayar yang dicentang mendapat tarif saat ini (K68).
         $biayaBeregu = [];
+        $timTanpa    = new TimTanpaPembayar($this->db);
+        $npsnBaru    = $data['sekolah']['npsn'] ?? null;
 
         foreach ($data['beregu'] as $j => $tim) {
-            if (array_key_exists($tim['nomor_lomba_id'], $lama['beregu'])) {
-                $tim['biaya_tim'] = $lama['beregu'][$tim['nomor_lomba_id']];
+            $nomorId = (int) $tim['nomor_lomba_id'];
+
+            if (array_key_exists($nomorId, $lama['beregu'])) {
+                $tim['biaya_tim'] = $lama['beregu'][$nomorId];
+            }
+
+            if (in_array($nomorId, $bebankan, true) && (int) $tim['biaya_tim'] === 0) {
+                $tarif = $timTanpa->tarifBebankan($pendaftaranId, $npsnBaru, $nomorId);
+
+                if ($tarif === null) {
+                    $galat[] = ['jalur' => self::KUNCI_BEBANKAN . '.' . $nomorId, 'pesan' => $timTanpa->namaNomor($nomorId)
+                        . ': tim ini sudah punya pembayar biaya tim atau tarifnya Rp0, jadi tidak perlu dibebankan. Hapus centang "Bebankan biaya tim", lalu simpan lagi.'];
+                } else {
+                    $tim['biaya_tim']            = $tarif;
+                    $rencana['tim_dibebankan'][] = $nomorId;
+                }
             }
 
             $data['beregu'][$j] = $tim;
             $biayaBeregu[]      = (int) $tim['biaya_tim'];
         }
+
+        if ($galat !== []) {
+            return ['galat' => $galat] + $rencana;
+        }
+
+        $rencana['tim_ditinggalkan'] = $timTanpa->ditinggalkan($pendaftaranId, $npsnBaru, array_map('intval', array_column($data['beregu'], 'nomor_lomba_id')));
 
         foreach ($data['penanggung_jawab'] as $i => $orang) {
             $data['penanggung_jawab'][$i] = [
@@ -706,8 +757,11 @@ final class UbahPendaftaran
      */
     public static function kalimatKonfirmasi(array $hasil): string
     {
+        $tim = TimTanpaPembayar::kalimatDitinggalkan($hasil['tim_ditinggalkan'] ?? []);
+        $tim = $tim === '' ? '' : ' ' . $tim;
+
         if ($hasil['kembali_menunggu']) {
-            return self::kalimatMenunggu((int) $hasil['total_lama'], (int) $hasil['total']);
+            return self::kalimatMenunggu((int) $hasil['total_lama'], (int) $hasil['total']) . $tim;
         }
 
         $kalimat = 'Perubahan pendaftaran ' . $hasil['id_pendaftaran'] . ' akan disimpan. '
@@ -719,7 +773,7 @@ final class UbahPendaftaran
             $kalimat .= ' Pendaftaran ini sudah Lunas, jadi ' . $hasil['atlet_baru'] . ' atlet baru langsung mendapat nomor dada, dan nomor itu tidak bisa ditarik kembali.';
         }
 
-        return $kalimat;
+        return $kalimat . $tim;
     }
 
     /**
@@ -870,6 +924,7 @@ final class UbahPendaftaran
         return array_intersect_key($rencana, array_flip([
             'galat', 'id_pendaftaran', 'perlu_setuju', 'tersimpan', 'status_lama', 'status', 'kembali_menunggu',
             'total_lama', 'subtotal_individu', 'subtotal_beregu', 'total', 'atlet_baru', 'nomor_dada',
+            'tim_dibebankan', 'tim_ditinggalkan',
         ]));
     }
 
@@ -896,6 +951,8 @@ final class UbahPendaftaran
             'total'             => (int) $p['total'],
             'atlet_baru'        => 0,
             'nomor_dada'        => [],
+            'tim_dibebankan'    => [],
+            'tim_ditinggalkan'  => [],
         ];
     }
 
@@ -938,6 +995,18 @@ final class UbahPendaftaran
         if ($id < 1) {
             throw new RuntimeException('Atlet baru gagal ditulis.');
         }
+    }
+
+    /**
+     * Nomor beregu yang dicentang "Bebankan biaya tim" di kiriman.
+     *
+     * @param array<string, mixed> $kiriman
+     *
+     * @return list<int>
+     */
+    private static function nomorBebankan(array $kiriman): array
+    {
+        return array_values(array_filter(array_map(self::id(...), self::daftar($kiriman[self::KUNCI_BEBANKAN] ?? null))));
     }
 
     private static function npsn(mixed $nilai): ?string

@@ -59,6 +59,11 @@ final class EksporExcel
     private string $judulLembar;
 
     /**
+     * @var list<self> lembar berikutnya di berkas yang sama
+     */
+    private array $lembarLain = [];
+
+    /**
      * @param string                                                     $judulLembar Nama lembar kerja (tab di bawah Excel).
      * @param array<string, array{judul: string, jenis?: string}|string> $kolom       Kunci data => judul, atau `['judul' => …, 'jenis' => …]`.
      */
@@ -90,6 +95,17 @@ final class EksporExcel
         foreach ($baris as $satu) {
             $this->baris[] = $satu;
         }
+
+        return $this;
+    }
+
+    /**
+     * Tambah lembar kerja lain di belakang lembar ini (misalnya rekap keuangan
+     * dan tim tanpa pembayar).
+     */
+    public function tambahLembar(self $lembar): self
+    {
+        $this->lembarLain[] = $lembar;
 
         return $this;
     }
@@ -140,6 +156,12 @@ final class EksporExcel
             $nomor++;
         }
 
+        foreach ($this->lembarLain as $lain) {
+            $bukuLain = $lain->lembar();
+            $buku->addExternalSheet($bukuLain->getActiveSheet());
+        }
+
+        $buku->setActiveSheetIndex(0);
         $buku->getProperties()->setTitle($this->judulLembar)->setCreator('Panel admin')->setLastModifiedBy('Panel admin');
 
         return $buku;

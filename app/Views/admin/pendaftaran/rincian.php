@@ -12,8 +12,13 @@
  * - F6-04: tombol Ubah di deretan tombol tindakan (menuju `admin/pendaftaran/<id>/ubah`).
  * - F6-03: satu baris include `admin/pendaftaran/_bukti_bayar` setelah kartu biaya.
  *
- * @var CodeIgniter\View\View $this
- * @var array<string, mixed>  $p
+ * Tim tanpa pembayar (K68): peringatan di kartu tim yang ditandai, dan
+ * jendela hapus menyebut tim yang akan kehilangan pembayarnya.
+ *
+ * @var CodeIgniter\View\View                $this
+ * @var array<string, mixed>                 $p
+ * @var array<int, array<string, mixed>>     $timTanpaPembayar `TimTanpaPembayar::untukPendaftaran()`
+ * @var string                               $kalimatTimHapus  `TimTanpaPembayar::kalimatDitinggalkan()`, boleh kosong
  */
 
 $alamat      = 'admin/pendaftaran/' . (int) $p['id'];
@@ -34,7 +39,8 @@ $kalimatMenunggu = 'Status pendaftaran ' . $namaSingkat . ' akan kembali menjadi
 $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_sekolah'] . ' beserta ' . $p['jumlah_atlet']
     . ' atlet, penanggung jawab, tim beregu, foto, dan bukti bayarnya akan dihapus. NISN atletnya bisa didaftarkan lagi.'
     . ($adaNomor ? ' Nomor dada yang sudah dibagikan tidak dipakai ulang.' : '')
-    . ' Tindakan ini tidak bisa dibatalkan.';
+    . ' Tindakan ini tidak bisa dibatalkan.'
+    . ($kalimatTimHapus === '' ? '' : ' ' . $kalimatTimHapus);
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
@@ -246,6 +252,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                 <h2 id="judul-beregu" class="h5 mb-3">Tim beregu</h2>
                 <div class="row g-3">
                     <?php foreach ($p['beregu'] as $tim) : ?>
+                        <?php $nomorId = (int) $tim['nomor_lomba_id'] ?>
                         <div class="col-12 col-lg-6">
                             <div class="border rounded p-3 h-100 tim-beregu">
                                 <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
@@ -256,6 +263,13 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                             : '<span class="text-body-secondary">Tanpa biaya tim (tambahan anggota tim yang sudah terdaftar)</span>' ?>
                                     </span>
                                 </div>
+                                <?php if (isset($timTanpaPembayar[$nomorId])) : ?>
+                                    <div class="alert alert-warning small py-2 px-3 mb-2 tim-tanpa-pembayar" data-nomor="<?= (int) $nomorId ?>">
+                                        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                                        Tim sekolah ini tidak punya pembayar biaya tim (<?= esc(rupiah((int) $timTanpaPembayar[$nomorId]['tarif'])) ?>), karena pendaftaran yang membayarnya sudah dihapus atau diubah.
+                                        Tagihkan lewat <a href="<?= site_url($alamat . '/ubah') ?>">Ubah</a> dengan mencentang "Bebankan biaya tim ke pendaftaran ini".
+                                    </div>
+                                <?php endif ?>
                                 <p class="mb-1 small text-body-secondary"><?= count($tim['anggota']) ?> anggota</p>
                                 <ol class="mb-0 ps-3">
                                     <?php foreach ($tim['anggota'] as $anggota) : ?>

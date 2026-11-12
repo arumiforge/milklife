@@ -8,6 +8,7 @@ use App\Libraries\Panel\DataPanelPendaftaran;
 use App\Libraries\Panel\EksporExcel;
 use App\Libraries\Panel\HapusPendaftaran;
 use App\Libraries\Panel\StatusPembayaran;
+use App\Libraries\Panel\TimTanpaPembayar;
 use App\Libraries\Panel\UbahPendaftaran;
 use App\Libraries\Pendaftaran\DataIndukPendaftaran;
 use App\Libraries\Pendaftaran\Kabupaten;
@@ -27,7 +28,8 @@ use CodeIgniter\HTTP\ResponseInterface;
  * - `lunas`, `menunggu`: status pembayaran dan nomor dada (`StatusPembayaran`).
  * - `hapus`: pendaftaran beserta berkasnya (`HapusPendaftaran`).
  *
- * `ubah` dan `perbarui` ditambahkan F6-04.
+ * `ubah` dan `perbarui` ditambahkan F6-04. Rincian, hapus, dan perbarui
+ * menyebut tim tanpa pembayar (K68, `TimTanpaPembayar`).
  */
 class PendaftaranController extends BaseController
 {
@@ -67,7 +69,13 @@ class PendaftaranController extends BaseController
             throw PageNotFoundException::forPageNotFound('Pendaftaran tidak ditemukan. Mungkin sudah dihapus.');
         }
 
-        return view('admin/pendaftaran/rincian', ['p' => $pendaftaran]);
+        $tim = new TimTanpaPembayar();
+
+        return view('admin/pendaftaran/rincian', [
+            'p'                => $pendaftaran,
+            'timTanpaPembayar' => $tim->untukPendaftaran($id),
+            'kalimatTimHapus'  => TimTanpaPembayar::kalimatDitinggalkan($tim->ditinggalkan($id)),
+        ]);
     }
 
     /**
@@ -135,7 +143,8 @@ class PendaftaranController extends BaseController
     public function hapus(int $id): RedirectResponse
     {
         try {
-            $hasil = (new HapusPendaftaran())->hapus($id);
+            $tinggal = (new TimTanpaPembayar())->ditinggalkan($id);
+            $hasil   = (new HapusPendaftaran())->hapus($id);
         } catch (DatabaseException $e) {
             log_message('error', 'Hapus pendaftaran {id} gagal: {pesan}', ['id' => $id, 'pesan' => $e->getMessage()]);
 
@@ -149,7 +158,8 @@ class PendaftaranController extends BaseController
         return redirect()->to(self::ALAMAT)->with(
             'pesan_sukses',
             'Pendaftaran ' . $hasil['id_pendaftaran'] . ' (' . $hasil['nama_sekolah'] . ') sudah dihapus beserta '
-            . $hasil['jumlah_atlet'] . ' atlet. NISN atletnya bisa didaftarkan lagi.',
+            . $hasil['jumlah_atlet'] . ' atlet. NISN atletnya bisa didaftarkan lagi.'
+            . ($tinggal === [] ? '' : ' ' . TimTanpaPembayar::kalimatSesudah($tinggal)),
         );
     }
 
@@ -192,6 +202,7 @@ class PendaftaranController extends BaseController
             'sekolah'          => is_array($post['sekolah'] ?? null) ? $post['sekolah'] : [],
             'penanggung_jawab' => is_array($post['penanggung_jawab'] ?? null) ? $post['penanggung_jawab'] : [],
             'atlet'            => is_array($post['atlet'] ?? null) ? $post['atlet'] : [],
+            UbahPendaftaran::KUNCI_BEBANKAN => is_array($post[UbahPendaftaran::KUNCI_BEBANKAN] ?? null) ? $post[UbahPendaftaran::KUNCI_BEBANKAN] : [],
         ];
         $ubah = new UbahPendaftaran();
 
@@ -219,7 +230,11 @@ class PendaftaranController extends BaseController
                 'kembali_menunggu' => $hasil['kembali_menunggu'] ?? false,
                 'total_lama'       => $hasil['total_lama'] ?? null,
                 'total'            => $hasil['total'] ?? null,
-                'judul'            => ($hasil['kembali_menunggu'] ?? false) ? 'Status akan kembali ke Menunggu' : 'Simpan perubahan?',
+                'judul'            => match (true) {
+                    $hasil['kembali_menunggu'] ?? false   => 'Status akan kembali ke Menunggu',
+                    ($hasil['tim_ditinggalkan'] ?? []) !== [] => 'Tim akan kehilangan pembayar',
+                    default                                 => 'Simpan perubahan?',
+                },
                 'kalimat'          => $hasil['galat'] === [] ? UbahPendaftaran::kalimatKonfirmasi($hasil) : null,
                 'csrf'             => csrf_hash(),
             ]);
@@ -237,6 +252,14 @@ class PendaftaranController extends BaseController
 
         if ($hasil['nomor_dada'] !== []) {
             $pesan .= ' ' . count($hasil['nomor_dada']) . ' atlet baru mendapat nomor dada.';
+        }
+
+        if ($hasil['tim_dibebankan'] !== []) {
+            $pesan .= ' Biaya ' . count($hasil['tim_dibebankan']) . ' tim tanpa pembayar kini dibebankan ke pendaftaran ini.';
+        }
+
+        if ($hasil['tim_ditinggalkan'] !== []) {
+            $pesan .= ' ' . TimTanpaPembayar::kalimatSesudah($hasil['tim_ditinggalkan']);
         }
 
         return redirect()->to(self::ALAMAT . '/' . $id)->with('pesan_sukses', $pesan);

@@ -40,6 +40,10 @@ class RekapController extends BaseController
             $excel->tambahBaris([$rekap['jumlah']]);
         }
 
+        if (isset($rekap['tim_tanpa_pembayar'])) {
+            $excel->tambahLembar((new EksporExcel('Tim Tanpa Pembayar', $rekap['tim_tanpa_pembayar']['kolom']))->tambahBaris($rekap['tim_tanpa_pembayar']['baris']));
+        }
+
         return $excel->unduh((new RekapPdf($jenis, $this->status(), $rekap))->namaBerkas('xlsx'));
     }
 
