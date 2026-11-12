@@ -89,7 +89,7 @@ final class PengaturanPendaftaranTest extends UjiBasisData
         $this->assertSame('1', $this->nilai($xpath, 'penanggung_jawab_minimal'));
         $this->assertSame('5', $this->nilai($xpath, 'penanggung_jawab_maksimal'));
         $this->assertSame('2', $this->nilai($xpath, 'nomor_individu_maksimal'));
-        $this->assertSame('2', $this->nilai($xpath, 'atlet_per_nomor_maksimal'));
+        $this->assertSame('', $this->nilai($xpath, 'atlet_per_nomor_maksimal'));
         $this->assertSame(0, $xpath->query('//input[@name="buka_manual"][@checked]')->length);
         $this->assertSame(['tahun'], $this->nilaiTercentang($xpath, 'tampilan_usia'));
         $this->assertSame(2, $xpath->query('//input[@type="radio"][@name="tampilan_usia"]')->length);
@@ -295,8 +295,8 @@ final class PengaturanPendaftaranTest extends UjiBasisData
 
     public function testBatasAtletPerNomor(): void
     {
-        // K51: nilai awal 2, kosong berarti tidak dibatasi.
-        $this->assertSame(2, setting('Pendaftaran.atlet_per_nomor_maksimal'));
+        // K53: nilai awal tidak dibatasi (kosong).
+        $this->assertNull(setting('Pendaftaran.atlet_per_nomor_maksimal'));
 
         foreach (['0', '101', '-1', 'dua'] as $nilai) {
             $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['atlet_per_nomor_maksimal' => $nilai] + self::isianBenar());

@@ -199,6 +199,8 @@ Setelah Tahap 4 digabung, di terminal Laragon pada folder proyek:
 
 ## Asumsi yang perlu ditinjau
 
+Tinjauan pemilik 12 November 2026: asumsi 1, 2, 5, 6 disetujui (K54); asumsi 4 digantikan K53 (kuota per sekolah tidak dibatasi, batas 2 nomor individu per atlet); asumsi 3 belum dijawab.
+
 1. NPSN yang ada di data referensi menentukan nama, kabupaten, dan jenjang sekolah; pilihan official di langkah 1 menyesuaikan, bukan ditolak.
 2. NISN dan aturan lintas pendaftaran (tim, kuota) diperiksa server saat pindah dari langkah 3 ke langkah 4 dan sekali lagi saat simpan, bukan setiap atlet ditambahkan.
 3. Pada pendaftaran susulan, atlet yang dipilih di nomor beregu yang timnya sudah ada otomatis menjadi tambahan anggota tim itu, tanpa biaya tim. Wizard memberi tahu hal ini di daftar sementara.

@@ -4,7 +4,7 @@ Diperbarui: 12 November 2026
 
 ## Sedang berjalan
 
-Belum ada. Tahap 4 dan Tahap 5 selesai 12 November 2026; berikutnya Tahap 6 — Panel data.
+Belum ada. Tahap 4 dan Tahap 5 selesai 12 November 2026; berikutnya Tahap 6 — Panel data, dikerjakan sesi koordinator dengan sub-sesi paralel (K56).
 
 ## Berikutnya
 
@@ -24,7 +24,4 @@ Belum ada. Tahap 4 dan Tahap 5 selesai 12 November 2026; berikutnya Tahap 6 — 
 
 ## Menunggu pemilik
 
-- Juknis resmi untuk `sumber/`; menyusul (K30). Batas tahun lahir kelompok umur sudah diisi dari ketetapan pemilik (K36) dan disesuaikan bila juknis berbeda.
-- Mencoba pemasangan di Laragon sesuai `README.md`.
-- Nilai awal batas atlet per sekolah per nomor individu (K51) adalah 2; pemilik belum menyebut angkanya.
-- Tinjauan rencana Tahap 4 (`dokumen/draf/rencana-implementasi-tahap-4.md`), termasuk enam asumsinya.
+- Asumsi 3 rencana Tahap 4: atlet susulan di nomor beregu otomatis menjadi tambahan anggota tim yang sudah ada, tanpa biaya tim (K54). Asumsi lain sudah dijawab (K53, K54); juknis tidak ditunggu (K55).

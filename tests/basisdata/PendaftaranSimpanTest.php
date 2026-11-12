@@ -88,9 +88,10 @@ final class PendaftaranSimpanTest extends UjiBasisData
         );
     }
 
-    public function testKuotaBawaanDua(): void
+    public function testKuotaBawaanTidakDibatasi(): void
     {
-        $this->assertSame(2, DataIndukPendaftaran::aturan()['atlet_per_nomor_maksimal']);
+        // K53: kuota atlet per sekolah per nomor individu bawaannya tidak dibatasi.
+        $this->assertNull(DataIndukPendaftaran::aturan()['atlet_per_nomor_maksimal']);
     }
 
     // Simpan
