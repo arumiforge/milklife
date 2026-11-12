@@ -9,7 +9,8 @@
  *
  * Nomor yang sudah dipakai atlet atau tim: kelompok umur, jenis, dan
  * kategorinya ditampilkan terkunci (nilainya tetap dikirim lewat isian
- * tersembunyi) dan tombol hapus tidak tampil.
+ * tersembunyi), isian tim yang sudah terisi hanya-baca, dan tombol hapus
+ * tidak tampil (F6-07).
  *
  * @var CodeIgniter\View\View                                 $this
  * @var array<string, string>                                 $isian
@@ -38,6 +39,8 @@ $pesan = static fn (string $kotak): string => isset($galat[$kotak])
     ? '<div id="' . $kotak . '-galat" class="invalid-feedback d-block">' . esc($galat[$kotak]) . '</div>'
     : '';
 $kunci = $dipakai ? ' disabled' : '';
+// Isian tim yang sudah terisi ikut terkunci; yang masih kosong (data awal) boleh dilengkapi.
+$tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kotak] ?? '') !== '' ? ' readonly' : '';
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
@@ -62,7 +65,8 @@ $kunci = $dipakai ? ' disabled' : '';
                         <div class="alert alert-info d-flex align-items-start gap-2" role="note" id="keterangan-dipakai">
                             <i class="bi bi-info-circle-fill flex-shrink-0" aria-hidden="true"></i>
                             <div>
-                                Nomor ini sudah dipakai atlet atau tim, jadi kelompok umur, jenis, dan kategorinya dikunci, dan nomor ini tidak bisa dihapus.
+                                Nomor ini sudah dipakai atlet atau tim, jadi kelompok umur, jenis, kategori, jumlah inti, batas anggota, dan jumlah putra/putri minimalnya dikunci, dan nomor ini tidak bisa dihapus.
+                                Nama, biaya beregu, urutan, dan aktif tetap bisa diubah; biaya baru hanya berlaku untuk pendaftaran berikutnya.
                                 Bila tidak dipakai lagi, matikan saja supaya tidak muncul di pendaftaran.
                             </div>
                         </div>
@@ -148,7 +152,7 @@ $kunci = $dipakai ? ' disabled' : '';
                                     <label for="jumlah_inti" class="form-label">Jumlah anggota inti</label>
                                     <div class="input-group has-validation">
                                         <input type="text" inputmode="numeric" class="form-control<?= $salah('jumlah_inti') ?>" id="jumlah_inti" name="jumlah_inti"
-                                            value="<?= esc($isian['jumlah_inti'], 'attr') ?>"<?= $jelas('jumlah_inti') !== '' ? ' aria-describedby="' . $jelas('jumlah_inti') . '"' : '' ?>>
+                                            value="<?= esc($isian['jumlah_inti'], 'attr') ?>"<?= $tetap('jumlah_inti') ?><?= $jelas('jumlah_inti') !== '' ? ' aria-describedby="' . $jelas('jumlah_inti') . '"' : '' ?>>
                                         <span class="input-group-text">orang</span>
                                     </div>
                                     <?= $pesan('jumlah_inti') ?>
@@ -157,7 +161,7 @@ $kunci = $dipakai ? ' disabled' : '';
                                     <label for="batas_anggota" class="form-label">Batas anggota</label>
                                     <div class="input-group has-validation">
                                         <input type="text" inputmode="numeric" class="form-control<?= $salah('batas_anggota') ?>" id="batas_anggota" name="batas_anggota"
-                                            value="<?= esc($isian['batas_anggota'], 'attr') ?>" aria-describedby="<?= $jelas('batas_anggota', 'batas_anggota-bantuan') ?>">
+                                            value="<?= esc($isian['batas_anggota'], 'attr') ?>"<?= $tetap('batas_anggota') ?> aria-describedby="<?= $jelas('batas_anggota', 'batas_anggota-bantuan') ?>">
                                         <span class="input-group-text">orang</span>
                                     </div>
                                     <div id="batas_anggota-bantuan" class="form-text">Paling banyak, termasuk cadangan. Sama dengan jumlah inti bila tanpa cadangan.</div>
@@ -183,7 +187,7 @@ $kunci = $dipakai ? ' disabled' : '';
                                         <label for="jumlah_putra" class="form-label">Putra minimal</label>
                                         <div class="input-group has-validation">
                                             <input type="text" inputmode="numeric" class="form-control<?= $salah('jumlah_putra') ?>" id="jumlah_putra" name="jumlah_putra"
-                                                value="<?= esc($isian['jumlah_putra'], 'attr') ?>"<?= $jelas('jumlah_putra') !== '' ? ' aria-describedby="' . $jelas('jumlah_putra') . '"' : '' ?>>
+                                                value="<?= esc($isian['jumlah_putra'], 'attr') ?>"<?= $tetap('jumlah_putra') ?><?= $jelas('jumlah_putra') !== '' ? ' aria-describedby="' . $jelas('jumlah_putra') . '"' : '' ?>>
                                             <span class="input-group-text">orang</span>
                                         </div>
                                         <?= $pesan('jumlah_putra') ?>
@@ -192,7 +196,7 @@ $kunci = $dipakai ? ' disabled' : '';
                                         <label for="jumlah_putri" class="form-label">Putri minimal</label>
                                         <div class="input-group has-validation">
                                             <input type="text" inputmode="numeric" class="form-control<?= $salah('jumlah_putri') ?>" id="jumlah_putri" name="jumlah_putri"
-                                                value="<?= esc($isian['jumlah_putri'], 'attr') ?>"<?= $jelas('jumlah_putri') !== '' ? ' aria-describedby="' . $jelas('jumlah_putri') . '"' : '' ?>>
+                                                value="<?= esc($isian['jumlah_putri'], 'attr') ?>"<?= $tetap('jumlah_putri') ?><?= $jelas('jumlah_putri') !== '' ? ' aria-describedby="' . $jelas('jumlah_putri') . '"' : '' ?>>
                                             <span class="input-group-text">orang</span>
                                         </div>
                                         <?= $pesan('jumlah_putri') ?>

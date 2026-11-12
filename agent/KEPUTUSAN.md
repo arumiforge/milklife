@@ -155,3 +155,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K62 | Gelombang Tahap 6 setelah F6-01 dijalankan pemilik sendiri di sesi berbeda, bukan oleh sesi koordinator | Mengubah cara kerja K56 untuk gelombang 2–4. Rencana, pembagian berkas, dan batas 3 sesi sekaligus (K38) tetap berlaku |
+
+## 12 November 2026 — ubah pendaftaran (F6-04)
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K63 | ID pendaftaran tidak berubah saat admin mengubah pendaftaran, juga bila jenjang sekolahnya diubah. Kode jenjang di ID (rancangan 6.8) tetap mengikuti data saat mendaftar | Supaya lebih aman dan sederhana: ID yang sudah dipegang sekolah, tercetak di bukti, dan dipakai di halaman cek tidak berganti. Dikonfirmasi pemilik di sesi F6-04 ([#52](https://github.com/arumiforge/milklife/pull/52)) dan dicatat sesi koordinator |
