@@ -1,5 +1,6 @@
 <?php
 
+use CodeIgniter\Test\StreamFilterTrait;
 use Tests\Support\KirimFormulir;
 use Tests\Support\UjiBasisData;
 
@@ -13,6 +14,7 @@ use Tests\Support\UjiBasisData;
 final class HalamanDepanLombaTest extends UjiBasisData
 {
     use KirimFormulir;
+    use StreamFilterTrait;
 
     // ---------- Bagian kosong ----------
 
@@ -67,7 +69,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $this->assertSame(69, array_sum(array_map(intval(...), $angka[0])));
 
         // Putra dan putri dengan nama yang sama digabung menjadi satu baris.
-        $ku10 = '//article[contains(@class, "lomba-ku")][2]';
+        $ku10 = '(//article[contains(@class, "lomba-ku")])[2]';
         $this->assertSame(
             ['Lari 60 m — Putra, Putri', 'Frog Jump — Putra, Putri', 'Turbo Throw — Putra, Putri'],
             $this->daftarTeks($xpath, $ku10 . '//ul[contains(@class, "lomba-daftar-individu")]/li'),
@@ -83,7 +85,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $this->assertSame(['4 atlet per tim', '4 atlet per tim', '8 atlet per tim'], $this->daftarTeks($xpath, $ku10 . '//ul[contains(@class, "lomba-beregu-info")]/li[1]'));
 
         // KU 8 tanpa nomor beregu: tanpa judul "Nomor beregu".
-        $this->assertSame(0, $xpath->query('//article[contains(@class, "lomba-ku")][1]//ul[contains(@class, "lomba-daftar-beregu")]')->length);
+        $this->assertSame(0, $xpath->query('(//article[contains(@class, "lomba-ku")])[1]//ul[contains(@class, "lomba-daftar-beregu")]')->length);
 
         // Daftar nomor bisa dilipat dan tertutup saat halaman dibuka.
         $this->assertSame(5, $xpath->query('//article[contains(@class, "lomba-ku")]/details[contains(@class, "lomba-nomor")]/summary')->length);
@@ -170,7 +172,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $baris = $xpath->query('//ul[contains(@class, "lomba-daftar-beregu")]/li');
 
         $this->assertSame(5, $baris->length);
-        $this->assertSame(['5 beregu'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-nomor-jumlah")]'), 'Jumlah menghitung nomor, bukan baris.');
+        $this->assertSame(['6 beregu'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-nomor-jumlah")]'), 'Jumlah menghitung nomor, bukan baris.');
         $this->assertSame(0, $xpath->query('//ul[contains(@class, "lomba-daftar-individu")]')->length);
 
         $this->assertSame([

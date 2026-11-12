@@ -134,12 +134,14 @@ $keteranganTim = static function (array $nomor): array {
                         <?php else : ?>
                             <details class="lomba-nomor">
                                 <summary>
-                                    <span class="lomba-nomor-label"><span class="lomba-nomor-buka">Lihat nomor lomba</span><span class="lomba-nomor-tutup">Sembunyikan nomor lomba</span></span>
-                                    <span class="lomba-nomor-jumlah">
-                                        <?= esc(implode(' · ', array_filter([
-                                            $jumlahIndividu > 0 ? "{$jumlahIndividu} individu" : '',
-                                            $jumlahBeregu > 0 ? "{$jumlahBeregu} beregu" : '',
-                                        ]))) ?>
+                                    <span class="lomba-nomor-ringkas">
+                                        <span class="lomba-nomor-label"><span class="lomba-nomor-buka">Lihat nomor lomba</span><span class="lomba-nomor-tutup">Sembunyikan nomor lomba</span></span>
+                                        <span class="lomba-nomor-jumlah">
+                                            <?= esc(implode(' · ', array_filter([
+                                                $jumlahIndividu > 0 ? "{$jumlahIndividu} individu" : '',
+                                                $jumlahBeregu > 0 ? "{$jumlahBeregu} beregu" : '',
+                                            ]))) ?>
+                                        </span>
                                     </span>
                                     <i class="bi bi-chevron-down lomba-nomor-panah" aria-hidden="true"></i>
                                 </summary>
