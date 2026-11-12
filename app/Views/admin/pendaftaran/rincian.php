@@ -284,7 +284,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
         </div>
     </section>
 
-    <?php /* F6-03: include admin/pendaftaran/_bukti_bayar ditambahkan di sini. */ ?>
+    <?= view('admin/pendaftaran/_bukti_bayar', ['pendaftaran' => $p], ['saveData' => false]) ?>
 </div>
 <?= $this->endSection() ?>
 
