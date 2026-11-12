@@ -8,6 +8,8 @@ use App\Libraries\Panel\DataPanelPendaftaran;
 use App\Libraries\Panel\EksporExcel;
 use App\Libraries\Panel\HapusPendaftaran;
 use App\Libraries\Panel\StatusPembayaran;
+use App\Libraries\Panel\UbahPendaftaran;
+use App\Libraries\Pendaftaran\DataIndukPendaftaran;
 use App\Libraries\Pendaftaran\Kabupaten;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\Exceptions\PageNotFoundException;
@@ -149,5 +151,94 @@ class PendaftaranController extends BaseController
             'Pendaftaran ' . $hasil['id_pendaftaran'] . ' (' . $hasil['nama_sekolah'] . ') sudah dihapus beserta '
             . $hasil['jumlah_atlet'] . ' atlet. NISN atletnya bisa didaftarkan lagi.',
         );
+    }
+
+    /**
+     * Formulir ubah pendaftaran (F6-04), atau formulir yang ditampilkan ulang
+     * dengan galat dari `perbarui()`.
+     *
+     * @param array<string, mixed>|null                  $kiriman Isian yang ditampilkan ulang.
+     * @param list<array{jalur: string, pesan: string}> $galat
+     */
+    public function ubah(int $id, ?array $kiriman = null, array $galat = []): string
+    {
+        $isian = (new UbahPendaftaran())->isian($id, $kiriman);
+
+        if ($isian === null) {
+            throw PageNotFoundException::forPageNotFound('Pendaftaran tidak ditemukan. Mungkin sudah dihapus.');
+        }
+
+        return view('admin/pendaftaran/ubah', [
+            'isian' => $isian,
+            'induk' => (new DataIndukPendaftaran())->untukWizard(),
+            'galat' => $galat,
+        ]);
+    }
+
+    /**
+     * Simpan perubahan pendaftaran (F6-04; `UbahPendaftaran`).
+     *
+     * Dengan `pratinjau=1` (dikirim `aset/js/admin-ubah-pendaftaran.js`
+     * sebelum jendela konfirmasi) tidak ada yang ditulis: jawabannya JSON
+     * berisi galat atau kalimat konfirmasi (K32, K59) dan token CSRF baru.
+     * Tanpa itu: berhasil dialihkan ke rincian dengan pesan kilat; galat
+     * menampilkan ulang formulir.
+     */
+    public function perbarui(int $id): RedirectResponse|ResponseInterface|string
+    {
+        $post      = $this->request->getPost();
+        $pratinjau = ($post['pratinjau'] ?? '') === '1';
+        $kiriman   = [
+            'sekolah'          => is_array($post['sekolah'] ?? null) ? $post['sekolah'] : [],
+            'penanggung_jawab' => is_array($post['penanggung_jawab'] ?? null) ? $post['penanggung_jawab'] : [],
+            'atlet'            => is_array($post['atlet'] ?? null) ? $post['atlet'] : [],
+        ];
+        $ubah = new UbahPendaftaran();
+
+        try {
+            $hasil = $pratinjau
+                ? $ubah->periksa($id, $kiriman)
+                : $ubah->simpan($id, $kiriman, ($post['setuju_menunggu'] ?? '') === '1');
+        } catch (DatabaseException $e) {
+            log_message('error', 'Ubah pendaftaran {id} gagal: {pesan}', ['id' => $id, 'pesan' => $e->getMessage()]);
+
+            $hasil = ['galat' => [['jalur' => 'simpan', 'pesan' => 'Perubahan belum disimpan. ' . self::PESAN_SIBUK]]];
+        }
+
+        if ($hasil === null) {
+            return $pratinjau
+                ? $this->response->setStatusCode(404)->setJSON(['galat' => [['jalur' => 'simpan', 'pesan' => 'Pendaftaran ini tidak ditemukan. Mungkin sudah dihapus.']], 'csrf' => csrf_hash()])
+                : redirect()->to(self::ALAMAT)->with('pesan_galat', 'Pendaftaran ini tidak ditemukan. Mungkin sudah dihapus.');
+        }
+
+        $idPendaftaran = (string) ($hasil['id_pendaftaran'] ?? '');
+
+        if ($pratinjau) {
+            return $this->response->setHeader('Cache-Control', 'no-store')->setJSON([
+                'galat'            => $hasil['galat'],
+                'kembali_menunggu' => $hasil['kembali_menunggu'] ?? false,
+                'total_lama'       => $hasil['total_lama'] ?? null,
+                'total'            => $hasil['total'] ?? null,
+                'judul'            => ($hasil['kembali_menunggu'] ?? false) ? 'Status akan kembali ke Menunggu' : 'Simpan perubahan?',
+                'kalimat'          => $hasil['galat'] === [] ? UbahPendaftaran::kalimatKonfirmasi($hasil) : null,
+                'csrf'             => csrf_hash(),
+            ]);
+        }
+
+        if ($hasil['galat'] !== []) {
+            return $this->ubah($id, $kiriman, $hasil['galat']);
+        }
+
+        $pesan = 'Perubahan pendaftaran ' . $idPendaftaran . ' tersimpan. Total sekarang ' . rupiah($hasil['total']) . '.';
+
+        if ($hasil['kembali_menunggu']) {
+            $pesan .= ' Status kembali menjadi Menunggu Konfirmasi Pembayaran; tandai Lunas lagi setelah selisihnya diurus.';
+        }
+
+        if ($hasil['nomor_dada'] !== []) {
+            $pesan .= ' ' . count($hasil['nomor_dada']) . ' atlet baru mendapat nomor dada.';
+        }
+
+        return redirect()->to(self::ALAMAT . '/' . $id)->with('pesan_sukses', $pesan);
     }
 }
