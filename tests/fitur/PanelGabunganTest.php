@@ -326,7 +326,7 @@ final class PanelGabunganTest extends UjiBasisData
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId($a['id_pendaftaran'])))->html();
         $this->assertStringContainsString('BUDI KARANGAN UBAH', $html);
         $this->assertStringContainsString('Rp400.000', $html);
-        $this->assertStringContainsString('lencana-menunggu', $html);
+        $this->assertStringContainsString('stempel stempel-menunggu', $html);
 
         $pdf = $this->get('bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', $a['id_pendaftaran'])->get()->getRow()->kode_bukti . '/' . $a['id_pendaftaran']);
         $pdf->assertOK();
