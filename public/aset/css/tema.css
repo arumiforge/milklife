@@ -1377,3 +1377,110 @@ h1, h2, h3, h4, h5, h6,
 
 
 /* ---------- Akhir bagian jadwal, unduhan, kontak ---------- */
+
+/* ---------- Halaman cek (Tahap 5) ---------- */
+
+.halaman-cek-kepala {
+    padding: 2rem 0;
+    background: var(--ml-gradasi-kepala);
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.halaman-cek-kepala h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+    font-weight: 800;
+    color: var(--ml-putih);
+}
+
+.halaman-cek-isi {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.cek-formulir,
+.cek-belum-siap {
+    max-width: 40rem;
+    margin: 0 auto 2rem;
+}
+
+.cek-belum-siap {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 1rem;
+}
+
+.cek-sekolah-data,
+.cek-biaya {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.5rem 1rem;
+}
+
+.cek-sekolah-data dt,
+.cek-biaya dt {
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: var(--ml-teks-redup);
+}
+
+.cek-sekolah-data dd,
+.cek-biaya dd {
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+.cek-kartu {
+    margin-bottom: 1.5rem;
+}
+
+.cek-kartu-kepala {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.cek-kartu-tindakan {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cek-kartu-tindakan .badge {
+    white-space: normal;
+}
+
+.cek-tabel {
+    font-size: 0.875rem;
+}
+
+.cek-tabel td,
+.cek-tabel th {
+    white-space: nowrap;
+}
+
+.cek-biaya-total dd,
+.cek-total-semua strong {
+    font-size: 1.25rem;
+    color: var(--ml-biru-tua);
+}
+
+.cek-total-semua {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--ml-biru-muda-pucat);
+    border-radius: 1rem;
+}
+
+/* ---------- Akhir halaman cek ---------- */

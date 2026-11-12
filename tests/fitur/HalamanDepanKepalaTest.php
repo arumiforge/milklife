@@ -176,7 +176,10 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         }
 
         // Tetap nonaktif walau pendaftaran terbuka, sampai halamannya ada (K39).
-        $this->assertSame(['Pendaftaran Segera', 'Cek Pendaftaran Segera'], array_keys($tombol));
+        // Cek sudah punya halaman (Tahap 5) dan aktif karena pengaturan lengkap.
+        $this->assertSame(['Pendaftaran Segera', 'Cek Pendaftaran'], array_keys($tombol));
+        $this->assertSame(site_url('cek-pendaftaran'), $tombol['Cek Pendaftaran']->getAttribute('href'));
+        unset($tombol['Cek Pendaftaran']);
 
         foreach ($tombol as $label => $simpul) {
             $this->assertSame('true', $simpul->getAttribute('aria-disabled'), $label);

@@ -149,9 +149,10 @@ final class IsiHalamanDepan
     public const ALAMAT_PENDAFTARAN = null;
 
     /**
-     * Alamat halaman Cek Pendaftaran (Tahap 5). `null` = belum ada.
+     * Alamat halaman Cek Pendaftaran (Tahap 5). Menu selalu menaut ke sini;
+     * tombol di halaman depan hanya bila pengaturan lengkap (`tombol()`).
      */
-    public const ALAMAT_CEK_PENDAFTARAN = null;
+    public const ALAMAT_CEK_PENDAFTARAN = 'cek-pendaftaran';
 
     /**
      * Kunci gambar di `HalamanDepan`, berurutan seperti tampil.
@@ -247,7 +248,8 @@ final class IsiHalamanDepan
     {
         return [
             ['kunci' => 'pendaftaran', 'label' => 'Pendaftaran', 'alamat' => self::ALAMAT_PENDAFTARAN, 'utama' => true],
-            ['kunci' => 'cek', 'label' => 'Cek Pendaftaran', 'alamat' => self::ALAMAT_CEK_PENDAFTARAN, 'utama' => false],
+            // Cek hanya bisa dipakai bila pengaturan lengkap (rancangan 6.1).
+            ['kunci' => 'cek', 'label' => 'Cek Pendaftaran', 'alamat' => $this->bukaTutup()->keadaan() === BukaTutupPendaftaran::DISIAPKAN ? null : self::ALAMAT_CEK_PENDAFTARAN, 'utama' => false],
         ];
     }
 

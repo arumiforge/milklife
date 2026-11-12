@@ -16,6 +16,10 @@ $routes->get('/', 'BerandaController::index');
 // alamatnya menampilkan halaman tidak ditemukan.
 $routes->get('unduhan', 'UnduhanController::index');
 
+// Cek pendaftaran dan bukti (Tahap 5). Blok milik sesi Tahap 5 (K48).
+$routes->get('cek-pendaftaran', 'CekPendaftaranController::index');
+// Akhir blok Tahap 5
+
 // Admin. Semua rute dijaga filter `admin` (`App\Filters\AdminFilter`):
 // yang belum masuk hanya bisa membuka halaman masuk.
 $routes->get('admin', static fn () => redirect()->to('admin/dasbor'), ['filter' => 'admin']);
