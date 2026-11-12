@@ -24,6 +24,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Rencana implementasi Tahap 4: `dokumen/draf/rencana-implementasi-tahap-4.md`.
 - Rencana implementasi Tahap 5: `dokumen/draf/rencana-implementasi-tahap-5.md`.
 - Rencana implementasi Tahap 6: `dokumen/draf/rencana-implementasi-tahap-6.md`.
+- Rencana implementasi Tahap 7: `dokumen/draf/rencana-implementasi-tahap-7.md`.
 - Arsip tahap selesai: `agent/arsip/`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
 - Bahan asli: `sumber/flyer/`.
