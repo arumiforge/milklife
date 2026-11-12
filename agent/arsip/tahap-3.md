@@ -22,7 +22,7 @@ Catatan koordinator: PR #24 (rencana, K39–K43). Tinjauan pemilik setelah F3-03
 - Halaman `/unduhan` dan menu Unduhan aktif (K40).
 - `App\Libraries\IsiHalamanDepan`: satu-satunya pengumpul data halaman publik; hanya data yang boleh dilihat pengunjung.
 - Perapian: kiriman di atas `post_max_size` mendapat pesan ramah; judul tab admin dan halaman masuk memakai nama acara; alamat IP pengunjung dibaca dari `CF-Connecting-IP` hanya bila datang dari komputer server sendiri (K31).
-- `composer uji`: JUMLAH_UJI uji lulus pada salinan baru `main` setelah penutupan.
+- `composer uji`: 798 uji lulus pada salinan baru `main` sebelum penutupan, 801 uji (5.217 asersi) lulus pada cabang penutupan dengan K44 dan K45.
 
 ## Yang dibawa ke tahap berikutnya
 
