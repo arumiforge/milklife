@@ -43,7 +43,7 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
 <div class="container-fluid px-3 px-lg-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="text-body-secondary mb-4">
+    <p class="teks-info mb-4">
         Rekening ini tampil di langkah terakhir pendaftaran. Official sekolah mentransfer ke rekening ini,
         lalu menekan tombol WA untuk mengirim pesan konfirmasi ke nomor di bawah.
     </p>

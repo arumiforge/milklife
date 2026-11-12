@@ -52,6 +52,7 @@ use App\Models\TautanModel;
                     <table class="table align-middle mb-0">
                         <thead>
                             <tr>
+                                <th scope="col" class="text-end">No</th>
                                 <th scope="col" class="text-center">Urutan</th>
                                 <th scope="col">Jadwal</th>
                                 <th scope="col">Tampil</th>
@@ -59,8 +60,10 @@ use App\Models\TautanModel;
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $no = 0; ?>
                             <?php foreach ($daftar as $jadwal) : ?>
                                 <tr data-id="<?= (int) $jadwal['id'] ?>">
+                                    <td class="text-end text-body-secondary"><?= ++$no ?></td>
                                     <td class="text-center"><?= (int) $jadwal['urutan'] ?></td>
                                     <td style="min-width: 13rem">
                                         <span class="fw-semibold d-block"><?= esc($jadwal['judul']) ?></span>

@@ -150,6 +150,53 @@ final class PanelPendaftaranTindakanTest extends UjiBasisData
         $this->assertSame(1, $this->db->table('pendaftaran')->countAllResults());
     }
 
+    // ---------- Tindakan massal (K76) ----------
+
+    public function testMassalLunasMenungguDanYangGagalDisebut(): void
+    {
+        $a = $this->buatPendaftaranPanel();
+        $b = $this->buatPendaftaranPanel(['sekolah' => ['nama' => 'SD KARANGAN JAYA', 'npsn' => '99999912']]);
+
+        $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/massal', ['tindakan' => 'lunas', 'id' => [$a['id'], $b['id']]]);
+        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran', '2 pendaftaran ditandai Lunas. 4 atlet mendapat nomor dada baru.');
+        $this->assertSame(['lunas', 'lunas'], [$this->statusPendaftaran($a['id']), $this->statusPendaftaran($b['id'])]);
+
+        // Yang sudah Menunggu tidak diubah dan disebut dengan ID-nya; yang lain tetap diproses.
+        $this->kirimSebagaiAdmin('admin/pendaftaran/' . $b['id'] . '/menunggu');
+        $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/massal', ['tindakan' => 'menunggu', 'id' => [$a['id'], $b['id']]]);
+        $hasil->assertRedirectTo(site_url('admin/pendaftaran'));
+        $this->assertSame('1 pendaftaran kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.', $_SESSION['pesan_sukses']);
+        $this->assertStringStartsWith('1 pendaftaran tidak diubah: ' . $b['id_pendaftaran'] . ': ', (string) $_SESSION['pesan_galat']);
+        $this->assertSame('menunggu', $this->statusPendaftaran($a['id']));
+        $this->assertNotContains(null, $this->nomorDada($a['atlet']), 'Nomor dada tetap.');
+    }
+
+    public function testMassalHapus(): void
+    {
+        $a = $this->buatPendaftaranPanel();
+        $b = $this->buatPendaftaranPanel(['sekolah' => ['nama' => 'SD KARANGAN JAYA', 'npsn' => '99999912']]);
+        $c = $this->buatPendaftaranPanel(['sekolah' => ['nama' => 'SD KARANGAN SENTOSA', 'npsn' => '99999913']]);
+
+        $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/massal', ['tindakan' => 'hapus', 'id' => [$a['id'], $c['id'], 999999]]);
+
+        $hasil->assertRedirectTo(site_url('admin/pendaftaran'));
+        $this->assertStringStartsWith('2 pendaftaran dihapus', (string) $_SESSION['pesan_sukses']);
+        $this->assertStringContainsString('tidak ditemukan', (string) $_SESSION['pesan_galat']);
+        $this->seeNumRecords(1, 'pendaftaran', []);
+        $this->seeInDatabase('pendaftaran', ['id' => $b['id']]);
+    }
+
+    public function testMassalTanpaCentangAtauTindakanSalahDitolak(): void
+    {
+        $a = $this->buatPendaftaranPanel();
+
+        $this->assertGagalDialihkan($this->kirimSebagaiAdmin('admin/pendaftaran/massal', ['tindakan' => 'lunas']), 'admin/pendaftaran', 'Belum ada pendaftaran yang dicentang. Centang pendaftarannya dulu, lalu pilih tindakan.');
+        $this->assertGagalDialihkan($this->kirimSebagaiAdmin('admin/pendaftaran/massal', ['tindakan' => 'kosongkan', 'id' => [$a['id']]]), 'admin/pendaftaran');
+        $this->assertSame('menunggu', $this->statusPendaftaran($a['id']));
+        $this->assertTokenCsrfWajib('admin/pendaftaran/massal', ['tindakan' => 'hapus', 'id' => [$a['id']]]);
+        $this->seeInDatabase('pendaftaran', ['id' => $a['id']]);
+    }
+
     private function statusPendaftaran(int $id): string
     {
         return (string) $this->db->table('pendaftaran')->where('id', $id)->get()->getRow()->status;

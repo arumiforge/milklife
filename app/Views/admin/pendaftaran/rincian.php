@@ -1,7 +1,7 @@
 <?php
 /**
  * Rincian satu pendaftaran (F6-02): sekolah, penanggung jawab beserta
- * fotonya, atlet (NISN, tanggal lahir, kelompok umur, nomor lomba, nomor
+ * fotonya (diperbesar di jendela, K76), atlet (NISN, tanggal lahir, kelompok umur, nomor lomba, nomor
  * dada), tim beregu, biaya, dan status. Data dari
  * `PendaftaranController::rincian()` (`DataPanelPendaftaran::rincian()`).
  *
@@ -154,11 +154,31 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                 <li class="col-12 col-sm-6 d-flex gap-3 align-items-start penanggung-jawab" data-id="<?= (int) $orang['id'] ?>">
                                     <div class="flex-shrink-0" style="width: 6rem;">
                                         <?php if ($orang['ada_foto']) : ?>
-                                            <a href="<?= site_url($alamat . '/foto/' . (int) $orang['id']) ?>" target="_blank" rel="noopener">
-                                                <img class="img-fluid rounded border" loading="lazy"
-                                                    src="<?= site_url($alamat . '/foto/' . (int) $orang['id']) ?>"
-                                                    alt="<?= esc('Foto ' . $orang['nama'], 'attr') ?>">
-                                            </a>
+                                            <?php $alamatFoto = site_url($alamat . '/foto/' . (int) $orang['id']); $idFoto = 'foto-pj-' . (int) $orang['id']; ?>
+                                            <button type="button" class="btn p-0 border-0 foto-pj" data-bs-toggle="modal" data-bs-target="#<?= $idFoto ?>" title="Perbesar foto">
+                                                <img class="img-fluid rounded border" loading="lazy" src="<?= $alamatFoto ?>" alt="<?= esc('Foto ' . $orang['nama'], 'attr') ?>">
+                                                <span class="foto-pj-perbesar" aria-hidden="true"><i class="bi bi-zoom-in"></i></span>
+                                                <span class="visually-hidden">Perbesar foto <?= esc($orang['nama']) ?></span>
+                                            </button>
+                                            <div class="modal fade" id="<?= $idFoto ?>" tabindex="-1" aria-labelledby="<?= $idFoto ?>-judul" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h3 class="modal-title h5" id="<?= $idFoto ?>-judul">Foto <?= esc($orang['nama']) ?></h3>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                        </div>
+                                                        <div class="modal-body text-center bg-body-tertiary">
+                                                            <img class="img-fluid rounded" loading="lazy" src="<?= $alamatFoto ?>" alt="<?= esc('Foto ' . $orang['nama'], 'attr') ?>">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <a class="btn btn-outline-primary" href="<?= $alamatFoto ?>" target="_blank" rel="noopener">
+                                                                <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Buka di tab baru
+                                                            </a>
+                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php else : ?>
                                             <?= view('tata_letak/_tanpa_gambar', ['rasio' => '1x1', 'label' => 'Foto ' . $orang['nama']], ['saveData' => false]) ?>
                                         <?php endif ?>

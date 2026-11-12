@@ -46,12 +46,12 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
 <div class="container-fluid px-3 px-lg-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
+    <p class="teks-info mb-4">
+        Atur kapan sekolah bisa mendaftar dan batas-batas isian pendaftaran. Semua waktu dalam WIB.
+    </p>
+
     <div class="row">
         <div class="col-12 col-xl-9 col-xxl-7">
-            <p class="text-body-secondary mb-4">
-                Atur kapan sekolah bisa mendaftar dan batas-batas isian pendaftaran. Semua waktu dalam WIB.
-            </p>
-
             <?= view('admin/_galat_isian', ['galat' => $galat], ['saveData' => false]) ?>
 
             <form action="<?= site_url('admin/pengaturan/pendaftaran') ?>" method="post" novalidate>

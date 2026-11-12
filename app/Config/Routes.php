@@ -55,6 +55,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('pendaftaran', 'PendaftaranController::index');
     $routes->get('pendaftaran/data', 'PendaftaranController::data');
     $routes->get('pendaftaran/excel', 'PendaftaranController::excel');
+    // Paket semua data pendaftaran untuk pindah server (K76); dimasukkan lewat `php spark pendaftaran:impor`.
+    $routes->get('pendaftaran/ekspor', 'PendaftaranController::ekspor');
+    // Tindakan untuk banyak pendaftaran sekaligus: lunas, menunggu, atau hapus (K76).
+    $routes->post('pendaftaran/massal', 'PendaftaranController::massal');
     $routes->get('pendaftaran/(:num)', 'PendaftaranController::rincian/$1');
     // Foto penanggung jawab: id pendaftaran, id penanggung jawab.
     $routes->get('pendaftaran/(:num)/foto/(:num)', 'PendaftaranController::foto/$1/$2');

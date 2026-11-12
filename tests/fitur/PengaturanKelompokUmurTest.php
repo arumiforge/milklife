@@ -468,6 +468,8 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
                 $sel[] = trim((string) preg_replace('/\s+/u', ' ', $td->textContent));
             }
 
+            // Sel pertama nomor urut (K76): 1, 2, …
+            $this->assertSame((string) (count($baris) + 1), array_shift($sel));
             $baris[] = $sel;
         }
 

@@ -24,7 +24,8 @@
  * - Uang dengan `rupiah()`; `null` → "Biaya segera diumumkan", `0` → "Gratis".
  * - Gaya hanya di wilayah "Bagian lomba (F3-02)" di `tema.css`.
  *
- * Susunan: satu kartu per kelompok umur (`#lomba-ku-<id>`). Tahun lahir,
+ * Susunan: satu kartu per kelompok umur (`#lomba-ku-<id>`), paling banyak
+ * dua kolom di layar lebar supaya teks yang lebih besar tetap lega (K76). Tahun lahir,
  * jenjang, dan biaya individu (bila ditampilkan) selalu terlihat; daftar nomornya dilipat dalam
  * `<details>` (asumsi rencana 5) supaya halaman tidak terlalu panjang di
  * ponsel, tanpa tabel lebar dan tanpa skrip.
@@ -39,6 +40,12 @@ if ($kelompokUmur === []) {
 }
 
 $tampilkanBiaya = (bool) ($tampilkanBiaya ?? false);
+
+/** Label kategori sebagai lencana berwarna (K76); pemisah koma tetap terbaca pembaca layar. */
+$lencanaKategori = static fn (array $kategori): string => implode('<span class="visually-hidden">, </span>', array_map(
+    static fn (string $label): string => '<span class="kategori kategori-' . esc(strtolower($label), 'attr') . '">' . esc($label) . '</span>',
+    $kategori,
+));
 
 /** Teks biaya: `null` belum diisi, `0` gratis, selain itu rupiah dengan satuannya. */
 $teksBiaya = static fn (?int $biaya, string $satuan, string $belum): string => match (true) {
@@ -108,7 +115,7 @@ $keteranganTim = static function (array $nomor): array {
             <?php endif ?>
         </p>
 
-        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 align-items-start">
+        <div class="row row-cols-1 row-cols-lg-2 g-4 align-items-start">
             <?php foreach ($kelompokUmur as $ku) : ?>
                 <?php
                 $individu = $gabung($ku['nomor_individu'], static fn (array $n): string => $n['nama']);
@@ -166,7 +173,7 @@ $keteranganTim = static function (array $nomor): array {
                                         <?php foreach ($individu as $butir) : ?>
                                             <li>
                                                 <span class="lomba-nama-nomor"><?= esc($butir['nomor']['nama']) ?></span>
-                                                <span class="lomba-kategori"><span class="visually-hidden">— </span><?= esc(implode(', ', $butir['kategori'])) ?></span>
+                                                <span class="lomba-kategori"><span class="visually-hidden">— </span><?= $lencanaKategori($butir['kategori']) ?></span>
                                             </li>
                                         <?php endforeach ?>
                                     </ul>
@@ -187,7 +194,7 @@ $keteranganTim = static function (array $nomor): array {
                                             <li>
                                                 <div class="lomba-beregu-kepala">
                                                     <span class="lomba-nama-nomor"><?= esc($nomor['nama']) ?></span>
-                                                    <span class="lomba-kategori"><span class="visually-hidden">— </span><?= esc(implode(', ', $butir['kategori'])) ?></span>
+                                                    <span class="lomba-kategori"><span class="visually-hidden">— </span><?= $lencanaKategori($butir['kategori']) ?></span>
                                                 </div>
                                                 <?php if ($info !== []) : ?>
                                                     <ul class="lomba-beregu-info">

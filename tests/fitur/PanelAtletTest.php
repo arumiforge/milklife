@@ -146,7 +146,7 @@ final class PanelAtletTest extends UjiBasisData
             $kolom[] = $th->getAttribute('data-kolom');
         }
 
-        $this->assertSame(['nomor_dada', 'nama', 'nisn', 'jenis_kelamin', 'tanggal_lahir', 'kelompok_umur', 'nomor_lomba', 'nama_sekolah', 'id_pendaftaran', 'status'], $kolom);
+        $this->assertSame(['', 'nomor_dada', 'nama', 'nisn', 'jenis_kelamin', 'tanggal_lahir', 'kelompok_umur', 'nomor_lomba', 'nama_sekolah', 'id_pendaftaran', 'status'], $kolom);
         $this->assertSame('tautan', $xpath->query('.//th[@data-kolom="id_pendaftaran"]', $tabel)->item(0)->getAttribute('data-bentuk'));
 
         // Saringan: kelompok umur, jenis kelamin, nomor lomba (dikelompokkan per kelompok umur), status.

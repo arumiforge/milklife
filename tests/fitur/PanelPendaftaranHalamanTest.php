@@ -74,7 +74,7 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
             $kolom[] = $th->getAttribute('data-kolom');
         }
 
-        $this->assertSame(['id_pendaftaran', 'tanggal', 'nama_sekolah', 'npsn', 'jenjang', 'kabupaten', 'jumlah_atlet', 'total', 'status', 'alamat'], $kolom);
+        $this->assertSame(['id', '', 'id_pendaftaran', 'tanggal', 'nama_sekolah', 'npsn', 'jenjang', 'kabupaten', 'jumlah_atlet', 'total', 'status', 'alamat'], $kolom);
 
         foreach (['status' => ['', 'lunas', 'menunggu'], 'jenjang' => ['', 'A', 'B', 'C'], 'kabupaten' => ['', 'Blora', 'Rembang', 'Pati', 'Kudus', 'Jepara']] as $nama => $nilai) {
             $pilihan = [];
@@ -221,7 +221,9 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
 
         // Foto penanggung jawab lewat rute admin.
         $foto = site_url('admin/pendaftaran/' . $p['id'] . '/foto/' . $p['penanggung_jawab'][0]);
-        $this->assertSame(1, $xpath->query('//img[@src="' . $foto . '"]')->length);
+        // Gambar kecil dan gambar besar di jendela (K76).
+        $this->assertSame(2, $xpath->query('//img[@src="' . $foto . '"]')->length);
+        $this->assertSame(1, $xpath->query('//div[contains(@class, "modal")]//img[@src="' . $foto . '"]')->length);
         // Kotak "tanpa gambar" bukti bayar (F6-03) tidak dihitung.
         $this->assertSame(0, $xpath->query('//*[contains(@class, "tanpa-gambar")][not(ancestor::section[@id="bukti-bayar"])]')->length);
 

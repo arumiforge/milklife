@@ -230,7 +230,7 @@ final class PanelRekapTest extends UjiBasisData
         $this->assertSame(0, $xpath->query('//nav[@id="saringan-status"]')->length);
         $this->assertSame(1, $xpath->query('//p[@id="keterangan-status"]')->length);
         $this->assertSame(4, $xpath->query('//table[@id="tabel-rekap"]/tbody/tr')->length);
-        $this->assertSame('Jumlah', trim($xpath->query('//table[@id="tabel-rekap"]/tfoot/tr/td')->item(0)->textContent));
+        $this->assertSame('Jumlah', trim($xpath->query('//table[@id="tabel-rekap"]/tfoot/tr/td')->item(1)->textContent));
         $this->assertSame(site_url('admin/rekap/keuangan/excel'), $xpath->query('//a[@id="excel-rekap"]')->item(0)->getAttribute('href'));
     }
 

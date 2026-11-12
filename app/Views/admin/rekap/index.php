@@ -29,7 +29,7 @@ $sel      = static function (array $kolom, mixed $nilai): string {
 };
 $tabel = static function (array $bagian, string $id, string $keterangan) use ($sel): string {
     $html = '<div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0" id="' . esc($id, 'attr') . '">'
-        . '<caption class="visually-hidden">' . esc($keterangan) . '</caption><thead><tr>';
+        . '<caption class="visually-hidden">' . esc($keterangan) . '</caption><thead><tr><th scope="col" class="text-end">No</th>';
 
     foreach ($bagian['kolom'] as $kunci => $kolom) {
         $html .= '<th scope="col" data-kolom="' . esc($kunci, 'attr') . '"' . ($kolom['jenis'] === 'teks' ? '' : ' class="text-end"') . '>' . esc($kolom['judul']) . '</th>';
@@ -37,8 +37,8 @@ $tabel = static function (array $bagian, string $id, string $keterangan) use ($s
 
     $html .= '</tr></thead><tbody>';
 
-    foreach ($bagian['baris'] as $baris) {
-        $html .= '<tr>';
+    foreach ($bagian['baris'] as $no => $baris) {
+        $html .= '<tr><td class="text-end text-body-secondary">' . ($no + 1) . '</td>';
 
         foreach ($bagian['kolom'] as $kunci => $kolom) {
             $html .= $sel($kolom, $baris[$kunci] ?? null);
@@ -50,7 +50,7 @@ $tabel = static function (array $bagian, string $id, string $keterangan) use ($s
     $html .= '</tbody>';
 
     if (($bagian['jumlah'] ?? null) !== null) {
-        $html .= '<tfoot class="fw-semibold"><tr>';
+        $html .= '<tfoot class="fw-semibold"><tr><td></td>';
 
         foreach ($bagian['kolom'] as $kunci => $kolom) {
             $html .= $sel($kolom, $bagian['jumlah'][$kunci] ?? null);

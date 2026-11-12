@@ -20,7 +20,7 @@
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
-    <p class="text-body-secondary mb-4 pengaturan-pengantar">
+    <p class="teks-info mb-4">
         Pilih bagian yang ingin diisi atau diubah. Bagian pertama wajib lengkap sebelum pendaftaran bisa dibuka.
     </p>
 

@@ -34,7 +34,7 @@
         </section>
     <?php else : ?>
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-            <p class="text-body-secondary mb-0">
+            <p class="teks-info mb-0 flex-grow-1">
                 Berkas yang ditandai tampil muncul di halaman depan, urut dari angka urutan terkecil.
             </p>
             <a class="btn btn-primary" href="<?= site_url('admin/pengaturan/unduhan/tambah') ?>">
@@ -48,6 +48,7 @@
                     <caption class="visually-hidden">Daftar berkas unduhan</caption>
                     <thead>
                         <tr>
+                            <th scope="col" class="text-end">No</th>
                             <th scope="col" class="text-center">Urutan</th>
                             <th scope="col">Judul</th>
                             <th scope="col">Berkas</th>
@@ -56,12 +57,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $no = 0; ?>
                         <?php foreach ($daftar as $baris) : ?>
                             <?php
                             $info       = $baris['info'];
                             $keterangan = (string) ($baris['keterangan'] ?? '');
                             ?>
                             <tr data-id="<?= (int) $baris['id'] ?>">
+                                <td class="text-end text-body-secondary"><?= ++$no ?></td>
                                 <td class="text-center"><?= (int) $baris['urutan'] ?></td>
                                 <td style="min-width: 12rem">
                                     <span class="fw-semibold"><?= esc($baris['judul']) ?></span>
