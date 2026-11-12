@@ -92,10 +92,16 @@ final class BerandaPengaturanTest extends UjiHalaman
         }
 
         $this->assertSame(['Wajib diisi sebelum pendaftaran dibuka', 'Isi halaman depan', 'Akun Anda'], $judul);
-        $hasil->assertSee('Batas usia, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor dada.');
+        $hasil->assertSee('Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor dada.');
 
-        // Belum ada tanda lengkap/belum sampai F2-09 mengisinya.
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "tanda-kelengkapan")]')->length);
+        // Tanda lengkap/belum (F2-09) hanya ada pada lima kartu wajib.
+        $bertanda = [];
+
+        foreach ($xpath->query('//a[contains(@class, "kartu-pengaturan")][.//*[contains(@class, "tanda-kelengkapan")]]') as $kartu) {
+            $bertanda[] = $kartu->getAttribute('data-kunci');
+        }
+
+        $this->assertSame(['acara', 'pendaftaran', 'kelompok-umur', 'nomor-lomba', 'pembayaran'], $bertanda);
     }
 
     public function testSetiapKartuPunyaIkonDanKeterangan(): void
