@@ -2,11 +2,12 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan **revisi 3 (K38)** disetujui 11 November 2026 |
-| Tanggal | 10 November 2026, revisi 11 November 2026 |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026** |
+| Tanggal | 10 November 2026, revisi 11 dan 12 November 2026 |
 | Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
 | Revisi 2 | SLB tidak ikut (K28); web lewat Cloudflare Tunnel (K31); asumsi 4–7 dikonfirmasi dan asumsi 8 diganti (K32); bukti bayar diunggah admin (K34); awalan nomor dada awal per kelompok umur (K33). Bagian yang berubah: 6.2, 6.9, 9, 11, 13, 15, 17, lampiran |
 | Revisi 3 | Kelompok umur ditentukan tahun lahir, bukan usia; batas tahun lahir diisi data awal; tanggal patokan usia dihapus, usia hanya ditampilkan (K36, K37). Bagian yang berubah: 5, 6.1, 6.4, 11, 14, lampiran |
+| Revisi 4 | Disesuaikan dengan yang dibangun di Tahap 4–7: foto penanggung jawab wajib (K50); batas nomor individu per atlet dan atlet per nomor (K51, K53); konfirmasi tim susulan (K57); tim tanpa pembayar (K68); ID pendaftaran tetap saat diubah (K63); cek dan bukti tanpa tanggal lahir dan nomor dada (K49, K52); panel tanpa pendaftaran baru, nomor dada atlet tambahan, saringan status rekap (K58–K60); sesi lain keluar saat ganti sandi dan halaman galat ramah (K67); CI GitHub (K46); cadangan harian (K66); juknis tidak ditunggu (K55). Bagian yang berubah: 5, 6.3, 6.5, 6.6, 6.8, 6.9, 8, 9, 13, 14, 15, 16, 17 |
 | Acara | MilkLife Athletics Challenge Seri 2 – 2026, Supersoccer Arena, Kudus, 9–12 Desember 2026 |
 | Dasar | Wawancara sesi 1 (lihat `agent/KEPUTUSAN.md`) dan flyer di `sumber/flyer/` |
 
@@ -79,9 +80,9 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 |---|---|
 | `/admin/masuk` | Halaman masuk |
 | `/admin/dasbor` | Ringkasan angka dan daftar kelengkapan pengaturan |
-| `/admin/pendaftaran` | Daftar dan rincian pendaftaran, tandai lunas, ubah, hapus |
+| `/admin/pendaftaran` | Daftar dan rincian pendaftaran, bukti bayar, tandai lunas, ubah, hapus. Tidak ada pendaftaran baru dari panel (K58) |
 | `/admin/atlet` | Daftar semua atlet |
-| `/admin/rekap` | Rekap per nomor lomba, per sekolah, per kelompok umur, keuangan |
+| `/admin/rekap` | Rekap per nomor lomba, tim beregu, per sekolah, per kelompok umur, keuangan |
 | `/admin/pengaturan` | Daftar semua halaman pengaturan beserta tanda lengkap atau belum |
 | `/admin/pengaturan/acara` | Nama, seri, tahun, tempat, tanggal acara |
 | `/admin/pengaturan/pendaftaran` | Jadwal buka-tutup, buka manual, tampilan usia, batas-batas |
@@ -124,7 +125,7 @@ Bila belum lengkap atau belum dibuka, halaman depan menampilkan keterangan ramah
 
 ### 6.3 Penanggung jawab
 
-Nama, nomor WA, dan foto. Jumlah minimal 1 dan maksimal 5; kedua batas bisa diubah admin.
+Nama, nomor WA, dan foto. **Foto wajib diisi** (K50); foto diperkecil di peramban, disimpan di luar folder publik, dan hanya dilihat admin. Jumlah minimal 1 dan maksimal 5; kedua batas bisa diubah admin.
 
 ### 6.4 Atlet
 
@@ -142,13 +143,16 @@ Nama, nomor WA, dan foto. Jumlah minimal 1 dan maksimal 5; kedua batas bisa diub
 - Pilihan nomor lomba baru muncul setelah kelompok umur atlet diketahui dan kelompok umur itu dibuka untuk jenjang sekolah pendaftaran, dan hanya yang sesuai kelompok umur dan jenis kelaminnya.
 - Setiap atlet wajib ikut minimal 1 nomor (individu atau beregu).
 - Maksimal 2 nomor individu per atlet (bisa diubah admin). Nomor beregu tidak dibatasi.
+- Jumlah atlet satu sekolah pada satu nomor individu **tidak dibatasi** (K53). Admin tetap bisa memasang batas di pengaturan Pendaftaran (K51); batas itu dihitung bersama pendaftaran sebelumnya dari NPSN yang sama, sedangkan pendaftaran tanpa NPSN dihitung sendiri. Kosong berarti tidak dibatasi.
 
 ### 6.6 Tim beregu
 
 - **Satu tim per nomor beregu per sekolah.**
 - Anggota minimal sama dengan jumlah inti nomor tersebut (4, 5, atau 8). Boleh lebih sebagai cadangan, tanpa label, sampai batas maksimal yang diatur admin.
 - Nomor mix: admin menetapkan jumlah putra dan jumlah putri minimal. Urutan lari tidak diatur sistem.
-- Pendaftaran susulan dari NPSN yang sama untuk nomor beregu yang sudah ada hanya menambah anggota, tanpa biaya beregu lagi.
+- Pendaftaran susulan dari NPSN yang sama untuk nomor beregu yang sudah ada hanya menambah anggota, tanpa biaya beregu lagi. Anggota lama dan baru bersama-sama tidak boleh melewati batas anggota.
+- **Official mengonfirmasi sendiri setiap tim susulan** (K57): wizard menampilkan kotak centang per tim yang menyebut bahwa atletnya masuk ke tim sekolah yang sudah terdaftar tanpa biaya tim. Server menolak kiriman yang belum dikonfirmasi. Admin yang mengubah pendaftaran di panel tidak perlu konfirmasi ini.
+- **Tim tanpa pembayar** (K68): bila pendaftaran yang membayar biaya tim dihapus, atau timnya dihapus lewat Ubah, sementara anggota susulan di pendaftaran lain tetap ada, biaya tim **tidak dipindah otomatis**. Tim itu ditandai di rincian pendaftaran, dasbor, dan rekap keuangan, dan admin membebankan biaya timnya ke salah satu pendaftaran anggotanya lewat Ubah (9). Jendela hapus dan simpan Ubah memperingatkan bila tindakannya meninggalkan tim tanpa pembayar.
 
 ### 6.7 Biaya
 
@@ -164,6 +168,7 @@ Format: `MAC` + seri + kode jenjang + nomor urut 5 digit + 2 digit tahun. Contoh
 
 - Kode jenjang: `A` untuk SD/MI, `B` untuk SMP/MTs, `C` untuk SMA/SMK/MA.
 - Nomor urut berlaku untuk seluruh pendaftaran (bukan per jenjang) dan diambil dari nomor baris basis data. Nomor bisa melompat bila ada pendaftaran yang gagal tersimpan atau dihapus.
+- **ID tidak berubah saat admin mengubah pendaftaran**, juga bila jenjang sekolahnya diubah (K63). Kode jenjang di ID tetap mengikuti data saat mendaftar, supaya ID yang sudah dipegang sekolah, tercetak di bukti, dan dipakai di halaman cek tidak berganti.
 
 ### 6.9 Status pembayaran dan nomor dada
 
@@ -174,6 +179,7 @@ Format: `MAC` + seri + kode jenjang + nomor urut 5 digit + 2 digit tahun. Contoh
 - Bila semua awalan sebuah kelompok umur penuh, penandaan Lunas dibatalkan seluruhnya dan admin diminta menambah awalan.
 - Nomor dada tidak dipakai ulang. Mengembalikan status ke Menunggu tidak menghapus nomor dada.
 - **Bila admin mengubah pendaftaran yang sudah Lunas dan totalnya berubah (naik atau turun), status kembali ke Menunggu Konfirmasi Pembayaran** (K32). Admin menandai Lunas lagi setelah selisihnya diurus panitia di luar sistem. Atlet yang sudah punya nomor dada tetap memegangnya; atlet baru mendapat nomor saat ditandai Lunas lagi. Jendela konfirmasi simpan menyebut akibat ini.
+- **Bila admin menambah atlet ke pendaftaran Lunas dan totalnya tetap** (misalnya tambahan anggota tim beregu), status tetap Lunas dan atlet baru **langsung mendapat nomor dada saat disimpan** (K59).
 - Tidak ada status "dibatalkan". Pendaftaran yang batal dihapus admin, sehingga NISN-nya bisa didaftarkan lagi.
 
 ## 7. Alur pendaftaran
@@ -205,18 +211,23 @@ Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah ked
 
 **Cek.** Official memasukkan NPSN atau ID pendaftaran.
 
-- NPSN menampilkan semua pendaftaran sekolah itu, digabung.
+- NPSN menampilkan semua pendaftaran sekolah itu berurutan per pendaftaran: data sekolah sekali di atas, satu kartu per pendaftaran, dan total keseluruhan di bawah (K49).
 - ID pendaftaran menampilkan satu pendaftaran.
-- Data tampil penuh sesuai MoU: sekolah, penanggung jawab, atlet (nama, NISN, tanggal lahir, kelompok umur, nomor lomba, nomor dada), tim beregu, biaya, dan status pembayaran.
+- Data tampil sesuai MoU: sekolah, penanggung jawab, atlet (nama, NISN, jenis kelamin, kelompok umur, nomor lomba), tim beregu beserta anggotanya, biaya, dan status pembayaran.
+- **Tanggal lahir dan nomor dada tidak ditampilkan** (K52). Keduanya tetap tersimpan dan terlihat di panel admin.
+- Nama nomor lomba ditulis bersama kategorinya, misalnya "Lari 60 m Putra" atau "Estafet 8 × 50 m Mix".
 - Foto penanggung jawab hanya tampil di panel admin.
 
 **Bukti PDF.** Kertas A4 mendatar.
 
-- Kiri atas: logo persegi MilkLife. Di kanannya, rata tengah: `MILKLIFE ATHLETICS CHALLENGE` dan `Seri 2 Tahun 2026`.
+- Kiri atas: logo persegi MilkLife, transparan dan tidak gepeng. Di kanannya, rata tengah: `MILKLIFE ATHLETICS CHALLENGE` dan `Seri 2 Tahun 2026`.
 - Baris berikutnya: `Nama Sekolah : …` di kiri, `Tanggal Pendaftaran : …` rata kanan.
 - Baris berikutnya: `Kabupaten / Kota : …` di kiri, `ID Pendaftaran : …` rata kanan.
-- Isi: daftar penanggung jawab, tabel individu, tabel beregu, total, dan status pembayaran.
-- Nama berkas: `BuktiPendaftaran_MilkLifeSeri2_<NamaSekolah>_2026.pdf`.
+- Penanggung jawab ditulis sebaris tanpa tabel: `Penanggung Jawab (Official) : Nama (ikon WA nomor WA)`, dipisah koma bila lebih dari satu (K52).
+- Tabel individu: No, Nama, NISN, Kelompok Umur, Nomor Lomba (dengan kategori), Biaya. Tabel beregu: No, Nomor Lomba (dengan kategori), Anggota (nama dalam satu baris dipisah koma), Biaya. Lalu total pembayaran.
+- Tanggal lahir dan nomor dada tidak dicetak (K52).
+- Status pembayaran diberi bingkai berwarna seperti tombol: Lunas hijau, Menunggu Konfirmasi Pembayaran kuning.
+- Nama berkas memakai seluruh nama acara tanpa spasi (K49): `BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_<NamaSekolah>_2026.pdf`.
 
 Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan acara.
 
@@ -226,10 +237,12 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 - **Tabel:** data dari titik akhir JSON, dengan halaman, pencarian, saringan pada setiap kolom yang relevan, dan pengurutan. Setiap tabel punya tombol unduh Excel yang mengikuti saringan aktif.
 - **Keadaan kosong:** pesan ramah yang menjelaskan apa yang belum ada dan langkah berikutnya.
 - **Pemuatan:** bilah kemajuan di atas halaman saat data dimuat.
-- **Tindakan berisiko** (hapus, tandai lunas): jendela konfirmasi yang menyebut apa yang akan terjadi.
-- **Ubah pendaftaran:** admin bisa mengubah data sekolah, penanggung jawab, atlet, dan nomor lomba. Aturan pada bagian 6 tetap berlaku dan biaya dihitung ulang.
+- **Tindakan berisiko** (hapus, tandai lunas, kembalikan ke Menunggu): jendela konfirmasi yang menyebut apa yang akan terjadi.
+- **Tanpa pendaftaran baru** (K58): panel hanya melihat, menandai Lunas, mengubah, dan menghapus pendaftaran yang sudah ada. Sekolah yang terlambat didaftarkan lewat wizard setelah admin memakai buka manual (6.1).
+- **Ubah pendaftaran:** admin bisa mengubah data sekolah, penanggung jawab, atlet, dan nomor lomba. Aturan pada bagian 6 tetap berlaku dan biaya dihitung ulang. ID pendaftaran tidak berubah (6.8). Akibat pada status dan nomor dada mengikuti 6.9 (K32, K59).
+- **Tim tanpa pembayar** (K68): rincian pendaftaran memberi peringatan pada tim yang kehilangan pembayar biaya timnya, dasbor menampilkan jumlahnya bila ada, dan rekap keuangan mendaftarnya beserta pendaftaran anggotanya. Di Ubah, tim itu punya kotak centang "Bebankan biaya tim ke pendaftaran ini" dengan tarif saat ini; bila pendaftarannya Lunas dan totalnya berubah, berlaku 6.9.
 - **Bukti bayar** (K34): admin mengunggah bukti transfer yang dikirim official lewat WA ke pendaftaran yang bersangkutan, paling banyak 5 gambar per pendaftaran. Gambar dikecilkan otomatis sebelum disimpan (sisi terpanjang 1600 piksel, JPEG). Admin bisa melihat, mengunduh, dan menghapus tiap gambar. Official tidak mengunggah apa pun.
-- **Rekap:** peserta per nomor lomba, tim beregu, per sekolah, per kelompok umur, dan keuangan (tagihan, lunas, belum). Tersedia Excel dan PDF.
+- **Rekap:** peserta per nomor lomba, tim beregu, per sekolah, per kelompok umur, dan keuangan (tagihan, lunas, belum). Tersedia Excel dan PDF. Rekap peserta memuat semua pendaftaran dengan saringan status (semua, Lunas, Menunggu), dan Excel serta PDF-nya mengikuti saringan itu; rekap keuangan selalu memuat keduanya (K60).
 - **Gambar belum ada:** kotak ikon "tanpa gambar", bukan gambar tiruan.
 
 ## 10. Halaman depan
@@ -286,18 +299,23 @@ Keunikan NISN dan nomor dada dijaga oleh basis data, bukan hanya oleh aplikasi.
 - Semua keluaran di-escape; semua masukan divalidasi di server.
 - Foto penanggung jawab dan bukti bayar disimpan di luar folder publik dan hanya disajikan ke admin.
 - Sandi admin di-hash; sesi admin berakhir otomatis.
+- **Mengganti kata sandi mengeluarkan sesi lain milik akun yang sama** pada permintaan berikutnya (K67); sesi yang mengganti tetap masuk. Mengganti kata sandi lewat perintah `admin:buat` mengeluarkan semua sesi akun itu.
+- Kepala keamanan HTTP aktif di setiap halaman.
+- Di mode produksi, halaman galat (halaman tidak ditemukan, permintaan keliru, galat umum) tampil ramah dalam bahasa Indonesia tanpa rincian teknis (K67).
 
 **Risiko yang diterima pemilik:** NPSN bersifat publik dan ID pendaftaran berurutan, jadi orang yang menebaknya bisa melihat data siswa (nama, NISN, tanggal lahir). Pemilik memilih tampilan penuh berdasarkan MoU dengan sekolah. Pembatasan laju mengurangi pengambilan massal, tetapi tidak menutup risikonya.
 
 ## 14. Pengujian
 
 - Uji unit untuk aturan murni: tahun lahir dan kelompok umur, biaya, ID pendaftaran, nomor dada, kelengkapan tim.
-- Uji fitur untuk alur pendaftaran, cek, dan penandaan lunas.
-- Tanpa CI GitHub. Semua uji dijalankan sendiri di komputer pengembang dengan satu perintah, sebelum PR digabung.
+- Uji fitur untuk alur pendaftaran, cek, bukti, panel, dan penandaan lunas, ditambah satu uji alur lengkap dari pendaftaran sampai hapus.
+- Semua uji dijalankan dengan satu perintah (`composer uji`) di komputer pengembang sebelum PR dibuka. **CI GitHub** (GitHub Actions) menjalankan uji yang sama di setiap PR dan setiap perubahan di `main` (K46); PR digabung setelah keduanya lulus.
 
 ## 15. Pemasangan
 
-Laragon dipakai untuk pengembangan dan produksi. Panduan pemasangan produksi ditulis pada tahap akhir dan mencakup: virtual host Nginx ke folder `public/`, HTTPS, mode produksi di `.env`, dan cadangan basis data terjadwal.
+Laragon dipakai untuk pengembangan dan produksi. Panduan pemasangan produksi ditulis sebagai dokumen tersendiri pada Tahap 7 dan mencakup: virtual host Nginx ke folder `public/`, HTTPS lewat Cloudflare Tunnel, mode produksi di `.env`, perkecil aset, cadangan terjadwal, cara memulihkan cadangan, dan cara memperbarui versi.
+
+**Cadangan** (K66): dibuat **harian** oleh Penjadwal Tugas Windows ke folder di luar proyek. Satu berkas zip berisi basis data serta foto penanggung jawab, bukti bayar, dan unggahan admin. Cadangan yang lebih tua dari **14 hari** dihapus otomatis. Pemulihan dilakukan manual mengikuti panduan.
 
 Peserta menjangkau komputer Laragon dari internet lewat **Cloudflare Tunnel** (K31). Pengaturannya berada di luar kode aplikasi, kecuali satu hal: alamat IP pengunjung dibaca dari kepala `CF-Connecting-IP` yang hanya dipercaya dari terowongan, supaya pembatasan laju tetap menghitung per pengunjung.
 
@@ -314,7 +332,7 @@ Setiap tahap punya wawancara singkat bila perlu, rencana implementasi, dan PR se
 | 4. Pendaftaran | Wizard lengkap sampai tersimpan |
 | 5. Bukti dan cek | Bukti PDF, halaman cek |
 | 6. Panel data | Daftar pendaftaran, lunas dan nomor dada, ubah, hapus, rekap, ekspor |
-| 7. Penyelesaian | Minify, uji menyeluruh, panduan pemasangan produksi |
+| 7. Penyelesaian | Minify dan pengecilan gambar, keamanan produksi, tim tanpa pembayar, cadangan harian, panduan pemasangan produksi, revisi rancangan ini, uji menyeluruh (K67) |
 
 ## 17. Asumsi yang perlu ditinjau
 
@@ -329,7 +347,7 @@ Hal berikut saya putuskan sendiri karena tidak disebut dalam wawancara. Mohon di
 7. Foto penanggung jawab tidak tampil di halaman cek. **Dikonfirmasi K32.**
 8. ~~Bila admin mengubah pendaftaran yang sudah lunas sehingga totalnya berubah, status tetap Lunas dan selisihnya diurus panitia di luar sistem.~~ **Diganti K32:** status kembali ke Menunggu dan admin menandai Lunas lagi (6.9).
 
-Semua asumsi sudah diputuskan pemilik.
+Semua asumsi sudah diputuskan pemilik. Juknis resmi tidak ditunggu; batas yang sudah disepakati tetap dipakai dan perubahan aturan berikutnya lewat wawancara dengan pemilik (K55).
 
 ## Lampiran: data awal nomor lomba
 
