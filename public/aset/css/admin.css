@@ -592,3 +592,100 @@ a.kepala-admin-nama:focus-visible {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
+
+/* ======================================================================
+ * Tahap 6 — tabel data panel (aset/js/tabel-admin.js, DataTables 2).
+ * Wilayah milik F6-01. Bilah kemajuan di atas halaman memakai
+ * .bilah-kemajuan di atas; tabel yang sedang memuat diredupkan di sini.
+ * ====================================================================== */
+
+/* Saringan di atas tabel: berderet di layar lebar, bertumpuk di ponsel. */
+.saringan-tabel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.saringan-tabel > * {
+    flex: 1 1 12rem;
+    min-width: 0;
+}
+
+.saringan-tabel .form-select,
+.saringan-tabel .form-control,
+.saringan-tabel .btn {
+    min-height: 2.75rem;
+}
+
+.saringan-tabel-tombol {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Tabel yang sedang memuat data. */
+table.tabel-admin-memuat tbody {
+    opacity: 0.45;
+    transition: opacity 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    table.tabel-admin-memuat tbody {
+        transition: none;
+    }
+}
+
+/* Kepala dan isi DataTables. */
+div.dt-container {
+    position: relative;
+}
+
+div.dt-container .dt-layout-row {
+    row-gap: 0.75rem;
+}
+
+div.dt-container .dt-search input,
+div.dt-container .dt-length select {
+    min-height: 2.5rem;
+}
+
+div.dt-container .dt-search input {
+    width: 16rem;
+    max-width: 100%;
+}
+
+div.dt-container .dt-layout-table {
+    /* Tabel lebar digulir mendatar di dalam kartunya, bukan halamannya. */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+div.dt-container table.dataTable {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+div.dt-container table.dataTable thead th {
+    white-space: nowrap;
+    color: var(--ml-biru-tua);
+}
+
+/* Pesan kosong dan pesan galat: ramah dan lapang. */
+div.dt-container td.dt-empty {
+    padding: 2rem 1rem;
+    color: var(--ml-teks-redup);
+    text-align: center;
+    white-space: normal;
+}
+
+div.dt-container .page-link {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---------- Akhir wilayah Tahap 6 ---------- */

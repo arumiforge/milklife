@@ -29,6 +29,12 @@
  * Bilah kemajuan di atas halaman dinyalakan dari JavaScript halaman:
  * `Kemajuan.mulai()` lalu `Kemajuan.selesai()`.
  *
+ * - `tabel` (pilihan, Tahap 6): halaman dengan tabel data mengisi bagian ini
+ *   dengan teks apa pun (`<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>`).
+ *   Gaya DataTables lalu dimuat di kepala, dan jQuery, DataTables, serta
+ *   `aset/js/tabel-admin.js` dimuat sebelum `skrip`. Halaman lain tidak
+ *   memuatnya.
+ *
  * @var CodeIgniter\View\View $this
  */
 
@@ -42,6 +48,8 @@ if ($judulHalaman === '') {
 }
 
 $judulTab = ($judul === '' ? '' : $judul . ' – ') . 'Admin ' . esc(AcaraController::namaTampil());
+
+$pakaiTabel = trim($this->renderSection('tabel')) !== '';
 ?>
 <!doctype html>
 <html lang="id">
@@ -55,6 +63,9 @@ $judulTab = ($judul === '' ? '' : $judul . ' – ') . 'Admin ' . esc(AcaraContro
     <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap/css/bootstrap.min.css') ?>">
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap-icons/bootstrap-icons.min.css') ?>">
+    <?php if ($pakaiTabel) : ?>
+    <link rel="stylesheet" href="<?= aset('vendor/datatables/css/dataTables.bootstrap5.min.css') ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="<?= aset('css/tema.css') ?>">
     <link rel="stylesheet" href="<?= aset('css/admin.css') ?>">
 </head>
@@ -109,6 +120,12 @@ $judulTab = ($judul === '' ? '' : $judul . ' – ') . 'Admin ' . esc(AcaraContro
 
     <script src="<?= aset('vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
     <script src="<?= aset('js/kemajuan.js') ?>"></script>
+    <?php if ($pakaiTabel) : ?>
+    <script src="<?= aset('vendor/jquery/jquery.min.js') ?>"></script>
+    <script src="<?= aset('vendor/datatables/js/dataTables.min.js') ?>"></script>
+    <script src="<?= aset('vendor/datatables/js/dataTables.bootstrap5.min.js') ?>"></script>
+    <script src="<?= aset('js/tabel-admin.js') ?>"></script>
+    <?php endif; ?>
     <?= $this->renderSection('skrip') ?>
 </body>
 </html>
