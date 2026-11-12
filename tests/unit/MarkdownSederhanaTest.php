@@ -46,6 +46,27 @@ final class MarkdownSederhanaTest extends CIUnitTestCase
         $this->assertSame('<table><tr><th>A</th><th>B</th></tr><tr><td>1</td><td><strong>dua</strong></td></tr><tr><td><code>x</code></td><td></td></tr></table>', $html);
     }
 
+    public function testBlokKodeDanNomorAwalDaftar(): void
+    {
+        $html = MarkdownSederhana::html(implode("\n", [
+            '1. Jalankan:',
+            '',
+            '   ```',
+            '   php spark <perintah>',
+            '',
+            '   # bukan judul',
+            '   ```',
+            '',
+            '2. Selesai.',
+        ]));
+
+        $this->assertSame(implode("\n", [
+            '<ol><li>Jalankan:</li></ol>',
+            "<pre><code>php spark &lt;perintah&gt;\n\n# bukan judul</code></pre>",
+            '<ol start="2"><li>Selesai.</li></ol>',
+        ]), $html);
+    }
+
     public function testSebarisDanEscape(): void
     {
         $this->assertSame(
