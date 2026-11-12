@@ -2,6 +2,9 @@
 
 use App\Filters\BatasUnggahFilter;
 use CodeIgniter\Config\Services;
+use CodeIgniter\HTTP\IncomingRequest;
+use CodeIgniter\HTTP\SiteURI;
+use CodeIgniter\HTTP\UserAgent;
 use CodeIgniter\Security\Exceptions\SecurityException;
 use CodeIgniter\Test\TestResponse;
 use Tests\Support\KirimFormulir;
@@ -27,22 +30,9 @@ final class BatasUnggahTest extends UjiBasisData
 
     private const HALAMAN = 'admin/pengaturan/halaman-depan';
 
-    private ?string $panjangAsli = null;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->panjangAsli = $_SERVER['CONTENT_LENGTH'] ?? null;
-    }
-
     protected function tearDown(): void
     {
-        if ($this->panjangAsli === null) {
-            unset($_SERVER['CONTENT_LENGTH']);
-        } else {
-            $_SERVER['CONTENT_LENGTH'] = $this->panjangAsli;
-        }
+        service('superglobals')->unsetServer('CONTENT_LENGTH');
 
         parent::tearDown();
     }
@@ -169,20 +159,18 @@ final class BatasUnggahTest extends UjiBasisData
 
     public function testAlamatCadanganHalamanPublikKeHalamanDepan(): void
     {
-        $permintaan = Services::incomingrequest(null, false);
-        $permintaan->setPath('pendaftaran');
+        foreach (['pendaftaran' => '/', 'admin/pengaturan/acara' => 'admin/dasbor', 'admin' => 'admin/dasbor', 'administrasi' => '/'] as $jalur => $cadangan) {
+            $permintaan = $this->permintaan($jalur);
 
-        $this->assertSame(site_url('/'), BatasUnggahFilter::alamatKembali($permintaan));
-
-        $permintaan->setPath('admin/pengaturan/acara');
-        $this->assertSame(site_url('admin/dasbor'), BatasUnggahFilter::alamatKembali($permintaan));
+            $this->assertSame(site_url($cadangan), BatasUnggahFilter::alamatKembali($permintaan), "Cadangan untuk {$jalur}.");
+        }
     }
 
     // ---------- Kiriman lain tidak berubah ----------
 
     public function testKirimanBiasaTetapTersimpan(): void
     {
-        $_SERVER['CONTENT_LENGTH'] = '2048';
+        $this->aturPanjang('2048');
 
         $hasil = $this->kirimSebagaiAdmin('admin/pengaturan/acara', [
             'nama'            => 'Lomba Lari Karangan',
@@ -199,7 +187,7 @@ final class BatasUnggahTest extends UjiBasisData
 
     public function testCsrfTetapMemeriksaKirimanKecilTanpaToken(): void
     {
-        $_SERVER['CONTENT_LENGTH'] = '0';
+        $this->aturPanjang('0');
 
         $this->assertTokenCsrfWajib(self::HALAMAN, []);
         $this->assertTokenCsrfWajib('admin/pengaturan/acara', ['nama' => 'Lomba Lari Karangan']);
@@ -210,7 +198,7 @@ final class BatasUnggahTest extends UjiBasisData
     {
         // Ukuran besar tetapi isiannya ada: bukan kiriman yang dibuang PHP,
         // jadi filter tidak ikut campur dan CSRF tetap menolak token salah.
-        $_SERVER['CONTENT_LENGTH'] = (string) ($this->batas() + 1);
+        $this->aturPanjang((string) ($this->batas() + 1));
 
         $this->assertTokenCsrfWajib('admin/pengaturan/acara', ['nama' => 'Lomba Lari Karangan']);
         $this->assertSame('', setting('Acara.nama'));
@@ -218,7 +206,8 @@ final class BatasUnggahTest extends UjiBasisData
 
     public function testBatasNolBerartiTanpaBatas(): void
     {
-        $permintaan = Services::incomingrequest(null, false);
+        $permintaan = $this->permintaan('admin/pengaturan/halaman-depan');
+        $permintaan->setGlobal('post', []);
         $permintaan->setGlobal('server', ['CONTENT_LENGTH' => '999999999999']);
 
         $this->assertFalse(BatasUnggahFilter::kebesaran($permintaan, 0));
@@ -231,6 +220,11 @@ final class BatasUnggahTest extends UjiBasisData
         $this->assertFalse(BatasUnggahFilter::kebesaran($permintaan, 1024));
 
         $permintaan->setGlobal('server', []);
+        $this->assertFalse(BatasUnggahFilter::kebesaran($permintaan, 1024));
+
+        // Isian masih ada: bukan kiriman yang dibuang PHP.
+        $permintaan->setGlobal('server', ['CONTENT_LENGTH' => '999999999999']);
+        $permintaan->setGlobal('post', ['judul' => 'Isi']);
         $this->assertFalse(BatasUnggahFilter::kebesaran($permintaan, 1024));
     }
 
@@ -255,7 +249,7 @@ final class BatasUnggahTest extends UjiBasisData
      */
     private function kirimKebesaran(string $alamat, array $kepala = [], array $sesi = []): TestResponse
     {
-        $_SERVER['CONTENT_LENGTH'] = (string) ($this->batas() + 1);
+        $this->aturPanjang((string) ($this->batas() + 1));
         Services::resetSingle('security');
 
         try {
@@ -263,6 +257,21 @@ final class BatasUnggahTest extends UjiBasisData
         } catch (SecurityException $e) {
             $this->fail('Kiriman kebesaran seharusnya dialihkan dengan pesan, bukan ditolak CSRF: ' . $e->getMessage());
         }
+    }
+
+    private function permintaan(string $jalur): IncomingRequest
+    {
+        $config = config('App');
+
+        return new IncomingRequest($config, new SiteURI($config, $jalur), null, new UserAgent());
+    }
+
+    /**
+     * Panjang isi kiriman seperti yang dilaporkan peramban (`CONTENT_LENGTH`).
+     */
+    private function aturPanjang(string $panjang): void
+    {
+        service('superglobals')->setServer('CONTENT_LENGTH', $panjang);
     }
 
     private function assertPesanBatas(TestResponse $hasil): void

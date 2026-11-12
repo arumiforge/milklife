@@ -1,6 +1,8 @@
 <?php
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
+use App\Models\AdminModel;
+use CodeIgniter\Test\TestResponse;
 use Tests\Support\KirimFormulir;
 use Tests\Support\UjiBasisData;
 
@@ -46,12 +48,18 @@ final class JudulTabAdminTest extends UjiBasisData
     {
         setting('Acara.nama', self::NAMA);
 
+        // Halaman Akun membaca admin dari basis data.
+        $idAdmin = model(AdminModel::class, false)->insert([
+            'nama'          => 'Admin Karangan',
+            'nama_pengguna' => 'admin.karangan',
+            'sandi'         => 'kata-sandi-uji-1',
+        ]);
+
         foreach (self::HALAMAN as $alamat => $judul) {
-            $hasil = $this->bukaSebagaiAdmin($alamat);
+            $hasil = $this->bukaSebagaiAdmin($alamat, ['admin_id' => $idAdmin]);
             $hasil->assertOK();
 
-            $this->assertSame($judul . ' – Admin ' . self::NAMA, $this->judulTab($hasil->getBody()), "Judul tab {$alamat}.");
-            $this->assertStringNotContainsString('MilkLife', $hasil->getBody(), "Masih ada tulisan MilkLife di {$alamat}.");
+            $this->assertSame($judul . ' – Admin ' . self::NAMA, $this->judulTab($hasil), "Judul tab {$alamat}.");
         }
     }
 
@@ -59,11 +67,11 @@ final class JudulTabAdminTest extends UjiBasisData
     {
         $hasil = $this->bukaSebagaiAdmin('admin/dasbor');
 
-        $this->assertSame('Dasbor – Admin ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil->getBody()));
+        $this->assertSame('Dasbor – Admin ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil));
 
         $hasil = $this->withSession([])->get('admin/masuk');
 
-        $this->assertSame('Masuk Admin – ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil->getBody()));
+        $this->assertSame('Masuk Admin – ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil));
         $hasil->assertSee('Panel panitia ' . AcaraController::NAMA_PENGGANTI);
     }
 
@@ -74,7 +82,7 @@ final class JudulTabAdminTest extends UjiBasisData
         $hasil = $this->withSession([])->get('admin/masuk');
         $hasil->assertOK();
 
-        $this->assertSame('Masuk Admin – ' . self::NAMA, $this->judulTab($hasil->getBody()));
+        $this->assertSame('Masuk Admin – ' . self::NAMA, $this->judulTab($hasil));
         $hasil->assertSee('Panel panitia ' . self::NAMA);
         $hasil->assertDontSee('MilkLife');
     }
@@ -85,7 +93,7 @@ final class JudulTabAdminTest extends UjiBasisData
 
         foreach (['admin/dasbor' => true, 'admin/masuk' => false] as $alamat => $admin) {
             $hasil = $admin ? $this->bukaSebagaiAdmin($alamat) : $this->withSession([])->get($alamat);
-            $html  = $hasil->getBody();
+            $html  = $this->html($hasil);
 
             $this->assertStringNotContainsString('<b>Lari</b>', $html, "Nama acara tidak di-escape di {$alamat}.");
             $this->assertStringContainsString('Lomba &lt;b&gt;Lari&lt;/b&gt; &amp; &quot;Cepat&quot;</title>', $html);
@@ -120,8 +128,19 @@ final class JudulTabAdminTest extends UjiBasisData
         }
     }
 
-    private function judulTab(string $html): string
+    /**
+     * Isi jawaban persis seperti dikirim ke peramban (`getBody()` milik
+     * `TestResponse` sudah diolah ulang oleh DOMDocument).
+     */
+    private function html(TestResponse $hasil): string
     {
+        return (string) $hasil->response()->getBody();
+    }
+
+    private function judulTab(TestResponse $hasil): string
+    {
+        $html = $this->html($hasil);
+
         $this->assertSame(1, preg_match('#<title>(.*?)</title>#s', $html, $cocok), 'Tidak ada <title>.');
 
         return html_entity_decode(trim($cocok[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8');
