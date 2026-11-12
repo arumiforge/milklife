@@ -85,7 +85,10 @@ class Filters extends BaseFilters
         ],
         'after' => [
             // 'honeypot',
-            // 'secureheaders',
+            // Kepala keamanan (K67): X-Frame-Options, X-Content-Type-Options,
+            // Referrer-Policy, dan lainnya di setiap jawaban, termasuk PDF,
+            // Excel, dan gambar admin.
+            'secureheaders',
         ],
     ];
 

@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Filters\AdminFilter;
+use App\Libraries\SesiAdmin;
 use App\Models\AdminModel;
 use CodeIgniter\HTTP\RedirectResponse;
 
@@ -99,8 +100,9 @@ class MasukController extends BaseController
             return $this->tampilkan(galat: self::PESAN_GAGAL, namaPengguna: $namaPengguna);
         }
 
-        if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
-            $model->simpanSandi((int) $admin['id'], $sandi);
+        if (password_needs_rehash($hash, PASSWORD_DEFAULT) && $model->simpanSandi((int) $admin['id'], $sandi)) {
+            // Sidik sesi harus dari hash yang baru saja disimpan.
+            $admin['sandi'] = $model->sandiTersimpan((int) $admin['id']) ?? $hash;
         }
 
         $sesi   = session();
@@ -108,10 +110,7 @@ class MasukController extends BaseController
 
         $sesi->regenerate(true);
         $sesi->remove(AdminFilter::KUNCI_TUJUAN);
-        $sesi->set([
-            'admin_id'   => (int) $admin['id'],
-            'admin_nama' => (string) $admin['nama'],
-        ]);
+        SesiAdmin::mulai($admin);
 
         return redirect()->to($tujuan ?? 'admin/dasbor');
     }
@@ -121,11 +120,7 @@ class MasukController extends BaseController
      */
     public function keluar(): RedirectResponse
     {
-        $sesi = session();
-
-        // Kosongkan seluruh isi sesi, lalu buat ID sesi baru dan hapus yang lama.
-        $sesi->remove(array_keys($_SESSION ?? []));
-        $sesi->regenerate(true);
+        SesiAdmin::akhiri();
 
         return redirect()->to('admin/masuk')->with('pesan_masuk', 'Anda sudah keluar.');
     }

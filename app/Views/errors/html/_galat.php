@@ -24,7 +24,9 @@ try {
     $galatBeranda = '/';
 }
 
+// Komentar CSS dibuang supaya nama berkas di dalamnya tidak ikut terkirim.
 $galatGaya = is_file(__DIR__ . '/galat.css') ? (string) file_get_contents(__DIR__ . '/galat.css') : '';
+$galatGaya = trim((string) preg_replace('#/\*.*?\*/#s', '', $galatGaya));
 ?>
 <!doctype html>
 <html lang="id">

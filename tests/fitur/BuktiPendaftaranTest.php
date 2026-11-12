@@ -45,6 +45,9 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->assertStringStartsWith('application/pdf', $hasil->response()->getHeaderLine('Content-Type'));
         $this->assertSame('inline; filename="BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_SDNEGERICONTOH1_2026.pdf"', $hasil->response()->getHeaderLine('Content-Disposition'));
         $this->assertStringStartsWith('%PDF', $hasil->response()->getBody());
+        // Kepala keamanan (F7-02) tidak menghalangi PDF dibuka di peramban.
+        $this->assertSame('nosniff', $hasil->response()->getHeaderLine('X-Content-Type-Options'));
+        $this->assertSame('SAMEORIGIN', $hasil->response()->getHeaderLine('X-Frame-Options'));
 
         // Nama acara, seri, dan tahun mengikuti pengaturan.
         setting('Acara.nama', 'Lomba Lari Karangan');

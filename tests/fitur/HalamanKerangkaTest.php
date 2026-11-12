@@ -37,7 +37,7 @@ final class HalamanKerangkaTest extends UjiHalaman
 
     public function testNamaAdminDiEscape(): void
     {
-        $sesi  = ['admin_id' => 1, 'admin_nama' => '<b>Nama Karangan</b>'];
+        $sesi  = ['admin_nama' => '<b>Nama Karangan</b>'] + self::SESI_ADMIN;
         $hasil = $this->withSession($sesi)->get('admin/dasbor');
 
         $hasil->assertOK();

@@ -25,11 +25,16 @@ use CodeIgniter\Test\DatabaseTestTrait;
  * setiap uji, tanpa sisa dari uji sebelumnya (`PengaturanBersih`). Untuk
  * mengirim formulir admin, tambahkan `use KirimFormulir;` (sudah termasuk
  * `FeatureTestTrait`).
+ *
+ * Sesi admin (`UjiHalaman::SESI_ADMIN`) diterima tanpa akun sungguhan lewat
+ * tiruan `SesiAdminUji`; uji yang memeriksa sidik kata sandi sungguhan
+ * memanggil `pakaiSesiAdminAsli()`.
  */
 abstract class UjiBasisData extends CIUnitTestCase
 {
     use DatabaseTestTrait;
     use PengaturanBersih;
+    use SesiAdminUji;
 
     /**
      * Grup sambungan di `app/Config/Database.php`.

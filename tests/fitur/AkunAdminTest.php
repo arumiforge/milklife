@@ -227,7 +227,7 @@ final class AkunAdminTest extends UjiBasisData
     {
         $hasil = $this->kirimSandi(self::SANDI_UJI, self::SANDI_BARU, self::SANDI_BARU);
 
-        $this->assertBerhasilDialihkan($hasil, 'admin/akun', 'Kata sandi sudah diganti. Pakai kata sandi baru saat masuk berikutnya.');
+        $this->assertBerhasilDialihkan($hasil, 'admin/akun', AkunController::PESAN_SANDI_DIGANTI);
 
         // Sesi dibuat ulang, admin tetap masuk.
         $this->assertTrue(service('session')->didRegenerate);
