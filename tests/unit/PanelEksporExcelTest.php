@@ -102,7 +102,7 @@ final class PanelEksporExcelTest extends CIUnitTestCase
         // Rupiah: bilangan dengan format Rp.
         $this->assertSame(DataType::TYPE_NUMERIC, $lembar->getCell('E2')->getDataType());
         $this->assertSame(EksporExcel::FORMAT_RUPIAH, $lembar->getStyle('E2')->getNumberFormat()->getFormatCode());
-        $this->assertSame('Rp450,000', $lembar->getCell('E2')->getFormattedValue());
+        $this->assertSame('Rp 450,000', $lembar->getCell('E2')->getFormattedValue());
         $this->assertSame(DataType::TYPE_NUMERIC, $lembar->getCell('D3')->getDataType());
     }
 

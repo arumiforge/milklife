@@ -446,20 +446,45 @@ html:has(.tata-publik) {
     display: block;
 }
 
+/* Waktu acara dan keadaan pendaftaran: dua kartu serupa, bertumpuk di ponsel
+   dan sejajar dengan tinggi sama di layar lebar (K80). */
+.pembuka-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 36rem;
+}
+
 .pembuka-waktu {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 1rem;
-    padding: 0.75rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.875rem 1.25rem;
     background-color: var(--ml-biru-muda);
     color: var(--ml-biru-tua);
+    font-size: 1.0625rem;
     font-weight: 700;
-    border-radius: 0.25rem;
-    box-shadow: 6px 6px 0 var(--ml-biru-tua);
+    border-left: 6px solid var(--ml-putih);
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(var(--ml-biru-tua-rgb), 0.25);
 }
 
 .pembuka-waktu .bi {
-    margin-right: 0.35rem;
+    margin-right: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .pembuka-info {
+        flex-direction: row;
+        max-width: none;
+    }
+
+    .pembuka-waktu,
+    .pembuka-info .keadaan-pendaftaran {
+        flex: 0 1 auto;
+    }
 }
 
 @media (min-width: 768px) {
@@ -596,6 +621,7 @@ html:has(.tata-publik) {
     color: var(--ml-biru-tua);
     border-left: 6px solid var(--keadaan-garis);
     border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(var(--ml-biru-tua-rgb), 0.25);
 }
 
 .keadaan-belum-dibuka {
@@ -866,7 +892,8 @@ html:has(.tata-publik) {
     font-weight: 600;
 }
 
-.lomba-ku-info dt .bi {
+.lomba-ku-info dt .bi,
+.lomba-ku-info dt .ikon-rp {
     color: var(--ml-biru);
 }
 
@@ -895,22 +922,26 @@ html:has(.tata-publik) {
     font-size: 1.25rem;
 }
 
-/* Daftar nomor yang bisa dilipat. */
-.lomba-nomor {
-    border-top: 1px solid var(--ml-garis);
-}
-
-/* Panah tetap di kanan; tulisan dan jumlah boleh turun baris. */
+/* Daftar nomor yang bisa dilipat. Ringkasannya berupa pita oranye pucat
+   bergaris oranye supaya beda dari isi kartu yang biru (K80). */
 .lomba-nomor > summary {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.9rem 0 0.25rem;
+    padding: 0.8rem 1rem;
     font-size: 1.125rem;
-    color: var(--ml-biru);
+    color: var(--ml-oranye-gelap);
     font-weight: 700;
+    background-color: #FDEEE7;
+    border-left: 5px solid var(--ml-oranye);
+    border-radius: 0.5rem;
     cursor: pointer;
     list-style: none;
+    transition: background-color 0.15s ease;
+}
+
+.lomba-nomor > summary:hover {
+    background-color: #FBE1D5;
 }
 
 .lomba-nomor > summary::-webkit-details-marker {
@@ -937,7 +968,7 @@ html:has(.tata-publik) {
 }
 
 .lomba-nomor-jumlah {
-    color: var(--ml-teks-redup);
+    color: var(--ml-teks);
     font-size: 1rem;
     font-weight: 600;
 }
@@ -976,7 +1007,7 @@ html:has(.tata-publik) {
 }
 
 .lomba-daftar > li {
-    padding: 0.7rem 0.9rem;
+    padding: 0.9rem 1.1rem;
 }
 
 .lomba-daftar > li + li {
@@ -1031,15 +1062,48 @@ html:has(.tata-publik) {
 }
 
 .lomba-beregu-info {
-    margin: 0.4rem 0 0;
+    display: grid;
+    gap: 0.35rem;
+    margin: 0.65rem 0 0;
     padding: 0;
     list-style: none;
     color: var(--ml-teks-redup);
-    font-size: 0.9375rem;
+    font-size: 1rem;
 }
 
-.lomba-beregu-info .bi {
+.lomba-beregu-info .bi,
+.lomba-beregu-info .ikon-rp {
+    margin-right: 0.3rem;
     color: var(--ml-biru);
+}
+
+/* Teks di samping dan di bawah nama nomor lebih besar di layar lebar (K80). */
+@media (min-width: 992px) {
+    .lomba-nama-nomor {
+        font-size: 1.1875rem;
+    }
+
+    .kategori {
+        font-size: 0.9375rem;
+    }
+
+    .lomba-beregu-info {
+        font-size: 1.0625rem;
+    }
+}
+
+/* Pengganti ikon uang: Bootstrap Icons tidak punya ikon rupiah (K80).
+   Tulisannya dari CSS supaya tidak terbaca dua kali bersama nominalnya. */
+.ikon-rp::before {
+    content: "Rp";
+    display: inline-block;
+    padding: 0 0.25em;
+    font-size: 0.7em;
+    font-weight: 800;
+    line-height: 1.45;
+    vertical-align: 0.15em;
+    border: 1.5px solid currentColor;
+    border-radius: 0.25em;
 }
 
 .lomba-biaya-beregu {

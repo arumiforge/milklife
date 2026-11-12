@@ -82,24 +82,27 @@ $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : '
             </div>
         <?php endif ?>
 
-        <p class="pembuka-waktu mb-4">
-            <?php if ($acara['tanggal'] === '' && $acara['tempat'] === '') : ?>
-                <span><i class="bi bi-calendar-event" aria-hidden="true"></i>Tanggal dan tempat acara segera diumumkan</span>
-            <?php else : ?>
-                <?php if ($acara['tanggal'] !== '') : ?>
-                    <span><i class="bi bi-calendar-event" aria-hidden="true"></i><?= esc($acara['tanggal']) ?></span>
+        <?php // Waktu acara dan keadaan pendaftaran sejajar di layar lebar (K80). ?>
+        <div class="pembuka-info">
+            <p class="pembuka-waktu">
+                <?php if ($acara['tanggal'] === '' && $acara['tempat'] === '') : ?>
+                    <span><i class="bi bi-calendar-event" aria-hidden="true"></i>Tanggal dan tempat acara segera diumumkan</span>
+                <?php else : ?>
+                    <?php if ($acara['tanggal'] !== '') : ?>
+                        <span><i class="bi bi-calendar-event" aria-hidden="true"></i><?= esc($acara['tanggal']) ?></span>
+                    <?php endif ?>
+                    <?php if ($acara['tempat'] !== '') : ?>
+                        <span><i class="bi bi-geo-alt" aria-hidden="true"></i><?= esc($acara['tempat']) ?></span>
+                    <?php endif ?>
                 <?php endif ?>
-                <?php if ($acara['tempat'] !== '') : ?>
-                    <span><i class="bi bi-geo-alt" aria-hidden="true"></i><?= esc($acara['tempat']) ?></span>
-                <?php endif ?>
-            <?php endif ?>
-        </p>
+            </p>
 
-        <div class="keadaan-pendaftaran keadaan-<?= esc(str_replace('_', '-', $keadaan), 'attr') ?>" data-keadaan="<?= esc($keadaan, 'attr') ?>">
-            <span class="keadaan-ikon"><i class="bi bi-<?= $ikonKeadaan[$keadaan] ?>" aria-hidden="true"></i></span>
-            <div>
-                <p class="keadaan-label mb-1"><?= esc($bukaTutup->label()) ?></p>
-                <p class="keadaan-kalimat mb-0"><?= esc($bukaTutup->kalimat()) ?></p>
+            <div class="keadaan-pendaftaran keadaan-<?= esc(str_replace('_', '-', $keadaan), 'attr') ?>" data-keadaan="<?= esc($keadaan, 'attr') ?>">
+                <span class="keadaan-ikon"><i class="bi bi-<?= $ikonKeadaan[$keadaan] ?>" aria-hidden="true"></i></span>
+                <div>
+                    <p class="keadaan-label mb-1"><?= esc($bukaTutup->label()) ?></p>
+                    <p class="keadaan-kalimat mb-0"><?= esc($bukaTutup->kalimat()) ?></p>
+                </div>
             </div>
         </div>
     </div>

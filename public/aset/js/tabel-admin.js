@@ -30,7 +30,7 @@
  * Bentuk bawaan:
  *   teks    teks biasa (selalu di-escape)
  *   angka   1.234
- *   rupiah  Rp1.234.000
+ *   rupiah  Rp 1.234.000
  *   tanggal 12 Nov 2026 dari 2026-11-12 atau 2026-11-12 08:30:00
  *   status  lencana Lunas (hijau) atau Menunggu (kuning) dari lunas/menunggu
  *   tautan  nilai {alamat, teks} menjadi <a>; teks di-escape
@@ -80,7 +80,7 @@
             return kosong(nilai) || isNaN(Number(nilai)) ? escape(nilai) : angkaId.format(Number(nilai));
         },
         rupiah: function (nilai) {
-            return kosong(nilai) || isNaN(Number(nilai)) ? escape(nilai) : 'Rp' + angkaId.format(Number(nilai));
+            return kosong(nilai) || isNaN(Number(nilai)) ? escape(nilai) : 'Rp ' + angkaId.format(Number(nilai));
         },
         tanggal: function (nilai) {
             var cocok = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(nilai || ''));

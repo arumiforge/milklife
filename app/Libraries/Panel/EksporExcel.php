@@ -20,7 +20,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  *     WA, dan ID tidak kehilangan angka nol di depan, dan isian yang diawali
  *     `=` tidak pernah dijalankan sebagai rumus;
  *   - `angka`: bilangan bulat;
- *   - `rupiah`: bilangan bulat rupiah dengan format `"Rp"#,##0`, jadi tetap
+ *   - `rupiah`: bilangan bulat rupiah dengan format `"Rp "#,##0`, jadi tetap
  *     bisa dijumlahkan di Excel.
  *   Nilai kosong (`null` atau `''`) menjadi sel kosong.
  *
@@ -42,7 +42,7 @@ final class EksporExcel
 {
     public const JENIS = ['teks', 'angka', 'rupiah'];
 
-    public const FORMAT_RUPIAH = '"Rp"#,##0';
+    public const FORMAT_RUPIAH = '"Rp "#,##0';
 
     public const MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 

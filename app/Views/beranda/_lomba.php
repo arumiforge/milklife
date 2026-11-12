@@ -47,6 +47,11 @@ $lencanaKategori = static fn (array $kategori): string => implode('<span class="
     $kategori,
 ));
 
+/** Ikon butir info; biaya memakai tanda "Rp" karena Bootstrap Icons tidak punya ikon rupiah (K80). */
+$ikon = static fn (string $nama): string => $nama === 'rupiah'
+    ? '<span class="ikon-rp" aria-hidden="true"></span>'
+    : '<i class="bi bi-' . esc($nama, 'attr') . '" aria-hidden="true"></i>';
+
 /** Teks biaya: `null` belum diisi, `0` gratis, selain itu rupiah dengan satuannya. */
 $teksBiaya = static fn (?int $biaya, string $satuan, string $belum): string => match (true) {
     $biaya === null => $belum,
@@ -83,10 +88,10 @@ $keteranganTim = static function (array $nomor): array {
     $inti  = $nomor['jumlah_inti'];
     $batas = $nomor['batas_anggota'];
 
+    // Batas anggota tidak ditulis di halaman depan (K80); tetap berlaku saat mendaftar.
     $anggota = match (true) {
-        $inti !== null && $batas !== null && $batas > $inti => "{$inti} atlet inti, paling banyak {$batas} anggota",
+        $inti !== null && $batas !== null && $batas > $inti => "{$inti} atlet inti per tim",
         $inti !== null                                       => "{$inti} atlet per tim",
-        $batas !== null                                      => "Paling banyak {$batas} anggota per tim",
         default                                              => null,
     };
 
@@ -144,7 +149,7 @@ $keteranganTim = static function (array $nomor): array {
                             </div>
                             <?php if ($tampilkanBiaya) : ?>
                                 <div>
-                                    <dt><i class="bi bi-cash-coin" aria-hidden="true"></i> Biaya individu</dt>
+                                    <dt><?= $ikon('rupiah') ?> Biaya individu</dt>
                                     <dd class="lomba-biaya-individu"><?= esc($teksBiaya($ku['biaya_individu'], 'per atlet per nomor', 'Biaya segera diumumkan')) ?></dd>
                                 </div>
                             <?php endif ?>
@@ -188,7 +193,7 @@ $keteranganTim = static function (array $nomor): array {
                                             $info  = $keteranganTim($nomor);
 
                                             if ($tampilkanBiaya) {
-                                                $info[] = ['ikon' => 'cash-coin', 'teks' => $teksBiaya($nomor['biaya_beregu'], 'per tim', 'Biaya tim segera diumumkan'), 'kelas' => 'lomba-biaya-beregu'];
+                                                $info[] = ['ikon' => 'rupiah', 'teks' => $teksBiaya($nomor['biaya_beregu'], 'per tim', 'Biaya tim segera diumumkan'), 'kelas' => 'lomba-biaya-beregu'];
                                             }
                                             ?>
                                             <li>
@@ -199,7 +204,7 @@ $keteranganTim = static function (array $nomor): array {
                                                 <?php if ($info !== []) : ?>
                                                     <ul class="lomba-beregu-info">
                                                         <?php foreach ($info as $butirInfo) : ?>
-                                                            <li<?= isset($butirInfo['kelas']) ? ' class="' . $butirInfo['kelas'] . '"' : '' ?>><i class="bi bi-<?= $butirInfo['ikon'] ?>" aria-hidden="true"></i> <?= esc($butirInfo['teks']) ?></li>
+                                                            <li<?= isset($butirInfo['kelas']) ? ' class="' . $butirInfo['kelas'] . '"' : '' ?>><?= $ikon($butirInfo['ikon']) ?> <?= esc($butirInfo['teks']) ?></li>
                                                         <?php endforeach ?>
                                                     </ul>
                                                 <?php endif ?>

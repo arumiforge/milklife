@@ -96,7 +96,7 @@ final class PendaftaranGabunganTest extends UjiBasisData
         $cekId = $this->get('cek-pendaftaran?kode=' . $satu['id_pendaftaran']);
         $cekId->assertOK();
         $teks = $this->teksHalaman($cekId);
-        foreach (['SD KARANGAN MAJU', $satu['id_pendaftaran'], 'BUDI KARANGAN 01', 'Lari 60 m putra', "Kanga's Escape putra", 'Rp250.000', 'Ibu Karangan', '0812-0000-0001', 'Menunggu Konfirmasi Pembayaran'] as $harap) {
+        foreach (['SD KARANGAN MAJU', $satu['id_pendaftaran'], 'BUDI KARANGAN 01', 'Lari 60 m putra', "Kanga's Escape putra", 'Rp 250.000', 'Ibu Karangan', '0812-0000-0001', 'Menunggu Konfirmasi Pembayaran'] as $harap) {
             $this->assertStringContainsString($harap, $teks);
         }
         $this->assertStringNotContainsString($dua['id_pendaftaran'], $teks);
@@ -107,7 +107,7 @@ final class PendaftaranGabunganTest extends UjiBasisData
         $this->assertStringContainsString($satu['id_pendaftaran'], $teks);
         $this->assertStringContainsString($dua['id_pendaftaran'], $teks);
         $this->assertStringContainsString('Frog Jump putra', $teks);
-        $this->assertStringContainsString('Rp400.000', $teks, 'Total keseluruhan dua pendaftaran.');
+        $this->assertStringContainsString('Rp 400.000', $teks, 'Total keseluruhan dua pendaftaran.');
 
         // Tautan cetak bukti dari langkah 5 membuka PDF pendaftaran itu.
         $alamatBukti = 'bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', $dua['id_pendaftaran'])->get()->getRow()->kode_bukti . '/' . $dua['id_pendaftaran'];

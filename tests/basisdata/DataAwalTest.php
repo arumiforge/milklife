@@ -178,7 +178,7 @@ final class DataAwalTest extends UjiBasisData
             array_map(static fn (array $ku): array => [$ku['tahun_lahir_awal'], $ku['tahun_lahir_akhir']], $baris),
         );
 
-        // K73: KU 8–12 Rp25.000 (SD), KU 15 Rp35.000 (SMP), KU 18 Rp50.000 (SMA).
+        // K73: KU 8–12 Rp 25.000 (SD), KU 15 Rp 35.000 (SMP), KU 18 Rp 50.000 (SMA).
         $this->assertSame(['25000', '25000', '25000', '35000', '50000'], array_column($baris, 'biaya_individu'));
 
         foreach ($baris as $ku) {

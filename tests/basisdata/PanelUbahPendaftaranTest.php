@@ -10,8 +10,8 @@ use Tests\Support\UjiBasisData;
  * Ubah pendaftaran dari panel (`App\Libraries\Panel\UbahPendaftaran`, F6-04;
  * rancangan 6.9 dan 9; K32, K57, K59; asumsi 4 rencana Tahap 6).
  *
- * Data induk dan biaya dari `PanelDataContoh`: KU 10 Rp150.000 per nomor
- * individu, Kanga's Escape beregu putra Rp100.000 (inti 4, batas 6), awalan
+ * Data induk dan biaya dari `PanelDataContoh`: KU 10 Rp 150.000 per nomor
+ * individu, Kanga's Escape beregu putra Rp 100.000 (inti 4, batas 6), awalan
  * nomor dada KU 10 = 2, KU 12 = 3.
  *
  * @internal
@@ -268,7 +268,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $this->assertTrue($tolak['perlu_setuju']);
         $this->assertFalse($tolak['tersimpan']);
         $this->assertSame(['setuju_menunggu'], array_column($tolak['galat'], 'jalur'));
-        $this->assertStringContainsString('dari Rp150.000 menjadi Rp300.000', $tolak['galat'][0]['pesan']);
+        $this->assertStringContainsString('dari Rp 150.000 menjadi Rp 300.000', $tolak['galat'][0]['pesan']);
         $this->assertSame('lunas', $this->pendaftaran($p['id'])['status']);
         $this->assertSame(150000, $this->pendaftaran($p['id'])['total']);
 

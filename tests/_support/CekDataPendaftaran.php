@@ -8,11 +8,11 @@ namespace Tests\Support;
  *
  * Isi `isiDataCek()`:
  *
- * - KU Contoh (tidak aktif) dengan tarif sekarang Rp175.000, padahal pendaftaran menyimpan
- *   Rp150.000 (membuktikan biaya tidak dihitung ulang).
+ * - KU Contoh (tidak aktif) dengan tarif sekarang Rp 175.000, padahal pendaftaran menyimpan
+ *   Rp 150.000 (membuktikan biaya tidak dihitung ulang).
  * - `MAC2A0000126` (NPSN 20300001, Menunggu): dua penanggung jawab (satu
  *   berfoto), BUDI (Lari 60 m + Estafet), CANDRA (Lompat Jauh + Lari 60 m +
- *   Estafet), DIMAS dan EKO (Estafet saja). Total tersimpan Rp650.000.
+ *   Estafet), DIMAS dan EKO (Estafet saja). Total tersimpan Rp 650.000.
  * - `MAC2A0000226` (NPSN sama, Lunas, susulan): FAJAR menambah anggota
  *   Estafet tanpa baris `pendaftaran_beregu`; bernomor dada 1001.
  * - `MAC2B0000326` (tanpa NPSN): nama sekolah berisi tanda HTML.

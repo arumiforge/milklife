@@ -30,7 +30,7 @@ final class DataPendaftaranTest extends UjiBasisData
         $this->assertSame('Menunggu Konfirmasi Pembayaran', $p['status_label']);
         $this->assertSame([450000, 200000, 650000], [$p['subtotal_individu'], $p['subtotal_beregu'], $p['total']]);
 
-        // Tarif KU Contoh sekarang Rp175.000; yang dibaca tetap biaya tersimpan.
+        // Tarif KU Contoh sekarang Rp 175.000; yang dibaca tetap biaya tersimpan.
         $this->assertSame([150000, 150000, 150000], array_column($p['individu'], 'biaya'));
         $this->assertSame(['Lari 60 m putra', 'Lari 60 m putra', 'Lompat Jauh putra'], array_column($p['individu'], 'nomor_lomba'));
         $this->assertSame(['BUDI KARANGAN', 'CANDRA REKAAN', 'CANDRA REKAAN'], array_column($p['individu'], 'nama'));

@@ -79,7 +79,7 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
         $tanda = $xpath->query('//*[contains(@class, "tim-tanpa-pembayar")]');
         $this->assertSame(1, $tanda->length);
         $this->assertSame((string) $this->idInduk['kanga'], $tanda->item(0)->getAttribute('data-nomor'));
-        $this->assertStringContainsString('Rp100.000', $tanda->item(0)->textContent);
+        $this->assertStringContainsString('Rp 100.000', $tanda->item(0)->textContent);
 
         // Dasbor: jumlahnya.
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'));
@@ -140,7 +140,7 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $hasil,
             'admin/pendaftaran/' . $b['id'],
-            'Perubahan pendaftaran ' . $b['id_pendaftaran'] . ' tersimpan. Total sekarang Rp100.000. Biaya 1 tim tanpa pembayar kini dibebankan ke pendaftaran ini.',
+            'Perubahan pendaftaran ' . $b['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 100.000. Biaya 1 tim tanpa pembayar kini dibebankan ke pendaftaran ini.',
         );
         $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id']))->query('//*[contains(@class, "tim-tanpa-pembayar")]')->length);
         $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'))->query('//*[@id="tim-tanpa-pembayar"]')->length);

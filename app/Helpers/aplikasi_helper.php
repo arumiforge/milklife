@@ -38,10 +38,10 @@ if (! function_exists('aset')) {
 
 if (! function_exists('rupiah')) {
     /**
-     * Tampilan uang rupiah tanpa angka di belakang koma: `Rp150.000`.
+     * Tampilan uang rupiah tanpa angka di belakang koma, dengan spasi setelah Rp (K80): `Rp 150.000`.
      *
-     *     rupiah(150000);   // 'Rp150.000'
-     *     rupiah('0');      // 'Rp0'
+     *     rupiah(150000);   // 'Rp 150.000'
+     *     rupiah('0');      // 'Rp 0'
      *     rupiah(null);     // ''
      *
      * Angka dari basis data (teks berisi angka bulat) juga diterima. Nilai
@@ -64,7 +64,7 @@ if (! function_exists('rupiah')) {
             return '';
         }
 
-        return ($angka < 0 ? '-' : '') . 'Rp' . number_format(abs($angka), 0, ',', '.');
+        return ($angka < 0 ? '-' : '') . 'Rp ' . number_format(abs($angka), 0, ',', '.');
     }
 }
 

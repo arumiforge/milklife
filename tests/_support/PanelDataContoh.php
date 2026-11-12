@@ -50,8 +50,8 @@ use App\Libraries\Pendaftaran\IdPendaftaran;
  *
  * Kunci nomor lomba dan kelompok umur sama dengan `isiDataIndukPendaftaran()`
  * (`PendaftaranContoh`): `ku10`, `ku12`, `ku15`, `lari60putra`, `lari60putri`,
- * `frog`, `turbo`, `kanga` (beregu putra, Rp100.000), `estafet` (beregu mix,
- * Rp150.000), `lari60putraKu12`, `lari80putri`.
+ * `frog`, `turbo`, `kanga` (beregu putra, Rp 100.000), `estafet` (beregu mix,
+ * Rp 150.000), `lari60putraKu12`, `lari80putri`.
  *
  * Biaya dihitung seperti `BiayaPendaftaran`: biaya kelompok umur untuk setiap
  * nomor individu, biaya tim untuk setiap nomor beregu (0 bila nomornya ada di

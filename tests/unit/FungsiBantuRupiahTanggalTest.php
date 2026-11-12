@@ -13,18 +13,18 @@ final class FungsiBantuRupiahTanggalTest extends CIUnitTestCase
 {
     public function testRupiahTanpaKomaDenganTitikRibuan(): void
     {
-        $this->assertSame('Rp150.000', rupiah(150000));
-        $this->assertSame('Rp0', rupiah(0));
-        $this->assertSame('Rp999', rupiah(999));
-        $this->assertSame('Rp1.000', rupiah(1000));
-        $this->assertSame('Rp4.294.967.295', rupiah(4294967295));
-        $this->assertSame('-Rp5.000', rupiah(-5000));
+        $this->assertSame('Rp 150.000', rupiah(150000));
+        $this->assertSame('Rp 0', rupiah(0));
+        $this->assertSame('Rp 999', rupiah(999));
+        $this->assertSame('Rp 1.000', rupiah(1000));
+        $this->assertSame('Rp 4.294.967.295', rupiah(4294967295));
+        $this->assertSame('-Rp 5.000', rupiah(-5000));
     }
 
     public function testRupiahDariTeksBasisData(): void
     {
-        $this->assertSame('Rp100.000', rupiah('100000'));
-        $this->assertSame('Rp100.000', rupiah(' 100000 '));
+        $this->assertSame('Rp 100.000', rupiah('100000'));
+        $this->assertSame('Rp 100.000', rupiah(' 100000 '));
         $this->assertSame('', rupiah(null));
         $this->assertSame('', rupiah(''));
         $this->assertSame('', rupiah('12,5'));
@@ -35,7 +35,7 @@ final class FungsiBantuRupiahTanggalTest extends CIUnitTestCase
     {
         $this->assertSame(150000, angka_rupiah('150000'));
         $this->assertSame(150000, angka_rupiah('150.000'));
-        $this->assertSame(150000, angka_rupiah('Rp150.000'));
+        $this->assertSame(150000, angka_rupiah('Rp 150.000'));
         $this->assertSame(150000, angka_rupiah('Rp 150.000'));
         $this->assertSame(150000, angka_rupiah('rp. 150 000'));
         $this->assertSame(0, angka_rupiah('0'));

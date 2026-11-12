@@ -201,3 +201,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K79 | Catatan di bawah tabel daftar pendaftaran panel tidak lagi menyebut centang yang hanya berlaku untuk halaman tampil, isi Backup data, maupun perintah `php spark pendaftaran:impor`. Antarmuka tidak memuat teks teknis dan memakai ejaan bahasa Indonesia baku | Cara memasukkan Backup data di server baru tetap tercatat di README (bagian Perintah) |
+
+## 12 November 2026 — rupiah dan halaman depan
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K80 | Rupiah ditulis dengan spasi antara Rp dan angkanya (`Rp 150.000`) di semua tempat: antarmuka, bukti PDF, pesan WA, dan Excel. Ikon uang ber-dolar diganti tanda "Rp". Di halaman depan, keterangan nomor beregu tidak lagi menyebut batas anggota ("paling banyak …"); nama nomor, lencana kategori, dan keterangan tim diperbesar di layar lebar dengan jarak yang lebih lega; ringkasan "Lihat nomor lomba" berupa pita oranye pucat bergaris oranye. Waktu acara dan keadaan pendaftaran di kepala menjadi dua kartu sejajar di layar lebar, bertumpuk dengan lebar sama di ponsel | Menggantikan aturan contoh `Rp150.000` di rancangan final bagian aturan umum; rancangan final belum diubah dan menunggu revisi lewat draf. Batas anggota tetap berlaku dan diperiksa saat mendaftar |

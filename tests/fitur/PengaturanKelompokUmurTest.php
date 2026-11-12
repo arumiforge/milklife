@@ -90,7 +90,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $this->assertSame(['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 0));
         $this->assertSame(['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2015', 'Lahir 2011–2014', 'Lahir 2008–2010'], array_column($baris, 1));
         $this->assertSame(['SD/MI', 'SD/MI', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], array_column($baris, 2));
-        $this->assertSame(['Rp25.000', 'Rp25.000', 'Rp25.000', 'Rp35.000', 'Rp50.000'], array_column($baris, 3));
+        $this->assertSame(['Rp 25.000', 'Rp 25.000', 'Rp 25.000', 'Rp 35.000', 'Rp 50.000'], array_column($baris, 3));
         $this->assertSame(['1', '2', '3', '4', '5'], array_column($baris, 4));
         $this->assertSame(['Aktif'], array_values(array_unique(array_column($baris, 5))));
     }
@@ -102,7 +102,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
 
         $baris = $this->barisTabel($this->bukaSebagaiAdmin(self::ALAMAT));
 
-        $this->assertSame(['KU 10', 'Lahir 2016–2018', 'SD/MI SMP/MTs', 'Rp50.000', '2, 6', 'Aktif'], array_slice($baris[0], 0, 6));
+        $this->assertSame(['KU 10', 'Lahir 2016–2018', 'SD/MI SMP/MTs', 'Rp 50.000', '2, 6', 'Aktif'], array_slice($baris[0], 0, 6));
         $this->assertSame(['KU Lama', 'Belum diisi', 'Belum dipilih', 'Belum diisi', 'Belum diisi', 'Mati'], array_slice($baris[1], 0, 6));
     }
 
@@ -155,7 +155,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
             'tahun_lahir_awal'  => '2016',
             'tahun_lahir_akhir' => '2018',
             'jenjang'           => ['A', 'B'],
-            'biaya_individu'    => 'Rp50.000',
+            'biaya_individu'    => 'Rp 50.000',
             'awalan'            => '2, 6',
             'urutan'            => '2',
             'aktif'             => '1',
@@ -275,7 +275,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $this->seeNumRecords(11, 'nomor_lomba', ['kelompok_umur_id' => $id]);
 
         $baris = $this->barisTabel($this->bukaSebagaiAdmin(self::ALAMAT));
-        $this->assertSame(['KU 10', 'Lahir 2016–2018', 'SD/MI', 'Rp50.000', '2, 7', 'Aktif'], array_slice($baris[1], 0, 6));
+        $this->assertSame(['KU 10', 'Lahir 2016–2018', 'SD/MI', 'Rp 50.000', '2, 7', 'Aktif'], array_slice($baris[1], 0, 6));
     }
 
     public function testUbahIsianSalahDitampilkanUlangTanpaMenyimpan(): void

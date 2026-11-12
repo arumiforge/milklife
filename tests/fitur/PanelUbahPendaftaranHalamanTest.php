@@ -97,7 +97,7 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
 
         $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/' . $p['id'], $isian);
 
-        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran/' . $p['id'], 'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp450.000.');
+        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran/' . $p['id'], 'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 450.000.');
         $this->assertSame('SITI KARANGAN BARU', $this->db->table('atlet')->where('id', $p['atlet'][1])->get()->getRow()->nama);
     }
 
@@ -166,7 +166,7 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $hasil,
             'admin/pendaftaran/' . $p['id'],
-            'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp600.000. '
+            'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 600.000. '
             . 'Status kembali menjadi Menunggu Konfirmasi Pembayaran; tandai Lunas lagi setelah selisihnya diurus.',
         );
         $this->assertSame('menunggu', $this->db->table('pendaftaran')->where('id', $p['id'])->get()->getRow()->status);
@@ -189,7 +189,7 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $hasil,
             'admin/pendaftaran/' . $p['id'],
-            'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp100.000. 1 atlet baru mendapat nomor dada.',
+            'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 100.000. 1 atlet baru mendapat nomor dada.',
         );
         $this->assertSame(0, $this->db->table('atlet')->where('pendaftaran_id', $p['id'])->where('nomor_dada', null)->countAllResults());
     }
