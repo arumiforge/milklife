@@ -18,6 +18,7 @@ $routes->get('unduhan', 'UnduhanController::index');
 
 // Cek pendaftaran dan bukti (Tahap 5). Blok milik sesi Tahap 5 (K48).
 $routes->get('cek-pendaftaran', 'CekPendaftaranController::index');
+$routes->get('bukti/(:segment)', 'BuktiController::index/$1');
 // Akhir blok Tahap 5
 
 // Admin. Semua rute dijaga filter `admin` (`App\Filters\AdminFilter`):
