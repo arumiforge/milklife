@@ -82,6 +82,9 @@ final class PendaftaranGabunganTest extends UjiBasisData
         $susulan['sekolah'] = $pertama['sekolah'];
         $susulan['atlet']   = [self::atletContoh('9900000005', [20, 12])];
 
+        // Official mencentang konfirmasi tim susulan (K57).
+        $susulan['konfirmasi_susulan'] = [20];
+
         $satu = $this->simpanLewatWizard($pertama);
         $dua  = $this->simpanLewatWizard($susulan);
 

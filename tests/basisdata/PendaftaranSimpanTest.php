@@ -256,6 +256,30 @@ final class PendaftaranSimpanTest extends UjiBasisData
         $this->assertStringContainsString('Tim ini sudah penuh', $ketiga['galat'][0]['pesan']);
     }
 
+    public function testSusulanTanpaKonfirmasiTidakDisimpan(): void
+    {
+        // K57: kiriman wizard membawa daftar konfirmasi; tim susulan yang tidak
+        // ada di daftar itu ditolak dan tidak ada yang tersimpan.
+        $this->assertSame([], $this->simpan(self::kirimanTimKanga(4, 100))['galat']);
+
+        $kiriman                       = self::kirimanTimKanga(2, 200);
+        $kiriman['konfirmasi_susulan'] = [];
+        $hasil                         = $this->simpan($kiriman);
+
+        $this->assertSame([['langkah' => 3, 'jalur' => 'konfirmasi.' . $this->id['kanga']]], array_map(
+            static fn (array $g): array => ['langkah' => $g['langkah'], 'jalur' => $g['jalur']],
+            $hasil['galat'],
+        ));
+        $this->assertSame(1, $this->db->table('pendaftaran')->countAllResults());
+
+        $kiriman['konfirmasi_susulan'] = [20];
+        $hasil                         = $this->simpan($kiriman);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertTrue($hasil['rincian']['beregu'][0]['susulan']);
+        $this->assertSame(0, $hasil['rincian']['beregu'][0]['biaya']);
+    }
+
     public function testSusulanTimHanyaBerlakuUntukNpsnYangSama(): void
     {
         $this->simpan(self::kirimanTimKanga(4, 100));

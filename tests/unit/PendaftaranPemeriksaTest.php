@@ -352,6 +352,89 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertGalat(self::periksa($kiriman, ['referensi' => $referensi, 'tim' => [20 => 4]]), 'beregu.20', 'sudah punya 4 atlet dari pendaftaran sebelumnya');
     }
 
+    // Konfirmasi tim susulan (K57)
+
+    /**
+     * @return array{0: array<string, mixed>, 1: array<string, mixed>} kiriman susulan satu atlet Kanga's Escape, data ada
+     */
+    private static function susulanKanga(): array
+    {
+        $kiriman            = self::kirimanContoh();
+        $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => ''];
+        $kiriman['atlet']   = self::timKanga(1);
+        $referensi          = ['npsn' => '99999911', 'nama' => 'SD KARANGAN MAJU', 'bentuk' => 'SD', 'jenjang' => 'SD', 'kabupaten' => 'Kudus'];
+
+        return [$kiriman, ['referensi' => $referensi, 'tim' => [20 => 4]]];
+    }
+
+    public function testTimSusulanTanpaKonfirmasiDitolak(): void
+    {
+        [$kiriman, $ada]               = self::susulanKanga();
+        $kiriman['konfirmasi_susulan'] = [];
+
+        $hasil = self::periksa($kiriman, $ada);
+
+        $this->assertGalat($hasil, 'konfirmasi.20', "Tim Kanga's Escape putra: sekolah ini sudah punya tim di nomor ini (4 atlet dari pendaftaran sebelumnya)");
+        $this->assertStringContainsString('Centang kotak konfirmasi', $hasil['galat'][0]['pesan']);
+        $this->assertSame(3, $hasil['galat'][0]['langkah']);
+        $this->assertCount(1, $hasil['galat']);
+
+        // Konfirmasi untuk nomor lain tidak berlaku.
+        $kiriman['konfirmasi_susulan'] = [21, 'bukan', -20, null];
+        $this->assertGalat(self::periksa($kiriman, $ada), 'konfirmasi.20');
+    }
+
+    public function testTimSusulanDenganKonfirmasiDiterima(): void
+    {
+        [$kiriman, $ada] = self::susulanKanga();
+
+        foreach ([[20], ['20'], [21, 20]] as $konfirmasi) {
+            $kiriman['konfirmasi_susulan'] = $konfirmasi;
+            $hasil                         = self::periksa($kiriman, $ada);
+
+            $this->assertSame([], $hasil['galat'], json_encode($konfirmasi));
+            $this->assertSame([['nomor_lomba_id' => 20, 'biaya_tim' => 0]], $hasil['data']['beregu']);
+            $this->assertTrue($hasil['rincian']['beregu'][0]['susulan']);
+        }
+    }
+
+    public function testTanpaKunciKonfirmasiPerilakuLama(): void
+    {
+        // Pemanggil admin (F6-04) tidak membawa kunci konfirmasi: tim susulan diterima seperti sebelumnya.
+        [$kiriman, $ada] = self::susulanKanga();
+
+        $hasil = self::periksa($kiriman, $ada);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame([['nomor_lomba_id' => 20, 'biaya_tim' => 0]], $hasil['data']['beregu']);
+    }
+
+    public function testKonfirmasiTidakMemengaruhiTimBaru(): void
+    {
+        // Pendaftaran tanpa tim susulan tidak perlu konfirmasi apa pun.
+        $kiriman                       = self::kirimanContoh();
+        $kiriman['atlet']              = self::timKanga(4);
+        $kiriman['konfirmasi_susulan'] = [];
+
+        $hasil = self::periksa($kiriman);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame([['nomor_lomba_id' => 20, 'biaya_tim' => 100000]], $hasil['data']['beregu']);
+
+        // Tanpa NPSN, data tim sekolah lain tidak membuat tim menjadi susulan.
+        $this->assertSame([], self::periksa($kiriman, ['tim' => [20 => 4]])['galat']);
+    }
+
+    public function testWajibKonfirmasiSusulanMerapikanKiriman(): void
+    {
+        $this->assertSame([], PemeriksaPendaftaran::wajibKonfirmasiSusulan(['atlet' => []])['konfirmasi_susulan']);
+        $this->assertSame([], PemeriksaPendaftaran::wajibKonfirmasiSusulan(['konfirmasi_susulan' => 'semua'])['konfirmasi_susulan']);
+        $this->assertSame(
+            [20, 21],
+            PemeriksaPendaftaran::wajibKonfirmasiSusulan(['konfirmasi_susulan' => [20, '21', '20', 0, -3, '4a', 1.5, null, ['x']]])['konfirmasi_susulan'],
+        );
+    }
+
     public function testTimSekolahLainTidakDihitungTanpaNpsn(): void
     {
         // Data tim hanya berlaku bila NPSN diisi; tanpa NPSN pendaftaran berdiri sendiri.

@@ -130,6 +130,75 @@ final class PendaftaranKirimTest extends UjiBasisData
         $this->assertSame(1, $this->db->table('pendaftaran')->countAllResults());
     }
 
+    /**
+     * Kiriman susulan dari NPSN 99999911 yang sudah punya tim Kanga's Escape
+     * (4 atlet): satu atlet tambahan di nomor itu.
+     *
+     * @return array<string, mixed>
+     */
+    private function siapkanSusulan(): array
+    {
+        $pertama            = self::kirimanContoh();
+        $pertama['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => ''];
+        $pertama['atlet']   = [];
+
+        foreach ([1, 2, 3, 4] as $n) {
+            $pertama['atlet'][] = self::atletContoh('990000007' . $n, [20]);
+        }
+
+        $this->kirimJson('pendaftaran/simpan', self::kirimanUntukBasisData($pertama, $this->id))->assertStatus(201);
+
+        $susulan          = $pertama;
+        $susulan['atlet'] = [self::atletContoh('9900000075', [20])];
+
+        return $susulan;
+    }
+
+    public function testSusulanTanpaKonfirmasiDitolak(): void
+    {
+        $susulan = $this->siapkanSusulan();
+
+        // Tanpa kunci konfirmasi sama sekali, dan dengan daftar kosong.
+        foreach ([null, []] as $konfirmasi) {
+            $kiriman = self::kirimanUntukBasisData($susulan, $this->id);
+
+            if ($konfirmasi !== null) {
+                $kiriman['konfirmasi_susulan'] = $konfirmasi;
+            }
+
+            foreach (['pendaftaran/periksa', 'pendaftaran/simpan'] as $alamat) {
+                $hasil = $this->kirimJson($alamat, $kiriman);
+
+                $hasil->assertStatus(422);
+                $galat = self::json($hasil)['galat'];
+                $this->assertSame(['konfirmasi.' . $this->id['kanga']], array_column($galat, 'jalur'), $alamat);
+                $this->assertSame([3], array_column($galat, 'langkah'));
+                $this->assertStringContainsString("Tim Kanga's Escape putra", $galat[0]['pesan']);
+                $this->assertStringContainsString('Centang kotak konfirmasi', $galat[0]['pesan']);
+            }
+        }
+
+        $this->assertSame(1, $this->db->table('pendaftaran')->countAllResults());
+    }
+
+    public function testSusulanDenganKonfirmasiDiterima(): void
+    {
+        $susulan                       = $this->siapkanSusulan();
+        $susulan['konfirmasi_susulan'] = [20];
+        $kiriman                       = self::kirimanUntukBasisData($susulan, $this->id);
+
+        $periksa = $this->kirimJson('pendaftaran/periksa', $kiriman);
+        $periksa->assertStatus(200);
+        $this->assertTrue(self::json($periksa)['rincian']['beregu'][0]['susulan']);
+
+        $simpan = $this->kirimJson('pendaftaran/simpan', $kiriman);
+        $simpan->assertStatus(201);
+        $rincian = self::json($simpan)['rincian'];
+        $this->assertSame(0, $rincian['subtotal_beregu']);
+        $this->assertSame(0, $rincian['total']);
+        $this->assertSame(2, $this->db->table('pendaftaran')->countAllResults());
+    }
+
     public function testDitolakBilaPendaftaranTidakTerbuka(): void
     {
         setting('Pendaftaran.akhir', '2026-01-02 00:00:00');
