@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Status | Draf, menunggu persetujuan pemilik sebelum kode dimulai |
+| Status | Draf, **disetujui pemilik 12 November 2026 termasuk delapan asumsinya (K61)** |
 | Tanggal | 12 November 2026 |
-| Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.6, 6.7, 6.9, 9, 11, 13, 14; keputusan K01–K60, terutama K32, K34, K52, K53, K56–K60; arsip Tahap 3, 4, 5 bagian "Yang dibawa ke tahap berikutnya" |
+| Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.6, 6.7, 6.9, 9, 11, 13, 14; keputusan K01–K61, terutama K32, K34, K52, K53, K56–K60; arsip Tahap 3, 4, 5 bagian "Yang dibawa ke tahap berikutnya" |
 
 ## Tujuan
 
