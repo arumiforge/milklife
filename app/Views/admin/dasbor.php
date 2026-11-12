@@ -1,9 +1,11 @@
 <?php
 /**
- * Dasbor admin: keadaan pendaftaran, daftar centang kelengkapan pengaturan
- * (F2-09), keadaan kosong pendaftaran, dan gambar kepala halaman depan.
- * Data dari `DasborController::index()`. Angka ringkasan menyusul di Tahap 6.
+ * Dasbor admin: angka ringkasan pendaftaran (F6-06), keadaan pendaftaran,
+ * daftar centang kelengkapan pengaturan (F2-09), keadaan kosong pendaftaran
+ * (hanya bila belum ada pendaftaran), dan gambar kepala halaman depan.
+ * Data dari `DasborController::index()`.
  *
+ * @var array{pendaftaran: int, atlet: int, tim: int, sekolah: int, tagihan: int, lunas: int, belum: int} $angka
  * @var CodeIgniter\View\View                                                                             $this
  * @var list<array{kunci: string, label: string, lengkap: bool, keterangan: string, alamat: string}>     $butir
  * @var int                                                                                               $jumlahLengkap
@@ -36,6 +38,31 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
+    <section class="mb-4" aria-labelledby="judul-angka" id="angka-pendaftaran">
+        <h2 id="judul-angka" class="visually-hidden">Ringkasan pendaftaran</h2>
+        <div class="row row-cols-2 row-cols-md-4 row-cols-xxl-7 g-3">
+            <?php foreach ([
+                'pendaftaran' => ['Pendaftaran', 'journal-text', false],
+                'sekolah'     => ['Sekolah', 'building', false],
+                'atlet'       => ['Atlet', 'person-arms-up', false],
+                'tim'         => ['Tim beregu', 'people', false],
+                'tagihan'     => ['Tagihan', 'receipt', true],
+                'lunas'       => ['Lunas', 'check-circle', true],
+                'belum'       => ['Belum dibayar', 'hourglass-split', true],
+            ] as $kunci => [$label, $ikon, $uang]) : ?>
+                <div class="col">
+                    <div class="card h-100" data-angka="<?= $kunci ?>">
+                        <div class="card-body p-3">
+                            <div class="small text-body-secondary"><i class="bi bi-<?= $ikon ?>" aria-hidden="true"></i> <?= $label ?></div>
+                            <div class="fs-5 fw-semibold text-nowrap nilai-angka"><?= $uang ? esc(rupiah($angka[$kunci])) : $angka[$kunci] ?></div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <p class="small mt-2 mb-0"><a href="<?= site_url('admin/rekap') ?>">Lihat rekap lengkap</a></p>
+    </section>
+
     <div class="row g-4 mb-4">
         <section class="col-12 col-xl-5" aria-labelledby="judul-keadaan" id="keadaan-pendaftaran" data-keadaan="<?= esc($keadaan, 'attr') ?>">
             <div class="card h-100">
@@ -115,6 +142,7 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
     </div>
 
     <div class="row g-4">
+        <?php if ($angka['pendaftaran'] === 0) : ?>
         <section class="col-12 col-xl-7" aria-labelledby="judul-kosong">
             <div class="card kartu-kosong h-100">
                 <div class="card-body text-center px-3 py-5">
@@ -127,6 +155,7 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
                 </div>
             </div>
         </section>
+        <?php endif ?>
 
         <section class="col-12 col-xl-5" aria-labelledby="judul-gambar">
             <div class="card h-100">

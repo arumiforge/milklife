@@ -5,11 +5,12 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\DataKelengkapan;
+use App\Libraries\Panel\Rekap;
 
 /**
- * Dasbor panel admin: keadaan pendaftaran, daftar centang kelengkapan
- * pengaturan (rancangan 6.1), dan keadaan kosong pendaftaran. Angka ringkasan
- * pendaftaran menyusul di Tahap 6.
+ * Dasbor panel admin: angka ringkasan pendaftaran (F6-06, `Rekap::ringkasan()`),
+ * keadaan pendaftaran, daftar centang kelengkapan pengaturan (rancangan 6.1),
+ * dan keadaan kosong pendaftaran.
  */
 class DasborController extends BaseController
 {
@@ -24,6 +25,7 @@ class DasborController extends BaseController
         $manualSampai = BukaTutupPendaftaran::bacaWaktu(setting('Pendaftaran.buka_manual_sampai'));
 
         return view('admin/dasbor', [
+            'angka'         => (new Rekap())->ringkasan(),
             'butir'         => $kelengkapan->butir(),
             'jumlahLengkap' => $kelengkapan->jumlahLengkap(),
             'semuaLengkap'  => $kelengkapan->lengkap(),
