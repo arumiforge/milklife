@@ -86,8 +86,15 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K42 | Urutan halaman depan: kepala (gambar, logo, judul, data acara, keadaan pendaftaran, tombol) → kelompok umur, nomor lomba, dan biaya → jadwal → unduhan → kontak dan tombol WA → footer | Yang paling dicari sekolah tampil lebih dulu |
 | K43 | Rencana implementasi Tahap 3 disetujui, termasuk enam asumsinya | Kode Tahap 3 boleh mulai, diawali F3-01 dan F3-04 bersamaan |
 
+## 12 November 2026 — tinjauan halaman depan Tahap 3
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K44 | Gambar kepala halaman depan menjadi latar di belakang judul, bukan pita gambar terpisah di atas judul | Gambar diberi lapisan biru tua supaya tulisan tetap terbaca. Keterangan unggah gambar kepala di panel menyarankan foto tanpa tulisan. Dikerjakan di F3-05 |
+| K45 | Rincian biaya di bagian lomba halaman depan bisa disembunyikan atau ditampilkan lewat panel admin (sakelar "Tampilkan biaya di halaman depan" di pengaturan Halaman Depan, nilai awal tampil) | Alasan pemilik: rincian biaya tetap muncul di bagian pembayaran saat mendaftar (Tahap 4). Kunci baru `HalamanDepan.tampilkan_biaya`. Diminta langsung ke sub-sesi F3-02, dibawa lewat PR penutupan F3-05 |
+
 ## 12 November 2026 — CI GitHub
 
 | No | Keputusan | Catatan |
 |---|---|---|
-| K44 | GitHub Actions menjalankan `composer uji` (PHP 8.3, MySQL 8) pada setiap PR ke `main` dan setiap push ke `main`. Uji lokal tetap dijalankan sebelum PR | Menggantikan K15 dan bagian "uji tanpa GitHub Actions" di K16; bagian K16 tentang pemasangan CodeIgniter 4 lewat Composer tetap berlaku. Menggantikan juga kalimat "Tanpa CI GitHub" di rancangan bagian 14. Workflow hanya berlaku untuk repo ini, jadi tidak mengganggu CI repo lain di akun yang sama |
+| K46 | GitHub Actions menjalankan `composer uji` (PHP 8.3, MySQL 8) pada setiap PR ke `main` dan setiap push ke `main`. Uji lokal tetap dijalankan sebelum PR | Menggantikan K15 dan bagian "uji tanpa GitHub Actions" di K16; bagian K16 tentang pemasangan CodeIgniter 4 lewat Composer tetap berlaku. Menggantikan juga kalimat "Tanpa CI GitHub" di rancangan bagian 14. Workflow hanya berlaku untuk repo ini, jadi tidak mengganggu CI repo lain di akun yang sama |

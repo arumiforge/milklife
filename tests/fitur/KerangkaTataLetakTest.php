@@ -90,16 +90,24 @@ final class KerangkaTataLetakTest extends UjiHalaman
     }
 
     /**
-     * Setiap alamat `http://`, `https://`, atau `//` di HTML harus menuju host aplikasi sendiri.
+     * Setiap aset yang dimuat peramban (`src`, `<link href>`, `url()` di CSS
+     * sebaris) harus menuju host aplikasi sendiri: tanpa CDN. Tautan biasa
+     * (`<a href>`, misalnya tombol bagikan ke WA sejak F3-03) tidak dihitung.
      */
     private function assertTanpaAlamatLuar(string $html): void
     {
         $hostSendiri = parse_url(base_url(), PHP_URL_HOST);
+        $alamat      = '((?:https?:)?//[^\s"\'<>]+)';
 
-        preg_match_all('#(?:https?:)?//([^/\s"\'<>?\#]+)#i', $html, $cocok);
+        preg_match_all('#\ssrc\s*=\s*["\']?' . $alamat . '#i', $html, $src);
+        preg_match_all('#<link\b[^>]*\shref\s*=\s*["\']?' . $alamat . '#i', $html, $link);
+        preg_match_all('#url\(\s*["\']?' . $alamat . '#i', $html, $url);
 
-        foreach ($cocok[1] as $host) {
-            $host = strtolower(preg_replace('/:\d+$/', '', $host));
+        $aset = array_merge($src[1], $link[1], $url[1]);
+
+        foreach ($aset as $alamatAset) {
+            $host = (string) parse_url(str_starts_with($alamatAset, '//') ? 'http:' . $alamatAset : $alamatAset, PHP_URL_HOST);
+            $host = strtolower((string) preg_replace('/:\d+$/', '', $host));
             $this->assertSame($hostSendiri, $host, 'Ada alamat ke host luar: ' . $host);
         }
     }

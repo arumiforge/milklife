@@ -28,7 +28,7 @@ $menuPublik = [
     ['label' => 'Beranda', 'alamat' => '/'],
     ['label' => 'Pendaftaran', 'alamat' => IsiHalamanDepan::ALAMAT_PENDAFTARAN],
     ['label' => 'Cek Pendaftaran', 'alamat' => IsiHalamanDepan::ALAMAT_CEK_PENDAFTARAN],
-    ['label' => 'Unduhan', 'alamat' => null],
+    ['label' => 'Unduhan', 'alamat' => 'unduhan'],
 ];
 
 $kaki = IsiHalamanDepan::kaki();

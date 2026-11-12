@@ -62,7 +62,7 @@ final class TataLetakHalamanTest extends UjiHalaman
         }
 
         $this->assertSame(
-            ['Beranda', 'Pendaftaran Segera', 'Cek Pendaftaran Segera', 'Unduhan Segera'],
+            ['Beranda', 'Pendaftaran Segera', 'Cek Pendaftaran Segera', 'Unduhan'],
             array_keys($butir),
         );
 
@@ -70,8 +70,13 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame('page', $butir['Beranda']->getAttribute('aria-current'));
         $this->assertSame(site_url('/'), $butir['Beranda']->getAttribute('href'));
 
+        // Unduhan sudah punya halaman (F3-03, K40): bertautan, tidak aktif di halaman depan.
+        $this->assertSame(site_url('unduhan'), $butir['Unduhan']->getAttribute('href'));
+        $this->assertFalse($butir['Unduhan']->hasAttribute('aria-disabled'));
+        $this->assertFalse($butir['Unduhan']->hasAttribute('aria-current'));
+
         // Yang halamannya belum ada: non-aktif, tanpa tautan (bukan tautan mati ke 404).
-        foreach (['Pendaftaran Segera', 'Cek Pendaftaran Segera', 'Unduhan Segera'] as $label) {
+        foreach (['Pendaftaran Segera', 'Cek Pendaftaran Segera'] as $label) {
             $this->assertSame('true', $butir[$label]->getAttribute('aria-disabled'), $label);
             $this->assertFalse($butir[$label]->hasAttribute('href'), $label . ' tidak boleh bertautan.');
             $this->assertStringContainsString('disabled', $butir[$label]->getAttribute('class'));
@@ -337,15 +342,23 @@ final class TataLetakHalamanTest extends UjiHalaman
     }
 
     /**
-     * Setiap alamat `http://`, `https://`, atau `//` di HTML harus menuju host aplikasi sendiri.
+     * Setiap aset yang dimuat peramban (`src`, `<link href>`, `url()` di CSS
+     * sebaris) harus menuju host aplikasi sendiri: tanpa CDN. Tautan biasa
+     * (`<a href>`, misalnya tombol bagikan ke WA sejak F3-03) tidak dihitung.
      */
     private function assertTanpaAlamatLuar(string $html): void
     {
         $hostSendiri = parse_url(base_url(), PHP_URL_HOST);
+        $alamat      = '((?:https?:)?//[^\s"\'<>]+)';
 
-        preg_match_all('#(?:https?:)?//([^/\s"\'<>?\#]+)#i', $html, $cocok);
+        preg_match_all('#\ssrc\s*=\s*["\']?' . $alamat . '#i', $html, $src);
+        preg_match_all('#<link\b[^>]*\shref\s*=\s*["\']?' . $alamat . '#i', $html, $link);
+        preg_match_all('#url\(\s*["\']?' . $alamat . '#i', $html, $url);
 
-        foreach ($cocok[1] as $host) {
+        $aset = array_merge($src[1], $link[1], $url[1]);
+
+        foreach ($aset as $alamatAset) {
+            $host = (string) parse_url(str_starts_with($alamatAset, '//') ? 'http:' . $alamatAset : $alamatAset, PHP_URL_HOST);
             $host = strtolower((string) preg_replace('/:\d+$/', '', $host));
             $this->assertSame($hostSendiri, $host, 'Ada alamat ke host luar: ' . $host);
         }

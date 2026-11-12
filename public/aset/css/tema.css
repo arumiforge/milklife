@@ -483,18 +483,39 @@ h1, h2, h3, h4, h5, h6,
 
 /* ---------- Kepala halaman depan (beranda/_kepala.php) ---------- */
 
-/* Gambar kepala selebar layar, di atas judul. Rasio dari ukuran aslinya
-   (atribut width/height), dibatasi supaya judul tetap terlihat. */
+/* Gambar kepala menjadi latar di belakang judul (K44): mengisi seluruh
+   bagian pembuka, di bawah bidang miring, dengan lapisan biru tua supaya
+   tulisan putih tetap terbaca di atas gambar apa pun. */
 .pembuka-gambar {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
     background-color: var(--ml-biru-tua);
 }
 
 .pembuka-gambar img {
     display: block;
     width: 100%;
-    height: auto;
-    max-height: 70vh;
+    height: 100%;
     object-fit: cover;
+}
+
+.pembuka-gambar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 31, 123, 0.8);
+}
+
+@media (min-width: 768px) {
+    .pembuka-dengan-gambar > .container {
+        min-height: 32rem;
+    }
+
+    /* Layar lebar: lapisan pekat di sisi tulisan, gambar lebih terlihat di kanan. */
+    .pembuka-gambar::after {
+        background: linear-gradient(90deg, rgba(2, 31, 123, 0.92) 0%, rgba(2, 31, 123, 0.8) 45%, rgba(2, 31, 123, 0.35) 100%);
+    }
 }
 
 /* Logo di atas kartu putih, sama tinggi, bentuk asli tidak berubah. */
@@ -752,6 +773,187 @@ h1, h2, h3, h4, h5, h6,
 
 /* ---------- Bagian lomba (F3-02) ---------- */
 
+/* Latar putih supaya terpisah dari kepala biru dan bagian berikutnya. */
+.bagian-lomba {
+    background-color: var(--ml-putih);
+    border-bottom: 1px solid var(--ml-garis);
+}
+
+.lomba-judul {
+    font-weight: 800;
+}
+
+.lomba-pengantar {
+    max-width: 68ch;
+    margin-bottom: 1.5rem;
+    color: var(--ml-teks-redup);
+}
+
+/* Kartu kelompok umur: garis oranye di atas seperti kartu masuk. */
+.lomba-ku {
+    padding: 1.1rem 1.1rem 0.9rem;
+    background-color: var(--ml-latar);
+    border: 1px solid var(--ml-garis);
+    border-top: 5px solid var(--ml-oranye);
+    border-radius: 0.75rem;
+    overflow-wrap: anywhere;
+}
+
+.lomba-ku-nama {
+    margin-bottom: 0.75rem;
+    font-size: 1.375rem;
+    font-weight: 800;
+}
+
+.lomba-ku-info {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+}
+
+.lomba-ku-info dt {
+    color: var(--ml-teks-redup);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.lomba-ku-info dt .bi {
+    color: var(--ml-biru);
+}
+
+.lomba-ku-info dd {
+    margin-bottom: 0;
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
+.lomba-kosong {
+    margin-bottom: 0;
+    color: var(--ml-teks-redup);
+}
+
+/* Daftar nomor yang bisa dilipat. */
+.lomba-nomor {
+    border-top: 1px solid var(--ml-garis);
+}
+
+/* Panah tetap di kanan; tulisan dan jumlah boleh turun baris. */
+.lomba-nomor > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0 0.15rem;
+    color: var(--ml-biru);
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+
+.lomba-nomor > summary::-webkit-details-marker {
+    display: none;
+}
+
+.lomba-nomor > summary:hover .lomba-nomor-label {
+    text-decoration: underline;
+}
+
+.lomba-nomor > summary:focus-visible {
+    outline: 3px solid var(--ml-oranye-tombol);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+}
+
+.lomba-nomor-ringkas {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.125rem 0.75rem;
+    min-width: 0;
+}
+
+.lomba-nomor-jumlah {
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.lomba-nomor-panah {
+    flex: none;
+    transition: transform 0.2s ease;
+}
+
+.lomba-nomor[open] .lomba-nomor-panah {
+    transform: rotate(180deg);
+}
+
+/* Tulisan ringkasan berganti saat daftar dibuka. */
+.lomba-nomor[open] .lomba-nomor-buka,
+.lomba-nomor:not([open]) .lomba-nomor-tutup {
+    display: none;
+}
+
+.lomba-nomor-judul {
+    margin: 1rem 0 0.5rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.lomba-daftar {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.5rem;
+}
+
+.lomba-daftar > li {
+    padding: 0.5rem 0.75rem;
+}
+
+.lomba-daftar > li + li {
+    border-top: 1px solid var(--ml-garis);
+}
+
+.lomba-daftar-individu > li,
+.lomba-beregu-kepala {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.125rem 0.75rem;
+}
+
+.lomba-nama-nomor {
+    color: var(--ml-teks);
+    font-weight: 600;
+}
+
+.lomba-kategori {
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+}
+
+.lomba-beregu-info {
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+}
+
+.lomba-beregu-info .bi {
+    color: var(--ml-biru);
+}
+
+.lomba-biaya-beregu {
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+}
+
 /* ---------- Akhir bagian lomba ---------- */
 
 /*
@@ -761,5 +963,402 @@ h1, h2, h3, h4, h5, h6,
  */
 
 /* ---------- Bagian jadwal, unduhan, kontak (F3-03) ---------- */
+
+/* Bagian jadwal, unduhan, dan kontak memakai kerangka yang sama
+   (.bagian-tambahan): jarak atas-bawah, judul biru tua bergaris oranye, dan
+   kalimat pengantar redup. Latar berselang: jadwal di latar halaman, unduhan
+   putih, kontak biru muda pucat, supaya batas bagian terlihat. */
+.bagian-tambahan {
+    padding: 2.5rem 0;
+    scroll-margin-top: 1rem;
+}
+
+.bagian-unduhan {
+    background-color: var(--ml-putih);
+    border-top: 1px solid var(--ml-garis);
+    border-bottom: 1px solid var(--ml-garis);
+}
+
+.bagian-kontak {
+    background-color: var(--ml-biru-muda-pucat);
+}
+
+.bagian-tambahan-judul {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 800;
+    color: var(--ml-biru-tua);
+}
+
+.bagian-tambahan-judul::after {
+    content: "";
+    flex: none;
+    width: 2.5rem;
+    height: 4px;
+    margin-left: 0.25rem;
+    background-color: var(--ml-oranye);
+    transform: skewX(-24deg);
+}
+
+/* Judul tanpa kalimat pengantar (jadwal) diberi jarak sendiri ke daftar. */
+.bagian-tambahan-judul + :not(.bagian-tambahan-pengantar) {
+    margin-top: 1.25rem;
+}
+
+.bagian-tambahan-judul .bi {
+    color: var(--ml-oranye-tombol);
+}
+
+.bagian-tambahan-pengantar {
+    max-width: 60ch;
+    margin-bottom: 1.5rem;
+    color: var(--ml-teks-redup);
+}
+
+/* Teks admin yang panjang tanpa spasi (alamat, nama berkas) dipatahkan,
+   supaya halaman tidak bergulir mendatar di ponsel. */
+.daftar-jadwal,
+.daftar-unduhan,
+.bagian-kontak {
+    overflow-wrap: anywhere;
+}
+
+/* ---------- Jadwal (beranda/_jadwal.php) ---------- */
+
+.daftar-jadwal {
+    display: grid;
+    gap: 1rem;
+}
+
+.jadwal-butir {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-left: 4px solid var(--ml-oranye);
+    border-radius: 0.75rem;
+}
+
+/* Kotak tanggal seperti lembar kalender: angka hari dan bulan singkat. */
+.jadwal-tanggal {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 3.75rem;
+    height: 3.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--ml-biru-tua);
+    color: #fff;
+    line-height: 1;
+}
+
+.jadwal-tanggal-hari {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.jadwal-tanggal-bulan {
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.jadwal-tanggal-kosong {
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru);
+    font-size: 1.5rem;
+}
+
+.jadwal-isi {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.jadwal-judul {
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.jadwal-rincian {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9375rem;
+}
+
+.jadwal-rincian li {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.jadwal-rincian .bi {
+    flex: none;
+    color: var(--ml-biru);
+}
+
+.jadwal-keterangan {
+    margin-bottom: 0.75rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.9375rem;
+}
+
+.jadwal-tautan {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+/* ---------- Unduhan (beranda/_unduhan.php, beranda/_daftar_unduhan.php) ---------- */
+
+.daftar-unduhan {
+    display: grid;
+    gap: 1rem;
+}
+
+.unduhan-butir {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    padding: 1rem;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.75rem;
+}
+
+.bagian-unduhan .unduhan-butir {
+    background-color: var(--ml-latar);
+}
+
+.unduhan-ikon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.5rem;
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru);
+    font-size: 1.5rem;
+}
+
+.unduhan-isi {
+    flex: 1 1 12rem;
+    min-width: 0;
+}
+
+.unduhan-judul {
+    margin-bottom: 0.25rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.unduhan-keterangan {
+    margin-bottom: 0.25rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.9375rem;
+}
+
+.unduhan-rincian {
+    margin-bottom: 0;
+    color: var(--ml-teks-redup);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* Tombol unduh selebar kartu di ponsel, di kanan pada layar lebih besar. */
+.unduhan-tombol {
+    display: inline-flex;
+    flex: 1 1 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.unduhan-semua {
+    margin: 1.5rem 0 0;
+}
+
+/* Halaman /unduhan (unduhan.php). */
+.halaman-unduhan-kepala {
+    padding: 2rem 0;
+    background: var(--ml-gradasi-kepala);
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.halaman-unduhan-kepala h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+    font-weight: 800;
+    color: #fff;
+}
+
+.halaman-unduhan-isi {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.unduhan-kosong {
+    max-width: 36rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.75rem;
+}
+
+.unduhan-kosong p {
+    color: var(--ml-teks-redup);
+}
+
+/* ---------- Kontak (beranda/_kontak.php) ---------- */
+
+.kontak-kolom {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.kontak-subjudul {
+    margin-bottom: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.daftar-narahubung,
+.daftar-media-sosial {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.narahubung-butir,
+.media-sosial-tautan {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.75rem;
+}
+
+.narahubung-butir {
+    flex-wrap: wrap;
+}
+
+.kontak-ikon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru);
+    font-size: 1.25rem;
+}
+
+.narahubung-isi,
+.media-sosial-isi {
+    flex: 1 1 8rem;
+    min-width: 0;
+}
+
+.narahubung-nama,
+.media-sosial-label {
+    display: block;
+    margin-bottom: 0;
+    font-weight: 700;
+    color: var(--ml-biru-tua);
+}
+
+.narahubung-nomor,
+.media-sosial-alamat {
+    display: block;
+    margin-bottom: 0;
+    color: var(--ml-teks-redup);
+    font-size: 0.9375rem;
+}
+
+.narahubung-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-weight: 600;
+}
+
+.media-sosial-tautan {
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.media-sosial-tautan:hover {
+    border-color: var(--ml-biru);
+    box-shadow: 0 0.25rem 0.75rem rgba(var(--ml-biru-tua-rgb), 0.12);
+}
+
+.media-sosial-tautan:hover .media-sosial-label {
+    text-decoration: underline;
+}
+
+/* Tombol tanya admin dan bagikan: selebar layar di ponsel, berjajar di layar lebih besar. */
+.kontak-tombol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.kontak-tombol .btn {
+    display: inline-flex;
+    flex: 1 1 15rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.bagian-kontak .btn-outline-primary {
+    --bs-btn-bg: var(--ml-putih);
+}
+
+@media (min-width: 576px) {
+    .unduhan-tombol {
+        flex: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .bagian-tambahan {
+        padding: 3.5rem 0;
+    }
+
+    .daftar-jadwal,
+    .kontak-kolom {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .kontak-tombol .btn {
+        flex: 0 0 auto;
+    }
+}
+
 
 /* ---------- Akhir bagian jadwal, unduhan, kontak ---------- */

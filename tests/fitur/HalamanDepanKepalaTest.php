@@ -60,6 +60,8 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->get('/'));
 
+        // Gambar kepala menjadi latar di belakang judul (K44), di dalam bagian pembuka.
+        $this->assertSame(1, $xpath->query('//section[@id="pembuka"][contains(@class, "pembuka-dengan-gambar")]')->length);
         $gambar = $xpath->query('//section[@id="pembuka"]//*[contains(@class, "pembuka-gambar")]/img')->item(0);
         $this->assertNotNull($gambar);
         $this->assertSame(base_url($jalur['gambar_kepala']), $gambar->getAttribute('src'));
@@ -213,7 +215,8 @@ final class HalamanDepanKepalaTest extends UjiBasisData
             iterator_to_array($xpath->query('//main/section')),
         );
 
-        $this->assertSame(['pembuka'], $bagian);
+        // Bagian kontak selalu tampil karena tombol "Bagikan ke WA" selalu ada (F3-03).
+        $this->assertSame(['pembuka', 'kontak'], $bagian);
         $this->assertSame('judul-acara', $xpath->query('//section[@id="pembuka"]')->item(0)?->getAttribute('aria-labelledby'));
     }
 

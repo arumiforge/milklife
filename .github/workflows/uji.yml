@@ -1,5 +1,5 @@
 # Menjalankan semua uji (composer uji) di GitHub Actions.
-# Keputusan K44: menggantikan K15 dan K16 (tanpa CI GitHub).
+# Keputusan K46: menggantikan K15 dan K16 (tanpa CI GitHub).
 #
 # Workflow ini hanya berlaku untuk repo ini. CI di repo lain milik akun yang
 # sama tidak ikut terpicu dan tidak terganggu.

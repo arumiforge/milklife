@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 3 — Halaman depan |
 | Dibuat | 12 November 2026 |
 
@@ -35,3 +35,4 @@ Admin yang mengunggah berkas terlalu besar mendapat pesan ramah, judul tab admin
 - Contoh di komentar `BerandaPengaturanController` masih menulis "Data Acara – Admin MilkLife"; berkas itu di luar bagian F3-04, jadi tidak diubah (dilaporkan ke koordinator).
 - `getIPAddress()` CodeIgniter 4.7 (`system/HTTP/RequestTrait.php`): kepala dari `$proxyIPs` hanya dibaca bila `REMOTE_ADDR` sama persis dengan kunci (atau masuk subnet); isi kepala diambil sampai koma pertama dan harus alamat IP sah, kalau tidak dipakai `REMOTE_ADDR`. Semua keadaan ini diuji di `AlamatPengunjungTest`, termasuk pembatasan masuk admin yang kini dihitung per pengunjung tunnel dan tidak bisa dihindari dengan kepala palsu.
 - Efek samping `$proxyIPs`: di CodeIgniter 4.7, `IncomingRequest::isSecure()` juga memercayai `X-Forwarded-Proto` dari alamat di `$proxyIPs`. `cloudflared` mengirim kepala itu, jadi permintaan lewat tunnel HTTPS dikenali sebagai aman; ini sesuai keadaan sebenarnya.
+- Digabung lewat PR #26 pada 12 November 2026.

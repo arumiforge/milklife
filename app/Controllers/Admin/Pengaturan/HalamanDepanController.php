@@ -12,8 +12,9 @@ use RuntimeException;
  * Pengaturan isi halaman depan: `GET` dan `POST /admin/pengaturan/halaman-depan`.
  *
  * Menyimpan gambar kepala, tiga logo, judul, teks, footer, nomor WA tanya
- * admin, pesan tanya admin, dan pesan bagikan (kunci `HalamanDepan.*` di
- * rencana Tahap 2). Tampilan halaman depan publik yang memakai isi ini
+ * admin, pesan tanya admin, pesan bagikan (kunci `HalamanDepan.*` di
+ * rencana Tahap 2), dan sakelar tampil-tidaknya biaya di bagian lomba
+ * (`HalamanDepan.tampilkan_biaya`). Tampilan halaman depan publik yang memakai isi ini
  * dikerjakan di Tahap 3.
  *
  * - Semua isian boleh kosong; yang diisi harus benar.
@@ -39,7 +40,7 @@ class HalamanDepanController extends BaseController
         'gambar_kepala' => [
             'label' => 'Gambar kepala',
             'rasio' => '21x9',
-            'saran' => 'Gambar mendatar selebar layar, misalnya 1920 × 820 piksel.',
+            'saran' => 'Tampil selebar layar sebagai latar di belakang judul halaman depan, diberi lapisan biru supaya tulisan tetap terbaca. Pilih foto tanpa tulisan, misalnya 1920 × 1080 piksel.',
         ],
         'logo_persegi' => [
             'label' => 'Logo persegi',
@@ -80,7 +81,7 @@ class HalamanDepanController extends BaseController
         $nomorWa                 = (string) setting('HalamanDepan.nomor_wa_tanya');
         $isian['nomor_wa_tanya'] = $nomorWa === '' ? '' : NomorWa::tampilan($nomorWa);
 
-        return $this->tampilkan($isian);
+        return $this->tampilkan($isian, [], [], (bool) setting('HalamanDepan.tampilkan_biaya'));
     }
 
     public function simpan(): ResponseInterface|string
@@ -93,6 +94,9 @@ class HalamanDepanController extends BaseController
             'pesan_tanya'    => self::rapikanTeks((string) $this->request->getPost('pesan_tanya')),
             'pesan_bagikan'  => self::rapikanTeks((string) $this->request->getPost('pesan_bagikan')),
         ];
+
+        // Kotak centang: tidak terkirim sama sekali bila tidak dicentang.
+        $tampilkanBiaya = $this->request->getPost('tampilkan_biaya') === '1';
 
         $sebutan = [
             'judul'         => 'Judul',
@@ -143,7 +147,7 @@ class HalamanDepanController extends BaseController
         }
 
         if ($galat !== []) {
-            return $this->tampilkan($isian, $galat, $dipilihSah);
+            return $this->tampilkan($isian, $galat, $dipilihSah, $tampilkanBiaya);
         }
 
         // Simpan semua gambar baru dulu. Bila satu gagal, yang sudah tersimpan
@@ -158,7 +162,7 @@ class HalamanDepanController extends BaseController
                     $unggahan->hapus($jalur);
                 }
 
-                return $this->tampilkan($isian, [$kunci => self::GAMBAR[$kunci]['label'] . ': ' . $e->getMessage()]);
+                return $this->tampilkan($isian, [$kunci => self::GAMBAR[$kunci]['label'] . ': ' . $e->getMessage()], [], $tampilkanBiaya);
             }
         }
 
@@ -167,6 +171,7 @@ class HalamanDepanController extends BaseController
         }
 
         setting('HalamanDepan.nomor_wa_tanya', $nomorWa);
+        setting('HalamanDepan.tampilkan_biaya', $tampilkanBiaya);
 
         // Berkas lama dibuang setelah yang baru tersimpan. Gambar baru
         // mengalahkan centang "Hapus gambar" pada kotak yang sama.
@@ -197,8 +202,9 @@ class HalamanDepanController extends BaseController
      * @param array<string, string> $isian
      * @param array<string, string> $galat
      * @param list<string>          $gambarPerluDipilihLagi label gambar sah yang belum tersimpan karena isian lain salah
+     * @param bool                  $tampilkanBiaya         keadaan sakelar biaya di bagian lomba
      */
-    private function tampilkan(array $isian, array $galat = [], array $gambarPerluDipilihLagi = []): string
+    private function tampilkan(array $isian, array $galat = [], array $gambarPerluDipilihLagi = [], bool $tampilkanBiaya = true): string
     {
         $unggahan = new Unggahan();
         $gambar   = [];
@@ -213,6 +219,7 @@ class HalamanDepanController extends BaseController
             'galat'                  => $galat,
             'gambar'                 => $gambar,
             'gambarPerluDipilihLagi' => $gambarPerluDipilihLagi,
+            'tampilkanBiaya'         => $tampilkanBiaya,
         ]);
     }
 }
