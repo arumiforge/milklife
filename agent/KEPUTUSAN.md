@@ -143,3 +143,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K59 | Atlet yang ditambahkan admin ke pendaftaran Lunas yang totalnya tidak berubah (misalnya tambahan anggota tim beregu) **langsung mendapat nomor dada saat disimpan** | Melengkapi K32: bila total berubah, status kembali ke Menunggu dan nomor dada atlet baru dibuat saat ditandai Lunas lagi |
 | K60 | Rekap peserta (per nomor lomba, tim beregu, per sekolah, per kelompok umur) beserta Excel dan PDF-nya memuat **semua pendaftaran**, dengan saringan status (semua, Lunas, Menunggu). Rekap keuangan selalu memuat keduanya | |
 | K61 | Rencana implementasi Tahap 6 disetujui, termasuk delapan asumsinya | Kode Tahap 6 boleh mulai, diawali F6-01 (gelombang 1) |
+
+## 12 November 2026 — persiapan sesi agen di cloud
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K62 | Sesi agen di cloud disiapkan oleh Setup script di setelan lingkungan cloud: MySQL 8, basis data `milklife_uji`, `.env`, dan `composer install` dipasang sekali di awal sesi. Agen tidak memasang ulang selama sesi, cukup `composer uji` | Pemilik melihat pemasangan berulang di sesi cloud. Isi skrip ada di `agent/ALUR-KERJA.md` bagian "Sesi agen di cloud". Diuji di sesi ini: pemasangan pertama sekitar 7,5 menit, jalan ulang 1 detik, 929 uji lulus. Unduhan zip dari GitHub ditolak jaringan sesi, jadi Composer mengambil lewat git dan lebih lambat |
