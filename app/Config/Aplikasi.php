@@ -13,8 +13,9 @@ use CodeIgniter\Config\BaseConfig;
 class Aplikasi extends BaseConfig
 {
     /**
-     * true = halaman memakai berkas CSS/JS versi kecil (`.min`) bila ada.
-     * Berkas kecil dibuat dengan `php spark aset:minify` (Tahap 7).
+     * true = halaman memakai berkas CSS/JS versi kecil (`.min`) bila ada,
+     * dan HTML diperkecil saat dikirim (filter `perkecilhtml`).
+     * Berkas kecil dibuat dengan `php spark aset:minify`.
      */
     public bool $minify = false;
 }

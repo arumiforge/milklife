@@ -2,6 +2,7 @@
 
 namespace App\Libraries;
 
+use App\Filters\BatasUnggahFilter;
 use CodeIgniter\HTTP\Files\UploadedFile;
 use RuntimeException;
 
@@ -13,7 +14,9 @@ use RuntimeException;
  * `unggahan/<folder>/<nama acak>.<ekstensi>`, dan alamatnya `base_url($jalur)`.
  *
  * - Folder yang boleh dipakai: `FOLDER` (`halaman-depan`, `pembayaran`, `unduhan`).
- * - Gambar: JPG, PNG, atau WEBP, paling besar 2 MB.
+ * - Gambar: JPG, PNG, atau WEBP, paling besar 2 MB. Gambar yang sisi
+ *   terpanjangnya lebih dari `SISI_GAMBAR` piksel dikecilkan saat disimpan,
+ *   dengan format yang sama (PNG dan WEBP tetap transparan).
  * - Berkas unduhan: PDF, JPG, PNG, DOC/DOCX, XLS/XLSX, paling besar 10 MB.
  * - Jenis berkas diperiksa dari isinya, bukan dari namanya. Ekstensi yang
  *   disimpan selalu dari daftar yang diizinkan, tidak pernah disalin dari nama
@@ -90,6 +93,17 @@ class Unggahan
     public const BATAS_BERKAS = 10 * 1024 * 1024;
 
     /**
+     * Sisi terpanjang gambar tersimpan dalam piksel. Gambar yang lebih besar
+     * dikecilkan; yang lebih kecil disimpan apa adanya.
+     */
+    public const SISI_GAMBAR = 1920;
+
+    /**
+     * Mutu simpan JPG dan WEBP setelah dikecilkan (0–100).
+     */
+    private const MUTU_GAMBAR = 85;
+
+    /**
      * Folder dasar pengganti untuk uji; `null` = `public/unggahan/`.
      */
     private static ?string $folderDasarUji = null;
@@ -141,12 +155,17 @@ class Unggahan
 
     /**
      * Simpan gambar ke `unggahan/<folder>/` dan kembalikan jalur relatifnya.
+     * Gambar yang sisi terpanjangnya lebih dari `SISI_GAMBAR` piksel dikecilkan.
      *
      * @throws RuntimeException Bila gambar tidak sah atau gagal disimpan; pesannya ramah.
      */
     public function simpanGambar(?UploadedFile $berkas, string $folder): string
     {
-        return $this->simpan($berkas, $folder, self::JENIS_GAMBAR, self::BATAS_GAMBAR, 'gambar');
+        $jalur = $this->simpan($berkas, $folder, self::JENIS_GAMBAR, self::BATAS_GAMBAR, 'gambar');
+
+        self::kecilkanGambar((string) $this->jalurPenuh($jalur));
+
+        return $jalur;
     }
 
     /**
@@ -325,6 +344,130 @@ class Unggahan
         @chmod($tujuan, 0644);
 
         return 'unggahan/' . $folder . '/' . $nama;
+    }
+
+    /**
+     * Kecilkan gambar tersimpan di `$penuh` bila sisi terpanjangnya lebih dari
+     * `SISI_GAMBAR` piksel. Format tetap sama; PNG dan WEBP tetap transparan,
+     * dan arah foto JPG dari kamera (EXIF) diterapkan supaya tidak terbalik.
+     *
+     * Bila gambar tidak bisa diolah (misalnya memori tidak cukup), berkas
+     * aslinya dibiarkan, karena sudah lolos batas ukuran unggah.
+     *
+     * `true` bila gambar dikecilkan.
+     */
+    public static function kecilkanGambar(string $penuh): bool
+    {
+        $info = @getimagesize($penuh);
+
+        if ($info === false || max($info[0], $info[1]) <= self::SISI_GAMBAR) {
+            return false;
+        }
+
+        [$lebar, $tinggi, $jenis] = $info;
+        $buka = [IMAGETYPE_JPEG => 'imagecreatefromjpeg', IMAGETYPE_PNG => 'imagecreatefrompng', IMAGETYPE_WEBP => 'imagecreatefromwebp'];
+
+        if (! isset($buka[$jenis]) || ! function_exists($buka[$jenis])) {
+            return false;
+        }
+
+        $skala      = self::SISI_GAMBAR / max($lebar, $tinggi);
+        $lebarBaru  = max(1, (int) round($lebar * $skala));
+        $tinggiBaru = max(1, (int) round($tinggi * $skala));
+
+        self::cukupkanMemori(($lebar * $tinggi + $lebarBaru * $tinggiBaru) * 5);
+
+        $asli = @$buka[$jenis]($penuh);
+
+        if ($asli === false) {
+            return false;
+        }
+
+        $baru = imagecreatetruecolor($lebarBaru, $tinggiBaru);
+
+        if ($jenis !== IMAGETYPE_JPEG) {
+            imagealphablending($baru, false);
+            imagesavealpha($baru, true);
+            imagefill($baru, 0, 0, imagecolorallocatealpha($baru, 0, 0, 0, 127));
+        }
+
+        imagecopyresampled($baru, $asli, 0, 0, 0, 0, $lebarBaru, $tinggiBaru, $lebar, $tinggi);
+        imagedestroy($asli);
+
+        if ($jenis === IMAGETYPE_JPEG) {
+            $baru = self::putarSesuaiExif($baru, $penuh);
+        }
+
+        $sementara = $penuh . '.sementara';
+        $tersimpan = match ($jenis) {
+            IMAGETYPE_JPEG => imagejpeg($baru, $sementara, self::MUTU_GAMBAR),
+            IMAGETYPE_PNG  => imagepng($baru, $sementara, 9),
+            default        => imagewebp($baru, $sementara, self::MUTU_GAMBAR),
+        };
+        imagedestroy($baru);
+
+        if (! $tersimpan || ! @rename($sementara, $penuh)) {
+            @unlink($sementara);
+
+            return false;
+        }
+
+        @chmod($penuh, 0644);
+        clearstatcache(true, $penuh);
+
+        return true;
+    }
+
+    /**
+     * Terapkan arah foto dari data EXIF (foto ponsel yang diambil miring),
+     * karena data EXIF hilang saat gambar disimpan ulang.
+     */
+    private static function putarSesuaiExif(\GdImage $gambar, string $penuh): \GdImage
+    {
+        if (! function_exists('exif_read_data')) {
+            return $gambar;
+        }
+
+        $exif  = @exif_read_data($penuh);
+        $sudut = match ((int) ($exif['Orientation'] ?? 1)) {
+            3       => 180,
+            6       => -90,
+            8       => 90,
+            default => 0,
+        };
+
+        if ($sudut === 0) {
+            return $gambar;
+        }
+
+        $diputar = imagerotate($gambar, $sudut, 0);
+
+        if ($diputar === false) {
+            return $gambar;
+        }
+
+        imagedestroy($gambar);
+
+        return $diputar;
+    }
+
+    /**
+     * Naikkan batas memori PHP bila kurang dari `$bita` (gambar besar butuh
+     * sekitar 5 bita per piksel saat diolah GD).
+     */
+    private static function cukupkanMemori(int $bita): void
+    {
+        $batas = BatasUnggahFilter::bitaDariIni((string) ini_get('memory_limit'));
+
+        if ($batas <= 0) {
+            return;
+        }
+
+        $perlu = memory_get_usage() + $bita;
+
+        if ($perlu > $batas) {
+            @ini_set('memory_limit', (string) $perlu);
+        }
     }
 
     /**

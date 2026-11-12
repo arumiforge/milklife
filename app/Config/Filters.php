@@ -4,6 +4,7 @@ namespace Config;
 
 use App\Filters\AdminFilter;
 use App\Filters\BatasUnggahFilter;
+use App\Filters\PerkecilHtml;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -38,6 +39,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'admin'         => AdminFilter::class,
         'batasunggah'   => BatasUnggahFilter::class,
+        'perkecilhtml'  => PerkecilHtml::class,
     ];
 
     /**
@@ -89,6 +91,7 @@ class Filters extends BaseFilters
             // Referrer-Policy, dan lainnya di setiap jawaban, termasuk PDF,
             // Excel, dan gambar admin.
             'secureheaders',
+            'perkecilhtml', // hanya bila `aplikasi.minify = true` dan jawaban `text/html`
         ],
     ];
 
