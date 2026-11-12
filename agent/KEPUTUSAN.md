@@ -85,3 +85,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | K41 | Gambar kepala dan logo yang belum diunggah disembunyikan di halaman depan | Pengunjung tidak melihat kotak kosong. Di panel admin kotak "tanpa gambar" tetap tampil (permintaan awal pemilik berlaku untuk panel) |
 | K42 | Urutan halaman depan: kepala (gambar, logo, judul, data acara, keadaan pendaftaran, tombol) → kelompok umur, nomor lomba, dan biaya → jadwal → unduhan → kontak dan tombol WA → footer | Yang paling dicari sekolah tampil lebih dulu |
 | K43 | Rencana implementasi Tahap 3 disetujui, termasuk enam asumsinya | Kode Tahap 3 boleh mulai, diawali F3-01 dan F3-04 bersamaan |
+
+## 12 November 2026 — CI GitHub
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K44 | GitHub Actions menjalankan `composer uji` (PHP 8.3, MySQL 8) pada setiap PR ke `main` dan setiap push ke `main`. Uji lokal tetap dijalankan sebelum PR | Menggantikan K15 dan bagian "uji tanpa GitHub Actions" di K16; bagian K16 tentang pemasangan CodeIgniter 4 lewat Composer tetap berlaku. Menggantikan juga kalimat "Tanpa CI GitHub" di rancangan bagian 14. Workflow hanya berlaku untuk repo ini, jadi tidak mengganggu CI repo lain di akun yang sama |
