@@ -203,11 +203,25 @@ final class HalamanDepanKepalaTest extends UjiBasisData
     {
         $tombol = [];
 
-        foreach ($this->xpathDari($this->get('/'))->query('//*[contains(@class, "pembuka-tombol")]/*') as $simpul) {
+        foreach ($this->xpathDari($this->get('/'))->query('//*[contains(@class, "tombol-utama")]/*') as $simpul) {
             $tombol[$this->teksSimpul($simpul)] = $simpul;
         }
 
         return $tombol;
+    }
+
+    public function testTombolDiAtasBagianLombaBukanDiKepala(): void
+    {
+        // K75: tombol ajakan utama di luar kepala, tepat sebelum bagian lomba;
+        // tetap tampil walau bagian lomba belum ada.
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//*[contains(@class, "tombol-utama")]')->length);
+        $this->assertSame(2, $xpath->query('//*[contains(@class, "tombol-utama")]/a')->length);
+        $this->assertSame(0, $xpath->query('//section[@id="lomba"]')->length);
+
+        $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:awal', []));
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/following-sibling::*[1][contains(@class, "bagian-tombol")]/following-sibling::*[1][@id="lomba"]')->length);
     }
 
     // ---------- Footer ----------
@@ -322,7 +336,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->db->query("UPDATE nomor_lomba SET jumlah_putra = jumlah_inti DIV 2, jumlah_putri = jumlah_inti DIV 2 WHERE kategori = 'mix'");
 
         foreach ($this->db->table('kelompok_umur')->select('id')->get()->getResultArray() as $ku) {
-            $this->db->table('kelompok_umur_jenjang')->insert(['kelompok_umur_id' => $ku['id'], 'jenjang' => 'A']);
+            $this->db->table('kelompok_umur_jenjang')->ignore(true)->insert(['kelompok_umur_id' => $ku['id'], 'jenjang' => 'A']);
         }
 
         setting('Pembayaran.bank', 'Bank Karangan');

@@ -5,7 +5,8 @@
  *
  * | Potongan       | Bagian                                              | `id` jangkar |
  * |----------------|-----------------------------------------------------|--------------|
- * | `_kepala.php`  | Gambar kepala, logo, judul, teks, acara, keadaan, tombol | `pembuka` |
+ * | `_kepala.php`  | Gambar kepala, logo, judul, teks, acara, keadaan    | `pembuka`    |
+ * | `_tombol.php`  | Tombol Pendaftaran dan Cek Pendaftaran (K75)        |              |
  * | `_lomba.php`   | Kelompok umur, nomor lomba, biaya                   | `lomba`      |
  * | `_jadwal.php`  | Jadwal                                              | `jadwal`     |
  * | `_unduhan.php` | Unduhan                                             | `unduhan`    |
@@ -34,7 +35,8 @@
 <?= $this->section('judul') ?><?= esc(trim($acara['nama'] . ' ' . $acara['seri_tahun'])) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<?= view('beranda/_kepala', ['acara' => $acara, 'tampilan' => $tampilan, 'bukaTutup' => $bukaTutup, 'tombol' => $tombol], ['saveData' => false]) ?>
+<?= view('beranda/_kepala', ['acara' => $acara, 'tampilan' => $tampilan, 'bukaTutup' => $bukaTutup], ['saveData' => false]) ?>
+<?= view('beranda/_tombol', ['tombol' => $tombol], ['saveData' => false]) ?>
 <?= view('beranda/_lomba', ['kelompokUmur' => $kelompokUmur, 'tampilkanBiaya' => $tampilkanBiaya], ['saveData' => false]) ?>
 <?= view('beranda/_jadwal', ['jadwal' => $jadwal], ['saveData' => false]) ?>
 <?= view('beranda/_unduhan', ['unduhan' => $unduhan], ['saveData' => false]) ?>

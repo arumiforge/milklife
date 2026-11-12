@@ -16,7 +16,7 @@
  * }> $kelompokUmur Kelompok umur aktif dengan nomor aktifnya; [] bila belum ada.
  * @var bool $tampilkanBiaya Sakelar admin `HalamanDepan.tampilkan_biaya`
  *     (`IsiHalamanDepan::tampilkanBiaya()`); bila `false`, biaya individu dan
- *     biaya tim tidak ditulis sama sekali. Nilai awal `true`.
+ *     biaya tim tidak ditulis sama sekali. Nilai awal `false` (K74).
  *
  * Kesepakatan (rencana Tahap 3, "Halaman depan"):
  * - Bagian tidak ditampilkan bila `$kelompokUmur === []`.
@@ -38,7 +38,7 @@ if ($kelompokUmur === []) {
     return;
 }
 
-$tampilkanBiaya = (bool) ($tampilkanBiaya ?? true);
+$tampilkanBiaya = (bool) ($tampilkanBiaya ?? false);
 
 /** Teks biaya: `null` belum diisi, `0` gratis, selain itu rupiah dengan satuannya. */
 $teksBiaya = static fn (?int $biaya, string $satuan, string $belum): string => match (true) {
@@ -144,7 +144,7 @@ $keteranganTim = static function (array $nomor): array {
                         </dl>
 
                         <?php if ($jumlahIndividu + $jumlahBeregu === 0) : ?>
-                            <p class="lomba-kosong">Nomor lomba segera diumumkan.</p>
+                            <p class="lomba-kosong"><i class="bi bi-hourglass-split" aria-hidden="true"></i> Nomor lomba segera diumumkan.</p>
                         <?php else : ?>
                             <details class="lomba-nomor">
                                 <summary>

@@ -69,7 +69,7 @@ class HalamanDepan extends BaseConfig
     /**
      * Tampilkan biaya individu dan biaya tim di bagian lomba halaman depan.
      * Bila dimatikan, rincian biaya hanya muncul di bagian pembayaran saat
-     * sekolah mendaftar.
+     * sekolah mendaftar. Nilai awal sembunyi (K74).
      */
-    public bool $tampilkan_biaya = true;
+    public bool $tampilkan_biaya = false;
 }

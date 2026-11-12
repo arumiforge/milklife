@@ -27,19 +27,7 @@
     padding-bottom: 3rem;
 }
 
-.pendaftaran-tertutup {
-    max-width: 36rem;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-    background-color: var(--ml-putih);
-    border: 1px solid var(--ml-garis);
-    border-radius: 0.75rem;
-}
-
-.pendaftaran-tertutup p {
-    color: var(--ml-teks-redup);
-}
+/* Kotak .pendaftaran-tertutup memakai gaya keadaan kosong bersama di tema.css. */
 
 /* ---------- Pil langkah ---------- */
 

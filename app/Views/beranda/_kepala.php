@@ -2,21 +2,18 @@
 /**
  * Kepala halaman depan (`#pembuka`): gambar kepala sebagai latar di belakang
  * judul (K44), logo, judul,
- * teks, data acara, keadaan pendaftaran, dan tombol Pendaftaran serta Cek
- * Pendaftaran.
+ * teks, data acara, dan keadaan pendaftaran. Tombol Pendaftaran dan Cek
+ * Pendaftaran ada di `beranda/_tombol.php`, di atas bagian lomba (K75).
  *
  * - Gambar dan logo yang belum diunggah (atau berkasnya hilang) tidak
  *   ditampilkan sama sekali (K41).
  * - Judul dari pengaturan Halaman Depan; bila kosong, nama acara menjadi
  *   judul. Satu-satunya `<h1>` halaman ada di sini (`#judul-acara`).
  * - Teks admin di-escape; baris baru di dalam paragraf menjadi `<br>`.
- * - Tombol tanpa alamat tampil nonaktif dengan `keterangan`-nya, atau "Segera"
- *   bila tanpa keterangan (K39; Pendaftaran hanya menaut saat terbuka).
  *
  * @var array{nama: string, seri_tahun: string, tempat: string, tanggal: string} $acara
  * @var array<string, mixed>                                                       $tampilan  lihat IsiHalamanDepan::tampilan()
  * @var App\Libraries\BukaTutupPendaftaran                                         $bukaTutup
- * @var list<array{kunci: string, label: string, alamat: string|null, utama: bool, keterangan?: string|null}> $tombol
  */
 
 use App\Libraries\BukaTutupPendaftaran;
@@ -98,27 +95,11 @@ $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : '
             <?php endif ?>
         </p>
 
-        <div class="pembuka-pendaftaran">
-            <div class="keadaan-pendaftaran keadaan-<?= esc(str_replace('_', '-', $keadaan), 'attr') ?>" data-keadaan="<?= esc($keadaan, 'attr') ?>">
-                <span class="keadaan-ikon"><i class="bi bi-<?= $ikonKeadaan[$keadaan] ?>" aria-hidden="true"></i></span>
-                <div>
-                    <p class="keadaan-label mb-1"><?= esc($bukaTutup->label()) ?></p>
-                    <p class="keadaan-kalimat mb-0"><?= esc($bukaTutup->kalimat()) ?></p>
-                </div>
-            </div>
-
-            <div class="pembuka-tombol">
-                <?php foreach ($tombol as $butir) : ?>
-                    <?php $kelas = 'btn btn-lg ' . ($butir['utama'] ? 'btn-primary' : 'btn-outline-light') . ' tombol-' . $butir['kunci']; ?>
-                    <?php if ($butir['alamat'] === null) : ?>
-                        <a class="<?= $kelas ?> disabled tombol-nonaktif" role="link" aria-disabled="true">
-                            <?= esc($butir['label']) ?>
-                            <span class="tombol-segera"><?= esc($butir['keterangan'] ?? 'Segera') ?></span>
-                        </a>
-                    <?php else : ?>
-                        <a class="<?= $kelas ?>" href="<?= site_url($butir['alamat']) ?>"><?= esc($butir['label']) ?></a>
-                    <?php endif ?>
-                <?php endforeach ?>
+        <div class="keadaan-pendaftaran keadaan-<?= esc(str_replace('_', '-', $keadaan), 'attr') ?>" data-keadaan="<?= esc($keadaan, 'attr') ?>">
+            <span class="keadaan-ikon"><i class="bi bi-<?= $ikonKeadaan[$keadaan] ?>" aria-hidden="true"></i></span>
+            <div>
+                <p class="keadaan-label mb-1"><?= esc($bukaTutup->label()) ?></p>
+                <p class="keadaan-kalimat mb-0"><?= esc($bukaTutup->kalimat()) ?></p>
             </div>
         </div>
     </div>
