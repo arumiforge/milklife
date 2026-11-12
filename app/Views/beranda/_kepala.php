@@ -1,6 +1,7 @@
 <?php
 /**
- * Kepala halaman depan (`#pembuka`): gambar kepala selebar layar, logo, judul,
+ * Kepala halaman depan (`#pembuka`): gambar kepala sebagai latar di belakang
+ * judul (K44), logo, judul,
  * teks, data acara, keadaan pendaftaran, dan tombol Pendaftaran serta Cek
  * Pendaftaran.
  *
@@ -44,7 +45,7 @@ foreach ([
 // Atribut width/height dari ukuran asli supaya halaman tidak melompat saat gambar dimuat.
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . $ukuran['lebar'] . '" height="' . $ukuran['tinggi'] . '"';
 ?>
-<section id="pembuka" class="pembuka" aria-labelledby="judul-acara">
+<section id="pembuka" class="pembuka<?= $tampilan['gambar_kepala'] !== null ? ' pembuka-dengan-gambar' : '' ?>" aria-labelledby="judul-acara">
     <?php if ($tampilan['gambar_kepala'] !== null) : ?>
         <div class="pembuka-gambar">
             <img src="<?= esc($tampilan['gambar_kepala'], 'attr') ?>" alt="<?= esc('Gambar kepala ' . $acara['nama'], 'attr') ?>"<?= $ukuranAtribut($tampilan['ukuran']['gambar_kepala'] ?? null) ?> fetchpriority="high">

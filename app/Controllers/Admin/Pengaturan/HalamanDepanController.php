@@ -39,7 +39,7 @@ class HalamanDepanController extends BaseController
         'gambar_kepala' => [
             'label' => 'Gambar kepala',
             'rasio' => '21x9',
-            'saran' => 'Gambar mendatar selebar layar, misalnya 1920 × 820 piksel.',
+            'saran' => 'Tampil selebar layar sebagai latar di belakang judul halaman depan, diberi lapisan biru supaya tulisan tetap terbaca. Pilih foto tanpa tulisan, misalnya 1920 × 1080 piksel.',
         ],
         'logo_persegi' => [
             'label' => 'Logo persegi',
