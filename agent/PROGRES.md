@@ -6,7 +6,7 @@ Diperbarui: 12 November 2026
 
 **Tahap 4 — Pendaftaran.** Belum mulai. Tahap 3 selesai 12 November 2026.
 
-**Tahap 5 — Bukti dan cek.** Dikerjakan bersamaan dengan Tahap 4 di sesi lain (K48). Rencana: `dokumen/draf/rencana-implementasi-tahap-5.md`. Tugas F5-01 sampai F5-05 berstatus rencana.
+**Tahap 5 — Bukti dan cek.** Dikerjakan bersamaan dengan Tahap 4 di sesi lain (K48). Rencana: `dokumen/draf/rencana-implementasi-tahap-5.md`. F5-01 selesai; F5-02 sampai F5-05 berstatus rencana.
 
 ## Berikutnya
 
