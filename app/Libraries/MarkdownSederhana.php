@@ -6,11 +6,13 @@ namespace App\Libraries;
  * Pengubah Markdown ke HTML untuk PDF dokumen repo (`php spark dokumen:pdf`).
  *
  * Hanya bagian Markdown yang dipakai dokumen di `dokumen/final/`: judul
- * (`#`–`######`), paragraf, daftar `-`/`*` dan bernomor, tabel berbatas `|`,
- * tebal, miring, kode sebaris, dan tautan. Semua teks di-escape.
+ * (`#`–`######`), paragraf, daftar `-`/`*` dan bernomor (nomor awal
+ * dipertahankan), tabel berbatas `|`, blok kode berpagar ```` ``` ````, tebal,
+ * miring, kode sebaris, dan tautan. Semua teks di-escape.
  *
- * shortcut: tanpa daftar bersarang, kutipan, blok kode, dan HTML mentah;
- * tambahkan bila dokumen final mulai memakainya.
+ * shortcut: tanpa daftar bersarang, kutipan, dan HTML mentah; blok kode di
+ * dalam butir daftar ditulis di antara daftar. Tambahkan bila dokumen final
+ * mulai memakainya.
  */
 final class MarkdownSederhana
 {
@@ -24,6 +26,17 @@ final class MarkdownSederhana
     private array $butir = [];
 
     private string $jenisDaftar = '';
+
+    private int $nomorAwal = 1;
+
+    /**
+     * Baris blok kode yang sedang terbuka; `null` = tidak di dalam blok kode.
+     *
+     * @var list<string>|null
+     */
+    private ?array $kode = null;
+
+    private int $jorokKode = 0;
 
     /** @var list<string> */
     private array $tabel = [];
@@ -43,6 +56,26 @@ final class MarkdownSederhana
 
     private function baris(string $baris): void
     {
+        if (preg_match('/^(\s*)```/u', $baris, $m) === 1) {
+            if ($this->kode === null) {
+                $this->tutup();
+                $this->kode      = [];
+                $this->jorokKode = strlen($m[1]);
+            } else {
+                $this->hasil[] = '<pre><code>' . htmlspecialchars(implode("\n", $this->kode), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</code></pre>';
+                $this->kode    = null;
+            }
+
+            return;
+        }
+
+        if ($this->kode !== null) {
+            // Jorok pagar (blok kode di dalam butir daftar) dibuang dari setiap baris.
+            $this->kode[] = (string) preg_replace('/^ {0,' . $this->jorokKode . '}/', '', $baris);
+
+            return;
+        }
+
         if (trim($baris) === '') {
             $this->tutup();
 
@@ -72,6 +105,7 @@ final class MarkdownSederhana
             if ($this->jenisDaftar !== $jenis) {
                 $this->tutup();
                 $this->jenisDaftar = $jenis;
+                $this->nomorAwal   = (int) $m[1];
             }
             $this->butir[] = trim($m[2]);
 
@@ -103,7 +137,8 @@ final class MarkdownSederhana
 
         if ($this->butir !== []) {
             $isi               = array_map(static fn (string $b): string => '<li>' . self::sebaris($b) . '</li>', $this->butir);
-            $this->hasil[]     = "<{$this->jenisDaftar}>" . implode('', $isi) . "</{$this->jenisDaftar}>";
+            $mulai             = $this->jenisDaftar === 'ol' && $this->nomorAwal > 1 ? ' start="' . $this->nomorAwal . '"' : '';
+            $this->hasil[]     = "<{$this->jenisDaftar}{$mulai}>" . implode('', $isi) . "</{$this->jenisDaftar}>";
             $this->butir       = [];
             $this->jenisDaftar = '';
         }

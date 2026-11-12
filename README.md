@@ -2,7 +2,7 @@
 
 Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Karesidenan Pati: pendaftaran, cek pendaftaran, dan rekap panitia.
 
-**Status:** Tahap 3 (halaman depan) selesai. Admin bisa mengisi semua pengaturan, dan halaman depan serta `/unduhan` menampilkan isinya. Pendaftaran, cek, dan rekap dikerjakan di tahap berikutnya.
+**Status:** Tahap 7 (penyelesaian) sedang berjalan. Halaman depan, pendaftaran, cek pendaftaran, bukti PDF, panel data, dan rekap sudah selesai; yang tersisa persiapan produksi dan uji menyeluruh. Rinciannya di [`agent/PROGRES.md`](agent/PROGRES.md).
 
 ## Mulai dari sini
 
@@ -12,8 +12,11 @@ Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Ka
 | Sampai mana pengerjaannya | [`agent/PROGRES.md`](agent/PROGRES.md) |
 | Aturan kerja di repo ini | [`agent/ALUR-KERJA.md`](agent/ALUR-KERJA.md) |
 | Keputusan yang sudah diambil | [`agent/KEPUTUSAN.md`](agent/KEPUTUSAN.md) |
+| Memasang di komputer server produksi | [`dokumen/draf/panduan-pemasangan-produksi.md`](dokumen/draf/panduan-pemasangan-produksi.md) |
 
 ## Memasang di Laragon
+
+Langkah di bawah untuk komputer pengembangan. Untuk komputer server produksi (HTTPS lewat Cloudflare Tunnel, `.env` produksi, cadangan harian, pemulihan, dan pembaruan versi), ikuti [panduan pemasangan produksi](dokumen/draf/panduan-pemasangan-produksi.md).
 
 Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 8, dan Composer (sudah ada di Laragon).
 
@@ -87,7 +90,7 @@ Admin mengunggah gambar (paling besar 2 MB) dan berkas unduhan seperti juknis (p
 
 3. Simpan, lalu tekan **Reload** di Laragon.
 
-Berkas unggahan disimpan di `public/unggahan/` (dibuat otomatis, tidak masuk git). Sertakan folder ini saat membuat cadangan.
+Berkas unggahan disimpan di `public/unggahan/` (dibuat otomatis, tidak masuk git). Folder ini ikut dicadangkan oleh `php spark cadangan:buat`.
 
 Bila admin mengunggah berkas yang lebih besar dari `post_max_size`, halaman kembali ke formulir dengan pesan yang menyebut batasnya, bukan halaman galat.
 
