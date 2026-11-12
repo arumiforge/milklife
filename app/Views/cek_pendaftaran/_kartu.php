@@ -1,6 +1,6 @@
 <?php
 /**
- * Satu kartu pendaftaran di halaman cek: kepala (ID, tanggal, status,
+ * Satu kartu pendaftaran di halaman cek (tanpa tanggal lahir dan nomor dada, K52): kepala (ID, tanggal, status,
  * tombol bukti), penanggung jawab, atlet, tim beregu, dan biaya. Angka biaya
  * adalah nilai tersimpan (rancangan 6.7).
  *
@@ -46,11 +46,9 @@ $lunas   = $p['status'] === 'lunas';
                         <th scope="col">No</th>
                         <th scope="col">Nama</th>
                         <th scope="col">NISN</th>
-                        <th scope="col">Tanggal lahir</th>
                         <th scope="col">L/P</th>
                         <th scope="col">Kelompok umur</th>
                         <th scope="col">Nomor lomba</th>
-                        <th scope="col">Nomor dada</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,11 +57,9 @@ $lunas   = $p['status'] === 'lunas';
                             <td><?= $i + 1 ?></td>
                             <td><?= esc($a['nama']) ?></td>
                             <td><?= esc($a['nisn']) ?></td>
-                            <td><?= esc(tanggal_id($a['tanggal_lahir'])) ?></td>
                             <td><abbr title="<?= esc($a['jenis_kelamin_label'], 'attr') ?>"><?= esc($a['jenis_kelamin']) ?></abbr></td>
                             <td><?= esc($a['kelompok_umur']) ?></td>
                             <td><?= esc(implode(', ', $a['nomor_lomba'])) ?></td>
-                            <td><?= esc($a['nomor_dada'] ?? '–') ?></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>

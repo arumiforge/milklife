@@ -67,10 +67,10 @@ final class BuktiPendaftaranTest extends UjiBasisData
             'MILKLIFE ATHLETICS CHALLENGE', 'Seri 2 Tahun 2026',
             'Nama Sekolah : <b>SD NEGERI CONTOH 1</b>', 'Tanggal Pendaftaran : <b>12 November 2026</b>',
             'Kabupaten / Kota : <b>Kudus</b>', 'ID Pendaftaran : <b>MAC2A0000126</b>',
-            'Ibu Karangan', '081200000002',
-            'CANDRA REKAAN', '9900000002', '1 Mei 2016', 'Lompat Jauh', 'Rp150.000',
-            'Estafet 4 × 50 m', 'EKO KARANGAN (–)', 'Rp200.000',
-            'Rp450.000', 'Rp650.000', 'Menunggu Konfirmasi Pembayaran',
+            'Penanggung Jawab (Official) :', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '081200000002',
+            'CANDRA REKAAN', '9900000002', 'Lompat Jauh', 'Rp150.000',
+            'Estafet 4 × 50 m', 'BUDI KARANGAN, CANDRA REKAAN, DIMAS CONTOH, EKO KARANGAN', 'Rp200.000',
+            'Rp450.000', 'Rp650.000', 'lencana-menunggu">Menunggu Konfirmasi Pembayaran',
         ] as $teks) {
             $this->assertStringContainsString($teks, $html);
         }
@@ -78,8 +78,11 @@ final class BuktiPendaftaranTest extends UjiBasisData
         // Tarif sekarang (Rp175.000) tidak dipakai; foto tidak ikut.
         $this->assertStringNotContainsString('Rp175.000', $html);
         $this->assertStringNotContainsString('foto-penanggung-jawab', $html);
-        // Logo persegi bawaan (K47) dari pengaturan.
-        $this->assertMatchesRegularExpression('#<img src="[^"]+\.webp"#', $html);
+        // Tanggal lahir dan nomor dada tidak dicetak (K52).
+        $this->assertStringNotContainsString('1 Mei 2016', $html);
+        $this->assertStringNotContainsString('Nomor Dada', $html);
+        // Logo persegi bawaan (K47) disisipkan sebagai PNG transparan.
+        $this->assertStringContainsString('<img src="var:logo"', $html);
     }
 
     public function testSusulanLunasDanTeksDiEscape(): void
@@ -87,11 +90,12 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->isiDataCek();
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000226')))->html();
-        $this->assertStringContainsString('FAJAR REKAAN (1001)', $html);
+        $this->assertStringContainsString('<td>FAJAR REKAAN</td>', $html);
+        $this->assertStringNotContainsString('1001', $html);
         $this->assertStringContainsString('Tanpa biaya (tim sudah terdaftar)', $html);
         $this->assertStringContainsString('Tidak ada nomor individu', $html);
-        $this->assertStringContainsString('<b>Lunas</b>', $html);
-        $this->assertStringNotContainsString('<img', $html, 'Tanpa logo bila belum diunggah.');
+        $this->assertStringContainsString('lencana-lunas">Lunas', $html);
+        $this->assertStringNotContainsString('var:logo', $html, 'Tanpa logo bila belum diunggah.');
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2B0000326')))->html();
         $this->assertStringContainsString('SMP &lt;b&gt;Contoh&lt;/b&gt; &amp; Mandiri', $html);

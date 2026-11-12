@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Draf, dikerjakan bersamaan dengan Tahap 4 di sesi lain (K48) |
+| Status | Draf, sudah dilaksanakan (Tahap 5 selesai 12 November 2026); dikerjakan bersamaan dengan Tahap 4 di sesi lain (K48) |
 | Tanggal | 12 November 2026 |
 | Dasar | Rancangan revisi 3 (`dokumen/final/rancangan-web-pendaftaran.md`) bagian 5, 6.1, 6.7, 6.8, 6.9, 8, 11, 13, 14; keputusan K01–K49; hasil Tahap 3 (`agent/arsip/tahap-3.md`) |
 
@@ -157,3 +157,16 @@ Setelah Tahap 5 digabung, di terminal Laragon pada folder proyek:
 3. Batas laju: 10 pencarian cek dan 10 bukti per menit per alamat IP.
 4. Tim beregu dari pendaftaran susulan yang hanya menambah anggota ditulis dengan biaya "tanpa biaya tim (tim sudah terdaftar)".
 5. Nama sekolah di nama berkas ditulis tanpa spasi dan tanda baca, huruf apa adanya.
+
+## Perubahan saat pengerjaan
+
+| Bagian | Rencana | Yang berlaku | Alasan |
+|---|---|---|---|
+| Data uji | Kelompok umur dan nomor lomba karangan | Kelompok umur "KU Contoh" dan nomor lombanya tidak aktif; ditambah `lengkapiPengaturanCek()` (data awal + isian wajib) di berkas yang sama | Supaya tidak mengganggu kelengkapan pengaturan dari `data:awal` di uji halaman (F5-01, F5-02) |
+| Uji Tahap 3 | Uji yang terdampak langsung | Label "Cek Pendaftaran Segera" menjadi "Cek Pendaftaran" di `HalamanDepanKepalaTest`, `TataLetakHalamanTest`, dan `HalamanUnduhanTest`; bagian Pendaftaran tidak diubah | Menu Cek kini bertautan (F5-02) |
+| Bukti terlalu sering | 429 dengan pesan ramah | Tampilan sendiri `app/Views/bukti/terlalu_sering.php` dengan tata letak publik | Halaman bukti biasanya PDF; pesan perlu halaman HTML (F5-03) |
+| Logo di bukti | Logo persegi dari pengaturan | Jalur berkas di `src` di-escape untuk HTML biasa, bukan atribut | Garis miring yang disandikan membuat mPDF gagal memuat gambar (F5-03) |
+| Tim susulan | `biaya_tim` `null` bila tanpa baris `pendaftaran_beregu` | Tetap; rencana Tahap 4 menyimpan tim susulan sebagai baris dengan `biaya_tim` 0, yang tampil "Rp0" | Nilai tersimpan ditampilkan apa adanya (6.7); dua bentuk sama-sama terbaca |
+| Isi bukti | Tabel penanggung jawab; tabel individu dengan tanggal lahir dan nomor dada; anggota tim per baris dengan nomor dada; status sebagai teks | Penanggung jawab (official) sebaris dengan ikon WA; tanpa tanggal lahir dan nomor dada; anggota tim sebaris dipisah koma; status berbingkai warna; logo disisipkan sebagai PNG transparan dengan tinggi tetap | K52, tinjauan pemilik setelah F5-03 (dibawa F5-05). mPDF mengubah WebP menjadi JPG sehingga latar transparan menjadi hitam |
+| Isi halaman cek | Atlet dengan tanggal lahir dan nomor dada | Tanpa tanggal lahir dan nomor dada | K52, permintaan pemilik setelah tinjauan bukti (dibawa F5-05). Rancangan 8 disesuaikan di revisi berikutnya |
+| PDF dokumen | Perintah dan pengubah Markdown | `ALUR-KERJA.md` bagian Dokumen menyebut `php spark dokumen:pdf`; uji perintah ada di `tests/unit/MarkdownSederhanaTest.php` | Supaya pengembang tahu cara membuat ulang PDF (F5-04) |
