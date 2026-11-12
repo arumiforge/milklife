@@ -127,6 +127,14 @@ final class MigrasiStrukturTest extends UjiBasisData
             'dibuat_pada' => ['datetime', true, null],
             'diubah_pada' => ['datetime', true, null],
         ],
+        // Tahap 6 (F6-01): bukti bayar yang diunggah admin (K34).
+        'bukti_bayar' => [
+            'id'             => ['int unsigned', false, null],
+            'pendaftaran_id' => ['int unsigned', false, null],
+            'berkas'         => ['varchar(255)', false, null],
+            'ukuran'         => ['int unsigned', false, null],
+            'waktu_unggah'   => ['datetime', true, null],
+        ],
         'tautan' => [
             'id'          => ['int unsigned', false, null],
             'jenis'       => ["enum('narahubung','media_sosial')", false, null],
@@ -155,6 +163,8 @@ final class MigrasiStrukturTest extends UjiBasisData
         'pendaftaran_beregu.nomor_lomba_id'  => ['nomor_lomba', 'RESTRICT'],
         // Tahap 2 (F2-01): jenjang ikut terhapus bersama kelompok umurnya.
         'kelompok_umur_jenjang.kelompok_umur_id' => ['kelompok_umur', 'CASCADE'],
+        // Tahap 6 (F6-01): bukti bayar ikut terhapus bersama pendaftarannya.
+        'bukti_bayar.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void

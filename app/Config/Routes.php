@@ -44,6 +44,47 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('akun', 'AkunController::simpan');
     $routes->post('akun/sandi', 'AkunController::simpanSandi');
 
+    // ---------- Panel data (Tahap 6) ----------
+    // Semua rute Tahap 6 ditulis F6-01 (rencana Tahap 6, "Aturan untuk semua
+    // sub-sesi" butir 3); pengendalinya dibuat tugas masing-masing. Selama
+    // pengendalinya belum ada, alamatnya menampilkan halaman tidak ditemukan.
+    // Tabel memakai pasangan `…/data` (JSON DataTables) dan `…/excel`
+    // (saringan yang sama, `App\Libraries\Panel\TabelSisiServer`).
+
+    // Pendaftaran (F6-02; ubah dan perbarui F6-04).
+    $routes->get('pendaftaran', 'PendaftaranController::index');
+    $routes->get('pendaftaran/data', 'PendaftaranController::data');
+    $routes->get('pendaftaran/excel', 'PendaftaranController::excel');
+    $routes->get('pendaftaran/(:num)', 'PendaftaranController::rincian/$1');
+    // Foto penanggung jawab: id pendaftaran, id penanggung jawab.
+    $routes->get('pendaftaran/(:num)/foto/(:num)', 'PendaftaranController::foto/$1/$2');
+    $routes->post('pendaftaran/(:num)/lunas', 'PendaftaranController::lunas/$1');
+    $routes->post('pendaftaran/(:num)/menunggu', 'PendaftaranController::menunggu/$1');
+    $routes->post('pendaftaran/(:num)/hapus', 'PendaftaranController::hapus/$1');
+    $routes->get('pendaftaran/(:num)/ubah', 'PendaftaranController::ubah/$1');
+    $routes->post('pendaftaran/(:num)', 'PendaftaranController::perbarui/$1');
+
+    // Bukti bayar (F6-03): id pendaftaran, id bukti bayar.
+    $routes->post('pendaftaran/(:num)/bukti-bayar', 'BuktiBayarController::unggah/$1');
+    $routes->get('pendaftaran/(:num)/bukti-bayar/(:num)', 'BuktiBayarController::lihat/$1/$2');
+    $routes->get('pendaftaran/(:num)/bukti-bayar/(:num)/unduh', 'BuktiBayarController::unduh/$1/$2');
+    $routes->post('pendaftaran/(:num)/bukti-bayar/(:num)/hapus', 'BuktiBayarController::hapus/$1/$2');
+
+    // Atlet (F6-03).
+    $routes->get('atlet', 'AtletController::index');
+    $routes->get('atlet/data', 'AtletController::data');
+    $routes->get('atlet/excel', 'AtletController::excel');
+
+    // Rekap (F6-06). Jenis rekap: nomor-lomba, tim-beregu, sekolah,
+    // kelompok-umur, keuangan; jenis lain tidak ditemukan. `rekap` tanpa
+    // jenis membuka rekap pertama.
+    $routes->get('rekap', 'RekapController::index');
+    $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)', 'RekapController::index/$1');
+    $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)/data', 'RekapController::data/$1');
+    $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)/excel', 'RekapController::excel/$1');
+    $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)/pdf', 'RekapController::pdf/$1');
+    // ---------- Akhir panel data (Tahap 6) ----------
+
     // Pengaturan (Tahap 2). Semua rute ditulis F2-01; pengendalinya dibuat
     // tugas masing-masing (rencana Tahap 2, "Rute"). Selama pengendalinya
     // belum ada, alamatnya menampilkan halaman tidak ditemukan.

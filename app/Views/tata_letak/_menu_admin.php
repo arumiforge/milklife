@@ -18,6 +18,10 @@
 
 $menuAdmin = [
     ['label' => 'Dasbor', 'ikon' => 'speedometer2', 'alamat' => 'admin/dasbor'],
+    // Panel data (Tahap 6, F6-01).
+    ['label' => 'Pendaftaran', 'ikon' => 'clipboard-check', 'alamat' => 'admin/pendaftaran'],
+    ['label' => 'Atlet', 'ikon' => 'people', 'alamat' => 'admin/atlet'],
+    ['label' => 'Rekap', 'ikon' => 'bar-chart-line', 'alamat' => 'admin/rekap'],
     ['label' => 'Pengaturan', 'ikon' => 'gear', 'alamat' => 'admin/pengaturan', 'aktif_juga' => ['admin/akun']],
 ];
 ?>
