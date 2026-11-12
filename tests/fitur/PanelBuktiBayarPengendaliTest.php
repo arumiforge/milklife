@@ -185,7 +185,7 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
         $this->assertStringStartsWith('inline;', $hasil->response()->getHeaderLine('Content-Disposition'));
 
         $baris = model(BuktiBayarModel::class)->find($id);
-        $this->assertSame(file_get_contents($this->folderBuktiBayar . $baris['berkas']), $hasil->getBody());
+        $this->assertSame(file_get_contents($this->folderBuktiBayar . $baris['berkas']), $hasil->response()->getBody());
     }
 
     public function testUnduhMemberiNamaBerkasDenganIdPendaftaranDanUrutan(): void
@@ -195,7 +195,8 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
 
         $hasil = $this->bukaSebagaiAdmin('admin/pendaftaran/' . $p['id'] . '/bukti-bayar/' . $id[1] . '/unduh');
 
-        $hasil->assertOK();
+        // Isi unduhan dikirim saat tanggapan dikirim, jadi badannya dibaca lewat `sendBody()`.
+        $hasil->assertStatus(200);
         $tanggapan = $hasil->response();
         $this->assertInstanceOf(DownloadResponse::class, $tanggapan);
         $tanggapan->buildHeaders();

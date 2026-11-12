@@ -131,7 +131,7 @@ class BuktiBayarController extends BaseController
         $penuh = $this->jalurBerkas($id, $buktiId);
 
         return $this->response
-            ->setContentType('image/jpeg')
+            ->setContentType('image/jpeg', '')
             ->setHeader('Content-Disposition', 'inline; filename="' . $this->namaUnduhan($id, $buktiId) . '"')
             ->setHeader('X-Content-Type-Options', 'nosniff')
             ->setBody((string) file_get_contents($penuh));
@@ -144,7 +144,7 @@ class BuktiBayarController extends BaseController
 
         $unduhan = $this->response->download($penuh, null);
         $unduhan->setFileName($this->namaUnduhan($id, $buktiId));
-        $unduhan->setContentType('image/jpeg');
+        $unduhan->setContentType('image/jpeg', '');
 
         return $unduhan;
     }

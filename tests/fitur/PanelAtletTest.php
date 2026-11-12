@@ -56,8 +56,8 @@ final class PanelAtletTest extends UjiBasisData
     {
         $a = $this->buatPendaftaranPanel([
             'atlet' => [
-                $this->atletPanel(['nama' => 'Budi Karangan', 'nisn' => '9900100001', 'nomor' => ['lari60putra', 'frog']]),
-                $this->atletPanel(['nama' => 'Siti Karangan', 'nisn' => '9900100002', 'jenis_kelamin' => 'P', 'tanggal_lahir' => '2016-08-30', 'nomor' => ['lari60putri']]),
+                $this->atletPanel(['nama' => 'Budi Karangan', 'nisn' => '9900200001', 'nomor' => ['lari60putra', 'frog']]),
+                $this->atletPanel(['nama' => 'Siti Karangan', 'nisn' => '9900200002', 'jenis_kelamin' => 'P', 'tanggal_lahir' => '2016-08-30', 'nomor' => ['lari60putri']]),
             ],
         ]);
         $b = $this->buatPendaftaranPanel([
@@ -221,7 +221,7 @@ final class PanelAtletTest extends UjiBasisData
 
         $budi = array_values(array_filter($data['data'], static fn (array $b): bool => $b['nama'] === 'Budi Karangan'))[0];
         $this->assertNull($budi['nomor_dada']);
-        $this->assertSame('9900100001', $budi['nisn']);
+        $this->assertSame('9900200001', $budi['nisn']);
         $this->assertSame('Laki-laki', $budi['jenis_kelamin']);
         $this->assertSame('2017-04-12', $budi['tanggal_lahir']);
         $this->assertSame('KU 10', $budi['kelompok_umur']);
@@ -318,7 +318,7 @@ final class PanelAtletTest extends UjiBasisData
         $contoh = $this->isiContoh();
         $hasil  = $this->bukaSebagaiAdmin('admin/atlet/excel');
 
-        $hasil->assertOK();
+        $hasil->assertStatus(200);
         $tanggapan = $hasil->response();
         $tanggapan->buildHeaders();
         $this->assertStringContainsString('Atlet_' . date('Ymd') . '.xlsx', $tanggapan->getHeaderLine('Content-Disposition'));
@@ -334,7 +334,7 @@ final class PanelAtletTest extends UjiBasisData
         $this->assertSame(['4001', 'Dewi Karangan', '0012345678', 'Perempuan', '1 Mei 2012', 'KU 15', 'Lari 80 m putri', 'SMP KARANGAN JAYA', $contoh['b']['id_pendaftaran'], 'Lunas'], $dewi);
 
         $budi = array_values(array_filter($baris, static fn (array $b): bool => $b[1] === 'Budi Karangan'))[0];
-        $this->assertSame([null, 'Budi Karangan', '9900100001', 'Laki-laki', '12 April 2017', 'KU 10', 'Lari 60 m putra, Frog Jump putra', 'SD KARANGAN MAJU', $contoh['a']['id_pendaftaran'], 'Menunggu'], $budi);
+        $this->assertSame([null, 'Budi Karangan', '9900200001', 'Laki-laki', '12 April 2017', 'KU 10', 'Lari 60 m putra, Frog Jump putra', 'SD KARANGAN MAJU', $contoh['a']['id_pendaftaran'], 'Menunggu'], $budi);
     }
 
     public function testExcelMengikutiSaringanPencarianDanUrutan(): void
