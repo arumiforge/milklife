@@ -121,6 +121,9 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[contains(@class, "kepala-seri")]'));
         $this->assertSame('02', $this->teks($xpath, '//*[contains(@class, "pembuka-nomor-seri")]'));
         $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath, '//*[contains(@class, "pembuka-waktu")]'));
+
+        // Kartu info ringkas seperti konsep (K82).
+        $this->assertSame('9–12', $this->teks($xpath, '//*[contains(@class, "info-besar")]'));
     }
 
     public function testJudulDanTeksDariPengaturanDiEscape(): void
@@ -179,7 +182,8 @@ final class HalamanDepanKepalaTest extends UjiBasisData
     {
         $this->lengkapiPengaturan();
 
-        $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'bi-door-open-fill');
+        $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'bi-megaphone');
+        $this->assertSame('Daftar s.d. 30 November', $this->teks($this->xpathDari($this->get('/')), '//*[contains(@class, "keadaan-ringkas")]'));
 
         Time::setTestNow('2026-09-30 12:00:00', 'Asia/Jakarta');
         $this->assertKeadaan($this->xpathDari($this->get('/')), 'belum_dibuka', 'Belum dibuka', 'Pendaftaran dibuka 1 Oktober 2026.', 'bi-calendar-event');

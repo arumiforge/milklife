@@ -26,14 +26,21 @@
 use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\IsiHalamanDepan;
 
-// Ikon keadaan pendaftaran (sama dengan dasbor admin).
+// Ikon keadaan pendaftaran; terbuka memakai pengeras suara seperti konsep (K82).
 $ikonKeadaan = [
     BukaTutupPendaftaran::DISIAPKAN    => 'hourglass-split',
     BukaTutupPendaftaran::BELUM_DIBUKA => 'calendar-event',
-    BukaTutupPendaftaran::TERBUKA      => 'door-open-fill',
+    BukaTutupPendaftaran::TERBUKA      => 'megaphone',
     BukaTutupPendaftaran::DITUTUP      => 'door-closed-fill',
 ];
 $keadaan = $bukaTutup->keadaan();
+
+// Kartu info ringkas seperti konsep (K82): "9–12" besar di atas "Desember 2026",
+// tempat dipisah di koma terakhir. Bentuk lain tampil satu baris.
+$tanggalInfo = preg_match('/^([\d\s–-]+?)\s+(\p{L}+\s+\d{4})$/u', $acara['tanggal'], $c) === 1 ? [$c[1], $c[2]] : ['', $acara['tanggal']];
+$koma        = mb_strrpos($acara['tempat'], ',');
+$tempatInfo  = $koma === false ? [$acara['tempat'], ''] : [trim(mb_substr($acara['tempat'], 0, $koma)), trim(mb_substr($acara['tempat'], $koma + 1))];
+[$ringkasAtas, $ringkasBawah] = $bukaTutup->ringkas();
 
 // Logo acara tampil di kepala halaman; di sini hanya logo pendukung (Djarum Foundation).
 $logo = array_values(array_filter(
@@ -105,22 +112,24 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                 <div class="pembuka-info">
                     <p class="pembuka-waktu">
                         <?php if ($acara['tanggal'] === '' && $acara['tempat'] === '') : ?>
-                            <span><i class="bi bi-calendar-event" aria-hidden="true"></i>Tanggal dan tempat acara segera diumumkan</span>
+                            <span class="info-sel"><i class="bi bi-calendar-event" aria-hidden="true"></i><span class="info-teks">Tanggal dan tempat acara segera diumumkan</span></span>
                         <?php else : ?>
                             <?php if ($acara['tanggal'] !== '') : ?>
-                                <span><i class="bi bi-calendar-event" aria-hidden="true"></i><?= esc($acara['tanggal']) ?></span>
+                                <span class="info-sel"><i class="bi bi-calendar-event" aria-hidden="true"></i><span class="info-teks"><?php if ($tanggalInfo[0] !== '') : ?><strong class="info-besar"><?= esc($tanggalInfo[0]) ?></strong> <?php endif ?><span><?= esc($tanggalInfo[1]) ?></span></span></span>
                             <?php endif ?>
                             <?php if ($acara['tempat'] !== '') : ?>
-                                <span><i class="bi bi-geo-alt" aria-hidden="true"></i><?= esc($acara['tempat']) ?></span>
+                                <span class="info-sel"><i class="bi bi-geo-alt" aria-hidden="true"></i><span class="info-teks"><span><?= esc($tempatInfo[0]) ?></span><?php if ($tempatInfo[1] !== '') : ?><span class="visually-hidden">,</span> <span><?= esc($tempatInfo[1]) ?></span><?php endif ?></span></span>
                             <?php endif ?>
                         <?php endif ?>
                     </p>
 
                     <div class="keadaan-pendaftaran keadaan-<?= esc(str_replace('_', '-', $keadaan), 'attr') ?>" data-keadaan="<?= esc($keadaan, 'attr') ?>">
-                        <span class="keadaan-ikon"><i class="bi bi-<?= $ikonKeadaan[$keadaan] ?>" aria-hidden="true"></i></span>
-                        <div>
-                            <p class="keadaan-label mb-0"><?= esc($bukaTutup->label()) ?></p>
-                            <p class="keadaan-kalimat mb-0"><?= esc($bukaTutup->kalimat()) ?></p>
+                        <i class="bi bi-<?= $ikonKeadaan[$keadaan] ?> keadaan-ikon" aria-hidden="true"></i>
+                        <?php // Tampilan ringkas; kalimat lengkap tetap dibaca pembaca layar. ?>
+                        <span class="keadaan-ringkas" aria-hidden="true"><span><?= esc($ringkasAtas) ?></span> <strong><?= esc($ringkasBawah) ?></strong></span>
+                        <div class="visually-hidden">
+                            <p class="keadaan-label"><?= esc($bukaTutup->label()) ?></p>
+                            <p class="keadaan-kalimat"><?= esc($bukaTutup->kalimat()) ?></p>
                         </div>
                     </div>
                 </div>

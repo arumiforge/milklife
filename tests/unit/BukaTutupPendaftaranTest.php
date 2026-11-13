@@ -23,6 +23,7 @@ final class BukaTutupPendaftaranTest extends CIUnitTestCase
             $this->assertFalse($hasil->terbuka());
             $this->assertNull($hasil->batas());
             $this->assertSame('Pendaftaran sedang disiapkan.', $hasil->kalimat());
+            $this->assertSame(['Pendaftaran', 'Segera dibuka'], $hasil->ringkas());
             $this->assertSame('Sedang disiapkan', $hasil->label());
         }
     }
@@ -69,6 +70,7 @@ final class BukaTutupPendaftaranTest extends CIUnitTestCase
         $this->assertFalse($hasil->terbuka());
         $this->assertSame('Belum dibuka', $hasil->label());
         $this->assertSame('Pendaftaran dibuka 1 Oktober 2026 pukul 08.00.', $hasil->kalimat());
+        $this->assertSame(['Dibuka', '1 Oktober'], $hasil->ringkas());
         $this->assertSame('2026-10-01 08:00:00', $hasil->batas()?->format('Y-m-d H:i:s'));
     }
 
@@ -87,6 +89,7 @@ final class BukaTutupPendaftaranTest extends CIUnitTestCase
         $this->assertFalse($hasil->lewatManual());
         $this->assertSame('Terbuka', $hasil->label());
         $this->assertSame('Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', $hasil->kalimat());
+        $this->assertSame(['Daftar s.d.', '30 November'], $hasil->ringkas());
         $this->assertSame('2026-11-30 23:59:59', $hasil->batas()?->format('Y-m-d H:i:s'));
     }
 
@@ -97,6 +100,7 @@ final class BukaTutupPendaftaranTest extends CIUnitTestCase
         $this->assertFalse($hasil->terbuka());
         $this->assertSame('Ditutup', $hasil->label());
         $this->assertSame('Pendaftaran sudah ditutup pada 30 November 2026 pukul 23.59.', $hasil->kalimat());
+        $this->assertSame(['Pendaftaran', 'Ditutup'], $hasil->ringkas());
     }
 
     // ---------- Buka manual ----------
