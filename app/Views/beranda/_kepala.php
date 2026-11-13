@@ -8,8 +8,8 @@
  *
  * - Gambar kepala (foto atlet) diunggah admin di Pengaturan > Halaman Depan;
  *   gambar dan logo yang belum diunggah atau berkasnya hilang tidak
- *   ditampilkan (K41). Logo acara tampil di kepala halaman (tata letak
- *   publik); di sini hanya logo Djarum Foundation.
+ *   ditampilkan (K41). Logo acara tampil di kepala halaman dan logo
+ *   Djarum Foundation di kaki halaman (tata letak publik, K84).
  * - Judul dari pengaturan, huruf besar; tiap kalimat (atau tiap kata bila
  *   hanya satu kalimat) satu baris dan baris terakhir oranye. Bila kosong, nama acara menjadi judul. Satu-satunya `<h1>`
  *   halaman ada di sini (`#judul-acara`).
@@ -24,7 +24,6 @@
  */
 
 use App\Libraries\BukaTutupPendaftaran;
-use App\Libraries\IsiHalamanDepan;
 
 // Ikon keadaan pendaftaran; terbuka memakai pengeras suara seperti konsep (K82).
 $ikonKeadaan = [
@@ -42,12 +41,6 @@ $koma        = mb_strrpos($acara['tempat'], ',');
 $tempatInfo  = $koma === false ? [$acara['tempat'], ''] : [trim(mb_substr($acara['tempat'], 0, $koma)), trim(mb_substr($acara['tempat'], $koma + 1))];
 [$ringkasAtas, $ringkasBawah] = $bukaTutup->ringkas();
 
-// Logo acara tampil di kepala halaman; di sini hanya logo pendukung (Djarum Foundation).
-$logo = array_values(array_filter(
-    IsiHalamanDepan::logoPembuka($tampilan, $acara['nama']),
-    static fn (array $butir): bool => $butir['kunci'] === 'logo_djarum',
-));
-
 // Atribut width/height dari ukuran asli supaya halaman tidak melompat saat gambar dimuat.
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . $ukuran['lebar'] . '" height="' . $ukuran['tinggi'] . '"';
 
@@ -60,11 +53,26 @@ if (count($kalimatJudul) === 1) {
 
 $ikonTombol = ['pendaftaran' => 'arrow-right', 'cek' => 'arrow-right'];
 
-/** Siluet pelari untuk kartu kelompok umur (hiasan). */
-$pelari = '<svg class="ku-pelari" viewBox="0 0 64 64" aria-hidden="true" focusable="false">'
-    . '<circle cx="40" cy="10" r="6.5" fill="currentColor"/>'
-    . '<path d="M37 18 L30 36 M36 21 L44 28 L51 23 M34 22 L26 27 L21 21 M30 36 L41 43 L38 56 M30 36 L23 48 L12 51" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>'
+/** Pelari dengan garis laju untuk kartu kelompok umur, seperti contoh pemilik (K84; hiasan). */
+$pelari = '<svg class="ku-pelari" viewBox="0 0 80 64" aria-hidden="true" focusable="false">'
+    . '<path d="M4 28 H22 M8 34 H24 M12 40 H22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'
+    . '<circle cx="56" cy="10" r="6.5" fill="currentColor"/>'
+    . '<path d="M53 18 L46 36 M52 21 L60 28 L67 23 M50 22 L42 27 L37 21 M46 36 L57 43 L54 56 M46 36 L39 48 L28 51" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>'
     . '</svg>';
+
+/**
+ * Ombak lintasan di bawah kartu kelompok umur (K84): tiga bidang warna dan
+ * dua garis lintasan putih. Tiga bentuk bergantian supaya tiap kartu berbeda;
+ * warnanya (hijau muda atau oranye) dari kelas kartu.
+ */
+$ombak = [
+    ['M0 62 C 90 50, 180 58, 300 8 V100 H0 Z', 'M0 76 C 100 62, 200 92, 300 34 V100 H0 Z', 'M140 100 C 220 92, 270 70, 300 54 V100 Z', 'M0 68 C 90 54, 175 62, 300 18', 'M110 100 C 195 84, 255 52, 300 44'],
+    ['M0 50 C 70 74, 160 34, 300 24 V100 H0 Z', 'M0 74 C 90 90, 190 52, 300 50 V100 H0 Z', 'M0 100 C 60 86, 120 84, 180 100 Z', 'M0 60 C 80 82, 170 42, 300 34', 'M50 100 C 140 74, 220 64, 300 64'],
+    ['M0 40 C 90 46, 190 74, 300 42 V100 H0 Z', 'M0 66 C 120 58, 210 96, 300 66 V100 H0 Z', 'M170 100 C 225 84, 268 80, 300 82 V100 Z', 'M0 50 C 100 54, 190 82, 300 52', 'M0 86 C 90 72, 200 98, 300 78'],
+];
+$gambarOmbak = static fn (array $b): string => '<svg class="ku-ombak" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">'
+    . '<path class="ku-ombak-muda" d="' . $b[0] . '"/><path class="ku-ombak-tengah" d="' . $b[1] . '"/><path class="ku-ombak-tua" d="' . $b[2] . '"/>'
+    . '<path class="ku-ombak-garis" d="' . $b[3] . '"/><path class="ku-ombak-garis" d="' . $b[4] . '"/></svg>';
 
 /** Nama kelompok umur dipisah: "KU 8 (Seneng Playon)" → ["KU 8", "Seneng Playon"]. */
 $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s*$/u', $nama, $c) === 1 ? [$c[1], $c[2]] : [$nama, ''];
@@ -145,16 +153,6 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                         <?php endif ?>
                     <?php endforeach ?>
                 </nav>
-
-                <?php if ($logo !== []) : ?>
-                    <ul class="pembuka-logo list-unstyled" aria-label="Logo">
-                        <?php foreach ($logo as $butir) : ?>
-                            <li class="pembuka-logo-butir pembuka-<?= str_replace('_', '-', $butir['kunci']) ?>">
-                                <img src="<?= esc($butir['alamat'], 'attr') ?>" alt="<?= esc($butir['alt'], 'attr') ?>"<?= $ukuranAtribut($butir['ukuran']) ?>>
-                            </li>
-                        <?php endforeach ?>
-                    </ul>
-                <?php endif ?>
             </div>
         </div>
 
@@ -174,6 +172,7 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                         <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>
                         <li>
                             <a class="pembuka-ku-kartu pembuka-ku-kartu-<?= $i % 2 === 0 ? 'hijau' : 'oranye' ?>" href="#lomba-ku-<?= (int) $ku['id'] ?>">
+                                <?= $gambarOmbak($ombak[$i % count($ombak)]) ?>
                                 <?= $pelari ?>
                                 <span class="pembuka-ku-nama">
                                     <?= esc($namaKu) ?>

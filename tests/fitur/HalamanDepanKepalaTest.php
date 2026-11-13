@@ -69,7 +69,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('1', $gambar->getAttribute('width'));
         $this->assertSame('1', $gambar->getAttribute('height'));
 
-        // K81: logo acara di kepala halaman (persegi panjang lebih dulu), logo Djarum di pembuka.
+        // K81: logo acara di kepala halaman (persegi panjang lebih dulu); logo Djarum di kanan kaki halaman (K84).
         $logoKepala = $xpath->query('//header//a[contains(@class, "navbar-brand")]/img')->item(0);
         $this->assertNotNull($logoKepala);
         $this->assertSame(base_url($jalur['logo_persegi_panjang']), $logoKepala->getAttribute('src'));
@@ -78,7 +78,9 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $logo = [];
 
-        foreach ($xpath->query('//ul[contains(@class, "pembuka-logo")]/li/img') as $img) {
+        $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//*[contains(@class, "pembuka-logo")]')->length);
+
+        foreach ($xpath->query('//footer//img[contains(@class, "kaki-logo")]') as $img) {
             $logo[] = [$img->getAttribute('src'), $img->getAttribute('alt'), $img->getAttribute('width')];
         }
 
@@ -100,10 +102,14 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $xpath = $this->xpathDari($this->get('/'));
 
         $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-gambar")]')->length);
+        $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//img')->length);
         $this->assertSame([base_url($ada)], array_map(
             static fn (DOMElement $img): string => $img->getAttribute('src'),
-            iterator_to_array($xpath->query('//section[@id="pembuka"]//img')),
+            iterator_to_array($xpath->query('//footer//img')),
         ));
+
+        // Logo kaki juga tampil di halaman publik lain.
+        $this->assertSame(base_url($ada), $this->xpathDari($this->get('unduhan'))->query('//footer//img[contains(@class, "kaki-logo")]')->item(0)?->getAttribute('src'));
     }
 
     // ---------- Judul, teks, dan data acara ----------
