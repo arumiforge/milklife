@@ -494,7 +494,12 @@ html:has(.tata-publik) {
 .kepala-logo {
     display: block;
     width: auto;
-    height: 3rem;
+    height: 3.25rem;
+}
+
+/* Latar putih logo membaur ke latar krem kepala (K93). */
+.kepala-beranda .kepala-logo {
+    mix-blend-mode: multiply;
 }
 
 /* Label seri miring bergaris bawah oranye, langsung setelah logo (K84). */
@@ -502,7 +507,7 @@ html:has(.tata-publik) {
     margin: 0 auto 0 0.25rem;
     padding: 0.2rem 0;
     color: var(--ml-biru-tua);
-    font-size: 0.9375rem;
+    font-size: 1.125rem;
     font-style: italic;
     font-weight: 800;
     text-transform: uppercase;
@@ -529,12 +534,12 @@ html:has(.tata-publik) {
     }
 
     .kepala-logo {
-        height: 3.5rem;
+        height: 4rem;
     }
 
     .kepala-seri {
         margin-left: 0.75rem;
-        font-size: 1.0625rem;
+        font-size: 1.375rem;
     }
 
     .kepala-seri::after {

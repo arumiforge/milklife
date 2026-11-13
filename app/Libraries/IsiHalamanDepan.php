@@ -162,15 +162,15 @@ final class IsiHalamanDepan
     public const GAMBAR = ['gambar_kepala', 'logo_persegi', 'logo_persegi_panjang', 'logo_djarum'];
 
     /**
-     * Logo yang tampil di kepala halaman depan (K81): logo persegi panjang,
-     * atau logo persegi bila yang persegi panjang belum ada. `null` bila
+     * Logo yang tampil di kepala halaman depan (K93): logo persegi, atau
+     * logo persegi panjang bila yang persegi belum ada. `null` bila
      * keduanya belum diunggah; kepala lalu menulis nama acara.
      *
      * @param array<string, mixed> $tampilan hasil `tampilan()`
      */
     public static function logoKepala(array $tampilan): ?string
     {
-        foreach (['logo_persegi_panjang', 'logo_persegi'] as $kunci) {
+        foreach (['logo_persegi', 'logo_persegi_panjang'] as $kunci) {
             if (($tampilan[$kunci] ?? null) !== null) {
                 return $kunci;
             }
