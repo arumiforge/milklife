@@ -50,7 +50,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4" id="rincian-pendaftaran" data-id="<?= (int) $p['id'] ?>" data-status="<?= esc($p['status'], 'attr') ?>">
-    <a class="d-inline-flex align-items-center gap-1 mb-3" href="<?= site_url('admin/pendaftaran') ?>">
+    <a class="tautan-kembali mb-3" href="<?= site_url('admin/pendaftaran') ?>">
         <i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke daftar pendaftaran
     </a>
 

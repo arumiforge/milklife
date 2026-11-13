@@ -93,7 +93,7 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
                 <div class="kepala-admin-pengguna">
                     <a class="btn btn-outline-primary tombol-halaman-depan" href="<?= site_url('/') ?>" target="_blank" rel="noopener" title="Buka halaman depan di tab baru">
                         <i class="bi bi-house-door" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline">Halaman depan</span>
+                        <span class="d-none d-md-inline tombol-kepala-teks">Halaman depan</span>
                         <span class="visually-hidden">(tab baru)</span>
                     </a>
                     <a class="kepala-admin-nama" href="<?= site_url('admin/akun') ?>" title="Buka Akun: ganti nama dan kata sandi">
@@ -106,7 +106,7 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
                         <?= csrf_field() ?>
                         <button type="submit" class="btn btn-outline-primary tombol-keluar">
                             <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
-                            Keluar
+                            <span class="tombol-kepala-teks">Keluar</span>
                         </button>
                     </form>
                 </div>

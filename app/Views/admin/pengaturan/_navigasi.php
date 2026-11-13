@@ -25,7 +25,7 @@ use App\Controllers\Admin\Pengaturan\BerandaPengaturanController;
 $halamanPengaturan = BerandaPengaturanController::daftarHalaman();
 ?>
 <nav class="navigasi-pengaturan mb-4" aria-label="Navigasi pengaturan">
-    <a class="navigasi-pengaturan-kembali" href="<?= site_url('admin/pengaturan') ?>">
+    <a class="navigasi-pengaturan-kembali tautan-kembali" href="<?= site_url('admin/pengaturan') ?>">
         <i class="bi bi-arrow-left" aria-hidden="true"></i>
         Semua pengaturan
     </a>

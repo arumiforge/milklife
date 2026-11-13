@@ -277,6 +277,28 @@ a.kepala-admin-nama:focus-visible {
     .kepala-admin-nama .bi {
         font-size: 1.5rem;
     }
+
+    /* Halaman depan dan Keluar: ikon saja tanpa bingkai, seukuran ikon profil.
+       Labelnya tetap terbaca pembaca layar. */
+    .tombol-halaman-depan,
+    .tombol-keluar {
+        justify-content: center;
+        min-width: 2.75rem;
+        padding: 0;
+        border-color: transparent;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+
+    .tombol-kepala-teks {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+    }
 }
 
 /* ---------- Menu bawah (ponsel dan tablet) ---------- */
@@ -340,15 +362,19 @@ a.kepala-admin-nama:focus-visible {
     font-weight: 700;
 }
 
+/* Menu yang sedang dibuka diberi kotak berwarna. */
 .menu-bawah .menu-admin-tautan[aria-current="page"]::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 25%;
-    right: 25%;
-    height: 3px;
-    border-radius: 0 0 3px 3px;
-    background: var(--ml-oranye);
+    inset: 0.3rem 0.2rem;
+    z-index: -1;
+    border-radius: 0.6rem;
+    background: var(--ml-biru-muda-pucat);
+    box-shadow: inset 0 -3px 0 var(--ml-oranye);
+}
+
+.menu-bawah .menu-admin-tautan {
+    isolation: isolate;
 }
 
 .menu-bawah .menu-admin-tautan:focus-visible {
@@ -485,17 +511,58 @@ a.kepala-admin-nama:focus-visible {
 }
 
 .navigasi-pengaturan-kembali {
-    display: inline-flex;
-    align-items: center;
     align-self: flex-start;
-    gap: 0.4rem;
-    min-height: 2.75rem;
-    font-weight: 500;
-    text-decoration: none;
 }
 
-.navigasi-pengaturan-kembali:hover {
-    text-decoration: underline;
+/* Tautan kembali: kapsul putih dengan panah di lingkaran biru pucat. */
+.tautan-kembali {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    padding: 0.3rem 1rem 0.3rem 0.3rem;
+    border: 1px solid var(--ml-garis);
+    border-radius: 999px;
+    background: var(--ml-putih);
+    color: var(--ml-biru-tua);
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(2, 31, 123, 0.06);
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.tautan-kembali .bi {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru);
+    transition: transform 0.15s;
+}
+
+.tautan-kembali:hover {
+    border-color: var(--ml-biru-muda);
+    color: var(--ml-biru-tua);
+    box-shadow: 0 3px 8px rgba(2, 31, 123, 0.12);
+}
+
+.tautan-kembali:hover .bi {
+    transform: translateX(-2px);
+}
+
+.tautan-kembali:focus-visible {
+    outline: 3px solid var(--ml-biru);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tautan-kembali,
+    .tautan-kembali .bi {
+        transition: none;
+    }
 }
 
 /* Deretan tautan: digeser mendatar di layar sempit, halaman tidak ikut bergeser. */

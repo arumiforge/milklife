@@ -266,7 +266,7 @@ $galatSekolah = [
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4" id="ubah-pendaftaran" data-status="<?= esc($p['status'], 'attr') ?>">
-    <a class="d-inline-flex align-items-center gap-1 mb-3" href="<?= site_url($alamat) ?>">
+    <a class="tautan-kembali mb-3" href="<?= site_url($alamat) ?>">
         <i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke rincian pendaftaran
     </a>
 
