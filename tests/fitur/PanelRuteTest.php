@@ -46,6 +46,7 @@ final class PanelRuteTest extends UjiHalaman
         ['GET', 'admin/atlet/data', 'AtletController::data', 'admin/atlet/data'],
         ['GET', 'admin/atlet/excel', 'AtletController::excel', 'admin/atlet/excel'],
         ['GET', 'admin/rekap', 'RekapController::index', 'admin/rekap'],
+        ['GET', 'admin/rekap/gabungan/excel', 'RekapController::semua', 'admin/rekap/gabungan/excel'],
         ['GET', 'admin/rekap/(' . self::JENIS_REKAP . ')', 'RekapController::index/$1', 'admin/rekap/keuangan'],
         ['GET', 'admin/rekap/(' . self::JENIS_REKAP . ')/data', 'RekapController::data/$1', 'admin/rekap/sekolah/data'],
         ['GET', 'admin/rekap/(' . self::JENIS_REKAP . ')/excel', 'RekapController::excel/$1', 'admin/rekap/tim-beregu/excel'],

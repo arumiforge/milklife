@@ -116,6 +116,12 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame(1, $xpath->query('.//form[@method="post"]//button[@type="submit"][contains(., "Keluar")]', $kepala)->length);
         $this->assertFormulirKeluarBerCsrf($xpath);
 
+        // Tautan ke halaman depan, dibuka di tab baru (K85).
+        $depan = $xpath->query('.//a[contains(@class, "tombol-halaman-depan")]', $kepala)->item(0);
+        $this->assertNotNull($depan);
+        $this->assertSame(site_url('/'), $depan->getAttribute('href'));
+        $this->assertSame('_blank', $depan->getAttribute('target'));
+
         // Menu samping dan menu bawah.
         $samping = $xpath->query('//aside[contains(@class, "menu-samping")]//nav[@aria-label]')->item(0);
         $bawah   = $xpath->query('//nav[contains(@class, "menu-bawah")][@aria-label]')->item(0);

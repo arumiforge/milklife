@@ -231,3 +231,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K84 | Logo Bakti Olahraga Djarum Foundation pindah dari pembuka ke kanan kaki halaman di semua halaman publik, di atas kapsul putih. Label "Kelompok usia" diberi jarak lebih lega dari kartu di bawahnya. Kartu kelompok umur mengikuti contoh pemilik: latar krem, ombak lintasan di bawah (hijau muda dan oranye bergantian, tiga bentuk ombak bergiliran supaya tiap kartu berbeda) dengan garis lintasan putih, dan pelari biru tua bergaris laju di kiri. Garis tegak pemisah antara logo dan label seri di kepala dihapus | Mengubah letak logo Djarum dari K81. Logo tetap diunggah admin di Pengaturan > Halaman Depan; bila belum diunggah, kaki hanya berisi teks. Ombak dan pelari digambar SVG di kode (bukan gambar contoh), supaya tajam di semua ukuran |
+
+## 13 November 2026 — gambar kartu kelompok usia, tautan halaman depan, rekap gabungan
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K85 | Kartu kelompok usia memakai gambar dari pemilik (pelari biru tua dan lintasan hijau muda atau oranye, bergantian), tinggal diisi nama kelompok umur; pelari dan ombak SVG dari K84 dihapus. Kepala panel admin punya tombol "Halaman depan" yang membuka halaman depan di tab baru. Menu Rekap punya tombol "Unduh Rekap Gabungan": satu berkas Excel berisi semua data, satu sheet per bagian (Pendaftaran, Atlet, Peserta per Nomor Lomba, Tim Beregu, Per Sekolah, Per Kelompok Umur, Keuangan, Tim Tanpa Pembayar) | Mengubah tampilan kartu di K84. Gambar dipotong dari contoh pemilik ke `public/aset/gambar/kartu-ku-hijau.webp` dan `kartu-ku-oranye.webp` (tanpa data siswa). Rekap gabungan tidak memakai saringan status: semua pendaftaran ikut, sama dengan rekap Keuangan |

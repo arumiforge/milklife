@@ -80,6 +80,16 @@ class AtletController extends BaseController
 
     public function excel(): DownloadResponse
     {
+        return self::lembarExcel($this->request->getGet())->unduh('Atlet_' . date('Ymd'));
+    }
+
+    /**
+     * Lembar Excel atlet dengan saringan tabel; dipakai juga rekap gabungan (K85).
+     *
+     * @param array<string, mixed> $saringan
+     */
+    public static function lembarExcel(array $saringan = []): EksporExcel
+    {
         $excel = new EksporExcel('Atlet', [
             'nomor_dada'     => 'Nomor Dada',
             'nama'           => 'Nama',
@@ -96,9 +106,9 @@ class AtletController extends BaseController
         $excel->tambahBaris(array_map(static fn (array $baris): array => [
             'tanggal_lahir' => tanggal_id((string) $baris['tanggal_lahir']),
             'status'        => self::STATUS[$baris['status']] ?? $baris['status'],
-        ] + $baris, self::tabel()->semuaBaris(self::pembuat(), $this->request->getGet())));
+        ] + $baris, self::tabel()->semuaBaris(self::pembuat(), $saringan)));
 
-        return $excel->unduh('Atlet_' . date('Ymd'));
+        return $excel;
     }
 
     /**

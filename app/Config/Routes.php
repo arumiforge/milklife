@@ -86,6 +86,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     // kelompok-umur, keuangan; jenis lain tidak ditemukan. `rekap` tanpa
     // jenis membuka rekap pertama.
     $routes->get('rekap', 'RekapController::index');
+    // Rekap gabungan (K85): semua data dalam satu Excel, satu sheet per bagian.
+    $routes->get('rekap/gabungan/excel', 'RekapController::semua');
     $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)', 'RekapController::index/$1');
     $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)/data', 'RekapController::data/$1');
     $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)/excel', 'RekapController::excel/$1');

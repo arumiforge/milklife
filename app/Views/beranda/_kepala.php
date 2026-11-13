@@ -53,27 +53,6 @@ if (count($kalimatJudul) === 1) {
 
 $ikonTombol = ['pendaftaran' => 'arrow-right', 'cek' => 'arrow-right'];
 
-/** Pelari dengan garis laju untuk kartu kelompok umur, seperti contoh pemilik (K84; hiasan). */
-$pelari = '<svg class="ku-pelari" viewBox="0 0 80 64" aria-hidden="true" focusable="false">'
-    . '<path d="M4 28 H22 M8 34 H24 M12 40 H22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>'
-    . '<circle cx="56" cy="10" r="6.5" fill="currentColor"/>'
-    . '<path d="M53 18 L46 36 M52 21 L60 28 L67 23 M50 22 L42 27 L37 21 M46 36 L57 43 L54 56 M46 36 L39 48 L28 51" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>'
-    . '</svg>';
-
-/**
- * Ombak lintasan di bawah kartu kelompok umur (K84): tiga bidang warna dan
- * dua garis lintasan putih. Tiga bentuk bergantian supaya tiap kartu berbeda;
- * warnanya (hijau muda atau oranye) dari kelas kartu.
- */
-$ombak = [
-    ['M0 62 C 90 50, 180 58, 300 8 V100 H0 Z', 'M0 76 C 100 62, 200 92, 300 34 V100 H0 Z', 'M140 100 C 220 92, 270 70, 300 54 V100 Z', 'M0 68 C 90 54, 175 62, 300 18', 'M110 100 C 195 84, 255 52, 300 44'],
-    ['M0 50 C 70 74, 160 34, 300 24 V100 H0 Z', 'M0 74 C 90 90, 190 52, 300 50 V100 H0 Z', 'M0 100 C 60 86, 120 84, 180 100 Z', 'M0 60 C 80 82, 170 42, 300 34', 'M50 100 C 140 74, 220 64, 300 64'],
-    ['M0 40 C 90 46, 190 74, 300 42 V100 H0 Z', 'M0 66 C 120 58, 210 96, 300 66 V100 H0 Z', 'M170 100 C 225 84, 268 80, 300 82 V100 Z', 'M0 50 C 100 54, 190 82, 300 52', 'M0 86 C 90 72, 200 98, 300 78'],
-];
-$gambarOmbak = static fn (array $b): string => '<svg class="ku-ombak" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">'
-    . '<path class="ku-ombak-muda" d="' . $b[0] . '"/><path class="ku-ombak-tengah" d="' . $b[1] . '"/><path class="ku-ombak-tua" d="' . $b[2] . '"/>'
-    . '<path class="ku-ombak-garis" d="' . $b[3] . '"/><path class="ku-ombak-garis" d="' . $b[4] . '"/></svg>';
-
 /** Nama kelompok umur dipisah: "KU 8 (Seneng Playon)" → ["KU 8", "Seneng Playon"]. */
 $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s*$/u', $nama, $c) === 1 ? [$c[1], $c[2]] : [$nama, ''];
 ?>
@@ -172,8 +151,6 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                         <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>
                         <li>
                             <a class="pembuka-ku-kartu pembuka-ku-kartu-<?= $i % 2 === 0 ? 'hijau' : 'oranye' ?>" href="#lomba-ku-<?= (int) $ku['id'] ?>">
-                                <?= $gambarOmbak($ombak[$i % count($ombak)]) ?>
-                                <?= $pelari ?>
                                 <span class="pembuka-ku-nama">
                                     <?= esc($namaKu) ?>
                                     <?php if ($julukan !== '') : ?>
