@@ -69,10 +69,10 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('1', $gambar->getAttribute('width'));
         $this->assertSame('1', $gambar->getAttribute('height'));
 
-        // K81: logo acara di kepala halaman (persegi panjang lebih dulu); logo Djarum di kanan kaki halaman (K84).
+        // K93: logo acara di kepala halaman (persegi lebih dulu); logo Djarum di kanan kaki halaman (K84).
         $logoKepala = $xpath->query('//header//a[contains(@class, "navbar-brand")]/img')->item(0);
         $this->assertNotNull($logoKepala);
-        $this->assertSame(base_url($jalur['logo_persegi_panjang']), $logoKepala->getAttribute('src'));
+        $this->assertSame(base_url($jalur['logo_persegi']), $logoKepala->getAttribute('src'));
         $this->assertSame('Logo Lomba Lari Karangan', $logoKepala->getAttribute('alt'));
         $this->assertSame('1', $logoKepala->getAttribute('width'));
 
