@@ -58,7 +58,7 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                 <div class="card-body p-3 p-sm-4">
                     <h2 class="h4 mb-1"><?= $baru ? 'Tambah nomor lomba' : 'Ubah ' . esc(NomorLombaModel::namaLengkap($nomor)) ?></h2>
                     <p class="text-body-secondary mb-4">
-                        <a href="<?= $kembali ?>"><i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke daftar nomor lomba</a>
+                        <a class="tautan-kembali" href="<?= $kembali ?>"><i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke daftar nomor lomba</a>
                     </p>
 
                     <?php if ($dipakai) : ?>
