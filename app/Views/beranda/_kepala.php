@@ -44,11 +44,13 @@ $tempatInfo  = $koma === false ? [$acara['tempat'], ''] : [trim(mb_substr($acara
 // Atribut width/height dari ukuran asli supaya halaman tidak melompat saat gambar dimuat.
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . $ukuran['lebar'] . '" height="' . $ukuran['tinggi'] . '"';
 
-// Judul per kalimat ("Berlari. Bermain. Berprestasi."); judul satu kalimat
-// per kata ("MilkLife Athletics Challenge"), K83. Tampil huruf besar lewat CSS.
+// Judul per kalimat ("Berlari. Bermain. Berprestasi."); judul pendek satu
+// kalimat (paling banyak 4 kata) per kata ("MilkLife Athletics Challenge", K83).
+// Judul satu kalimat yang lebih panjang mengalir biasa (K86). Huruf besar lewat CSS.
 $kalimatJudul = preg_split('/(?<=[.!?])\s+/u', $tampilan['judul'], -1, PREG_SPLIT_NO_EMPTY) ?: [];
-if (count($kalimatJudul) === 1) {
-    $kalimatJudul = preg_split('/\s+/u', $kalimatJudul[0], -1, PREG_SPLIT_NO_EMPTY) ?: [];
+$kataJudul    = count($kalimatJudul) === 1 ? (preg_split('/\s+/u', $kalimatJudul[0], -1, PREG_SPLIT_NO_EMPTY) ?: []) : [];
+if (count($kataJudul) > 1 && count($kataJudul) <= 4) {
+    $kalimatJudul = $kataJudul;
 }
 
 $ikonTombol = ['pendaftaran' => 'arrow-right', 'cek' => 'arrow-right'];
