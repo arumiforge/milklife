@@ -277,6 +277,28 @@ a.kepala-admin-nama:focus-visible {
     .kepala-admin-nama .bi {
         font-size: 1.5rem;
     }
+
+    /* Halaman depan dan Keluar: ikon saja tanpa bingkai, seukuran ikon profil.
+       Labelnya tetap terbaca pembaca layar. */
+    .tombol-halaman-depan,
+    .tombol-keluar {
+        justify-content: center;
+        min-width: 2.75rem;
+        padding: 0;
+        border-color: transparent;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+
+    .tombol-kepala-teks {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+    }
 }
 
 /* ---------- Menu bawah (ponsel dan tablet) ---------- */
