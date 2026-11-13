@@ -60,7 +60,7 @@ final class PengaturanPembayaranTest extends UjiBasisData
 
         $contoh = (string) $xpath->query('//*[@id="contoh-pesan"]')->item(0)?->textContent;
         $this->assertStringContainsString('Nama sekolah: SD Negeri Contoh 1', $contoh);
-        $this->assertStringContainsString('Total: Rp500.000', $contoh);
+        $this->assertStringContainsString('Total: Rp 500.000', $contoh);
         $this->assertStringNotContainsString('{', $contoh);
 
         // Belum ada logo: kotak tanpa gambar, tanpa pilihan hapus.
@@ -258,7 +258,7 @@ final class PengaturanPembayaranTest extends UjiBasisData
     public function testContohPesanDanPenandaTidakDikenal(): void
     {
         $this->assertSame(
-            'SD Negeri Contoh 1 / 12345678 / MAC2A0000126 / Rp300.000 + Rp200.000 = Rp500.000',
+            'SD Negeri Contoh 1 / 12345678 / MAC2A0000126 / Rp 300.000 + Rp 200.000 = Rp 500.000',
             PembayaranController::contohPesan('{nama_sekolah} / {npsn} / {id_pendaftaran} / {subtotal_individu} + {subtotal_beregu} = {total}'),
         );
         $this->assertSame([], PembayaranController::penandaTidakDikenal((new Pembayaran())->templat_pesan));

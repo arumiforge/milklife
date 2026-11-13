@@ -209,7 +209,7 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
         foreach ([
             $p['id_pendaftaran'], 'SD KARANGAN MAJU', '99999911', 'SD/MI', 'Kudus', 'Ibu Karangan', '0812-0000-0001',
             'Budi Karangan', '9900177771', '12 April 2017', 'KU 10', 'Lari 60 m putra', 'Frog Jump putra',
-            "Kanga's Escape putra", 'Rp100.000', 'Rp300.000', 'Rp400.000', 'Menunggu Konfirmasi Pembayaran', 'Belum lunas',
+            "Kanga's Escape putra", 'Rp 100.000', 'Rp 300.000', 'Rp 400.000', 'Menunggu Konfirmasi Pembayaran', 'Belum lunas',
         ] as $teks) {
             $hasil->assertSee($teks);
         }

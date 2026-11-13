@@ -96,7 +96,7 @@ final class PendaftaranGabunganTest extends UjiBasisData
         $cekId = $this->get('cek-pendaftaran?kode=' . $satu['id_pendaftaran']);
         $cekId->assertOK();
         $teks = $this->teksHalaman($cekId);
-        foreach (['SD KARANGAN MAJU', $satu['id_pendaftaran'], 'BUDI KARANGAN 01', 'Lari 60 m putra', "Kanga's Escape putra", 'Rp250.000', 'Ibu Karangan', '0812-0000-0001', 'Menunggu Konfirmasi Pembayaran'] as $harap) {
+        foreach (['SD KARANGAN MAJU', $satu['id_pendaftaran'], 'BUDI KARANGAN 01', 'Lari 60 m putra', "Kanga's Escape putra", 'Rp 250.000', 'Ibu Karangan', '0812-0000-0001', 'Menunggu Konfirmasi Pembayaran'] as $harap) {
             $this->assertStringContainsString($harap, $teks);
         }
         $this->assertStringNotContainsString($dua['id_pendaftaran'], $teks);
@@ -107,7 +107,7 @@ final class PendaftaranGabunganTest extends UjiBasisData
         $this->assertStringContainsString($satu['id_pendaftaran'], $teks);
         $this->assertStringContainsString($dua['id_pendaftaran'], $teks);
         $this->assertStringContainsString('Frog Jump putra', $teks);
-        $this->assertStringContainsString('Rp400.000', $teks, 'Total keseluruhan dua pendaftaran.');
+        $this->assertStringContainsString('Rp 400.000', $teks, 'Total keseluruhan dua pendaftaran.');
 
         // Tautan cetak bukti dari langkah 5 membuka PDF pendaftaran itu.
         $alamatBukti = 'bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', $dua['id_pendaftaran'])->get()->getRow()->kode_bukti . '/' . $dua['id_pendaftaran'];
@@ -119,42 +119,34 @@ final class PendaftaranGabunganTest extends UjiBasisData
         $this->assertStringContainsString('BuktiPendaftaran_', $bukti->response()->getHeaderLine('Content-Disposition'));
     }
 
-    public function testMenuPendaftaranMengikutiKeadaan(): void
+    public function testTombolDaftarMengikutiKeadaan(): void
     {
-        $menu = function (): array {
-            $hasil = [];
-
-            foreach ($this->xpathDari($this->get('unduhan'))->query('//nav[@aria-label="Menu utama"]//li/a') as $a) {
-                $hasil[trim((string) preg_replace('/\s+/u', ' ', $a->textContent))] = $a;
-            }
-
-            return $hasil;
-        };
+        // K81: Pendaftaran dibuka dari tombol di bagian pembuka halaman depan, bukan dari menu.
+        $tombol = fn () => $this->xpathDari($this->get('/'))->query('//section[@id="pembuka"]//*[contains(@class, "tombol-pendaftaran")]')->item(0);
 
         // Terbuka: menaut ke wizard.
-        $butir = $menu();
-        $this->assertArrayHasKey('Pendaftaran', $butir);
-        $this->assertSame(site_url('pendaftaran'), $butir['Pendaftaran']->getAttribute('href'));
+        $this->assertSame(site_url('pendaftaran'), $tombol()->getAttribute('href'));
+        $this->assertSame('Daftar Sekarang', trim($tombol()->textContent));
 
         // Ditutup: nonaktif dengan keterangan.
         setting('Pendaftaran.akhir', '2026-01-02 00:00:00');
-        $butir = $menu();
-        $this->assertArrayHasKey('Pendaftaran Ditutup', $butir);
-        $this->assertSame('true', $butir['Pendaftaran Ditutup']->getAttribute('aria-disabled'));
-        $this->assertFalse($butir['Pendaftaran Ditutup']->hasAttribute('href'));
+        $this->assertSame('true', $tombol()->getAttribute('aria-disabled'));
+        $this->assertFalse($tombol()->hasAttribute('href'));
+        $this->assertSame('Pendaftaran Ditutup', trim((string) preg_replace('/\s+/u', ' ', $tombol()->textContent)));
 
         // Belum dibuka.
         setting('Pendaftaran.mulai', '2099-01-01 00:00:00');
         setting('Pendaftaran.akhir', '2099-02-01 00:00:00');
-        $this->assertArrayHasKey('Pendaftaran Belum dibuka', $menu());
+        $this->assertSame('Pendaftaran Belum dibuka', trim((string) preg_replace('/\s+/u', ' ', $tombol()->textContent)));
     }
 
-    public function testMenuAktifDiHalamanPendaftaran(): void
+    public function testMenuTanpaPendaftaranDiHalamanPendaftaran(): void
     {
-        $a = $this->xpathDari($this->get('pendaftaran'))->query('//nav[@aria-label="Menu utama"]//a[@aria-current="page"]')->item(0);
+        // Menu tidak memuat Pendaftaran (K81), jadi tidak ada butir yang ditandai aktif.
+        $xpath = $this->xpathDari($this->get('pendaftaran'));
 
-        $this->assertNotNull($a);
-        $this->assertSame('Pendaftaran', trim($a->textContent));
+        $this->assertSame(0, $xpath->query('//nav[@aria-label="Menu utama"]//a[@aria-current="page"]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Menu utama"]//a[contains(@class, "tombol-panitia")]')->length);
     }
 
     public function testPesanKilatDiTataLetakPublik(): void

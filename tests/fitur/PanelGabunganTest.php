@@ -240,7 +240,7 @@ final class PanelGabunganTest extends UjiBasisData
         $rincian = $this->bukaSebagaiAdmin('admin/pendaftaran/' . $a['pid']);
         $rincian->assertOK();
         $teks = $this->teks($rincian);
-        foreach (['SD KARANGAN MAJU', $a['id_pendaftaran'], 'BUDI KARANGAN 01', "Kanga's Escape putra", 'Ibu Karangan', 'Rp250.000'] as $harap) {
+        foreach (['SD KARANGAN MAJU', $a['id_pendaftaran'], 'BUDI KARANGAN 01', "Kanga's Escape putra", 'Ibu Karangan', 'Rp 250.000'] as $harap) {
             $this->assertStringContainsString($harap, $teks);
         }
 
@@ -279,7 +279,7 @@ final class PanelGabunganTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $b['pid'], $isian),
             'admin/pendaftaran/' . $b['pid'],
-            'Perubahan pendaftaran ' . $b['id_pendaftaran'] . ' tersimpan. Total sekarang Rp150.000. 1 atlet baru mendapat nomor dada.',
+            'Perubahan pendaftaran ' . $b['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 150.000. 1 atlet baru mendapat nomor dada.',
         );
         $this->assertSame('lunas', $this->statusPendaftaran($b['pid']));
         $this->assertSame(['2005', '2006'], $this->nomorDada($b['pid']));
@@ -295,7 +295,7 @@ final class PanelGabunganTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['pid'], $isian + ['setuju_menunggu' => '1']),
             'admin/pendaftaran/' . $a['pid'],
-            'Perubahan pendaftaran ' . $a['id_pendaftaran'] . ' tersimpan. Total sekarang Rp400.000. '
+            'Perubahan pendaftaran ' . $a['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 400.000. '
             . 'Status kembali menjadi Menunggu Konfirmasi Pembayaran; tandai Lunas lagi setelah selisihnya diurus.',
         );
         $this->assertSame('menunggu', $this->statusPendaftaran($a['pid']));
@@ -317,15 +317,15 @@ final class PanelGabunganTest extends UjiBasisData
 
         // ---------- 8. Cek dan bukti membaca data yang sudah diubah ----------
         $teks = $this->teks($this->get('cek-pendaftaran?kode=99999911'));
-        foreach (['BUDI KARANGAN UBAH', 'EKO KARANGAN 06', 'Frog Jump putra', 'Rp400.000', 'Rp150.000', 'Rp550.000', 'Lunas', 'Menunggu Konfirmasi Pembayaran'] as $harap) {
+        foreach (['BUDI KARANGAN UBAH', 'EKO KARANGAN 06', 'Frog Jump putra', 'Rp 400.000', 'Rp 150.000', 'Rp 550.000', 'Lunas', 'Menunggu Konfirmasi Pembayaran'] as $harap) {
             $this->assertStringContainsString($harap, $teks);
         }
         $this->assertStringNotContainsString('BUDI KARANGAN 01', $teks);
-        $this->assertStringNotContainsString('Rp250.000', $teks);
+        $this->assertStringNotContainsString('Rp 250.000', $teks);
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId($a['id_pendaftaran'])))->html();
         $this->assertStringContainsString('BUDI KARANGAN UBAH', $html);
-        $this->assertStringContainsString('Rp400.000', $html);
+        $this->assertStringContainsString('Rp 400.000', $html);
         $this->assertStringContainsString('stempel stempel-menunggu', $html);
 
         $pdf = $this->get('bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', $a['id_pendaftaran'])->get()->getRow()->kode_bukti . '/' . $a['id_pendaftaran']);

@@ -9,7 +9,7 @@ use Config\Pembayaran;
  * Pesan WA konfirmasi pembayaran (rancangan 7, langkah 5).
  *
  * Penanda di `Pembayaran.templat_pesan` (`Config\Pembayaran::PENANDA`) diganti
- * dengan data pendaftaran. Uang ditulis `Rp150.000`; NPSN kosong ditulis "-".
+ * dengan data pendaftaran. Uang ditulis `Rp 150.000`; NPSN kosong ditulis "-".
  *
  *     PesanKonfirmasi::teks($templat, [
  *         'nama_sekolah' => 'SD Karangan', 'npsn' => null, 'id_pendaftaran' => 'MAC2A0000126',

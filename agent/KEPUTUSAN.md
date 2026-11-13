@@ -201,3 +201,21 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K79 | Catatan di bawah tabel daftar pendaftaran panel tidak lagi menyebut centang yang hanya berlaku untuk halaman tampil, isi Backup data, maupun perintah `php spark pendaftaran:impor`. Antarmuka tidak memuat teks teknis dan memakai ejaan bahasa Indonesia baku | Cara memasukkan Backup data di server baru tetap tercatat di README (bagian Perintah) |
+
+## 12 November 2026 — rupiah dan halaman depan
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K80 | Rupiah ditulis dengan spasi antara Rp dan angkanya (`Rp 150.000`) di semua tempat: antarmuka, bukti PDF, pesan WA, dan Excel. Ikon uang ber-dolar diganti tanda "Rp". Di halaman depan, keterangan nomor beregu tidak lagi menyebut batas anggota ("paling banyak …"); nama nomor, lencana kategori, dan keterangan tim diperbesar di layar lebar dengan jarak yang lebih lega; ringkasan "Lihat nomor lomba" berupa pita oranye pucat bergaris oranye. Waktu acara dan keadaan pendaftaran di kepala menjadi dua kartu sejajar di layar lebar, bertumpuk dengan lebar sama di ponsel | Menggantikan aturan contoh `Rp150.000` di rancangan final bagian aturan umum; rancangan final belum diubah dan menunggu revisi lewat draf. Batas anggota tetap berlaku dan diperiksa saat mendaftar |
+
+## 12 November 2026 — desain ulang pembuka halaman depan
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K81 | Bagian pembuka halaman depan didesain ulang mengikuti konsep visual pemilik: latar krem dengan biru tua, oranye, dan hijau muda; judul besar miring per kalimat dengan kalimat terakhir oranye; foto di kanan memudar ke latar dan dipotong otomatis; nomor seri besar bergaris ("02"); kartu info tanggal, tempat, dan keadaan pendaftaran; tombol "Daftar Sekarang" (saat terbuka) dan "Cek Pendaftaran" pindah ke dalam pembuka; deret kartu kelompok umur ("Kelompok usia — Setiap langkah punya peluang") menaut ke rinciannya. Di layar lebar pembuka mengisi tepat satu layar di bawah kepala. Menu publik menjadi Tentang, Kategori, Jadwal, Unduhan, ditambah tombol Panitia (biru tua, tanpa panah) ke halaman masuk admin. Kepala terang dengan logo acara dan label seri hanya di halaman depan; halaman lain tetap biru. Data awal judul "Berlari. Bermain. Berprestasi." dan teks "Ajang atletik untuk generasi muda Indonesia." | Dijawab pemilik: foto atlet diunggah admin lewat Pengaturan > Halaman Depan dan tidak masuk git (repo publik, foto siswa, hak cipta); data awal tetap gambar bawaan dari pemilik. Menu mengikuti konsep. Gaya baru hanya untuk halaman depan. Menggantikan K44 (gambar sebagai latar di belakang judul) dan letak tombol di K75. Logo persegi panjang dipakai di kepala bila ada, selain itu logo persegi; logo Djarum di bawah tombol |
+
+## 13 November 2026 — kartu info pembuka
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K82 | Kartu info di pembuka halaman depan dibuat persis seperti contoh pemilik: satu kapsul putih berisi tanggal ("9–12" besar di atas "Desember 2026") dan tempat (dipisah di koma terakhir: "Supersoccer Arena" / "Kudus") bersekat garis tegak, lalu ujung kanan berwarna keadaan berisi dua baris pendek: "Daftar s.d. / 30 November" (terbuka, ikon pengeras suara), "Dibuka / 1 Oktober", "Pendaftaran / Ditutup", atau "Pendaftaran / Segera dibuka". Di ponsel ujung keadaan turun ke baris kedua | Mengubah tampilan keadaan dari K81. Kalimat lengkap ("Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.") tetap ada untuk pembaca layar. Ringkasan dari `BukaTutupPendaftaran::ringkas()` |

@@ -28,7 +28,7 @@ final class PanelDataContohTest extends UjiBasisData
         $this->assertCount(2, $hasil['atlet']);
         $this->assertCount(1, $hasil['penanggung_jawab']);
 
-        // Putra 2 nomor individu + putri 1 nomor individu, KU 10 Rp150.000.
+        // Putra 2 nomor individu + putri 1 nomor individu, KU 10 Rp 150.000.
         $this->assertSame(450000, $hasil['subtotal_individu']);
         $this->assertSame(0, $hasil['subtotal_beregu']);
         $this->assertSame(450000, $hasil['total']);

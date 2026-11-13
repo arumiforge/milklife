@@ -71,15 +71,15 @@ final class BuktiPendaftaranTest extends UjiBasisData
             'Nama Sekolah</div><div class="info-isi">SD NEGERI CONTOH 1</div>', 'Tanggal Pendaftaran</div><div class="info-isi">12 November 2026</div>',
             'Kabupaten / Kota</div><div class="info-isi">Kudus</div>', 'ID Pendaftaran</div><div class="info-isi">MAC2A0000126</div>',
             'Penanggung Jawab (Official)', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
-            'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp150.000',
-            'Estafet 4 × 50 m putra', 'BUDI KARANGAN, CANDRA REKAAN, DIMAS CONTOH, EKO KARANGAN', 'Rp200.000',
-            'Rp450.000', 'Rp650.000', 'stempel stempel-menunggu', 'Status Pembayaran</div><div class="info-isi">Menunggu Konfirmasi Pembayaran',
+            'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp 150.000',
+            'Estafet 4 × 50 m putra', 'BUDI KARANGAN, CANDRA REKAAN, DIMAS CONTOH, EKO KARANGAN', 'Rp 200.000',
+            'Rp 450.000', 'Rp 650.000', 'stempel stempel-menunggu', 'Status Pembayaran</div><div class="info-isi">Menunggu Konfirmasi Pembayaran',
         ] as $teks) {
             $this->assertStringContainsString($teks, $html);
         }
 
-        // Tarif sekarang (Rp175.000) tidak dipakai; foto tidak ikut.
-        $this->assertStringNotContainsString('Rp175.000', $html);
+        // Tarif sekarang (Rp 175.000) tidak dipakai; foto tidak ikut.
+        $this->assertStringNotContainsString('Rp 175.000', $html);
         $this->assertStringNotContainsString('foto-penanggung-jawab', $html);
         // Tanggal lahir dan nomor dada tidak dicetak (K52).
         $this->assertStringNotContainsString('1 Mei 2016', $html);

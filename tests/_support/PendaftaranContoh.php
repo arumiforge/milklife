@@ -39,12 +39,12 @@ trait PendaftaranContoh
     /**
      * Data induk karangan (bentuk `DataIndukPendaftaran::induk()`).
      *
-     * - KU 10: lahir 2016–2018, SD/MI, Rp150.000; nomor 10 Lari 60 m putra,
+     * - KU 10: lahir 2016–2018, SD/MI, Rp 150.000; nomor 10 Lari 60 m putra,
      *   11 Lari 60 m putri, 12 Frog Jump putra, 13 Turbo Throw putra,
-     *   20 Kanga's Escape putra (beregu, inti 4, batas 6, Rp100.000),
-     *   21 Estafet 8 × 50 m mix (inti 8, batas 10, 4 putra 4 putri, Rp150.000).
-     * - KU 12: lahir 2015, SD/MI dan SMP/MTs, Rp175.000; nomor 30 Lari 60 m putra.
-     * - KU 15: lahir 2011–2014, SMP/MTs, Rp200.000; nomor 40 Lari 80 m putri.
+     *   20 Kanga's Escape putra (beregu, inti 4, batas 6, Rp 100.000),
+     *   21 Estafet 8 × 50 m mix (inti 8, batas 10, 4 putra 4 putri, Rp 150.000).
+     * - KU 12: lahir 2015, SD/MI dan SMP/MTs, Rp 175.000; nomor 30 Lari 60 m putra.
+     * - KU 15: lahir 2011–2014, SMP/MTs, Rp 200.000; nomor 40 Lari 80 m putri.
      *
      * @return array<string, mixed>
      */

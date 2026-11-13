@@ -13,7 +13,7 @@ use Tests\Support\UjiBasisData;
  * `Rekap`.
  *
  * Contoh: sekolah karangan NPSN 99999911 mendaftarkan tim Kanga's Escape
- * (Rp100.000, KU 10, inti 4, batas 6) lewat pendaftaran A (pembayar, 4
+ * (Rp 100.000, KU 10, inti 4, batas 6) lewat pendaftaran A (pembayar, 4
  * anggota) dan pendaftaran susulan B (2 anggota, tanpa biaya tim). Setelah A
  * pergi, tim B kurang dari 4 anggota, jadi Ubah yang membebankan biaya tim
  * sekaligus melengkapi anggotanya. Semua nama dan NISN karangan.
@@ -135,7 +135,7 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
 
     public function testTimTanpaBarisBerbiayaDitandaiSelamaTarifnyaLebihDariNol(): void
     {
-        // Tarif sekarang yang menentukan: tim yang semua barisnya Rp0 ditandai begitu tarifnya lebih dari 0.
+        // Tarif sekarang yang menentukan: tim yang semua barisnya Rp 0 ditandai begitu tarifnya lebih dari 0.
         $this->buatPendaftaranPanel(['atlet' => $this->timPanel('kanga', 4), 'susulan' => ['kanga']]);
 
         $this->assertSame(1, (new TimTanpaPembayar())->jumlah());
@@ -169,7 +169,7 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
             'susulan' => ['kanga'],
         ]);
 
-        // Sekolah lain hanya punya baris Rp0: ditandai sendiri, tidak "dibayar" oleh A.
+        // Sekolah lain hanya punya baris Rp 0: ditandai sendiri, tidak "dibayar" oleh A.
         $daftar = (new TimTanpaPembayar())->daftar();
         $this->assertSame(['99999913'], array_column($daftar, 'npsn'));
 

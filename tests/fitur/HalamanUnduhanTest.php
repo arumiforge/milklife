@@ -97,17 +97,16 @@ final class HalamanUnduhanTest extends UjiBasisData
     {
         $menu = $this->menu($this->xpathDari($this->get('unduhan')));
 
-        $this->assertSame(['Beranda', 'Pendaftaran Segera', 'Cek Pendaftaran', 'Unduhan'], array_keys($menu));
+        $this->assertSame(['Tentang', 'Kategori', 'Jadwal', 'Unduhan'], array_keys($menu));
         $this->assertSame(site_url('unduhan'), $menu['Unduhan']->getAttribute('href'));
         $this->assertSame('page', $menu['Unduhan']->getAttribute('aria-current'));
         $this->assertStringContainsString('active', $menu['Unduhan']->getAttribute('class'));
-        $this->assertFalse($menu['Beranda']->hasAttribute('aria-current'), 'Beranda tidak ditandai aktif di halaman unduhan.');
+        $this->assertFalse($menu['Tentang']->hasAttribute('aria-current'));
 
         // Di halaman depan, Unduhan bertautan tetapi tidak aktif.
         $menu = $this->menu($this->xpathDari($this->get('/')));
         $this->assertSame(site_url('unduhan'), $menu['Unduhan']->getAttribute('href'));
         $this->assertFalse($menu['Unduhan']->hasAttribute('aria-current'));
-        $this->assertSame('page', $menu['Beranda']->getAttribute('aria-current'));
     }
 
     // ---------- Bantuan ----------

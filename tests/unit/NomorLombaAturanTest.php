@@ -200,7 +200,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
 
     public function testBiayaBereguRupiahLebihDariNol(): void
     {
-        $this->assertSame([], NomorLombaModel::periksaIsian(self::beregu(['biaya_beregu' => 'Rp150.000']), self::KU));
+        $this->assertSame([], NomorLombaModel::periksaIsian(self::beregu(['biaya_beregu' => 'Rp 150.000']), self::KU));
 
         foreach (['0', '150.000,50', 'seratus ribu', '-100000'] as $nilai) {
             $galat = NomorLombaModel::periksaIsian(self::beregu(['biaya_beregu' => $nilai]), self::KU);

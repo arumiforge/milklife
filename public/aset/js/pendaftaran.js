@@ -65,7 +65,7 @@
     }
 
     function rupiah(angka) {
-        return 'Rp' + String(Math.round(Number(angka) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return 'Rp ' + String(Math.round(Number(angka) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
     function rapikanSpasi(teks) {
@@ -1486,7 +1486,7 @@
         if (rincian.beregu.length > 0) {
             wadah.appendChild(tabel('Beregu', ['No', 'Nomor Lomba Beregu', 'Biaya'],
                 rincian.beregu.map(function (b, i) {
-                    return [String(i + 1), b.nomor + ' (' + b.kelompok_umur + ', ' + b.anggota + ' atlet' + (b.susulan ? ', tambahan anggota tim yang sudah terdaftar' : '') + ')', b.susulan ? 'Rp0' : rupiah(b.biaya)];
+                    return [String(i + 1), b.nomor + ' (' + b.kelompok_umur + ', ' + b.anggota + ' atlet' + (b.susulan ? ', tambahan anggota tim yang sudah terdaftar' : '') + ')', b.susulan ? 'Rp 0' : rupiah(b.biaya)];
                 }),
                 'Subtotal beregu', rincian.subtotal_beregu));
         }

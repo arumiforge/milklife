@@ -93,7 +93,7 @@ final class BerandaPengaturanPolaHalamanTest extends UjiBasisData
 
     public function testSimpanBerhasilDialihkanDenganPesanSukses(): void
     {
-        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['nama' => '  Lomba Karangan  ', 'tempat' => 'Stadion Karangan', 'biaya' => 'Rp150.000']);
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['nama' => '  Lomba Karangan  ', 'tempat' => 'Stadion Karangan', 'biaya' => 'Rp 150.000']);
 
         $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Data acara tersimpan.');
         $this->assertSame('Lomba Karangan', setting('Acara.nama'));

@@ -53,9 +53,9 @@ use Throwable;
  * - Biaya (asumsi 4 rencana Tahap 6): baris atlet-nomor (atlet tersimpan,
  *   nomor yang sama) dan tim (nomor beregu yang sama) yang tetap ada
  *   mempertahankan biaya tersimpan; baris baru memakai tarif saat ini (tim
- *   susulan tetap Rp0, K07). Subtotal dan total dihitung ulang dari baris itu.
+ *   susulan tetap Rp 0, K07). Subtotal dan total dihitung ulang dari baris itu.
  * - Tim tanpa pembayar (K68, `TimTanpaPembayar`): nomor di `bebankan_tim`
- *   yang tim pendaftaran ini dan biaya timnya Rp0 diberi tarif saat ini;
+ *   yang tim pendaftaran ini dan biaya timnya Rp 0 diberi tarif saat ini;
  *   bila tim itu sudah punya pembayar lain, kiriman ditolak. Nomor lain
  *   diabaikan. `tim_ditinggalkan` menyebut tim yang kehilangan pembayar
  *   karena perubahan ini (untuk jendela konfirmasi dan pesan sesudahnya).
@@ -681,7 +681,7 @@ final class UbahPendaftaran
             $data['atlet'][$i]['id'] = $idAtlet[$i];
         }
 
-        // Biaya tim: tim tersimpan dipertahankan, tim baru tarif saat ini (susulan Rp0);
+        // Biaya tim: tim tersimpan dipertahankan, tim baru tarif saat ini (susulan Rp 0);
         // tim tanpa pembayar yang dicentang mendapat tarif saat ini (K68).
         $biayaBeregu = [];
         $timTanpa    = new TimTanpaPembayar($this->db);
@@ -699,7 +699,7 @@ final class UbahPendaftaran
 
                 if ($tarif === null) {
                     $galat[] = ['jalur' => self::KUNCI_BEBANKAN . '.' . $nomorId, 'pesan' => $timTanpa->namaNomor($nomorId)
-                        . ': tim ini sudah punya pembayar biaya tim atau tarifnya Rp0, jadi tidak perlu dibebankan. Hapus centang "Bebankan biaya tim", lalu simpan lagi.'];
+                        . ': tim ini sudah punya pembayar biaya tim atau tarifnya Rp 0, jadi tidak perlu dibebankan. Hapus centang "Bebankan biaya tim", lalu simpan lagi.'];
                 } else {
                     $tim['biaya_tim']            = $tarif;
                     $rencana['tim_dibebankan'][] = $nomorId;

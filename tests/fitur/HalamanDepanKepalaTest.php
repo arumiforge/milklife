@@ -69,17 +69,25 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('1', $gambar->getAttribute('width'));
         $this->assertSame('1', $gambar->getAttribute('height'));
 
+        // K81: logo acara di kepala halaman (persegi panjang lebih dulu), logo Djarum di pembuka.
+        $logoKepala = $xpath->query('//header//a[contains(@class, "navbar-brand")]/img')->item(0);
+        $this->assertNotNull($logoKepala);
+        $this->assertSame(base_url($jalur['logo_persegi_panjang']), $logoKepala->getAttribute('src'));
+        $this->assertSame('Logo Lomba Lari Karangan', $logoKepala->getAttribute('alt'));
+        $this->assertSame('1', $logoKepala->getAttribute('width'));
+
         $logo = [];
 
         foreach ($xpath->query('//ul[contains(@class, "pembuka-logo")]/li/img') as $img) {
             $logo[] = [$img->getAttribute('src'), $img->getAttribute('alt'), $img->getAttribute('width')];
         }
 
-        $this->assertSame([
-            [base_url($jalur['logo_persegi']), 'Logo Lomba Lari Karangan', '1'],
-            [base_url($jalur['logo_persegi_panjang']), 'Logo Lomba Lari Karangan', '1'],
-            [base_url($jalur['logo_djarum']), 'Logo Bakti Olahraga Djarum Foundation', '1'],
-        ], $logo);
+        $this->assertSame([[base_url($jalur['logo_djarum']), 'Logo Bakti Olahraga Djarum Foundation', '1']], $logo);
+
+        // Tanpa logo persegi panjang, logo persegi yang tampil di kepala.
+        setting('HalamanDepan.logo_persegi_panjang', null);
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(base_url($jalur['logo_persegi']), $xpath->query('//header//a[contains(@class, "navbar-brand")]/img')->item(0)?->getAttribute('src'));
     }
 
     public function testGambarYangBerkasnyaHilangDisembunyikan(): void
@@ -110,8 +118,12 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('MilkLife Athletics Challenge', $this->teks($xpath, '//h1[@id="judul-acara"]'));
         $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-nama")]')->length);
         $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-teks")]')->length, 'Teks kosong tidak ditampilkan.');
-        $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//*[contains(@class, "pita-miring")]'));
+        $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[contains(@class, "kepala-seri")]'));
+        $this->assertSame('02', $this->teks($xpath, '//*[contains(@class, "pembuka-nomor-seri")]'));
         $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath, '//*[contains(@class, "pembuka-waktu")]'));
+
+        // Kartu info ringkas seperti konsep (K82).
+        $this->assertSame('9–12', $this->teks($xpath, '//*[contains(@class, "info-besar")]'));
     }
 
     public function testJudulDanTeksDariPengaturanDiEscape(): void
@@ -125,7 +137,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $this->assertSame(1, $xpath->query('//h1')->length);
         $this->assertSame('Ayo <b>ikut</b> lomba!', $this->teks($xpath, '//h1[@id="judul-acara"]'));
-        $this->assertSame('MilkLife Athletics Challenge', $this->teks($xpath, '//*[contains(@class, "pembuka-nama")]'));
+        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-nama")]')->length, 'Nama acara ada di kepala halaman (K81).');
 
         $paragraf = $xpath->query('//*[contains(@class, "pembuka-teks")]/p');
         $this->assertSame(2, $paragraf->length);
@@ -135,6 +147,23 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $hasil->assertDontSee('<script>alert(1)</script>');
         $hasil->assertDontSee('<b>ikut</b>');
+    }
+
+    public function testJudulPerKalimatDenganBarisTerakhirDisorot(): void
+    {
+        setting('HalamanDepan.judul', 'Berlari. Bermain. Berprestasi.');
+
+        $xpath = $this->xpathDari($this->get('/'));
+
+        $this->assertSame(
+            ['Berlari.', 'Bermain.', 'Berprestasi.'],
+            array_map($this->teksSimpul(...), iterator_to_array($xpath->query('//h1[@id="judul-acara"]/span'))),
+        );
+        $this->assertSame('Berprestasi.', $this->teks($xpath, '//h1//*[contains(@class, "pembuka-judul-sorot")]'));
+
+        // Satu kalimat saja: tidak ada baris yang disorot.
+        setting('HalamanDepan.judul', 'Ayo ikut lomba');
+        $this->assertSame(0, $this->xpathDari($this->get('/'))->query('//*[contains(@class, "pembuka-judul-sorot")]')->length);
     }
 
     // ---------- Keadaan pendaftaran ----------
@@ -153,7 +182,8 @@ final class HalamanDepanKepalaTest extends UjiBasisData
     {
         $this->lengkapiPengaturan();
 
-        $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'bi-door-open-fill');
+        $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'bi-megaphone');
+        $this->assertSame('Daftar s.d. 30 November', $this->teks($this->xpathDari($this->get('/')), '//*[contains(@class, "keadaan-ringkas")]'));
 
         Time::setTestNow('2026-09-30 12:00:00', 'Asia/Jakarta');
         $this->assertKeadaan($this->xpathDari($this->get('/')), 'belum_dibuka', 'Belum dibuka', 'Pendaftaran dibuka 1 Oktober 2026.', 'bi-calendar-event');
@@ -171,9 +201,9 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // Terbuka (11 November 2026): Pendaftaran menaut ke wizard (Tahap 4).
         // Cek sudah punya halaman (Tahap 5) dan aktif karena pengaturan lengkap.
         $tombol = $this->tombolKepala();
-        $this->assertSame(['Pendaftaran', 'Cek Pendaftaran'], array_keys($tombol));
-        $this->assertSame(site_url('pendaftaran'), $tombol['Pendaftaran']->getAttribute('href'));
-        $this->assertStringContainsString('btn-primary', $tombol['Pendaftaran']->getAttribute('class'));
+        $this->assertSame(['Daftar Sekarang', 'Cek Pendaftaran'], array_keys($tombol));
+        $this->assertSame(site_url('pendaftaran'), $tombol['Daftar Sekarang']->getAttribute('href'));
+        $this->assertStringContainsString('btn-primary', $tombol['Daftar Sekarang']->getAttribute('class'));
         $this->assertSame(site_url('cek-pendaftaran'), $tombol['Cek Pendaftaran']->getAttribute('href'));
 
         // Belum dibuka dan sudah ditutup: nonaktif dengan keterangannya.
@@ -210,18 +240,27 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         return $tombol;
     }
 
-    public function testTombolDiAtasBagianLombaBukanDiKepala(): void
+    public function testTombolDanKartuKelompokUmurDiPembuka(): void
     {
-        // K75: tombol ajakan utama di luar kepala, tepat sebelum bagian lomba;
-        // tetap tampil walau bagian lomba belum ada.
+        // K81: tombol ajakan ada di bagian pembuka; kartu kelompok umur hanya
+        // tampil bila kelompok umur sudah ada.
         $xpath = $this->xpathDari($this->get('/'));
-        $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//*[contains(@class, "tombol-utama")]')->length);
-        $this->assertSame(2, $xpath->query('//*[contains(@class, "tombol-utama")]/a')->length);
+        $this->assertSame(2, $xpath->query('//section[@id="pembuka"]//*[contains(@class, "tombol-utama")]/a')->length);
+        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-ku")]')->length);
         $this->assertSame(0, $xpath->query('//section[@id="lomba"]')->length);
 
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:awal', []));
         $xpath = $this->xpathDari($this->get('/'));
-        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/following-sibling::*[1][contains(@class, "bagian-tombol")]/following-sibling::*[1][@id="lomba"]')->length);
+        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/following-sibling::*[1][@id="lomba"]')->length);
+
+        // Tiap kartu menaut ke rincian kelompok umurnya di bagian lomba.
+        $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[contains(@class, "pembuka-ku-kartu")]'));
+        $this->assertCount(5, $kartu);
+        $this->assertSame('KU 8 Seneng Playon', $this->teksSimpul($kartu[0]));
+
+        foreach ($kartu as $a) {
+            $this->assertSame(1, $xpath->query('//article[@id="' . substr($a->getAttribute('href'), 1) . '"]')->length, $a->getAttribute('href'));
+        }
     }
 
     // ---------- Footer ----------

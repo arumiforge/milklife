@@ -199,6 +199,31 @@ final class BukaTutupPendaftaran
     }
 
     /**
+     * Ringkasan dua baris untuk kartu info halaman depan (K82), tanpa tahun
+     * dan jam supaya pendek:
+     *
+     * - disiapkan:    ["Pendaftaran", "Segera dibuka"]
+     * - belum_dibuka: ["Dibuka", "1 Oktober"]
+     * - terbuka:      ["Daftar s.d.", "30 November"]
+     * - ditutup:      ["Pendaftaran", "Ditutup"]
+     *
+     * Kalimat lengkapnya tetap dari `kalimat()`.
+     *
+     * @return array{0: string, 1: string}
+     */
+    public function ringkas(): array
+    {
+        $tanggal = $this->batas === null ? '' : (int) $this->batas->format('j') . ' ' . _aplikasi_nama_bulan((int) $this->batas->format('n'));
+
+        return match ($this->keadaan) {
+            self::DISIAPKAN    => ['Pendaftaran', 'Segera dibuka'],
+            self::BELUM_DIBUKA => ['Dibuka', $tanggal],
+            self::TERBUKA      => ['Daftar s.d.', $tanggal],
+            default            => ['Pendaftaran', 'Ditutup'],
+        };
+    }
+
+    /**
      * Baca waktu tersimpan (`Y-m-d`, `Y-m-d H:i`, `Y-m-d H:i:s`, atau
      * objek tanggal). Nilai kosong atau tidak sah menghasilkan `null`.
      * Dipakai juga `KelengkapanPengaturan`.

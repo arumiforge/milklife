@@ -84,7 +84,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
             'batas_anggota'    => '6',
             'jumlah_putra'     => '2',
             'jumlah_putri'     => '2',
-            'biaya_beregu'     => 'Rp100.000',
+            'biaya_beregu'     => 'Rp 100.000',
             'urutan'           => '',
             'aktif'            => '1',
         ];
@@ -185,7 +185,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
         $this->assertStringContainsString('Beregu', $estafet->textContent);
         $this->assertStringContainsString('Mix', $estafet->textContent);
         $this->assertStringContainsString('8 inti', $estafet->textContent);
-        $this->assertStringContainsString('Rp150.000', $estafet->textContent);
+        $this->assertStringContainsString('Rp 150.000', $estafet->textContent);
         $this->assertStringContainsString('Aktif', $estafet->textContent);
 
         // Semua nomor belum dipakai, jadi semua bisa dihapus lewat jendela konfirmasi.
