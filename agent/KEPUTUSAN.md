@@ -285,3 +285,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K93 | Kepala halaman depan memakai logo persegi lebih dulu (logo persegi panjang hanya bila yang persegi belum diunggah), tanpa latar: latar putih logo dibaurkan ke krem dengan `mix-blend-mode: multiply`. Logo lebih besar (3,25 rem di ponsel, 4 rem di layar lebar) dan label seri diperbesar (1,125 rem dan 1,375 rem) | Menggantikan urutan logo kepala di K81. Logo yang latarnya bukan putih tetap tampil apa adanya; untuk hasil terbaik unggah logo PNG berlatar transparan |
+
+## 13 November 2026 — reset nomor dada setelah uji coba
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K94 | Ada perintah `php spark nomor-dada:reset` untuk mengosongkan semua nomor dada setelah uji coba: nomor dada semua atlet dikosongkan, penghitung semua awalan kembali 0, dan pendaftaran Lunas kembali Menunggu (karena pendaftaran Lunas selalu punya nomor dada). Perintah meminta pengguna mengetik RESET; `--ya` untuk skrip | Permintaan pemilik: nomor dada sempat terpakai saat uji coba. Satu-satunya pengecualian aturan nomor dada tidak dipakai ulang; jangan dijalankan setelah nomor dada dibagikan ke peserta |
