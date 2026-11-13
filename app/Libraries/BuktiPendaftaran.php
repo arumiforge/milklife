@@ -153,7 +153,7 @@ final class BuktiPendaftaran
             'tempDir'       => WRITEPATH . 'cache/mpdf',
             'margin_left'   => 15,
             'margin_right'  => 15,
-            'margin_top'    => 15,
+            'margin_top'    => 10,
             'margin_bottom' => 20,
             'margin_footer' => 8,
         ]);

@@ -84,8 +84,11 @@
     background-color: var(--ml-biru-muda-pucat);
 }
 
-.pil:disabled {
-    opacity: 0.65;
+/* Diredupkan lewat warna, bukan opacity: lingkaran tetap putih penuh
+   sehingga garis penghubung tidak tembus terlihat. */
+.pil:disabled:not(.pil-selesai),
+.pil:disabled:not(.pil-selesai) .pil-nomor {
+    color: #8A93A3;
 }
 
 .pil-langkah > li {
