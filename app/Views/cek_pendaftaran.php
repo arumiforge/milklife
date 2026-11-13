@@ -69,7 +69,7 @@ $sekolah = $hasil[0] ?? null;
                     </div>
 
                     <?php foreach ($hasil as $nomor => $pendaftaran) : ?>
-                        <?= view('cek_pendaftaran/_kartu', ['p' => $pendaftaran, 'urutan' => $nomor + 1, 'banyak' => count($hasil) > 1], ['saveData' => false]) ?>
+                        <?= view('cek_pendaftaran/_kartu', ['p' => $pendaftaran, 'urutan' => $nomor + 1, 'banyak' => count($hasil) > 1, 'kode' => $kode], ['saveData' => false]) ?>
                     <?php endforeach ?>
 
                     <?php if (count($hasil) > 1) : ?>

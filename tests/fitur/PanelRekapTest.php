@@ -253,6 +253,36 @@ final class PanelRekapTest extends UjiBasisData
         $this->assertSame($c['a']['total'] + $c['b']['total'] + $c['c']['total'] + $c['d']['total'], (int) end($baris)[7]);
     }
 
+    public function testRekapGabunganSatuBerkasBanyakSheet(): void
+    {
+        $this->isiContoh();
+
+        $hasil   = $this->bukaSebagaiAdmin('admin/rekap/gabungan/excel');
+        $unduhan = $hasil->response();
+        $this->assertInstanceOf(DownloadResponse::class, $unduhan);
+        $unduhan->buildHeaders();
+        $this->assertStringContainsString('filename="Rekap_Gabungan_', $unduhan->getHeaderLine('Content-Disposition'));
+
+        ob_start();
+        $unduhan->sendBody();
+        $berkas = tempnam(sys_get_temp_dir(), 'milklife-rekap-') . '.xlsx';
+        file_put_contents($berkas, (string) ob_get_clean());
+        $this->berkasSementara[] = $berkas;
+
+        $buku = IOFactory::load($berkas);
+        $this->assertSame(
+            ['Pendaftaran', 'Atlet', 'Peserta per Nomor Lomba', 'Tim Beregu', 'Per Sekolah', 'Per Kelompok Umur', 'Keuangan', 'Tim Tanpa Pembayar'],
+            $buku->getSheetNames(),
+        );
+        // Lembar pendaftaran berisi semua pendaftaran contoh (judul + 4 baris), tanpa saringan status.
+        $this->assertSame(5, $buku->getSheetByName('Pendaftaran')->getHighestRow());
+        $buku->disconnectWorksheets();
+
+        // Halaman rekap menautkannya.
+        $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/rekap'));
+        $this->assertSame(site_url('admin/rekap/gabungan/excel'), $xpath->query('//a[@id="excel-gabungan"]')->item(0)?->getAttribute('href'));
+    }
+
     public function testPdfSetiapRekap(): void
     {
         $this->isiContoh();

@@ -1635,6 +1635,62 @@
         }
     });
 
+    // Unggah bukti transfer ke alamat bukti pendaftaran (K83).
+    $('#bayar-unggah').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var t = draf.tersimpan;
+        var berkas = $('#bayar-berkas');
+        var tombol = $('#bayar-kirim-bukti');
+        var pesan = $('#bayar-pesan-bukti');
+        var tulis = function (teks, berhasil) {
+            pesan.hidden = false;
+            pesan.className = 'mt-2 mb-0 alert ' + (berhasil ? 'alert-success' : 'alert-warning');
+            pesan.textContent = teks;
+        };
+
+        if (!t || !t.bukti) {
+            return;
+        }
+        if (!berkas.files.length) {
+            tulis('Belum ada gambar yang dipilih. Pilih foto atau tangkapan layar bukti transfer.', false);
+            berkas.focus();
+            return;
+        }
+
+        var isi = new FormData();
+        isi.append('bukti', berkas.files[0]);
+        var kepala = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+        kepala[csrfKepala] = csrfToken;
+
+        tombol.disabled = true;
+        tombol.lastChild.textContent = 'Mengunggah…';
+
+        fetch(t.bukti + '/bukti-bayar', { method: 'POST', headers: kepala, credentials: 'same-origin', body: isi })
+            .then(function (jawaban) {
+                return jawaban.json().then(function (data) {
+                    return { kode: jawaban.status, isi: data };
+                }, function () {
+                    return { kode: jawaban.status, isi: null };
+                });
+            }, function () {
+                return { kode: 0, isi: null };
+            })
+            .then(function (hasil) {
+                tombol.disabled = false;
+                tombol.lastChild.textContent = 'Unggah';
+                if (hasil.isi && hasil.isi.csrf) {
+                    csrfToken = hasil.isi.csrf;
+                }
+                if (hasil.kode === 201) {
+                    berkas.value = '';
+                    tulis(hasil.isi.pesan, true);
+                    return;
+                }
+                tulis(hasil.isi && hasil.isi.pesan ? hasil.isi.pesan
+                    : 'Bukti bayar belum terkirim. Periksa sambungan internet dan pastikan gambar tidak lebih dari 10 MB, lalu coba lagi.', false);
+            });
+    });
+
     $('#bayar-selesai').addEventListener('click', function () {
         sudahSelesai = true;
         hapusDraf();

@@ -259,6 +259,7 @@ a.kepala-admin-nama:focus-visible {
     max-width: 14rem;
 }
 
+.tombol-halaman-depan,
 .tombol-keluar {
     display: inline-flex;
     align-items: center;
@@ -267,6 +268,7 @@ a.kepala-admin-nama:focus-visible {
     white-space: nowrap;
 }
 
+.tombol-halaman-depan,
 .tombol-keluar {
     flex: none;
 }

@@ -13,7 +13,8 @@ use CodeIgniter\HTTP\ResponseInterface;
  * Rekap panitia (F6-06): `admin/rekap/<jenis>` dengan saringan
  * `?status=lunas|menunggu` (K60), JSON (`…/data`), Excel (`…/excel`), dan PDF
  * (`…/pdf`). Keempatnya memakai `Rekap::susun()` yang sama. Jenis yang sah
- * dibatasi rute.
+ * dibatasi rute. `admin/rekap/gabungan/excel` (K85) menggabungkan semuanya
+ * dalam satu berkas, satu sheet per bagian.
  */
 class RekapController extends BaseController
 {
@@ -34,17 +35,57 @@ class RekapController extends BaseController
     public function excel(string $jenis): DownloadResponse
     {
         $rekap = (new Rekap())->susun($jenis, $this->status());
-        $excel = (new EksporExcel(Rekap::JENIS[$jenis], $rekap['kolom']))->tambahBaris($rekap['baris']);
+        $excel = null;
 
-        if ($rekap['jumlah'] !== null) {
-            $excel->tambahBaris([$rekap['jumlah']]);
-        }
-
-        if (isset($rekap['tim_tanpa_pembayar'])) {
-            $excel->tambahLembar((new EksporExcel('Tim Tanpa Pembayar', $rekap['tim_tanpa_pembayar']['kolom']))->tambahBaris($rekap['tim_tanpa_pembayar']['baris']));
+        foreach (self::lembarRekap($jenis, $rekap) as $lembar) {
+            $excel = $excel === null ? $lembar : $excel->tambahLembar($lembar);
         }
 
         return $excel->unduh((new RekapPdf($jenis, $this->status(), $rekap))->namaBerkas('xlsx'));
+    }
+
+    /**
+     * Rekap gabungan (K85): satu berkas Excel berisi semua data, satu sheet
+     * per bagian: Pendaftaran, Atlet, lalu tiap jenis rekap (dan Tim Tanpa
+     * Pembayar). Tanpa saringan status; semua pendaftaran ikut.
+     */
+    public function semua(): DownloadResponse
+    {
+        $excel = PendaftaranController::lembarExcel()->tambahLembar(AtletController::lembarExcel());
+        $data  = new Rekap();
+
+        foreach (array_keys(Rekap::JENIS) as $jenis) {
+            foreach (self::lembarRekap($jenis, $data->susun($jenis)) as $lembar) {
+                $excel->tambahLembar($lembar);
+            }
+        }
+
+        return $excel->unduh('Rekap_Gabungan_' . date('Ymd_His'));
+    }
+
+    /**
+     * Lembar Excel satu jenis rekap: lembar utama (dengan baris jumlah bila
+     * ada), lalu Tim Tanpa Pembayar bila rekap itu memilikinya.
+     *
+     * @param array<string, mixed> $rekap hasil `Rekap::susun()`
+     *
+     * @return list<EksporExcel>
+     */
+    private static function lembarRekap(string $jenis, array $rekap): array
+    {
+        $utama = (new EksporExcel(Rekap::JENIS[$jenis], $rekap['kolom']))->tambahBaris($rekap['baris']);
+
+        if ($rekap['jumlah'] !== null) {
+            $utama->tambahBaris([$rekap['jumlah']]);
+        }
+
+        $daftar = [$utama];
+
+        if (isset($rekap['tim_tanpa_pembayar'])) {
+            $daftar[] = (new EksporExcel('Tim Tanpa Pembayar', $rekap['tim_tanpa_pembayar']['kolom']))->tambahBaris($rekap['tim_tanpa_pembayar']['baris']);
+        }
+
+        return $daftar;
     }
 
     public function pdf(string $jenis): ResponseInterface

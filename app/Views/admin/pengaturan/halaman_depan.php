@@ -114,7 +114,7 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
                 <section class="card h-100" aria-labelledby="judul-teks">
                     <div class="card-body p-3 p-md-4">
                         <h2 id="judul-teks" class="h5 mb-3">Teks</h2>
-                        <?= $kotak('judul', 'Judul', 'Judul besar di bagian atas. Tiap kalimat tampil di baris sendiri dan kalimat terakhir berwarna oranye, misalnya "Berlari. Bermain. Berprestasi.".', $isian, $galat, 0, ['maxlength' => '150']) ?>
+                        <?= $kotak('judul', 'Judul', 'Judul besar di bagian atas, tampil dengan huruf besar. Tiap kata tampil di baris sendiri dan baris terakhir berwarna oranye, misalnya "MilkLife Athletics Challenge". Bila judul berisi beberapa kalimat bertitik, tiap kalimat yang menjadi satu baris.', $isian, $galat, 0, ['maxlength' => '150']) ?>
                         <?= $kotak('teks', 'Teks pengantar', 'Beberapa kalimat di bawah judul. Tekan Enter dua kali untuk membuat paragraf baru.', $isian, $galat, 6, ['maxlength' => '2000']) ?>
                         <?= $kotak('footer', 'Teks kaki halaman', 'Tampil di bagian paling bawah, misalnya nama penyelenggara dan tahun.', $isian, $galat, 3, ['maxlength' => '500']) ?>
                     </div>

@@ -70,6 +70,18 @@ $tabel = static function (array $bagian, string $id, string $keterangan) use ($s
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
+    <div class="card mb-3" id="rekap-gabungan">
+        <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <h2 class="h6 fw-bold mb-1"><i class="bi bi-collection" aria-hidden="true"></i> Rekap gabungan</h2>
+                <p class="text-body-secondary small mb-0">Semua data dalam satu file Excel, dipisah per sheet: Pendaftaran, Atlet, dan semua rekap di bawah (termasuk Tim Tanpa Pembayar).</p>
+            </div>
+            <a class="btn btn-primary" id="excel-gabungan" href="<?= site_url('admin/rekap/gabungan/excel') ?>">
+                <i class="bi bi-file-earmark-spreadsheet" aria-hidden="true"></i> Unduh Rekap Gabungan
+            </a>
+        </div>
+    </div>
+
     <ul class="nav nav-tabs mb-3" id="jenis-rekap">
         <?php foreach (Rekap::JENIS as $kode => $judul) : ?>
             <li class="nav-item">

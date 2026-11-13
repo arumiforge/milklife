@@ -65,11 +65,20 @@ class PendaftaranController extends BaseController
 
     public function excel(): DownloadResponse
     {
-        $data  = new DataPanelPendaftaran();
-        $excel = new EksporExcel('Pendaftaran', DataPanelPendaftaran::KOLOM_EXCEL);
-        $excel->tambahBaris($data->tabel()->semuaBaris($data->pembuat(), $this->request->getGet()));
+        return self::lembarExcel($this->request->getGet())->unduh('Pendaftaran_' . date('Ymd_His') . '.xlsx');
+    }
 
-        return $excel->unduh('Pendaftaran_' . date('Ymd_His') . '.xlsx');
+    /**
+     * Lembar Excel pendaftaran dengan saringan tabel; dipakai juga rekap gabungan (K85).
+     *
+     * @param array<string, mixed> $saringan
+     */
+    public static function lembarExcel(array $saringan = []): EksporExcel
+    {
+        $data = new DataPanelPendaftaran();
+
+        return (new EksporExcel('Pendaftaran', DataPanelPendaftaran::KOLOM_EXCEL))
+            ->tambahBaris($data->tabel()->semuaBaris($data->pembuat(), $saringan));
     }
 
     /**

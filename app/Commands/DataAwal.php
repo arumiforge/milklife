@@ -67,7 +67,7 @@ class DataAwal extends BaseCommand
         'Pembayaran.nomor_rekening'   => '0123456789',
         'Pembayaran.pemilik_rekening' => 'Nama Panitia',
         'Pembayaran.nomor_wa'         => '628123456789',
-        'HalamanDepan.judul'          => 'Berlari. Bermain. Berprestasi.',
+        'HalamanDepan.judul'          => 'MilkLife Athletics Challenge',
         'HalamanDepan.teks'           => 'Ajang atletik untuk generasi muda Indonesia.',
         'HalamanDepan.footer'         => 'Bakti Olahraga Djarum Foundation dan MilkLife',
         'HalamanDepan.nomor_wa_tanya' => '628123456789',
@@ -88,7 +88,7 @@ class DataAwal extends BaseCommand
      */
     public const JADWAL = [
         ['Zoom Meeting Sosialisasi', '2026-10-05 19:00:00', 'Zoom Meeting', 'https://zoom.us/j/1234567890', "Penjelasan aturan lomba dan cara mendaftar untuk guru dan official sekolah.\nTautan Zoom di atas masih contoh."],
-        ['Batas akhir pendaftaran dan pembayaran', '2026-11-30 23:59:00', 'Web pendaftaran', '', 'Pendaftaran ditutup otomatis. Pastikan bukti transfer sudah dikirim lewat WA sebelum batas ini.'],
+        ['Batas akhir pendaftaran dan pembayaran', '2026-11-30 23:59:00', 'Web pendaftaran', '', 'Pendaftaran ditutup otomatis. Pastikan bukti transfer sudah diunggah di web pendaftaran sebelum batas ini.'],
         ['Technical Meeting', '2026-12-05 09:00:00', 'Supersoccer Arena, Kudus', '', "Pembahasan teknis lomba bersama official sekolah.\nWajib dihadiri minimal satu penanggung jawab tiap sekolah."],
         ['Pengambilan nomor dada', '2026-12-08 13:00:00', 'Supersoccer Arena, Kudus', '', 'Bawa bukti pendaftaran (PDF atau cetak) dengan status Lunas.'],
         ['Pelaksanaan lomba', '2026-12-09 07:00:00', 'Supersoccer Arena, Kudus', '', 'Lomba berlangsung 9–12 Desember 2026. Jadwal per nomor lomba diumumkan saat technical meeting.'],

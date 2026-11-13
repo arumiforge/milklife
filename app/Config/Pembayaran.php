@@ -61,5 +61,5 @@ class Pembayaran extends BaseConfig
         . "Subtotal individu: {subtotal_individu}\n"
         . "Subtotal beregu: {subtotal_beregu}\n"
         . "Total: {total}\n\n"
-        . 'Bukti transfer kami lampirkan. Terima kasih.';
+        . 'Bukti transfer sudah kami unggah di web pendaftaran. Terima kasih.';
 }

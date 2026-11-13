@@ -8,10 +8,10 @@
  *
  * - Gambar kepala (foto atlet) diunggah admin di Pengaturan > Halaman Depan;
  *   gambar dan logo yang belum diunggah atau berkasnya hilang tidak
- *   ditampilkan (K41). Logo acara tampil di kepala halaman (tata letak
- *   publik); di sini hanya logo Djarum Foundation.
- * - Judul dari pengaturan; tiap kalimat satu baris dan kalimat terakhir
- *   oranye. Bila kosong, nama acara menjadi judul. Satu-satunya `<h1>`
+ *   ditampilkan (K41). Logo acara tampil di kepala halaman dan logo
+ *   Djarum Foundation di kaki halaman (tata letak publik, K84).
+ * - Judul dari pengaturan, huruf besar; tiap kalimat (atau tiap kata bila
+ *   hanya satu kalimat) satu baris dan baris terakhir oranye. Bila kosong, nama acara menjadi judul. Satu-satunya `<h1>`
  *   halaman ada di sini (`#judul-acara`).
  * - Teks admin di-escape; baris baru di dalam paragraf menjadi `<br>`.
  * - Tombol tanpa alamat tampil nonaktif dengan keterangannya (K39).
@@ -24,7 +24,6 @@
  */
 
 use App\Libraries\BukaTutupPendaftaran;
-use App\Libraries\IsiHalamanDepan;
 
 // Ikon keadaan pendaftaran; terbuka memakai pengeras suara seperti konsep (K82).
 $ikonKeadaan = [
@@ -42,28 +41,17 @@ $koma        = mb_strrpos($acara['tempat'], ',');
 $tempatInfo  = $koma === false ? [$acara['tempat'], ''] : [trim(mb_substr($acara['tempat'], 0, $koma)), trim(mb_substr($acara['tempat'], $koma + 1))];
 [$ringkasAtas, $ringkasBawah] = $bukaTutup->ringkas();
 
-// Logo acara tampil di kepala halaman; di sini hanya logo pendukung (Djarum Foundation).
-$logo = array_values(array_filter(
-    IsiHalamanDepan::logoPembuka($tampilan, $acara['nama']),
-    static fn (array $butir): bool => $butir['kunci'] === 'logo_djarum',
-));
-
 // Atribut width/height dari ukuran asli supaya halaman tidak melompat saat gambar dimuat.
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . $ukuran['lebar'] . '" height="' . $ukuran['tinggi'] . '"';
 
-// Judul per kalimat: "Berlari. Bermain. Berprestasi." menjadi tiga baris.
+// Judul per kalimat ("Berlari. Bermain. Berprestasi."); judul satu kalimat
+// per kata ("MilkLife Athletics Challenge"), K83. Tampil huruf besar lewat CSS.
 $kalimatJudul = preg_split('/(?<=[.!?])\s+/u', $tampilan['judul'], -1, PREG_SPLIT_NO_EMPTY) ?: [];
-
-// Nomor seri besar bergaris di atas foto ("Seri 2" menjadi "02"); hiasan saja.
-$nomorSeri = preg_match('/(\d+)/', $acara['seri_tahun'], $cocok) === 1 ? sprintf('%02d', (int) $cocok[1]) : '';
+if (count($kalimatJudul) === 1) {
+    $kalimatJudul = preg_split('/\s+/u', $kalimatJudul[0], -1, PREG_SPLIT_NO_EMPTY) ?: [];
+}
 
 $ikonTombol = ['pendaftaran' => 'arrow-right', 'cek' => 'arrow-right'];
-
-/** Siluet pelari untuk kartu kelompok umur (hiasan). */
-$pelari = '<svg class="ku-pelari" viewBox="0 0 64 64" aria-hidden="true" focusable="false">'
-    . '<circle cx="40" cy="10" r="6.5" fill="currentColor"/>'
-    . '<path d="M37 18 L30 36 M36 21 L44 28 L51 23 M34 22 L26 27 L21 21 M30 36 L41 43 L38 56 M30 36 L23 48 L12 51" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>'
-    . '</svg>';
 
 /** Nama kelompok umur dipisah: "KU 8 (Seneng Playon)" → ["KU 8", "Seneng Playon"]. */
 $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s*$/u', $nama, $c) === 1 ? [$c[1], $c[2]] : [$nama, ''];
@@ -76,14 +64,11 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
             </div>
         <?php endif ?>
 
-        <?php // Lengkung oranye dan hijau muda, nomor seri, dan gelombang bawah: hiasan. ?>
+        <?php // Lengkung oranye dan hijau muda serta gelombang bawah: hiasan. ?>
         <svg class="pembuka-lengkung" viewBox="0 0 800 600" preserveAspectRatio="none" aria-hidden="true" focusable="false">
             <path d="M120 600 C 160 330, 420 150, 800 90" fill="none" stroke="#E85F31" stroke-width="46" stroke-linecap="round"/>
             <path d="M210 600 C 250 380, 470 220, 800 175" fill="none" stroke="#C9E265" stroke-width="22" stroke-linecap="round"/>
         </svg>
-        <?php if ($nomorSeri !== '') : ?>
-            <span class="pembuka-nomor-seri" aria-hidden="true"><?= esc($nomorSeri) ?></span>
-        <?php endif ?>
 
         <div class="container pembuka-isi">
             <div class="pembuka-kiri">
@@ -147,16 +132,6 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                         <?php endif ?>
                     <?php endforeach ?>
                 </nav>
-
-                <?php if ($logo !== []) : ?>
-                    <ul class="pembuka-logo list-unstyled" aria-label="Logo">
-                        <?php foreach ($logo as $butir) : ?>
-                            <li class="pembuka-logo-butir pembuka-<?= str_replace('_', '-', $butir['kunci']) ?>">
-                                <img src="<?= esc($butir['alamat'], 'attr') ?>" alt="<?= esc($butir['alt'], 'attr') ?>"<?= $ukuranAtribut($butir['ukuran']) ?>>
-                            </li>
-                        <?php endforeach ?>
-                    </ul>
-                <?php endif ?>
             </div>
         </div>
 
@@ -171,13 +146,11 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
         <div class="pembuka-ku">
             <div class="container">
                 <p class="pembuka-ku-label"><span>Kelompok usia</span></p>
-                <p class="pembuka-ku-judul">Setiap langkah punya peluang</p>
                 <ul class="pembuka-ku-daftar">
                     <?php foreach ($kelompokUmur as $i => $ku) : ?>
                         <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>
                         <li>
                             <a class="pembuka-ku-kartu pembuka-ku-kartu-<?= $i % 2 === 0 ? 'hijau' : 'oranye' ?>" href="#lomba-ku-<?= (int) $ku['id'] ?>">
-                                <?= $pelari ?>
                                 <span class="pembuka-ku-nama">
                                     <?= esc($namaKu) ?>
                                     <?php if ($julukan !== '') : ?>

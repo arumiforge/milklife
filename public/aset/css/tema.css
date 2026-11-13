@@ -413,6 +413,27 @@ html:has(.tata-publik) {
     border-top: 4px solid var(--ml-oranye);
 }
 
+/* Teks kaki di kiri, logo Djarum Foundation di kanan (K84). Logo di atas
+   kapsul putih supaya warna aslinya terbaca di latar biru tua. */
+.kaki-isi {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+}
+
+.kaki-logo {
+    display: block;
+    width: auto;
+    height: 3.25rem;
+    max-width: 100%;
+    padding: 0.4rem 0.9rem;
+    background: #fff;
+    border-radius: 0.75rem;
+    object-fit: contain;
+}
+
 /* ---------- Halaman depan: kepala terang dan bagian pembuka (K81) ----------
    Mengikuti konsep visual pemilik: latar krem, biru tua, oranye, dan hijau
    muda. Hanya halaman depan; halaman lain tetap memakai kepala biru.
@@ -468,11 +489,10 @@ html:has(.tata-publik) {
     height: 3rem;
 }
 
-/* Label seri miring bergaris bawah oranye, dipisah garis tegak dari logo. */
+/* Label seri miring bergaris bawah oranye, langsung setelah logo (K84). */
 .kepala-seri {
     margin: 0 auto 0 0.25rem;
-    padding: 0.2rem 0 0.2rem 1rem;
-    border-left: 2px solid var(--ml-biru-tua);
+    padding: 0.2rem 0;
     color: var(--ml-biru-tua);
     font-size: 0.9375rem;
     font-style: italic;
@@ -505,8 +525,7 @@ html:has(.tata-publik) {
     }
 
     .kepala-seri {
-        margin-left: 1rem;
-        padding-left: 1.5rem;
+        margin-left: 0.75rem;
         font-size: 1.0625rem;
     }
 
@@ -548,8 +567,7 @@ html:has(.tata-publik) {
     object-position: 50% 30%;
 }
 
-.pembuka-lengkung,
-.pembuka-nomor-seri {
+.pembuka-lengkung {
     display: none;
 }
 
@@ -807,28 +825,6 @@ html:has(.tata-publik) {
     border-radius: 1rem;
 }
 
-.pembuka-logo {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin: 1.25rem 0 0;
-    padding: 0;
-}
-
-.pembuka-logo-butir {
-    display: flex;
-    align-items: center;
-    height: 2.75rem;
-}
-
-.pembuka-logo-butir img {
-    display: block;
-    width: auto;
-    height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-}
-
 /* Deret kartu kelompok umur di bawah pembuka, menaut ke rinciannya. */
 .pembuka-ku {
     position: relative;
@@ -841,7 +837,7 @@ html:has(.tata-publik) {
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin: 0 0 0.35rem;
+    margin: 0 0 1rem;
 }
 
 .pembuka-ku-label::before,
@@ -863,15 +859,6 @@ html:has(.tata-publik) {
     text-transform: uppercase;
 }
 
-.pembuka-ku-judul {
-    margin-bottom: 1rem;
-    text-align: center;
-    font-size: clamp(1.25rem, 5vw, 2.25rem);
-    font-style: italic;
-    font-weight: 900;
-    line-height: 1.1;
-    text-transform: uppercase;
-}
 
 .pembuka-ku-daftar {
     display: grid;
@@ -885,35 +872,23 @@ html:has(.tata-publik) {
 .pembuka-ku-kartu {
     position: relative;
     display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    height: 100%;
-    padding: 0.85rem 0.9rem 1.6rem;
+    align-items: flex-start;
+    height: 5rem;
+    /* Teks di kanan pelari: lebar bagian pelari ±30 % gambar (1,15 × tinggi kartu). */
+    padding: 0.55rem 0.5rem 0 5.75rem;
     overflow: hidden;
-    background: #fff;
-    border: 1px solid rgba(var(--ml-biru-tua-rgb), 0.12);
+    background: #FCF6EC url("../gambar/kartu-ku-hijau.webp") left bottom / cover no-repeat;
     border-radius: 1rem;
-    box-shadow: 0 0.375rem 1rem rgba(var(--ml-biru-tua-rgb), 0.08);
+    box-shadow: 0 0.375rem 1rem rgba(var(--ml-biru-tua-rgb), 0.1);
     color: var(--ml-biru-tua);
     text-decoration: none;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Sapuan warna di bawah kartu, hijau muda dan oranye bergantian. */
-.pembuka-ku-kartu::after {
-    content: "";
-    position: absolute;
-    left: -10%;
-    right: -10%;
-    bottom: -1.5rem;
-    height: 2.6rem;
-    border-radius: 50%;
-    background: var(--ml-hijau-muda);
-    transform: rotate(-4deg);
-}
-
-.pembuka-ku-kartu-oranye::after {
-    background: var(--ml-oranye);
+/* Gambar kartu dari contoh pemilik (K85): pelari dan lintasan, hijau muda
+   dan oranye bergantian; teks saja yang diisi. */
+.pembuka-ku-kartu-oranye {
+    background-image: url("../gambar/kartu-ku-oranye.webp");
 }
 
 .pembuka-ku-kartu:hover {
@@ -927,13 +902,9 @@ html:has(.tata-publik) {
     outline-offset: 2px;
 }
 
-.ku-pelari {
-    flex: none;
-    width: 2.75rem;
-    height: 2.75rem;
-}
-
 .pembuka-ku-nama {
+    align-self: flex-start;
+    margin-top: 0.15rem;
     font-size: 1.25rem;
     font-style: italic;
     font-weight: 900;
@@ -985,8 +956,13 @@ html:has(.tata-publik) {
         z-index: -1;
         width: 60%;
         height: auto;
-        -webkit-mask-image: linear-gradient(to right, transparent 0, #000 30%);
-        mask-image: linear-gradient(to right, transparent 0, #000 30%);
+        /* Tepi kiri foto berupa setengah lingkaran yang memudar perlahan
+           ke latar krem (K83), bukan garis lurus. */
+        -webkit-mask-image: var(--ml-pudar-pembuka);
+        mask-image: var(--ml-pudar-pembuka);
+        --ml-pudar-pembuka: radial-gradient(ellipse 100% 100% at 100% 50%,
+            #000 0%, #000 46%, rgba(0, 0, 0, 0.92) 54%, rgba(0, 0, 0, 0.75) 63%,
+            rgba(0, 0, 0, 0.5) 72%, rgba(0, 0, 0, 0.26) 81%, rgba(0, 0, 0, 0.08) 90%, transparent 97%);
     }
 
     .pembuka-lengkung {
@@ -1003,25 +979,6 @@ html:has(.tata-publik) {
     .pembuka-dengan-gambar .pembuka-lengkung {
         z-index: 0;
         opacity: 0.55;
-    }
-
-    .pembuka-nomor-seri {
-        display: block;
-        position: absolute;
-        top: 0.5rem;
-        right: 2.5%;
-        z-index: 0;
-        color: transparent;
-        font-size: clamp(7rem, 22vh, 14rem);
-        font-style: italic;
-        font-weight: 900;
-        line-height: 1;
-        letter-spacing: -0.04em;
-        -webkit-text-stroke: 3px rgba(var(--ml-biru-tua-rgb), 0.2);
-    }
-
-    .pembuka-dengan-gambar .pembuka-nomor-seri {
-        -webkit-text-stroke-color: rgba(255, 255, 255, 0.9);
     }
 
     .pembuka-gelombang {
@@ -1049,10 +1006,6 @@ html:has(.tata-publik) {
         padding: 0 0 1.25rem;
     }
 
-    .pembuka-ku-judul {
-        margin-bottom: 0.75rem;
-        font-size: clamp(1.25rem, 3.4vh, 2.25rem);
-    }
 
     .pembuka-ku-daftar {
         grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1060,13 +1013,8 @@ html:has(.tata-publik) {
     }
 
     .pembuka-ku-kartu {
-        gap: 0.9rem;
-        padding: 0.9rem 1.25rem 1.6rem;
-    }
-
-    .ku-pelari {
-        width: 3.5rem;
-        height: 3.5rem;
+        height: 6.5rem;
+        padding: 0.75rem 0.75rem 0 8.1rem;
     }
 
     .pembuka-ku-nama {
@@ -1106,21 +1054,13 @@ html:has(.tata-publik) {
     }
 
     .pembuka-ku-label {
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.75rem;
     }
 
-    .pembuka-ku-judul {
-        margin-bottom: 0.5rem;
-        font-size: clamp(1.25rem, 3vh, 2rem);
-    }
 
     .pembuka-ku-kartu {
-        padding: 0.6rem 1rem 1.35rem;
-    }
-
-    .ku-pelari {
-        width: 2.75rem;
-        height: 2.75rem;
+        height: 5.75rem;
+        padding: 0.6rem 0.75rem 0 7.1rem;
     }
 
     .pembuka-ku-nama {
@@ -2034,6 +1974,13 @@ html:has(.tata-publik) {
     margin-bottom: 0;
     font-weight: 700;
     color: var(--ml-biru-tua);
+}
+
+/* Kotak unggah bukti bayar di kartu yang belum Lunas (K83). */
+.cek-unggah-bukti {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed rgba(var(--ml-biru-tua-rgb), 0.25);
 }
 
 /* Kartu pendaftaran: garis kiri hijau (Lunas) atau kuning (Menunggu). */

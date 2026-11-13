@@ -219,3 +219,21 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K82 | Kartu info di pembuka halaman depan dibuat persis seperti contoh pemilik: satu kapsul putih berisi tanggal ("9–12" besar di atas "Desember 2026") dan tempat (dipisah di koma terakhir: "Supersoccer Arena" / "Kudus") bersekat garis tegak, lalu ujung kanan berwarna keadaan berisi dua baris pendek: "Daftar s.d. / 30 November" (terbuka, ikon pengeras suara), "Dibuka / 1 Oktober", "Pendaftaran / Ditutup", atau "Pendaftaran / Segera dibuka". Di ponsel ujung keadaan turun ke baris kedua | Mengubah tampilan keadaan dari K81. Kalimat lengkap ("Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.") tetap ada untuk pembaca layar. Ringkasan dari `BukaTutupPendaftaran::ringkas()` |
+
+## 13 November 2026 — judul pembuka dan unggah bukti bayar oleh official
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K83 | Pembuka halaman depan: nomor seri besar "02" dan tulisan "Setiap langkah punya peluang" dihapus; judul data awal menjadi "MilkLife Athletics Challenge", tampil huruf besar dengan satu kata per baris dan kata terakhir oranye (judul berkalimat bertitik tetap satu kalimat per baris), tetap bisa diganti di Pengaturan > Halaman Depan; tepi kiri foto berupa setengah lingkaran yang memudar lebih halus ke latar krem, bukan garis lurus. Official mengunggah bukti transfer sendiri di langkah Pembayaran wizard atau di kartu Cek Pendaftaran (alamat `POST /bukti/<kode acak>/<ID>/bukti-bayar`), jadi bukti tidak perlu dikirim lewat WA; admin tetap bisa mengunggah dari rincian. Di bukti PDF, nomor WA penanggung jawab tidak lagi diapit tanda kurung | Permintaan panitia: bukti yang masuk lewat sistem tidak perlu dikirim ke WA, supaya admin tidak mengunggah semua bukti sendiri. Unggah memakai alamat bukti berkode acak sebagai izin (ID atau NPSN saja tidak cukup), dibatasi 10 kiriman per menit per alamat IP, ditolak untuk pendaftaran Lunas, dan memakai batas 5 gambar yang sama dengan panel. Official tidak bisa melihat atau menghapus gambar yang sudah diunggah; salah unggah dihapus admin. Tombol WA di langkah Pembayaran menjadi tombol sekunder "Konfirmasi lewat WA". Judul yang sudah diisi admin tidak ditimpa data awal. Rancangan final (langkah 5 lewat WA) belum diubah dan menunggu revisi lewat draf |
+
+## 13 November 2026 — kartu kelompok usia, logo kaki, dan kepala
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K84 | Logo Bakti Olahraga Djarum Foundation pindah dari pembuka ke kanan kaki halaman di semua halaman publik, di atas kapsul putih. Label "Kelompok usia" diberi jarak lebih lega dari kartu di bawahnya. Kartu kelompok umur mengikuti contoh pemilik: latar krem, ombak lintasan di bawah (hijau muda dan oranye bergantian, tiga bentuk ombak bergiliran supaya tiap kartu berbeda) dengan garis lintasan putih, dan pelari biru tua bergaris laju di kiri. Garis tegak pemisah antara logo dan label seri di kepala dihapus | Mengubah letak logo Djarum dari K81. Logo tetap diunggah admin di Pengaturan > Halaman Depan; bila belum diunggah, kaki hanya berisi teks. Ombak dan pelari digambar SVG di kode (bukan gambar contoh), supaya tajam di semua ukuran |
+
+## 13 November 2026 — gambar kartu kelompok usia, tautan halaman depan, rekap gabungan
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K85 | Kartu kelompok usia memakai gambar dari pemilik (pelari biru tua dan lintasan hijau muda atau oranye, bergantian), tinggal diisi nama kelompok umur; pelari dan ombak SVG dari K84 dihapus. Kepala panel admin punya tombol "Halaman depan" yang membuka halaman depan di tab baru. Menu Rekap punya tombol "Unduh Rekap Gabungan": satu berkas Excel berisi semua data, satu sheet per bagian (Pendaftaran, Atlet, Peserta per Nomor Lomba, Tim Beregu, Per Sekolah, Per Kelompok Umur, Keuangan, Tim Tanpa Pembayar) | Mengubah tampilan kartu di K84. Gambar dipotong dari contoh pemilik ke `public/aset/gambar/kartu-ku-hijau.webp` dan `kartu-ku-oranye.webp` (tanpa data siswa). Rekap gabungan tidak memakai saringan status: semua pendaftaran ikut, sama dengan rekap Keuangan |

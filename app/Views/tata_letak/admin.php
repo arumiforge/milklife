@@ -91,6 +91,11 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
             <header class="kepala-admin">
                 <h1 class="kepala-admin-judul"><?= $judulHalaman ?></h1>
                 <div class="kepala-admin-pengguna">
+                    <a class="btn btn-outline-primary tombol-halaman-depan" href="<?= site_url('/') ?>" target="_blank" rel="noopener" title="Buka halaman depan di tab baru">
+                        <i class="bi bi-house-door" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline">Halaman depan</span>
+                        <span class="visually-hidden">(tab baru)</span>
+                    </a>
                     <a class="kepala-admin-nama" href="<?= site_url('admin/akun') ?>" title="Buka Akun: ganti nama dan kata sandi">
                         <i class="bi bi-person-circle" aria-hidden="true"></i>
                         <span class="visually-hidden">Masuk sebagai</span>

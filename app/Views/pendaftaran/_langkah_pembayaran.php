@@ -2,8 +2,9 @@
 /**
  * Langkah 5: Pembayaran (rancangan 7). Data rekening dari `wizard.pembayaran`,
  * ID, total, dan alamat WA dari jawaban `POST pendaftaran/simpan`; diisi
- * `pendaftaran.js`. "Pendaftaran Selesai" mengosongkan draf dan menampilkan
- * tombol cetak bukti ke `/bukti/<ID>` (Tahap 5).
+ * `pendaftaran.js`. Bukti transfer diunggah ke `<alamat bukti>/bukti-bayar`
+ * (K83). "Pendaftaran Selesai" mengosongkan draf dan menampilkan tombol
+ * cetak bukti ke `/bukti/<kode>/<ID>` (Tahap 5).
  */
 ?>
 <section class="langkah" id="langkah-5" data-langkah="5" aria-labelledby="judul-langkah-5" hidden>
@@ -40,13 +41,23 @@
 
         <ol class="cara-bayar">
             <li>Transfer sebesar total di atas ke rekening tersebut.</li>
-            <li>Tekan <strong>Kirim Konfirmasi Pembayaran</strong>. WA terbuka dengan pesan yang sudah terisi; lampirkan foto bukti transfer, lalu kirim.</li>
+            <li>Unggah foto atau tangkapan layar bukti transfer di bawah. Bukti tidak perlu dikirim lewat WA. Bila belum sempat, bukti bisa diunggah nanti lewat menu Cek Pendaftaran.</li>
             <li>Tekan <strong>Pendaftaran Selesai</strong> untuk mencetak bukti pendaftaran.</li>
         </ol>
 
+        <form class="kartu-isian unggah-bukti-bayar" id="bayar-unggah" enctype="multipart/form-data" novalidate>
+            <label class="form-label fw-semibold" for="bayar-berkas">Bukti transfer</label>
+            <div class="input-group">
+                <input class="form-control" type="file" id="bayar-berkas" name="bukti" accept="image/jpeg,image/png,image/webp" aria-describedby="bayar-berkas-keterangan">
+                <button type="submit" class="btn btn-primary" id="bayar-kirim-bukti"><i class="bi bi-upload" aria-hidden="true"></i> <span>Unggah</span></button>
+            </div>
+            <div class="form-text" id="bayar-berkas-keterangan">JPG, PNG, atau WEBP, paling besar 10 MB.</div>
+            <div class="mt-2 mb-0" id="bayar-pesan-bukti" role="status" hidden></div>
+        </form>
+
         <div class="tombol-bayar">
-            <a class="btn btn-success btn-lg" id="bayar-wa" target="_blank" rel="noopener noreferrer" hidden>
-                <i class="bi bi-whatsapp" aria-hidden="true"></i> Kirim Konfirmasi Pembayaran
+            <a class="btn btn-outline-success btn-lg" id="bayar-wa" target="_blank" rel="noopener noreferrer" hidden>
+                <i class="bi bi-whatsapp" aria-hidden="true"></i> Konfirmasi lewat WA
             </a>
             <button type="button" class="btn btn-primary btn-lg" id="bayar-selesai">
                 <i class="bi bi-flag" aria-hidden="true"></i> Pendaftaran Selesai

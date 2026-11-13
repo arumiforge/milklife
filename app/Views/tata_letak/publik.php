@@ -24,7 +24,8 @@
  * Nama acara di kepala diambil dari pengaturan `Acara.nama`
  * (`tata_letak/_merek`). Teks kaki dari `IsiHalamanDepan::kaki()`:
  * `HalamanDepan.footer` (baris baru menjadi `<br>`), atau "nama acara tahun"
- * bila kosong.
+ * bila kosong. Logo Bakti Olahraga Djarum Foundation (bila diunggah) di
+ * kanan kaki (K84).
  *
  * @var CodeIgniter\View\View $this
  */
@@ -54,6 +55,14 @@ if ($beranda) {
 }
 
 $kaki = IsiHalamanDepan::kaki();
+
+// Logo Bakti Olahraga Djarum Foundation di kanan kaki halaman, semua halaman publik (K84).
+$isiKaki    = $isiDepan ?? new IsiHalamanDepan();
+$tampilKaki = $tampilan ?? $isiKaki->tampilan();
+$logoKaki   = array_values(array_filter(
+    IsiHalamanDepan::logoPembuka($tampilKaki, $isiKaki->acara()['nama']),
+    static fn (array $butir): bool => $butir['kunci'] === 'logo_djarum',
+))[0] ?? null;
 ?>
 <!doctype html>
 <html lang="id">
@@ -112,8 +121,11 @@ $kaki = IsiHalamanDepan::kaki();
     </main>
 
     <footer class="kaki-publik">
-        <div class="container py-4">
+        <div class="container py-4 kaki-isi">
             <p class="mb-0"><?= nl2br(esc($kaki), false) ?></p>
+            <?php if ($logoKaki !== null) : ?>
+                <img class="kaki-logo" src="<?= esc($logoKaki['alamat'], 'attr') ?>" alt="<?= esc($logoKaki['alt'], 'attr') ?>"<?= $logoKaki['ukuran'] === null ? '' : ' width="' . $logoKaki['ukuran']['lebar'] . '" height="' . $logoKaki['ukuran']['tinggi'] . '"' ?>>
+            <?php endif ?>
         </div>
     </footer>
 
