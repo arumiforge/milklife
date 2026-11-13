@@ -33,6 +33,12 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame(1, $xpath->query('//main[@id="isi"]')->length);
         $this->assertSame(1, $xpath->query('//a[@href="#isi"][contains(., "Lompat ke isi")]')->length);
 
+        // Bilah muat, jendela konfirmasi, dan pemilih tanggal di semua halaman publik (K89).
+        $this->assertSame(1, $xpath->query('//*[@id="bilah-kemajuan"][@hidden]')->length);
+        foreach (['js/kemajuan.js', 'js/konfirmasi.js', 'js/pilih-tanggal.js'] as $skrip) {
+            $this->assertSame(1, $xpath->query('//script[@src="' . aset($skrip) . '"]')->length, $skrip);
+        }
+
         // Kepala memuat nama acara sebagai teks.
         $merek = $xpath->query('//header//a[contains(@class, "navbar-brand")]')->item(0);
         $this->assertNotNull($merek);

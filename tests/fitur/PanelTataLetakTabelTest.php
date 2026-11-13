@@ -123,6 +123,8 @@ final class PanelTataLetakTabelTest extends UjiHalaman
         $this->assertStringContainsString('Tahap 6', $css);
         $this->assertStringContainsString('.tabel-admin-memuat', $css);
         $this->assertStringContainsString('.saringan-tabel', $css);
-        $this->assertLessThan(strpos($css, 'Tahap 6'), strpos($css, '.bilah-kemajuan'));
+        // Bilah kemajuan dipakai admin dan publik, jadi gayanya di tema.css (K89).
+        $this->assertStringContainsString('.bilah-kemajuan {', (string) file_get_contents(FCPATH . 'aset/css/tema.css'));
+        $this->assertStringNotContainsString('.bilah-kemajuan {', $css);
     }
 }

@@ -117,12 +117,15 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
                     <p class="mb-0">Sudah <?= $batasBukti ?> gambar terkirim, batas paling banyak. Panitia akan memeriksanya.</p>
                 <?php else : ?>
                     <p class="small text-body-secondary"><?= $jumlahBukti === 0 ? 'Belum ada bukti bayar.' : 'Sudah ' . $jumlahBukti . ' gambar terkirim.' ?> Unggah foto atau tangkapan layar bukti transfer di sini, tidak perlu dikirim lewat WA.</p>
-                    <form method="post" action="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p) . '/bukti-bayar', 'attr') ?>" enctype="multipart/form-data">
+                    <form method="post" action="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p) . '/bukti-bayar', 'attr') ?>" enctype="multipart/form-data"
+                        data-konfirmasi-judul="Kirim bukti bayar?"
+                        data-konfirmasi="<?= esc('Gambar yang dipilih dikirim ke panitia sebagai bukti transfer pendaftaran ' . $p['id_pendaftaran'] . '. Setelah terkirim, gambar tidak bisa dihapus sendiri.', 'attr') ?>"
+                        data-konfirmasi-tombol="Kirim bukti" data-konfirmasi-jenis="utama">
                         <?= csrf_field() ?>
                         <input type="hidden" name="kembali" value="<?= esc($kode, 'attr') ?>">
                         <label class="visually-hidden" for="bukti-<?= $urutan ?>">Gambar bukti transfer <?= esc($p['id_pendaftaran']) ?></label>
                         <div class="input-group">
-                            <input class="form-control" type="file" id="bukti-<?= $urutan ?>" name="bukti" accept="image/jpeg,image/png,image/webp" required>
+                            <input class="form-control" type="file" id="bukti-<?= $urutan ?>" name="bukti" accept="image/jpeg,image/png,image/webp" data-ukuran-maksimal="<?= App\Libraries\Panel\BerkasBuktiBayar::BATAS_BITA ?>" required>
                             <button class="btn btn-primary" type="submit"><i class="bi bi-upload" aria-hidden="true"></i> Unggah</button>
                         </div>
                         <div class="form-text">JPG, PNG, atau WEBP, paling besar 10 MB.</div>

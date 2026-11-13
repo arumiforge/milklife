@@ -31,6 +31,11 @@ final class BuktiPendaftaran
     public const KERTAS = [215, 330];
 
     /**
+     * Tinggi blok kode QR di dasar halaman terakhir, dalam mm (QR 38 mm dan sedikit jarak).
+     */
+    private const TINGGI_BLOK_QR = 41;
+
+    /**
      * Kode acak baru untuk `pendaftaran.kode_bukti`.
      */
     public static function kodeBaru(): string
@@ -161,6 +166,14 @@ final class BuktiPendaftaran
             . '<td style="padding-top: 1.5mm; text-align: right;">Halaman {PAGENO} dari {nbpg}</td></tr></table>');
         $mpdf->SetTitle('Bukti Pendaftaran ' . $this->pendaftaran['id_pendaftaran']);
         $mpdf->WriteHTML($this->html());
+
+        // Kode QR dan keterangannya di dasar halaman terakhir (K89), bukan
+        // langsung di bawah isi. Bila sisa ruang kurang, pindah ke halaman baru.
+        if ($mpdf->h - $mpdf->bMargin - $mpdf->y < self::TINGGI_BLOK_QR) {
+            $mpdf->AddPage();
+        }
+        $mpdf->y = $mpdf->h - $mpdf->bMargin - self::TINGGI_BLOK_QR;
+        $mpdf->WriteHTML(view('bukti/pdf_qr', [], ['saveData' => false]));
 
         return $mpdf->Output('', 'S');
     }

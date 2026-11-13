@@ -2207,3 +2207,75 @@ html:has(.tata-publik) {
 }
 
 /* ---------- Akhir halaman cek ---------- */
+
+/* ---------- Bilah kemajuan (aset/js/kemajuan.js), admin dan publik ---------- */
+
+.bilah-kemajuan {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1090;
+    height: 3px;
+    pointer-events: none;
+}
+
+.bilah-kemajuan[hidden] {
+    display: none;
+}
+
+.bilah-kemajuan-isi {
+    width: 0;
+    height: 100%;
+    background-color: var(--ml-oranye);
+    box-shadow: 0 0 6px rgba(232, 95, 49, 0.6);
+    transition: width 0.25s ease-out, opacity 0.3s ease;
+}
+
+.bilah-kemajuan.selesai .bilah-kemajuan-isi {
+    opacity: 0;
+}
+
+/* ---------- Pemilih tanggal (aset/js/pilih-tanggal.js, K89) ----------
+   Tanggal, Bulan, Tahun berderet; Jam dan Menit di baris kedua. */
+.pilih-tanggal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.pilih-tanggal-baris {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pilih-tanggal .form-select {
+    min-width: 0;
+    padding-right: 1.9rem;
+    padding-left: 0.65rem;
+    background-position: right 0.55rem center;
+    cursor: pointer;
+}
+
+.pilih-tanggal-hari {
+    flex: 0 0 4.5rem;
+}
+
+.pilih-tanggal-bulan {
+    flex: 1 1 0;
+}
+
+.pilih-tanggal-tahun {
+    flex: 0 0 5.75rem;
+}
+
+.pilih-tanggal-jam,
+.pilih-tanggal-menit {
+    flex: 0 0 4.5rem;
+}
+
+.pilih-tanggal-pukul {
+    color: var(--ml-teks-redup);
+    font-weight: 600;
+}

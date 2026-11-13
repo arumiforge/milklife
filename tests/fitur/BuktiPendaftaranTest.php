@@ -113,9 +113,13 @@ final class BuktiPendaftaranTest extends UjiBasisData
         // Tanggal lahir dan nomor dada tidak dicetak (K52).
         $this->assertStringNotContainsString('1 Mei 2016', $html);
         $this->assertStringNotContainsString('Nomor Dada', $html);
-        // Logo persegi bawaan (K47) disisipkan sebagai PNG transparan; kode QR di kanan (K77).
+        // Logo persegi bawaan (K47) disisipkan sebagai PNG transparan; kode QR
+        // ditulis terpisah di dasar halaman terakhir (K89).
         $this->assertStringContainsString('<img src="var:logo"', $html);
-        $this->assertStringContainsString('<img src="var:qr"', $html);
+        $this->assertStringNotContainsString('var:qr', $html);
+        $qr = view('bukti/pdf_qr');
+        $this->assertStringContainsString('<img src="var:qr"', $qr);
+        $this->assertStringContainsString('kode QR di sebelah kanan', $qr);
         // Kepala tabel diulang di setiap halaman.
         $this->assertStringContainsString('<thead>', $html);
     }

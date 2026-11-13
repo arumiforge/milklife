@@ -43,8 +43,8 @@
     'use strict';
 
     var jendela = null;
-    var formulirMenunggu = null;
-    var tombolPengirim = null;
+    // Dipanggil dengan true (setuju) atau false (batal/tutup) setelah jendela dijawab.
+    var tindakanMenunggu = null;
 
     function buatJendela() {
         var elemen = document.createElement('div');
@@ -71,25 +71,67 @@
         document.body.appendChild(elemen);
 
         elemen.querySelector('[data-konfirmasi-setuju]').addEventListener('click', function () {
-            var formulir = formulirMenunggu;
-            var pengirim = tombolPengirim;
+            var tindakan = tindakanMenunggu;
 
-            formulirMenunggu = null;
-            tombolPengirim = null;
+            tindakanMenunggu = null;
             jendela.hide();
 
-            if (formulir) {
-                kirim(formulir, pengirim);
+            if (tindakan) {
+                tindakan(true);
             }
         });
 
         elemen.addEventListener('hidden.bs.modal', function () {
-            formulirMenunggu = null;
-            tombolPengirim = null;
+            var tindakan = tindakanMenunggu;
+
+            tindakanMenunggu = null;
+
+            if (tindakan) {
+                tindakan(false);
+            }
         });
 
         return new window.bootstrap.Modal(elemen);
     }
+
+    /**
+     * Tampilkan jendela; `tindakan(setuju)` dipanggil sekali setelah dijawab.
+     * `jenis`: 'utama' (tombol oranye) atau lainnya (tombol merah).
+     */
+    function tanya(judul, kalimat, labelTombol, jenis, tindakan) {
+        if (!window.bootstrap || !window.bootstrap.Modal) {
+            tindakan(window.confirm(kalimat));
+            return;
+        }
+
+        if (!jendela) {
+            jendela = buatJendela();
+        }
+
+        var elemen = document.getElementById('jendela-konfirmasi');
+        var setuju = elemen.querySelector('[data-konfirmasi-setuju]');
+
+        elemen.querySelector('#jendela-konfirmasi-judul').textContent = judul || 'Yakin?';
+        elemen.querySelector('#jendela-konfirmasi-isi').textContent = kalimat;
+        setuju.textContent = labelTombol || 'Ya, lanjutkan';
+        setuju.className = 'btn ' + (jenis === 'utama' ? 'btn-primary' : 'btn-danger');
+
+        tindakanMenunggu = tindakan;
+        jendela.show();
+    }
+
+    /**
+     * Untuk skrip lain (mis. wizard pendaftaran), K89:
+     *
+     *     Konfirmasi.tanya('Hapus atlet?', 'BUDI akan dihapus.', 'Hapus', 'bahaya').then(function (ya) { … });
+     */
+    window.Konfirmasi = {
+        tanya: function (judul, kalimat, labelTombol, jenis) {
+            return new Promise(function (selesai) {
+                tanya(judul, kalimat, labelTombol, jenis, selesai);
+            });
+        }
+    };
 
     // Kirim tanpa memicu konfirmasi lagi, dengan tombol pengirim yang sama
     // (supaya nama dan nilai tombolnya ikut terkirim).
@@ -167,33 +209,18 @@
 
         peristiwa.preventDefault();
 
-        var kalimat = formulir.getAttribute('data-konfirmasi') || 'Lanjutkan tindakan ini?';
-        var judul = formulir.getAttribute('data-konfirmasi-judul') || 'Yakin?';
-        var labelTombol = formulir.getAttribute('data-konfirmasi-tombol') || 'Ya, lanjutkan';
-        var jenis = formulir.getAttribute('data-konfirmasi-jenis') === 'utama' ? 'btn-primary' : 'btn-danger';
         var pengirim = peristiwa.submitter || null;
 
-        if (!window.bootstrap || !window.bootstrap.Modal) {
-            if (window.confirm(kalimat)) {
-                kirim(formulir, pengirim);
+        tanya(
+            formulir.getAttribute('data-konfirmasi-judul'),
+            formulir.getAttribute('data-konfirmasi') || 'Lanjutkan tindakan ini?',
+            formulir.getAttribute('data-konfirmasi-tombol'),
+            formulir.getAttribute('data-konfirmasi-jenis'),
+            function (setuju) {
+                if (setuju) {
+                    kirim(formulir, pengirim);
+                }
             }
-            return;
-        }
-
-        if (!jendela) {
-            jendela = buatJendela();
-        }
-
-        var elemen = document.getElementById('jendela-konfirmasi');
-        var setuju = elemen.querySelector('[data-konfirmasi-setuju]');
-
-        elemen.querySelector('#jendela-konfirmasi-judul').textContent = judul;
-        elemen.querySelector('#jendela-konfirmasi-isi').textContent = kalimat;
-        setuju.textContent = labelTombol;
-        setuju.className = 'btn ' + jenis;
-
-        formulirMenunggu = formulir;
-        tombolPengirim = pengirim;
-        jendela.show();
+        );
     });
 }());
