@@ -1676,16 +1676,23 @@
         }
     };
 
-    $('#bayar-salin').addEventListener('click', function () {
-        var teks = DATA.pembayaran.nomor_rekening;
-        var label = $('#bayar-salin span');
-        var tandai = function () {
-            label.textContent = 'Tersalin';
-            window.setTimeout(function () { label.textContent = 'Salin'; }, 2000);
-        };
+    function salin(tombol, teks) {
+        var label = $('span', tombol);
+        var asal = label.textContent;
         if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(teks).then(tandai, function () {});
+            navigator.clipboard.writeText(teks).then(function () {
+                label.textContent = 'Tersalin';
+                window.setTimeout(function () { label.textContent = asal; }, 2000);
+            }, function () {});
         }
+    }
+
+    $('#bayar-salin').addEventListener('click', function () {
+        salin(this, DATA.pembayaran.nomor_rekening);
+    });
+
+    $('#selesai-salin').addEventListener('click', function () {
+        salin(this, draf.tersimpan ? draf.tersimpan.id_pendaftaran : '');
     });
 
     // Pendaftaran dan bukti transfer dikirim bersama (K90): tanpa bukti tidak ada yang tersimpan.

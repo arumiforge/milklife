@@ -267,3 +267,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K90 | Pendaftaran baru masuk sistem hanya bersama bukti transfer. Langkah 4 (Biaya) tidak lagi menyimpan; langkah 5 (Pembayaran) menampilkan rekening dan total, official memilih gambar bukti transfer, lalu "Kirim Pendaftaran" mengirim isian dan bukti sekaligus ke `POST pendaftaran/simpan` (bukti sebagai data URL gambar `bukti_bayar`, dikecilkan peramban ke sisi 1600 piksel). Tanpa bukti, server menolak (galat langkah 5) dan tidak ada yang tersimpan. Isian tetap di draf peramban sampai terkirim, jadi official bisa kembali lain waktu dan tinggal mengunggah bukti. Unggahan dianggap sudah bayar; pemeriksaan tetap oleh panitia. Status tetap bernama Lunas dan Menunggu (pemilik memutuskan tidak diganti menjadi Sudah/Belum Dikonfirmasi) | Permintaan pemilik: pendaftar yang belum bayar tidak masuk sistem. Belum ada gerbang pembayaran otomatis. Pendaftaran dan baris bukti bayar ditulis dalam satu transaksi; berkas bukti dihapus bila gagal. Unggah bukti tambahan lewat Cek Pendaftaran tetap ada. Rancangan final belum diubah dan menunggu revisi lewat draf |
+
+## 13 November 2026 — stempel bukti PDF setelah K90
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K91 | Stempel bukti PDF untuk pendaftaran yang belum Lunas berbunyi "MENUNGGU / KONFIRMASI PANITIA", bukan lagi "BELUM LUNAS / MENUNGGU KONFIRMASI". Keterangan di dasar bukti ("Bukti ini dibuat otomatis …") miring, dan margin atas PDF 10 mm. Layar selesai di wizard punya tombol Salin ID | Mengubah teks stempel K78. Sejak K90 setiap pendaftaran masuk bersama bukti transfer, jadi "belum lunas" menyesatkan |

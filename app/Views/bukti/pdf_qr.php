@@ -8,7 +8,7 @@
 ?>
 <table width="100%" style="font-family: dejavusans;">
     <tr>
-        <td style="vertical-align: bottom; font-size: 7.5pt; line-height: 1.5; color: #5B6475;">
+        <td style="vertical-align: bottom; font-size: 7.5pt; line-height: 1.5; color: #5B6475; font-style: italic;">
             Bukti ini dibuat otomatis dan sah tanpa tanda tangan.<br>
             Keasliannya dapat diperiksa dengan memindai kode QR di sebelah kanan.
         </td>

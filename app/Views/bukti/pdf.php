@@ -23,15 +23,16 @@ $ikonWa = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w
 
 $lunas = $p['status'] === 'lunas';
 
-// Stempel status (K78): bingkai ganda miring, hijau "LUNAS" atau oranye "BELUM LUNAS", sebagai SVG.
+// Stempel status (K78): bingkai ganda miring, hijau "LUNAS" atau oranye "MENUNGGU", sebagai SVG.
+// Sejak K90 pendaftaran masuk bersama bukti transfer, jadi yang belum Lunas menunggu konfirmasi panitia.
 $warnaStempel = $lunas ? '#198754' : '#C4461B';
 $stempel      = 'data:image/svg+xml;base64,' . base64_encode(
     '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">'
     . '<g transform="rotate(-7 120 60)">'
     . '<rect x="14" y="20" width="212" height="80" rx="12" fill="none" stroke="' . $warnaStempel . '" stroke-width="4.5"/>'
     . '<rect x="22" y="28" width="196" height="64" rx="7" fill="none" stroke="' . $warnaStempel . '" stroke-width="1.6"/>'
-    . '<text x="120" y="66" font-family="dejavusans" font-weight="bold" font-size="' . ($lunas ? 34 : 22) . '" fill="' . $warnaStempel . '" text-anchor="middle">' . ($lunas ? 'LUNAS' : 'BELUM LUNAS') . '</text>'
-    . '<text x="120" y="84" font-family="dejavusans" font-weight="bold" font-size="10.5" fill="' . $warnaStempel . '" text-anchor="middle">' . ($lunas ? 'PEMBAYARAN DITERIMA' : 'MENUNGGU KONFIRMASI') . '</text>'
+    . '<text x="120" y="66" font-family="dejavusans" font-weight="bold" font-size="' . ($lunas ? 34 : 28) . '" fill="' . $warnaStempel . '" text-anchor="middle">' . ($lunas ? 'LUNAS' : 'MENUNGGU') . '</text>'
+    . '<text x="120" y="84" font-family="dejavusans" font-weight="bold" font-size="10.5" fill="' . $warnaStempel . '" text-anchor="middle">' . ($lunas ? 'PEMBAYARAN DITERIMA' : 'KONFIRMASI PANITIA') . '</text>'
     . '</g></svg>',
 );
 
