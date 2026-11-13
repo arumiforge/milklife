@@ -26,7 +26,7 @@ use Throwable;
  * 3. Bukti transfer wajib (K90): `bukti_bayar` berupa data URL gambar. Tanpa
  *    bukti, pendaftaran tidak masuk sistem (galat langkah 5).
  * 4. Foto penanggung jawab dan bukti transfer disimpan di luar `public/`.
- * 5. Satu transaksi: pendaftaran (status menunggu = Belum Dikonfirmasi), ID
+ * 5. Satu transaksi: pendaftaran (status menunggu), ID
  *    pendaftaran dari nomor baris (6.8), penanggung jawab, atlet, nomor atlet
  *    (biaya individu disalin), tim beregu, dan baris bukti bayar.
  * 6. Bila gagal, transaksi dibatalkan dan foto serta bukti dihapus. NISN yang ternyata
