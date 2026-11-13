@@ -261,6 +261,33 @@
         ringkasan.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
+    /**
+     * Isian yang ditandai salah dan mulai diisi lagi: tanda dan pesannya
+     * hilang. Ringkasan di atas langkah ikut tersembunyi bila tidak ada
+     * isian salah lagi. Semua isian diperiksa ulang saat Lanjut ditekan.
+     */
+    function hapusGalatIsian(e) {
+        var isian = e.target.closest && e.target.closest('.is-invalid');
+        if (!isian || !akar.contains(isian)) {
+            return;
+        }
+        isian.classList.remove('is-invalid');
+        var umpan = isian.parentElement.querySelector(':scope > .invalid-feedback')
+            || (isian.closest('.input-group') && isian.closest('.input-group').querySelector('.invalid-feedback'))
+            || $('.invalid-feedback', isian);
+        if (umpan) {
+            umpan.textContent = '';
+        }
+        var bagian = isian.closest('.langkah');
+        var ringkasan = bagian && $('.ringkasan-galat', bagian);
+        if (ringkasan && !$('.is-invalid', bagian)) {
+            ringkasan.hidden = true;
+        }
+    }
+
+    akar.addEventListener('input', hapusGalatIsian);
+    akar.addEventListener('change', hapusGalatIsian);
+
     function tandaiIsian(bagian, jalur, pesan) {
         var sasaran = $('[data-jalur="' + jalur + '"]', bagian);
 
