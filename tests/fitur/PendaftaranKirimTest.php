@@ -156,6 +156,21 @@ final class PendaftaranKirimTest extends UjiBasisData
         return $susulan;
     }
 
+    public function testTanpaBuktiTransferTidakTersimpan(): void
+    {
+        foreach (['', 'data:image/jpeg;base64,bukan-gambar'] as $bukti) {
+            $hasil = $this->kirimJson('pendaftaran/simpan', ['bukti_bayar' => $bukti] + $this->kirimanSah());
+
+            $hasil->assertStatus(422);
+            $galat = self::json($hasil)['galat'];
+            $this->assertSame(5, $galat[0]['langkah']);
+            $this->assertSame('bukti_bayar', $galat[0]['jalur']);
+        }
+
+        $this->assertSame(0, $this->db->table('pendaftaran')->countAllResults());
+        $this->assertSame(0, $this->db->table('bukti_bayar')->countAllResults());
+    }
+
     public function testSusulanTanpaKonfirmasiDitolak(): void
     {
         $susulan = $this->siapkanSusulan();
