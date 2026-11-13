@@ -125,6 +125,7 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
 
     <script src="<?= aset('vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
     <script src="<?= aset('js/kemajuan.js') ?>"></script>
+    <script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
     <?php if ($pakaiTabel) : ?>
     <script src="<?= aset('vendor/jquery/jquery.min.js') ?>"></script>
     <script src="<?= aset('vendor/datatables/js/dataTables.min.js') ?>"></script>

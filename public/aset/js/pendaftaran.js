@@ -39,6 +39,37 @@
     // Bantu
     // ------------------------------------------------------------------
 
+    /**
+     * `fetch` dengan bilah muat di atas halaman (K89).
+     */
+    function ambil(alamat, opsi) {
+        var bilah = window.Kemajuan;
+        if (bilah) {
+            bilah.mulai();
+        }
+        var akhiri = function () {
+            if (bilah) {
+                bilah.selesai();
+            }
+        };
+        return fetch(alamat, opsi).then(function (jawaban) {
+            akhiri();
+            return jawaban;
+        }, function (galat) {
+            akhiri();
+            throw galat;
+        });
+    }
+
+    /**
+     * Jendela konfirmasi (`konfirmasi.js`, K89); `window.confirm` bila belum termuat.
+     */
+    function yakin(judul, kalimat, tombol, jenis) {
+        return window.Konfirmasi
+            ? window.Konfirmasi.tanya(judul, kalimat, tombol, jenis)
+            : Promise.resolve(window.confirm(kalimat));
+    }
+
     function $(pemilih, induk) {
         return (induk || document).querySelector(pemilih);
     }
@@ -411,7 +442,7 @@
         L1.cari.disabled = true;
         L1.hasil.textContent = 'Mencari sekolah…';
 
-        return fetch(DATA.alamat.sekolah + '?npsn=' + encodeURIComponent(npsn), {
+        return ambil(DATA.alamat.sekolah + '?npsn=' + encodeURIComponent(npsn), {
             headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin'
         }).then(function (jawaban) {
@@ -1146,22 +1177,28 @@
         var sisa = atlet.nomor.filter(function (id) { return (hapusNomor || []).indexOf(id) === -1; });
         hapus.setAttribute('aria-label', 'Hapus ' + (namaNomor ? namaNomor + ' untuk ' : '') + atlet.nama);
         hapus.addEventListener('click', function () {
-            var tanya = namaNomor && sisa.length > 0
-                ? 'Hapus ' + namaNomor + ' untuk ' + atlet.nama + '? Nomor lomba lainnya tetap.'
-                : 'Hapus ' + atlet.nama + ' dari daftar?' + (namaNomor ? ' Atlet ini tidak punya nomor lomba lain.' : '');
-            if (!window.confirm(tanya)) {
-                return;
-            }
-            if (namaNomor && sisa.length > 0) {
-                atlet.nomor = sisa;
-            } else {
-                draf.atlet.splice(draf.atlet.indexOf(atlet), 1);
-            }
-            if (atletDiubah === atlet) {
-                kosongkanFormulirAtlet();
-            }
-            simpanDraf();
-            tampilkanDaftarAtlet();
+            var hanyaNomor = namaNomor && sisa.length > 0;
+            yakin(
+                hanyaNomor ? 'Hapus nomor lomba?' : 'Hapus atlet?',
+                hanyaNomor
+                    ? namaNomor + ' untuk ' + atlet.nama + ' akan dihapus. Nomor lomba lainnya tetap.'
+                    : atlet.nama + ' akan dihapus dari daftar.' + (namaNomor ? ' Atlet ini tidak punya nomor lomba lain.' : ''),
+                hanyaNomor ? 'Hapus nomor' : 'Hapus atlet'
+            ).then(function (setuju) {
+                if (!setuju) {
+                    return;
+                }
+                if (hanyaNomor) {
+                    atlet.nomor = sisa;
+                } else {
+                    draf.atlet.splice(draf.atlet.indexOf(atlet), 1);
+                }
+                if (atletDiubah === atlet) {
+                    kosongkanFormulirAtlet();
+                }
+                simpanDraf();
+                tampilkanDaftarAtlet();
+            });
         });
         tombol.appendChild(ubah);
         tombol.appendChild(hapus);
@@ -1357,7 +1394,7 @@
         var kepala = { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
         kepala[csrfKepala] = csrfToken;
 
-        return fetch(alamat, {
+        return ambil(alamat, {
             method: 'POST',
             headers: kepala,
             credentials: 'same-origin',
@@ -1419,7 +1456,7 @@
      */
     function perbaruiSusulan() {
         var npsn = draf.sekolah.dicari;
-        return fetch(DATA.alamat.sekolah + '?npsn=' + encodeURIComponent(npsn), {
+        return ambil(DATA.alamat.sekolah + '?npsn=' + encodeURIComponent(npsn), {
             headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin'
         }).then(function (jawaban) {
@@ -1700,6 +1737,14 @@
             return;
         }
 
+        yakin('Kirim bukti bayar?', 'Gambar "' + berkas.files[0].name + '" dikirim ke panitia sebagai bukti transfer. Setelah terkirim, gambar tidak bisa dihapus sendiri.', 'Kirim bukti', 'utama').then(function (setuju) {
+            if (setuju) {
+                kirimBukti(t, berkas, tombol, tulis);
+            }
+        });
+    });
+
+    function kirimBukti(t, berkas, tombol, tulis) {
         var isi = new FormData();
         isi.append('bukti', berkas.files[0]);
         var kepala = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
@@ -1708,7 +1753,7 @@
         tombol.disabled = true;
         tombol.lastChild.textContent = 'Mengunggah…';
 
-        fetch(t.bukti + '/bukti-bayar', { method: 'POST', headers: kepala, credentials: 'same-origin', body: isi })
+        ambil(t.bukti + '/bukti-bayar', { method: 'POST', headers: kepala, credentials: 'same-origin', body: isi })
             .then(function (jawaban) {
                 return jawaban.json().then(function (data) {
                     return { kode: jawaban.status, isi: data };
@@ -1732,7 +1777,7 @@
                 tulis(hasil.isi && hasil.isi.pesan ? hasil.isi.pesan
                     : 'Bukti bayar belum terkirim. Periksa sambungan internet dan pastikan gambar tidak lebih dari 10 MB, lalu coba lagi.', false);
             });
-    });
+    }
 
     $('#bayar-selesai').addEventListener('click', function () {
         sudahSelesai = true;
@@ -1765,13 +1810,16 @@
     });
 
     $('#tombol-mulai-ulang').addEventListener('click', function () {
-        if (window.confirm('Kosongkan semua isian dan mulai dari awal? Data sekolah, penanggung jawab, dan atlet di halaman ini akan hilang.')) {
+        yakin('Mulai dari awal?', 'Semua isian dikosongkan. Data sekolah, penanggung jawab, dan atlet di halaman ini akan hilang.', 'Kosongkan isian').then(function (setuju) {
+            if (!setuju) {
+                return;
+            }
             hapusDraf();
             draf = drafBaru();
             kosongkanFormulirAtlet();
             simpanDraf();
             tampilkanLangkah(1);
-        }
+        });
     });
 
     // Antarmuka untuk langkah 4–5 (F4-04).

@@ -62,6 +62,9 @@
         wadah.innerHTML = templat.innerHTML.split('__k__').join(kunci);
         var kartu = wadah.firstElementChild;
         daftar.appendChild(kartu);
+        if (window.PilihTanggal) {
+            window.PilihTanggal.pasang(kartu);
+        }
         siapkanKartu(kartu);
         nomoriKartu();
 

@@ -7,7 +7,8 @@
  * - `isi`: isi halaman, berada di dalam `<main id="isi">`. Halaman menulis
  *   `<h1>`-nya sendiri; kepala dan kaki tidak memakai heading.
  * - `kepala`: tag tambahan di `<head>` (misalnya `<link>` CSS atau `<meta>` halaman itu).
- * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap.
+ * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap, `kemajuan.js`
+ *   (bilah muat), dan `konfirmasi.js` (jendela konfirmasi, `window.Konfirmasi`).
  *
  * Menu publik ditulis di `$menuPublik` di bawah (K81): Tentang, Kategori,
  * dan Jadwal melompat ke bagian halaman depan, Unduhan ke halaman unduhan,
@@ -79,6 +80,10 @@ $logoKaki   = array_values(array_filter(
     <?= $this->renderSection('kepala') ?>
 </head>
 <body class="tata-publik" data-bs-theme="light">
+    <div id="bilah-kemajuan" class="bilah-kemajuan" hidden aria-hidden="true">
+        <div class="bilah-kemajuan-isi"></div>
+    </div>
+
     <a class="lompat-ke-isi visually-hidden-focusable" href="#isi">Lompat ke isi</a>
 
     <header class="kepala-publik<?= $beranda ? ' kepala-beranda' : '' ?>">
@@ -130,6 +135,10 @@ $logoKaki   = array_values(array_filter(
     </footer>
 
     <script src="<?= aset('vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
+    <?php // Bilah muat dan jendela konfirmasi untuk semua halaman publik (K89). ?>
+    <script src="<?= aset('js/kemajuan.js') ?>"></script>
+    <script src="<?= aset('js/konfirmasi.js') ?>"></script>
+    <script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
     <?= $this->renderSection('skrip') ?>
 </body>
 </html>

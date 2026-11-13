@@ -6,8 +6,9 @@
  *
  * Susunan hemat tempat untuk data banyak: kepala (logo kiri, judul tengah),
  * kotak info ringkas, tabel nomor individu satu baris per atlet (nomor
- * lombanya digabung), tabel nomor beregu, lalu status dan total berdampingan,
- * dan kode QR besar di pojok kanan bawah (K88). Kepala tabel diulang di setiap halaman; nomor halaman di kaki
+ * lombanya digabung), tabel nomor beregu, lalu status dan total berdampingan.
+ * Kode QR besar di pojok kanan bawah halaman terakhir dan keterangannya di
+ * pojok kiri bawah (`bukti/pdf_qr`, ditulis `BuktiPendaftaran::pdf()`, K89). Kepala tabel diulang di setiap halaman; nomor halaman di kaki
  * (`BuktiPendaftaran::pdf()`).
  *
  * @var array<string, mixed> $p         satu pendaftaran (App\Libraries\DataPendaftaran)
@@ -15,7 +16,6 @@
  * @var string               $seriTahun 'Seri 2 Tahun 2026'
  * @var bool                 $logo      logo persegi ada (`var:logo`, PNG transparan)
  *
- * Kode QR berisi alamat bukti ini, disisipkan `BuktiPendaftaran::pdf()` sebagai `var:qr`.
  */
 
 // Ikon WhatsApp (Bootstrap Icons, MIT), disisipkan sebagai SVG.
@@ -182,15 +182,8 @@ foreach ($p['individu'] as $baris) {
             </table>
         </td>
     </tr>
-    <tr>
-        <td style="vertical-align: bottom;">
-            <div class="catatan">Bukti ini dibuat otomatis dan sah tanpa tanda tangan.<br>Keasliannya dapat diperiksa dengan memindai kode QR di pojok kanan bawah.</div>
-        </td>
-        <td style="text-align: right; padding-top: 5mm;">
-            <img src="var:qr" width="38mm" height="38mm">
-        </td>
-    </tr>
 </table>
+
 
 </body>
 </html>
