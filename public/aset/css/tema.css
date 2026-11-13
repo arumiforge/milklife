@@ -789,6 +789,7 @@ html:has(.tata-publik) {
     font-weight: 800;
     letter-spacing: 0.02em;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .tombol-utama .btn-primary {
@@ -862,7 +863,7 @@ html:has(.tata-publik) {
 
 .pembuka-ku-daftar {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.75rem;
     margin: 0;
     padding: 0;
@@ -873,9 +874,9 @@ html:has(.tata-publik) {
     position: relative;
     display: flex;
     align-items: flex-start;
-    height: 5rem;
-    /* Teks di kanan pelari: lebar bagian pelari ±30 % gambar (1,15 × tinggi kartu). */
-    padding: 0.55rem 0.5rem 0 5.75rem;
+    height: 6rem;
+    /* Teks di kanan pelari: lebar bagian pelari ±30 % gambar (1,15 × tinggi gambar). */
+    padding: 0.7rem 0.6rem 0 7rem;
     overflow: hidden;
     background: #FCF6EC url("../gambar/kartu-ku-hijau.webp") left bottom / cover no-repeat;
     border-radius: 1rem;
@@ -902,9 +903,15 @@ html:has(.tata-publik) {
     outline-offset: 2px;
 }
 
+.pembuka-ku-teks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    min-width: 0;
+}
+
 .pembuka-ku-nama {
-    align-self: flex-start;
-    margin-top: 0.15rem;
+    margin-bottom: 0.15rem;
     font-size: 1.25rem;
     font-style: italic;
     font-weight: 900;
@@ -912,19 +919,32 @@ html:has(.tata-publik) {
     text-transform: uppercase;
 }
 
+/* Julukan kelompok umur: kecil, miring, oranye; jumlah nomor kecil tidak tebal (K88). */
 .pembuka-ku-julukan {
-    display: block;
-    margin-top: 0.15rem;
-    color: var(--ml-teks-redup);
+    margin-bottom: 0.1rem;
+    color: var(--ml-oranye-judul);
+    font-size: 0.7rem;
+    font-style: italic;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.pembuka-ku-jumlah {
+    color: var(--ml-biru-tua);
     font-size: 0.75rem;
-    font-style: normal;
-    font-weight: 700;
-    text-transform: none;
+    font-weight: 400;
+    line-height: 1.3;
+    white-space: nowrap;
 }
 
 @media (min-width: 576px) {
     .tombol-utama .btn {
         flex: 0 1 auto;
+    }
+
+    .pembuka-ku-daftar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -1012,9 +1032,12 @@ html:has(.tata-publik) {
         gap: 1rem;
     }
 
+    /* Gambar 82 % tinggi kartu supaya pelari lebih sempit dan teks muat di
+       lima kolom; bagian atas yang kosong sewarna latar gambar. */
     .pembuka-ku-kartu {
         height: 6.5rem;
-        padding: 0.75rem 0.75rem 0 8.1rem;
+        padding: 0.7rem 0.5rem 0 6.4rem;
+        background-size: auto 82%;
     }
 
     .pembuka-ku-nama {
@@ -1060,7 +1083,7 @@ html:has(.tata-publik) {
 
     .pembuka-ku-kartu {
         height: 5.75rem;
-        padding: 0.6rem 0.75rem 0 7.1rem;
+        padding: 0.5rem 0.5rem 0 5.8rem;
     }
 
     .pembuka-ku-nama {
@@ -2121,8 +2144,14 @@ html:has(.tata-publik) {
 }
 
 .cek-tim-anggota {
-    color: var(--ml-teks-redup);
+    --bs-table-bg: transparent;
     font-size: 0.9375rem;
+}
+
+.cek-tim-anggota th {
+    color: var(--ml-teks-redup);
+    font-size: 0.8125rem;
+    font-weight: 600;
 }
 
 /* Biaya: strip ringkasan, total menonjol. */

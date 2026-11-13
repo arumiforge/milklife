@@ -277,7 +277,9 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // Tiap kartu menaut ke rincian kelompok umurnya di bagian lomba.
         $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[contains(@class, "pembuka-ku-kartu")]'));
         $this->assertCount(5, $kartu);
-        $this->assertSame('KU 8 Seneng Playon', $this->teksSimpul($kartu[0]));
+        // Nama, julukan, dan jumlah nomor; jumlah 0 tidak ditulis (K88).
+        $this->assertSame('KU 8 Seneng Playon 2 nomor individu', $this->teksSimpul($kartu[0]));
+        $this->assertSame('KU 10 6 nomor individu 5 nomor beregu', $this->teksSimpul($kartu[1]));
 
         foreach ($kartu as $a) {
             $this->assertSame(1, $xpath->query('//article[@id="' . substr($a->getAttribute('href'), 1) . '"]')->length, $a->getAttribute('href'));

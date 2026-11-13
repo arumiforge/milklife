@@ -20,7 +20,7 @@
  * @var array<string, mixed>                                                                                   $tampilan     lihat IsiHalamanDepan::tampilan()
  * @var App\Libraries\BukaTutupPendaftaran                                                                     $bukaTutup
  * @var list<array{kunci: string, label: string, alamat: string|null, utama: bool, keterangan?: string|null}> $tombol
- * @var list<array{id: int, nama: string}>                                                                     $kelompokUmur
+ * @var list<array{id: int, nama: string, nomor_individu: list<mixed>, nomor_beregu: list<mixed>}>             $kelompokUmur
  */
 
 use App\Libraries\BukaTutupPendaftaran;
@@ -153,11 +153,17 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                         <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>
                         <li>
                             <a class="pembuka-ku-kartu pembuka-ku-kartu-<?= $i % 2 === 0 ? 'hijau' : 'oranye' ?>" href="#lomba-ku-<?= (int) $ku['id'] ?>">
-                                <span class="pembuka-ku-nama">
-                                    <?= esc($namaKu) ?>
+                                <?php // Nama, julukan, lalu jumlah nomor individu dan beregu (K88); jumlah 0 tidak ditulis. ?>
+                                <span class="pembuka-ku-teks">
+                                    <span class="pembuka-ku-nama"><?= esc($namaKu) ?></span>
                                     <?php if ($julukan !== '') : ?>
                                         <span class="pembuka-ku-julukan"><?= esc($julukan) ?></span>
                                     <?php endif ?>
+                                    <?php foreach (['individu' => count($ku['nomor_individu'] ?? []), 'beregu' => count($ku['nomor_beregu'] ?? [])] as $jenis => $jumlah) : ?>
+                                        <?php if ($jumlah > 0) : ?>
+                                            <span class="pembuka-ku-jumlah"><?= $jumlah ?> nomor <?= $jenis ?></span>
+                                        <?php endif ?>
+                                    <?php endforeach ?>
                                 </span>
                             </a>
                         </li>

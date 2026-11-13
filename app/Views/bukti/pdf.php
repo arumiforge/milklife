@@ -4,10 +4,10 @@
  * `App\Libraries\BuktiPendaftaran`. CSS ditulis di sini karena mPDF tidak
  * memuat berkas tema.
  *
- * Susunan hemat tempat untuk data banyak: kepala (logo kiri, judul tengah,
- * kode QR kanan), kotak info ringkas, tabel nomor individu satu baris per
- * atlet (nomor lombanya digabung), tabel nomor beregu, lalu status dan total
- * berdampingan. Kepala tabel diulang di setiap halaman; nomor halaman di kaki
+ * Susunan hemat tempat untuk data banyak: kepala (logo kiri, judul tengah),
+ * kotak info ringkas, tabel nomor individu satu baris per atlet (nomor
+ * lombanya digabung), tabel nomor beregu, lalu status dan total berdampingan,
+ * dan kode QR besar di pojok kanan bawah (K88). Kepala tabel diulang di setiap halaman; nomor halaman di kaki
  * (`BuktiPendaftaran::pdf()`).
  *
  * @var array<string, mixed> $p         satu pendaftaran (App\Libraries\DataPendaftaran)
@@ -99,9 +99,8 @@ foreach ($p['individu'] as $baris) {
             <div class="nama-acara"><?= esc($namaAcara) ?></div>
             <?php if ($seriTahun !== '') : ?><div class="seri-tahun"><?= esc($seriTahun) ?></div><?php endif ?>
         </td>
-        <td width="26mm" style="text-align: right;">
-            <img src="var:qr" width="24mm" height="24mm">
-        </td>
+        <?php // Sel kosong selebar logo supaya judul tetap di tengah; kode QR di pojok kanan bawah (K88). ?>
+        <td width="26mm"></td>
     </tr>
 </table>
 
@@ -174,7 +173,6 @@ foreach ($p['individu'] as $baris) {
     <tr>
         <td width="55%" class="stempel stempel-<?= $lunas ? 'lunas' : 'menunggu' ?>">
             <img src="<?= $stempel ?>" width="58mm" alt="<?= esc($p['status_label'], 'attr') ?>">
-            <div class="catatan">Bukti ini dibuat otomatis dan sah tanpa tanda tangan.<br>Keasliannya dapat diperiksa dengan memindai kode QR di pojok kanan atas.</div>
         </td>
         <td width="45%">
             <table class="total">
@@ -182,6 +180,14 @@ foreach ($p['individu'] as $baris) {
                 <tr><td>Subtotal beregu</td><td style="text-align: right;"><?= esc(rupiah($p['subtotal_beregu'])) ?></td></tr>
                 <tr class="akhir"><td>Total Pembayaran</td><td style="text-align: right;"><?= esc(rupiah($p['total'])) ?></td></tr>
             </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="vertical-align: bottom;">
+            <div class="catatan">Bukti ini dibuat otomatis dan sah tanpa tanda tangan.<br>Keasliannya dapat diperiksa dengan memindai kode QR di pojok kanan bawah.</div>
+        </td>
+        <td style="text-align: right; padding-top: 5mm;">
+            <img src="var:qr" width="38mm" height="38mm">
         </td>
     </tr>
 </table>

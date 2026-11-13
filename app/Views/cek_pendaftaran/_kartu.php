@@ -1,6 +1,6 @@
 <?php
 /**
- * Satu kartu pendaftaran di halaman cek (tanpa tanggal lahir dan nomor dada, K52): kepala (ID, tanggal, status,
+ * Satu kartu pendaftaran di halaman cek (tanpa tanggal lahir, K52): kepala (ID, tanggal, status,
  * tombol bukti), penanggung jawab, atlet, tim beregu, dan biaya. Angka biaya
  * adalah nilai tersimpan (rancangan 6.7).
  *
@@ -14,6 +14,10 @@
 $idJudul = 'pendaftaran-' . $urutan;
 $lunas   = $p['status'] === 'lunas';
 $jumlahBukti = (int) ($p['jumlah_bukti_bayar'] ?? 0);
+// Nomor dada tampil setelah Lunas (K88); sebelumnya tanda pisah.
+$dada = static fn (array $a): string => $lunas && ($a['nomor_dada'] ?? null) !== null
+    ? '<strong>' . esc((string) $a['nomor_dada']) . '</strong>'
+    : '<span class="text-body-secondary" title="Nomor dada keluar setelah pembayaran Lunas">–</span>';
 $batasBukti  = App\Models\BuktiBayarModel::BATAS;
 ?>
 <article class="card cek-kartu <?= $lunas ? 'cek-kartu-lunas' : 'cek-kartu-menunggu' ?>" aria-labelledby="<?= $idJudul ?>">
@@ -51,6 +55,7 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
                         <th scope="col">Nama</th>
                         <th scope="col">NISN</th>
                         <th scope="col">L/P</th>
+                        <th scope="col">No. Dada</th>
                         <th scope="col">Kelompok umur</th>
                         <th scope="col">Nomor lomba</th>
                     </tr>
@@ -62,6 +67,7 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
                             <td class="fw-semibold"><?= esc($a['nama']) ?></td>
                             <td><?= esc($a['nisn']) ?></td>
                             <td><abbr class="kategori kategori-<?= $a['jenis_kelamin'] === 'P' ? 'putri' : 'putra' ?>" title="<?= esc($a['jenis_kelamin_label'], 'attr') ?>"><?= esc($a['jenis_kelamin']) ?></abbr></td>
+                            <td><?= $dada($a) ?></td>
                             <td><?= esc($a['kelompok_umur']) ?></td>
                             <td><?= esc(implode(', ', $a['nomor_lomba'])) ?></td>
                         </tr>
@@ -79,7 +85,20 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
                             <strong><?= esc($tim['nomor_lomba']) ?></strong>
                             <span class="cek-tim-biaya"><?= $tim['biaya_tim'] === null ? 'tanpa biaya tim, tim sudah terdaftar' : esc(rupiah($tim['biaya_tim'])) ?></span>
                         </div>
-                        <span class="cek-tim-anggota"><?= esc(implode(', ', array_column($tim['anggota'], 'nama'))) ?></span>
+                        <?php // Satu nama per baris dengan nomor dada (K88). ?>
+                        <table class="table table-sm align-middle mb-0 mt-2 cek-tim-anggota">
+                            <thead><tr><th scope="col">No</th><th scope="col">Nama</th><th scope="col">NISN</th><th scope="col">No. Dada</th></tr></thead>
+                            <tbody>
+                                <?php foreach ($tim['anggota'] as $j => $anggota) : ?>
+                                    <tr>
+                                        <td class="text-body-secondary"><?= $j + 1 ?></td>
+                                        <td class="fw-semibold"><?= esc($anggota['nama']) ?></td>
+                                        <td><?= esc($anggota['nisn']) ?></td>
+                                        <td><?= $dada($anggota) ?></td>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
                     </li>
                 <?php endforeach ?>
             </ul>
