@@ -115,7 +115,7 @@ foreach ($p['individu'] as $baris) {
     <tr>
         <td colspan="3">
             <div class="info-label">Penanggung Jawab (Official)</div>
-            <div class="info-isi-biasa"><?php foreach ($p['penanggung_jawab'] as $i => $pj) : ?><?= $i > 0 ? ', ' : '' ?><b><?= esc($pj['nama']) ?></b> (<img src="<?= $ikonWa ?>" width="3mm" height="3mm" style="vertical-align: middle;"> <?= esc($pj['nomor_wa']) ?>)<?php endforeach ?></div>
+            <div class="info-isi-biasa"><?php foreach ($p['penanggung_jawab'] as $i => $pj) : ?><?= $i > 0 ? ', ' : '' ?><b><?= esc($pj['nama']) ?></b> <img src="<?= $ikonWa ?>" width="3mm" height="3mm" style="vertical-align: middle;"> <?= esc($pj['nomor_wa']) ?><?php endforeach ?></div>
         </td>
     </tr>
 </table>

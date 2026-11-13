@@ -6,9 +6,10 @@ use App\Models\BuktiBayarModel;
 use CodeIgniter\HTTP\Files\UploadedFile;
 use GdImage;
 use RuntimeException;
+use Throwable;
 
 /**
- * Berkas gambar bukti bayar yang diunggah admin (K34; rencana Tahap 6,
+ * Berkas gambar bukti bayar yang diunggah admin atau official (K34, K83; rencana Tahap 6,
  * "Bukti bayar").
  *
  * - Diterima: gambar JPG, PNG, atau WEBP yang benar-benar terbaca, paling
@@ -59,6 +60,12 @@ final class BerkasBuktiBayar
     public const FOLDER = 'bukti-bayar';
 
     public const MUTU_JPEG = 85;
+
+    /**
+     * Hasil `unggahKe()` bila batas bukti per pendaftaran sudah tercapai;
+     * pesannya dipilih pemanggil (admin dan official berbeda saran).
+     */
+    public const PENUH = 'penuh';
 
     /**
      * Jenis gambar GD yang diterima.
@@ -176,6 +183,69 @@ final class BerkasBuktiBayar
         clearstatcache(true, $penuh);
 
         return ['berkas' => $jalur, 'ukuran' => (int) filesize($penuh)];
+    }
+
+    /**
+     * Periksa, simpan, lalu catat satu bukti bayar untuk pendaftaran
+     * `$pendaftaranId`. Dipakai panel admin dan official (K83).
+     *
+     * Hasil `null` bila tersimpan, `self::PENUH` bila batas sudah tercapai,
+     * selain itu pesan galat ramah. Berkas disimpan di luar transaksi
+     * (mengecilkan gambar butuh waktu); di dalam transaksi baris pendaftaran
+     * dikunci supaya dua unggahan bersamaan tidak sama-sama lolos batas.
+     * Bila baris gagal dicatat, berkas baru dihapus lagi.
+     */
+    public function unggahKe(int $pendaftaranId, ?UploadedFile $unggahan): ?string
+    {
+        $model = model(BuktiBayarModel::class);
+
+        if (! $model->masihBolehTambah($pendaftaranId)) {
+            return self::PENUH;
+        }
+
+        $pesan = $this->periksa($unggahan);
+
+        if ($pesan !== null) {
+            return 'Bukti bayar belum tersimpan. ' . $pesan;
+        }
+
+        try {
+            $hasil = $this->simpan($unggahan);
+        } catch (RuntimeException $e) {
+            return 'Bukti bayar belum tersimpan. ' . $e->getMessage();
+        }
+
+        $db = $model->db;
+        $db->transBegin();
+
+        try {
+            $db->query('SELECT id FROM ' . $db->prefixTable('pendaftaran') . ' WHERE id = ? FOR UPDATE', [$pendaftaranId]);
+
+            if ($model->jumlahMilik($pendaftaranId) >= BuktiBayarModel::BATAS) {
+                $db->transRollback();
+                $this->hapus($hasil['berkas']);
+
+                return self::PENUH;
+            }
+
+            $baru = $model->insert(['pendaftaran_id' => $pendaftaranId] + $hasil);
+        } catch (Throwable $e) {
+            $db->transRollback();
+            $this->hapus($hasil['berkas']);
+
+            throw $e;
+        }
+
+        if ($baru === false) {
+            $db->transRollback();
+            $this->hapus($hasil['berkas']);
+
+            return 'Bukti bayar belum tersimpan karena ada gangguan di server. Coba unggah sekali lagi; bila masih gagal, hubungi panitia.';
+        }
+
+        $db->transCommit();
+
+        return null;
     }
 
     /**

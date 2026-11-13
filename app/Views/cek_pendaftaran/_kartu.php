@@ -7,9 +7,14 @@
  * @var array<string, mixed> $p      satu pendaftaran (App\Libraries\DataPendaftaran)
  * @var int                  $urutan nomor kartu, mulai 1
  * @var bool                 $banyak lebih dari satu pendaftaran ditampilkan
+ * @var string               $kode   isian pencarian, tujuan kembali setelah unggah bukti bayar
+ *
+ * Pendaftaran yang belum Lunas punya kotak unggah bukti bayar (K83).
  */
 $idJudul = 'pendaftaran-' . $urutan;
 $lunas   = $p['status'] === 'lunas';
+$jumlahBukti = (int) ($p['jumlah_bukti_bayar'] ?? 0);
+$batasBukti  = App\Models\BuktiBayarModel::BATAS;
 ?>
 <article class="card cek-kartu <?= $lunas ? 'cek-kartu-lunas' : 'cek-kartu-menunggu' ?>" aria-labelledby="<?= $idJudul ?>">
     <div class="card-header cek-kartu-kepala">
@@ -85,5 +90,26 @@ $lunas   = $p['status'] === 'lunas';
             <div><dt>Subtotal beregu</dt><dd><?= esc(rupiah($p['subtotal_beregu'])) ?></dd></div>
             <div class="cek-biaya-total"><dt>Total</dt><dd><?= esc(rupiah($p['total'])) ?></dd></div>
         </dl>
+
+        <?php if (! $lunas) : ?>
+            <div class="cek-unggah-bukti">
+                <h4 class="cek-subjudul"><i class="bi bi-receipt" aria-hidden="true"></i> Bukti bayar <span class="cek-jumlah"><?= $jumlahBukti ?></span></h4>
+                <?php if ($jumlahBukti >= $batasBukti) : ?>
+                    <p class="mb-0">Sudah <?= $batasBukti ?> gambar terkirim, batas paling banyak. Panitia akan memeriksanya.</p>
+                <?php else : ?>
+                    <p class="small text-body-secondary"><?= $jumlahBukti === 0 ? 'Belum ada bukti bayar.' : 'Sudah ' . $jumlahBukti . ' gambar terkirim.' ?> Unggah foto atau tangkapan layar bukti transfer di sini, tidak perlu dikirim lewat WA.</p>
+                    <form method="post" action="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p) . '/bukti-bayar', 'attr') ?>" enctype="multipart/form-data">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="kembali" value="<?= esc($kode, 'attr') ?>">
+                        <label class="visually-hidden" for="bukti-<?= $urutan ?>">Gambar bukti transfer <?= esc($p['id_pendaftaran']) ?></label>
+                        <div class="input-group">
+                            <input class="form-control" type="file" id="bukti-<?= $urutan ?>" name="bukti" accept="image/jpeg,image/png,image/webp" required>
+                            <button class="btn btn-primary" type="submit"><i class="bi bi-upload" aria-hidden="true"></i> Unggah</button>
+                        </div>
+                        <div class="form-text">JPG, PNG, atau WEBP, paling besar 10 MB.</div>
+                    </form>
+                <?php endif ?>
+            </div>
+        <?php endif ?>
     </div>
 </article>

@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\DataPendaftaran;
 use App\Libraries\IsiHalamanDepan;
+use App\Models\BuktiBayarModel;
 
 /**
  * Cek pendaftaran lewat NPSN atau ID pendaftaran (`/cek-pendaftaran`,
@@ -77,6 +78,12 @@ class CekPendaftaranController extends BaseController
         } else {
             $data['galat'] = 'Isian belum sesuai. Tulis 8 angka NPSN sekolah (contoh 20300001), atau ID pendaftaran yang diawali MAC (contoh MAC2A0000126).';
         }
+
+        // Jumlah bukti bayar yang sudah diunggah, untuk kotak unggah di kartu (K83).
+        foreach ($data['hasil'] as &$p) {
+            $p['jumlah_bukti_bayar'] = model(BuktiBayarModel::class)->jumlahMilik((int) $p['id']);
+        }
+        unset($p);
 
         return view('cek_pendaftaran', $data);
     }

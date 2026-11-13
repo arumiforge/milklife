@@ -10,8 +10,8 @@
  *   gambar dan logo yang belum diunggah atau berkasnya hilang tidak
  *   ditampilkan (K41). Logo acara tampil di kepala halaman (tata letak
  *   publik); di sini hanya logo Djarum Foundation.
- * - Judul dari pengaturan; tiap kalimat satu baris dan kalimat terakhir
- *   oranye. Bila kosong, nama acara menjadi judul. Satu-satunya `<h1>`
+ * - Judul dari pengaturan, huruf besar; tiap kalimat (atau tiap kata bila
+ *   hanya satu kalimat) satu baris dan baris terakhir oranye. Bila kosong, nama acara menjadi judul. Satu-satunya `<h1>`
  *   halaman ada di sini (`#judul-acara`).
  * - Teks admin di-escape; baris baru di dalam paragraf menjadi `<br>`.
  * - Tombol tanpa alamat tampil nonaktif dengan keterangannya (K39).
@@ -51,11 +51,12 @@ $logo = array_values(array_filter(
 // Atribut width/height dari ukuran asli supaya halaman tidak melompat saat gambar dimuat.
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . $ukuran['lebar'] . '" height="' . $ukuran['tinggi'] . '"';
 
-// Judul per kalimat: "Berlari. Bermain. Berprestasi." menjadi tiga baris.
+// Judul per kalimat ("Berlari. Bermain. Berprestasi."); judul satu kalimat
+// per kata ("MilkLife Athletics Challenge"), K83. Tampil huruf besar lewat CSS.
 $kalimatJudul = preg_split('/(?<=[.!?])\s+/u', $tampilan['judul'], -1, PREG_SPLIT_NO_EMPTY) ?: [];
-
-// Nomor seri besar bergaris di atas foto ("Seri 2" menjadi "02"); hiasan saja.
-$nomorSeri = preg_match('/(\d+)/', $acara['seri_tahun'], $cocok) === 1 ? sprintf('%02d', (int) $cocok[1]) : '';
+if (count($kalimatJudul) === 1) {
+    $kalimatJudul = preg_split('/\s+/u', $kalimatJudul[0], -1, PREG_SPLIT_NO_EMPTY) ?: [];
+}
 
 $ikonTombol = ['pendaftaran' => 'arrow-right', 'cek' => 'arrow-right'];
 
@@ -76,14 +77,11 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
             </div>
         <?php endif ?>
 
-        <?php // Lengkung oranye dan hijau muda, nomor seri, dan gelombang bawah: hiasan. ?>
+        <?php // Lengkung oranye dan hijau muda serta gelombang bawah: hiasan. ?>
         <svg class="pembuka-lengkung" viewBox="0 0 800 600" preserveAspectRatio="none" aria-hidden="true" focusable="false">
             <path d="M120 600 C 160 330, 420 150, 800 90" fill="none" stroke="#E85F31" stroke-width="46" stroke-linecap="round"/>
             <path d="M210 600 C 250 380, 470 220, 800 175" fill="none" stroke="#C9E265" stroke-width="22" stroke-linecap="round"/>
         </svg>
-        <?php if ($nomorSeri !== '') : ?>
-            <span class="pembuka-nomor-seri" aria-hidden="true"><?= esc($nomorSeri) ?></span>
-        <?php endif ?>
 
         <div class="container pembuka-isi">
             <div class="pembuka-kiri">
@@ -171,7 +169,6 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
         <div class="pembuka-ku">
             <div class="container">
                 <p class="pembuka-ku-label"><span>Kelompok usia</span></p>
-                <p class="pembuka-ku-judul">Setiap langkah punya peluang</p>
                 <ul class="pembuka-ku-daftar">
                     <?php foreach ($kelompokUmur as $i => $ku) : ?>
                         <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>

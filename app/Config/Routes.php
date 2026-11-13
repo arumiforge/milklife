@@ -20,6 +20,8 @@ $routes->get('unduhan', 'UnduhanController::index');
 $routes->get('cek-pendaftaran', 'CekPendaftaranController::index');
 // Bukti PDF: kode acak lalu ID pendaftaran (K77); alamat tanpa kode tidak ada lagi.
 $routes->get('bukti/([0-9a-f]{24})/(:segment)', 'BuktiController::index/$1/$2');
+// Official mengunggah bukti bayar sendiri (K83), dari wizard atau Cek Pendaftaran.
+$routes->post('bukti/([0-9a-f]{24})/(:segment)/bukti-bayar', 'BuktiController::unggahBayar/$1/$2');
 // Akhir blok Tahap 5
 
 // ---------- Pendaftaran (Tahap 4) ----------

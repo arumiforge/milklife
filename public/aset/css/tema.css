@@ -548,8 +548,7 @@ html:has(.tata-publik) {
     object-position: 50% 30%;
 }
 
-.pembuka-lengkung,
-.pembuka-nomor-seri {
+.pembuka-lengkung {
     display: none;
 }
 
@@ -863,15 +862,6 @@ html:has(.tata-publik) {
     text-transform: uppercase;
 }
 
-.pembuka-ku-judul {
-    margin-bottom: 1rem;
-    text-align: center;
-    font-size: clamp(1.25rem, 5vw, 2.25rem);
-    font-style: italic;
-    font-weight: 900;
-    line-height: 1.1;
-    text-transform: uppercase;
-}
 
 .pembuka-ku-daftar {
     display: grid;
@@ -985,8 +975,13 @@ html:has(.tata-publik) {
         z-index: -1;
         width: 60%;
         height: auto;
-        -webkit-mask-image: linear-gradient(to right, transparent 0, #000 30%);
-        mask-image: linear-gradient(to right, transparent 0, #000 30%);
+        /* Tepi kiri foto berupa setengah lingkaran yang memudar perlahan
+           ke latar krem (K83), bukan garis lurus. */
+        -webkit-mask-image: var(--ml-pudar-pembuka);
+        mask-image: var(--ml-pudar-pembuka);
+        --ml-pudar-pembuka: radial-gradient(ellipse 100% 100% at 100% 50%,
+            #000 0%, #000 46%, rgba(0, 0, 0, 0.92) 54%, rgba(0, 0, 0, 0.75) 63%,
+            rgba(0, 0, 0, 0.5) 72%, rgba(0, 0, 0, 0.26) 81%, rgba(0, 0, 0, 0.08) 90%, transparent 97%);
     }
 
     .pembuka-lengkung {
@@ -1003,25 +998,6 @@ html:has(.tata-publik) {
     .pembuka-dengan-gambar .pembuka-lengkung {
         z-index: 0;
         opacity: 0.55;
-    }
-
-    .pembuka-nomor-seri {
-        display: block;
-        position: absolute;
-        top: 0.5rem;
-        right: 2.5%;
-        z-index: 0;
-        color: transparent;
-        font-size: clamp(7rem, 22vh, 14rem);
-        font-style: italic;
-        font-weight: 900;
-        line-height: 1;
-        letter-spacing: -0.04em;
-        -webkit-text-stroke: 3px rgba(var(--ml-biru-tua-rgb), 0.2);
-    }
-
-    .pembuka-dengan-gambar .pembuka-nomor-seri {
-        -webkit-text-stroke-color: rgba(255, 255, 255, 0.9);
     }
 
     .pembuka-gelombang {
@@ -1049,10 +1025,6 @@ html:has(.tata-publik) {
         padding: 0 0 1.25rem;
     }
 
-    .pembuka-ku-judul {
-        margin-bottom: 0.75rem;
-        font-size: clamp(1.25rem, 3.4vh, 2.25rem);
-    }
 
     .pembuka-ku-daftar {
         grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1109,10 +1081,6 @@ html:has(.tata-publik) {
         margin-bottom: 0.15rem;
     }
 
-    .pembuka-ku-judul {
-        margin-bottom: 0.5rem;
-        font-size: clamp(1.25rem, 3vh, 2rem);
-    }
 
     .pembuka-ku-kartu {
         padding: 0.6rem 1rem 1.35rem;
@@ -2034,6 +2002,13 @@ html:has(.tata-publik) {
     margin-bottom: 0;
     font-weight: 700;
     color: var(--ml-biru-tua);
+}
+
+/* Kotak unggah bukti bayar di kartu yang belum Lunas (K83). */
+.cek-unggah-bukti {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed rgba(var(--ml-biru-tua-rgb), 0.25);
 }
 
 /* Kartu pendaftaran: garis kiri hijau (Lunas) atau kuning (Menunggu). */

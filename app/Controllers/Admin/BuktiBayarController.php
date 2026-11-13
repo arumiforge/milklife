@@ -9,14 +9,14 @@ use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\DownloadResponse;
 use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\ResponseInterface;
-use RuntimeException;
 use Throwable;
 
 /**
  * Bukti bayar pendaftaran (K34; F6-03): unggah, lihat, unduh, dan hapus.
  *
- * Official mengirim bukti transfer lewat WA; admin mengunggahnya ke
- * pendaftaran yang bersangkutan dari rincian pendaftaran
+ * Official mengunggah bukti transfer sendiri saat mendaftar atau lewat Cek
+ * Pendaftaran (K83, `BuktiController::unggahBayar`); admin tetap bisa
+ * mengunggah bukti yang dikirim lewat WA dari rincian pendaftaran
  * (`admin/pendaftaran/<id>`, potongan `admin/pendaftaran/_bukti_bayar`).
  *
  * Rute (blok "Panel data (Tahap 6)" di `app/Config/Routes.php`, dijaga
@@ -43,10 +43,7 @@ use Throwable;
  *
  * Urutan langkah supaya tidak ada berkas tanpa baris atau baris tanpa berkas:
  *
- * - Unggah: simpan berkas (di luar transaksi, karena mengecilkan gambar
- *   butuh waktu) → di dalam transaksi kunci baris pendaftaran, hitung bukti,
- *   simpan baris → selesaikan transaksi. Bila batas sudah tercapai (misalnya
- *   dua unggahan bersamaan) atau baris gagal disimpan, berkas baru dihapus.
+ * - Unggah: `BerkasBuktiBayar::unggahKe()`.
  * - Hapus: hapus baris di dalam transaksi → hapus berkas → selesaikan
  *   transaksi. Bila berkas tidak bisa dihapus, transaksi dibatalkan sehingga
  *   barisnya kembali. Berkas yang sudah tidak ada tidak menghalangi hapus.
@@ -61,63 +58,14 @@ class BuktiBayarController extends BaseController
     public function unggah(int $id): RedirectResponse
     {
         $pendaftaran = $this->cariPendaftaran($id);
-        $model       = model(BuktiBayarModel::class);
         $kembali     = self::alamatRincian($id);
-
-        if (! $model->masihBolehTambah($id)) {
-            return redirect()->to($kembali)->with('pesan_galat', self::pesanPenuh());
-        }
-
-        $berkas  = new BerkasBuktiBayar();
-        $unggah  = $this->request->getFile(self::KOTAK);
-        $pesan   = $berkas->periksa($unggah);
+        $pesan       = (new BerkasBuktiBayar())->unggahKe($id, $this->request->getFile(self::KOTAK));
 
         if ($pesan !== null) {
-            return redirect()->to($kembali)->with('pesan_galat', 'Bukti bayar belum tersimpan. ' . $pesan);
+            return redirect()->to($kembali)->with('pesan_galat', $pesan === BerkasBuktiBayar::PENUH ? self::pesanPenuh() : $pesan);
         }
 
-        try {
-            $hasil = $berkas->simpan($unggah);
-        } catch (RuntimeException $e) {
-            return redirect()->to($kembali)->with('pesan_galat', 'Bukti bayar belum tersimpan. ' . $e->getMessage());
-        }
-
-        $db = $model->db;
-        $db->transBegin();
-
-        try {
-            // Kunci baris pendaftaran supaya dua unggahan bersamaan tidak
-            // sama-sama lolos batas.
-            $db->query('SELECT id FROM ' . $db->prefixTable('pendaftaran') . ' WHERE id = ? FOR UPDATE', [$id]);
-
-            if ($model->jumlahMilik($id) >= BuktiBayarModel::BATAS) {
-                $db->transRollback();
-                $berkas->hapus($hasil['berkas']);
-
-                return redirect()->to($kembali)->with('pesan_galat', self::pesanPenuh());
-            }
-
-            $baru = $model->insert(['pendaftaran_id' => $id] + $hasil);
-        } catch (Throwable $e) {
-            $db->transRollback();
-            $berkas->hapus($hasil['berkas']);
-
-            throw $e;
-        }
-
-        if ($baru === false) {
-            $db->transRollback();
-            $berkas->hapus($hasil['berkas']);
-
-            return redirect()->to($kembali)->with(
-                'pesan_galat',
-                'Bukti bayar belum tersimpan karena ada gangguan di server. Coba unggah sekali lagi; bila masih gagal, hubungi pengelola server.',
-            );
-        }
-
-        $db->transCommit();
-
-        $jumlah = $model->jumlahMilik($id);
+        $jumlah = model(BuktiBayarModel::class)->jumlahMilik($id);
 
         return redirect()->to($kembali)->with(
             'pesan_sukses',

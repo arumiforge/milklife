@@ -119,7 +119,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-nama")]')->length);
         $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-teks")]')->length, 'Teks kosong tidak ditampilkan.');
         $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[contains(@class, "kepala-seri")]'));
-        $this->assertSame('02', $this->teks($xpath, '//*[contains(@class, "pembuka-nomor-seri")]'));
+        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-nomor-seri")]')->length, 'Nomor seri besar dihapus (K83).');
         $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath, '//*[contains(@class, "pembuka-waktu")]'));
 
         // Kartu info ringkas seperti konsep (K82).
@@ -161,8 +161,17 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         );
         $this->assertSame('Berprestasi.', $this->teks($xpath, '//h1//*[contains(@class, "pembuka-judul-sorot")]'));
 
-        // Satu kalimat saja: tidak ada baris yang disorot.
-        setting('HalamanDepan.judul', 'Ayo ikut lomba');
+        // Satu kalimat: tiap kata satu baris, kata terakhir disorot (K83).
+        setting('HalamanDepan.judul', 'MilkLife Athletics Challenge');
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(
+            ['MilkLife', 'Athletics', 'Challenge'],
+            array_map($this->teksSimpul(...), iterator_to_array($xpath->query('//h1[@id="judul-acara"]/span'))),
+        );
+        $this->assertSame('Challenge', $this->teks($xpath, '//h1//*[contains(@class, "pembuka-judul-sorot")]'));
+
+        // Satu kata saja: tidak ada baris yang disorot.
+        setting('HalamanDepan.judul', 'Lomba');
         $this->assertSame(0, $this->xpathDari($this->get('/'))->query('//*[contains(@class, "pembuka-judul-sorot")]')->length);
     }
 
