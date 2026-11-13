@@ -362,15 +362,19 @@ a.kepala-admin-nama:focus-visible {
     font-weight: 700;
 }
 
+/* Menu yang sedang dibuka diberi kotak berwarna. */
 .menu-bawah .menu-admin-tautan[aria-current="page"]::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 25%;
-    right: 25%;
-    height: 3px;
-    border-radius: 0 0 3px 3px;
-    background: var(--ml-oranye);
+    inset: 0.3rem 0.2rem;
+    z-index: -1;
+    border-radius: 0.6rem;
+    background: var(--ml-biru-muda-pucat);
+    box-shadow: inset 0 -3px 0 var(--ml-oranye);
+}
+
+.menu-bawah .menu-admin-tautan {
+    isolation: isolate;
 }
 
 .menu-bawah .menu-admin-tautan:focus-visible {
