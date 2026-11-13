@@ -1604,8 +1604,14 @@
     };
 
     // Isian yang berubah membuat rincian lama tidak berlaku.
-    akar.addEventListener('input', function () { rincian = null; });
-    akar.addEventListener('change', function () { rincian = null; });
+    // Memilih gambar bukti transfer tidak mengubah isian, jadi rincian tetap berlaku.
+    function rincianBasi(e) {
+        if (e.target.id !== 'bayar-berkas') {
+            rincian = null;
+        }
+    }
+    akar.addEventListener('input', rincianBasi);
+    akar.addEventListener('change', rincianBasi);
 
     pemeriksaLangkah[4] = function () {
         return rincian ? [] : periksaServer();
