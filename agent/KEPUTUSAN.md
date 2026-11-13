@@ -273,3 +273,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K91 | Stempel bukti PDF untuk pendaftaran yang belum Lunas berbunyi "MENUNGGU / KONFIRMASI PANITIA", bukan lagi "BELUM LUNAS / MENUNGGU KONFIRMASI". Keterangan di dasar bukti ("Bukti ini dibuat otomatis …") miring, dan margin atas PDF 10 mm. Layar selesai di wizard punya tombol Salin ID | Mengubah teks stempel K78. Sejak K90 setiap pendaftaran masuk bersama bukti transfer, jadi "belum lunas" menyesatkan |
+
+## 13 November 2026 — pembuka halaman depan dirapikan
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K92 | Pembuka halaman depan: lengkung oranye dan hijau muda di atas gambar kanan dihapus, garis hijau di atas judul dihapus, dan isi pembuka di layar lebar dimulai dari atas (tidak di tengah) supaya judul lebih tinggi. Kapsul info selebar isinya, jadi ujung keadaan ("Daftar s.d. …") menempel setelah tempat. Ujung keadaan saat pendaftaran terbuka berwarna biru, bukan oranye, supaya tidak sama dengan tombol Daftar Sekarang | Mengubah hiasan K81 dan warna keadaan K82. Gelombang di dasar pembuka tetap |

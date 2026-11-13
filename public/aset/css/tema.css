@@ -575,10 +575,6 @@ html:has(.tata-publik) {
     object-position: 50% 30%;
 }
 
-.pembuka-lengkung {
-    display: none;
-}
-
 .pembuka-gelombang {
     position: absolute;
     left: 0;
@@ -593,15 +589,6 @@ html:has(.tata-publik) {
     z-index: 1;
     padding-top: 1.5rem;
     padding-bottom: 3.5rem;
-}
-
-.pembuka-garis {
-    display: block;
-    width: 5.5rem;
-    height: 0.5rem;
-    margin-bottom: 1rem;
-    background: var(--ml-hijau-muda);
-    transform: skewX(-24deg);
 }
 
 .pembuka-judul {
@@ -719,8 +706,9 @@ html:has(.tata-publik) {
     --keadaan-latar: var(--ml-biru-tua);
 }
 
+/* Biru, supaya tidak tertukar dengan tombol oranye Daftar Sekarang. */
 .keadaan-terbuka {
-    --keadaan-latar: var(--ml-oranye-tombol);
+    --keadaan-latar: var(--ml-biru);
 }
 
 .keadaan-ditutup {
@@ -766,7 +754,13 @@ html:has(.tata-publik) {
 @media (min-width: 576px) {
     .pembuka-info {
         flex-wrap: nowrap;
+        width: fit-content;
         border-radius: 999px;
+    }
+
+    .pembuka-waktu {
+        flex: 0 1 auto;
+        padding-right: 0.9rem;
     }
 
     .keadaan-pendaftaran {
@@ -970,10 +964,11 @@ html:has(.tata-publik) {
         min-height: calc(100svh - var(--ml-tinggi-kepala-beranda));
     }
 
+    /* Isi dimulai dari atas (tidak di tengah), supaya judul lebih tinggi. */
     .pembuka-utama {
         display: flex;
         flex: 1 1 auto;
-        align-items: center;
+        align-items: flex-start;
     }
 
     .pembuka-gambar {
@@ -993,28 +988,12 @@ html:has(.tata-publik) {
             rgba(0, 0, 0, 0.5) 72%, rgba(0, 0, 0, 0.26) 81%, rgba(0, 0, 0, 0.08) 90%, transparent 97%);
     }
 
-    .pembuka-lengkung {
-        display: block;
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: -1;
-        width: 58%;
-        height: 100%;
-        opacity: 0.9;
-    }
-
-    .pembuka-dengan-gambar .pembuka-lengkung {
-        z-index: 0;
-        opacity: 0.55;
-    }
-
     .pembuka-gelombang {
         height: 3rem;
     }
 
     .pembuka-isi {
-        padding-top: 1.25rem;
+        padding-top: clamp(1.5rem, 5vh, 3.5rem);
         padding-bottom: 3.25rem;
     }
 
@@ -1059,11 +1038,6 @@ html:has(.tata-publik) {
     .pembuka-isi {
         padding-top: 0.75rem;
         padding-bottom: 2.75rem;
-    }
-
-    .pembuka-garis {
-        height: 0.4rem;
-        margin-bottom: 0.6rem;
     }
 
     .pembuka-judul {

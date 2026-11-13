@@ -66,16 +66,8 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
             </div>
         <?php endif ?>
 
-        <?php // Lengkung oranye dan hijau muda serta gelombang bawah: hiasan. ?>
-        <svg class="pembuka-lengkung" viewBox="0 0 800 600" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-            <path d="M120 600 C 160 330, 420 150, 800 90" fill="none" stroke="#E85F31" stroke-width="46" stroke-linecap="round"/>
-            <path d="M210 600 C 250 380, 470 220, 800 175" fill="none" stroke="#C9E265" stroke-width="22" stroke-linecap="round"/>
-        </svg>
-
         <div class="container pembuka-isi">
             <div class="pembuka-kiri">
-                <span class="pembuka-garis" aria-hidden="true"></span>
-
                 <?php if ($kalimatJudul !== []) : ?>
                     <h1 id="judul-acara" class="pembuka-judul pembuka-judul-teks">
                         <?php foreach ($kalimatJudul as $i => $kalimat) : ?>
