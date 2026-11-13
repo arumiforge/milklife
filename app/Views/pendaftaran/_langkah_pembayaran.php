@@ -63,7 +63,7 @@
         <span class="ikon-bulat mb-3"><i class="bi bi-trophy" aria-hidden="true"></i></span>
         <h3 class="h4">Pendaftaran terkirim</h3>
         <p>Pendaftaran <strong id="selesai-sekolah"></strong> tersimpan dengan ID <strong class="id-pendaftaran" id="selesai-id"></strong>. Catat ID ini untuk memeriksa pendaftaran.</p>
-        <p>Status pendaftaran <strong>Belum Dikonfirmasi</strong> sampai panitia memeriksa bukti transfer, lalu menjadi <strong>Sudah Dikonfirmasi</strong>.</p>
+        <p>Status pembayaran <strong>Menunggu</strong> sampai panitia memeriksa bukti transfer, lalu menjadi <strong>Lunas</strong>.</p>
         <div class="tombol-bayar">
             <a class="btn btn-primary btn-lg" id="cetak-bukti" target="_blank" rel="noopener">
                 <i class="bi bi-printer" aria-hidden="true"></i> Cetak Bukti Pendaftaran
