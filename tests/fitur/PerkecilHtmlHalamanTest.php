@@ -119,6 +119,8 @@ final class PerkecilHtmlHalamanTest extends UjiBasisData
     {
         $html = (string) preg_replace('/[a-f0-9]{32}/', 'TOKEN', $hasil->getBody());
         $html = (string) preg_replace('#(/aset/(?:css|js|gambar)/[^"\']+)\.min\.(css|js|svg)#', '$1.$2', $html);
+        // Penanda versi `?v=` (K86) mengikuti waktu ubah berkas asli atau `.min`-nya.
+        $html = (string) preg_replace('#(/aset/[^"\']+)\?v=\d+#', '$1', $html);
         $dom  = new DOMDocument();
         libxml_use_internal_errors(true);
         $dom->loadHTML('<?xml encoding="utf-8"?>' . $html);

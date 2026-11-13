@@ -237,3 +237,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K85 | Kartu kelompok usia memakai gambar dari pemilik (pelari biru tua dan lintasan hijau muda atau oranye, bergantian), tinggal diisi nama kelompok umur; pelari dan ombak SVG dari K84 dihapus. Kepala panel admin punya tombol "Halaman depan" yang membuka halaman depan di tab baru. Menu Rekap punya tombol "Unduh Rekap Gabungan": satu berkas Excel berisi semua data, satu sheet per bagian (Pendaftaran, Atlet, Peserta per Nomor Lomba, Tim Beregu, Per Sekolah, Per Kelompok Umur, Keuangan, Tim Tanpa Pembayar) | Mengubah tampilan kartu di K84. Gambar dipotong dari contoh pemilik ke `public/aset/gambar/kartu-ku-hijau.webp` dan `kartu-ku-oranye.webp` (tanpa data siswa). Rekap gabungan tidak memakai saringan status: semua pendaftaran ikut, sama dengan rekap Keuangan |
+
+## 13 November 2026 — penanda versi aset dan judul panjang
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K86 | Alamat CSS, JS, dan SVG aplikasi dari `aset()` diberi penanda versi `?v=<waktu ubah berkas>`, supaya Cloudflare dan peramban langsung memakai berkas baru sesudah `php spark aset:minify` atau pembaruan kode. Pustaka `vendor/` tanpa penanda. Judul pembuka satu kalimat hanya dipecah per kata bila paling banyak 4 kata; judul satu kalimat yang lebih panjang mengalir biasa | Temuan di situs produksi: Cloudflare menyimpan `tema.min.css` lama selama 4 jam (`cache-control: max-age=14400`), sehingga halaman baru memakai CSS lama dan tampil berantakan. Mengubah aturan judul di K83 untuk judul panjang |

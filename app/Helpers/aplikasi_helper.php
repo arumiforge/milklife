@@ -18,6 +18,10 @@ if (! function_exists('aset')) {
      * berkas `.min` yang dipakai.
      * Jalur yang sudah `.min` atau berada di `vendor/` tidak diubah.
      *
+     * Berkas aplikasi (bukan `vendor/`) diberi penanda versi `?v=<waktu ubah>`
+     * supaya peramban dan Cloudflare mengambil berkas baru setiap kali
+     * berkasnya berubah, misalnya sesudah `php spark aset:minify` (K86).
+     *
      * @param string $jalur Jalur relatif terhadap `public/aset/`, misalnya `css/tema.css`.
      */
     function aset(string $jalur): string
@@ -32,7 +36,9 @@ if (! function_exists('aset')) {
             }
         }
 
-        return base_url('aset/' . $jalur);
+        $versi = str_starts_with($jalur, 'vendor/') ? false : @filemtime(FCPATH . 'aset/' . $jalur);
+
+        return base_url('aset/' . $jalur) . ($versi === false ? '' : '?v=' . $versi);
     }
 }
 

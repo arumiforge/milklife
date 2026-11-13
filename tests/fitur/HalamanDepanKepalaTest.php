@@ -176,6 +176,12 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         );
         $this->assertSame('Challenge', $this->teks($xpath, '//h1//*[contains(@class, "pembuka-judul-sorot")]'));
 
+        // Satu kalimat lebih dari 4 kata mengalir biasa, tidak dipecah per kata (K86).
+        setting('HalamanDepan.judul', 'Berkompetisi bersama para atlet muda dari berbagai daerah!');
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(1, $xpath->query('//h1[@id="judul-acara"]/span')->length);
+        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-judul-sorot")]')->length);
+
         // Satu kata saja: tidak ada baris yang disorot.
         setting('HalamanDepan.judul', 'Lomba');
         $this->assertSame(0, $this->xpathDari($this->get('/'))->query('//*[contains(@class, "pembuka-judul-sorot")]')->length);

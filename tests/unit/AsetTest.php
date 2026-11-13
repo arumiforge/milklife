@@ -35,11 +35,31 @@ final class AsetTest extends CIUnitTestCase
         parent::tearDown();
     }
 
+    /**
+     * Alamat tanpa penanda versi `?v=…` (K86).
+     */
+    private static function tanpaVersi(string $alamat): string
+    {
+        return (string) preg_replace('/\?v=\d+$/', '', $alamat);
+    }
+
+    public function testPenandaVersiDariWaktuUbahBerkas(): void
+    {
+        $this->buatBerkas(self::FOLDER_UJI . '/contoh.css');
+        touch(FCPATH . 'aset/' . self::FOLDER_UJI . '/contoh.css', 1_700_000_000);
+        clearstatcache();
+
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.css') . '?v=1700000000', aset(self::FOLDER_UJI . '/contoh.css'));
+        // Berkas yang tidak ada dan pustaka vendor tanpa penanda.
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/tidak-ada.css'), aset(self::FOLDER_UJI . '/tidak-ada.css'));
+        $this->assertStringNotContainsString('?v=', aset('vendor/bootstrap/css/bootstrap.min.css'));
+    }
+
     public function testAlamatBiasa(): void
     {
-        $this->assertSame(base_url('aset/css/tema.css'), aset('css/tema.css'));
-        $this->assertSame(base_url('aset/css/tema.css'), aset('/css/tema.css'));
-        $this->assertStringEndsWith('/aset/css/tema.css', aset('css/tema.css'));
+        $this->assertSame(base_url('aset/css/tema.css'), self::tanpaVersi(aset('css/tema.css')));
+        $this->assertSame(base_url('aset/css/tema.css'), self::tanpaVersi(aset('/css/tema.css')));
+        $this->assertStringEndsWith('/aset/css/tema.css', self::tanpaVersi(aset('css/tema.css')));
     }
 
     public function testMinifyMatiTetapBerkasAsli(): void
@@ -48,7 +68,7 @@ final class AsetTest extends CIUnitTestCase
         $this->buatBerkas(self::FOLDER_UJI . '/contoh.min.css');
         config('Aplikasi')->minify = false;
 
-        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.css'), aset(self::FOLDER_UJI . '/contoh.css'));
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.css'), self::tanpaVersi(aset(self::FOLDER_UJI . '/contoh.css')));
     }
 
     public function testMinifyAktifMemilihBerkasMin(): void
@@ -61,9 +81,9 @@ final class AsetTest extends CIUnitTestCase
         $this->buatBerkas(self::FOLDER_UJI . '/contoh.min.svg');
         config('Aplikasi')->minify = true;
 
-        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.css'), aset(self::FOLDER_UJI . '/contoh.css'));
-        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.js'), aset(self::FOLDER_UJI . '/contoh.js'));
-        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.svg'), aset(self::FOLDER_UJI . '/contoh.svg'));
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.css'), self::tanpaVersi(aset(self::FOLDER_UJI . '/contoh.css')));
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.js'), self::tanpaVersi(aset(self::FOLDER_UJI . '/contoh.js')));
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.svg'), self::tanpaVersi(aset(self::FOLDER_UJI . '/contoh.svg')));
     }
 
     public function testMinifyAktifTanpaBerkasMinTidakBerubah(): void
@@ -71,7 +91,7 @@ final class AsetTest extends CIUnitTestCase
         $this->buatBerkas(self::FOLDER_UJI . '/contoh.css');
         config('Aplikasi')->minify = true;
 
-        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.css'), aset(self::FOLDER_UJI . '/contoh.css'));
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.css'), self::tanpaVersi(aset(self::FOLDER_UJI . '/contoh.css')));
     }
 
     public function testJalurMinTidakDiubah(): void
@@ -79,7 +99,7 @@ final class AsetTest extends CIUnitTestCase
         $this->buatBerkas(self::FOLDER_UJI . '/contoh.min.css');
         config('Aplikasi')->minify = true;
 
-        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.css'), aset(self::FOLDER_UJI . '/contoh.min.css'));
+        $this->assertSame(base_url('aset/' . self::FOLDER_UJI . '/contoh.min.css'), self::tanpaVersi(aset(self::FOLDER_UJI . '/contoh.min.css')));
     }
 
     public function testJalurVendorTidakDiubah(): void
