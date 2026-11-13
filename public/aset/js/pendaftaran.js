@@ -890,11 +890,9 @@
         L3.nama.focus({ preventScroll: true });
     }
 
-    L3.nama.addEventListener('input', function () {
-        var posisi = L3.nama.selectionStart;
-        L3.nama.value = L3.nama.value.toUpperCase();
-        L3.nama.setSelectionRange(posisi, posisi);
-    });
+    // Nama tampil huruf besar lewat CSS (`huruf-besar`) dan diubah ke huruf
+    // besar saat disimpan. Isinya tidak ditulis ulang saat mengetik: di
+    // keyboard ponsel itu memutus ketikan dan teks bisa hilang setelah spasi.
     L3.nisn.addEventListener('input', function () {
         var nisn = L3.nisn.value.replace(/\D/g, '').slice(0, 10);
         if (nisn !== L3.nisn.value) {
@@ -1085,7 +1083,12 @@
         return pesan;
     }
 
-    function barisAtlet(atlet, indeks, jalur, rincian) {
+    /**
+     * Baris atlet di daftar sementara. `hapusNomor`: ID nomor lomba yang
+     * dihapus tombol Hapus baris ini; nomor lain atlet itu tetap. Bila atlet
+     * tidak punya nomor lain (atau `hapusNomor` kosong), atletnya ikut dihapus.
+     */
+    function barisAtlet(atlet, indeks, jalur, rincian, hapusNomor) {
         var li = buat('li', 'baris-atlet');
         li.setAttribute('data-baris-jalur', jalur);
         var isi = buat('div', 'baris-atlet-isi');
@@ -1112,16 +1115,26 @@
         hapus.type = 'button';
         hapus.appendChild(ikon('trash'));
         hapus.appendChild(document.createTextNode(' Hapus'));
-        hapus.setAttribute('aria-label', 'Hapus ' + atlet.nama);
+        var namaNomor = (hapusNomor || []).map(function (id) { return NOMOR[id] ? NOMOR[id].nama_lengkap : ''; }).join(', ');
+        var sisa = atlet.nomor.filter(function (id) { return (hapusNomor || []).indexOf(id) === -1; });
+        hapus.setAttribute('aria-label', 'Hapus ' + (namaNomor ? namaNomor + ' untuk ' : '') + atlet.nama);
         hapus.addEventListener('click', function () {
-            if (window.confirm('Hapus ' + atlet.nama + ' dari daftar? Semua nomor lombanya ikut terhapus.')) {
-                draf.atlet.splice(draf.atlet.indexOf(atlet), 1);
-                if (atletDiubah === atlet) {
-                    kosongkanFormulirAtlet();
-                }
-                simpanDraf();
-                tampilkanDaftarAtlet();
+            var tanya = namaNomor && sisa.length > 0
+                ? 'Hapus ' + namaNomor + ' untuk ' + atlet.nama + '? Nomor lomba lainnya tetap.'
+                : 'Hapus ' + atlet.nama + ' dari daftar?' + (namaNomor ? ' Atlet ini tidak punya nomor lomba lain.' : '');
+            if (!window.confirm(tanya)) {
+                return;
             }
+            if (namaNomor && sisa.length > 0) {
+                atlet.nomor = sisa;
+            } else {
+                draf.atlet.splice(draf.atlet.indexOf(atlet), 1);
+            }
+            if (atletDiubah === atlet) {
+                kosongkanFormulirAtlet();
+            }
+            simpanDraf();
+            tampilkanDaftarAtlet();
         });
         tombol.appendChild(ubah);
         tombol.appendChild(hapus);
@@ -1189,15 +1202,18 @@
         draf.atlet.forEach(function (atlet, i) {
             var nomor = atlet.nomor.map(function (id) { return NOMOR[id]; }).filter(function (n) { return n && n.jenis === 'individu'; });
             var tanpaNomor = atlet.nomor.length === 0 || atlet.nomor.some(function (id) { return !NOMOR[id]; });
-            if (nomor.length > 0 || tanpaNomor) {
+            // Satu baris per nomor individu, supaya Hapus hanya menghapus nomor itu.
+            nomor.forEach(function (n) {
                 adaIndividu = true;
-                var baris = barisAtlet(atlet, i, 'atlet.' + i, nomor.map(function (n) { return n.nama_lengkap; }).join(', '));
-                nomor.forEach(function (n) {
-                    if (kuota[n.id]) {
-                        baris.firstChild.appendChild(buat('p', 'galat-baris', kuota[n.id]));
-                    }
-                });
+                var baris = barisAtlet(atlet, i, 'atlet.' + i, n.nama_lengkap, [n.id]);
+                if (kuota[n.id]) {
+                    baris.firstChild.appendChild(buat('p', 'galat-baris', kuota[n.id]));
+                }
                 individu.appendChild(baris);
+            });
+            if (nomor.length === 0 && tanpaNomor) {
+                adaIndividu = true;
+                individu.appendChild(barisAtlet(atlet, i, 'atlet.' + i, ''));
             }
         });
         $('#bagian-individu').hidden = !adaIndividu;
@@ -1219,7 +1235,7 @@
             t.pesan.forEach(function (p) { kartu.appendChild(buat('p', 'galat-baris', p)); });
             var ul = buat('ul', 'daftar-atlet');
             t.anggota.forEach(function (a) {
-                ul.appendChild(barisAtlet(a.atlet, a.indeks, 'atlet.' + a.indeks));
+                ul.appendChild(barisAtlet(a.atlet, a.indeks, 'atlet.' + a.indeks, null, [n.id]));
             });
             kartu.appendChild(ul);
             if (t.susulan) {

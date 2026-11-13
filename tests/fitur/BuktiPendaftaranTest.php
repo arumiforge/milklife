@@ -43,7 +43,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $hasil = $this->get($this->alamatBukti('MAC2A0000126'));
         $hasil->assertOK();
         $this->assertStringStartsWith('application/pdf', $hasil->response()->getHeaderLine('Content-Type'));
-        $this->assertSame('inline; filename="BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_SDNEGERICONTOH1_2026.pdf"', $hasil->response()->getHeaderLine('Content-Disposition'));
+        $this->assertSame('inline; filename="BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_SDNEGERICONTOH1_2026_MAC2A0000126_Menunggu.pdf"', $hasil->response()->getHeaderLine('Content-Disposition'));
         $this->assertStringStartsWith('%PDF', $hasil->response()->getBody());
         // Kepala keamanan (F7-02) tidak menghalangi PDF dibuka di peramban.
         $this->assertSame('nosniff', $hasil->response()->getHeaderLine('X-Content-Type-Options'));
@@ -54,9 +54,38 @@ final class BuktiPendaftaranTest extends UjiBasisData
         setting('Acara.seri', 3);
         setting('Acara.tahun', 2027);
         $bukti = new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2B0000326'));
-        $this->assertSame('BuktiPendaftaran_LombaLariKaranganSeri3_SMPbContohbMandiri_2027.pdf', $bukti->namaBerkas());
+        $this->assertSame('BuktiPendaftaran_LombaLariKaranganSeri3_SMPbContohbMandiri_2027_MAC2B0000326_Menunggu.pdf', $bukti->namaBerkas());
         $this->assertStringContainsString('LOMBA LARI KARANGAN', $bukti->html());
         $this->assertStringContainsString('Seri 3 Tahun 2027', $bukti->html());
+    }
+
+    public function testAlamatSamaMengikutiStatusTerbaruDanNomorDadaSaatLunas(): void
+    {
+        $this->lengkapiPengaturanCek();
+        $this->isiDataCek();
+        $alamat = $this->alamatBukti('MAC2A0000126');
+        $db     = db_connect();
+        $db->table('atlet')->where('nisn', '9900000001')->update(['nomor_dada' => '2001']);
+
+        // Menunggu: stempel menunggu, nomor dada kosong walau sudah tersimpan.
+        $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000126')))->html();
+        $this->assertStringContainsString('stempel stempel-menunggu', $html);
+        $this->assertStringContainsString('No. Dada', $html);
+        $this->assertStringNotContainsString('2001', $html);
+
+        // Ditandai Lunas: alamat yang sama (kode QR) langsung memuat status baru,
+        // nomor dada, dan nama berkas baru (K87).
+        $db->table('pendaftaran')->where('id_pendaftaran', 'MAC2A0000126')->update(['status' => 'lunas', 'waktu_lunas' => '2026-11-15 10:00:00']);
+        $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000126')))->html();
+        $this->assertStringContainsString('stempel stempel-lunas', $html);
+        $this->assertStringContainsString('<b>2001</b>', $html);
+        $this->assertStringContainsString('BUDI KARANGAN (2001)', $html, 'Nomor dada anggota tim beregu.');
+
+        Services::resetSingle('throttler');
+        $hasil = $this->get($alamat);
+        $hasil->assertOK();
+        $this->assertStringEndsWith('_MAC2A0000126_Lunas.pdf"', $hasil->response()->getHeaderLine('Content-Disposition'));
+        $this->assertStringContainsString('no-store', $hasil->response()->getHeaderLine('Cache-Control'));
     }
 
     public function testIsiBuktiDariNilaiTersimpan(): void
@@ -96,8 +125,8 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->isiDataCek();
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000226')))->html();
-        $this->assertStringContainsString('<td>FAJAR REKAAN</td>', $html);
-        $this->assertStringNotContainsString('1001', $html);
+        // Lunas: nomor dada anggota tim ikut dicetak (K87, menggantikan K52).
+        $this->assertStringContainsString('<td>FAJAR REKAAN (1001)</td>', $html);
         $this->assertStringContainsString('Tanpa biaya (tim sudah terdaftar)', $html);
         $this->assertStringContainsString('Tidak ada nomor individu', $html);
         $this->assertStringContainsString('stempel stempel-lunas', $html);

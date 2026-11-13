@@ -35,11 +35,14 @@ $stempel      = 'data:image/svg+xml;base64,' . base64_encode(
     . '</g></svg>',
 );
 
+// Nomor dada hanya dicetak bila sudah Lunas (K87); selain itu kosong.
+$nomorDada = static fn (array $atlet): string => $lunas && ($atlet['nomor_dada'] ?? null) !== null ? (string) $atlet['nomor_dada'] : '';
+
 // Nomor individu digabung per atlet: satu baris per atlet, nomor dipisah koma, biaya dijumlah.
 $perAtlet = [];
 
 foreach ($p['individu'] as $baris) {
-    $perAtlet[$baris['nisn']] ??= ['nama' => $baris['nama'], 'nisn' => $baris['nisn'], 'kelompok_umur' => $baris['kelompok_umur'], 'nomor' => [], 'biaya' => null];
+    $perAtlet[$baris['nisn']] ??= ['nama' => $baris['nama'], 'nisn' => $baris['nisn'], 'nomor_dada' => $nomorDada($baris), 'kelompok_umur' => $baris['kelompok_umur'], 'nomor' => [], 'biaya' => null];
     $perAtlet[$baris['nisn']]['nomor'][] = $baris['nomor_lomba'];
 
     if ($baris['biaya'] !== null) {
@@ -126,7 +129,7 @@ foreach ($p['individu'] as $baris) {
 <?php else : ?>
     <table class="data">
         <thead>
-            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="27mm" style="white-space: nowrap;">Kelompok Umur</th><th>Nomor Lomba</th><th class="uang" width="22mm">Biaya</th></tr>
+            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Dada</th><th width="27mm" style="white-space: nowrap;">Kelompok Umur</th><th>Nomor Lomba</th><th class="uang" width="22mm">Biaya</th></tr>
         </thead>
         <tbody>
             <?php foreach (array_values($perAtlet) as $i => $atlet) : ?>
@@ -134,12 +137,13 @@ foreach ($p['individu'] as $baris) {
                     <td class="no"><?= $i + 1 ?></td>
                     <td><?= esc($atlet['nama']) ?></td>
                     <td><?= esc($atlet['nisn']) ?></td>
+                    <td><b><?= esc($atlet['nomor_dada']) ?></b></td>
                     <td><?= esc($atlet['kelompok_umur']) ?></td>
                     <td><?= esc(implode(', ', $atlet['nomor'])) ?></td>
                     <td class="uang"><?= $atlet['biaya'] === null ? '' : esc(rupiah($atlet['biaya'])) ?></td>
                 </tr>
             <?php endforeach ?>
-            <tr class="jumlah"><td colspan="5">Subtotal individu</td><td class="uang"><?= esc(rupiah($p['subtotal_individu'])) ?></td></tr>
+            <tr class="jumlah"><td colspan="6">Subtotal individu</td><td class="uang"><?= esc(rupiah($p['subtotal_individu'])) ?></td></tr>
         </tbody>
     </table>
 <?php endif ?>
@@ -157,7 +161,7 @@ foreach ($p['individu'] as $baris) {
                 <tr<?= $i % 2 === 1 ? ' class="genap"' : '' ?>>
                     <td class="no"><?= $i + 1 ?></td>
                     <td><?= esc($tim['nomor_lomba']) ?></td>
-                    <td><?= esc(implode(', ', array_column($tim['anggota'], 'nama'))) ?></td>
+                    <td><?= esc(implode(', ', array_map(static fn (array $a): string => $a['nama'] . ($nomorDada($a) !== '' ? ' (' . $nomorDada($a) . ')' : ''), $tim['anggota']))) ?></td>
                     <td class="uang"><?= $tim['biaya_tim'] === null ? '<span class="kecil">Tanpa biaya (tim sudah terdaftar)</span>' : esc(rupiah($tim['biaya_tim'])) ?></td>
                 </tr>
             <?php endforeach ?>

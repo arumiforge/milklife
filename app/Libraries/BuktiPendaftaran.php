@@ -85,6 +85,11 @@ final class BuktiPendaftaran
             self::rapat(AcaraController::namaTampil()) . ($seri !== '' ? 'Seri' . $seri : ''),
             self::rapat($this->pendaftaran['nama_sekolah']),
             self::rapat(setting('Acara.tahun')),
+            // ID dan status ikut di nama (K87): berkas Lunas tidak bernama sama
+            // dengan berkas Menunggu yang sudah tersimpan di ponsel, jadi
+            // penampil PDF tidak membuka berkas lama.
+            self::rapat($this->pendaftaran['id_pendaftaran']),
+            $this->pendaftaran['status'] === 'lunas' ? 'Lunas' : 'Menunggu',
         ];
 
         return implode('_', array_filter($bagian, static fn (string $b): bool => $b !== '')) . '.pdf';
