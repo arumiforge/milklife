@@ -141,6 +141,28 @@ final class BerkasBuktiBayar
     }
 
     /**
+     * Bita gambar dari data URL `data:image/<jenis>;base64,…` yang dikirim
+     * wizard (K90), atau `null` bila bukan data URL atau lebih dari
+     * `BATAS_BITA`. Isinya diperiksa lagi oleh `simpanIsi()`.
+     */
+    public static function bacaDataUrl(mixed $dataUrl): ?string
+    {
+        if (! is_string($dataUrl) || preg_match('#^data:image/(jpeg|png|webp);base64,#', $dataUrl, $cocok) !== 1) {
+            return null;
+        }
+
+        $base64 = substr($dataUrl, strlen($cocok[0]));
+
+        if (strlen($base64) > (int) ceil(self::BATAS_BITA * 4 / 3) + 4) {
+            return null;
+        }
+
+        $isi = base64_decode($base64, true);
+
+        return $isi === false || $isi === '' ? null : $isi;
+    }
+
+    /**
      * Simpan isi gambar (bita JPG, PNG, atau WEBP) sebagai JPEG.
      *
      * @return array{berkas: string, ukuran: int}

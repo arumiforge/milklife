@@ -254,11 +254,13 @@ final class PanelGabunganTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['pid'] . '/bukti-bayar'),
             'admin/pendaftaran/' . $a['pid'],
-            'Bukti bayar tersimpan untuk pendaftaran ' . $a['id_pendaftaran'] . ' (1 dari 5 gambar).',
+            // Bukti pertama sudah ikut terkirim bersama pendaftaran (K90).
+            'Bukti bayar tersimpan untuk pendaftaran ' . $a['id_pendaftaran'] . ' (2 dari 5 gambar).',
         );
         $buktiId = (int) $this->db->table('bukti_bayar')->where('pendaftaran_id', $a['pid'])->get()->getRow()->id;
         $this->bukaSebagaiAdmin('admin/pendaftaran/' . $a['pid'] . '/bukti-bayar/' . $buktiId)->assertOK();
-        $this->assertCount(1, $this->berkasBuktiBayarTersimpan());
+        // Tiga bukti dari wizard (K90) ditambah satu unggahan admin.
+        $this->assertCount(4, $this->berkasBuktiBayarTersimpan());
 
         // ---------- 5. Tandai Lunas dan nomor dada ----------
         foreach ([$a, $b, $c] as $p) {
@@ -300,7 +302,7 @@ final class PanelGabunganTest extends UjiBasisData
         );
         $this->assertSame('menunggu', $this->statusPendaftaran($a['pid']));
         $this->assertSame(['2001', '2002', '2003', '2004'], $this->nomorDada($a['pid']), 'Nomor dada tetap.');
-        $this->assertCount(1, $this->berkasBuktiBayarTersimpan(), 'Bukti bayar tidak tersentuh oleh ubah.');
+        $this->assertCount(4, $this->berkasBuktiBayarTersimpan(), 'Bukti bayar tidak tersentuh oleh ubah.');
 
         // ---------- 7. Hapus, NISN bisa didaftarkan lagi, nomor dada tidak dipakai ulang ----------
         $this->assertBerhasilDialihkan(

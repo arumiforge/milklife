@@ -26,6 +26,9 @@
     var VERSI_DRAF = 1;
     var SISI_FOTO = 800;
     var BATAS_FOTO = 450 * 1024;
+    // Bukti transfer dikecilkan di peramban seperti foto (K90); server menyimpan sisi paling besar 1600.
+    var SISI_BUKTI = 1600;
+    var BATAS_BUKTI = 1500 * 1024;
     var KU = {};
     var NOMOR = {};
 
@@ -650,7 +653,9 @@
      * @param {File} berkas
      * @returns {Promise<string>} data URL `data:image/jpeg;base64,…`
      */
-    function kecilkanFoto(berkas) {
+    function kecilkanFoto(berkas, sisi, batas) {
+        sisi = sisi || SISI_FOTO;
+        batas = batas || BATAS_FOTO;
         return new Promise(function (selesai, gagal) {
             if (!berkas.type || berkas.type.indexOf('image/') !== 0) {
                 gagal(new Error('bukan gambar'));
@@ -660,7 +665,7 @@
             var gambar = new Image();
             gambar.onload = function () {
                 URL.revokeObjectURL(alamat);
-                var skala = Math.min(1, SISI_FOTO / Math.max(gambar.naturalWidth, gambar.naturalHeight));
+                var skala = Math.min(1, sisi / Math.max(gambar.naturalWidth, gambar.naturalHeight));
                 var kanvas = document.createElement('canvas');
                 kanvas.width = Math.max(1, Math.round(gambar.naturalWidth * skala));
                 kanvas.height = Math.max(1, Math.round(gambar.naturalHeight * skala));
@@ -671,11 +676,11 @@
 
                 var kualitas = 0.82;
                 var hasil = kanvas.toDataURL('image/jpeg', kualitas);
-                while (hasil.length * 0.75 > BATAS_FOTO && kualitas > 0.4) {
+                while (hasil.length * 0.75 > batas && kualitas > 0.4) {
                     kualitas -= 0.12;
                     hasil = kanvas.toDataURL('image/jpeg', kualitas);
                 }
-                if (hasil.indexOf('data:image/jpeg;base64,') !== 0 || hasil.length * 0.75 > BATAS_FOTO) {
+                if (hasil.indexOf('data:image/jpeg;base64,') !== 0 || hasil.length * 0.75 > batas) {
                     gagal(new Error('terlalu besar'));
                     return;
                 }
@@ -1390,7 +1395,7 @@
      * POST JSON dengan token CSRF. Hasil: `{kode, isi}`; `isi` null bila
      * jawaban bukan JSON (misalnya sesi halaman habis).
      */
-    function kirim(alamat) {
+    function kirim(alamat, tambahan) {
         var kepala = { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
         kepala[csrfKepala] = csrfToken;
 
@@ -1398,7 +1403,7 @@
             method: 'POST',
             headers: kepala,
             credentials: 'same-origin',
-            body: JSON.stringify(kiriman())
+            body: JSON.stringify(Object.assign(kiriman(), tambahan || {}))
         }).then(function (jawaban) {
             return jawaban.json().then(function (isi) {
                 if (isi && isi.csrf) {
@@ -1428,7 +1433,7 @@
      */
     function tampilkanGalatServer(galat) {
         var langkah = Math.min.apply(null, galat.map(function (g) { return g.langkah; }));
-        langkah = Math.max(1, Math.min(langkah, 4));
+        langkah = Math.max(1, Math.min(langkah, 5));
         var galatLangkah = galat.filter(function (g) { return g.langkah === langkah; });
         tampilkanLangkah(langkah, false);
         tampilkanGalat(langkah, galatLangkah);
@@ -1541,9 +1546,7 @@
 
     function tampilkanRincian() {
         var wadah = $('#rincian-biaya');
-        var simpan = $('#tombol-simpan');
         wadah.textContent = '';
-        simpan.disabled = !rincian;
 
         if (!rincian) {
             wadah.appendChild(buat('p', 'text-body-secondary', 'Menghitung biaya…'));
@@ -1604,92 +1607,36 @@
     akar.addEventListener('input', function () { rincian = null; });
     akar.addEventListener('change', function () { rincian = null; });
 
-    var jendela = $('#konfirmasi-simpan');
-
-    $('#tombol-simpan').addEventListener('click', function () {
-        if (!rincian) {
-            return;
-        }
-        $('#konfirmasi-sekolah').textContent = rincian.sekolah.nama;
-        $('#konfirmasi-atlet').textContent = draf.atlet.length + ' atlet';
-        $('#konfirmasi-total').textContent = rupiah(rincian.total);
-        if (window.bootstrap && window.bootstrap.Modal) {
-            window.bootstrap.Modal.getOrCreateInstance(jendela).show();
-        } else if (window.confirm('Simpan pendaftaran? Setelah disimpan, data tidak bisa diubah lewat halaman ini.')) {
-            simpanPendaftaran();
-        }
-    });
-
-    $('#konfirmasi-ya').addEventListener('click', function () {
-        if (window.bootstrap && window.bootstrap.Modal) {
-            window.bootstrap.Modal.getOrCreateInstance(jendela).hide();
-        }
-        simpanPendaftaran();
-    });
-
-    function simpanPendaftaran() {
-        var tombol = $('#tombol-simpan');
-        tombol.disabled = true;
-        tombol.lastChild.textContent = ' Menyimpan…';
-
-        kirim(DATA.alamat.simpan).then(function (hasil) {
-            tombol.lastChild.textContent = ' Simpan Pendaftaran';
-            tombol.disabled = false;
-
-            if (hasil.kode === 201 && hasil.isi && hasil.isi.status === 'tersimpan') {
-                var r = hasil.isi.rincian;
-                draf.tersimpan = {
-                    id_pendaftaran: hasil.isi.id_pendaftaran,
-                    nama_sekolah: r.sekolah.nama,
-                    npsn: r.sekolah.npsn,
-                    subtotal_individu: r.subtotal_individu,
-                    subtotal_beregu: r.subtotal_beregu,
-                    total: r.total,
-                    wa: hasil.isi.wa,
-                    bukti: hasil.isi.bukti
-                };
-                // Foto tidak dibutuhkan lagi di peramban setelah tersimpan.
-                draf.penanggungJawab.forEach(function (o) { o.foto = ''; });
-                rincian = null;
-                simpanDraf();
-                tampilkanLangkah(5);
-                return;
-            }
-
-            if (hasil.kode === 422 && hasil.isi && Array.isArray(hasil.isi.galat)) {
-                rincian = null;
-                tampilkanGalatServer(hasil.isi.galat);
-                return;
-            }
-
-            tampilkanGalat(4, [{ jalur: 'simpan', pesan: pesanGagalKirim(hasil) }]);
-        });
-    }
+    pemeriksaLangkah[4] = function () {
+        return rincian ? [] : periksaServer();
+    };
 
     // ------------------------------------------------------------------
     // Langkah 5: Pembayaran
     // ------------------------------------------------------------------
 
-    penyiapLangkah[5] = function () {
-        var t = draf.tersimpan;
-        if (!t) {
-            tampilkanLangkah(4, false);
-            return;
-        }
+    function tampilkanBayar() {
         var bayar = DATA.pembayaran;
-        $('#bayar-sekolah').textContent = t.nama_sekolah;
-        $('#bayar-id').textContent = t.id_pendaftaran;
         $('#bayar-bank').textContent = bayar.bank;
         $('#bayar-rekening').textContent = bayar.nomor_rekening;
         $('#bayar-pemilik').textContent = bayar.pemilik_rekening;
-        $('#bayar-total').textContent = rupiah(t.total);
-        $('#bayar-rincian').textContent = 'Subtotal individu ' + rupiah(t.subtotal_individu) + ' · subtotal beregu ' + rupiah(t.subtotal_beregu) + '.';
+        $('#bayar-total').textContent = rincian ? rupiah(rincian.total) : 'Menghitung…';
+        $('#bayar-rincian').textContent = rincian
+            ? 'Subtotal individu ' + rupiah(rincian.subtotal_individu) + ' · subtotal beregu ' + rupiah(rincian.subtotal_beregu) + '.'
+            : '';
+        $('#tombol-kirim').disabled = !rincian;
         var logo = $('#bayar-logo');
         logo.hidden = !bayar.logo_bank;
         if (bayar.logo_bank) {
             logo.src = bayar.logo_bank;
             logo.alt = 'Logo ' + bayar.bank;
         }
+    }
+
+    function tampilkanSelesai() {
+        var t = draf.tersimpan;
+        $('#selesai-sekolah').textContent = t.nama_sekolah;
+        $('#selesai-id').textContent = t.id_pendaftaran;
         var wa = $('#bayar-wa');
         wa.hidden = !t.wa;
         if (t.wa) {
@@ -1698,9 +1645,29 @@
         $('#cetak-bukti').href = t.bukti;
         $('#selesai-keterangan').textContent = 'Bukti juga bisa dicetak lagi kapan saja lewat menu Cek Pendaftaran dengan ID ' + t.id_pendaftaran
             + (t.npsn ? ' atau NPSN ' + t.npsn : '') + '.';
-        $('#bayar-isi').hidden = sudahSelesai;
-        $('#selesai').hidden = !sudahSelesai;
+        $('#bayar-isi').hidden = true;
+        $('#selesai').hidden = false;
         $('#tombol-mulai-ulang').closest('.mulai-ulang').hidden = true;
+    }
+
+    penyiapLangkah[5] = function () {
+        if (sudahSelesai) {
+            tampilkanSelesai();
+            return;
+        }
+        tampilkanBayar();
+        if (!rincian) {
+            // Draf yang dibuka lagi lain waktu: hitung ulang total dari server.
+            periksaServer().then(function (galat) {
+                if (galat === false) {
+                    return;
+                }
+                if (galat.length > 0) {
+                    tampilkanGalat(5, galat);
+                }
+                tampilkanBayar();
+            });
+        }
     };
 
     $('#bayar-salin').addEventListener('click', function () {
@@ -1715,77 +1682,81 @@
         }
     });
 
-    // Unggah bukti transfer ke alamat bukti pendaftaran (K83).
-    $('#bayar-unggah').addEventListener('submit', function (e) {
-        e.preventDefault();
-        var t = draf.tersimpan;
+    // Pendaftaran dan bukti transfer dikirim bersama (K90): tanpa bukti tidak ada yang tersimpan.
+    $('#tombol-kirim').addEventListener('click', function () {
         var berkas = $('#bayar-berkas');
-        var tombol = $('#bayar-kirim-bukti');
-        var pesan = $('#bayar-pesan-bukti');
-        var tulis = function (teks, berhasil) {
-            pesan.hidden = false;
-            pesan.className = 'mt-2 mb-0 alert ' + (berhasil ? 'alert-success' : 'alert-warning');
-            pesan.textContent = teks;
-        };
+        var dipilih = berkas.files[0];
 
-        if (!t || !t.bukti) {
+        if (!rincian) {
             return;
         }
-        if (!berkas.files.length) {
-            tulis('Belum ada gambar yang dipilih. Pilih foto atau tangkapan layar bukti transfer.', false);
+        if (!dipilih) {
+            tampilkanGalat(5, [{ jalur: 'bukti_bayar', pesan: 'Bukti transfer belum dipilih. Pilih foto atau tangkapan layar bukti transfer.' }]);
             berkas.focus();
             return;
         }
+        if (dipilih.size > 10 * 1024 * 1024) {
+            tampilkanGalat(5, [{ jalur: 'bukti_bayar', pesan: 'Gambar terlalu besar. Paling besar 10 MB; perkecil dulu atau pakai tangkapan layar.' }]);
+            return;
+        }
 
-        yakin('Kirim bukti bayar?', 'Gambar "' + berkas.files[0].name + '" dikirim ke panitia sebagai bukti transfer. Setelah terkirim, gambar tidak bisa dihapus sendiri.', 'Kirim bukti', 'utama').then(function (setuju) {
+        yakin('Kirim pendaftaran?', 'Pendaftaran ' + rincian.sekolah.nama + ' dengan ' + draf.atlet.length + ' atlet dan total ' + rupiah(rincian.total)
+            + ' dikirim bersama bukti transfer "' + dipilih.name + '". Setelah terkirim, data tidak bisa diubah lewat halaman ini; bila ada yang perlu diubah, hubungi panitia.',
+        'Kirim pendaftaran', 'utama').then(function (setuju) {
             if (setuju) {
-                kirimBukti(t, berkas, tombol, tulis);
+                kirimPendaftaran(dipilih);
             }
         });
     });
 
-    function kirimBukti(t, berkas, tombol, tulis) {
-        var isi = new FormData();
-        isi.append('bukti', berkas.files[0]);
-        var kepala = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
-        kepala[csrfKepala] = csrfToken;
-
+    function kirimPendaftaran(dipilih) {
+        var tombol = $('#tombol-kirim');
+        var label = $('span', tombol);
         tombol.disabled = true;
-        tombol.lastChild.textContent = 'Mengunggah…';
+        label.textContent = 'Mengirim…';
+        var pulih = function () {
+            tombol.disabled = false;
+            label.textContent = 'Kirim Pendaftaran';
+        };
 
-        ambil(t.bukti + '/bukti-bayar', { method: 'POST', headers: kepala, credentials: 'same-origin', body: isi })
-            .then(function (jawaban) {
-                return jawaban.json().then(function (data) {
-                    return { kode: jawaban.status, isi: data };
-                }, function () {
-                    return { kode: jawaban.status, isi: null };
-                });
-            }, function () {
-                return { kode: 0, isi: null };
-            })
-            .then(function (hasil) {
-                tombol.disabled = false;
-                tombol.lastChild.textContent = 'Unggah';
-                if (hasil.isi && hasil.isi.csrf) {
-                    csrfToken = hasil.isi.csrf;
-                }
-                if (hasil.kode === 201) {
-                    berkas.value = '';
-                    tulis(hasil.isi.pesan, true);
-                    return;
-                }
-                tulis(hasil.isi && hasil.isi.pesan ? hasil.isi.pesan
-                    : 'Bukti bayar belum terkirim. Periksa sambungan internet dan pastikan gambar tidak lebih dari 10 MB, lalu coba lagi.', false);
-            });
+        kecilkanFoto(dipilih, SISI_BUKTI, BATAS_BUKTI).then(function (dataUrl) {
+            return kirim(DATA.alamat.simpan, { bukti_bayar: dataUrl });
+        }, function () {
+            return { kode: -1 };
+        }).then(function (hasil) {
+            pulih();
+
+            if (hasil.kode === -1) {
+                tampilkanGalat(5, [{ jalur: 'bukti_bayar', pesan: 'Gambar tidak bisa dibaca. Pilih foto atau tangkapan layar bukti transfer lain (JPG, PNG, atau WEBP).' }]);
+                return;
+            }
+
+            if (hasil.kode === 201 && hasil.isi && hasil.isi.status === 'tersimpan') {
+                var r = hasil.isi.rincian;
+                draf.tersimpan = {
+                    id_pendaftaran: hasil.isi.id_pendaftaran,
+                    nama_sekolah: r.sekolah.nama,
+                    npsn: r.sekolah.npsn,
+                    wa: hasil.isi.wa,
+                    bukti: hasil.isi.bukti
+                };
+                sudahSelesai = true;
+                hapusDraf();
+                penyiapLangkah[5]();
+                perbaruiPil();
+                $('#cetak-bukti').focus();
+                return;
+            }
+
+            if (hasil.kode === 422 && hasil.isi && Array.isArray(hasil.isi.galat)) {
+                rincian = null;
+                tampilkanGalatServer(hasil.isi.galat);
+                return;
+            }
+
+            tampilkanGalat(5, [{ jalur: 'kirim', pesan: pesanGagalKirim(hasil) }]);
+        });
     }
-
-    $('#bayar-selesai').addEventListener('click', function () {
-        sudahSelesai = true;
-        hapusDraf();
-        penyiapLangkah[5]();
-        perbaruiPil();
-        $('#cetak-bukti').focus();
-    });
 
     // ------------------------------------------------------------------
     // Tombol bersama dan mulai
@@ -1841,6 +1812,12 @@
         kabupatenSekolah: kabupatenSekolah,
         npsnSekolah: npsnSekolah
     };
+
+    if (draf.tersimpan) {
+        // Draf dari alur lama yang sudah tersimpan di server.
+        sudahSelesai = true;
+        hapusDraf();
+    }
 
     akar.hidden = false;
     tampilkanSekolah();

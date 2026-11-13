@@ -3,6 +3,8 @@
 namespace App\Libraries\Pendaftaran;
 
 use App\Libraries\BuktiPendaftaran;
+use App\Libraries\Panel\BerkasBuktiBayar;
+use App\Models\BuktiBayarModel;
 use App\Models\AtletModel;
 use App\Models\AtletNomorModel;
 use App\Models\PenanggungJawabModel;
@@ -21,11 +23,13 @@ use Throwable;
  *    kuota (6.6, K51).
  * 2. Data yang sudah ada dibaca ulang dan seluruh kiriman diperiksa
  *    (`PemeriksaPendaftaran`).
- * 3. Foto penanggung jawab disimpan di luar `public/`.
- * 4. Satu transaksi: pendaftaran (status menunggu), ID pendaftaran dari nomor
- *    baris (6.8), penanggung jawab, atlet, nomor atlet (biaya individu
- *    disalin), dan tim beregu.
- * 5. Bila gagal, transaksi dibatalkan dan foto dihapus. NISN yang ternyata
+ * 3. Bukti transfer wajib (K90): `bukti_bayar` berupa data URL gambar. Tanpa
+ *    bukti, pendaftaran tidak masuk sistem (galat langkah 5).
+ * 4. Foto penanggung jawab dan bukti transfer disimpan di luar `public/`.
+ * 5. Satu transaksi: pendaftaran (status menunggu = Belum Dikonfirmasi), ID
+ *    pendaftaran dari nomor baris (6.8), penanggung jawab, atlet, nomor atlet
+ *    (biaya individu disalin), tim beregu, dan baris bukti bayar.
+ * 6. Bila gagal, transaksi dibatalkan dan foto serta bukti dihapus. NISN yang ternyata
  *    terdaftar pada saat yang sama ditolak kunci unik basis data dan
  *    dilaporkan sebagai galat NISN biasa.
  *
@@ -44,6 +48,8 @@ final class SimpanPendaftaran
      * Lama menunggu kunci per NPSN, dalam detik.
      */
     public const TUNGGU_KUNCI = 10;
+
+    public const PESAN_TANPA_BUKTI = 'Bukti transfer belum dipilih. Transfer dulu sebesar total, lalu pilih foto atau tangkapan layar bukti transfer (JPG, PNG, atau WEBP).';
 
     private BaseConnection $db;
 
@@ -72,9 +78,9 @@ final class SimpanPendaftaran
 
         if ($kunci !== null && ! $this->ambilKunci($kunci)) {
             return self::gagal([[
-                'langkah' => 4,
-                'jalur'   => 'simpan',
-                'pesan'   => 'Pendaftaran lain dari sekolah ini sedang disimpan. Tunggu beberapa detik, lalu tekan simpan lagi.',
+                'langkah' => 5,
+                'jalur'   => 'kirim',
+                'pesan'   => 'Pendaftaran lain dari sekolah ini sedang disimpan. Tunggu beberapa detik, lalu tekan Kirim Pendaftaran lagi.',
             ]]);
         }
 
@@ -100,12 +106,28 @@ final class SimpanPendaftaran
             return self::gagal($hasil['galat']);
         }
 
+        $isiBukti = BerkasBuktiBayar::bacaDataUrl($kiriman['bukti_bayar'] ?? null);
+
+        if ($isiBukti === null) {
+            return self::gagal([['langkah' => 5, 'jalur' => 'bukti_bayar', 'pesan' => self::PESAN_TANPA_BUKTI]]);
+        }
+
+        $berkasBukti = new BerkasBuktiBayar();
+
+        try {
+            $bukti = $berkasBukti->simpanIsi($isiBukti);
+        } catch (RuntimeException $e) {
+            return self::gagal([['langkah' => 5, 'jalur' => 'bukti_bayar', 'pesan' => $e->getMessage()]]);
+        }
+
         $data  = $hasil['data'];
         $foto  = [];
         $seri  = setting('Acara.seri');
         $tahun = setting('Acara.tahun');
 
         if (! is_numeric($seri) || ! is_numeric($tahun)) {
+            $berkasBukti->hapus($bukti['berkas']);
+
             throw new RuntimeException('Seri dan tahun acara belum diisi; ID pendaftaran tidak bisa dibuat.');
         }
 
@@ -172,6 +194,8 @@ final class SimpanPendaftaran
                 ]));
             }
 
+            self::pastikan(model(BuktiBayarModel::class)->insert(['pendaftaran_id' => $id] + $bukti));
+
             if ($this->db->transStatus() === false) {
                 throw new RuntimeException('Transaksi pendaftaran gagal.');
             }
@@ -185,6 +209,8 @@ final class SimpanPendaftaran
             foreach ($foto as $jalur) {
                 $this->foto->hapus($jalur);
             }
+
+            $berkasBukti->hapus($bukti['berkas']);
 
             // Kiriman lain mungkin baru saja mendaftarkan NISN yang sama:
             // laporkan sebagai galat biasa bila pemeriksaan ulang menemukannya.

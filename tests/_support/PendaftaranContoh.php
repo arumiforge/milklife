@@ -127,11 +127,13 @@ trait PendaftaranContoh
         $this->folderFoto = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'milklife-foto-' . bin2hex(random_bytes(6)) . DIRECTORY_SEPARATOR;
         mkdir($this->folderFoto, 0777, true);
         FotoPenanggungJawab::gantiFolderDasar($this->folderFoto);
+        \App\Libraries\Panel\BerkasBuktiBayar::gantiFolderDasar($this->folderFoto);
     }
 
     protected function hapusFolderFotoSementara(): void
     {
         FotoPenanggungJawab::gantiFolderDasar(null);
+        \App\Libraries\Panel\BerkasBuktiBayar::gantiFolderDasar(null);
 
         if ($this->folderFoto !== '' && is_dir($this->folderFoto)) {
             helper('filesystem');
@@ -261,6 +263,15 @@ trait PendaftaranContoh
 
         if (isset($kiriman['konfirmasi_susulan'])) {
             $kiriman['konfirmasi_susulan'] = array_map(static fn (int $n): int => $peta[$n], $kiriman['konfirmasi_susulan']);
+        }
+
+        // Bukti transfer wajib saat simpan (K90).
+        if (! array_key_exists('bukti_bayar', $kiriman)) {
+            $g = imagecreatetruecolor(40, 30);
+            ob_start();
+            imagejpeg($g);
+            imagedestroy($g);
+            $kiriman['bukti_bayar'] = 'data:image/jpeg;base64,' . base64_encode((string) ob_get_clean());
         }
 
         return $kiriman;
