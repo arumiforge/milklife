@@ -1,0 +1,373 @@
+[
+    {
+        "name": "Agency Landing",
+        "svgSrc": "/images/components/agency.svg",
+        "svgDarkSrc": "/images/components/agency-dark.svg",
+        "slug": "/landing/agency/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Mobile App Landing",
+        "svgSrc": "/images/components/mobile.svg",
+        "svgDarkSrc": "/images/components/mobile-dark.svg",
+        "slug": "/landing/mobile-application/",
+        "classes": "w-52"
+    },
+    {
+        "name": "Digital Product Landing",
+        "svgSrc": "/images/components/digital-product.svg",
+        "svgDarkSrc": "/images/components/digital-product-dark.svg",
+        "slug": "/landing/digital-product/",
+        "classes": "w-56"
+    },
+    {
+        "name": "SaaS Product Landing",
+        "svgSrc": "/images/components/saas.svg",
+        "svgDarkSrc": "/images/components/saas-dark.svg",
+        "slug": "/landing/saas/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Open-source Project Landing",
+        "svgSrc": "/images/components/open-source.svg",
+        "svgDarkSrc": "/images/components/open-source-dark.svg",
+        "slug": "/landing/open-source/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Pre-launch Landing",
+        "svgSrc": "/images/components/pre-launch.svg",
+        "svgDarkSrc": "/images/components/pre-launch-dark.svg",
+        "slug": "/landing/pre-launch/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Physical Product Landing",
+        "svgSrc": "/images/components/physical-product.svg",
+        "svgDarkSrc": "/images/components/physical-product-dark.svg",
+        "slug": "/landing/physical-product/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Crypto Landing",
+        "svgSrc": "/images/components/crypto.svg",
+        "svgDarkSrc": "/images/components/crypto-dark.svg",
+        "slug": "/landing/crypto/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Event Schedule Landing",
+        "svgSrc": "/images/components/event.svg",
+        "svgDarkSrc": "/images/components/event-dark.svg",
+        "slug": "/landing/event/",
+        "classes": "w-56"
+    },
+    {
+        "name": "NGO Presentation Landing",
+        "svgSrc": "/images/components/ngo.svg",
+        "svgDarkSrc": "/images/components/ngo-dark.svg",
+        "slug": "/landing/ngo/",
+        "classes": "w-56"
+    },
+    {
+        "name": "About page with feature list",
+        "svgSrc": "/images/components/about-1.svg",
+        "svgDarkSrc": "/images/components/about-1-dark.svg",
+        "slug": "/about/about-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "About page with video",
+        "svgSrc": "/images/components/about-2.svg",
+        "svgDarkSrc": "/images/components/about-2-dark.svg",
+        "slug": "/about/about-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "About page with statistics",
+        "svgSrc": "/images/components/about-3.svg",
+        "svgDarkSrc": "/images/components/about-3-dark.svg",
+        "slug": "/about/about-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Services page with icon features",
+        "svgSrc": "/images/components/services-1.svg",
+        "svgDarkSrc": "/images/components/services-1-dark.svg",
+        "slug": "/services/services-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Services page with image content",
+        "svgSrc": "/images/components/services-2.svg",
+        "svgDarkSrc": "/images/components/services-2-dark.svg",
+        "slug": "/services/services-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Services page with image cards",
+        "svgSrc": "/images/components/services-3.svg",
+        "svgDarkSrc": "/images/components/services-3-dark.svg",
+        "slug": "/services/services-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Services page with statistics and FAQ",
+        "svgSrc": "/images/components/services-4.svg",
+        "svgDarkSrc": "/images/components/services-4-dark.svg",
+        "slug": "/services/services-4/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Team page with hover cards",
+        "svgSrc": "/images/components/team-1.svg",
+        "svgDarkSrc": "/images/components/team-1-dark.svg",
+        "slug": "/team/team-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Team page with profile cards",
+        "svgSrc": "/images/components/team-2.svg",
+        "svgDarkSrc": "/images/components/team-2-dark.svg",
+        "slug": "/team/team-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Team page with masonry grid",
+        "svgSrc": "/images/components/team-3.svg",
+        "svgDarkSrc": "/images/components/team-3-dark.svg",
+        "slug": "/team/team-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Team page with outline cards",
+        "svgSrc": "/images/components/team-4.svg",
+        "svgDarkSrc": "/images/components/team-4-dark.svg",
+        "slug": "/team/team-4/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Pricing page with single plan",
+        "svgSrc": "/images/components/pricing-1.svg",
+        "svgDarkSrc": "/images/components/pricing-1-dark.svg",
+        "slug": "/pricing/pricing-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Pricing page with three plans",
+        "svgSrc": "/images/components/pricing-2.svg",
+        "svgDarkSrc": "/images/components/pricing-2-dark.svg",
+        "slug": "/pricing/pricing-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Pricing page with price toggle",
+        "svgSrc": "/images/components/pricing-3.svg",
+        "svgDarkSrc": "/images/components/pricing-3-dark.svg",
+        "slug": "/pricing/pricing-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Pricing page with comparison table",
+        "svgSrc": "/images/components/pricing-4.svg",
+        "svgDarkSrc": "/images/components/pricing-4-dark.svg",
+        "slug": "/pricing/pricing-4/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Contact page with search",
+        "svgSrc": "/images/components/contact-1.svg",
+        "svgDarkSrc": "/images/components/contact-1-dark.svg",
+        "slug": "/contact/contact-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Contact page with FAQ",
+        "svgSrc": "/images/components/contact-2.svg",
+        "svgDarkSrc": "/images/components/contact-2-dark.svg",
+        "slug": "/contact/contact-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Contact page with background",
+        "svgSrc": "/images/components/contact-3.svg",
+        "svgDarkSrc": "/images/components/contact-3-dark.svg",
+        "slug": "/contact/contact-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Contact page with options",
+        "svgSrc": "/images/components/contact-4.svg",
+        "svgDarkSrc": "/images/components/contact-4-dark.svg",
+        "slug": "/contact/contact-4/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Blog Landing Page",
+        "svgSrc": "/images/components/blog.svg",
+        "svgDarkSrc": "/images/components/blog-dark.svg",
+        "slug": "/blog/homepage/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Blog Article Page",
+        "svgSrc": "/images/components/article.svg",
+        "svgDarkSrc": "/images/components/article-dark.svg",
+        "slug": "/blog/article/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Testimonials page with statistics",
+        "svgSrc": "/images/components/testimonials-1.svg",
+        "svgDarkSrc": "/images/components/testimonials-1-dark.svg",
+        "slug": "/testimonials/testimonials-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Testimonials page with cards",
+        "svgSrc": "/images/components/testimonials-2.svg",
+        "svgDarkSrc": "/images/components/testimonials-2-dark.svg",
+        "slug": "/testimonials/testimonials-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Project Showcase page",
+        "svgSrc": "/images/components/portfolio-1.svg",
+        "svgDarkSrc": "/images/components/portfolio-1-dark.svg",
+        "slug": "/portfolio/project-showcase/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Login page with feature list",
+        "svgSrc": "/images/components/login-1.svg",
+        "svgDarkSrc": "/images/components/login-1-dark.svg",
+        "slug": "/authentication/login-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Login page with illustration",
+        "svgSrc": "/images/components/login-2.svg",
+        "svgDarkSrc": "/images/components/login-2-dark.svg",
+        "slug": "/authentication/login-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Login page with background image",
+        "svgSrc": "/images/components/login-3.svg",
+        "svgDarkSrc": "/images/components/login-3-dark.svg",
+        "slug": "/authentication/login-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Register page with feature list",
+        "svgSrc": "/images/components/register-1.svg",
+        "svgDarkSrc": "/images/components/register-1-dark.svg",
+        "slug": "/authentication/register-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Register page with illustration",
+        "svgSrc": "/images/components/register-2.svg",
+        "svgDarkSrc": "/images/components/register-2-dark.svg",
+        "slug": "/authentication/register-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Register page with background image",
+        "svgSrc": "/images/components/register-3.svg",
+        "svgDarkSrc": "/images/components/register-3-dark.svg",
+        "slug": "/authentication/register-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Forgot password with feature list",
+        "svgSrc": "/images/components/forgot-password-1.svg",
+        "svgDarkSrc": "/images/components/forgot-password-1-dark.svg",
+        "slug": "/authentication/forgot-password-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Forgot password with illustration",
+        "svgSrc": "/images/components/forgot-password-2.svg",
+        "svgDarkSrc": "/images/components/forgot-password-2-dark.svg",
+        "slug": "/authentication/forgot-password-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Forgot password with background image",
+        "svgSrc": "/images/components/forgot-password-3.svg",
+        "svgDarkSrc": "/images/components/forgot-password-3-dark.svg",
+        "slug": "/authentication/forgot-password-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Reset password with feature list",
+        "svgSrc": "/images/components/reset-password-1.svg",
+        "svgDarkSrc": "/images/components/reset-password-1-dark.svg",
+        "slug": "/authentication/reset-password-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Reset password with illustration",
+        "svgSrc": "/images/components/reset-password-2.svg",
+        "svgDarkSrc": "/images/components/reset-password-2-dark.svg",
+        "slug": "/authentication/reset-password-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Reset password with background image",
+        "svgSrc": "/images/components/reset-password-3.svg",
+        "svgDarkSrc": "/images/components/reset-password-3-dark.svg",
+        "slug": "/authentication/reset-password-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "404 page with search bar",
+        "svgSrc": "/images/components/404-1.svg",
+        "svgDarkSrc": "/images/components/404-1-dark.svg",
+        "slug": "/status/404-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "404 page with illustration",
+        "svgSrc": "/images/components/404-2.svg",
+        "svgDarkSrc": "/images/components/404-2-dark.svg",
+        "slug": "/status/404-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "404 page with homepage button",
+        "svgSrc": "/images/components/404-3.svg",
+        "svgDarkSrc": "/images/components/404-3-dark.svg",
+        "slug": "/status/404-3/",
+        "classes": "w-56"
+    },
+    {
+        "name": "500 page with illustration",
+        "svgSrc": "/images/components/500-1.svg",
+        "svgDarkSrc": "/images/components/500-1-dark.svg",
+        "slug": "/status/500-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "500 page with background image",
+        "svgSrc": "/images/components/500-2.svg",
+        "svgDarkSrc": "/images/components/500-2-dark.svg",
+        "slug": "/status/500-2/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Legal page with sidebar",
+        "svgSrc": "/images/components/terms-1.svg",
+        "svgDarkSrc": "/images/components/terms-1-dark.svg",
+        "slug": "/legal/terms-1/",
+        "classes": "w-56"
+    },
+    {
+        "name": "Legal page with contact button",
+        "svgSrc": "/images/components/terms-2.svg",
+        "svgDarkSrc": "/images/components/terms-2-dark.svg",
+        "slug": "/legal/terms-2/",
+        "classes": "w-56"
+    }
+]

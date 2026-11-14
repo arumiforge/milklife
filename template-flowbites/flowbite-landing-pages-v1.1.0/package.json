@@ -1,0 +1,45 @@
+{
+	"name": "flowbite-pro-marketing-ui-pages",
+	"version": "1.1.0",
+	"description": "Marketing UI Tailwind CSS code part of the Pro version of Flowbite",
+	"license": "https://flowbite.com/license",
+	"style": "dist/flowbite.css",
+	"main": "static/js/app.bundle.js",
+	"homepage": "https://flowbite.com/pro/",
+	"contributors": [
+		"Zoltán Szőgyényi <zoltan@themesberg.com>",
+		"Robert Tanislav <robert@themesberg.com>"
+	],
+	"scripts": {
+		"start": "run-p start:dev:*",
+		"start:dev:hugo": "hugo server -D --watch",
+		"start:dev:webpack": "webpack --mode=development --watch",
+		"build": "NODE_ENV=production && run-s build:webpack build:hugo",
+		"build:hugo": "hugo --destination=./.build",
+		"build:webpack": "webpack --mode=production",
+		"build:styles": "npx tailwindcss -i ./src/app.css -o ./dist/css/flowbite.css"
+	},
+	"devDependencies": {
+		"@tailwindcss/postcss": "^4.0.1",
+		"css-loader": "^7.1.2",
+		"css-minimizer-webpack-plugin": "^3.1.1",
+		"file-loader": "^6.2.0",
+		"mini-css-extract-plugin": "^2.4.2",
+		"npm-run-all": "^4.1.5",
+		"postcss": "^8.5.1",
+		"postcss-loader": "^8.1.1",
+		"postcss-preset-env": "^6.7.0",
+		"source-map-loader": "^3.0.0",
+		"style-loader": "^3.3.0",
+		"tailwindcss": "^4.0.1",
+		"webpack": "^5.58.2",
+		"webpack-cli": "^4.9.0",
+		"webpack-dev-server": "^4.3.1",
+		"yarn": "^1.22.17"
+	},
+	"dependencies": {
+		"@popperjs/core": "^2.10.2",
+		"flowbite": "^3.1.1",
+		"flowbite-typography": "^1.0.3"
+	}
+}
