@@ -11,16 +11,16 @@ Diperbarui: 14 November 2026
 | [F7-01 Minify dan pengecilan gambar](tugas/F7-01-minify-pengecilan-gambar.md) | selesai | 1 | [#60](https://github.com/arumiforge/milklife/pull/60) |
 | [F7-02 Keamanan dan mode produksi](tugas/F7-02-keamanan-mode-produksi.md) | selesai | 1 | [#58](https://github.com/arumiforge/milklife/pull/58) |
 | [F7-04 Rancangan revisi 4](tugas/F7-04-rancangan-revisi-4.md) | selesai | 1 | [#57](https://github.com/arumiforge/milklife/pull/57), [#59](https://github.com/arumiforge/milklife/pull/59) |
-| [F7-03 Tim tanpa pembayar](tugas/F7-03-tim-tanpa-pembayar.md) | dikerjakan | 2 | |
-| [F7-05 Cadangan dan panduan produksi](tugas/F7-05-cadangan-panduan-produksi.md) | rencana | 2 | |
+| [F7-03 Tim tanpa pembayar](tugas/F7-03-tim-tanpa-pembayar.md) | selesai | 2 | [#62](https://github.com/arumiforge/milklife/pull/62) |
+| [F7-05 Cadangan dan panduan produksi](tugas/F7-05-cadangan-panduan-produksi.md) | selesai | 2 | [#63](https://github.com/arumiforge/milklife/pull/63) |
 | [F7-06 Uji menyeluruh](tugas/F7-06-uji-menyeluruh.md) | rencana | 3 | |
 | [F7-07 Penutupan](tugas/F7-07-penutupan-tahap-7.md) | rencana | 4 | |
-| [F7-08 Data sekolah dan menu Sekolah](tugas/F7-08-data-sekolah-panel.md) | menunggu tinjauan | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
-| [F7-09 Usulan nama sekolah dan dokumen final](tugas/F7-09-usulan-nama-sekolah.md) | menunggu tinjauan | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
+| [F7-08 Data sekolah dan menu Sekolah](tugas/F7-08-data-sekolah-panel.md) | selesai | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
+| [F7-09 Usulan nama sekolah dan dokumen final](tugas/F7-09-usulan-nama-sekolah.md) | selesai | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
 
 ## Berikutnya
 
-Tidak ada tahap lain di rancangan. Setelah Tahap 7: pemasangan di komputer produksi oleh pemilik mengikuti panduan F7-05.
+Tidak ada tahap lain di rancangan. Web sudah terpasang di komputer produksi mengikuti panduan F7-05; pembaruan berikutnya mengikuti bagian 10 panduan itu.
 
 ## Selesai
 

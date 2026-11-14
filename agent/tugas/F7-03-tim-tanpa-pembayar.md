@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 7 — Penyelesaian |
 | Dibuat | 12 November 2026 |
 

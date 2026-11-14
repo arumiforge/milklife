@@ -2,14 +2,15 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100) |
-| Tanggal | 10 November 2026, revisi 11, 12, dan 14 November 2026 |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100); **revisi 7 disetujui 15 November 2026** (K101) |
+| Tanggal | 10 November 2026, revisi 11, 12, 14, dan 15 November 2026 |
 | Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
 | Revisi 2 | SLB tidak ikut (K28); web lewat Cloudflare Tunnel (K31); asumsi 4–7 dikonfirmasi dan asumsi 8 diganti (K32); bukti bayar diunggah admin (K34); awalan nomor dada awal per kelompok umur (K33). Bagian yang berubah: 6.2, 6.9, 9, 11, 13, 15, 17, lampiran |
 | Revisi 3 | Kelompok umur ditentukan tahun lahir, bukan usia; batas tahun lahir diisi data awal; tanggal patokan usia dihapus, usia hanya ditampilkan (K36, K37). Bagian yang berubah: 5, 6.1, 6.4, 11, 14, lampiran |
 | Revisi 4 | Disesuaikan dengan yang dibangun di Tahap 4–7: foto penanggung jawab wajib (K50); batas nomor individu per atlet dan atlet per nomor (K51, K53); konfirmasi tim susulan (K57); tim tanpa pembayar (K68); ID pendaftaran tetap saat diubah (K63); cek dan bukti tanpa tanggal lahir dan nomor dada (K49, K52); panel tanpa pendaftaran baru, nomor dada atlet tambahan, saringan status rekap (K58–K60); sesi lain keluar saat ganti sandi dan halaman galat ramah (K67); CI GitHub (K46); cadangan harian (K66); juknis tidak ditunggu (K55). Bagian yang berubah: 5, 6.3, 6.5, 6.6, 6.8, 6.9, 8, 9, 13, 14, 15, 16, 17 |
 | Revisi 5 | Kelompok umur ditentukan jenjang dulu, baru tahun lahir; rentang tahun lahir boleh beririsan antar-jenjang, tidak dalam satu jenjang (K95). Bagian yang berubah: 6.4, 17 |
 | Revisi 6 | Data sekolah dari Sekolah Kita dan menu Sekolah di panel untuk memberi nama pembeda (K97); kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan saat admin mengubah pendaftaran (K98); usulan nama sekolah dari pendaftar (K99). Disesuaikan juga dengan keputusan yang sudah berjalan: penulisan rupiah (K80), bukti transfer diunggah official dan pendaftaran baru masuk bersama bukti transfer (K83, K90), alamat dan isi bukti PDF serta halaman cek (K77, K78, K87–K89, K91). Bagian yang berubah: 5, 6.2, 6.7, 7, 8, 9, 11, 15, 17 |
+| Revisi 7 | Disesuaikan dengan keputusan Tahap 7 yang belum masuk: aset kecil dan penanda versi (K72, K86), data awal lengkap (K73), rincian biaya tersembunyi bawaan (K74), tampilan halaman depan (K75, K81–K86, K92, K93), kolom No, pilih massal, dan Backup data di panel (K76), tombol Halaman depan dan rekap gabungan (K85), validasi dan kenyamanan wizard (K88, K89), reset nomor dada setelah uji coba (K94). Bagian yang berubah: 4, 6.9, 7, 9, 10, lampiran |
 | Acara | MilkLife Athletics Challenge Seri 2 – 2026, Supersoccer Arena, Kudus, 9–12 Desember 2026 |
 | Dasar | Wawancara sesi 1 (lihat `agent/KEPUTUSAN.md`) dan flyer di `sumber/flyer/` |
 
@@ -57,7 +58,7 @@ Dua pendekatan lain ditolak:
 | PDF | mPDF |
 | Excel | PhpSpreadsheet |
 | Pengaturan | `codeigniter4/settings` (pengaturan tersimpan di basis data) |
-| Minify | `matthiasmullie/minify` untuk CSS/JS lewat `php spark aset:minify`; berkas asli tetap ada |
+| Minify | `matthiasmullie/minify` untuk CSS, JS, dan SVG lewat `php spark aset:minify`; berkas asli tetap ada (K72). Alamat aset diberi penanda versi `?v=<waktu ubah berkas>` supaya Cloudflare dan peramban langsung memakai berkas baru (K86) |
 | Masuk admin | Sesi bawaan CodeIgniter + `password_hash`, tanpa pustaka tambahan |
 
 HTML diperkecil saat dikirim ke peramban (filter keluaran, aktif di produksi), jadi berkas tampilan asli tidak berubah.
@@ -185,6 +186,7 @@ Format: `MAC` + seri + kode jenjang + nomor urut 5 digit + 2 digit tahun. Contoh
 - Tiap kelompok umur boleh punya lebih dari satu awalan. Bila awalan pertama penuh, nomor berlanjut ke awalan berikutnya.
 - Bila semua awalan sebuah kelompok umur penuh, penandaan Lunas dibatalkan seluruhnya dan admin diminta menambah awalan.
 - Nomor dada tidak dipakai ulang. Mengembalikan status ke Menunggu tidak menghapus nomor dada.
+- Satu-satunya pengecualian (K94): perintah `php spark nomor-dada:reset` mengosongkan semua nomor dada dan penghitung awalan setelah uji coba, dan pendaftaran Lunas kembali Menunggu. Perintah meminta konfirmasi dan tidak boleh dijalankan setelah nomor dada dibagikan ke peserta.
 - **Bila admin mengubah pendaftaran yang sudah Lunas dan totalnya berubah (naik atau turun), status kembali ke Menunggu Konfirmasi Pembayaran** (K32). Admin menandai Lunas lagi setelah selisihnya diurus panitia di luar sistem. Atlet yang sudah punya nomor dada tetap memegangnya; atlet baru mendapat nomor saat ditandai Lunas lagi. Jendela konfirmasi simpan menyebut akibat ini.
 - **Bila admin menambah atlet ke pendaftaran Lunas dan totalnya tetap** (misalnya tambahan anggota tim beregu), status tetap Lunas dan atlet baru **langsung mendapat nomor dada saat disimpan** (K59).
 - Tidak ada status "dibatalkan". Pendaftaran yang batal dihapus admin, sehingga NISN-nya bisa didaftarkan lagi.
@@ -212,7 +214,9 @@ Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah ked
 
 **Draf.** Isian tersimpan di peramban (`localStorage`) pada setiap perubahan, sehingga tidak hilang saat halaman dimuat ulang. Foto penanggung jawab diperkecil di peramban (sisi terpanjang 800 piksel, JPEG) dan ikut tersimpan di draf.
 
-**Validasi.** Setiap isian diperiksa di peramban untuk kenyamanan dan diperiksa lagi seluruhnya di server. Penyimpanan berlangsung dalam satu transaksi: tersimpan semua atau tidak sama sekali.
+**Validasi.** Setiap isian diperiksa di peramban untuk kenyamanan dan diperiksa lagi seluruhnya di server. Isian yang ditandai salah kembali normal begitu mulai diubah (K88). Penyimpanan berlangsung dalam satu transaksi: tersimpan semua atau tidak sama sekali.
+
+**Kenyamanan** (K89): tindakan yang tidak bisa dibatalkan (hapus nomor atau atlet, mulai dari awal, kirim pendaftaran, kirim bukti bayar) memakai jendela konfirmasi, bukan kotak bawaan peramban. Isian tanggal memakai pemilih Tanggal, Bulan (nama bulan), dan Tahun. Bilah muat tipis di atas halaman menyala saat wizard menghubungi server.
 
 ## 8. Cek pendaftaran dan bukti
 
@@ -240,18 +244,19 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 
 ## 9. Panel admin
 
-- **Tata letak:** lebar penuh, menu samping, kepala halaman menempel di atas, menu menempel di bawah pada ponsel, tanpa teks footer.
-- **Tabel:** data dari titik akhir JSON, dengan halaman, pencarian, saringan pada setiap kolom yang relevan, dan pengurutan. Setiap tabel punya tombol unduh Excel yang mengikuti saringan aktif.
+- **Tata letak:** lebar penuh, menu samping, kepala halaman menempel di atas dengan tombol "Halaman depan" yang membuka halaman depan di tab baru (K85), menu menempel di bawah pada ponsel, tanpa teks footer.
+- **Tabel:** data dari titik akhir JSON, dengan kolom No otomatis (K76), halaman, pencarian, saringan pada setiap kolom yang relevan, dan pengurutan. Setiap tabel punya tombol unduh Excel yang mengikuti saringan aktif.
 - **Keadaan kosong:** pesan ramah yang menjelaskan apa yang belum ada dan langkah berikutnya.
 - **Pemuatan:** bilah kemajuan di atas halaman saat data dimuat.
-- **Tindakan berisiko** (hapus, tandai lunas, kembalikan ke Menunggu): jendela konfirmasi yang menyebut apa yang akan terjadi.
+- **Tindakan berisiko** (hapus, tandai lunas, kembalikan ke Menunggu): jendela konfirmasi yang menyebut apa yang akan terjadi. Daftar pendaftaran punya pilih massal untuk ketiga tindakan itu, paling banyak 100 sekaligus, dengan aturan yang sama seperti di rincian (K76).
+- **Backup data** (K76, K77): tombol di daftar pendaftaran mengunduh satu zip berisi data pendaftaran, foto penanggung jawab, dan bukti bayar, untuk dimasukkan ke server baru dengan `php spark pendaftaran:impor`. Cadangan harian lengkap tetap lewat `cadangan:buat` (15).
 - **Tanpa pendaftaran baru** (K58): panel hanya melihat, menandai Lunas, mengubah, dan menghapus pendaftaran yang sudah ada. Sekolah yang terlambat didaftarkan lewat wizard setelah admin memakai buka manual (6.1).
 - **Ubah pendaftaran:** admin bisa mengubah data sekolah, penanggung jawab, atlet, dan nomor lomba. Aturan pada bagian 6 tetap berlaku dan biaya dihitung ulang. ID pendaftaran tidak berubah (6.8). Akibat pada status dan nomor dada mengikuti 6.9 (K32, K59).
   - Kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan untuk atlet yang sudah memakainya, ditandai "Sudah ditutup", sehingga perubahan lain (misalnya nomor WA) tetap bisa disimpan. Atlet baru dan nomor baru tidak bisa memakainya (K98).
   - Nama sekolah tersimpan yang berbeda dari data sekolah, misalnya nama usulan yang belum diputuskan, dipertahankan selama NPSN tidak diubah.
 - **Tim tanpa pembayar** (K68): rincian pendaftaran memberi peringatan pada tim yang kehilangan pembayar biaya timnya, dasbor menampilkan jumlahnya bila ada, dan rekap keuangan mendaftarnya beserta pendaftaran anggotanya. Di Ubah, tim itu punya kotak centang "Bebankan biaya tim ke pendaftaran ini" dengan tarif saat ini; bila pendaftarannya Lunas dan totalnya berubah, berlaku 6.9.
 - **Bukti bayar** (K34, K83, K90): official mengunggah bukti transfer saat mengirim pendaftaran, dan bisa menambah bukti lewat Cek Pendaftaran selama belum Lunas. Admin juga bisa mengunggah dari rincian pendaftaran. Paling banyak 5 gambar per pendaftaran. Gambar dikecilkan otomatis sebelum disimpan (sisi terpanjang 1600 piksel, JPEG). Admin bisa melihat, mengunduh, dan menghapus tiap gambar.
-- **Rekap:** peserta per nomor lomba, tim beregu, per sekolah, per kelompok umur, dan keuangan (tagihan, lunas, belum). Tersedia Excel dan PDF. Rekap peserta memuat semua pendaftaran dengan saringan status (semua, Lunas, Menunggu), dan Excel serta PDF-nya mengikuti saringan itu; rekap keuangan selalu memuat keduanya (K60).
+- **Rekap:** peserta per nomor lomba, tim beregu, per sekolah, per kelompok umur, dan keuangan (tagihan, lunas, belum). Tersedia Excel dan PDF, ditambah tombol "Unduh Rekap Gabungan": satu Excel berisi semua data, satu sheet per bagian (K85). Rekap peserta memuat semua pendaftaran dengan saringan status (semua, Lunas, Menunggu), dan Excel serta PDF-nya mengikuti saringan itu; rekap keuangan selalu memuat keduanya (K60).
 - **Data sekolah** (K97): menu Sekolah menampilkan semua sekolah di data referensi dengan saringan kabupaten, jenjang, nama yang sama dengan sekolah lain, dan sudah disunting, serta unduh Excel. Admin bisa mengubah nama, bentuk, jenjang, status, alamat, desa, kecamatan, dan kabupaten; NPSN tidak bisa diubah. Nama baru yang sama dengan sekolah lain ditolak. Saat menyimpan, admin bisa sekalian mengganti nama di pendaftaran yang sudah masuk dengan NPSN itu. Sekolah yang disunting tidak ditimpa saat data sekolah diimpor ulang.
 - **Usulan nama** (K99): usulan dari pendaftar (6.2) tampil di halaman Usulan nama dengan formulir Setujui (nama boleh dirapikan dulu) dan Tolak (alasan pilihan). Jumlah usulan yang menunggu tampil di dasbor dan di menu Sekolah, dan rincian pendaftaran pengusul diberi tanda. Menyetujui satu usulan menutup usulan lain yang masih menunggu untuk sekolah yang sama.
 - **Gambar belum ada:** kotak ikon "tanpa gambar", bukan gambar tiruan.
@@ -260,16 +265,18 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 
 Semua isi diatur dari panel admin.
 
-- Gambar kepala mendatar selebar layar.
-- Logo persegi, logo persegi panjang, dan logo Bakti Olahraga Djarum Foundation.
-- Judul, teks, seri, tahun, tempat, dan tanggal acara.
-- Dua tombol utama: **Pendaftaran** dan **Cek Pendaftaran**.
-- Keterangan status pendaftaran (lihat 6.1).
-- Kelompok umur, nomor lomba, dan biaya, diambil dari data induk.
+- **Kepala** menempel di atas saat digulir, dengan pita bawah oranye (K75). Isinya logo persegi (logo persegi panjang hanya bila yang persegi belum ada) tanpa latar, label seri, menu Tentang, Kategori, Jadwal, Unduhan, dan tombol Panitia (K81, K93).
+- **Pembuka** berlatar krem (K81–K83, K92):
+  - judul besar huruf besar, satu kata per baris dengan kata terakhir oranye (judul data awal "MilkLife Athletics Challenge"; judul panjang mengalir biasa, K86);
+  - gambar kepala di kanan yang memudar ke latar dengan tepi kiri setengah lingkaran;
+  - kapsul info berisi tanggal, tempat, dan keadaan pendaftaran (6.1), dengan ujung keadaan biru saat pendaftaran terbuka (K82, K92);
+  - tombol **Daftar Sekarang** (saat terbuka) dan **Cek Pendaftaran**.
+- **Kartu kelompok usia** bergambar pelari dan lintasan, menaut ke rinciannya, dengan julukan dan jumlah nomor individu dan beregu (K85, K88).
+- **Kelompok umur, nomor lomba, dan biaya** dari data induk, paling banyak 2 kolom dengan lencana kategori Putra, Putri, atau Mix (K76). Rincian biaya **disembunyikan** secara bawaan dan dinyalakan admin lewat sakelar di Pengaturan > Halaman Depan (K74).
 - Jadwal: sosialisasi daring, technical meeting, dan jadwal lain yang ditambahkan admin.
 - Unduhan, narahubung, media sosial.
 - Tombol bagikan ke WA dan tombol tanya admin lewat WA dengan teks yang sudah diatur.
-- Footer.
+- **Kaki halaman** dengan logo Bakti Olahraga Djarum Foundation di kanan, di semua halaman publik (K84).
 
 ## 11. Model data
 
@@ -365,12 +372,12 @@ Semua asumsi sudah diputuskan pemilik. Juknis resmi tidak ditunggu; batas yang s
 
 ## Lampiran: data awal nomor lomba
 
-Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25). Semua bisa diubah admin. Jenjang yang boleh ikut dan biaya individu dikosongkan. Batas tahun lahir (K36): KU 8 lahir 2019 ke atas; KU 10 lahir 2016–2018; KU 12 lahir 2015; KU 15 lahir 2011–2014; KU 18 lahir 2008–2010. Awalan nomor dada diisi satu per kelompok umur (K33): KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5; admin bisa mengubah atau menambahnya. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
+Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25, diperluas K73). Semua bisa diubah admin. Jenjang yang boleh ikut: KU 8–12 SD/MI, KU 15 SMP/MTs, KU 18 SMA/SMK/MA. Biaya individu: KU 8–12 Rp 25.000, KU 15 Rp 35.000, KU 18 Rp 50.000 per nomor. Batas anggota nomor beregu dua kali jumlah inti. Perintah yang sama juga mengisi rekening, isi halaman depan, jadwal, kontak, dan berkas unduhan; rekening, nomor WA, dan sebagian unduhan masih contoh yang diganti admin. Batas tahun lahir (K36): KU 8 lahir 2019 ke atas; KU 10 lahir 2016–2018; KU 12 lahir 2015; KU 15 lahir 2011–2014; KU 18 lahir 2008–2010. Awalan nomor dada diisi satu per kelompok umur (K33): KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5; admin bisa mengubah atau menambahnya. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
 
 | Kelompok umur | Individu (putra dan putri) | Beregu |
 |---|---|---|
 | KU 8 (Seneng Playon) | Lari 40 m | – |
-| KU 10 | Lari 60 m, Frog Jump, Turbo Throw | Kanga's Escape putra/putri (4 orang, Rp100.000); Formula 1 putra/putri (4 orang, Rp100.000); Estafet 8 × 50 m mix (8 orang, Rp150.000) |
-| KU 12 | Lompat Jauh, Tolak Peluru, Lari 60 m, Lari 1000 m, Trilomba | Estafet 8 × 50 m mix (8 orang, Rp150.000) |
-| KU 15 | Jalan Cepat 2000 m, Lari 80 m, Lari 400 m, Lari 800 m, Lari 1500 m, Lompat Jauh, Lompat Tinggi, Lempar Lembing, Lempar Cakram, Tolak Peluru | Estafet 5 × 80 m putra/putri (5 orang, Rp100.000) |
-| KU 18 | Jalan Cepat 3000 m, Lari 100 m, Lari 400 m, Lari 800 m, Lari 1500 m, Lompat Jauh, Lompat Tinggi, Lempar Lembing, Lempar Cakram, Tolak Peluru | Estafet 4 × 100 m putra/putri (4 orang, Rp100.000); Estafet 4 × 400 m mix (4 orang, Rp100.000) |
+| KU 10 | Lari 60 m, Frog Jump, Turbo Throw | Kanga's Escape putra/putri (4 orang, Rp 100.000); Formula 1 putra/putri (4 orang, Rp 100.000); Estafet 8 × 50 m mix (8 orang, Rp 150.000) |
+| KU 12 | Lompat Jauh, Tolak Peluru, Lari 60 m, Lari 1000 m, Trilomba | Estafet 8 × 50 m mix (8 orang, Rp 150.000) |
+| KU 15 | Jalan Cepat 2000 m, Lari 80 m, Lari 400 m, Lari 800 m, Lari 1500 m, Lompat Jauh, Lompat Tinggi, Lempar Lembing, Lempar Cakram, Tolak Peluru | Estafet 5 × 80 m putra/putri (5 orang, Rp 100.000) |
+| KU 18 | Jalan Cepat 3000 m, Lari 100 m, Lari 400 m, Lari 800 m, Lari 1500 m, Lompat Jauh, Lompat Tinggi, Lempar Lembing, Lempar Cakram, Tolak Peluru | Estafet 4 × 100 m putra/putri (4 orang, Rp 100.000); Estafet 4 × 400 m mix (4 orang, Rp 100.000) |
