@@ -29,5 +29,5 @@ Data sekolah diperbarui dari Sekolah Kita (sekolah.data.kemendikdasmen.go.id), d
 
 - Sekolah Kita memakai nama yang sama persis dengan data lama, jadi nama kembar hanya bisa dibereskan lewat penyuntingan admin.
 - Penelusuran Sekolah Kita dilakukan lewat peramban di halaman daftar sekolahnya (100 kartu per halaman), bukan lewat skrip; `ambil_sekolah.py` (Data Referensi) tetap ada.
-- Belum diubah: rancangan final dan `dokumen/final/panduan-pemasangan-produksi.md` (masih menyebut 4.729 sekolah). Perubahan dokumen final harus lewat draf dan persetujuan pemilik.
+- Rancangan final dan panduan pemasangan produksi diperbarui di F7-09 atas permintaan pemilik (K100).
 - Tidak termasuk: menambah atau menghapus sekolah dari panel.

@@ -15,7 +15,8 @@ Diperbarui: 14 November 2026
 | [F7-05 Cadangan dan panduan produksi](tugas/F7-05-cadangan-panduan-produksi.md) | rencana | 2 | |
 | [F7-06 Uji menyeluruh](tugas/F7-06-uji-menyeluruh.md) | rencana | 3 | |
 | [F7-07 Penutupan](tugas/F7-07-penutupan-tahap-7.md) | rencana | 4 | |
-| [F7-08 Data sekolah dan menu Sekolah](tugas/F7-08-data-sekolah-panel.md) | menunggu tinjauan | sisipan | |
+| [F7-08 Data sekolah dan menu Sekolah](tugas/F7-08-data-sekolah-panel.md) | menunggu tinjauan | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
+| [F7-09 Usulan nama sekolah dan dokumen final](tugas/F7-09-usulan-nama-sekolah.md) | menunggu tinjauan | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
 
 ## Berikutnya
 

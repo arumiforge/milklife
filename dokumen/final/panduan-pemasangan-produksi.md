@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026** |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100) |
+| Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
 | Tanggal | 12 November 2026 |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
@@ -115,11 +116,13 @@ Jalankan berurutan di terminal Laragon, di folder `C:\laragon\www\milklife`:
    php spark migrate --all
    ```
 
-2. Isi daftar sekolah (4.729 sekolah di lima kabupaten):
+2. Isi daftar sekolah (4.766 sekolah di lima kabupaten):
 
    ```
    php spark sekolah:impor
    ```
+
+   Perintah ini aman diulang kapan saja. Sekolah yang namanya sudah disunting admin di menu Sekolah tidak ditimpa (K97).
 
 3. Isi data awal dari flyer Seri 2. Hanya **sekali** saat pemasangan; bila data sudah ada, perintah menolak supaya isian admin tidak tertimpa:
 
@@ -269,8 +272,11 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    git pull
    composer install --no-dev --optimize-autoloader
    php spark migrate --all
+   php spark sekolah:impor
    php spark aset:minify
    ```
+
+   `sekolah:impor` memasukkan data sekolah terbaru bila versi baru membawanya. Sekolah yang sudah disunting admin tidak ditimpa, dan tidak ada sekolah yang dihapus.
 
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 
@@ -298,6 +304,7 @@ Isi:
 - [ ] Dasbor admin tidak lagi menampilkan peringatan pengaturan yang belum lengkap.
 - [ ] Halaman depan: acara, jadwal, nomor lomba, biaya, rekening pembayaran, kontak, dan unduhan (juknis) benar.
 - [ ] Jadwal buka dan tutup pendaftaran benar.
+- [ ] Menu **Sekolah**: sekolah bernama sama dengan sekolah lain (saringan Nama → "Sama dengan sekolah lain") yang diperkirakan ikut sudah diberi nama pembeda, misalnya dengan nama desa (K97). Sisanya bisa diusulkan pendaftar sendiri saat mendaftar (K99).
 - [ ] Coba satu pendaftaran dengan data karangan sampai selesai, buka halaman cek dan bukti PDF-nya, lalu hapus pendaftaran itu dari panel. **Jangan** menandainya Lunas: nomor dada yang sudah terpakai tidak pernah dipakai ulang.
 
 Cadangan:
@@ -306,7 +313,7 @@ Cadangan:
 - [ ] Tugas `Cadangan MilkLife` di Task Scheduler sudah diuji dengan **Run** dan hasilnya `(0x0)`.
 - [ ] Tempat salinan di luar komputer server sudah disiapkan.
 
-Selama masa pendaftaran, periksa sesekali bahwa folder cadangan berisi berkas hari ini.
+Selama masa pendaftaran, periksa sesekali bahwa folder cadangan berisi berkas hari ini, dan putuskan usulan nama sekolah dari pendaftar di **Sekolah** → **Usulan nama dari pendaftar** (jumlahnya juga tampil di dasbor).
 
 ## Asumsi yang perlu ditinjau
 

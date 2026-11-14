@@ -17,7 +17,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 1 dan 2 disetujui, K27 dan K35).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi terakhir 6, K100).
 - Rencana implementasi Tahap 1: `dokumen/draf/rencana-implementasi-tahap-1.md`.
 - Rencana implementasi Tahap 2: `dokumen/draf/rencana-implementasi-tahap-2.md`.
 - Rencana implementasi Tahap 3: `dokumen/draf/rencana-implementasi-tahap-3.md`.
@@ -43,3 +43,5 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Pendaftaran susulan ke tim beregu sekolah yang sudah terdaftar wajib dikonfirmasi official di wizard (K57), tanpa biaya tim. Admin tidak membuat pendaftaran baru dari panel (K58).
 - Foto penanggung jawab dan bukti bayar disimpan di `writable/unggahan/` (di luar `public/`) dan hanya disajikan lewat rute admin.
 - Nama sekolah **tidak unik**: data resmi memakai nama umum untuk banyak madrasah. Sekolah selalu dikenali lewat NPSN; nama pembeda diberi admin di menu Sekolah (K97), dan sekolah yang disunting tidak ditimpa impor ulang.
+- Pendaftar boleh **mengusulkan nama sekolah** yang lebih lengkap; pendaftarannya langsung memakai nama itu sampai admin menyetujui atau menolak (K99).
+- Saat admin mengubah pendaftaran, kelompok umur dan nomor lomba yang sudah dimatikan **tetap boleh dipertahankan** untuk atlet yang sudah memakainya, tidak untuk atlet atau nomor baru (K98).
