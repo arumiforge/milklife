@@ -80,6 +80,20 @@ final class PanelBerkasBuktiBayarTest extends CIUnitTestCase
         $this->assertSame([600, 1600, IMAGETYPE_JPEG], $this->ukuranGambar($hasil['berkas']));
     }
 
+    public function testFotoPonselDiputarSesuaiTagExif(): void
+    {
+        // JPEG 400 × 200 dengan tag EXIF Orientation = 6 (kamera dipegang tegak).
+        $jpeg = self::gambarPanel(400, 200, 'jpg');
+        $exif = "Exif\x00\x00" . "MM\x00\x2A\x00\x00\x00\x08" . "\x00\x01"
+            . "\x01\x12\x00\x03\x00\x00\x00\x01\x00\x06\x00\x00" . "\x00\x00\x00\x00";
+        $jpeg = "\xFF\xD8" . "\xFF\xE1" . pack('n', strlen($exif) + 2) . $exif . substr($jpeg, 2);
+
+        $hasil = (new BerkasBuktiBayar())->simpanIsi($jpeg);
+
+        // Tersimpan tegak: lebar dan tinggi tertukar.
+        $this->assertSame([200, 400, IMAGETYPE_JPEG], $this->ukuranGambar($hasil['berkas']));
+    }
+
     public function testGambarKecilTidakDibesarkanTetapiTetapJpeg(): void
     {
         foreach (['png', 'jpg', 'webp'] as $jenis) {

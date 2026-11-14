@@ -62,7 +62,7 @@ class AdminFilter implements FilterInterface
             return null;
         }
 
-        if (! $halamanMasuk && $request instanceof IncomingRequest && $request->getMethod() === 'GET') {
+        if (! $halamanMasuk && $request instanceof IncomingRequest && $request->getMethod() === 'GET' && ! $request->isAJAX()) {
             $kueri  = $request->getUri()->getQuery();
             $tujuan = self::tujuanAman($jalur . ($kueri === '' ? '' : '?' . $kueri));
 
@@ -117,6 +117,12 @@ class AdminFilter implements FilterInterface
         $jalur = rtrim(explode('?', $tujuan, 2)[0], '/');
 
         if (in_array($jalur, [self::HALAMAN_MASUK, 'admin/keluar'], true)) {
+            return null;
+        }
+
+        // Data tabel (JSON), unduhan, berkas, dan foto bukan halaman: admin akan
+        // mendarat di JSON atau unduhan mentah setelah masuk. Kembali ke halamannya saja.
+        if (preg_match('#/(data|excel|pdf|ekspor|unduh|foto/\d+|bukti-bayar/\d+)\z#', $jalur) === 1) {
             return null;
         }
 

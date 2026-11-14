@@ -2,7 +2,7 @@
 
 Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Karesidenan Pati: pendaftaran, cek pendaftaran, dan rekap panitia.
 
-**Status:** Tahap 7 (penyelesaian) sedang berjalan. Halaman depan, pendaftaran, cek pendaftaran, bukti PDF, panel data, dan rekap sudah selesai; yang tersisa persiapan produksi dan uji menyeluruh. Rinciannya di [`agent/PROGRES.md`](agent/PROGRES.md).
+**Status:** Tahap 7 (penyelesaian) sedang berjalan. Halaman depan, pendaftaran, cek pendaftaran, bukti PDF, panel data, rekap, data sekolah, cadangan, dan panduan produksi sudah selesai, dan web sudah dipakai di produksi; yang tersisa uji menyeluruh dan penutupan tahap. Rinciannya di [`agent/PROGRES.md`](agent/PROGRES.md).
 
 ## Mulai dari sini
 
@@ -56,13 +56,13 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
    php spark sekolah:impor
    ```
 
-7. Isi data awal dari flyer Seri 2: data acara, jadwal pendaftaran, tanggal patokan usia, lima kelompok umur beserta awalan nomor dadanya (KU 8 = 1 sampai KU 18 = 5), dan semua nomor lomba. Perintah ini hanya dijalankan **sekali** saat pemasangan; bila data sudah ada, perintah menolak supaya isian admin tidak tertimpa.
+7. Isi data awal Seri 2 (K73): data acara, jadwal pendaftaran, lima kelompok umur beserta batas tahun lahir, jenjang, biaya individu, dan awalan nomor dadanya (KU 8 = 1 sampai KU 18 = 5), semua nomor lomba beserta aturan timnya, rekening pembayaran, isi halaman depan, jadwal, kontak, dan berkas unduhan. Perintah ini hanya dijalankan **sekali** saat pemasangan; bila data sudah ada, perintah menolak supaya isian admin tidak tertimpa.
 
    ```
    php spark data:awal
    ```
 
-   Batas usia, jenjang sekolah, biaya individu, dan batas anggota nomor beregu sengaja dikosongkan; admin mengisinya dari menu **Pengaturan**. Awalan nomor dada bisa diubah di sana juga.
+   Rekening, nomor WA, tautan Zoom, media sosial, dan sebagian berkas unduhan masih **contoh**; ganti dengan data sebenarnya di menu **Pengaturan** sebelum pendaftaran dibuka.
 8. Buat akun admin. Perintah menanyakan nama pengguna, nama, dan kata sandi (minimal 8 karakter). Perintah yang sama dipakai untuk mengganti kata sandi.
 
    ```
@@ -103,7 +103,7 @@ Web dibuka dari internet lewat Cloudflare Tunnel (K31). Susunannya:
 - `cloudflared` dipasang di **komputer server yang sama** dengan Laragon, dan meneruskan alamat publik ke Nginx lokal, misalnya `http://milklife.test` atau `http://127.0.0.1:80`.
 - Di mata aplikasi, semua pengunjung lewat tunnel datang dari komputer itu sendiri (`127.0.0.1` atau `::1`). Alamat pengunjung yang asli dikirim Cloudflare dalam kepala `CF-Connecting-IP`.
 - Aplikasi memercayai kepala `CF-Connecting-IP` **hanya** dari `127.0.0.1` dan `::1` (`app/Config/App.php`, `$proxyIPs`). Permintaan dari alamat lain, misalnya komputer lain di jaringan sekolah, tetap dicatat dengan alamatnya sendiri walaupun membawa kepala itu, jadi alamat tidak bisa dipalsukan.
-- Dengan begitu, pembatasan percobaan masuk admin (dan nanti pembatasan laju di halaman pendaftaran dan cek) dihitung per pengunjung, bukan semua pengunjung dianggap satu alamat.
+- Dengan begitu, pembatasan percobaan masuk admin dan pembatasan laju di halaman pendaftaran, cek, dan bukti dihitung per pengunjung, bukan semua pengunjung dianggap satu alamat.
 
 Jangan jalankan `cloudflared` di komputer lain yang meneruskan ke server ini; bila terpaksa, alamat komputer itu harus ditambahkan ke `$proxyIPs`.
 
@@ -118,7 +118,8 @@ Semua dijalankan dari folder proyek dengan `php spark <perintah>`.
 | `admin:buat` | Membuat akun admin atau mengganti kata sandinya |
 | `aset:minify` | Membuat versi kecil CSS, JavaScript, dan SVG. Wajib di produksi setiap memperbarui versi |
 | `cadangan:buat` | Mencadangkan basis data dan unggahan ke satu berkas zip |
-| `pendaftaran:impor <berkas.zip>` | Memasukkan zip dari tombol **Backup data** di panel ke server baru yang belum punya pendaftaran |
+| `pendaftaran:impor <berkas.zip>` | Memasukkan zip dari tombol **Backup data** di panel ke server baru yang belum punya pendaftaran, beserta usulan nama sekolah dan nama sekolah yang disunting admin. Jalankan `sekolah:impor` lebih dulu |
+| `nomor-dada:reset` | Mengosongkan semua nomor dada setelah uji coba (K94). Jangan dijalankan setelah nomor dada dibagikan ke peserta |
 | `dokumen:pdf` | Membuat ulang PDF di `dokumen/pdf/` dari dokumen final |
 
 ## Memperbarui pustaka
@@ -139,11 +140,12 @@ composer uji
 | `agent/` | Konteks, progres, keputusan, alur kerja, dan berkas tugas |
 | `dokumen/` | Draf, dokumen final, PDF, dan templat |
 | `sumber/` | Bahan asli dari pemilik (flyer, juknis) |
-| `data/` | Data siap impor (daftar sekolah) |
+| `data/` | Data siap impor: daftar sekolah (beserta cara memperbaruinya) dan berkas bawaan `data:awal` |
 | `app/` | Kode aplikasi: pengendali, tampilan, konfigurasi, migrasi |
 | `app/Views/tata_letak/` | Tata letak halaman: `publik.php`, `admin.php`, `polos.php` |
 | `public/` | Folder yang dibuka peramban: `index.php` dan aset |
 | `public/unggahan/` | Gambar dan berkas unggahan admin; tidak masuk git |
+| `writable/unggahan/` | Foto penanggung jawab dan bukti bayar, di luar folder publik dan hanya disajikan ke admin; tidak masuk git |
 | `public/aset/` | CSS, JavaScript, dan pustaka tampilan (Bootstrap, Bootstrap Icons) |
 | `tests/` | Uji: `unit/` (aturan murni), `basisdata/` (migrasi dan model), `fitur/` (halaman dan rute) |
 | `writable/` | Sesi, log, dan berkas sementara buatan aplikasi; isinya tidak masuk git |

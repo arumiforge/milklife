@@ -22,6 +22,8 @@ final class AdminFilterTest extends CIUnitTestCase
             'dasbor'        => ['admin/dasbor'],
             'halaman dalam' => ['admin/pengaturan/kelompok-umur'],
             'dengan kueri'  => ['admin/pendaftaran?halaman=2&cari=SD%20Karangan'],
+            'rincian'       => ['admin/pendaftaran/5'],
+            'rekap'         => ['admin/rekap/sekolah?status=lunas'],
         ];
     }
 
@@ -51,6 +53,13 @@ final class AdminFilterTest extends CIUnitTestCase
             'halaman keluar'     => ['admin/keluar'],
             'baris baru'         => ["admin/dasbor\r\nLocation: https://contoh.invalid"],
             'terlalu panjang'    => ['admin/' . str_repeat('a', 600)],
+            // Bukan halaman: JSON tabel, unduhan, dan berkas.
+            'data tabel'         => ['admin/pendaftaran/data?draw=3&start=25'],
+            'unduh excel'        => ['admin/atlet/excel?status=lunas'],
+            'unduh pdf'          => ['admin/rekap/sekolah/pdf'],
+            'backup data'        => ['admin/pendaftaran/ekspor'],
+            'foto'               => ['admin/pendaftaran/5/foto/2'],
+            'bukti bayar'        => ['admin/pendaftaran/5/bukti-bayar/3'],
         ];
     }
 

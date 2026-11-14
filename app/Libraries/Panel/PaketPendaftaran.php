@@ -3,6 +3,8 @@
 namespace App\Libraries\Panel;
 
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
+use App\Models\SekolahModel;
+use App\Models\UsulanNamaSekolahModel;
 use CodeIgniter\Database\BaseConnection;
 use RuntimeException;
 use Throwable;
@@ -16,7 +18,9 @@ use ZipArchive;
  * - `data.json`: semua pendaftaran beserta penanggung jawab, atlet, nomor lomba
  *   yang diikuti, tim beregu, dan bukti bayar; juga `nomor_terakhir` tiap
  *   awalan nomor dada (supaya nomor dada tidak dipakai ulang, K05) dan nomor
- *   urut ID pendaftaran berikutnya.
+ *   urut ID pendaftaran berikutnya; usulan nama sekolah dari pendaftar (K99)
+ *   dan sekolah yang namanya disunting admin (K97), supaya keduanya tidak hilang
+ *   di server baru. Dua kunci terakhir boleh tidak ada (paket lama).
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -151,6 +155,12 @@ final class PaketPendaftaran
                 $this->db->table('awalan_nomor_dada')->select('awalan, nomor_terakhir')->get()->getResultArray(),
             ),
             'pendaftaran' => $data,
+            'usulan_nama' => $this->db->table('usulan_nama_sekolah')
+                ->select('npsn, pendaftaran_id, nama_lama, nama_usulan, status, nama_disetujui, alasan, diputuskan_pada, dibuat_pada, diubah_pada')
+                ->orderBy('id')->get()->getResultArray(),
+            'sekolah_disunting' => $this->db->table('sekolah')
+                ->select('npsn, nama, bentuk, jenjang, status, alamat, desa_kelurahan, kecamatan, kabupaten, disunting_pada')
+                ->where('disunting_pada IS NOT NULL', null, false)->orderBy('npsn')->get()->getResultArray(),
         ];
 
         $zip = new ZipArchive();
@@ -453,6 +463,74 @@ final class PaketPendaftaran
 
         foreach ($terakhir as $awalan => $angka) {
             $this->db->query('UPDATE awalan_nomor_dada SET nomor_terakhir = GREATEST(nomor_terakhir, ?) WHERE awalan = ?', [$angka, (string) $awalan]);
+        }
+
+        $this->simpanSekolahDisunting(is_array($isi['sekolah_disunting'] ?? null) ? $isi['sekolah_disunting'] : [], $tabel);
+        $this->simpanUsulanNama(is_array($isi['usulan_nama'] ?? null) ? $isi['usulan_nama'] : [], $isi['pendaftaran'], $tabel);
+    }
+
+    /**
+     * Nama dan data sekolah yang disunting admin di server lama (K97) menimpa
+     * data impor sekolah di server ini; NPSN yang belum ada ditambahkan.
+     *
+     * @param list<mixed>                                  $daftar
+     * @param callable(string, array<string, mixed>): int $tabel
+     */
+    private function simpanSekolahDisunting(array $daftar, callable $tabel): void
+    {
+        $kolom = ['nama', 'bentuk', 'jenjang', 'status', 'alamat', 'desa_kelurahan', 'kecamatan', 'kabupaten', 'disunting_pada'];
+        $waktu = date('Y-m-d H:i:s');
+
+        foreach ($daftar as $baris) {
+            if (! is_array($baris) || ! SekolahModel::npsnSah((string) ($baris['npsn'] ?? '')) || trim((string) ($baris['nama'] ?? '')) === '') {
+                continue;
+            }
+
+            $data = array_intersect_key($baris, array_flip($kolom)) + ['diubah_pada' => $waktu];
+            $ada  = $this->db->table('sekolah')->where('npsn', $baris['npsn'])->countAllResults() > 0;
+
+            if ($ada) {
+                if (! $this->db->table('sekolah')->where('npsn', $baris['npsn'])->update($data)) {
+                    throw new RuntimeException('Data sekolah ' . $baris['npsn'] . ' gagal disimpan.');
+                }
+            } else {
+                $tabel('sekolah', ['npsn' => $baris['npsn'], 'dibuat_pada' => $waktu] + $data);
+            }
+        }
+    }
+
+    /**
+     * Usulan nama sekolah (K99), beserta riwayat keputusannya. Pendaftaran
+     * pengusul memakai id yang sama dengan server lama.
+     *
+     * @param list<mixed>                                  $daftar
+     * @param list<array<string, mixed>>                   $pendaftaran
+     * @param callable(string, array<string, mixed>): int $tabel
+     */
+    private function simpanUsulanNama(array $daftar, array $pendaftaran, callable $tabel): void
+    {
+        $idAda  = array_flip(array_map(static fn (array $p): int => (int) $p['id'], $pendaftaran));
+        $status = [UsulanNamaSekolahModel::MENUNGGU, UsulanNamaSekolahModel::DISETUJUI, UsulanNamaSekolahModel::DITOLAK];
+
+        foreach ($daftar as $u) {
+            if (! is_array($u) || ! SekolahModel::npsnSah((string) ($u['npsn'] ?? '')) || ! in_array($u['status'] ?? null, $status, true)) {
+                continue;
+            }
+
+            $pendaftaranId = isset($u['pendaftaran_id']) && isset($idAda[(int) $u['pendaftaran_id']]) ? (int) $u['pendaftaran_id'] : null;
+
+            $tabel('usulan_nama_sekolah', [
+                'npsn'            => (string) $u['npsn'],
+                'pendaftaran_id'  => $pendaftaranId,
+                'nama_lama'       => (string) ($u['nama_lama'] ?? ''),
+                'nama_usulan'     => (string) ($u['nama_usulan'] ?? ''),
+                'status'          => (string) $u['status'],
+                'nama_disetujui'  => $u['nama_disetujui'] ?? null,
+                'alasan'          => $u['alasan'] ?? null,
+                'diputuskan_pada' => $u['diputuskan_pada'] ?? null,
+                'dibuat_pada'     => $u['dibuat_pada'] ?? null,
+                'diubah_pada'     => $u['diubah_pada'] ?? null,
+            ]);
         }
     }
 
