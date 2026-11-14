@@ -1,6 +1,6 @@
 # Progres
 
-Diperbarui: 12 November 2026
+Diperbarui: 14 November 2026
 
 ## Sedang berjalan
 
@@ -32,4 +32,4 @@ Tidak ada tahap lain di rancangan. Setelah Tahap 7: pemasangan di komputer produ
 
 ## Menunggu pemilik
 
-Belum ada.
+- Persetujuan rancangan revisi 5 (K95, kelompok umur beririsan antar-jenjang): [`dokumen/draf/rancangan-web-pendaftaran.md`](../dokumen/draf/rancangan-web-pendaftaran.md). Setelah disetujui, draf dipindah ke `dokumen/final/` dan PDF dibuat ulang dengan `php spark dokumen:pdf`.
