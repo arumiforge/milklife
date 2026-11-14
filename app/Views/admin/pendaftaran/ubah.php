@@ -7,6 +7,10 @@
  *   ditampilkan ulang).
  * - `induk`: `DataIndukPendaftaran::untukWizard()` (kelompok umur dan nomor
  *   lomba aktif, aturan, jenjang, kabupaten).
+ * - `nonaktif`: `UbahPendaftaran::nonaktifTerpakai()`, nama nomor lomba dan
+ *   kelompok umur yang sudah dimatikan tetapi masih dipakai pendaftaran ini
+ *   (K98). Nomor itu tetap tercentang dengan tanda "sudah ditutup" dan boleh
+ *   dipertahankan; atlet baru tidak bisa memilihnya.
  * - `galat`: list `{jalur, pesan}` dari `UbahPendaftaran`.
  *
  * Nama isian sama dengan kiriman wizard (`sekolah[npsn]`,
@@ -22,6 +26,7 @@
  * @var CodeIgniter\View\View                    $this
  * @var array<string, mixed>                     $isian
  * @var array<string, mixed>                     $induk
+ * @var array{nomor_lomba: array<int, string>, kelompok_umur: array<int, string>} $nonaktif
  * @var list<array{jalur: string, pesan: string}> $galat
  *
  * Tim tanpa pembayar (K68): kotak centang `bebankan_tim[]` per tim yang
@@ -142,7 +147,7 @@ $kartuPj = static function (string $k, ?int $urut, array $orang) use ($tandai, $
  *
  * @param array<string, mixed> $atlet
  */
-$kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai, $galatIsian, $induk, $nomorPerKu, $nomorAktif): string {
+$kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai, $galatIsian, $induk, $nomorPerKu, $nomorAktif, $nonaktif): string {
     $jalur     = 'atlet.' . $k;
     $idDasar   = 'atlet-' . $k;
     $nameDasar = 'atlet[' . $k . ']';
@@ -152,10 +157,10 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
     $jk        = $tandai($galatIsian, $jalur . '.jenis_kelamin', $idDasar . '-jenis-kelamin');
     $nomor     = $tandai($galatIsian, $jalur . '.nomor', $idDasar . '-nomor');
     $dipilih   = array_map('intval', $atlet['nomor']);
-    $nonaktif  = array_values(array_filter($dipilih, static fn (int $id): bool => ! isset($nomorAktif[$id])));
+    $tertutup  = array_values(array_filter($dipilih, static fn (int $id): bool => ! isset($nomorAktif[$id])));
 
     ob_start(); ?>
-    <li class="kartu-atlet border rounded p-3 mb-3" data-kunci="<?= esc($k, 'attr') ?>">
+    <li class="kartu-atlet border rounded p-3 mb-3" data-kunci="<?= esc($k, 'attr') ?>"<?= isset($nonaktif['kelompok_umur'][(int) ($atlet['ku_lama'] ?? 0)]) ? ' data-ku-lama="' . (int) $atlet['ku_lama'] . '"' : '' ?>>
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
             <h3 class="h6 mb-0">
                 Atlet <span class="urut-kartu"><?= $urut === null ? '' : $urut ?></span>
@@ -203,11 +208,14 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
         <fieldset class="mt-3" id="<?= $idDasar ?>-nomor">
             <legend class="form-label fs-6 mb-1">Nomor lomba</legend>
             <p class="small text-body-secondary mb-2 keterangan-ku" aria-live="polite"></p>
-            <?php foreach ($nonaktif as $id) : ?>
+            <?php foreach ($tertutup as $id) : ?>
                 <div class="form-check">
                     <input class="form-check-input<?= $nomor['kelas'] ?>" type="checkbox" name="<?= $nameDasar ?>[nomor][]" value="<?= $id ?>"
                         id="<?= $idDasar ?>-nomor-<?= $id ?>" checked data-isian="nomor">
-                    <label class="form-check-label" for="<?= $idDasar ?>-nomor-<?= $id ?>">Nomor lomba yang sudah tidak dibuka (hapus centangnya)</label>
+                    <label class="form-check-label" for="<?= $idDasar ?>-nomor-<?= $id ?>">
+                        <?= esc($nonaktif['nomor_lomba'][$id] ?? 'Nomor lomba') ?>
+                        <span class="badge rounded-pill text-bg-secondary">Sudah ditutup</span>
+                    </label>
                 </div>
             <?php endforeach; ?>
             <?php foreach ($induk['kelompok_umur'] as $ku) : ?>
@@ -245,9 +253,10 @@ $pjKosong    = ['id' => null, 'nama' => '', 'nomor_wa' => '', 'foto' => '', 'ada
 $atletKosong = ['id' => null, 'nama' => '', 'nisn' => '', 'tanggal_lahir' => '', 'jenis_kelamin' => '', 'nomor' => [], 'nomor_dada' => null];
 
 $dataSkrip = [
-    'jenjang'       => $induk['jenjang'],
-    'kelompok_umur' => $induk['kelompok_umur'],
-    'aturan'        => $aturan,
+    'jenjang'                => $induk['jenjang'],
+    'kelompok_umur'          => $induk['kelompok_umur'],
+    'kelompok_umur_nonaktif' => (object) $nonaktif['kelompok_umur'],
+    'aturan'                 => $aturan,
 ];
 
 $s = $isian['sekolah'];

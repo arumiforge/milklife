@@ -22,6 +22,8 @@ $menuAdmin = [
     ['label' => 'Pendaftaran', 'ikon' => 'clipboard-check', 'alamat' => 'admin/pendaftaran'],
     ['label' => 'Atlet', 'ikon' => 'people', 'alamat' => 'admin/atlet'],
     ['label' => 'Rekap', 'ikon' => 'bar-chart-line', 'alamat' => 'admin/rekap'],
+    // Data sekolah (K97).
+    ['label' => 'Sekolah', 'ikon' => 'building', 'alamat' => 'admin/sekolah'],
     ['label' => 'Pengaturan', 'ikon' => 'gear', 'alamat' => 'admin/pengaturan', 'aktif_juga' => ['admin/akun']],
 ];
 ?>

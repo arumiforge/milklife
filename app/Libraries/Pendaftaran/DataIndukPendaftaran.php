@@ -44,10 +44,56 @@ class DataIndukPendaftaran
             return $this->induk;
         }
 
+        [$kelompokUmur, $nomorLomba] = self::baris(
+            static fn (array $ku): bool => (int) $ku['aktif'] === 1,
+            static fn (array $nomor): bool => (int) $nomor['aktif'] === 1 && (int) ($nomor['kelompok_umur_aktif'] ?? 0) === 1,
+        );
+
+        return $this->induk = [
+            'kelompok_umur' => $kelompokUmur,
+            'nomor_lomba'   => $nomorLomba,
+            'aturan'        => self::aturan(),
+        ];
+    }
+
+    /**
+     * Kelompok umur dan nomor lomba yang sudah dimatikan tetapi masih dipakai
+     * pendaftaran yang sedang diubah admin (K98). Bentuk barisnya sama dengan
+     * `induk()`; hanya id yang diminta dan tidak aktif yang ikut. Nomor lomba
+     * aktif milik kelompok umur yang dimatikan ikut dianggap tidak dibuka.
+     *
+     * @param list<int> $kelompokUmurId
+     * @param list<int> $nomorLombaId
+     *
+     * @return array{kelompok_umur: list<array<string, mixed>>, nomor_lomba: list<array<string, mixed>>}
+     */
+    public function nonaktif(array $kelompokUmurId, array $nomorLombaId): array
+    {
+        $ku    = array_flip(array_map('intval', $kelompokUmurId));
+        $nomor = array_flip(array_map('intval', $nomorLombaId));
+
+        [$kelompokUmur, $nomorLomba] = self::baris(
+            static fn (array $baris): bool => (int) $baris['aktif'] !== 1 && isset($ku[(int) $baris['id']]),
+            static fn (array $baris): bool => ((int) $baris['aktif'] !== 1 || (int) ($baris['kelompok_umur_aktif'] ?? 0) !== 1) && isset($nomor[(int) $baris['id']]),
+        );
+
+        return ['kelompok_umur' => $kelompokUmur, 'nomor_lomba' => $nomorLomba];
+    }
+
+    /**
+     * Baris kelompok umur dan nomor lomba yang lolos saringan, dalam bentuk induk.
+     *
+     * @param callable(array<string, mixed>): bool $ambilKu
+     * @param callable(array<string, mixed>): bool $ambilNomor
+     *
+     * @return array{0: list<array<string, mixed>>, 1: list<array<string, mixed>>}
+     */
+    private static function baris(callable $ambilKu, callable $ambilNomor): array
+    {
         $kelompokUmur = [];
 
         foreach (model(KelompokUmurModel::class)->daftarLengkap() as $ku) {
-            if ((int) $ku['aktif'] !== 1) {
+            if (! $ambilKu($ku)) {
                 continue;
             }
 
@@ -64,7 +110,7 @@ class DataIndukPendaftaran
         $nomorLomba = [];
 
         foreach (model(NomorLombaModel::class)->daftarLengkap() as $nomor) {
-            if ((int) $nomor['aktif'] !== 1 || (int) ($nomor['kelompok_umur_aktif'] ?? 0) !== 1) {
+            if (! $ambilNomor($nomor)) {
                 continue;
             }
 
@@ -82,11 +128,7 @@ class DataIndukPendaftaran
             ];
         }
 
-        return $this->induk = [
-            'kelompok_umur' => $kelompokUmur,
-            'nomor_lomba'   => $nomorLomba,
-            'aturan'        => self::aturan(),
-        ];
+        return [$kelompokUmur, $nomorLomba];
     }
 
     /**

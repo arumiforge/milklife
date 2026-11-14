@@ -25,7 +25,7 @@ final class SekolahModelTest extends UjiBasisData
     {
         $this->assertTrue($this->db->tableExists('sekolah'));
         $this->assertSame(
-            ['id', 'npsn', 'nama', 'bentuk', 'jenjang', 'status', 'alamat', 'desa_kelurahan', 'kecamatan', 'kabupaten', 'dibuat_pada', 'diubah_pada'],
+            ['id', 'npsn', 'nama', 'bentuk', 'jenjang', 'status', 'alamat', 'desa_kelurahan', 'kecamatan', 'kabupaten', 'disunting_pada', 'dibuat_pada', 'diubah_pada'],
             $this->db->getFieldNames('sekolah'),
         );
 
@@ -43,6 +43,8 @@ final class SekolahModelTest extends UjiBasisData
 
         $this->assertSame(['UNIQUE', ['npsn']], $indeks['sekolah_npsn_unik']);
         $this->assertSame(['INDEX', ['jenjang', 'kabupaten']], $indeks['sekolah_jenjang_kabupaten']);
+        // Menghitung sekolah bernama sama di panel (K97).
+        $this->assertSame(['INDEX', ['nama']], $indeks['sekolah_nama']);
     }
 
     public function testNpsnGandaDitolakBasisData(): void
@@ -121,5 +123,12 @@ final class SekolahModelTest extends UjiBasisData
             'kecamatan'      => 'Kecamatan Contoh',
             'kabupaten'      => 'Blora',
         ];
+    }
+
+    public function testLokasiMenggabungkanDesaKecamatanKabupaten(): void
+    {
+        $this->assertSame('Jati, Kec. Jati, Kab. Blora', SekolahModel::lokasi(['desa_kelurahan' => 'Jati', 'kecamatan' => ' Jati ', 'kabupaten' => 'Blora']));
+        $this->assertSame('Kec. Undaan', SekolahModel::lokasi(['desa_kelurahan' => null, 'kecamatan' => 'Undaan', 'kabupaten' => '']));
+        $this->assertSame('', SekolahModel::lokasi([]));
     }
 }

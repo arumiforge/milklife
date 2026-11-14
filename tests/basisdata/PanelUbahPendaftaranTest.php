@@ -142,6 +142,75 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $this->assertSame(['individu.' . $this->idInduk['lari60putra']], array_column($hasil['galat'], 'jalur'));
     }
 
+    public function testK98NomorYangSudahDitutupTetapBolehDipertahankan(): void
+    {
+        $p = $this->buatPendaftaranPanel(['foto' => true]);   // putra: Lari 60 m + Frog Jump, putri: Lari 60 m
+        $this->db->table('nomor_lomba')->where('id', $this->idInduk['frog'])->update(['aktif' => 0]);
+
+        // Hanya membetulkan nomor WA penanggung jawab.
+        $kiriman = $this->kirimanDari($p['id']);
+        $kiriman['penanggung_jawab'][0]['nomor_wa'] = '0812-1111-2222';
+
+        $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertTrue($hasil['tersimpan']);
+        $this->assertSame($p['total'], $hasil['total']);
+        $this->assertArrayHasKey($this->idInduk['frog'], $this->biayaNomor($p['atlet'][0]));
+
+        // Halaman ubah menyebut nama nomor yang sudah ditutup.
+        $nonaktif = (new UbahPendaftaran())->nonaktifTerpakai($p['id']);
+        $this->assertSame([$this->idInduk['frog']], array_keys($nonaktif['nomor_lomba']));
+        $this->assertStringContainsString('Frog Jump', $nonaktif['nomor_lomba'][$this->idInduk['frog']]);
+    }
+
+    public function testK98NomorYangSudahDitutupTidakBisaDipilihAtletLainAtauAtletBaru(): void
+    {
+        $p = $this->buatPendaftaranPanel([
+            'foto'  => true,
+            'atlet' => [
+                $this->atletPanel(['nomor' => ['lari60putra', 'frog']]),
+                $this->atletPanel(['nisn' => '9900300002', 'nomor' => ['lari60putra']]),
+            ],
+        ]);
+        $this->db->table('nomor_lomba')->where('id', $this->idInduk['frog'])->update(['aktif' => 0]);
+
+        $kiriman = $this->kirimanDari($p['id']);
+        $kiriman['atlet'][1]['nomor'][] = $this->idInduk['frog'];
+        $kiriman['atlet'][]             = $this->atletBaru(['frog'], '9988776650');
+
+        $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+
+        $this->assertFalse($hasil['tersimpan']);
+        $this->assertSame(['atlet.1.nomor', 'atlet.2.nomor'], array_column($hasil['galat'], 'jalur'));
+        $this->assertStringContainsString('sudah tidak dibuka', $hasil['galat'][0]['pesan']);
+    }
+
+    public function testK98KelompokUmurYangSudahDitutupTetapDipakaiAtletTersimpan(): void
+    {
+        $p = $this->buatPendaftaranPanel(['foto' => true, 'atlet' => [$this->atletPanel(['nomor' => ['lari60putra']])]]);
+        $this->db->table('kelompok_umur')->where('id', $this->idInduk['ku10'])->update(['aktif' => 0]);
+
+        $kiriman = $this->kirimanDari($p['id']);
+        $kiriman['atlet'][0]['nama'] = 'BUDI KARANGAN DIBETULKAN';
+
+        $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertTrue($hasil['tersimpan']);
+        $atlet = $this->db->table('atlet')->where('id', $p['atlet'][0])->get()->getRowArray();
+        $this->assertSame('BUDI KARANGAN DIBETULKAN', $atlet['nama']);
+        $this->assertSame($this->idInduk['ku10'], (int) $atlet['kelompok_umur_id']);
+
+        // Atlet baru dengan tahun lahir yang sama tidak masuk kelompok umur yang ditutup.
+        $kiriman            = $this->kirimanDari($p['id']);
+        $kiriman['atlet'][] = $this->atletBaru(['lari60putra'], '9988776651');
+        $hasil              = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+
+        $this->assertFalse($hasil['tersimpan']);
+        $this->assertContains('atlet.1.tanggal_lahir', array_column($hasil['galat'], 'jalur'));
+    }
+
     public function testPeriksaTidakMenulisApaPun(): void
     {
         $p       = $this->buatPendaftaranPanel(['foto' => true]);

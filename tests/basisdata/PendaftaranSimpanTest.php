@@ -232,6 +232,36 @@ final class PendaftaranSimpanTest extends UjiBasisData
         $this->assertSame(0, $this->db->table('pendaftaran')->countAllResults());
     }
 
+    public function testUsulanNamaSekolahTercatatDanDipakaiPendaftaran(): void
+    {
+        $kiriman            = self::kirimanContoh();
+        $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => '', 'nama_usulan' => 'SD KARANGAN MAJU REKAAN'];
+
+        $hasil = $this->simpan($kiriman);
+
+        // K99: pendaftaran memakai nama usulan, usulannya menunggu keputusan admin.
+        $this->assertSame([], $hasil['galat']);
+        $this->seeInDatabase('pendaftaran', ['id' => $hasil['pendaftaran']['id'], 'nama_sekolah' => 'SD KARANGAN MAJU REKAAN']);
+        $this->seeInDatabase('usulan_nama_sekolah', [
+            'npsn'           => '99999911',
+            'pendaftaran_id' => $hasil['pendaftaran']['id'],
+            'nama_lama'      => 'SD KARANGAN MAJU',
+            'nama_usulan'    => 'SD KARANGAN MAJU REKAAN',
+            'status'         => 'menunggu',
+        ]);
+        // Data sekolah belum berubah sampai admin menyetujui.
+        $this->seeInDatabase('sekolah', ['npsn' => '99999911', 'nama' => 'SD KARANGAN MAJU']);
+    }
+
+    public function testTanpaUsulanTidakAdaBarisUsulan(): void
+    {
+        $kiriman            = self::kirimanContoh();
+        $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => '', 'nama_usulan' => ''];
+
+        $this->assertSame([], $this->simpan($kiriman)['galat']);
+        $this->assertSame(0, $this->db->table('usulan_nama_sekolah')->countAllResults());
+    }
+
     // Satu tim per nomor beregu per sekolah (6.6)
 
     public function testSusulanMenambahAnggotaTanpaBiayaTim(): void

@@ -144,6 +144,8 @@
                 npsn: '',
                 tanpaNpsn: false,
                 nama: '',
+                namaUsulan: '',
+                usulanTerbuka: false,
                 dicari: '',
                 status: '',
                 referensi: null,
@@ -359,8 +361,20 @@
         kabupaten: $('#sekolah-kabupaten'),
         nama: $('#sekolah-nama'),
         namaKotak: $('#sekolah-nama-kotak'),
-        hasil: $('#sekolah-hasil')
+        hasil: $('#sekolah-hasil'),
+        usulan: $('#sekolah-nama-usulan'),
+        usulanKotak: $('#sekolah-usulan-kotak')
     };
+
+    /** Nama usulan pendaftar yang berlaku (K99): hanya untuk sekolah yang ditemukan lewat NPSN. */
+    function namaUsulan() {
+        var s = draf.sekolah;
+        var usulan = rapikanSpasi(s.namaUsulan || '');
+        if (s.tanpaNpsn || !s.referensi || usulan === '' || usulan.toLowerCase() === rapikanSpasi(s.referensi.nama).toLowerCase()) {
+            return '';
+        }
+        return usulan;
+    }
 
     function jenjangSekolah() {
         return draf.sekolah.referensi && draf.sekolah.referensi.jenjang ? draf.sekolah.referensi.jenjang : draf.sekolah.jenjang;
@@ -397,15 +411,44 @@
         L1.nama.value = s.nama;
         L1.namaKotak.hidden = !(s.tanpaNpsn || s.status === 'tidak_ditemukan');
 
+        var kembar = !s.tanpaNpsn && ref && Number(ref.nama_kembar || 0) > 0;
+        var usulan = namaUsulan();
+        if (L1.usulan !== document.activeElement) {
+            L1.usulan.value = s.namaUsulan || '';
+        }
+        L1.usulanKotak.hidden = !(!s.tanpaNpsn && ref && (kembar || s.usulanTerbuka || usulan !== ''));
+
         L1.hasil.textContent = '';
         if (!s.tanpaNpsn && ref) {
             var kotak = buat('div', 'alert alert-success sekolah-ditemukan');
             kotak.appendChild(ikon('building-check'));
             var isi = buat('div');
-            isi.appendChild(buat('strong', 'd-block', ref.nama));
+            isi.appendChild(buat('strong', 'd-block', usulan || ref.nama));
+            if (usulan) {
+                isi.appendChild(buat('span', 'd-block small', 'Nama usulan Anda, menunggu persetujuan panitia. Nama di data sekolah: ' + ref.nama + '.'));
+            }
+            // Letak sekolah membedakan sekolah yang namanya sama (K97).
+            if (ref.lokasi) {
+                isi.appendChild(buat('span', 'd-block small', ref.lokasi));
+            }
             isi.appendChild(buat('span', 'small', [ref.jenjang_label, ref.kabupaten].filter(Boolean).join(' · ') + '. Jenjang dan kabupaten mengikuti data sekolah.'));
             kotak.appendChild(isi);
             L1.hasil.appendChild(kotak);
+
+            // Nama umum yang dipakai sekolah lain juga (K99): tawarkan usulan nama lengkap.
+            if (kembar && !usulan) {
+                L1.hasil.appendChild(buat('div', 'alert alert-warning small',
+                    'Nama ' + ref.nama + ' juga dipakai ' + ref.nama_kembar + ' sekolah lain di data kami. Supaya tidak tertukar di rekap dan bukti pendaftaran, '
+                    + 'usulkan nama lengkap sekolah Anda di bawah, misalnya dengan menambahkan nama desa.'));
+            } else if (!kembar && L1.usulanKotak.hidden) {
+                var tautan = buat('button', 'btn btn-link btn-sm p-0 mb-3', 'Nama sekolah kurang lengkap? Usulkan nama yang benar');
+                tautan.type = 'button';
+                tautan.addEventListener('click', function () {
+                    setelSekolah({ usulanTerbuka: true });
+                    L1.usulan.focus();
+                });
+                L1.hasil.appendChild(tautan);
+            }
 
             var tim = Object.keys(s.susulan.tim || {}).length;
             if (tim > 0) {
@@ -454,7 +497,7 @@
             L1.cari.disabled = false;
 
             if (isi.status === 'ditemukan') {
-                setelSekolah({ npsn: npsn, dicari: npsn, status: 'ditemukan', referensi: isi.sekolah, susulan: isi.susulan, nama: '' });
+                setelSekolah({ npsn: npsn, dicari: npsn, status: 'ditemukan', referensi: isi.sekolah, susulan: isi.susulan, nama: '', namaUsulan: '', usulanTerbuka: false });
                 return true;
             }
 
@@ -480,6 +523,8 @@
     });
     L1.kabupaten.addEventListener('change', function () { setelSekolah({ kabupaten: L1.kabupaten.value }); });
     L1.nama.addEventListener('input', function () { draf.sekolah.nama = L1.nama.value; simpanDraf(); });
+    L1.usulan.addEventListener('input', function () { draf.sekolah.namaUsulan = L1.usulan.value; simpanDraf(); });
+    L1.usulan.addEventListener('change', function () { setelSekolah({ namaUsulan: L1.usulan.value }); });
     L1.npsn.addEventListener('input', function () {
         var npsn = L1.npsn.value.replace(/\D/g, '').slice(0, 8);
         if (npsn !== L1.npsn.value) {
@@ -539,6 +584,9 @@
         }
         if ((s.tanpaNpsn || s.status === 'tidak_ditemukan') && rapikanSpasi(s.nama) === '') {
             galat.push({ jalur: 'sekolah.nama', pesan: 'Nama sekolah belum diisi. Tulis nama sekolah secara lengkap.' });
+        }
+        if (namaUsulan().length > 150) {
+            galat.push({ jalur: 'sekolah.nama_usulan', pesan: 'Usulan nama sekolah terlalu panjang. Tulis paling banyak 150 huruf.' });
         }
         return galat;
     };
@@ -1392,7 +1440,8 @@
                 jenjang: jenjangSekolah(),
                 kabupaten: kabupatenSekolah(),
                 npsn: npsnSekolah(),
-                nama: draf.sekolah.nama
+                nama: draf.sekolah.nama,
+                nama_usulan: namaUsulan()
             },
             penanggung_jawab: draf.penanggungJawab.map(function (o) {
                 return { nama: o.nama, nomor_wa: o.nomor_wa, foto: o.foto };
@@ -1578,6 +1627,9 @@
         var s = rincian.sekolah;
         var sekolah = buat('div', 'kartu-isian ringkasan-sekolah');
         sekolah.appendChild(buat('strong', 'd-block', s.nama));
+        if (s.nama_resmi) {
+            sekolah.appendChild(buat('span', 'd-block small text-body-secondary', 'Nama usulan, menunggu persetujuan panitia. Nama di data sekolah: ' + s.nama_resmi + '.'));
+        }
         sekolah.appendChild(buat('span', 'small text-body-secondary', [s.npsn ? 'NPSN ' + s.npsn : 'Tanpa NPSN', s.jenjang_label, s.kabupaten].filter(Boolean).join(' · ')
             + ' · ' + draf.penanggungJawab.length + ' penanggung jawab · ' + draf.atlet.length + ' atlet'));
         wadah.appendChild(sekolah);

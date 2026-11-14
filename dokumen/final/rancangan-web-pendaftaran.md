@@ -2,13 +2,14 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96) |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100) |
 | Tanggal | 10 November 2026, revisi 11, 12, dan 14 November 2026 |
 | Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
 | Revisi 2 | SLB tidak ikut (K28); web lewat Cloudflare Tunnel (K31); asumsi 4–7 dikonfirmasi dan asumsi 8 diganti (K32); bukti bayar diunggah admin (K34); awalan nomor dada awal per kelompok umur (K33). Bagian yang berubah: 6.2, 6.9, 9, 11, 13, 15, 17, lampiran |
 | Revisi 3 | Kelompok umur ditentukan tahun lahir, bukan usia; batas tahun lahir diisi data awal; tanggal patokan usia dihapus, usia hanya ditampilkan (K36, K37). Bagian yang berubah: 5, 6.1, 6.4, 11, 14, lampiran |
 | Revisi 4 | Disesuaikan dengan yang dibangun di Tahap 4–7: foto penanggung jawab wajib (K50); batas nomor individu per atlet dan atlet per nomor (K51, K53); konfirmasi tim susulan (K57); tim tanpa pembayar (K68); ID pendaftaran tetap saat diubah (K63); cek dan bukti tanpa tanggal lahir dan nomor dada (K49, K52); panel tanpa pendaftaran baru, nomor dada atlet tambahan, saringan status rekap (K58–K60); sesi lain keluar saat ganti sandi dan halaman galat ramah (K67); CI GitHub (K46); cadangan harian (K66); juknis tidak ditunggu (K55). Bagian yang berubah: 5, 6.3, 6.5, 6.6, 6.8, 6.9, 8, 9, 13, 14, 15, 16, 17 |
 | Revisi 5 | Kelompok umur ditentukan jenjang dulu, baru tahun lahir; rentang tahun lahir boleh beririsan antar-jenjang, tidak dalam satu jenjang (K95). Bagian yang berubah: 6.4, 17 |
+| Revisi 6 | Data sekolah dari Sekolah Kita dan menu Sekolah di panel untuk memberi nama pembeda (K97); kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan saat admin mengubah pendaftaran (K98); usulan nama sekolah dari pendaftar (K99). Disesuaikan juga dengan keputusan yang sudah berjalan: penulisan rupiah (K80), bukti transfer diunggah official dan pendaftaran baru masuk bersama bukti transfer (K83, K90), alamat dan isi bukti PDF serta halaman cek (K77, K78, K87–K89, K91). Bagian yang berubah: 5, 6.2, 6.7, 7, 8, 9, 11, 15, 17 |
 | Acara | MilkLife Athletics Challenge Seri 2 – 2026, Supersoccer Arena, Kudus, 9–12 Desember 2026 |
 | Dasar | Wawancara sesi 1 (lihat `agent/KEPUTUSAN.md`) dan flyer di `sumber/flyer/` |
 
@@ -73,7 +74,7 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/pendaftaran` | Wizard pendaftaran |
 | `/cek-pendaftaran` | Cek lewat NPSN atau ID pendaftaran |
 | `/unduhan` | Flyer, juknis, berkas lain |
-| `/bukti/{id-pendaftaran}` | Bukti pendaftaran PDF |
+| `/bukti/{kode-acak}/{id-pendaftaran}` | Bukti pendaftaran PDF; kode acak 24 huruf supaya alamatnya tidak bisa ditebak (K77) |
 
 **Admin** (semua di bawah `/admin`)
 
@@ -84,6 +85,8 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/admin/pendaftaran` | Daftar dan rincian pendaftaran, bukti bayar, tandai lunas, ubah, hapus. Tidak ada pendaftaran baru dari panel (K58) |
 | `/admin/atlet` | Daftar semua atlet |
 | `/admin/rekap` | Rekap per nomor lomba, tim beregu, per sekolah, per kelompok umur, keuangan |
+| `/admin/sekolah` | Data sekolah: daftar dengan saringan nama kembar, ubah nama dan data lain (K97) |
+| `/admin/sekolah/usulan` | Usulan nama sekolah dari pendaftar: setujui atau tolak (K99) |
 | `/admin/pengaturan` | Daftar semua halaman pengaturan beserta tanda lengkap atau belum |
 | `/admin/pengaturan/acara` | Nama, seri, tahun, tempat, tanggal acara |
 | `/admin/pengaturan/pendaftaran` | Jadwal buka-tutup, buka manual, tampilan usia, batas-batas |
@@ -119,7 +122,9 @@ Bila belum lengkap atau belum dibuka, halaman depan menampilkan keterangan ramah
 
 - Official memilih jenjang (SD/MI, SMP/MTs, SMA/SMK/MA) dan kabupaten (Blora, Rembang, Pati, Kudus, Jepara).
 - Sekolah Luar Biasa (SLB) tidak ikut (K28): NPSN SLB ditolak dengan pesan yang jelas.
-- Official mengetik NPSN, sistem menampilkan nama sekolah dari data referensi. Bila tidak ditemukan, nama sekolah diisi manual.
+- Official mengetik NPSN, sistem menampilkan nama sekolah beserta desa dan kecamatannya dari data referensi (K97). Bila tidak ditemukan, nama sekolah diisi manual.
+- Data referensi diambil dari Sekolah Kita Kemendikdasmen (4.766 sekolah, 14 November 2026; K97). Nama resminya tidak selalu unik: banyak madrasah memakai nama umum seperti "MIS MUHAMMADIYAH". Sekolah selalu dikenali lewat NPSN, dan admin memberi nama pembeda di panel (9).
+- **Usulan nama** (K99): bila nama yang tampil juga dipakai sekolah lain, wizard menonjolkan tawaran mengusulkan nama lengkap, misalnya dengan nama desa; untuk sekolah lain tersedia tautan "Nama sekolah kurang lengkap?". Pendaftaran itu langsung memakai nama usulan, lalu admin memutuskan. Disetujui: nama di data sekolah dan semua pendaftaran dengan NPSN itu diganti. Ditolak: pendaftaran pengusul kembali memakai nama dari data sekolah.
 - Sekolah tanpa NPSN tetap bisa mendaftar dengan nama sekolah saja.
 - Satu NPSN boleh mendaftar lebih dari sekali. Semua pendaftaran dengan NPSN yang sama dianggap satu sekolah.
 - Pendaftaran tanpa NPSN berdiri sendiri dan hanya bisa dicek lewat ID pendaftaran.
@@ -162,7 +167,7 @@ Nama, nomor WA, dan foto. **Foto wajib diisi** (K50); foto diperkecil di peramba
 - **Beregu:** biaya per tim, besarnya ditetapkan pada tiap nomor lomba.
 - Biaya disimpan bersama pendaftaran saat pendaftaran dibuat. Perubahan tarif oleh admin tidak mengubah pendaftaran yang sudah ada.
 - Semua angka dihitung ulang di server. Angka dari peramban tidak dipercaya.
-- Rupiah ditampilkan tanpa angka di belakang koma, contoh `Rp150.000`.
+- Rupiah ditampilkan tanpa angka di belakang koma, dengan spasi setelah Rp, contoh `Rp 150.000` (K80).
 
 ### 6.8 ID pendaftaran
 
@@ -188,11 +193,11 @@ Format: `MAC` + seri + kode jenjang + nomor urut 5 digit + 2 digit tahun. Contoh
 
 Wizard satu halaman dengan pil langkah bercentang:
 
-1. **Data Sekolah** — jenjang, kabupaten, NPSN atau nama sekolah. Jenjang yang dipilih di sini menentukan kelompok umur yang boleh diikuti atlet (6.4).
+1. **Data Sekolah** — jenjang, kabupaten, NPSN atau nama sekolah, dan usulan nama bila nama sekolah kurang lengkap (6.2). Jenjang yang dipilih di sini menentukan kelompok umur yang boleh diikuti atlet (6.4).
 2. **Penanggung Jawab** — 1 sampai 5 orang.
 3. **Atlet** — formulir atlet dan daftar sementara.
 4. **Biaya** — rincian dan konfirmasi.
-5. **Pembayaran** — rekening, konfirmasi WA, selesai.
+5. **Pembayaran** — rekening, unggah bukti transfer, kirim pendaftaran, selesai.
 
 **Langkah 3.** Setelah atlet ditambahkan, daftar sementara langsung terbentuk dalam dua bagian: daftar individu dan daftar tim beregu (dikelompokkan per nomor). Setiap baris punya tombol ubah dan hapus. Sebelum lanjut, sistem memeriksa kelengkapan setiap tim.
 
@@ -201,9 +206,9 @@ Wizard satu halaman dengan pil langkah bercentang:
 - Individu: No, Nama, NISN, Kelompok Umur, Nomor Lomba, Biaya, lalu subtotal individu.
 - Beregu: No, Nomor Lomba Beregu, Biaya, lalu subtotal beregu.
 
-Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah keduanya. Tombol lanjut membuka jendela konfirmasi. **Data tersimpan ke server saat official mengonfirmasi di langkah ini**, dan ID pendaftaran dibuat.
+Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah keduanya. Langkah ini belum menyimpan apa pun (K90).
 
-**Langkah 5.** Menampilkan logo bank, nomor rekening, nama pemilik rekening, dan total. Tombol "Kirim Konfirmasi Pembayaran" membuka WA ke pemilik rekening dengan pesan berisi nama sekolah, NPSN, ID pendaftaran, subtotal individu, subtotal beregu, dan total. Tombol "Pendaftaran Selesai" menampilkan tombol cetak bukti dan mengosongkan draf.
+**Langkah 5.** Menampilkan logo bank, nomor rekening, nama pemilik rekening, dan total. Official mentransfer, memilih foto atau tangkapan layar bukti transfer, lalu menekan **Kirim Pendaftaran** dan mengonfirmasi. **Pendaftaran baru masuk sistem saat itu, bersama bukti transfernya** (K90): tanpa bukti tidak ada yang tersimpan, dan isian tetap di draf sehingga official bisa kembali lain waktu dan tinggal mengunggah bukti. Setelah terkirim, ID pendaftaran dibuat, draf dikosongkan, dan layar selesai menampilkan tombol cetak bukti, salin ID, dan konfirmasi lewat WA ke pemilik rekening (pesan berisi nama sekolah, NPSN, ID pendaftaran, subtotal individu, subtotal beregu, dan total). Status tetap Menunggu Konfirmasi Pembayaran sampai panitia memeriksa transfernya.
 
 **Draf.** Isian tersimpan di peramban (`localStorage`) pada setiap perubahan, sehingga tidak hilang saat halaman dimuat ulang. Foto penanggung jawab diperkecil di peramban (sisi terpanjang 800 piksel, JPEG) dan ikut tersimpan di draf.
 
@@ -216,20 +221,20 @@ Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah ked
 - NPSN menampilkan semua pendaftaran sekolah itu berurutan per pendaftaran: data sekolah sekali di atas, satu kartu per pendaftaran, dan total keseluruhan di bawah (K49).
 - ID pendaftaran menampilkan satu pendaftaran.
 - Data tampil sesuai MoU: sekolah, penanggung jawab, atlet (nama, NISN, jenis kelamin, kelompok umur, nomor lomba), tim beregu beserta anggotanya, biaya, dan status pembayaran.
-- **Tanggal lahir dan nomor dada tidak ditampilkan** (K52). Keduanya tetap tersimpan dan terlihat di panel admin.
+- **Tanggal lahir tidak ditampilkan** (K52); tetap tersimpan dan terlihat di panel admin. Nomor dada tampil setelah pendaftaran Lunas (K88).
+- Pendaftaran yang belum Lunas punya kotak unggah bukti transfer tambahan (K83).
 - Nama nomor lomba ditulis bersama kategorinya, misalnya "Lari 60 m Putra" atau "Estafet 8 × 50 m Mix".
 - Foto penanggung jawab hanya tampil di panel admin.
 
-**Bukti PDF.** Kertas A4 mendatar.
+**Bukti PDF.** Kertas F4 tegak (215 × 330 mm) (K77).
 
-- Kiri atas: logo persegi MilkLife, transparan dan tidak gepeng. Di kanannya, rata tengah: `MILKLIFE ATHLETICS CHALLENGE` dan `Seri 2 Tahun 2026`.
-- Baris berikutnya: `Nama Sekolah : …` di kiri, `Tanggal Pendaftaran : …` rata kanan.
-- Baris berikutnya: `Kabupaten / Kota : …` di kiri, `ID Pendaftaran : …` rata kanan.
-- Penanggung jawab ditulis sebaris tanpa tabel: `Penanggung Jawab (Official) : Nama (ikon WA nomor WA)`, dipisah koma bila lebih dari satu (K52).
-- Tabel individu: No, Nama, NISN, Kelompok Umur, Nomor Lomba (dengan kategori), Biaya. Tabel beregu: No, Nomor Lomba (dengan kategori), Anggota (nama dalam satu baris dipisah koma), Biaya. Lalu total pembayaran.
-- Tanggal lahir dan nomor dada tidak dicetak (K52).
-- Status pembayaran diberi bingkai berwarna seperti tombol: Lunas hijau, Menunggu Konfirmasi Pembayaran kuning.
-- Nama berkas memakai seluruh nama acara tanpa spasi (K49): `BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_<NamaSekolah>_2026.pdf`.
+- Kepala: logo persegi MilkLife, nama acara, seri, dan tahun. Lalu nama sekolah, kabupaten, tanggal pendaftaran, dan ID pendaftaran.
+- Penanggung jawab ditulis sebaris tanpa tabel: nama dan nomor WA, dipisah koma bila lebih dari satu (K52, K83).
+- Tabel individu satu baris per atlet per nomor lomba (dengan kategori), dan tabel beregu dengan anggota tiap tim. Lalu total pembayaran.
+- Tanggal lahir tidak dicetak. Nomor dada dicetak setelah pendaftaran Lunas, di tabel individu dan di belakang nama anggota tim; sebelum Lunas kolomnya kosong (K87).
+- Status pembayaran berupa stempel miring di bagian akhir: hijau "LUNAS / PEMBAYARAN DITERIMA" atau oranye "MENUNGGU / KONFIRMASI PANITIA" (K78, K91).
+- Kode QR berisi alamat bukti di pojok kanan bawah halaman terakhir, dengan keterangan di kirinya untuk memeriksa keaslian (K89).
+- Nama berkas memakai seluruh nama acara tanpa spasi, ditambah ID pendaftaran dan status (K87): `BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_<NamaSekolah>_2026_<ID>_<Status>.pdf`.
 
 Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan acara.
 
@@ -242,9 +247,13 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 - **Tindakan berisiko** (hapus, tandai lunas, kembalikan ke Menunggu): jendela konfirmasi yang menyebut apa yang akan terjadi.
 - **Tanpa pendaftaran baru** (K58): panel hanya melihat, menandai Lunas, mengubah, dan menghapus pendaftaran yang sudah ada. Sekolah yang terlambat didaftarkan lewat wizard setelah admin memakai buka manual (6.1).
 - **Ubah pendaftaran:** admin bisa mengubah data sekolah, penanggung jawab, atlet, dan nomor lomba. Aturan pada bagian 6 tetap berlaku dan biaya dihitung ulang. ID pendaftaran tidak berubah (6.8). Akibat pada status dan nomor dada mengikuti 6.9 (K32, K59).
+  - Kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan untuk atlet yang sudah memakainya, ditandai "Sudah ditutup", sehingga perubahan lain (misalnya nomor WA) tetap bisa disimpan. Atlet baru dan nomor baru tidak bisa memakainya (K98).
+  - Nama sekolah tersimpan yang berbeda dari data sekolah, misalnya nama usulan yang belum diputuskan, dipertahankan selama NPSN tidak diubah.
 - **Tim tanpa pembayar** (K68): rincian pendaftaran memberi peringatan pada tim yang kehilangan pembayar biaya timnya, dasbor menampilkan jumlahnya bila ada, dan rekap keuangan mendaftarnya beserta pendaftaran anggotanya. Di Ubah, tim itu punya kotak centang "Bebankan biaya tim ke pendaftaran ini" dengan tarif saat ini; bila pendaftarannya Lunas dan totalnya berubah, berlaku 6.9.
-- **Bukti bayar** (K34): admin mengunggah bukti transfer yang dikirim official lewat WA ke pendaftaran yang bersangkutan, paling banyak 5 gambar per pendaftaran. Gambar dikecilkan otomatis sebelum disimpan (sisi terpanjang 1600 piksel, JPEG). Admin bisa melihat, mengunduh, dan menghapus tiap gambar. Official tidak mengunggah apa pun.
+- **Bukti bayar** (K34, K83, K90): official mengunggah bukti transfer saat mengirim pendaftaran, dan bisa menambah bukti lewat Cek Pendaftaran selama belum Lunas. Admin juga bisa mengunggah dari rincian pendaftaran. Paling banyak 5 gambar per pendaftaran. Gambar dikecilkan otomatis sebelum disimpan (sisi terpanjang 1600 piksel, JPEG). Admin bisa melihat, mengunduh, dan menghapus tiap gambar.
 - **Rekap:** peserta per nomor lomba, tim beregu, per sekolah, per kelompok umur, dan keuangan (tagihan, lunas, belum). Tersedia Excel dan PDF. Rekap peserta memuat semua pendaftaran dengan saringan status (semua, Lunas, Menunggu), dan Excel serta PDF-nya mengikuti saringan itu; rekap keuangan selalu memuat keduanya (K60).
+- **Data sekolah** (K97): menu Sekolah menampilkan semua sekolah di data referensi dengan saringan kabupaten, jenjang, nama yang sama dengan sekolah lain, dan sudah disunting, serta unduh Excel. Admin bisa mengubah nama, bentuk, jenjang, status, alamat, desa, kecamatan, dan kabupaten; NPSN tidak bisa diubah. Nama baru yang sama dengan sekolah lain ditolak. Saat menyimpan, admin bisa sekalian mengganti nama di pendaftaran yang sudah masuk dengan NPSN itu. Sekolah yang disunting tidak ditimpa saat data sekolah diimpor ulang.
+- **Usulan nama** (K99): usulan dari pendaftar (6.2) tampil di halaman Usulan nama dengan formulir Setujui (nama boleh dirapikan dulu) dan Tolak (alasan pilihan). Jumlah usulan yang menunggu tampil di dasbor dan di menu Sekolah, dan rincian pendaftaran pengusul diberi tanda. Menyetujui satu usulan menutup usulan lain yang masih menunggu untuk sekolah yang sama.
 - **Gambar belum ada:** kotak ikon "tanpa gambar", bukan gambar tiruan.
 
 ## 10. Halaman depan
@@ -270,12 +279,13 @@ Nama tabel dan kolom berbahasa Indonesia.
 |---|---|
 | `admin` | nama, nama pengguna, sandi (hash) |
 | `settings` | pengaturan kunci–nilai (dari pustaka settings) |
-| `sekolah` | npsn, nama, bentuk, jenjang, status, alamat, kecamatan, kabupaten |
+| `sekolah` | npsn, nama, bentuk, jenjang, status, alamat, desa/kelurahan, kecamatan, kabupaten, waktu disunting admin (impor tidak menimpa baris yang pernah disunting) |
+| `usulan_nama_sekolah` | npsn, pendaftaran pengusul (kosong bila pendaftarannya dihapus), nama lama, nama usulan, status (menunggu, disetujui, ditolak), nama yang disetujui, alasan, waktu diputuskan |
 | `kelompok_umur` | nama, tahun lahir paling awal, tahun lahir paling akhir (masing-masing boleh kosong), biaya individu, urutan, aktif |
 | `kelompok_umur_jenjang` | kelompok umur, jenjang (A, B, atau C); satu baris per jenjang yang boleh ikut, unik per pasangan |
 | `awalan_nomor_dada` | kelompok umur, awalan (unik), urutan, nomor terakhir |
 | `nomor_lomba` | kelompok umur, nama, jenis, kategori, jumlah inti, batas anggota, jumlah putra/putri (mix), biaya beregu, urutan, aktif |
-| `pendaftaran` | ID pendaftaran (unik), jenjang, npsn, nama sekolah, kabupaten, subtotal individu, subtotal beregu, total, status, waktu lunas |
+| `pendaftaran` | ID pendaftaran (unik), kode bukti (acak), jenjang, npsn, nama sekolah, kabupaten, subtotal individu, subtotal beregu, total, status, waktu lunas |
 | `penanggung_jawab` | pendaftaran, nama, nomor WA, foto |
 | `atlet` | pendaftaran, nama, NISN (unik), tanggal lahir, jenis kelamin, kelompok umur, nomor dada (unik) |
 | `atlet_nomor` | atlet, nomor lomba, biaya (terisi untuk individu) |
@@ -317,6 +327,8 @@ Keunikan NISN dan nomor dada dijaga oleh basis data, bukan hanya oleh aplikasi.
 
 Laragon dipakai untuk pengembangan dan produksi. Panduan pemasangan produksi ditulis sebagai dokumen tersendiri pada Tahap 7 dan mencakup: virtual host Nginx ke folder `public/`, HTTPS lewat Cloudflare Tunnel, mode produksi di `.env`, perkecil aset, cadangan terjadwal, cara memulihkan cadangan, dan cara memperbarui versi.
 
+Daftar sekolah diisi dengan `php spark sekolah:impor` dan aman diulang setiap data sekolah diperbarui. Sekolah yang sudah disunting admin tidak ditimpa (K97).
+
 **Cadangan** (K66): dibuat **harian** oleh Penjadwal Tugas Windows ke folder di luar proyek. Satu berkas zip berisi basis data serta foto penanggung jawab, bukti bayar, dan unggahan admin. Cadangan yang lebih tua dari **14 hari** dihapus otomatis. Pemulihan dilakukan manual mengikuti panduan.
 
 Peserta menjangkau komputer Laragon dari internet lewat **Cloudflare Tunnel** (K31). Pengaturannya berada di luar kode aplikasi, kecuali satu hal: alamat IP pengunjung dibaca dari kepala `CF-Connecting-IP` yang hanya dipercaya dari terowongan, supaya pembatasan laju tetap menghitung per pengunjung.
@@ -344,7 +356,7 @@ Hal berikut saya putuskan sendiri karena tidak disebut dalam wawancara. Mohon di
 2. Frog Jump dan Turbo Throw (KU 10) berjenis **individu**. **Dikonfirmasi K21.**
 3. Trilomba (KU 12) adalah **satu nomor individu** dan dihitung satu dari batas dua nomor individu. **Dikonfirmasi K22.**
 4. Nomor urut ID pendaftaran berlaku global, bukan per jenjang. **Dikonfirmasi K32.**
-5. Data tersimpan di langkah Biaya (saat konfirmasi), bukan saat tombol "Pendaftaran Selesai". **Dikonfirmasi K32.**
+5. ~~Data tersimpan di langkah Biaya (saat konfirmasi), bukan saat tombol "Pendaftaran Selesai".~~ **Dikonfirmasi K32, lalu diganti K90:** data tersimpan di langkah Pembayaran saat official mengirim pendaftaran bersama bukti transfer (7).
 6. Official tidak bisa mengubah pendaftaran yang sudah tersimpan; perubahan lewat admin. **Dikonfirmasi K32.**
 7. Foto penanggung jawab tidak tampil di halaman cek. **Dikonfirmasi K32.**
 8. ~~Bila admin mengubah pendaftaran yang sudah lunas sehingga totalnya berubah, status tetap Lunas dan selisihnya diurus panitia di luar sistem.~~ **Diganti K32:** status kembali ke Menunggu dan admin menandai Lunas lagi (6.9).

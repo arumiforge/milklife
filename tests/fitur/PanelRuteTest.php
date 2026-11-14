@@ -128,6 +128,8 @@ final class PanelRuteTest extends UjiHalaman
             'admin/atlet'                      => 'Atlet',
             'admin/rekap'                      => 'Rekap',
             'admin/rekap/keuangan'             => 'Rekap',
+            'admin/sekolah'                    => 'Sekolah',
+            'admin/sekolah/12/ubah'            => 'Sekolah',
             // Pengaturan pendaftaran tetap menandai Pengaturan, bukan Pendaftaran.
             'admin/pengaturan/pendaftaran'     => 'Pengaturan',
         ] as $alamat => $label) {

@@ -6,6 +6,7 @@
  * Data dari `DasborController::index()`.
  *
  * @var array{pendaftaran: int, atlet: int, tim: int, sekolah: int, tagihan: int, lunas: int, belum: int, tim_tanpa_pembayar: int} $angka
+ * @var int $usulanNama usulan nama sekolah yang menunggu keputusan (K99)
  * @var CodeIgniter\View\View                                                                             $this
  * @var list<array{kunci: string, label: string, lengkap: bool, keterangan: string, alamat: string}>     $butir
  * @var int                                                                                               $jumlahLengkap
@@ -65,6 +66,13 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
                 <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
                 <strong><?= (int) $angka['tim_tanpa_pembayar'] ?></strong> tim beregu tidak punya pembayar biaya tim.
                 <a href="<?= site_url('admin/rekap/keuangan') ?>#judul-tim-tanpa-pembayar">Lihat daftarnya di rekap keuangan</a>.
+            </div>
+        <?php endif ?>
+        <?php if ($usulanNama > 0) : ?>
+            <div class="alert alert-info mt-3 mb-0" id="usulan-nama-menunggu">
+                <i class="bi bi-chat-square-text" aria-hidden="true"></i>
+                <strong><?= $usulanNama ?></strong> usulan nama sekolah dari pendaftar menunggu keputusan.
+                <a href="<?= site_url('admin/sekolah/usulan') ?>">Periksa usulannya</a>.
             </div>
         <?php endif ?>
         <p class="small mt-2 mb-0"><a href="<?= site_url('admin/rekap') ?>">Lihat rekap lengkap</a></p>

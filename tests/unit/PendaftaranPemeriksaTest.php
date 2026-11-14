@@ -72,7 +72,7 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertSame([], $hasil['galat']);
 
         $data = $hasil['data'];
-        $this->assertSame(['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => null, 'nama_sekolah' => 'SD Karangan Maju'], $data['sekolah']);
+        $this->assertSame(['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => null, 'nama_sekolah' => 'SD Karangan Maju', 'nama_usulan' => null, 'nama_resmi' => null], $data['sekolah']);
         $this->assertSame('6281200000001', $data['penanggung_jawab'][0]['nomor_wa']);
         $this->assertStringStartsWith("\xFF\xD8", $data['penanggung_jawab'][0]['foto']);
         $this->assertSame('BUDI KARANGAN 01', $data['atlet'][0]['nama']);
@@ -113,7 +113,47 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $hasil = self::periksa($kiriman, ['referensi' => ['npsn' => '99999911', 'nama' => 'SD KARANGAN  MAJU', 'bentuk' => 'SD', 'jenjang' => 'SD', 'kabupaten' => 'Kab. Kudus']]);
 
         $this->assertSame([], $hasil['galat']);
-        $this->assertSame(['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama_sekolah' => 'SD KARANGAN MAJU'], $hasil['data']['sekolah']);
+        $this->assertSame(['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama_sekolah' => 'SD KARANGAN MAJU', 'nama_usulan' => null, 'nama_resmi' => null], $hasil['data']['sekolah']);
+    }
+
+    public function testUsulanNamaDipakaiSementaraUntukSekolahReferensi(): void
+    {
+        $referensi          = ['npsn' => '99999911', 'nama' => 'MIS KARANGAN', 'bentuk' => 'MI', 'jenjang' => 'SD', 'kabupaten' => 'Kudus'];
+        $kiriman            = self::kirimanContoh();
+        $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => '', 'nama_usulan' => '  MIS KARANGAN   REKAAN '];
+
+        $hasil = self::periksa($kiriman, ['referensi' => $referensi]);
+
+        // K99: pendaftaran memakai nama usulan; nama resmi ikut dikirim untuk usulan ke admin.
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame('MIS KARANGAN REKAAN', $hasil['data']['sekolah']['nama_sekolah']);
+        $this->assertSame('MIS KARANGAN REKAAN', $hasil['data']['sekolah']['nama_usulan']);
+        $this->assertSame('MIS KARANGAN', $hasil['data']['sekolah']['nama_resmi']);
+        $this->assertSame('MIS KARANGAN', $hasil['rincian']['sekolah']['nama_resmi']);
+
+        // Usulan yang sama dengan nama resmi (huruf besar-kecil diabaikan) bukan usulan.
+        $kiriman['sekolah']['nama_usulan'] = 'mis karangan';
+        $hasil                             = self::periksa($kiriman, ['referensi' => $referensi]);
+        $this->assertNull($hasil['data']['sekolah']['nama_usulan']);
+        $this->assertSame('MIS KARANGAN', $hasil['data']['sekolah']['nama_sekolah']);
+    }
+
+    public function testUsulanNamaDiperiksa(): void
+    {
+        $referensi          = ['npsn' => '99999911', 'nama' => 'MIS KARANGAN', 'bentuk' => 'MI', 'jenjang' => 'SD', 'kabupaten' => 'Kudus'];
+        $kiriman            = self::kirimanContoh();
+        $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => '', 'nama_usulan' => str_repeat('A', 151)];
+
+        $this->assertGalat(self::periksa($kiriman, ['referensi' => $referensi]), 'sekolah.nama_usulan', 'terlalu panjang');
+
+        $kiriman['sekolah']['nama_usulan'] = 'SLB KARANGAN';
+        $this->assertGalat(self::periksa($kiriman, ['referensi' => $referensi]), 'sekolah.nama_usulan');
+
+        // Tanpa sekolah referensi, nama ditulis sendiri; usulan diabaikan.
+        $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '', 'nama' => 'SD Karangan', 'nama_usulan' => 'SD Lain'];
+        $hasil              = self::periksa($kiriman);
+        $this->assertSame('SD Karangan', $hasil['data']['sekolah']['nama_sekolah']);
+        $this->assertNull($hasil['data']['sekolah']['nama_usulan']);
     }
 
     public function testSlbDitolak(): void
@@ -536,5 +576,9 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertSame(['9900000001', '9900000002'], PemeriksaPendaftaran::nisnKiriman($kiriman));
         $this->assertNull(PemeriksaPendaftaran::npsnKiriman(['sekolah' => ['npsn' => '123']]));
         $this->assertSame([], PemeriksaPendaftaran::nisnKiriman(['atlet' => 'bukan daftar']));
+
+        // Spasi di tengah dibuang seperti saat memeriksa sekolah, supaya
+        // susulan, kuota, dan SLB tetap terbaca untuk NPSN yang sama.
+        $this->assertSame('99999911', PemeriksaPendaftaran::npsnKiriman(['sekolah' => ['npsn' => "9999 99\t11"]]));
     }
 }

@@ -53,6 +53,18 @@
 
         <div id="sekolah-hasil" aria-live="polite"></div>
 
+        <?php // Usulan nama sekolah yang lebih lengkap (K99); ditampilkan pendaftaran.js. ?>
+        <div class="mb-3" id="sekolah-usulan-kotak" hidden>
+            <label class="form-label" for="sekolah-nama-usulan">Nama sekolah lengkap yang diusulkan</label>
+            <input type="text" class="form-control" id="sekolah-nama-usulan" maxlength="150" autocomplete="off" data-jalur="sekolah.nama_usulan"
+                placeholder="Contoh: MIS MUHAMMADIYAH JATI" aria-describedby="sekolah-nama-usulan-keterangan">
+            <div class="invalid-feedback"></div>
+            <div id="sekolah-nama-usulan-keterangan" class="form-text">
+                Nama ini langsung dipakai untuk pendaftaran Anda dan dikirim ke panitia untuk diperiksa.
+                Bila panitia tidak menyetujuinya, pendaftaran memakai nama dari data sekolah. Kosongkan bila nama di atas sudah benar.
+            </div>
+        </div>
+
         <div class="mb-3" id="sekolah-nama-kotak" hidden>
             <label class="form-label" for="sekolah-nama">Nama sekolah</label>
             <input type="text" class="form-control" id="sekolah-nama" maxlength="150" autocomplete="organization" data-jalur="sekolah.nama" placeholder="Contoh: SD Negeri 1 Kudus">

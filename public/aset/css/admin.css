@@ -382,6 +382,16 @@ a.kepala-admin-nama:focus-visible {
     outline-offset: -3px;
 }
 
+/* Enam butir menu (K97) di ponsel sempit: huruf sedikit lebih kecil supaya
+   "Pendaftaran" dan "Pengaturan" tidak terpotong. */
+@media (max-width: 400px) {
+    .menu-bawah .menu-admin-tautan {
+        padding-inline: 0.0625rem;
+        font-size: 0.625rem;
+        letter-spacing: -0.01em;
+    }
+}
+
 /* ---------- Isi ---------- */
 
 .kartu-kosong .ikon-bulat {

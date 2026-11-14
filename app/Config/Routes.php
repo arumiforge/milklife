@@ -94,6 +94,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)/pdf', 'RekapController::pdf/$1');
     // ---------- Akhir panel data (Tahap 6) ----------
 
+    // Data sekolah (K97): lihat dan sunting nama supaya sekolah bernama umum bisa dibedakan.
+    $routes->get('sekolah', 'SekolahController::index');
+    $routes->get('sekolah/data', 'SekolahController::data');
+    $routes->get('sekolah/excel', 'SekolahController::excel');
+    $routes->get('sekolah/(:num)/ubah', 'SekolahController::ubah/$1');
+    $routes->post('sekolah/(:num)', 'SekolahController::perbarui/$1');
+    // Usulan nama sekolah dari pendaftar (K99).
+    $routes->get('sekolah/usulan', 'SekolahController::usulan');
+    $routes->post('sekolah/usulan/(:num)/setujui', 'SekolahController::setujuiUsulan/$1');
+    $routes->post('sekolah/usulan/(:num)/tolak', 'SekolahController::tolakUsulan/$1');
+
     // Pengaturan (Tahap 2). Semua rute ditulis F2-01; pengendalinya dibuat
     // tugas masing-masing (rencana Tahap 2, "Rute"). Selama pengendalinya
     // belum ada, alamatnya menampilkan halaman tidak ditemukan.

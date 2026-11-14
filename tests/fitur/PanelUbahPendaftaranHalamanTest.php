@@ -64,6 +64,22 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//form[@id="formulir-ubah"]//input[@name="' . config('Security')->tokenName . '"]')->length);
     }
 
+    public function testNomorDanKelompokUmurYangSudahDitutupTetapTampilBernama(): void
+    {
+        $p = $this->buatPendaftaranPanel(['foto' => true]);
+        $this->db->table('kelompok_umur')->where('id', $this->idInduk['ku10'])->update(['aktif' => 0]);
+
+        $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $p['id'] . '/ubah'));
+
+        // K98: nomor tetap tercentang dengan nama dan tanda Sudah ditutup.
+        $kotak = $xpath->query('//input[@name="atlet[0][nomor][]" and @value="' . $this->idInduk['frog'] . '" and @checked]')->item(0);
+        $this->assertNotNull($kotak);
+        $label = trim((string) preg_replace('/\s+/', ' ', $xpath->query('//label[@for="' . $kotak->getAttribute('id') . '"]')->item(0)->textContent));
+        $this->assertStringContainsString('Frog Jump', $label);
+        $this->assertStringContainsString('Sudah ditutup', $label);
+        $this->assertSame((string) $this->idInduk['ku10'], $xpath->query('//li[contains(@class, "kartu-atlet")]')->item(0)->getAttribute('data-ku-lama'));
+    }
+
     public function testPendaftaranYangTidakAda(): void
     {
         try {

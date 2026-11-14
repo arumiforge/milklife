@@ -156,6 +156,10 @@ class ImporSekolah extends BaseCommand
         CLI::write('  Diperbarui : ' . $angka($hasil['diperbarui']));
         CLI::write('  Dilewati   : ' . $angka($hasil['dilewati']));
 
+        if ($hasil['dipertahankan'] > 0) {
+            CLI::write('  Tidak diubah karena sudah disunting admin: ' . $angka($hasil['dipertahankan']));
+        }
+
         if ($hasil['per_kabupaten'] !== []) {
             CLI::newLine();
             CLI::write('Jumlah per kabupaten (yang tersimpan dari berkas ini):');

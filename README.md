@@ -50,7 +50,7 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
    php spark migrate --all
    ```
 
-6. Isi daftar sekolah (4.729 sekolah di lima kabupaten). Perintah ini aman dijalankan ulang kapan saja:
+6. Isi daftar sekolah (4.766 sekolah di lima kabupaten). Perintah ini aman dijalankan ulang kapan saja:
 
    ```
    php spark sekolah:impor
