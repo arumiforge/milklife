@@ -4,6 +4,7 @@ namespace Config;
 
 use App\Filters\AdminFilter;
 use App\Filters\BatasUnggahFilter;
+use App\Filters\CatatPengunjung;
 use App\Filters\PerkecilHtml;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
@@ -28,18 +29,19 @@ class Filters extends BaseFilters
      * or [filter_name => [classname1, classname2, ...]]
      */
     public array $aliases = [
-        'csrf'          => CSRF::class,
-        'toolbar'       => DebugToolbar::class,
-        'honeypot'      => Honeypot::class,
-        'invalidchars'  => InvalidChars::class,
-        'secureheaders' => SecureHeaders::class,
-        'cors'          => Cors::class,
-        'forcehttps'    => ForceHTTPS::class,
-        'pagecache'     => PageCache::class,
-        'performance'   => PerformanceMetrics::class,
-        'admin'         => AdminFilter::class,
-        'batasunggah'   => BatasUnggahFilter::class,
-        'perkecilhtml'  => PerkecilHtml::class,
+        'csrf'            => CSRF::class,
+        'toolbar'         => DebugToolbar::class,
+        'honeypot'        => Honeypot::class,
+        'invalidchars'    => InvalidChars::class,
+        'secureheaders'   => SecureHeaders::class,
+        'cors'            => Cors::class,
+        'forcehttps'      => ForceHTTPS::class,
+        'pagecache'       => PageCache::class,
+        'performance'     => PerformanceMetrics::class,
+        'admin'           => AdminFilter::class,
+        'batasunggah'     => BatasUnggahFilter::class,
+        'perkecilhtml'    => PerkecilHtml::class,
+        'catatpengunjung' => CatatPengunjung::class,
     ];
 
     /**
@@ -92,6 +94,8 @@ class Filters extends BaseFilters
             // Excel, dan gambar admin.
             'secureheaders',
             'perkecilhtml', // hanya bila `aplikasi.minify = true` dan jawaban `text/html`
+            // Catatan pengunjung halaman publik (K102); halaman admin tidak dicatat.
+            'catatpengunjung' => ['except' => ['admin', 'admin/*']],
         ],
     ];
 

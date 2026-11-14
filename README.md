@@ -78,6 +78,10 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
 
 10. Buka `http://milklife.test` untuk halaman depan, dan `http://milklife.test/admin/masuk` untuk panel admin.
 
+### Monitoring
+
+`http://milklife.test/arumi.php` (halaman Monitoring, tema gelap) menampilkan keadaan PHP, Nginx, ukuran basis data, penyimpanan unggahan, dan catatan pengunjung per jam dan per hari (K102). Halaman ini meminta kata sandi dari pemilik; kata sandinya hanya tersimpan sebagai hash. Untuk memakai kata sandi lain, isi `arumi.sandiHash` di `.env` (cara membuat hashnya ada di `.env.example`). Catatan pengunjung butuh tabel `kunjungan`, jadi jalankan `php spark migrate` setelah memperbarui versi.
+
 ### Batas unggah berkas
 
 Admin mengunggah gambar (paling besar 2 MB) dan berkas unduhan seperti juknis (paling besar 10 MB). Batas bawaan PHP biasanya hanya 2 MB, jadi naikkan dulu:

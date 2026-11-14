@@ -108,6 +108,25 @@
     padding: 1rem 0.75rem;
 }
 
+/* Isi menu samping memenuhi tinggi layar supaya daftar kedua (Pengecekan dan
+   Halaman depan, K102) menempel di bagian bawah. */
+.menu-samping .menu-samping-nav {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-samping .menu-admin-akhir {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.menu-samping .menu-admin-akhir .bi-box-arrow-up-right {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
 .menu-admin {
     list-style: none;
     margin: 0;
@@ -231,7 +250,8 @@ a.kepala-admin-nama:focus-visible {
     max-width: 14rem;
 }
 
-.tombol-halaman-depan,
+.kepala-admin .tombol-pengecekan,
+.kepala-admin .tombol-halaman-depan,
 .tombol-keluar {
     display: inline-flex;
     align-items: center;
@@ -240,7 +260,8 @@ a.kepala-admin-nama:focus-visible {
     white-space: nowrap;
 }
 
-.tombol-halaman-depan,
+.kepala-admin .tombol-pengecekan,
+.kepala-admin .tombol-halaman-depan,
 .tombol-keluar {
     flex: none;
 }
@@ -280,7 +301,8 @@ a.kepala-admin-nama:focus-visible {
 
     /* Halaman depan dan Keluar: ikon saja tanpa bingkai, seukuran ikon profil.
        Labelnya tetap terbaca pembaca layar. */
-    .tombol-halaman-depan,
+    .kepala-admin .tombol-pengecekan,
+    .kepala-admin .tombol-halaman-depan,
     .tombol-keluar {
         justify-content: center;
         min-width: 2.75rem;
@@ -940,4 +962,172 @@ div.dt-container .dt-layout-table {
     max-height: 60vh;
     margin: 0 auto;
     object-fit: contain;
+}
+
+/* ---------- Dasbor (K102) ----------
+   Kartu putih bersudut lembut dan berbayang tipis, mengikuti kartu dasbor
+   Flowbite di template-flowbites/ (rounded-lg bg-white p-4 shadow-sm md:p-6). */
+
+.dasbor .judul-bagian-dasbor {
+    margin-bottom: 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ml-teks-redup);
+}
+
+.kartu-dasbor {
+    position: relative;
+    display: block;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background-color: var(--ml-putih);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+    color: inherit;
+}
+
+@media (min-width: 768px) {
+    .kartu-dasbor {
+        padding: 1.25rem 1.5rem;
+    }
+}
+
+.kartu-sapa {
+    border-left: 4px solid var(--ml-oranye);
+}
+
+.kartu-angka .label-angka,
+.kartu-kecil .label-angka {
+    font-size: 0.875rem;
+    color: var(--ml-teks-redup);
+}
+
+.kartu-angka .nilai-angka {
+    margin-top: 0.25rem;
+    font-size: 1.625rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ml-biru-tua);
+}
+
+@media (min-width: 1400px) {
+    .kartu-angka .nilai-angka {
+        font-size: 1.875rem;
+    }
+}
+
+/* Rupiah lebih panjang: ukuran huruf mengikuti lebar kartu supaya tidak
+   tertutup ikon. */
+.kartu-angka {
+    container-type: inline-size;
+}
+
+.kartu-angka .nilai-angka.nilai-uang {
+    font-size: clamp(1.125rem, 8.5cqi, 1.75rem);
+    white-space: nowrap;
+}
+
+.kartu-angka .catatan-angka {
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #0E9F6E;
+}
+
+.ikon-angka {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.625rem;
+    font-size: 1.25rem;
+}
+
+@media (max-width: 575.98px) {
+    .ikon-angka {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 1rem;
+    }
+}
+
+.ikon-biru { background: var(--ml-biru-muda-pucat); color: var(--ml-biru); }
+.ikon-oranye { background: #FDEDE6; color: var(--ml-oranye-tombol); }
+.ikon-hijau { background: #DEF7EC; color: #046C4E; }
+.ikon-ungu { background: #EDEBFE; color: #5521B5; }
+.ikon-abu { background: #F3F4F6; color: var(--ml-teks-redup); }
+
+.kartu-tautan {
+    text-decoration: none;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.kartu-tautan:hover {
+    color: inherit;
+    box-shadow: 0 4px 12px rgba(2, 31, 123, 0.12);
+    transform: translateY(-1px);
+}
+
+.kartu-tautan:focus-visible {
+    outline: 3px solid var(--ml-biru);
+    outline-offset: 2px;
+}
+
+.kartu-kecil {
+    padding: 0.875rem 1rem;
+}
+
+.kartu-kecil > .bi {
+    font-size: 1.125rem;
+    color: var(--ml-biru);
+}
+
+.kartu-kecil .nilai-kecil {
+    margin-top: 0.25rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ml-biru-tua);
+}
+
+.kartu-kecil .label-angka {
+    font-size: 0.8125rem;
+    line-height: 1.3;
+}
+
+.kartu-kecil .label-angka a {
+    color: inherit;
+}
+
+.kartu-sorot {
+    box-shadow: inset 0 0 0 2px var(--ml-oranye), 0 1px 3px rgba(16, 24, 40, 0.08);
+}
+
+.kartu-sorot > .bi {
+    color: var(--ml-oranye-tombol);
+}
+
+.dasbor .judul-grafik {
+    margin-bottom: 0.125rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.dasbor .keterangan-grafik {
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--ml-teks-redup);
+}
+
+.wadah-grafik {
+    margin-inline: -0.5rem;
+}
+
+.wadah-grafik .apexcharts-tooltip {
+    border: 0 !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 6px 20px rgba(2, 31, 123, 0.15) !important;
 }

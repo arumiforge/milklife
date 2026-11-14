@@ -7,8 +7,9 @@ use Tests\Support\KirimFormulir;
 use Tests\Support\UjiBasisData;
 
 /**
- * Dasbor (daftar centang kelengkapan dan keadaan pendaftaran) dan tanda
- * lengkap/belum di halaman daftar pengaturan (F2-09).
+ * Pengecekan (daftar centang kelengkapan dan keadaan pendaftaran; dulu di
+ * dasbor, dipindah K102), ringkasannya di dasbor, dan tanda lengkap/belum di
+ * halaman daftar pengaturan (F2-09).
  *
  * Kolom batas tahun lahir (K36) ditambahkan di persiapan selama migrasi F2-03
  * belum ada, seperti `DataKelengkapanTest`.
@@ -38,16 +39,17 @@ final class DasborKelengkapanTest extends UjiBasisData
         parent::tearDown();
     }
 
-    // ---------- Dasbor ----------
+    // ---------- Pengecekan (K102) ----------
 
     public function testDasborTertutupUntukYangBelumMasuk(): void
     {
         $this->assertBelumMasukDialihkan('admin/dasbor');
+        $this->assertBelumMasukDialihkan('admin/pengecekan');
     }
 
     public function testDasborBasisDataKosong(): void
     {
-        $hasil = $this->bukaSebagaiAdmin('admin/dasbor');
+        $hasil = $this->bukaSebagaiAdmin('admin/pengecekan');
         $hasil->assertOK();
         $xpath = $this->xpathDari($hasil);
 
@@ -77,8 +79,18 @@ final class DasborKelengkapanTest extends UjiBasisData
         $hasil->assertSee('Pendaftaran sedang disiapkan.');
         $hasil->assertSee('Sedang disiapkan');
 
-        // Keadaan kosong pendaftaran tetap ada.
-        $hasil->assertSee('Belum ada pendaftaran');
+        // Gambar kepala halaman depan ikut pindah ke Pengecekan.
+        $this->assertSame(1, $xpath->query('//*[@id="judul-gambar"]')->length);
+
+        // Dasbor hanya meringkas: lencana keadaan, peringatan kelengkapan, keadaan kosong.
+        $dasbor = $this->bukaSebagaiAdmin('admin/dasbor');
+        $dasbor->assertOK();
+        $xpathDasbor = $this->xpathDari($dasbor);
+        $this->assertSame(0, $xpathDasbor->query('//*[@id="kelengkapan-pengaturan"]')->length);
+        $this->assertSame(0, $xpathDasbor->query('//*[@id="judul-gambar"]')->length);
+        $this->assertSame('disiapkan', $xpathDasbor->query('//*[@data-keadaan]')->item(0)?->getAttribute('data-keadaan'));
+        $dasbor->assertSee('Pengaturan wajib baru 0 dari 5 yang lengkap.');
+        $dasbor->assertSee('Belum ada pendaftaran');
     }
 
     public function testDasborSetelahDataAwal(): void
@@ -86,7 +98,7 @@ final class DasborKelengkapanTest extends UjiBasisData
         $this->jalankanDataAwal();
         $this->kosongkanSebagian();
 
-        $hasil = $this->bukaSebagaiAdmin('admin/dasbor');
+        $hasil = $this->bukaSebagaiAdmin('admin/pengecekan');
         $xpath = $this->xpathDari($hasil);
 
         $this->assertSame(
@@ -105,20 +117,24 @@ final class DasborKelengkapanTest extends UjiBasisData
         $this->jalankanDataAwal();
         $this->lengkapiSemua();
 
-        $hasil = $this->bukaSebagaiAdmin('admin/dasbor');
+        $hasil = $this->bukaSebagaiAdmin('admin/pengecekan');
         $xpath = $this->xpathDari($hasil);
 
         $this->assertSame(['ya'], array_values(array_unique($this->centang($xpath))));
         $hasil->assertSee('Semua pengaturan wajib sudah lengkap.');
         $this->assertSame('terbuka', $xpath->query('//*[@id="keadaan-pendaftaran"]')->item(0)?->getAttribute('data-keadaan'));
         $hasil->assertSee('Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.');
-        $hasil->assertSee('Belum ada pendaftaran');
+
+        // Dasbor tanpa peringatan bila semua lengkap.
+        $dasbor = $this->bukaSebagaiAdmin('admin/dasbor');
+        $dasbor->assertSee('Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.');
+        $this->assertSame(0, $this->xpathDari($dasbor)->query('//*[@id="peringatan-kelengkapan"]')->length);
 
         Time::setTestNow('2026-12-01 00:00:00', 'Asia/Jakarta');
-        $this->bukaSebagaiAdmin('admin/dasbor')->assertSee('Pendaftaran sudah ditutup pada 30 November 2026 pukul 23.59.');
+        $this->bukaSebagaiAdmin('admin/pengecekan')->assertSee('Pendaftaran sudah ditutup pada 30 November 2026 pukul 23.59.');
 
         Time::setTestNow('2026-09-30 12:00:00', 'Asia/Jakarta');
-        $this->bukaSebagaiAdmin('admin/dasbor')->assertSee('Pendaftaran dibuka 1 Oktober 2026.');
+        $this->bukaSebagaiAdmin('admin/pengecekan')->assertSee('Pendaftaran dibuka 1 Oktober 2026.');
     }
 
     public function testDasborBukaManual(): void
@@ -129,7 +145,7 @@ final class DasborKelengkapanTest extends UjiBasisData
         setting('Pendaftaran.buka_manual_sampai', '2026-12-03 12:00:00');
         Time::setTestNow('2026-12-02 08:00:00', 'Asia/Jakarta');
 
-        $hasil = $this->bukaSebagaiAdmin('admin/dasbor');
+        $hasil = $this->bukaSebagaiAdmin('admin/pengecekan');
 
         $hasil->assertSee('Pendaftaran dibuka sampai 3 Desember 2026 pukul 12.00.');
         $hasil->assertSee('Pendaftaran terbuka karena dibuka manual oleh admin, di luar jadwal.');
@@ -140,7 +156,7 @@ final class DasborKelengkapanTest extends UjiBasisData
     {
         $this->db->table('kelompok_umur')->insert(['nama' => '<b>KU Karangan</b>', 'aktif' => 1]);
 
-        $html = $this->bukaSebagaiAdmin('admin/dasbor')->getBody();
+        $html = $this->bukaSebagaiAdmin('admin/pengecekan')->getBody();
 
         $this->assertStringContainsString('&lt;b&gt;KU Karangan&lt;/b&gt; belum punya', $html);
         $this->assertStringNotContainsString('<b>KU Karangan</b>', $html);

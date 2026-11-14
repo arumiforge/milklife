@@ -122,11 +122,17 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame(1, $xpath->query('.//form[@method="post"]//button[@type="submit"][contains(., "Keluar")]', $kepala)->length);
         $this->assertFormulirKeluarBerCsrf($xpath);
 
-        // Tautan ke halaman depan, dibuka di tab baru (K85).
+        // Tautan ke halaman depan, dibuka di tab baru (K85). Di kepala halaman
+        // hanya untuk ponsel dan tablet; di layar lebar ada di bawah menu samping (K102).
         $depan = $xpath->query('.//a[contains(@class, "tombol-halaman-depan")]', $kepala)->item(0);
         $this->assertNotNull($depan);
         $this->assertSame(site_url('/'), $depan->getAttribute('href'));
         $this->assertSame('_blank', $depan->getAttribute('target'));
+        $this->assertStringContainsString('d-lg-none', $depan->getAttribute('class'));
+        $cek = $xpath->query('.//a[contains(@class, "tombol-pengecekan")]', $kepala)->item(0);
+        $this->assertNotNull($cek);
+        $this->assertSame(site_url('admin/pengecekan'), $cek->getAttribute('href'));
+        $this->assertStringContainsString('d-lg-none', $cek->getAttribute('class'));
 
         // Menu samping dan menu bawah.
         $samping = $xpath->query('//aside[contains(@class, "menu-samping")]//nav[@aria-label]')->item(0);
@@ -137,8 +143,7 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertStringContainsString('d-lg-flex', $samping->parentNode->getAttribute('class'));
 
         // Kedua menu berasal dari daftar yang sama.
-        $this->assertSame($this->daftarMenu($xpath, $samping), $this->daftarMenu($xpath, $bawah));
-        $this->assertSame([
+        $utama = [
             ['Dasbor', site_url('admin/dasbor'), 'page'],
             // Panel data (Tahap 6, F6-01).
             ['Pendaftaran', site_url('admin/pendaftaran'), ''],
@@ -146,7 +151,19 @@ final class TataLetakHalamanTest extends UjiHalaman
             ['Rekap', site_url('admin/rekap'), ''],
             ['Sekolah', site_url('admin/sekolah'), ''],
             ['Pengaturan', site_url('admin/pengaturan'), ''],
+        ];
+        $this->assertSame($utama, $this->daftarMenu($xpath, $bawah));
+
+        // Menu samping: daftar yang sama, lalu Pengecekan dan Halaman depan di bagian bawah (K102).
+        $this->assertSame([
+            ...$utama,
+            ['Pengecekan', site_url('admin/pengecekan'), ''],
+            ['Halaman depan (tab baru)', site_url('/'), ''],
         ], $this->daftarMenu($xpath, $samping));
+        $akhir = $xpath->query('.//ul[contains(@class, "menu-admin-akhir")]', $samping)->item(0);
+        $this->assertNotNull($akhir);
+        $this->assertSame('_blank', $xpath->query('.//a[contains(@class, "tombol-halaman-depan")]', $akhir)->item(0)?->getAttribute('target'));
+        $this->assertSame(0, $xpath->query('.//ul[contains(@class, "menu-admin-akhir")]', $bawah)->length);
 
         // Ikon dekoratif disembunyikan dari pembaca layar.
         foreach ($xpath->query('//nav[contains(@class, "menu-bawah")]//i[contains(@class, "bi")]') as $ikon) {
@@ -167,8 +184,11 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertStringContainsString('Belum ada pendaftaran', $isi);
         $this->assertStringContainsString('Langkah berikutnya', $isi);
 
-        // Contoh komponen tanpa gambar.
-        $this->assertSame(1, $xpath->query('//main//*[contains(@class, "tanpa-gambar")][@role="img"]')->length);
+        // Contoh komponen tanpa gambar, kini di Pengecekan (K102).
+        $this->assertSame(0, $xpath->query('//main//*[contains(@class, "tanpa-gambar")]')->length);
+        $pengecekan = $this->xpath($this->withSession(self::SESI_ADMIN)->get('admin/pengecekan')->getBody());
+        $this->assertSame(1, $pengecekan->query('//main//*[contains(@class, "tanpa-gambar")][@role="img"]')->length);
+        $this->assertSame(1, $pengecekan->query('//aside//a[contains(@class, "menu-admin-tautan")][@aria-current="page"][contains(@href, "admin/pengecekan")]')->length);
     }
 
     public function testPenandaMenuAktifMengikutiAlamat(): void
@@ -182,7 +202,8 @@ final class TataLetakHalamanTest extends UjiHalaman
         // Halaman lain tidak menandai Dasbor.
         $xpath = $this->xpath($this->renderDiAlamat('admin/lain', 'Tests\Support\Views\contoh_admin'));
         $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
-        $this->assertSame(12, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
+        // Enam butir di menu bawah, delapan di menu samping (K102).
+        $this->assertSame(14, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));

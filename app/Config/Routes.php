@@ -41,6 +41,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('masuk', 'MasukController::masuk');
     $routes->post('keluar', 'MasukController::keluar');
     $routes->get('dasbor', 'DasborController::index');
+    // Pengecekan (K102): keadaan pendaftaran, kelengkapan pengaturan, gambar kepala.
+    $routes->get('pengecekan', 'PengecekanController::index');
 
     // Akun admin yang sedang masuk (F2-08): dua formulir di satu halaman.
     $routes->get('akun', 'AkunController::index');
