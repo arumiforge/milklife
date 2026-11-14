@@ -291,3 +291,9 @@ Keputusan pemilik, terbaru di bawah. Keputusan lama tidak dihapus.
 | No | Keputusan | Catatan |
 |---|---|---|
 | K94 | Ada perintah `php spark nomor-dada:reset` untuk mengosongkan semua nomor dada setelah uji coba: nomor dada semua atlet dikosongkan, penghitung semua awalan kembali 0, dan pendaftaran Lunas kembali Menunggu (karena pendaftaran Lunas selalu punya nomor dada). Perintah meminta pengguna mengetik RESET; `--ya` untuk skrip | Permintaan pemilik: nomor dada sempat terpakai saat uji coba. Satu-satunya pengecualian aturan nomor dada tidak dipakai ulang; jangan dijalankan setelah nomor dada dibagikan ke peserta |
+
+## 14 November 2026 — kelompok umur beririsan antar-jenjang
+
+| No | Keputusan | Catatan |
+|---|---|---|
+| K95 | Kelompok umur atlet ditentukan jenjang dulu, baru tahun lahir. Dari jenjang sekolah, hanya kelompok umur yang dicentang untuk jenjang itu yang dipertimbangkan; di antaranya dicari yang rentang tahun lahirnya cocok. Rentang tahun lahir kelompok umur aktif boleh beririsan antar-jenjang, tetapi tidak dalam satu jenjang. Contoh: bila KU 12 (SD/MI) dan KU 15 (SMP/MTs) sama-sama menerima kelahiran 2012, atlet lahir 2012 dari SD masuk KU 12 dan dari SMP masuk KU 15. Pengaturan kelompok umur menolak irisan hanya bila kedua kelompok umur aktif dibuka untuk jenjang yang sama; kelompok umur yang belum dicentang jenjangnya tidak dibandingkan. Berlaku di server, wizard pendaftaran, dan halaman ubah pendaftaran admin | Menggantikan sebagian K23 (atlet tidak dipindah ke kelompok umur lain karena jenjangnya) dan K36 (tahun lahir satu-satunya penentu kelompok umur). Rentang tahun lahir data awal K36 tidak diubah; contoh 2012 hanya ilustrasi, rentang diubah admin di panel bila perlu. Rancangan revisi 5 (bagian 6.4 dan 17) ada di `dokumen/draf/` dan menunggu persetujuan pemilik |

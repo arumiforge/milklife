@@ -17,9 +17,12 @@ use Throwable;
  *   tahun lahir paling awal (atlet tertua), `tahun_lahir_akhir` paling akhir
  *   (atlet termuda). Keduanya boleh kosong; kosong berarti tidak dibatasi di
  *   sisi itu (KU 8: lahir 2019 ke atas).
- * - Rentang tahun lahir kelompok umur aktif tidak boleh tumpang tindih.
- *   Kelompok umur yang kedua batasnya masih kosong belum punya rentang, jadi
- *   tidak dibandingkan (pengaturannya dianggap belum lengkap oleh F2-09).
+ * - Rentang tahun lahir kelompok umur aktif boleh beririsan antar-jenjang,
+ *   tetapi tidak dalam satu jenjang (K95): dua kelompok umur aktif yang sama-sama
+ *   dibuka untuk satu jenjang tidak boleh punya tahun lahir yang sama.
+ *   Kelompok umur yang kedua batasnya masih kosong belum punya rentang, dan yang
+ *   belum dicentang jenjangnya tidak menerima atlet, jadi keduanya tidak
+ *   dibandingkan (pengaturannya dianggap belum lengkap oleh F2-09).
  * - Batas tahun lahir tidak bisa diubah sehingga atlet yang sudah terdaftar
  *   di kelompok umur itu keluar dari rentangnya (F6-07).
  * - Batas tahun lahir, jenjang, biaya individu, dan awalan boleh kosong saat
@@ -99,6 +102,31 @@ class KelompokUmurModel extends Model
 
         return ($awalA ?? PHP_INT_MIN) <= ($akhirB ?? PHP_INT_MAX)
             && ($awalB ?? PHP_INT_MIN) <= ($akhirA ?? PHP_INT_MAX);
+    }
+
+    /**
+     * Kode jenjang yang membuat dua kelompok umur bertabrakan (K95): rentang
+     * tahun lahirnya beririsan dan keduanya dibuka untuk jenjang yang sama.
+     * Kosong bila tidak bertabrakan, termasuk bila salah satunya belum punya
+     * jenjang.
+     *
+     *     jenjangBertabrakan(
+     *         ['tahun_lahir_awal' => 2012, 'tahun_lahir_akhir' => 2015, 'jenjang' => ['A']],
+     *         ['tahun_lahir_awal' => 2011, 'tahun_lahir_akhir' => 2014, 'jenjang' => ['B']],
+     *     ); // [] (beda jenjang, boleh beririsan)
+     *
+     * @param array<string, mixed> $a `tahun_lahir_awal`, `tahun_lahir_akhir`, `jenjang` (list kode)
+     * @param array<string, mixed> $b Sama dengan `$a`.
+     *
+     * @return list<string>
+     */
+    public static function jenjangBertabrakan(array $a, array $b): array
+    {
+        if (! self::rentangBertabrakan($a['tahun_lahir_awal'] ?? null, $a['tahun_lahir_akhir'] ?? null, $b['tahun_lahir_awal'] ?? null, $b['tahun_lahir_akhir'] ?? null)) {
+            return [];
+        }
+
+        return Jenjang::rapikan(array_intersect(Jenjang::rapikan($a['jenjang'] ?? []), Jenjang::rapikan($b['jenjang'] ?? [])));
     }
 
     /**
@@ -316,14 +344,15 @@ class KelompokUmurModel extends Model
             $galat['awalan'] = $galatAwalan;
         }
 
-        // Rentang tahun lahir kelompok umur aktif tidak boleh tumpang tindih.
-        if ($data['aktif'] === 1 && ! isset($galat['tahun_lahir_awal']) && ! isset($galat['tahun_lahir_akhir'])) {
-            $tabrakan = $this->cariTabrakan($data['tahun_lahir_awal'], $data['tahun_lahir_akhir'], $id);
+        // Dalam satu jenjang, rentang tahun lahir kelompok umur aktif tidak boleh beririsan (K95).
+        if ($data['aktif'] === 1 && ! isset($galat['tahun_lahir_awal']) && ! isset($galat['tahun_lahir_akhir']) && ! isset($galat['jenjang'])) {
+            [$tabrakan, $jenjangSama] = $this->cariTabrakan($data, $id) ?? [null, []];
 
             if ($tabrakan !== null) {
                 $galat['tahun_lahir_awal'] = 'Tahun lahir ini bertabrakan dengan ' . $tabrakan['nama'] . ' ('
                     . mb_strtolower(self::teksTahunLahir($tabrakan['tahun_lahir_awal'], $tabrakan['tahun_lahir_akhir']))
-                    . '). Satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, atau matikan salah satu kelompok umur.';
+                    . ') untuk jenjang ' . Jenjang::gabungLabel($jenjangSama) . '. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif.'
+                    . ' Ubah tahunnya, hapus centang jenjang yang sama, atau matikan salah satu kelompok umur.';
             }
         }
 
@@ -480,13 +509,16 @@ class KelompokUmurModel extends Model
     }
 
     /**
-     * Kelompok umur aktif lain yang rentang tahun lahirnya bertabrakan.
+     * Kelompok umur aktif lain yang bertabrakan dengan `$data` beserta jenjang
+     * yang sama (`jenjangBertabrakan()`), atau `null`.
      *
-     * @return array<string, mixed>|null
+     * @param array<string, mixed> $data `tahun_lahir_awal`, `tahun_lahir_akhir`, `jenjang`
+     *
+     * @return array{0: array<string, mixed>, 1: list<string>}|null
      */
-    private function cariTabrakan(?int $awal, ?int $akhir, ?int $kecualiId): ?array
+    private function cariTabrakan(array $data, ?int $kecualiId): ?array
     {
-        if ($awal === null && $akhir === null) {
+        if (($data['tahun_lahir_awal'] === null && $data['tahun_lahir_akhir'] === null) || ($data['jenjang'] ?? []) === []) {
             return null;
         }
 
@@ -496,9 +528,14 @@ class KelompokUmurModel extends Model
             $kueri->where('id !=', $kecualiId);
         }
 
+        $jenjang = model(KelompokUmurJenjangModel::class)->kodePerKelompokUmur();
+
         foreach ($kueri->get()->getResultArray() as $lain) {
-            if (self::rentangBertabrakan($awal, $akhir, $lain['tahun_lahir_awal'], $lain['tahun_lahir_akhir'])) {
-                return $lain;
+            $lain['jenjang'] = $jenjang[(int) $lain['id']] ?? [];
+            $sama            = self::jenjangBertabrakan($data, $lain);
+
+            if ($sama !== []) {
+                return [$lain, $sama];
             }
         }
 

@@ -363,6 +363,40 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $this->assertSame(175000, $this->pendaftaran($p['id'])['total']);
     }
 
+    public function testJenjangDiubahMemindahkanKelompokUmurSaatRentangBeririsan(): void
+    {
+        // K95: KU 12 hanya untuk SD dan diperlebar ke 2012–2015, beririsan dengan KU 15 (SMP, 2011–2014).
+        $this->db->table('kelompok_umur')->where('id', $this->idInduk['ku12'])->update(['tahun_lahir_awal' => 2012]);
+        $this->db->table('kelompok_umur_jenjang')->where('kelompok_umur_id', $this->idInduk['ku12'])->where('jenjang', 'B')->delete();
+
+        $p = $this->buatPendaftaranPanel([
+            'foto'    => true,
+            'sekolah' => ['npsn' => null, 'nama' => 'SD KARANGAN MAJU'],
+            'atlet'   => [$this->atletPanel(['ku' => 'ku12', 'tanggal_lahir' => '2012-05-01', 'nomor' => ['lari60putraKu12']])],
+        ]);
+
+        // Dari SD, atlet 2012 sah di KU 12.
+        $this->assertSame([], (new UbahPendaftaran())->simpan($p['id'], $this->kirimanDari($p['id']))['galat']);
+
+        // Jenjang diganti SMP: atlet 2012 kini KU 15, jadi nomor KU 12 ditolak.
+        $kiriman                       = $this->kirimanDari($p['id']);
+        $kiriman['sekolah']['jenjang'] = 'B';
+        $kiriman['sekolah']['nama']    = 'SMP KARANGAN MAJU';
+        $hasil                         = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+
+        $this->assertFalse($hasil['tersimpan']);
+        $this->assertStringContainsString('untuk KU 12, sedangkan atlet ini KU 15', implode(' ', array_column($hasil['galat'], 'pesan')));
+
+        // Dengan nomor KU 15, tersimpan di KU 15.
+        $kiriman['atlet'][0]['jenis_kelamin'] = 'P';
+        $kiriman['atlet'][0]['nomor']         = [$this->idInduk['lari80putri']];
+        $hasil                                = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertTrue($hasil['tersimpan']);
+        $this->assertSame($this->idInduk['ku15'], (int) $this->db->table('atlet')->where('id', $p['atlet'][0])->get()->getRow()->kelompok_umur_id);
+    }
+
     public function testMenungguTetapMenungguDanTanpaNomorDada(): void
     {
         $p       = $this->buatPendaftaranPanel(['foto' => true]);

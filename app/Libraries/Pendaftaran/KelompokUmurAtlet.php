@@ -6,21 +6,23 @@ use App\Libraries\Jenjang;
 use App\Models\KelompokUmurModel;
 
 /**
- * Kelompok umur atlet dari tahun lahir, dibatasi jenjang sekolah
- * (rancangan 6.4; K36, K23).
+ * Kelompok umur atlet dari jenjang sekolah dan tahun lahir (rancangan 6.4;
+ * K95, yang menggantikan sebagian K23 dan K36).
  *
  * Aturan murni: daftar kelompok umur diberikan pemanggil (hanya yang aktif).
  *
- * - Hanya tahun lahir yang dipakai; bulan dan tanggal diabaikan.
+ * - Jenjang dulu: hanya kelompok umur yang dibuka untuk jenjang sekolah yang
+ *   dipertimbangkan.
+ * - Baru tahun lahir: di antara kelompok umur itu, dicari yang rentangnya
+ *   cocok. Bulan dan tanggal diabaikan.
  * - Batas kosong berarti tidak dibatasi di sisi itu. Kelompok umur yang kedua
  *   batasnya kosong belum punya rentang dan tidak pernah cocok.
- * - Rentang kelompok umur aktif tidak tumpang tindih (dijaga pengaturan), jadi
- *   yang cocok pertama yang dipakai.
- * - Bila kelompok umurnya tidak dibuka untuk jenjang sekolah, atlet ditolak;
- *   atlet tidak dipindah ke kelompok umur lain.
+ * - Rentang boleh beririsan antar-jenjang (KU 12 untuk SD dan KU 15 untuk SMP
+ *   sama-sama menerima 2012), tetapi tidak dalam satu jenjang (dijaga
+ *   pengaturan), jadi yang cocok pertama yang dipakai.
  *
- *     $hasil = KelompokUmurAtlet::tentukan(2017, 'A', $daftar);
- *     $hasil['kelompok_umur']; // baris KU 10, atau null
+ *     $hasil = KelompokUmurAtlet::tentukan(2012, 'B', $daftar);
+ *     $hasil['kelompok_umur']; // baris KU 15, atau null
  *     $hasil['galat'];         // null, atau kalimat penolakan
  */
 final class KelompokUmurAtlet
@@ -33,36 +35,44 @@ final class KelompokUmurAtlet
      */
     public static function tentukan(int $tahunLahir, string $jenjang, array $daftar): array
     {
-        $cocok = null;
+        $untukJenjang = array_values(array_filter(
+            $daftar,
+            static fn (array $ku): bool => in_array($jenjang, Jenjang::rapikan($ku['jenjang'] ?? []), true),
+        ));
 
-        foreach ($daftar as $ku) {
+        foreach ($untukJenjang as $ku) {
             if (self::masuk($tahunLahir, $ku)) {
-                $cocok = $ku;
-                break;
+                return ['kelompok_umur' => $ku, 'galat' => null];
             }
         }
 
-        if ($cocok === null) {
+        $labelJenjang = Jenjang::label($jenjang) ?? $jenjang;
+
+        if ($untukJenjang === []) {
             return [
                 'kelompok_umur' => null,
-                'galat'         => "Atlet lahir tahun {$tahunLahir} tidak masuk kelompok umur mana pun"
-                    . self::daftarRentang($daftar) . '. Periksa lagi tanggal lahirnya.',
+                'galat'         => "Belum ada kelompok umur yang dibuka untuk {$labelJenjang}, jadi atlet ini tidak bisa didaftarkan.",
             ];
         }
 
-        $boleh = Jenjang::rapikan($cocok['jenjang'] ?? []);
+        $rentang = self::daftarRentang($untukJenjang, $labelJenjang);
 
-        if (! in_array($jenjang, $boleh, true)) {
-            $labelBoleh = $boleh === [] ? 'belum dibuka untuk jenjang mana pun' : 'hanya untuk ' . Jenjang::gabungLabel($boleh);
+        foreach ($daftar as $ku) {
+            $boleh = Jenjang::rapikan($ku['jenjang'] ?? []);
 
-            return [
-                'kelompok_umur' => null,
-                'galat'         => "Atlet lahir tahun {$tahunLahir} masuk {$cocok['nama']}, yang {$labelBoleh}. "
-                    . 'Sekolah ini ' . (Jenjang::label($jenjang) ?? $jenjang) . ', jadi atlet ini tidak bisa didaftarkan.',
-            ];
+            if ($boleh !== [] && self::masuk($tahunLahir, $ku)) {
+                return [
+                    'kelompok_umur' => null,
+                    'galat'         => "Atlet lahir tahun {$tahunLahir} masuk {$ku['nama']}, yang hanya untuk " . Jenjang::gabungLabel($boleh) . '. '
+                        . "Sekolah ini {$labelJenjang}, jadi atlet ini tidak bisa didaftarkan{$rentang}.",
+                ];
+            }
         }
 
-        return ['kelompok_umur' => $cocok, 'galat' => null];
+        return [
+            'kelompok_umur' => null,
+            'galat'         => "Atlet lahir tahun {$tahunLahir} tidak masuk kelompok umur mana pun untuk {$labelJenjang}{$rentang}. Periksa lagi tanggal lahirnya.",
+        ];
     }
 
     /**
@@ -83,11 +93,12 @@ final class KelompokUmurAtlet
     }
 
     /**
-     * ": KU 8 (lahir 2019 ke atas), KU 10 (lahir 2016–2018)", atau '' bila kosong.
+     * ". Kelompok umur untuk SD/MI: KU 8 (lahir 2019 ke atas), KU 10 (lahir 2016–2018)",
+     * atau '' bila tidak ada yang punya rentang.
      *
      * @param list<array<string, mixed>> $daftar
      */
-    private static function daftarRentang(array $daftar): string
+    private static function daftarRentang(array $daftar, string $labelJenjang): string
     {
         $bagian = [];
 
@@ -99,7 +110,7 @@ final class KelompokUmurAtlet
             }
         }
 
-        return $bagian === [] ? '' : '. Kelompok umur yang dibuka: ' . implode(', ', $bagian);
+        return $bagian === [] ? '' : ". Kelompok umur untuk {$labelJenjang}: " . implode(', ', $bagian);
     }
 
     private static function tahun(mixed $nilai): ?int

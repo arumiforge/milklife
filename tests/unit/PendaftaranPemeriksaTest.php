@@ -253,6 +253,29 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertGalat(self::periksa($kiriman), 'atlet.0.tanggal_lahir', 'masuk KU 15, yang hanya untuk SMP/MTs');
     }
 
+    public function testJenjangMenentukanKelompokUmurSaatRentangBeririsan(): void
+    {
+        // K95: KU 12 (SD) dan KU 15 (SMP) sama-sama menerima kelahiran 2012.
+        $induk                     = self::indukContoh();
+        $induk['kelompok_umur'][1] = ['id' => 3, 'nama' => 'KU 12', 'tahun_lahir_awal' => 2012, 'tahun_lahir_akhir' => 2015, 'biaya_individu' => 175000, 'jenjang' => ['A']];
+        $periksa                   = static fn (array $kiriman): array => (new PemeriksaPendaftaran($induk, self::ADA_KOSONG, self::HARI_INI))->periksa($kiriman, true);
+
+        // Dari SD: KU 12.
+        $sd          = self::kirimanContoh();
+        $sd['atlet'] = [self::atletContoh('9900000003', [30], 'L', '2012-05-01')];
+        $this->assertSame([], $periksa($sd)['galat']);
+
+        // Dari SMP: KU 15, karena KU 12 tidak dibuka untuk SMP.
+        $smp            = self::kirimanContoh();
+        $smp['sekolah'] = ['jenjang' => 'B', 'kabupaten' => 'Kudus', 'npsn' => '', 'nama' => 'SMP Karangan Maju'];
+        $smp['atlet']   = [self::atletContoh('9900000004', [40], 'P', '2012-05-01')];
+        $this->assertSame([], $periksa($smp)['galat']);
+
+        $smp['atlet'] = [self::atletContoh('9900000004', [30], 'L', '2012-05-01')];
+        $galat        = self::galat($periksa($smp));
+        $this->assertStringContainsString('Lari 60 m putra untuk KU 12, sedangkan atlet ini KU 15', $galat['atlet.0.nomor'] ?? '');
+    }
+
     public function testNomorHarusMilikKelompokUmurAtlet(): void
     {
         $kiriman          = self::kirimanContoh();

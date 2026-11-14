@@ -72,6 +72,34 @@ final class KelompokUmurAturanTest extends CIUnitTestCase
         $this->assertSame($harapan, KelompokUmurModel::rentangBertabrakan($b[0], $b[1], $a[0], $a[1]), 'Urutan pembanding tidak berpengaruh.');
     }
 
+    /**
+     * @return iterable<string, array{0: array<string, mixed>, 1: array<string, mixed>, 2: list<string>}>
+     */
+    public static function contohJenjangBertabrakan(): iterable
+    {
+        $ku = static fn (?int $awal, ?int $akhir, array $jenjang): array => ['tahun_lahir_awal' => $awal, 'tahun_lahir_akhir' => $akhir, 'jenjang' => $jenjang];
+
+        // Contoh K95: KU 12 (SD) dan KU 15 (SMP) sama-sama menerima 2012.
+        yield 'beririsan, beda jenjang' => [$ku(2012, 2015, ['A']), $ku(2011, 2014, ['B']), []];
+        yield 'beririsan, jenjang sama' => [$ku(2012, 2015, ['A']), $ku(2011, 2014, ['A']), ['A']];
+        yield 'beririsan, sebagian jenjang sama' => [$ku(2012, 2015, ['A', 'B']), $ku(2011, 2014, ['B', 'C']), ['B']];
+        yield 'beririsan, salah satu tanpa jenjang' => [$ku(2012, 2015, []), $ku(2011, 2014, ['A']), []];
+        yield 'jenjang sama, rentang terpisah' => [$ku(2016, 2018, ['A']), $ku(2015, 2015, ['A']), []];
+        yield 'jenjang sama, salah satu belum punya rentang' => [$ku(null, null, ['A']), $ku(2015, 2015, ['A']), []];
+    }
+
+    /**
+     * @param array<string, mixed> $a
+     * @param array<string, mixed> $b
+     * @param list<string>         $harapan
+     */
+    #[DataProvider('contohJenjangBertabrakan')]
+    public function testJenjangBertabrakan(array $a, array $b, array $harapan): void
+    {
+        $this->assertSame($harapan, KelompokUmurModel::jenjangBertabrakan($a, $b));
+        $this->assertSame($harapan, KelompokUmurModel::jenjangBertabrakan($b, $a), 'Urutan pembanding tidak berpengaruh.');
+    }
+
     public function testTahunLahirTerbesarAdalahTahunBerjalan(): void
     {
         $this->assertSame((int) date('Y'), KelompokUmurModel::tahunLahirTerbesar());
