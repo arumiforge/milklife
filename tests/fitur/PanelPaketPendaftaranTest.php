@@ -75,6 +75,35 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         (new PaketPendaftaran())->impor($this->zip);
     }
 
+    public function testUsulanNamaDanSekolahDisuntingIkutPindah(): void
+    {
+        $this->db->table('sekolah')->insertBatch([
+            ['npsn' => '99100001', 'nama' => 'MIS KARANGAN', 'jenjang' => 'SD', 'kabupaten' => 'Kudus', 'desa_kelurahan' => 'Rekaan', 'disunting_pada' => null],
+            ['npsn' => '99100002', 'nama' => 'MIS KARANGAN KHAYALAN', 'jenjang' => 'SD', 'kabupaten' => 'Kudus', 'desa_kelurahan' => 'Khayalan', 'disunting_pada' => '2026-11-14 09:00:00'],
+        ]);
+        $p = $this->buatPendaftaranPanel(['foto' => true, 'sekolah' => ['npsn' => '99100001', 'nama' => 'MIS KARANGAN REKAAN', 'jenjang' => 'A', 'kabupaten' => 'Kudus']]);
+        $this->db->table('usulan_nama_sekolah')->insertBatch([
+            ['npsn' => '99100001', 'pendaftaran_id' => $p['id'], 'nama_lama' => 'MIS KARANGAN', 'nama_usulan' => 'MIS KARANGAN REKAAN', 'status' => 'menunggu', 'nama_disetujui' => null, 'dibuat_pada' => '2026-11-14 10:00:00'],
+            ['npsn' => '99100002', 'pendaftaran_id' => null, 'nama_lama' => 'MIS KARANGAN', 'nama_usulan' => 'MIS KARANGAN KHAYALAN', 'status' => 'disetujui', 'nama_disetujui' => 'MIS KARANGAN KHAYALAN', 'dibuat_pada' => '2026-11-14 08:00:00'],
+        ]);
+
+        (new PaketPendaftaran())->ekspor($this->zip);
+
+        // Server baru: sekolah dari impor resmi (nama umum), tanpa pendaftaran dan usulan.
+        $this->db->query('DELETE FROM pendaftaran');
+        $this->db->query('DELETE FROM usulan_nama_sekolah');
+        $this->db->table('sekolah')->where('npsn', '99100002')->update(['nama' => 'MIS KARANGAN', 'disunting_pada' => null]);
+        $this->hapusBerkas();
+
+        (new PaketPendaftaran())->impor($this->zip);
+
+        // K97: nama pembeda admin kembali; K99: usulan tetap bisa diputuskan di server baru.
+        $this->seeInDatabase('sekolah', ['npsn' => '99100002', 'nama' => 'MIS KARANGAN KHAYALAN', 'disunting_pada' => '2026-11-14 09:00:00']);
+        $this->seeInDatabase('usulan_nama_sekolah', ['npsn' => '99100001', 'pendaftaran_id' => $p['id'], 'status' => 'menunggu', 'nama_usulan' => 'MIS KARANGAN REKAAN']);
+        $this->seeInDatabase('usulan_nama_sekolah', ['npsn' => '99100002', 'status' => 'disetujui']);
+        $this->seeInDatabase('pendaftaran', ['id' => $p['id'], 'nama_sekolah' => 'MIS KARANGAN REKAAN']);
+    }
+
     public function testImporDitolakBilaNomorLombaTidakAdaDanTidakAdaYangTersimpan(): void
     {
         $this->buatPendaftaranPanel(['foto' => true]);

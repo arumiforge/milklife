@@ -141,6 +141,12 @@
 
         semua.forEach(function (s) { s.addEventListener('change', simpan); });
 
+        // form.reset() mengembalikan isian tanpa lewat setter `value` di bawah:
+        // tampilkan ulang supaya pilihan dan tanggal yang dinonaktifkan ikut kembali.
+        if (isian.form) {
+            isian.form.addEventListener('reset', function () { window.setTimeout(tampilkan, 0); });
+        }
+
         Object.defineProperty(isian, 'value', {
             configurable: true,
             get: function () { return nilaiAsli.get.call(this); },

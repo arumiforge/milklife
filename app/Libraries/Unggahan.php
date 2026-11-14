@@ -455,7 +455,7 @@ class Unggahan
      * Naikkan batas memori PHP bila kurang dari `$bita` (gambar besar butuh
      * sekitar 5 bita per piksel saat diolah GD).
      */
-    private static function cukupkanMemori(int $bita): void
+    public static function cukupkanMemori(int $bita): void
     {
         $batas = BatasUnggahFilter::bitaDariIni((string) ini_get('memory_limit'));
 

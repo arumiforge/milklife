@@ -471,6 +471,7 @@
             });
         }
         Object.keys(perubahan).forEach(function (k) { draf.sekolah[k] = perubahan[k]; });
+        rincian = null;
         simpanDraf();
         tampilkanSekolah();
     }
@@ -496,6 +497,11 @@
         }).then(function (isi) {
             L1.cari.disabled = false;
 
+            // NPSN sudah diganti selagi menunggu jawaban: jawaban lama diabaikan.
+            if (L1.npsn.value.replace(/\s+/g, '') !== npsn) {
+                return false;
+            }
+
             if (isi.status === 'ditemukan') {
                 setelSekolah({ npsn: npsn, dicari: npsn, status: 'ditemukan', referensi: isi.sekolah, susulan: isi.susulan, nama: '', namaUsulan: '', usulanTerbuka: false });
                 return true;
@@ -507,7 +513,8 @@
                 return true;
             }
 
-            setelSekolah({ npsn: npsn, dicari: npsn, status: isi.status || 'galat', referensi: null, susulan: { tim: {}, individu: {} } });
+            // SLB, terlalu sering, atau galat lain: Lanjut mencari ulang supaya pesannya tampil lagi.
+            setelSekolah({ npsn: npsn, dicari: '', status: isi.status || 'galat', referensi: null, susulan: { tim: {}, individu: {} } });
             tampilkanGalat(1, [{ jalur: 'sekolah.npsn', pesan: isi.pesan || 'NPSN belum bisa dicari. Coba lagi.' }]);
             return false;
         }).catch(function () {
@@ -671,6 +678,7 @@
             hapus.setAttribute('aria-label', 'Hapus penanggung jawab ' + (i + 1));
             hapus.addEventListener('click', function () {
                 draf.penanggungJawab.splice(i, 1);
+                rincian = null;
                 simpanDraf();
                 tampilkanPenanggungJawab();
             });
@@ -1221,15 +1229,15 @@
      * dihapus tombol Hapus baris ini; nomor lain atlet itu tetap. Bila atlet
      * tidak punya nomor lain (atau `hapusNomor` kosong), atletnya ikut dihapus.
      */
-    function barisAtlet(atlet, indeks, jalur, rincian, hapusNomor) {
+    function barisAtlet(atlet, indeks, jalur, keterangan, hapusNomor) {
         var li = buat('li', 'baris-atlet');
         li.setAttribute('data-baris-jalur', jalur);
         var isi = buat('div', 'baris-atlet-isi');
         isi.appendChild(buat('strong', 'd-block', atlet.nama));
         var ku = tentukanKu(Number(String(atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah()).ku;
         isi.appendChild(buat('span', 'baris-atlet-keterangan', ['NISN ' + atlet.nisn, ku ? ku.nama : null, atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
-        if (rincian) {
-            isi.appendChild(buat('span', 'baris-atlet-nomor', rincian));
+        if (keterangan) {
+            isi.appendChild(buat('span', 'baris-atlet-nomor', keterangan));
         }
         var masalah = masalahAtlet(atlet);
         if (masalah) {
@@ -1268,6 +1276,8 @@
                 } else {
                     draf.atlet.splice(draf.atlet.indexOf(atlet), 1);
                 }
+                // Tombol Hapus tidak memicu event input/change: total lama tidak berlaku lagi.
+                rincian = null;
                 if (atletDiubah === atlet) {
                     kosongkanFormulirAtlet();
                 }

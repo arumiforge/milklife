@@ -29,4 +29,4 @@ Pendaftar bisa mengusulkan nama sekolah yang lebih lengkap untuk sekolah bernama
 
 - Dikerjakan di PR yang sama dengan F7-08 ([#81](https://github.com/arumiforge/milklife/pull/81)) karena dibangun di atas menu Sekolah yang belum digabung.
 - Pendaftaran susulan dari NPSN yang usulannya belum diputuskan kembali melihat nama data sekolah dan boleh mengusulkan lagi; admin melihat semua usulannya.
-- Backup data untuk pindah server (K76) belum membawa usulan nama; usulan yang menunggu sebaiknya diputuskan sebelum pindah server.
+- Backup data untuk pindah server (K76) membawa usulan nama sejak F7-10.

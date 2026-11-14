@@ -118,7 +118,7 @@ Semua dijalankan dari folder proyek dengan `php spark <perintah>`.
 | `admin:buat` | Membuat akun admin atau mengganti kata sandinya |
 | `aset:minify` | Membuat versi kecil CSS, JavaScript, dan SVG. Wajib di produksi setiap memperbarui versi |
 | `cadangan:buat` | Mencadangkan basis data dan unggahan ke satu berkas zip |
-| `pendaftaran:impor <berkas.zip>` | Memasukkan zip dari tombol **Backup data** di panel ke server baru yang belum punya pendaftaran |
+| `pendaftaran:impor <berkas.zip>` | Memasukkan zip dari tombol **Backup data** di panel ke server baru yang belum punya pendaftaran, beserta usulan nama sekolah dan nama sekolah yang disunting admin. Jalankan `sekolah:impor` lebih dulu |
 | `nomor-dada:reset` | Mengosongkan semua nomor dada setelah uji coba (K94). Jangan dijalankan setelah nomor dada dibagikan ke peserta |
 | `dokumen:pdf` | Membuat ulang PDF di `dokumen/pdf/` dari dokumen final |
 

@@ -31,6 +31,11 @@ class CekPendaftaranController extends BaseController
 
     public function index(): string
     {
+        // Hasil cek memuat data siswa dan alamat bukti rahasia: jangan disimpan
+        // tembolok peramban, proksi, atau Cloudflare.
+        $this->response->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $this->response->setHeader('Pragma', 'no-cache');
+
         $isi  = new IsiHalamanDepan();
         $data = [
             'namaAcara' => $isi->acara()['nama'],

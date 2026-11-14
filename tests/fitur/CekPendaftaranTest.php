@@ -72,6 +72,8 @@ final class CekPendaftaranTest extends UjiBasisData
 
         $hasil = $this->get('cek-pendaftaran?kode=+2030 0001+');
         $hasil->assertOK();
+        // Data siswa tidak boleh disimpan tembolok.
+        $this->assertStringContainsString('no-store', $hasil->response()->getHeaderLine('Cache-Control'));
         $xpath = $this->xpathDari($hasil);
 
         $this->assertSame('SD NEGERI CONTOH 1', trim($xpath->query('//h2[@id="cek-sekolah"]')->item(0)->textContent));

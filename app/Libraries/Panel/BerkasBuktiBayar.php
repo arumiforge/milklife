@@ -2,6 +2,7 @@
 
 namespace App\Libraries\Panel;
 
+use App\Libraries\Unggahan;
 use App\Models\BuktiBayarModel;
 use CodeIgniter\HTTP\Files\UploadedFile;
 use GdImage;
@@ -177,11 +178,18 @@ final class BerkasBuktiBayar
             throw new RuntimeException($pesan);
         }
 
+        // GD butuh kira-kira 5 bita per piksel; naikkan batas memori bila kurang,
+        // supaya foto ponsel beresolusi tinggi tidak berakhir di halaman galat.
+        $ukuran = (array) @getimagesizefromstring($isi);
+        Unggahan::cukupkanMemori((int) (($ukuran[0] ?? 0) * ($ukuran[1] ?? 0) * 5) + 32 * 1024 * 1024);
+
         $gambar = @imagecreatefromstring($isi);
 
         if (! $gambar instanceof GdImage) {
             throw new RuntimeException('Gambar tidak bisa dibaca. Pilih foto atau tangkapan layar lain.');
         }
+
+        $gambar = self::putarSesuaiExif($gambar, $isi);
 
         $folder = self::folderDasar() . self::FOLDER;
 
@@ -363,6 +371,39 @@ final class BerkasBuktiBayar
         }
 
         return null;
+    }
+
+    /**
+     * Foto ponsel menyimpan arah tegak di tag EXIF, yang hilang saat gambar
+     * disimpan ulang dengan GD: putar dulu supaya bukti tidak tampil miring.
+     */
+    private static function putarSesuaiExif(GdImage $gambar, string $isi): GdImage
+    {
+        if (! function_exists('exif_read_data') || ! str_starts_with($isi, "\xFF\xD8")) {
+            return $gambar;
+        }
+
+        $exif  = @exif_read_data('data://image/jpeg;base64,' . base64_encode($isi));
+        $sudut = match ((int) (is_array($exif) ? ($exif['Orientation'] ?? 1) : 1)) {
+            3       => 180,
+            6       => -90,
+            8       => 90,
+            default => 0,
+        };
+
+        if ($sudut === 0) {
+            return $gambar;
+        }
+
+        $diputar = imagerotate($gambar, $sudut, 0);
+
+        if ($diputar === false) {
+            return $gambar;
+        }
+
+        imagedestroy($gambar);
+
+        return $diputar;
     }
 
     /**
