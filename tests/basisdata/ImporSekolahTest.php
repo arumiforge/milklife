@@ -95,6 +95,33 @@ final class ImporSekolahTest extends UjiBasisData
         $this->seeInDatabase('sekolah', ['npsn' => '99000002', 'diubah_pada' => '2026-01-01 08:00:00']);
     }
 
+    public function testSekolahYangDisuntingAdminTidakDitimpa(): void
+    {
+        $model = model(SekolahModel::class);
+        $model->impor(ImporSekolah::bacaBerkas(self::DATA . 'sekolah-contoh.json'));
+
+        // Admin memberi nama pembeda di panel (K97).
+        $this->db->table('sekolah')->where('npsn', '99000001')
+            ->update(['nama' => 'SD KARANGAN SATU JATI', 'disunting_pada' => '2026-11-14 09:00:00']);
+
+        $hasil = $model->impor([
+            ['npsn' => '99000001', 'nama' => 'SD KARANGAN SATU', 'jenjang' => 'SD', 'kabupaten_kota' => 'Kab. Jepara'],
+            ['npsn' => '99000002', 'nama' => 'SD KARANGAN DUA LAGI', 'jenjang' => 'SD', 'kabupaten_kota' => 'Kab. Jepara'],
+            ['npsn' => '99000009', 'nama' => 'SD KARANGAN SEMBILAN', 'jenjang' => 'SD', 'kabupaten_kota' => 'Kab. Rembang'],
+        ]);
+
+        $this->assertSame(
+            ['dibaca' => 3, 'ditambah' => 1, 'diperbarui' => 1, 'dipertahankan' => 1, 'dilewati' => 0],
+            array_intersect_key($hasil, array_flip(['dibaca', 'ditambah', 'diperbarui', 'dipertahankan', 'dilewati'])),
+        );
+        $this->seeInDatabase('sekolah', ['npsn' => '99000001', 'nama' => 'SD KARANGAN SATU JATI', 'disunting_pada' => '2026-11-14 09:00:00']);
+        $this->seeInDatabase('sekolah', ['npsn' => '99000002', 'nama' => 'SD KARANGAN DUA LAGI', 'disunting_pada' => null]);
+
+        // Perintah menyebut sekolah yang tidak diubah.
+        $this->jalankan(self::DATA . 'sekolah-contoh.json');
+        $this->assertStringContainsString('Tidak diubah karena sudah disunting admin: 1', $this->keluaran());
+    }
+
     public function testBarisTidakSahDilewatiDanDihitung(): void
     {
         $kode = $this->jalankan(self::DATA . 'sekolah-tidak-sah.json');

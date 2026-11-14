@@ -57,9 +57,19 @@ final class PendaftaranSekolahTest extends UjiBasisData
         $isi = $this->cari(' 9999 9911 ', 200);
 
         $this->assertSame('ditemukan', $isi['status']);
-        $this->assertSame(['npsn' => '99999911', 'nama' => 'SD KARANGAN MAJU', 'jenjang' => 'A', 'jenjang_label' => 'SD/MI', 'kabupaten' => 'Kudus'], $isi['sekolah']);
+        $this->assertSame(['npsn' => '99999911', 'nama' => 'SD KARANGAN MAJU', 'jenjang' => 'A', 'jenjang_label' => 'SD/MI', 'kabupaten' => 'Kudus', 'lokasi' => ''], $isi['sekolah']);
         $this->assertSame(['tim' => [], 'individu' => []], $isi['susulan']);
         $this->assertArrayHasKey('csrf', $isi);
+    }
+
+    public function testLetakSekolahIkutDikirimUntukMembedakanNamaUmum(): void
+    {
+        $this->db->table('sekolah')->where('npsn', '99999913')->update(['desa_kelurahan' => 'Karanganyar', 'kecamatan' => 'Welahan']);
+
+        $isi = $this->cari('99999913', 200);
+
+        // Kabupaten sudah punya kunci sendiri, jadi tidak diulang di lokasi.
+        $this->assertSame('Karanganyar, Kec. Welahan', $isi['sekolah']['lokasi']);
     }
 
     public function testSmpDitemukan(): void

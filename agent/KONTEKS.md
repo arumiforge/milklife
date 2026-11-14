@@ -28,7 +28,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Arsip tahap selesai: `agent/arsip/`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
 - Bahan asli: `sumber/flyer/`.
-- Data sekolah: `data/sekolah/sekolah.json`.
+- Data sekolah: `data/sekolah/sekolah.json` (sumber dan cara memperbarui di `data/README.md`).
 
 ## Hal yang mudah keliru
 
@@ -42,3 +42,4 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Admin yang mengubah pendaftaran Lunas: bila total berubah, status kembali ke Menunggu (K32); bila tetap, atlet baru langsung mendapat nomor dada (K59). ID pendaftaran tidak berubah (K63).
 - Pendaftaran susulan ke tim beregu sekolah yang sudah terdaftar wajib dikonfirmasi official di wizard (K57), tanpa biaya tim. Admin tidak membuat pendaftaran baru dari panel (K58).
 - Foto penanggung jawab dan bukti bayar disimpan di `writable/unggahan/` (di luar `public/`) dan hanya disajikan lewat rute admin.
+- Nama sekolah **tidak unik**: data resmi memakai nama umum untuk banyak madrasah. Sekolah selalu dikenali lewat NPSN; nama pembeda diberi admin di menu Sekolah (K97), dan sekolah yang disunting tidak ditimpa impor ulang.

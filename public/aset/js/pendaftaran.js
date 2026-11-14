@@ -403,6 +403,10 @@
             kotak.appendChild(ikon('building-check'));
             var isi = buat('div');
             isi.appendChild(buat('strong', 'd-block', ref.nama));
+            // Letak sekolah membedakan sekolah yang namanya sama (K97).
+            if (ref.lokasi) {
+                isi.appendChild(buat('span', 'd-block small', ref.lokasi));
+            }
             isi.appendChild(buat('span', 'small', [ref.jenjang_label, ref.kabupaten].filter(Boolean).join(' · ') + '. Jenjang dan kabupaten mengikuti data sekolah.'));
             kotak.appendChild(isi);
             L1.hasil.appendChild(kotak);

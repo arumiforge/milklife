@@ -21,6 +21,13 @@ class SekolahModel extends Model
     public const JENJANG = ['SD', 'SMP', 'SMA'];
 
     /**
+     * Status sekolah yang dikenal, nilai tersimpan => label.
+     *
+     * @var array<string, string>
+     */
+    public const STATUS = ['NEGERI' => 'Negeri', 'SWASTA' => 'Swasta'];
+
+    /**
      * Banyak data yang disimpan dalam satu transaksi saat impor.
      */
     public const UKURAN_KELOMPOK = 500;
@@ -61,6 +68,7 @@ class SekolahModel extends Model
         'desa_kelurahan',
         'kecamatan',
         'kabupaten',
+        'disunting_pada',
     ];
 
     protected $useTimestamps = true;
@@ -94,6 +102,30 @@ class SekolahModel extends Model
     public static function npsnSah(string $npsn): bool
     {
         return preg_match('/^[0-9]{8}$/D', $npsn) === 1;
+    }
+
+    /**
+     * Letak sekolah untuk membedakan sekolah yang namanya sama (K97):
+     * desa/kelurahan, kecamatan, dan kabupaten yang terisi.
+     *
+     *     SekolahModel::lokasi(['desa_kelurahan' => 'Jati', 'kecamatan' => 'Jati', 'kabupaten' => 'Blora']);
+     *     // 'Jati, Kec. Jati, Kab. Blora'
+     *
+     * @param array<string, mixed> $sekolah
+     */
+    public static function lokasi(array $sekolah): string
+    {
+        $bagian = [];
+
+        foreach (['desa_kelurahan' => '', 'kecamatan' => 'Kec. ', 'kabupaten' => 'Kab. '] as $kolom => $awalan) {
+            $nilai = trim((string) preg_replace('/\s+/u', ' ', (string) ($sekolah[$kolom] ?? '')));
+
+            if ($nilai !== '') {
+                $bagian[] = $awalan . $nilai;
+            }
+        }
+
+        return implode(', ', $bagian);
     }
 
     /**
@@ -175,8 +207,10 @@ class SekolahModel extends Model
      *
      * Aman diulang: NPSN yang sudah ada diperbarui (nama, alamat, dan
      * seterusnya; `dibuat_pada` tetap), NPSN baru ditambahkan, dan sekolah
-     * yang tidak ada di daftar tidak dihapus. Data tidak sah dan NPSN yang
-     * muncul lebih dari sekali dilewati dan dihitung; yang pertama dipakai.
+     * yang tidak ada di daftar tidak dihapus. Sekolah yang pernah disunting
+     * admin (`disunting_pada` terisi, K97) tidak diubah dan dihitung sebagai
+     * `dipertahankan`. Data tidak sah dan NPSN yang muncul lebih dari sekali
+     * dilewati dan dihitung; yang pertama dipakai.
      *
      * @param iterable<mixed> $daftar Isi berkas JSON yang sudah diurai
      *
@@ -184,6 +218,7 @@ class SekolahModel extends Model
      *     dibaca: int,
      *     ditambah: int,
      *     diperbarui: int,
+     *     dipertahankan: int,
      *     dilewati: int,
      *     contoh_dilewati: list<string>,
      *     per_kabupaten: array<string, int>
@@ -197,6 +232,7 @@ class SekolahModel extends Model
             'dibaca'          => 0,
             'ditambah'        => 0,
             'diperbarui'      => 0,
+            'dipertahankan'   => 0,
             'dilewati'        => 0,
             'contoh_dilewati' => [],
             'per_kabupaten'   => [],
@@ -251,7 +287,8 @@ class SekolahModel extends Model
      * Simpan satu kelompok data dalam satu transaksi.
      *
      * NPSN yang sudah ada diperiksa dulu supaya "ditambah" dan "diperbarui"
-     * terhitung benar, lalu semuanya ditulis dengan satu
+     * terhitung benar dan sekolah yang disunting admin dikeluarkan dari
+     * kelompok, lalu sisanya ditulis dengan satu
      * `INSERT ... ON DUPLICATE KEY UPDATE`.
      *
      * @param list<array<string, string|null>> $kelompok
@@ -261,27 +298,41 @@ class SekolahModel extends Model
     {
         $npsn = array_column($kelompok, 'npsn');
 
-        // Kolom yang diperbarui bila NPSN sudah ada; dibuat_pada tidak termasuk.
-        $diperbarui = [...array_diff($this->allowedFields, ['npsn']), $this->updatedField];
+        // Kolom yang diperbarui bila NPSN sudah ada; dibuat_pada dan
+        // disunting_pada tidak termasuk.
+        $diperbarui = [...array_diff($this->allowedFields, ['npsn', 'disunting_pada']), $this->updatedField];
 
         $this->db->transBegin();
 
         try {
-            $ada = $this->db->table($this->table)->select('npsn')->whereIn('npsn', $npsn)->get();
+            $ada = $this->db->table($this->table)->select('npsn, disunting_pada')->whereIn('npsn', $npsn)->get();
 
             if ($ada === false) {
                 throw new RuntimeException('Gagal membaca NPSN yang sudah tersimpan.');
             }
 
-            $jumlahAda = count($ada->getResultArray());
+            $disunting = [];
+            $jumlahAda = 0;
 
-            $tertulis = $this->db->table($this->table)
-                ->setData($kelompok)
-                ->updateFields($diperbarui)
-                ->upsertBatch(null, null, count($kelompok));
+            foreach ($ada->getResultArray() as $baris) {
+                if ($baris['disunting_pada'] !== null) {
+                    $disunting[$baris['npsn']] = true;
+                } else {
+                    $jumlahAda++;
+                }
+            }
 
-            if ($tertulis === false) {
-                throw new RuntimeException('Gagal menyimpan data sekolah.');
+            $kelompok = array_values(array_filter($kelompok, static fn (array $data): bool => ! isset($disunting[$data['npsn']])));
+
+            if ($kelompok !== []) {
+                $tertulis = $this->db->table($this->table)
+                    ->setData($kelompok)
+                    ->updateFields($diperbarui)
+                    ->upsertBatch(null, null, count($kelompok));
+
+                if ($tertulis === false) {
+                    throw new RuntimeException('Gagal menyimpan data sekolah.');
+                }
             }
 
             $this->db->transCommit();
@@ -293,5 +344,6 @@ class SekolahModel extends Model
 
         $hasil['ditambah'] += count($kelompok) - $jumlahAda;
         $hasil['diperbarui'] += $jumlahAda;
+        $hasil['dipertahankan'] += count($disunting);
     }
 }

@@ -155,6 +155,9 @@ class PendaftaranController extends BaseController
                 'jenjang'       => $jenjang,
                 'jenjang_label' => (string) Jenjang::label($jenjang),
                 'kabupaten'     => Kabupaten::baku($sekolah['kabupaten'] ?? null),
+                // Desa dan kecamatan, supaya official yakin sekolahnya benar
+                // bila namanya umum (K97).
+                'lokasi'        => SekolahModel::lokasi(['kabupaten' => ''] + $sekolah),
             ],
             'susulan' => $susulan,
         ]);

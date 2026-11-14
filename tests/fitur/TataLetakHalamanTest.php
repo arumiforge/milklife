@@ -144,6 +144,7 @@ final class TataLetakHalamanTest extends UjiHalaman
             ['Pendaftaran', site_url('admin/pendaftaran'), ''],
             ['Atlet', site_url('admin/atlet'), ''],
             ['Rekap', site_url('admin/rekap'), ''],
+            ['Sekolah', site_url('admin/sekolah'), ''],
             ['Pengaturan', site_url('admin/pengaturan'), ''],
         ], $this->daftarMenu($xpath, $samping));
 
@@ -181,7 +182,7 @@ final class TataLetakHalamanTest extends UjiHalaman
         // Halaman lain tidak menandai Dasbor.
         $xpath = $this->xpath($this->renderDiAlamat('admin/lain', 'Tests\Support\Views\contoh_admin'));
         $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
-        $this->assertSame(10, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
+        $this->assertSame(12, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));
