@@ -156,6 +156,7 @@ final class KelompokUmurModelTest extends UjiBasisData
                 'nama'              => $ku['nama'],
                 'tahun_lahir_awal'  => (string) $ku['tahun_lahir_awal'],
                 'tahun_lahir_akhir' => (string) $ku['tahun_lahir_akhir'],
+                'jenjang'           => model(KelompokUmurJenjangModel::class)->kodeUntuk((int) $ku['id']),
                 'awalan'            => '',
             ]), (int) $ku['id']);
 
@@ -171,16 +172,40 @@ final class KelompokUmurModelTest extends UjiBasisData
             'nama'              => 'KU 11',
             'tahun_lahir_awal'  => '2015',
             'tahun_lahir_akhir' => '2016',
+            'jenjang'           => ['A'],
         ]));
 
         $this->assertSame(
-            'Tahun lahir ini bertabrakan dengan KU 10 (lahir 2016–2018). Satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, atau matikan salah satu kelompok umur.',
+            'Tahun lahir ini bertabrakan dengan KU 10 (lahir 2016–2018) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, hapus centang jenjang yang sama, atau matikan salah satu kelompok umur.',
             $galat['tahun_lahir_awal'],
         );
 
         // Batas kosong = tidak terbatas: "lahir 2020 ke atas" menabrak KU 8 (2019 ke atas).
-        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 6', 'tahun_lahir_awal' => '2020']));
-        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 8 (Seneng Playon) (lahir 2019 ke atas).', $galat['tahun_lahir_awal']);
+        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 6', 'tahun_lahir_awal' => '2020', 'jenjang' => ['A']]));
+        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 8 (Seneng Playon) (lahir 2019 ke atas) untuk jenjang SD/MI.', $galat['tahun_lahir_awal']);
+    }
+
+    public function testRentangBeririsanBolehUntukJenjangLain(): void
+    {
+        // K95: KU 12 (SD) diperlebar sampai 2012, beririsan dengan KU 15 (SMP, 2011–2014).
+        DataAwal::isi($this->db);
+        $id = (int) $this->model->where('nama', 'KU 12')->first()['id'];
+
+        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2012', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A']]), $id);
+        $this->assertSame([], $galat);
+
+        // Mencentang SMP juga membuat keduanya menerima SMP 2012–2014: ditolak.
+        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2012', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A', 'B']]), $id);
+        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 15 (lahir 2011–2014) untuk jenjang SMP/MTs.', $galat['tahun_lahir_awal']);
+    }
+
+    public function testKelompokUmurTanpaJenjangTidakDibandingkan(): void
+    {
+        DataAwal::isi($this->db);
+
+        // Belum dicentang jenjangnya, jadi belum menerima atlet.
+        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10 Baru', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2018']));
+        $this->assertSame([], $galat);
     }
 
     public function testKelompokUmurMatiBolehBertabrakan(): void
@@ -188,20 +213,20 @@ final class KelompokUmurModelTest extends UjiBasisData
         DataAwal::isi($this->db);
 
         // Kelompok umur baru yang mati tidak diperiksa.
-        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2018', 'aktif' => '']));
+        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2018', 'jenjang' => ['A'], 'aktif' => '']));
         $this->assertSame([], $galat);
 
         // Kelompok umur aktif tidak dibandingkan dengan yang mati.
         $this->db->table('kelompok_umur')->where('nama', 'KU 10')->update(['aktif' => 0]);
-        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10 Baru', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2018']));
+        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10 Baru', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2018', 'jenjang' => ['A']]));
         $this->assertSame([], $galat);
     }
 
     public function testKelompokUmurTanpaBatasTidakDibandingkan(): void
     {
-        $this->simpan(['nama' => 'KU Belum Diisi']);
+        $this->simpan(['nama' => 'KU Belum Diisi', 'jenjang' => ['A']]);
 
-        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2018']));
+        [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10', 'tahun_lahir_awal' => '2016', 'tahun_lahir_akhir' => '2018', 'jenjang' => ['A']]));
         $this->assertSame([], $galat);
     }
 

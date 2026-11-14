@@ -181,12 +181,19 @@
     // Kelompok umur dan pilihan nomor lomba
     // ------------------------------------------------------------------
 
+    /**
+     * Kelompok umur dari jenjang dan tahun lahir (K95, sama dengan `KelompokUmurAtlet`):
+     * bila jenjang terisi, hanya kelompok umur yang dibuka untuk jenjang itu yang dicari.
+     */
     function tentukanKu(tahun, jenjang) {
         var cocok = null;
         DATA.kelompok_umur.some(function (ku) {
             var awal = ku.tahun_lahir_awal;
             var akhir = ku.tahun_lahir_akhir;
             if (awal === null && akhir === null) {
+                return false;
+            }
+            if (jenjang && ku.jenjang.indexOf(jenjang) === -1) {
                 return false;
             }
             if ((awal === null || tahun >= awal) && (akhir === null || tahun <= akhir)) {
@@ -197,10 +204,12 @@
         });
 
         if (!cocok) {
-            return { ku: null, pesan: 'Tahun lahir ' + tahun + ' tidak masuk kelompok umur mana pun.' };
-        }
-        if (jenjang && cocok.jenjang.indexOf(jenjang) === -1) {
-            return { ku: null, pesan: cocok.nama + ' tidak dibuka untuk jenjang ' + (DATA.jenjang[jenjang] || jenjang) + '.' };
+            return {
+                ku: null,
+                pesan: jenjang
+                    ? 'Tidak ada kelompok umur untuk ' + (DATA.jenjang[jenjang] || jenjang) + ' yang menerima lahir tahun ' + tahun + '.'
+                    : 'Tahun lahir ' + tahun + ' tidak masuk kelompok umur mana pun.'
+            };
         }
         return { ku: cocok, pesan: cocok.nama };
     }

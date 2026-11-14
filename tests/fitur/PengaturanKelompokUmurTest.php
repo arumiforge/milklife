@@ -216,15 +216,27 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
     {
         DataAwal::isi($this->db);
 
-        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, $this->isian(['nama' => 'KU 13', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2015', 'aktif' => '1']));
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, $this->isian(['nama' => 'KU 13', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A'], 'aktif' => '1']));
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_awal', 'tahun_lahir_akhir']);
-        $hasil->assertSee('Tahun lahir ini bertabrakan dengan KU 12 (lahir 2015). Satu tahun lahir hanya boleh masuk satu kelompok umur aktif.');
+        $hasil->assertSee('Tahun lahir ini bertabrakan dengan KU 12 (lahir 2015) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif.');
         $this->seeNumRecords(0, 'kelompok_umur', ['nama' => 'KU 13']);
 
         // Kelompok umur yang mati boleh disimpan dengan rentang yang sama.
-        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, $this->isian(['nama' => 'KU 13', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2015', 'aktif' => '']));
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, $this->isian(['nama' => 'KU 13', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A'], 'aktif' => '']));
         $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+    }
+
+    public function testRentangBeririsanUntukJenjangLainDisimpan(): void
+    {
+        // K95: KU 12 (SD) dan KU 15 (SMP) sama-sama menerima kelahiran 2012.
+        DataAwal::isi($this->db);
+        $id = (int) $this->db->table('kelompok_umur')->where('nama', 'KU 12')->get()->getRow()->id;
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2012', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A'], 'awalan' => '3']));
+
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+        $this->seeInDatabase('kelompok_umur', ['id' => $id, 'tahun_lahir_awal' => 2012, 'tahun_lahir_akhir' => 2015]);
     }
 
     // ---------------------------------------------------------------
@@ -332,9 +344,9 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
     public function testMengaktifkanYangBertabrakanDitolak(): void
     {
         DataAwal::isi($this->db);
-        $id = $this->buatKu(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2019', 'aktif' => '']);
+        $id = $this->buatKu(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2019', 'jenjang' => ['A'], 'aktif' => '']);
 
-        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2019', 'aktif' => '1']));
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2019', 'jenjang' => ['A'], 'aktif' => '1']));
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_awal']);
         $hasil->assertSee('bertabrakan dengan KU 8 (Seneng Playon) (lahir 2019 ke atas)');
