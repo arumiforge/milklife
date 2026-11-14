@@ -159,7 +159,9 @@ final class PemeriksaPendaftaran
      */
     public static function npsnKiriman(array $kiriman): ?string
     {
-        $npsn = trim((string) self::teks($kiriman['sekolah']['npsn'] ?? null));
+        // Spasi di mana pun dibuang, sama dengan periksaSekolah(): "2031 7000"
+        // harus dibaca 20317000 juga saat memeriksa susulan, kuota, kunci, dan SLB.
+        $npsn = preg_replace('/\s+/', '', self::teks($kiriman['sekolah']['npsn'] ?? null)) ?? '';
 
         return preg_match('/^\d{8}$/D', $npsn) === 1 ? $npsn : null;
     }

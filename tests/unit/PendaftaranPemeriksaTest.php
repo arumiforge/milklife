@@ -536,5 +536,9 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertSame(['9900000001', '9900000002'], PemeriksaPendaftaran::nisnKiriman($kiriman));
         $this->assertNull(PemeriksaPendaftaran::npsnKiriman(['sekolah' => ['npsn' => '123']]));
         $this->assertSame([], PemeriksaPendaftaran::nisnKiriman(['atlet' => 'bukan daftar']));
+
+        // Spasi di tengah dibuang seperti saat memeriksa sekolah, supaya
+        // susulan, kuota, dan SLB tetap terbaca untuk NPSN yang sama.
+        $this->assertSame('99999911', PemeriksaPendaftaran::npsnKiriman(['sekolah' => ['npsn' => "9999 99\t11"]]));
     }
 }
