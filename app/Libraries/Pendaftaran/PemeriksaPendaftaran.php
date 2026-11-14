@@ -109,26 +109,60 @@ final class PemeriksaPendaftaran
     private array $nomorLomba = [];
 
     /**
+     * Id kelompok umur dan nomor lomba yang sudah dimatikan (K98).
+     *
+     * @var array<int, true>
+     */
+    private array $kuNonaktif = [];
+
+    /**
+     * @var array<int, true>
+     */
+    private array $nomorNonaktif = [];
+
+    /**
      * @var list<array{langkah: int, jalur: string, pesan: string}>
      */
     private array $galat = [];
 
     /**
-     * @param array<string, mixed> $induk
+     * @param array<string, mixed> $induk    Bila admin mengubah pendaftaran, boleh ditambah
+     *                                       `kelompok_umur_nonaktif` dan `nomor_lomba_nonaktif`
+     *                                       (`DataIndukPendaftaran::nonaktif()`).
      * @param array<string, mixed> $ada
+     * @param array<int, array{kelompok_umur_id: int, nomor: list<int>}> $simpanan
+     *                                       Atlet tersimpan per id (hanya saat admin mengubah
+     *                                       pendaftaran): kelompok umur dan nomor lomba yang sudah
+     *                                       dimatikan tetap diterima untuk atlet yang sudah memakainya
+     *                                       (K98), tidak untuk atlet atau nomor baru.
      */
     public function __construct(
         private readonly array $induk,
         private readonly array $ada,
         private readonly string $hariIni,
+        private readonly array $simpanan = [],
     ) {
         foreach ($induk['kelompok_umur'] ?? [] as $ku) {
             $this->kelompokUmur[(int) $ku['id']] = $ku;
         }
 
+        foreach ($induk['kelompok_umur_nonaktif'] ?? [] as $ku) {
+            if (! isset($this->kelompokUmur[(int) $ku['id']])) {
+                $this->kelompokUmur[(int) $ku['id']] = $ku;
+                $this->kuNonaktif[(int) $ku['id']]   = true;
+            }
+        }
+
         foreach ($induk['nomor_lomba'] ?? [] as $nomor) {
             if (isset($this->kelompokUmur[(int) $nomor['kelompok_umur_id']])) {
                 $this->nomorLomba[(int) $nomor['id']] = $nomor;
+            }
+        }
+
+        foreach ($induk['nomor_lomba_nonaktif'] ?? [] as $nomor) {
+            if (isset($this->kelompokUmur[(int) $nomor['kelompok_umur_id']]) && ! isset($this->nomorLomba[(int) $nomor['id']])) {
+                $this->nomorLomba[(int) $nomor['id']]    = $nomor;
+                $this->nomorNonaktif[(int) $nomor['id']] = true;
             }
         }
     }
@@ -257,16 +291,17 @@ final class PemeriksaPendaftaran
     /**
      * @param array<string, mixed> $isian
      *
-     * @return array{jenjang: string|null, kabupaten: string|null, npsn: string|null, nama_sekolah: string}
+     * @return array{jenjang: string|null, kabupaten: string|null, npsn: string|null, nama_sekolah: string, nama_usulan: string|null, nama_resmi: string|null}
      */
     private function periksaSekolah(array $isian): array
     {
-        $jenjang   = strtoupper(trim(self::teks($isian['jenjang'] ?? null)));
-        $jenjang   = Jenjang::sah($jenjang) ? $jenjang : null;
-        $kabupaten = Kabupaten::baku($isian['kabupaten'] ?? null);
-        $npsnTeks  = preg_replace('/\s+/', '', self::teks($isian['npsn'] ?? null)) ?? '';
-        $nama      = self::rapikanSpasi(self::teks($isian['nama'] ?? null));
-        $npsn      = null;
+        $jenjang    = strtoupper(trim(self::teks($isian['jenjang'] ?? null)));
+        $jenjang    = Jenjang::sah($jenjang) ? $jenjang : null;
+        $kabupaten  = Kabupaten::baku($isian['kabupaten'] ?? null);
+        $npsnTeks   = preg_replace('/\s+/', '', self::teks($isian['npsn'] ?? null)) ?? '';
+        $nama       = self::rapikanSpasi(self::teks($isian['nama'] ?? null));
+        $npsn       = null;
+        $namaUsulan = null;
 
         if ($npsnTeks !== '') {
             if (preg_match('/^\d{8}$/D', $npsnTeks) !== 1) {
@@ -287,6 +322,20 @@ final class PemeriksaPendaftaran
             $nama      = self::rapikanSpasi((string) $referensi['nama']);
             $kabupaten = Kabupaten::baku($referensi['kabupaten'] ?? null) ?? $kabupaten;
             $jenjang   = self::JENJANG_REFERENSI[strtoupper((string) ($referensi['jenjang'] ?? ''))] ?? $jenjang;
+
+            // Pendaftar boleh mengusulkan nama yang lebih lengkap (K99); pendaftaran
+            // ini memakainya sementara sampai panitia memutuskan.
+            $usulan = self::rapikanSpasi(self::teks($isian['nama_usulan'] ?? null));
+
+            if ($usulan !== '' && mb_strtolower($usulan) !== mb_strtolower($nama)) {
+                if (mb_strlen($usulan) > self::NAMA_SEKOLAH_MAKSIMAL) {
+                    $this->tambah('sekolah.nama_usulan', 'Usulan nama sekolah terlalu panjang. Tulis paling banyak ' . self::NAMA_SEKOLAH_MAKSIMAL . ' huruf.');
+                } elseif (preg_match('/\bSLB\b|sekolah\s+luar\s+biasa/iu', $usulan) === 1) {
+                    $this->tambah('sekolah.nama_usulan', self::pesanSlb());
+                } else {
+                    $namaUsulan = $usulan;
+                }
+            }
         } else {
             if ($nama === '') {
                 $this->tambah('sekolah.nama', $npsn === null
@@ -307,7 +356,15 @@ final class PemeriksaPendaftaran
             $this->tambah('sekolah.kabupaten', 'Kabupaten belum dipilih. Pilih salah satu: ' . implode(', ', Kabupaten::semua()) . '.');
         }
 
-        return ['jenjang' => $jenjang, 'kabupaten' => $kabupaten, 'npsn' => $npsn, 'nama_sekolah' => $nama];
+        return [
+            'jenjang'      => $jenjang,
+            'kabupaten'    => $kabupaten,
+            'npsn'         => $npsn,
+            'nama_sekolah' => $namaUsulan ?? $nama,
+            // Hanya terisi bila pendaftar mengusulkan nama lain untuk sekolah di data referensi (K99).
+            'nama_usulan'  => $namaUsulan,
+            'nama_resmi'   => $namaUsulan !== null ? $nama : null,
+        ];
     }
 
     // ---------------------------------------------------------------
@@ -387,7 +444,7 @@ final class PemeriksaPendaftaran
         }
 
         $maksimalIndividu = (int) ($this->induk['aturan']['nomor_individu_maksimal'] ?? 2);
-        $kelompokUmur     = array_values($this->kelompokUmur);
+        $kelompokUmur     = array_values(array_diff_key($this->kelompokUmur, $this->kuNonaktif));
         $nisnTerdaftar    = array_flip(array_map('strval', $this->ada['nisn_terdaftar'] ?? []));
         $nisnDipakai      = [];
         $hasil            = [];
@@ -396,12 +453,14 @@ final class PemeriksaPendaftaran
 
         foreach ($daftar as $i => $isian) {
             $isian = is_array($isian) ? $isian : [];
-            $jalur = "atlet.{$i}";
-            $nama  = mb_strtoupper(self::rapikanSpasi(self::teks($isian['nama'] ?? null)));
-            $ke    = $nama !== '' ? $nama : 'Atlet ' . ($i + 1);
-            $nisn  = trim(self::teks($isian['nisn'] ?? null));
-            $jk    = strtoupper(trim(self::teks($isian['jenis_kelamin'] ?? null)));
-            $lahir = self::tanggal(self::teks($isian['tanggal_lahir'] ?? null));
+            $jalur  = "atlet.{$i}";
+            $idLama = $isian['id'] ?? null;
+            $simpan = (is_int($idLama) || (is_string($idLama) && ctype_digit($idLama))) ? ($this->simpanan[(int) $idLama] ?? null) : null;
+            $nama   = mb_strtoupper(self::rapikanSpasi(self::teks($isian['nama'] ?? null)));
+            $ke     = $nama !== '' ? $nama : 'Atlet ' . ($i + 1);
+            $nisn   = trim(self::teks($isian['nisn'] ?? null));
+            $jk     = strtoupper(trim(self::teks($isian['jenis_kelamin'] ?? null)));
+            $lahir  = self::tanggal(self::teks($isian['tanggal_lahir'] ?? null));
 
             if ($nama === '') {
                 $this->tambah("{$jalur}.nama", "{$ke}: nama belum diisi.");
@@ -432,14 +491,24 @@ final class PemeriksaPendaftaran
                 $this->tambah("{$jalur}.tanggal_lahir", "{$ke}: tanggal lahir belum benar. Periksa lagi tahunnya.");
             } elseif ($jenjang !== null) {
                 $tentu = KelompokUmurAtlet::tentukan((int) $lahir->format('Y'), $jenjang, $kelompokUmur);
-                $ku    = $tentu['kelompok_umur'];
+
+                // Atlet tersimpan yang kelompok umurnya sudah dimatikan tetap di
+                // kelompok umur itu selama tahun lahir dan jenjangnya masih cocok (K98).
+                $kuLama = $simpan !== null && isset($this->kuNonaktif[$simpan['kelompok_umur_id']]) ? $this->kelompokUmur[$simpan['kelompok_umur_id']] : null;
+
+                if ($kuLama !== null) {
+                    $tetap = KelompokUmurAtlet::tentukan((int) $lahir->format('Y'), $jenjang, [$kuLama]);
+                    $tentu = $tetap['galat'] === null ? $tetap : $tentu;
+                }
+
+                $ku = $tentu['kelompok_umur'];
 
                 if ($tentu['galat'] !== null) {
                     $this->tambah("{$jalur}.tanggal_lahir", "{$ke}: {$tentu['galat']}");
                 }
             }
 
-            $nomor = $this->periksaNomorAtlet($isian['nomor'] ?? null, $jalur, $ke, $ku, $jk, $maksimalIndividu);
+            $nomor = $this->periksaNomorAtlet($isian['nomor'] ?? null, $jalur, $ke, $ku, $jk, $maksimalIndividu, $simpan['nomor'] ?? []);
 
             foreach ($nomor as $baris) {
                 $id = (int) $baris['id'];
@@ -467,9 +536,11 @@ final class PemeriksaPendaftaran
     /**
      * @param array<string, mixed>|null $ku
      *
+     * @param list<int>                 $nomorLama nomor tersimpan atlet ini; nomor yang sudah dimatikan hanya diterima bila ada di sini (K98)
+     *
      * @return list<array<string, mixed>> baris nomor lomba yang sah untuk atlet ini
      */
-    private function periksaNomorAtlet(mixed $daftar, string $jalur, string $ke, ?array $ku, ?string $jk, int $maksimalIndividu): array
+    private function periksaNomorAtlet(mixed $daftar, string $jalur, string $ke, ?array $ku, ?string $jk, int $maksimalIndividu, array $nomorLama = []): array
     {
         $id = [];
 
@@ -492,6 +563,10 @@ final class PemeriksaPendaftaran
 
         foreach (array_keys($id) as $nomorId) {
             $nomor = $this->nomorLomba[$nomorId] ?? null;
+
+            if ($nomor !== null && isset($this->nomorNonaktif[$nomorId]) && ! in_array($nomorId, $nomorLama, true)) {
+                $nomor = null;
+            }
 
             if ($nomor === null) {
                 $this->tambah("{$jalur}.nomor", "{$ke}: ada nomor lomba yang sudah tidak dibuka. Pilih ulang nomor lombanya.");
@@ -678,6 +753,7 @@ final class PemeriksaPendaftaran
             'rincian' => [
                 'sekolah' => [
                     'nama'          => $sekolah['nama_sekolah'],
+                    'nama_resmi'    => $sekolah['nama_resmi'],
                     'npsn'          => $sekolah['npsn'],
                     'kabupaten'     => $sekolah['kabupaten'],
                     'jenjang'       => $sekolah['jenjang'],

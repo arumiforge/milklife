@@ -57,7 +57,7 @@ final class PendaftaranSekolahTest extends UjiBasisData
         $isi = $this->cari(' 9999 9911 ', 200);
 
         $this->assertSame('ditemukan', $isi['status']);
-        $this->assertSame(['npsn' => '99999911', 'nama' => 'SD KARANGAN MAJU', 'jenjang' => 'A', 'jenjang_label' => 'SD/MI', 'kabupaten' => 'Kudus', 'lokasi' => ''], $isi['sekolah']);
+        $this->assertSame(['npsn' => '99999911', 'nama' => 'SD KARANGAN MAJU', 'jenjang' => 'A', 'jenjang_label' => 'SD/MI', 'kabupaten' => 'Kudus', 'lokasi' => '', 'nama_kembar' => 0], $isi['sekolah']);
         $this->assertSame(['tim' => [], 'individu' => []], $isi['susulan']);
         $this->assertArrayHasKey('csrf', $isi);
     }

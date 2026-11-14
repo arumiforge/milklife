@@ -7,6 +7,7 @@ use App\Libraries\Pendaftaran\BiayaPendaftaran;
 use App\Libraries\Pendaftaran\DataIndukPendaftaran;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PemeriksaPendaftaran;
+use App\Models\NomorLombaModel;
 use App\Models\SekolahModel;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Exceptions\DatabaseException;
@@ -204,6 +205,7 @@ final class UbahPendaftaran
                 'jenis_kelamin' => (string) $a['jenis_kelamin'],
                 'nomor'         => array_keys($lama['nomor'][(int) $a['id']] ?? []),
                 'nomor_dada'    => $a['nomor_dada'] === null || $a['nomor_dada'] === '' ? null : (string) $a['nomor_dada'],
+                'ku_lama'       => (int) $a['kelompok_umur_id'],
             ], array_values($lama['atlet']));
 
             return $hasil;
@@ -248,6 +250,7 @@ final class UbahPendaftaran
                 'jenis_kelamin' => self::teks($a['jenis_kelamin'] ?? null),
                 'nomor'         => array_values(array_filter(array_map(self::id(...), self::daftar($a['nomor'] ?? null)))),
                 'nomor_dada'    => $simpan !== null && $simpan['nomor_dada'] !== null && $simpan['nomor_dada'] !== '' ? (string) $simpan['nomor_dada'] : null,
+                'ku_lama'       => $simpan !== null ? (int) $simpan['kelompok_umur_id'] : null,
             ];
         }
 
@@ -628,7 +631,18 @@ final class UbahPendaftaran
             'nisn_terdaftar' => $this->nisnLain($pendaftaranId, PemeriksaPendaftaran::nisnKiriman($kiriman)),
         ] + $this->sekolahLain($pendaftaranId, $npsn);
 
-        $periksa = (new PemeriksaPendaftaran($this->data->induk(), $ada, $hariIni))->periksa($kiriman, false);
+        // Nama tersimpan yang berbeda dari data sekolah (usulan pendaftar yang
+        // belum diputuskan, K99, atau nama yang sengaja tidak diganti admin)
+        // dipertahankan selama NPSN-nya tidak diubah.
+        if ($npsn !== null && $npsn === ($lama['pendaftaran']['npsn'] ?? null) && is_array($ada['referensi'])) {
+            $kiriman['sekolah']                = is_array($kiriman['sekolah'] ?? null) ? $kiriman['sekolah'] : [];
+            $kiriman['sekolah']['nama_usulan'] = (string) $lama['pendaftaran']['nama_sekolah'];
+        }
+
+        // Kelompok umur dan nomor lomba yang sudah dimatikan tetap diterima
+        // untuk atlet yang sudah memakainya (K98).
+        [$induk, $simpanan] = $this->indukDenganSimpanan($lama);
+        $periksa            = (new PemeriksaPendaftaran($induk, $ada, $hariIni, $simpanan))->periksa($kiriman, false);
 
         foreach ($periksa['galat'] as $g) {
             $galat[] = ['jalur' => $g['jalur'], 'pesan' => $g['pesan']];
@@ -889,6 +903,63 @@ final class UbahPendaftaran
         }
 
         return ['pendaftaran' => $p, 'penanggung_jawab' => $pj, 'atlet' => $atlet, 'nomor' => $nomor, 'beregu' => $beregu];
+    }
+
+    /**
+     * Induk aktif ditambah kelompok umur dan nomor lomba nonaktif yang masih
+     * dipakai pendaftaran ini, serta peta atlet tersimpan untuk
+     * `PemeriksaPendaftaran` (K98).
+     *
+     * @param array<string, mixed> $lama
+     *
+     * @return array{0: array<string, mixed>, 1: array<int, array{kelompok_umur_id: int, nomor: list<int>}>}
+     */
+    private function indukDenganSimpanan(array $lama): array
+    {
+        $simpanan = [];
+
+        foreach ($lama['atlet'] as $id => $atlet) {
+            $simpanan[(int) $id] = [
+                'kelompok_umur_id' => (int) $atlet['kelompok_umur_id'],
+                'nomor'            => array_map('intval', array_keys($lama['nomor'][(int) $id] ?? [])),
+            ];
+        }
+
+        $nonaktif = $this->data->nonaktif(
+            array_values(array_unique(array_column($simpanan, 'kelompok_umur_id'))),
+            array_values(array_unique(array_merge([], ...array_column($simpanan, 'nomor')))),
+        );
+
+        return [$this->data->induk() + [
+            'kelompok_umur_nonaktif' => $nonaktif['kelompok_umur'],
+            'nomor_lomba_nonaktif'   => $nonaktif['nomor_lomba'],
+        ], $simpanan];
+    }
+
+    /**
+     * Nama nomor lomba dan kelompok umur yang sudah dimatikan tetapi masih
+     * dipakai pendaftaran ini, untuk ditampilkan di halaman ubah (K98).
+     *
+     * @return array{nomor_lomba: array<int, string>, kelompok_umur: array<int, string>}
+     */
+    public function nonaktifTerpakai(int $id): array
+    {
+        $lama = $this->bacaLama($id);
+
+        if ($lama === null) {
+            return ['nomor_lomba' => [], 'kelompok_umur' => []];
+        }
+
+        [$induk] = $this->indukDenganSimpanan($lama);
+        $ku      = array_column($induk['kelompok_umur_nonaktif'], 'nama', 'id');
+        $semuaKu = $ku + array_column($induk['kelompok_umur'], 'nama', 'id');
+        $nomor   = [];
+
+        foreach ($induk['nomor_lomba_nonaktif'] as $baris) {
+            $nomor[(int) $baris['id']] = trim(($semuaKu[(int) $baris['kelompok_umur_id']] ?? '') . ' ' . NomorLombaModel::namaLengkap($baris));
+        }
+
+        return ['nomor_lomba' => $nomor, 'kelompok_umur' => $ku];
     }
 
     private function adaFoto(mixed $jalur): bool

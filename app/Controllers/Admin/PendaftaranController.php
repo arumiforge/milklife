@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Libraries\Jenjang;
 use App\Models\PendaftaranModel;
+use App\Models\UsulanNamaSekolahModel;
 use App\Libraries\Panel\DataPanelPendaftaran;
 use App\Libraries\Panel\EksporExcel;
 use App\Libraries\Panel\HapusPendaftaran;
@@ -118,6 +119,9 @@ class PendaftaranController extends BaseController
             'p'                => $pendaftaran,
             'timTanpaPembayar' => $tim->untukPendaftaran($id),
             'kalimatTimHapus'  => TimTanpaPembayar::kalimatDitinggalkan($tim->ditinggalkan($id)),
+            // Usulan nama sekolah dari pendaftaran ini yang belum diputuskan (K99).
+            'usulanNama'       => model(UsulanNamaSekolahModel::class)
+                ->where('pendaftaran_id', $id)->where('status', UsulanNamaSekolahModel::MENUNGGU)->first(),
         ]);
     }
 
@@ -311,16 +315,18 @@ class PendaftaranController extends BaseController
      */
     public function ubah(int $id, ?array $kiriman = null, array $galat = []): string
     {
-        $isian = (new UbahPendaftaran())->isian($id, $kiriman);
+        $ubah  = new UbahPendaftaran();
+        $isian = $ubah->isian($id, $kiriman);
 
         if ($isian === null) {
             throw PageNotFoundException::forPageNotFound('Pendaftaran tidak ditemukan. Mungkin sudah dihapus.');
         }
 
         return view('admin/pendaftaran/ubah', [
-            'isian' => $isian,
-            'induk' => (new DataIndukPendaftaran())->untukWizard(),
-            'galat' => $galat,
+            'isian'    => $isian,
+            'induk'    => (new DataIndukPendaftaran())->untukWizard(),
+            'nonaktif' => $ubah->nonaktifTerpakai($id),
+            'galat'    => $galat,
         ]);
     }
 

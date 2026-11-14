@@ -224,6 +224,14 @@
         var keterangan = kartu.querySelector('.keterangan-ku');
         var hasil = /^\d{4}-\d{2}-\d{2}$/.test(lahir) ? tentukanKu(Number(lahir.slice(0, 4)), jenjangSekolah.value) : null;
         var kuId = hasil && hasil.ku ? hasil.ku.id : null;
+        // Kelompok umur tersimpan yang sudah dimatikan tetap dipakai atlet ini (K98);
+        // server memeriksa ulang tahun lahir dan jenjangnya.
+        var kuLama = kartu.getAttribute('data-ku-lama');
+        var namaKuLama = kuLama && DATA.kelompok_umur_nonaktif ? DATA.kelompok_umur_nonaktif[kuLama] : null;
+        if (hasil && namaKuLama) {
+            hasil = { ku: { id: Number(kuLama) }, pesan: namaKuLama + ' (sudah ditutup, tetap dipakai atlet ini)' };
+            kuId = Number(kuLama);
+        }
 
         if (!hasil) {
             keterangan.textContent = 'Isi tanggal lahir dan jenis kelamin supaya pilihan nomor lomba yang cocok tampil.';

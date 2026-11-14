@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\DataKelengkapan;
 use App\Libraries\Panel\Rekap;
+use App\Models\UsulanNamaSekolahModel;
 
 /**
  * Dasbor panel admin: angka ringkasan pendaftaran (F6-06, `Rekap::ringkasan()`),
@@ -40,6 +41,7 @@ class DasborController extends BaseController
                 ? ($manualSampai !== null ? 'Menyala sampai ' . tanggal_id($manualSampai, true) : 'Menyala, tetapi batas waktunya belum diisi')
                 : 'Tidak dipakai',
             'gambarKepala'  => (string) setting('HalamanDepan.gambar_kepala'),
+            'usulanNama'    => model(UsulanNamaSekolahModel::class)->jumlahMenunggu(),
         ]);
     }
 }

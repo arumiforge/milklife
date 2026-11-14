@@ -100,6 +100,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('sekolah/excel', 'SekolahController::excel');
     $routes->get('sekolah/(:num)/ubah', 'SekolahController::ubah/$1');
     $routes->post('sekolah/(:num)', 'SekolahController::perbarui/$1');
+    // Usulan nama sekolah dari pendaftar (K99).
+    $routes->get('sekolah/usulan', 'SekolahController::usulan');
+    $routes->post('sekolah/usulan/(:num)/setujui', 'SekolahController::setujuiUsulan/$1');
+    $routes->post('sekolah/usulan/(:num)/tolak', 'SekolahController::tolakUsulan/$1');
 
     // Pengaturan (Tahap 2). Semua rute ditulis F2-01; pengendalinya dibuat
     // tugas masing-masing (rencana Tahap 2, "Rute"). Selama pengendalinya

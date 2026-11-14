@@ -60,6 +60,13 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                 <div>
                     <h2 id="judul-pendaftaran" class="h4 mb-1"><?= esc($p['id_pendaftaran']) ?></h2>
                     <p class="mb-2 fs-5"><?= esc($p['nama_sekolah']) ?></p>
+                    <?php if (! empty($usulanNama)) : ?>
+                        <p class="small mb-2" id="usulan-nama-pendaftaran">
+                            <span class="badge text-bg-info">Nama usulan pendaftar</span>
+                            Nama di data sekolah: <?= esc($usulanNama['nama_lama']) ?>.
+                            <a href="<?= site_url('admin/sekolah/usulan') ?>">Setujui atau tolak usulannya</a>.
+                        </p>
+                    <?php endif ?>
                     <p class="mb-0" id="status-pendaftaran">
                         <?php if ($lunas) : ?>
                             <span class="badge rounded-pill text-bg-success fs-6"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Lunas</span>

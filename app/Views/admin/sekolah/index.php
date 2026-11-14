@@ -9,6 +9,7 @@
  * @var list<string>           $kabupaten
  * @var array<string, string>  $jenjang      kode data sekolah => label
  * @var int                    $jumlahKembar sekolah yang namanya sama dengan sekolah lain
+ * @var int                    $jumlahUsulan usulan nama dari pendaftar yang menunggu (K99)
  */
 
 use App\Controllers\Admin\SekolahController;
@@ -28,6 +29,15 @@ use App\Controllers\Admin\SekolahController;
         Data sekolah yang dicari lewat NPSN saat pendaftaran. Nama yang disimpan di sini dipakai untuk pendaftaran baru,
         rekap, dan bukti pendaftaran.
     </p>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <a class="btn btn-<?= $jumlahUsulan > 0 ? 'primary' : 'outline-primary' ?>" href="<?= site_url('admin/sekolah/usulan') ?>" id="tautan-usulan">
+            <i class="bi bi-chat-square-text" aria-hidden="true"></i> Usulan nama dari pendaftar
+            <?php if ($jumlahUsulan > 0) : ?>
+                <span class="badge rounded-pill text-bg-light ms-1"><?= $jumlahUsulan ?> menunggu</span>
+            <?php endif ?>
+        </a>
+    </div>
 
     <?php if ($jumlahKembar > 0) : ?>
         <div class="alert alert-warning d-flex align-items-start gap-2" role="status">

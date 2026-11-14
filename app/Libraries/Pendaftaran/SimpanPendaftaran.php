@@ -4,6 +4,7 @@ namespace App\Libraries\Pendaftaran;
 
 use App\Libraries\BuktiPendaftaran;
 use App\Libraries\Panel\BerkasBuktiBayar;
+use App\Libraries\Panel\UsulanNamaSekolah;
 use App\Models\BuktiBayarModel;
 use App\Models\AtletModel;
 use App\Models\AtletNomorModel;
@@ -156,6 +157,16 @@ final class SimpanPendaftaran
 
             $idPendaftaran = IdPendaftaran::buat((int) $seri, $data['sekolah']['jenjang'], (int) $id, (int) $tahun);
             self::pastikan($pendaftaran->update($id, ['id_pendaftaran' => $idPendaftaran]));
+
+            // Usulan nama sekolah dari pendaftar (K99), diputuskan admin di menu Sekolah.
+            if (($data['sekolah']['nama_usulan'] ?? null) !== null) {
+                (new UsulanNamaSekolah($this->db))->catat(
+                    (string) $data['sekolah']['npsn'],
+                    (int) $id,
+                    (string) $data['sekolah']['nama_resmi'],
+                    (string) $data['sekolah']['nama_usulan'],
+                );
+            }
 
             foreach ($data['penanggung_jawab'] as $i => $orang) {
                 self::pastikan(model(PenanggungJawabModel::class)->insert([

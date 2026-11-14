@@ -136,6 +136,20 @@ final class MigrasiStrukturTest extends UjiBasisData
             'ukuran'         => ['int unsigned', false, null],
             'waktu_unggah'   => ['datetime', true, null],
         ],
+        // K99: usulan nama sekolah dari pendaftar.
+        'usulan_nama_sekolah' => [
+            'id'              => ['int unsigned', false, null],
+            'npsn'            => ['char(8)', false, null],
+            'pendaftaran_id'  => ['int unsigned', true, null],
+            'nama_lama'       => ['varchar(150)', false, null],
+            'nama_usulan'     => ['varchar(150)', false, null],
+            'status'          => ["enum('menunggu','disetujui','ditolak')", false, 'menunggu'],
+            'nama_disetujui'  => ['varchar(150)', true, null],
+            'alasan'          => ['varchar(200)', true, null],
+            'diputuskan_pada' => ['datetime', true, null],
+            'dibuat_pada'     => ['datetime', true, null],
+            'diubah_pada'     => ['datetime', true, null],
+        ],
         'tautan' => [
             'id'          => ['int unsigned', false, null],
             'jenis'       => ["enum('narahubung','media_sosial')", false, null],
@@ -166,6 +180,8 @@ final class MigrasiStrukturTest extends UjiBasisData
         'kelompok_umur_jenjang.kelompok_umur_id' => ['kelompok_umur', 'CASCADE'],
         // Tahap 6 (F6-01): bukti bayar ikut terhapus bersama pendaftarannya.
         'bukti_bayar.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
+        // K99: usulan nama sekolah tetap ada bila pendaftaran pengusulnya dihapus.
+        'usulan_nama_sekolah.pendaftaran_id' => ['pendaftaran', 'SET NULL'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void

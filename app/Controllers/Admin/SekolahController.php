@@ -6,9 +6,11 @@ use App\Controllers\BaseController;
 use App\Libraries\Jenjang;
 use App\Libraries\Panel\EksporExcel;
 use App\Libraries\Panel\TabelSisiServer;
+use App\Libraries\Panel\UsulanNamaSekolah;
 use App\Libraries\Pendaftaran\Kabupaten;
 use App\Libraries\Pendaftaran\PemeriksaPendaftaran;
 use App\Models\SekolahModel;
+use App\Models\UsulanNamaSekolahModel;
 use Closure;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\HTTP\DownloadResponse;
@@ -28,6 +30,8 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   sudah disunting.
  * - `data`: JSON DataTables (`TabelSisiServer`).
  * - `excel`: semua baris yang lolos saringan yang sama.
+ * - `usulan`, `setujuiUsulan`, `tolakUsulan`: usulan nama dari pendaftar
+ *   (K99, `App\Libraries\Panel\UsulanNamaSekolah`).
  * - `ubah` / `perbarui`: formulir satu sekolah. NPSN tidak bisa diubah.
  *   Sekolah yang disimpan ditandai `disunting_pada`, sehingga
  *   `php spark sekolah:impor` tidak menimpanya. Pilihan "terapkan ke
@@ -65,7 +69,59 @@ class SekolahController extends BaseController
             'kabupaten'    => Kabupaten::semua(),
             'jenjang'      => self::labelJenjang(),
             'jumlahKembar' => $this->jumlahKembar(),
+            'jumlahUsulan' => model(UsulanNamaSekolahModel::class)->jumlahMenunggu(),
         ]);
+    }
+
+    /**
+     * Usulan nama sekolah dari pendaftar (K99): yang menunggu di atas, lalu
+     * riwayat keputusan terbaru.
+     */
+    public function usulan(): string
+    {
+        return view('admin/sekolah/usulan', [
+            'usulan' => model(UsulanNamaSekolahModel::class)->daftarLengkap(),
+        ]);
+    }
+
+    public function setujuiUsulan(int $id): RedirectResponse
+    {
+        $nama  = $this->request->getPost('nama');
+        $hasil = (new UsulanNamaSekolah())->setujui($id, is_string($nama) ? $nama : '');
+
+        if ($hasil['galat'] !== null) {
+            return redirect()->to(self::ALAMAT . '/usulan')->with('pesan_galat', $hasil['galat']);
+        }
+
+        $pesan = 'Usulan disetujui. Nama sekolah sekarang ' . $hasil['nama'] . '.';
+
+        if ($hasil['pendaftaran'] > 0) {
+            $pesan .= ' Nama di ' . $hasil['pendaftaran'] . ' pendaftaran ikut diganti.';
+        }
+
+        if ($hasil['usulan_lain'] > 0) {
+            $pesan .= ' ' . $hasil['usulan_lain'] . ' usulan lain untuk sekolah yang sama ikut ditutup.';
+        }
+
+        return redirect()->to(self::ALAMAT . '/usulan')->with('pesan_sukses', $pesan);
+    }
+
+    public function tolakUsulan(int $id): RedirectResponse
+    {
+        $alasan = $this->request->getPost('alasan');
+        $hasil  = (new UsulanNamaSekolah())->tolak($id, is_string($alasan) ? $alasan : '');
+
+        if ($hasil['galat'] !== null) {
+            return redirect()->to(self::ALAMAT . '/usulan')->with('pesan_galat', $hasil['galat']);
+        }
+
+        $pesan = 'Usulan ditolak.';
+
+        if ($hasil['pendaftaran'] > 0) {
+            $pesan .= ' Pendaftaran pengusul kembali memakai nama ' . $hasil['nama'] . '.';
+        }
+
+        return redirect()->to(self::ALAMAT . '/usulan')->with('pesan_sukses', $pesan);
     }
 
     public function data(): ResponseInterface
