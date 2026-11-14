@@ -375,8 +375,8 @@ final class PanelGabunganTest extends UjiBasisData
 
         $this->assertSame([
             'pendaftaran' => '3',
-            'sekolah'     => '2',
             'atlet'       => '7',
+            'sekolah'     => '2',
             'tim'         => '1',
             'tagihan'     => rupiah(750000),
             'lunas'       => rupiah(350000),

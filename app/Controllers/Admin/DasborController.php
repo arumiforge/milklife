@@ -3,15 +3,17 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
-use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\DataKelengkapan;
 use App\Libraries\Panel\Rekap;
+use App\Libraries\Panel\RingkasanDasbor;
 use App\Models\UsulanNamaSekolahModel;
 
 /**
- * Dasbor panel admin: angka ringkasan pendaftaran (F6-06, `Rekap::ringkasan()`),
- * keadaan pendaftaran, daftar centang kelengkapan pengaturan (rancangan 6.1),
- * dan keadaan kosong pendaftaran.
+ * Dasbor panel admin (K102): kartu ringkasan data (`Rekap::ringkasan()` dan
+ * `RingkasanDasbor::angka()`), grafik (`RingkasanDasbor::grafik()`), dan
+ * keadaan kosong pendaftaran. Keadaan pendaftaran, kelengkapan pengaturan,
+ * dan gambar kepala ada di Pengecekan (`PengecekanController`); dasbor hanya
+ * menampilkan lencana keadaan dan peringatan bila pengaturan belum lengkap.
  */
 class DasborController extends BaseController
 {
@@ -20,27 +22,18 @@ class DasborController extends BaseController
         $data        = new DataKelengkapan();
         $kelengkapan = $data->kelengkapan();
         $pendaftaran = $data->bukaTutup();
-
-        $mulai       = BukaTutupPendaftaran::bacaWaktu(setting('Pendaftaran.mulai'));
-        $akhir       = BukaTutupPendaftaran::bacaWaktu(setting('Pendaftaran.akhir'));
-        $manualSampai = BukaTutupPendaftaran::bacaWaktu(setting('Pendaftaran.buka_manual_sampai'));
+        $ringkasan   = new RingkasanDasbor();
 
         return view('admin/dasbor', [
             'angka'         => (new Rekap())->ringkasan(),
-            'butir'         => $kelengkapan->butir(),
-            'jumlahLengkap' => $kelengkapan->jumlahLengkap(),
-            'semuaLengkap'  => $kelengkapan->lengkap(),
+            'tambahan'      => $ringkasan->angka(),
+            'grafik'        => $ringkasan->grafik(),
             'keadaan'       => $pendaftaran->keadaan(),
             'labelKeadaan'  => $pendaftaran->label(),
             'kalimat'       => $pendaftaran->kalimat(),
-            'lewatManual'   => $pendaftaran->lewatManual(),
-            'jadwal'        => $mulai !== null && $akhir !== null
-                ? tanggal_id($mulai, true) . ' sampai ' . tanggal_id($akhir, true)
-                : '',
-            'bukaManual'    => (bool) setting('Pendaftaran.buka_manual')
-                ? ($manualSampai !== null ? 'Menyala sampai ' . tanggal_id($manualSampai, true) : 'Menyala, tetapi batas waktunya belum diisi')
-                : 'Tidak dipakai',
-            'gambarKepala'  => (string) setting('HalamanDepan.gambar_kepala'),
+            'semuaLengkap'  => $kelengkapan->lengkap(),
+            'jumlahLengkap' => $kelengkapan->jumlahLengkap(),
+            'jumlahButir'   => count($kelengkapan->butir()),
             'usulanNama'    => model(UsulanNamaSekolahModel::class)->jumlahMenunggu(),
         ]);
     }

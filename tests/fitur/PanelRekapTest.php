@@ -338,17 +338,34 @@ final class PanelRekapTest extends UjiBasisData
         $belum = $c['a']['total'] + $c['d']['total'];
         $this->assertSame([
             'pendaftaran' => '4',
-            'sekolah'     => '2',
             'atlet'       => '8',
+            'sekolah'     => '2',
             'tim'         => '1',
             'tagihan'     => rupiah($lunas + $belum),
             'lunas'       => rupiah($lunas),
             'belum'       => rupiah($belum),
         ], $angka);
 
-        // Keadaan kosong pendaftaran hanya bila belum ada pendaftaran; daftar kelengkapan tetap.
+        // Keadaan kosong pendaftaran hanya bila belum ada pendaftaran.
         $hasil->assertDontSee('Belum ada pendaftaran');
-        $this->assertSame(1, $xpath->query('//*[@id="kelengkapan-pengaturan"]')->length);
+
+        // Kartu tambahan dan data grafik (K102).
+        $tambahan = [];
+
+        foreach ($xpath->query('//*[@id="angka-tambahan"]//*[@data-tambahan]') as $kartu) {
+            $tambahan[$kartu->getAttribute('data-tambahan')] = trim($xpath->query('.//*[contains(@class, "nilai-kecil")]', $kartu)->item(0)->textContent);
+        }
+        $this->assertSame('2', $tambahan['pendaftaran_lunas']);
+        $this->assertSame('2', $tambahan['pendaftaran_menunggu']);
+        $this->assertSame('8', (string) ((int) $tambahan['atlet_putra'] + (int) $tambahan['atlet_putri']));
+
+        $grafik = json_decode((string) $xpath->query('//script[@id="data-grafik-dasbor"]')->item(0)?->textContent, true);
+        $this->assertIsArray($grafik);
+        $this->assertSame(['tren', 'status', 'kabupaten', 'kelompok_umur', 'jenjang', 'nomor_lomba', 'jam_daftar', 'pengunjung'], array_keys($grafik));
+        $this->assertSame([2, 2], $grafik['status']['jumlah']);
+        $this->assertSame([$lunas, $belum], $grafik['status']['rupiah']);
+        $this->assertSame(8, array_sum($grafik['kabupaten']['putra']) + array_sum($grafik['kabupaten']['putri']));
+        $this->assertStringContainsString(aset('js/dasbor.js'), $hasil->getBody());
     }
 
     public function testDasborKosongMenampilkanNol(): void

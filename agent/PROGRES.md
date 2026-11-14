@@ -18,6 +18,7 @@ Diperbarui: 15 November 2026
 | [F7-08 Data sekolah dan menu Sekolah](tugas/F7-08-data-sekolah-panel.md) | selesai | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
 | [F7-09 Usulan nama sekolah dan dokumen final](tugas/F7-09-usulan-nama-sekolah.md) | selesai | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
 | [F7-10 Audit bug dan dokumen](tugas/F7-10-audit-bug-dokumen.md) | menunggu tinjauan | sisipan | [#82](https://github.com/arumiforge/milklife/pull/82) |
+| [F7-11 Monitoring, pengunjung, Pengecekan, dasbor bergrafik](tugas/F7-11-pemantau-pengunjung-dasbor.md) | menunggu tinjauan | sisipan | |
 
 ## Berikutnya
 

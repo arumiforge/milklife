@@ -6,6 +6,8 @@
  * - Ponsel dan tablet: menu samping hilang, diganti menu menempel di bawah
  *   (ikon + label). Tombol Keluar tetap di kepala halaman.
  * Kedua menu memakai daftar yang sama: `tata_letak/_menu_admin.php`.
+ * Pengecekan dan Halaman depan (K102) menempel di bagian bawah menu samping;
+ * di ponsel dan tablet keduanya ikon di kepala halaman.
  *
  * Bagian yang diisi tampilan:
  * - `judul`: judul halaman, cukup nama halamannya (misalnya `Dasbor`). Tab
@@ -15,6 +17,7 @@
  * - `judul_halaman` (pilihan): judul pendek di kepala halaman, tampil sebagai
  *   `<h1>`. Bila kosong, isi `judul` yang dipakai. Isi halaman dimulai dari `<h2>`.
  * - `isi`: isi halaman, di dalam `<main id="isi">`; bungkus dengan `container-fluid`.
+ * - `kepala` (pilihan): tag tambahan di `<head>`, misalnya gaya khusus halaman.
  * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap dan `aset/js/kemajuan.js`.
  *
  * Nama acara di menu samping dari pengaturan `Acara.nama` (`tata_letak/_merek`).
@@ -68,6 +71,7 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
     <?php endif; ?>
     <link rel="stylesheet" href="<?= aset('css/tema.css') ?>">
     <link rel="stylesheet" href="<?= aset('css/admin.css') ?>">
+    <?= $this->renderSection('kepala') ?>
 </head>
 <body class="tata-admin" data-bs-theme="light">
     <div id="bilah-kemajuan" class="bilah-kemajuan" hidden aria-hidden="true">
@@ -82,8 +86,8 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
                 <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
                 <span class="menu-samping-peran">Panel admin</span>
             </a>
-            <nav aria-label="Menu admin">
-                <?= $this->include('tata_letak/_menu_admin') ?>
+            <nav class="menu-samping-nav" aria-label="Menu admin">
+                <?= view('tata_letak/_menu_admin', ['tempatMenu' => 'samping'], ['saveData' => false]) ?>
             </nav>
         </aside>
 
@@ -91,7 +95,12 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
             <header class="kepala-admin">
                 <h1 class="kepala-admin-judul"><?= $judulHalaman ?></h1>
                 <div class="kepala-admin-pengguna">
-                    <a class="btn btn-outline-primary tombol-halaman-depan" href="<?= site_url('/') ?>" target="_blank" rel="noopener" title="Buka halaman depan di tab baru">
+                    <?php /* Di layar lebar Pengecekan dan Halaman depan ada di bagian bawah menu samping (K102). */ ?>
+                    <a class="btn btn-outline-primary tombol-pengecekan d-lg-none" href="<?= site_url('admin/pengecekan') ?>" title="Pengecekan: keadaan pendaftaran dan kelengkapan pengaturan"<?= url_is('admin/pengecekan') ? ' aria-current="page"' : '' ?>>
+                        <i class="bi bi-clipboard2-pulse" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline tombol-kepala-teks">Pengecekan</span>
+                    </a>
+                    <a class="btn btn-outline-primary tombol-halaman-depan d-lg-none" href="<?= site_url('/') ?>" target="_blank" rel="noopener" title="Buka halaman depan di tab baru">
                         <i class="bi bi-house-door" aria-hidden="true"></i>
                         <span class="d-none d-md-inline tombol-kepala-teks">Halaman depan</span>
                         <span class="visually-hidden">(tab baru)</span>

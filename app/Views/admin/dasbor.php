@@ -1,23 +1,27 @@
 <?php
 /**
- * Dasbor admin: angka ringkasan pendaftaran (F6-06), keadaan pendaftaran,
- * daftar centang kelengkapan pengaturan (F2-09), keadaan kosong pendaftaran
- * (hanya bila belum ada pendaftaran), dan gambar kepala halaman depan.
+ * Dasbor admin (K102): kartu ringkasan data dan grafik interaktif
+ * (ApexCharts, `aset/js/dasbor.js`), bergaya kartu Flowbite. Keadaan
+ * pendaftaran, kelengkapan pengaturan, dan gambar kepala ada di Pengecekan;
+ * di sini hanya lencana keadaan dan peringatan bila pengaturan belum lengkap.
  * Data dari `DasborController::index()`.
  *
+ * Kartu utama `#angka-pendaftaran [data-angka]` dari `Rekap::ringkasan()`
+ * (F6-06), kartu tambahan `#angka-tambahan [data-tambahan]` dari
+ * `RingkasanDasbor::angka()`. Data grafik dikirim sebagai JSON di
+ * `#data-grafik-dasbor`.
+ *
+ * @var CodeIgniter\View\View $this
  * @var array{pendaftaran: int, atlet: int, tim: int, sekolah: int, tagihan: int, lunas: int, belum: int, tim_tanpa_pembayar: int} $angka
- * @var int $usulanNama usulan nama sekolah yang menunggu keputusan (K99)
- * @var CodeIgniter\View\View                                                                             $this
- * @var list<array{kunci: string, label: string, lengkap: bool, keterangan: string, alamat: string}>     $butir
- * @var int                                                                                               $jumlahLengkap
- * @var bool                                                                                              $semuaLengkap
- * @var string                                                                                            $keadaan       salah satu konstanta BukaTutupPendaftaran
- * @var string                                                                                            $labelKeadaan
- * @var string                                                                                            $kalimat
- * @var bool                                                                                              $lewatManual
- * @var string                                                                                            $jadwal        kosong bila belum diisi
- * @var string                                                                                            $bukaManual
- * @var string                                                                                            $gambarKepala  jalur unggahan, boleh kosong
+ * @var array<string, int|float> $tambahan
+ * @var array<string, array<string, list<int|string>>> $grafik
+ * @var string $keadaan salah satu konstanta BukaTutupPendaftaran
+ * @var string $labelKeadaan
+ * @var string $kalimat
+ * @var bool   $semuaLengkap
+ * @var int    $jumlahLengkap
+ * @var int    $jumlahButir
+ * @var int    $usulanNama usulan nama sekolah yang menunggu keputusan (K99)
  */
 
 use App\Libraries\BukaTutupPendaftaran;
@@ -28,8 +32,9 @@ $warnaKeadaan = [
     BukaTutupPendaftaran::TERBUKA      => ['text-bg-success', 'door-open-fill'],
     BukaTutupPendaftaran::DITUTUP      => ['text-bg-dark', 'door-closed-fill'],
 ][$keadaan];
-$jumlahButir = count($butir);
-$persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 100) : 0;
+
+$angkaBiasa = static fn (int|float $n): string => number_format($n, is_float($n) && floor($n) !== $n ? 1 : 0, ',', '.');
+$persenLunas = $angka['tagihan'] > 0 ? (int) round($angka['lunas'] / $angka['tagihan'] * 100) : 0;
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
@@ -38,29 +43,71 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
 <?= $this->section('judul_halaman') ?>Dasbor<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="container-fluid px-3 px-lg-4">
+<div class="container-fluid px-3 px-lg-4 dasbor">
+    <section class="kartu-dasbor kartu-sapa mb-4" aria-label="Keadaan pendaftaran">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <span class="badge rounded-pill <?= $warnaKeadaan[0] ?> fs-6 lencana-keadaan" data-keadaan="<?= esc($keadaan, 'attr') ?>">
+                <i class="bi bi-<?= $warnaKeadaan[1] ?>" aria-hidden="true"></i> <?= esc($labelKeadaan) ?>
+            </span>
+            <p class="mb-0 flex-grow-1 kalimat-keadaan"><?= esc($kalimat) ?></p>
+            <a class="btn btn-sm btn-outline-primary" href="<?= site_url('admin/pengecekan') ?>">
+                <i class="bi bi-clipboard2-pulse" aria-hidden="true"></i> Buka Pengecekan
+            </a>
+        </div>
+        <?php if (! $semuaLengkap) : ?>
+            <p class="small mb-0 mt-3 text-warning-emphasis" id="peringatan-kelengkapan">
+                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+                Pengaturan wajib baru <?= $jumlahLengkap ?> dari <?= $jumlahButir ?> yang lengkap.
+                <a href="<?= site_url('admin/pengecekan') ?>#kelengkapan-pengaturan">Lihat yang belum lengkap</a>.
+            </p>
+        <?php endif ?>
+    </section>
+
     <section class="mb-4" aria-labelledby="judul-angka" id="angka-pendaftaran">
-        <h2 id="judul-angka" class="visually-hidden">Ringkasan pendaftaran</h2>
-        <div class="row row-cols-2 row-cols-md-4 row-cols-xxl-7 g-3">
+        <h2 id="judul-angka" class="judul-bagian-dasbor">Ringkasan pendaftaran</h2>
+        <div class="row g-3">
             <?php foreach ([
-                'pendaftaran' => ['Pendaftaran', 'journal-text', false],
-                'sekolah'     => ['Sekolah', 'building', false],
-                'atlet'       => ['Atlet', 'person-arms-up', false],
-                'tim'         => ['Tim beregu', 'people', false],
-                'tagihan'     => ['Tagihan', 'receipt', true],
-                'lunas'       => ['Lunas', 'check-circle', true],
-                'belum'       => ['Belum dibayar', 'hourglass-split', true],
-            ] as $kunci => [$label, $ikon, $uang]) : ?>
-                <div class="col">
-                    <div class="card h-100" data-angka="<?= $kunci ?>">
-                        <div class="card-body p-3">
-                            <div class="small text-body-secondary"><i class="bi bi-<?= $ikon ?>" aria-hidden="true"></i> <?= $label ?></div>
-                            <div class="fs-5 fw-semibold text-nowrap nilai-angka"><?= $uang ? esc(rupiah($angka[$kunci])) : $angka[$kunci] ?></div>
+                'pendaftaran' => ['Pendaftaran', 'journal-text', 'biru', false, $tambahan['pendaftaran_hari_ini'] > 0 ? '+' . $tambahan['pendaftaran_hari_ini'] . ' hari ini' : ''],
+                'atlet'       => ['Atlet', 'person-arms-up', 'oranye', false, $tambahan['atlet_hari_ini'] > 0 ? '+' . $tambahan['atlet_hari_ini'] . ' hari ini' : ''],
+                'sekolah'     => ['Sekolah', 'building', 'hijau', false, $tambahan['kabupaten'] . ' kabupaten'],
+                'tim'         => ['Tim beregu', 'people', 'ungu', false, ''],
+                'tagihan'     => ['Tagihan', 'receipt', 'biru', true, ''],
+                'lunas'       => ['Lunas', 'check-circle', 'hijau', true, $persenLunas . '% dari tagihan'],
+                'belum'       => ['Belum dibayar', 'hourglass-split', 'oranye', true, ''],
+            ] as $kunci => [$label, $ikon, $warna, $uang, $catatan]) : ?>
+                <div class="<?= $uang ? 'col-12 col-sm-6' : 'col-6' ?> col-xl-3">
+                    <div class="kartu-dasbor kartu-angka h-100" data-angka="<?= $kunci ?>">
+                        <div class="d-flex align-items-start justify-content-between gap-2">
+                            <div class="min-w-0">
+                                <div class="label-angka"><?= $label ?></div>
+                                <div class="nilai-angka<?= $uang ? ' nilai-uang' : '' ?>"><?= $uang ? esc(rupiah($angka[$kunci])) : $angka[$kunci] ?></div>
+                            </div>
+                            <span class="ikon-angka ikon-<?= $warna ?>"><i class="bi bi-<?= $ikon ?>" aria-hidden="true"></i></span>
                         </div>
+                        <?php if ($catatan !== '') : ?>
+                            <div class="catatan-angka"><?= esc($catatan) ?></div>
+                        <?php endif ?>
+                        <?php if ($kunci === 'lunas') : ?>
+                            <div class="progress mt-2" role="progressbar" aria-label="Bagian tagihan yang sudah lunas" aria-valuenow="<?= $persenLunas ?>" aria-valuemin="0" aria-valuemax="100" style="height: .375rem">
+                                <div class="progress-bar bg-success" style="width: <?= $persenLunas ?>%"></div>
+                            </div>
+                        <?php endif ?>
                     </div>
                 </div>
             <?php endforeach; ?>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <a class="kartu-dasbor kartu-angka kartu-tautan h-100" href="<?= site_url('admin/rekap') ?>">
+                    <div class="d-flex align-items-start justify-content-between gap-2">
+                        <div>
+                            <div class="label-angka">Rekap lengkap</div>
+                            <div class="fw-semibold mt-1">Lihat rekap dan unduh Excel</div>
+                        </div>
+                        <span class="ikon-angka ikon-abu"><i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                    </div>
+                </a>
+            </div>
         </div>
+
         <?php if ($angka['tim_tanpa_pembayar'] > 0) : ?>
             <div class="alert alert-warning mt-3 mb-0" id="tim-tanpa-pembayar">
                 <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
@@ -75,119 +122,133 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
                 <a href="<?= site_url('admin/sekolah/usulan') ?>">Periksa usulannya</a>.
             </div>
         <?php endif ?>
-        <p class="small mt-2 mb-0"><a href="<?= site_url('admin/rekap') ?>">Lihat rekap lengkap</a></p>
     </section>
 
-    <div class="row g-4 mb-4">
-        <section class="col-12 col-xl-5" aria-labelledby="judul-keadaan" id="keadaan-pendaftaran" data-keadaan="<?= esc($keadaan, 'attr') ?>">
-            <div class="card h-100">
-                <div class="card-body p-4">
-                    <h2 id="judul-keadaan" class="h5 mb-3">Keadaan pendaftaran</h2>
-                    <p class="mb-2">
-                        <span class="badge rounded-pill <?= $warnaKeadaan[0] ?> fs-6 lencana-keadaan">
-                            <i class="bi bi-<?= $warnaKeadaan[1] ?>" aria-hidden="true"></i> <?= esc($labelKeadaan) ?>
-                        </span>
-                    </p>
-                    <p class="fs-5 mb-3 kalimat-keadaan"><?= esc($kalimat) ?></p>
-
-                    <?php if ($keadaan === BukaTutupPendaftaran::DISIAPKAN) : ?>
-                        <p class="text-body-secondary">
-                            Pendaftaran baru bisa dibuka setelah semua butir kelengkapan pengaturan bercentang.
-                            Sampai saat itu, sekolah melihat keterangan "Pendaftaran sedang disiapkan".
-                        </p>
-                    <?php elseif ($lewatManual) : ?>
-                        <p class="text-body-secondary">
-                            Pendaftaran terbuka karena dibuka manual oleh admin, di luar jadwal.
-                        </p>
-                    <?php endif ?>
-
-                    <dl class="row small mb-3">
-                        <dt class="col-sm-4 fw-semibold">Jadwal</dt>
-                        <dd class="col-sm-8"><?= $jadwal !== '' ? esc($jadwal) : '<span class="text-body-secondary">Belum diisi</span>' ?></dd>
-                        <dt class="col-sm-4 fw-semibold">Buka manual</dt>
-                        <dd class="col-sm-8 mb-0"><?= esc($bukaManual) ?></dd>
-                    </dl>
-
-                    <a class="btn btn-outline-primary" href="<?= site_url('admin/pengaturan/pendaftaran') ?>">
-                        <i class="bi bi-calendar-week" aria-hidden="true"></i> Atur jadwal pendaftaran
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="col-12 col-xl-7" aria-labelledby="judul-kelengkapan" id="kelengkapan-pengaturan">
-            <div class="card h-100">
-                <div class="card-body p-4">
-                    <h2 id="judul-kelengkapan" class="h5 mb-1">Kelengkapan pengaturan</h2>
-                    <p class="text-body-secondary mb-2 ringkasan-kelengkapan">
-                        <?php if ($semuaLengkap) : ?>
-                            Semua pengaturan wajib sudah lengkap.
-                        <?php else : ?>
-                            <?= $jumlahLengkap ?> dari <?= $jumlahButir ?> sudah lengkap.
-                        <?php endif ?>
-                    </p>
-                    <?php if (! $semuaLengkap) : ?>
-                        <p class="small mb-2">
-                            <strong>Langkah berikutnya:</strong> buka butir yang belum bercentang dan lengkapi isinya supaya pendaftaran bisa dibuka.
-                        </p>
-                    <?php endif ?>
-                    <div class="progress mb-3" role="progressbar" aria-label="Kelengkapan pengaturan" aria-valuenow="<?= $persen ?>" aria-valuemin="0" aria-valuemax="100" style="height: .5rem">
-                        <div class="progress-bar <?= $semuaLengkap ? 'bg-success' : '' ?>" style="width: <?= $persen ?>%"></div>
+    <section class="mb-4" aria-labelledby="judul-tambahan" id="angka-tambahan">
+        <h2 id="judul-tambahan" class="judul-bagian-dasbor">Angka lain</h2>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-xxl-6 g-3">
+            <?php foreach ([
+                'perlu_diperiksa'      => ['Bukti bayar perlu diperiksa', 'patch-question', 'admin/pendaftaran'],
+                'pendaftaran_menunggu' => ['Pendaftaran menunggu', 'clock-history', ''],
+                'pendaftaran_lunas'    => ['Pendaftaran lunas', 'patch-check', ''],
+                'nomor_dada'           => ['Nomor dada terbit', '123', ''],
+                'atlet_putra'          => ['Atlet putra', 'gender-male', ''],
+                'atlet_putri'          => ['Atlet putri', 'gender-female', ''],
+                'rata_atlet'           => ['Atlet per pendaftaran', 'calculator', ''],
+                'pendaftaran_hari_ini' => ['Pendaftaran hari ini', 'calendar-check', ''],
+                'atlet_hari_ini'       => ['Atlet hari ini', 'calendar-plus', ''],
+                'kabupaten'            => ['Kabupaten', 'geo-alt', ''],
+                'pengunjung_hari_ini'  => ['Pengunjung hari ini', 'eye', ''],
+                'kunjungan_hari_ini'   => ['Halaman dibuka hari ini', 'window-stack', ''],
+            ] as $kunci => [$label, $ikon, $alamat]) : ?>
+                <div class="col">
+                    <div class="kartu-dasbor kartu-kecil h-100<?= $kunci === 'perlu_diperiksa' && $tambahan[$kunci] > 0 ? ' kartu-sorot' : '' ?>" data-tambahan="<?= $kunci ?>">
+                        <i class="bi bi-<?= $ikon ?>" aria-hidden="true"></i>
+                        <div class="nilai-kecil"><?= $angkaBiasa($tambahan[$kunci]) ?></div>
+                        <div class="label-angka">
+                            <?php if ($alamat !== '') : ?>
+                                <a class="stretched-link" href="<?= site_url($alamat) ?>"><?= $label ?></a>
+                            <?php else : ?>
+                                <?= $label ?>
+                            <?php endif ?>
+                        </div>
                     </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </section>
 
-                    <ul class="list-unstyled mb-0 daftar-kelengkapan">
-                        <?php foreach ($butir as $satu) : ?>
-                            <li class="d-flex gap-3 py-2 border-top" data-kunci="<?= esc($satu['kunci'], 'attr') ?>" data-lengkap="<?= $satu['lengkap'] ? 'ya' : 'tidak' ?>">
-                                <?php if ($satu['lengkap']) : ?>
-                                    <i class="bi bi-check-circle-fill text-success fs-5 flex-shrink-0" aria-hidden="true"></i>
-                                <?php else : ?>
-                                    <i class="bi bi-exclamation-circle-fill text-warning fs-5 flex-shrink-0" aria-hidden="true"></i>
-                                <?php endif ?>
-                                <div class="flex-grow-1 min-w-0">
-                                    <a class="fw-semibold" href="<?= site_url($satu['alamat']) ?>"><?= esc($satu['label']) ?></a>
-                                    <span class="visually-hidden">: <?= $satu['lengkap'] ? 'lengkap' : 'belum lengkap' ?>.</span>
-                                    <div class="small <?= $satu['lengkap'] ? 'text-body-secondary' : '' ?> keterangan-kelengkapan"><?= esc($satu['keterangan']) ?></div>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
+    <?php if ($angka['pendaftaran'] === 0) : ?>
+    <section class="mb-4" aria-labelledby="judul-kosong">
+        <div class="card kartu-kosong">
+            <div class="card-body text-center px-3 py-5">
+                <span class="ikon-bulat mb-3"><i class="bi bi-inbox" aria-hidden="true"></i></span>
+                <h2 id="judul-kosong" class="h4">Belum ada pendaftaran</h2>
+                <p class="text-body-secondary mb-0 mx-auto">
+                    Pendaftaran dari sekolah akan muncul di sini setelah formulir pendaftaran dibuka.
+                    <strong>Langkah berikutnya:</strong> pastikan semua butir di
+                    <a href="<?= site_url('admin/pengecekan') ?>">Pengecekan</a> sudah bercentang.
+                </p>
+            </div>
+        </div>
+    </section>
+    <?php endif ?>
+
+    <section aria-labelledby="judul-grafik" id="grafik-dasbor">
+        <h2 id="judul-grafik" class="judul-bagian-dasbor">Grafik</h2>
+        <div class="row g-3">
+            <div class="col-12 col-xxl-8">
+                <div class="kartu-dasbor h-100">
+                    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+                        <div>
+                            <h3 class="judul-grafik">Tren <?= \App\Libraries\Panel\RingkasanDasbor::HARI_TREN ?> hari terakhir</h3>
+                            <p class="keterangan-grafik">Pendaftaran dan atlet yang masuk per hari</p>
+                        </div>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Pilih isi grafik tren">
+                            <button type="button" class="btn btn-outline-primary active" data-tren="jumlah" aria-pressed="true">Jumlah</button>
+                            <button type="button" class="btn btn-outline-primary" data-tren="tagihan" aria-pressed="false">Tagihan</button>
+                        </div>
+                    </div>
+                    <div class="wadah-grafik" id="grafik-tren" style="min-height: 320px"></div>
                 </div>
             </div>
-        </section>
-    </div>
-
-    <div class="row g-4">
-        <?php if ($angka['pendaftaran'] === 0) : ?>
-        <section class="col-12 col-xl-7" aria-labelledby="judul-kosong">
-            <div class="card kartu-kosong h-100">
-                <div class="card-body text-center px-3 py-5">
-                    <span class="ikon-bulat mb-3"><i class="bi bi-inbox" aria-hidden="true"></i></span>
-                    <h2 id="judul-kosong" class="h4">Belum ada pendaftaran</h2>
-                    <p class="text-body-secondary mb-0 mx-auto">
-                        Pendaftaran dari sekolah akan muncul di sini setelah formulir pendaftaran dibuka.
-                        Untuk sekarang belum ada yang perlu diperiksa.
-                    </p>
+            <div class="col-12 col-md-6 col-xxl-4">
+                <div class="kartu-dasbor h-100">
+                    <h3 class="judul-grafik">Status pembayaran</h3>
+                    <p class="keterangan-grafik">Jumlah pendaftaran; arahkan ke potongan untuk melihat rupiahnya</p>
+                    <div class="wadah-grafik" id="grafik-status" style="min-height: 300px"></div>
                 </div>
             </div>
-        </section>
-        <?php endif ?>
-
-        <section class="col-12 col-xl-5" aria-labelledby="judul-gambar">
-            <div class="card h-100">
-                <div class="card-body p-4">
-                    <h2 id="judul-gambar" class="h5 mb-3">Gambar kepala halaman depan</h2>
-                    <?php if ($gambarKepala !== '') : ?>
-                        <img class="img-fluid rounded w-100" src="<?= esc(base_url($gambarKepala), 'attr') ?>" alt="Gambar kepala halaman depan">
-                    <?php else : ?>
-                        <?= view('tata_letak/_tanpa_gambar', ['rasio' => '21x9', 'label' => 'Gambar kepala halaman depan'], ['saveData' => false]) ?>
-                    <?php endif ?>
-                    <p class="teks-catatan mt-3 mb-0">
-                        Gambar kepala dan logo diatur di
-                        <a href="<?= site_url('admin/pengaturan/halaman-depan') ?>">Pengaturan Halaman Depan</a>.
-                    </p>
+            <div class="col-12 col-md-6 col-xxl-6">
+                <div class="kartu-dasbor h-100">
+                    <h3 class="judul-grafik">Atlet per kabupaten</h3>
+                    <p class="keterangan-grafik">Putra dan putri</p>
+                    <div class="wadah-grafik" id="grafik-kabupaten" style="min-height: 300px"></div>
                 </div>
             </div>
-        </section>
-    </div>
+            <div class="col-12 col-md-6 col-xxl-6">
+                <div class="kartu-dasbor h-100">
+                    <h3 class="judul-grafik">Atlet per kelompok umur</h3>
+                    <p class="keterangan-grafik">Putra dan putri</p>
+                    <div class="wadah-grafik" id="grafik-kelompok-umur" style="min-height: 300px"></div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xxl-4">
+                <div class="kartu-dasbor h-100">
+                    <h3 class="judul-grafik">Jenjang sekolah</h3>
+                    <p class="keterangan-grafik">Atlet per jenjang</p>
+                    <div class="wadah-grafik" id="grafik-jenjang" style="min-height: 300px"></div>
+                </div>
+            </div>
+            <div class="col-12 col-xxl-8">
+                <div class="kartu-dasbor h-100">
+                    <h3 class="judul-grafik">Nomor lomba terpopuler</h3>
+                    <p class="keterangan-grafik">Sepuluh nomor dengan peserta terbanyak</p>
+                    <div class="wadah-grafik" id="grafik-nomor-lomba" style="min-height: 340px"></div>
+                </div>
+            </div>
+            <div class="col-12 col-xxl-7">
+                <div class="kartu-dasbor h-100">
+                    <h3 class="judul-grafik">Pengunjung halaman publik</h3>
+                    <p class="keterangan-grafik">Pengunjung dan halaman dibuka per hari, <?= \App\Libraries\Panel\RingkasanDasbor::HARI_TREN ?> hari terakhir</p>
+                    <div class="wadah-grafik" id="grafik-pengunjung" style="min-height: 300px"></div>
+                </div>
+            </div>
+            <div class="col-12 col-xxl-5">
+                <div class="kartu-dasbor h-100">
+                    <h3 class="judul-grafik">Jam mendaftar</h3>
+                    <p class="keterangan-grafik">Jam berapa sekolah biasanya mengirim pendaftaran</p>
+                    <div class="wadah-grafik" id="grafik-jam" style="min-height: 300px"></div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
+<script type="application/json" id="data-grafik-dasbor"><?= json_encode($grafik, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?></script>
+<?= $this->endSection() ?>
+
+<?= $this->section('skrip') ?>
+<script src="<?= aset('vendor/apexcharts/apexcharts.min.js') ?>"></script>
+<script src="<?= aset('js/dasbor.js') ?>"></script>
 <?= $this->endSection() ?>

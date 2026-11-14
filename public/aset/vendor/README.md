@@ -9,8 +9,10 @@ Berkas jadi dari pustaka luar, disimpan di sini supaya halaman tidak memuat apa 
 | DataTables | 2.3.8 | MIT (`datatables/LICENSE`) | `https://registry.npmjs.org/datatables.net/-/datatables.net-2.3.8.tgz` |
 | DataTables gaya Bootstrap 5 | 2.3.8 | MIT (lisensinya sama dengan DataTables) | `https://registry.npmjs.org/datatables.net-bs5/-/datatables.net-bs5-2.3.8.tgz` |
 | jQuery | 3.7.1 | MIT (`jquery/LICENSE`) | `https://registry.npmjs.org/jquery/-/jquery-3.7.1.tgz` |
+| ApexCharts | 4.7.0 | MIT (`apexcharts/LICENSE`) | `https://registry.npmjs.org/apexcharts/-/apexcharts-4.7.0.tgz` |
+| CSS Flowbite Dashboard (Tailwind 4) | 2.2.0 | lisensi Flowbite Pro milik pemilik (`https://flowbite.com/license/`) | `template-flowbites/flowbite-admin-dashboard-v2.2.0/static/app.css` di repo ini |
 
-Arsip Bootstrap diunduh dengan `curl` pada 11 November 2026, arsip DataTables dan jQuery (Tahap 6, F6-01) pada 12 November 2026. Sidik `sha1` arsip sama dengan yang tercatat di registri npm:
+Arsip Bootstrap diunduh dengan `curl` pada 11 November 2026, arsip DataTables dan jQuery (Tahap 6, F6-01) pada 12 November 2026, arsip ApexCharts (K102) pada 15 November 2026. ApexCharts 4.7.0 adalah versi terakhir berlisensi MIT; versi 5.2 ke atas memakai lisensi ApexCharts sendiri. Sidik `sha1` arsip sama dengan yang tercatat di registri npm:
 
 | Arsip | sha1 |
 |---|---|
@@ -19,6 +21,7 @@ Arsip Bootstrap diunduh dengan `curl` pada 11 November 2026, arsip DataTables da
 | `datatables.net-2.3.8.tgz` | `55a8dbe3bd2196951c498ab79bf44602a2bf3229` |
 | `datatables.net-bs5-2.3.8.tgz` | `7266636ff488429988ca664bc8cb0b7c5e48c563` |
 | `jquery-3.7.1.tgz` | `083ef98927c9a6a74d05a6af02806566d16274de` |
+| `apexcharts-4.7.0.tgz` | `27e578a2fd66847d8ea425aeea1de56d6be42f21` |
 
 ## Berkas yang disalin
 
@@ -36,6 +39,11 @@ Arsip Bootstrap diunduh dengan `curl` pada 11 November 2026, arsip DataTables da
 | `datatables/LICENSE` | `datatables.net`: `package/License.txt` |
 | `jquery/jquery.min.js` | `package/dist/jquery.min.js` |
 | `jquery/LICENSE` | `package/LICENSE.txt` |
+| `apexcharts/apexcharts.min.js` | `package/dist/apexcharts.min.js` |
+| `apexcharts/LICENSE` | `package/LICENSE` |
+| `flowbite/flowbite-dasbor.css` | salinan apa adanya `template-flowbites/flowbite-admin-dashboard-v2.2.0/static/app.css` |
+
+ApexCharts dimuat di dasbor admin (`aset/js/dasbor.js`) dan di halaman Monitoring `arumi.php`. CSS Flowbite hanya dimuat `arumi.php`; panel admin tetap Bootstrap (K103). CSS itu sudah dipangkas Tailwind untuk kelas yang dipakai template, jadi kelas Tailwind yang tidak dipakai template tidak ada di dalamnya.
 
 DataTables 2 membutuhkan jQuery, jadi jQuery ikut disimpan. Keduanya hanya dimuat di halaman admin yang memakai tabel data (lihat `tata_letak/admin.php`, bagian `tabel`).
 
