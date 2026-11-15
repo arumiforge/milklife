@@ -26,5 +26,6 @@ Sekolah yang hanya mendaftarkan satu regu di satu nomor tidak perlu memikirkan n
 
 ## Catatan
 
+- PR: [#86](https://github.com/arumiforge/milklife/pull/86).
 - Tanpa migrasi. Setelah memasang versi ini di server: `php spark aset:minify`.
 - Bila sekolah menambah regu kedua lewat susulan, bukti yang diunduh ulang menulis "Regu A" untuk regu pertama; cetakan lama tidak (diterima pemilik).

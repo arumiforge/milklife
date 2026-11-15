@@ -21,7 +21,7 @@ Diperbarui: 15 November 2026
 | [F7-11 Monitoring, pengunjung, Pengecekan, dasbor bergrafik](tugas/F7-11-pemantau-pengunjung-dasbor.md) | menunggu tinjauan | sisipan | |
 | [F7-12 Lebih dari satu regu per nomor beregu](tugas/F7-12-regu-beregu.md) | menunggu tinjauan | sisipan | |
 | [F7-13 Regu tanpa batas bawaan, awalan regu, bukti PDF beregu per baris](tugas/F7-13-regu-tanpa-batas-awalan.md) | menunggu tinjauan | sisipan | |
-| [F7-14 Regu tunggal tanpa nama regu, bukti PDF lebih formal](tugas/F7-14-regu-tunggal-bukti-formal.md) | menunggu tinjauan | sisipan | |
+| [F7-14 Regu tunggal tanpa nama regu, bukti PDF lebih formal](tugas/F7-14-regu-tunggal-bukti-formal.md) | menunggu tinjauan | sisipan | [#86](https://github.com/arumiforge/milklife/pull/86) |
 
 ## Berikutnya
 
