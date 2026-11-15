@@ -90,8 +90,8 @@ $keteranganTim = static function (array $nomor): array {
 
     // Batas anggota tidak ditulis di halaman depan (K80); tetap berlaku saat mendaftar.
     $anggota = match (true) {
-        $inti !== null && $batas !== null && $batas > $inti => "{$inti} atlet inti per tim",
-        $inti !== null                                       => "{$inti} atlet per tim",
+        $inti !== null && $batas !== null && $batas > $inti => "{$inti} atlet inti per regu",
+        $inti !== null                                       => "{$inti} atlet per regu",
         default                                              => null,
     };
 
@@ -114,7 +114,7 @@ $keteranganTim = static function (array $nomor): array {
         <p class="lomba-pengantar">
             Kelompok umur ditentukan dari tahun lahir atlet.
             <?php if ($tampilkanBiaya) : ?>
-                Biaya individu dihitung per atlet untuk tiap nomor yang diikuti; biaya beregu dihitung per tim.
+                Biaya individu dihitung per atlet untuk tiap nomor yang diikuti; biaya beregu dihitung per regu; satu sekolah boleh mendaftarkan beberapa regu di satu nomor beregu.
             <?php else : ?>
                 Rincian biaya ditampilkan di bagian pembayaran saat mendaftar.
             <?php endif ?>
@@ -193,7 +193,7 @@ $keteranganTim = static function (array $nomor): array {
                                             $info  = $keteranganTim($nomor);
 
                                             if ($tampilkanBiaya) {
-                                                $info[] = ['ikon' => 'rupiah', 'teks' => $teksBiaya($nomor['biaya_beregu'], 'per tim', 'Biaya tim segera diumumkan'), 'kelas' => 'lomba-biaya-beregu'];
+                                                $info[] = ['ikon' => 'rupiah', 'teks' => $teksBiaya($nomor['biaya_beregu'], 'per regu', 'Biaya regu segera diumumkan'), 'kelas' => 'lomba-biaya-beregu'];
                                             }
                                             ?>
                                             <li>

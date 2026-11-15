@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Pendaftaran\Regu;
 use CodeIgniter\Model;
 
 /**
@@ -47,7 +48,7 @@ class NomorLombaModel extends Model
      *
      * @var list<string>
      */
-    public const KOLOM_TIM = ['jumlah_inti', 'batas_anggota', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu'];
+    public const KOLOM_TIM = ['jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu'];
 
     /**
      * Isian yang terkunci begitu nomor dipakai atlet atau tim (F6-07), dengan
@@ -77,7 +78,7 @@ class NomorLombaModel extends Model
     protected $useAutoIncrement = true;
     protected $allowedFields    = [
         'kelompok_umur_id', 'nama', 'jenis', 'kategori',
-        'jumlah_inti', 'batas_anggota', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu',
+        'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu',
         'urutan', 'aktif',
     ];
 
@@ -97,7 +98,7 @@ class NomorLombaModel extends Model
      *
      * @param array<string, mixed> $mentah
      *
-     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jumlah_inti: string, batas_anggota: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string}
+     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string}
      */
     public static function rapikanIsian(array $mentah): array
     {
@@ -110,6 +111,7 @@ class NomorLombaModel extends Model
             'kategori'         => $teks('kategori'),
             'jumlah_inti'      => $teks('jumlah_inti'),
             'batas_anggota'    => $teks('batas_anggota'),
+            'regu_maksimal'    => $teks('regu_maksimal'),
             'jumlah_putra'     => $teks('jumlah_putra'),
             'jumlah_putri'     => $teks('jumlah_putri'),
             'biaya_beregu'     => $teks('biaya_beregu'),
@@ -195,6 +197,7 @@ class NomorLombaModel extends Model
             'kategori'         => $isian['kategori'],
             'jumlah_inti'      => $angka($isian['jumlah_inti']),
             'batas_anggota'    => $angka($isian['batas_anggota']),
+            'regu_maksimal'    => $angka($isian['regu_maksimal'] ?? ''),
             'jumlah_putra'     => $angka($isian['jumlah_putra']),
             'jumlah_putri'     => $angka($isian['jumlah_putri']),
             'biaya_beregu'     => $isian['biaya_beregu'] === '' ? null : angka_rupiah($isian['biaya_beregu']),
@@ -214,7 +217,7 @@ class NomorLombaModel extends Model
     {
         $isian = [];
 
-        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jumlah_inti', 'batas_anggota', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan'] as $kolom) {
+        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan'] as $kolom) {
             $isian[$kolom] = (string) ($baris[$kolom] ?? '');
         }
 
@@ -372,6 +375,13 @@ class NomorLombaModel extends Model
             $galat['batas_anggota'] = "Batas anggota harus angka {$batas}, misalnya 6.";
         } elseif ($inti !== null && $anggota < $inti) {
             $galat['batas_anggota'] = "Batas anggota ({$anggota}) kurang dari jumlah inti ({$inti}). Tulis {$inti} atau lebih.";
+        }
+
+        // Regu per sekolah paling banyak (K105); kosong = tidak dibatasi.
+        $regu = $isian['regu_maksimal'] ?? '';
+
+        if ($regu !== '' && self::angka($regu, 1, Regu::PALING_BANYAK) === null) {
+            $galat['regu_maksimal'] = 'Regu per sekolah harus angka 1 sampai ' . Regu::PALING_BANYAK . ', misalnya 3 (Regu A, B, C). Kosongkan bila tidak dibatasi.';
         }
 
         $biaya = angka_rupiah($isian['biaya_beregu']);

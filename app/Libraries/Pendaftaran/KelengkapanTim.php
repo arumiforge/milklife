@@ -5,15 +5,20 @@ namespace App\Libraries\Pendaftaran;
 use App\Models\NomorLombaModel;
 
 /**
- * Kelengkapan tim beregu (rancangan 6.6; K07, K09, K10).
+ * Kelengkapan satu regu beregu (rancangan 6.6; K09, K10, K105).
  *
- * Tim baru: anggota paling sedikit jumlah inti dan paling banyak batas
- * anggota; nomor mix juga harus punya putra dan putri minimal. Tim susulan
- * (sekolah sudah punya tim di nomor itu dari pendaftaran sebelumnya): hanya
- * menambah anggota, jadi cukup anggota lama + baru tidak melewati batas.
+ * Anggota regu (lama dari pendaftaran sebelumnya ditambah yang baru) paling
+ * banyak batas anggota. Atlet inti harus **tepat** sejumlah inti nomor itu;
+ * nomor mix juga harus punya putra dan putri minimal di antara atlet inti.
  *
- *     KelengkapanTim::periksa($nomor, ['L', 'L', 'P']);          // list pesan, [] bila lengkap
- *     KelengkapanTim::periksa($nomor, ['L'], anggotaLama: 4);    // susulan
+ * Mode longgar (admin mengubah regu yang sudah terdaftar): inti boleh kurang
+ * dari jumlah inti supaya perubahan lain tetap bisa disimpan, tetapi tidak
+ * boleh lebih; syarat mix diperiksa bila inti sudah lengkap.
+ *
+ *     $anggota = [['jenis_kelamin' => 'L', 'peran' => 'inti'], …];
+ *     KelengkapanTim::periksa($nomor, 'A', $anggota);                 // list pesan, [] bila lengkap
+ *     KelengkapanTim::periksa($nomor, 'A', $baru, lama: $anggotaLama); // susulan
+ *     KelengkapanTim::periksa($nomor, 'A', $anggota, longgar: true);   // admin, regu tersimpan
  *
  * `$nomor` adalah baris `nomor_lomba` (`nama`, `kategori`, `jumlah_inti`,
  * `batas_anggota`, `jumlah_putra`, `jumlah_putri`).
@@ -21,46 +26,63 @@ use App\Models\NomorLombaModel;
 final class KelengkapanTim
 {
     /**
-     * @param array<string, mixed> $nomor
-     * @param list<string>         $jenisKelamin Jenis kelamin (`L`/`P`) tiap anggota baru.
-     * @param int|null             $anggotaLama  Jumlah anggota tim dari pendaftaran sebelumnya;
-     *                                           `null` = tim baru.
+     * @param array<string, mixed>                                     $nomor
+     * @param list<array{jenis_kelamin: string|null, peran: string}>      $baru Anggota dari kiriman ini.
+     * @param list<array{jenis_kelamin: string|null, peran: string}>|null $lama Anggota regu dari pendaftaran
+     *                                                                         sebelumnya (inti yang diturunkan
+     *                                                                         sudah cadangan); `null` = regu baru.
      *
      * @return list<string>
      */
-    public static function periksa(array $nomor, array $jenisKelamin, ?int $anggotaLama = null): array
+    public static function periksa(array $nomor, string $regu, array $baru, ?array $lama = null, bool $longgar = false): array
     {
-        $nama   = 'Tim ' . NomorLombaModel::namaLengkap($nomor);
-        $jumlah = count($jenisKelamin);
+        $nama   = Regu::nama(NomorLombaModel::namaLengkap($nomor), $regu);
+        $semua  = array_merge($lama ?? [], $baru);
+        $jumlah = count($semua);
+        $jLama  = count($lama ?? []);
         $inti   = (int) ($nomor['jumlah_inti'] ?? 0);
         $batas  = (int) ($nomor['batas_anggota'] ?? 0);
+        $pesan  = [];
 
-        if ($anggotaLama !== null) {
-            $sisa = max(0, $batas - $anggotaLama);
-
-            if ($anggotaLama + $jumlah > $batas) {
-                return ["{$nama} sudah punya {$anggotaLama} atlet dari pendaftaran sebelumnya, dan paling banyak {$batas} atlet. "
-                    . ($sisa === 0 ? 'Tim ini sudah penuh; hapus nomor ini dari atlet tambahan.' : "Atlet tambahan paling banyak {$sisa}; hapus " . ($anggotaLama + $jumlah - $batas) . ' atlet dari nomor ini.')];
+        if ($jumlah > $batas) {
+            if ($lama !== null) {
+                $sisa    = max(0, $batas - $jLama);
+                $pesan[] = "{$nama} sudah punya {$jLama} atlet dari pendaftaran sebelumnya, dan paling banyak {$batas} atlet. "
+                    . ($sisa === 0
+                        ? 'Regu ini sudah penuh; pilih regu lain untuk atlet tambahan.'
+                        : "Atlet tambahan paling banyak {$sisa}; pindahkan " . ($jumlah - $batas) . ' atlet ke regu lain atau hapus dari nomor ini.');
+            } else {
+                $pesan[] = "{$nama} punya {$jumlah} atlet, padahal paling banyak {$batas}. Pindahkan " . ($jumlah - $batas) . ' atlet ke regu lain atau hapus dari nomor ini.';
             }
-
-            return [];
         }
 
-        $pesan = [];
+        $atletInti = array_values(array_filter($semua, static fn (array $a): bool => ($a['peran'] ?? '') === Regu::INTI));
+        $adaInti   = count($atletInti);
+        $intiLama  = count(array_filter($lama ?? [], static fn (array $a): bool => ($a['peran'] ?? '') === Regu::INTI));
+        $keterangan = $lama !== null && $intiLama > 0
+            ? " ({$intiLama} di antaranya dari " . ($longgar ? 'pendaftaran lain sekolah ini' : 'pendaftaran sebelumnya') . ')'
+            : '';
 
-        if ($jumlah < $inti) {
-            $pesan[] = "{$nama} baru punya {$jumlah} atlet. Tambah " . ($inti - $jumlah) . " atlet lagi; tim ini minimal {$inti} atlet.";
-        } elseif ($jumlah > $batas) {
-            $pesan[] = "{$nama} punya {$jumlah} atlet, padahal paling banyak {$batas}. Hapus " . ($jumlah - $batas) . ' atlet dari nomor ini.';
+        if ($adaInti > $inti) {
+            // Admin (longgar) mengubah inti pendaftaran lain lewat Ubah pendaftaran itu.
+            $pesan[] = "{$nama} punya {$adaInti} atlet inti{$keterangan}, padahal satu regu tepat {$inti} atlet inti. "
+                . 'Jadikan ' . ($adaInti - $inti) . ' atlet cadangan'
+                . ($lama !== null && $intiLama > 0
+                    ? ($longgar ? ' di pendaftaran ini, atau ubah dulu pendaftaran lain itu.' : ', atau pilih inti lama yang menjadi cadangan.')
+                    : '.');
+        } elseif ($adaInti < $inti && ! $longgar) {
+            $pesan[] = $jumlah < $inti
+                ? "{$nama} baru punya {$jumlah} atlet. Tambah " . ($inti - $jumlah) . " atlet lagi; satu regu tepat {$inti} atlet inti."
+                : "{$nama} baru punya {$adaInti} atlet inti{$keterangan}. Tandai " . ($inti - $adaInti) . " atlet lagi sebagai Inti; satu regu tepat {$inti} atlet inti.";
         }
 
-        if (($nomor['kategori'] ?? '') === 'mix') {
+        if (($nomor['kategori'] ?? '') === 'mix' && $adaInti === $inti) {
             $perlu = ['L' => (int) ($nomor['jumlah_putra'] ?? 0), 'P' => (int) ($nomor['jumlah_putri'] ?? 0)];
             $ada   = ['L' => 0, 'P' => 0];
 
-            foreach ($jenisKelamin as $jk) {
-                if (isset($ada[$jk])) {
-                    $ada[$jk]++;
+            foreach ($atletInti as $a) {
+                if (isset($ada[$a['jenis_kelamin'] ?? ''])) {
+                    $ada[$a['jenis_kelamin']]++;
                 }
             }
 
@@ -75,7 +97,8 @@ final class KelengkapanTim
             }
 
             if ($kurang !== []) {
-                $pesan[] = "{$nama} minimal {$perlu['L']} putra dan {$perlu['P']} putri; sekarang {$ada['L']} putra dan {$ada['P']} putri. Tambah " . implode(' dan ', $kurang) . '.';
+                $pesan[] = "{$nama}: atlet inti minimal {$perlu['L']} putra dan {$perlu['P']} putri; sekarang {$ada['L']} putra dan {$ada['P']} putri. "
+                    . 'Jadikan ' . implode(' dan ', $kurang) . ' sebagai inti.';
             }
         }
 

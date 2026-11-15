@@ -145,7 +145,7 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
 
                         <fieldset class="border rounded-3 p-3 mb-3" id="bagian-tim"<?= $beregu ? '' : ' hidden' ?>>
                             <legend class="float-none w-auto px-2 mb-0 fs-6 fw-semibold">Tim beregu</legend>
-                            <p class="form-text mt-0">Wajib diisi untuk nomor beregu. Tim yang didaftarkan sekolah harus berisi paling sedikit sejumlah anggota inti.</p>
+                            <p class="form-text mt-0">Wajib diisi untuk nomor beregu. Satu sekolah boleh mendaftarkan beberapa regu (Regu A, B, C, …); setiap regu berisi tepat sejumlah anggota inti, ditambah cadangan sampai batas anggota.</p>
 
                             <div class="row g-3">
                                 <div class="col-12 col-sm-6">
@@ -164,8 +164,18 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                                             value="<?= esc($isian['batas_anggota'], 'attr') ?>"<?= $tetap('batas_anggota') ?> aria-describedby="<?= $jelas('batas_anggota', 'batas_anggota-bantuan') ?>">
                                         <span class="input-group-text">orang</span>
                                     </div>
-                                    <div id="batas_anggota-bantuan" class="form-text">Paling banyak, termasuk cadangan. Sama dengan jumlah inti bila tanpa cadangan.</div>
+                                    <div id="batas_anggota-bantuan" class="form-text">Paling banyak per regu, termasuk cadangan. Sama dengan jumlah inti bila tanpa cadangan.</div>
                                     <?= $pesan('batas_anggota') ?>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label for="regu_maksimal" class="form-label">Regu per sekolah paling banyak</label>
+                                    <div class="input-group has-validation">
+                                        <input type="text" inputmode="numeric" class="form-control<?= $salah('regu_maksimal') ?>" id="regu_maksimal" name="regu_maksimal"
+                                            value="<?= esc($isian['regu_maksimal'] ?? '', 'attr') ?>" aria-describedby="<?= $jelas('regu_maksimal', 'regu_maksimal-bantuan') ?>">
+                                        <span class="input-group-text">regu</span>
+                                    </div>
+                                    <div id="regu_maksimal-bantuan" class="form-text">Contoh: 3 berarti Regu A, B, dan C. Kosongkan bila tidak dibatasi.</div>
+                                    <?= $pesan('regu_maksimal') ?>
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <label for="biaya_beregu" class="form-label">Biaya beregu</label>
@@ -174,14 +184,14 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                                         <input type="text" inputmode="numeric" class="form-control<?= $salah('biaya_beregu') ?>" id="biaya_beregu" name="biaya_beregu"
                                             value="<?= esc($isian['biaya_beregu'], 'attr') ?>" aria-describedby="<?= $jelas('biaya_beregu', 'biaya_beregu-bantuan') ?>">
                                     </div>
-                                    <div id="biaya_beregu-bantuan" class="form-text">Per tim, tanpa titik. Contoh: 100000.</div>
+                                    <div id="biaya_beregu-bantuan" class="form-text">Per regu, tanpa titik. Contoh: 100000.</div>
                                     <?= $pesan('biaya_beregu') ?>
                                 </div>
                             </div>
 
                             <div id="bagian-mix" class="mt-3"<?= $mix ? '' : ' hidden' ?>>
                                 <p class="fw-semibold mb-1">Nomor mix</p>
-                                <p class="form-text mt-0">Jumlah putra dan putri paling sedikit dalam satu tim. Jumlah keduanya tidak boleh lebih dari jumlah inti.</p>
+                                <p class="form-text mt-0">Jumlah putra dan putri paling sedikit di antara anggota inti satu regu. Jumlah keduanya tidak boleh lebih dari jumlah inti.</p>
                                 <div class="row g-3">
                                     <div class="col-12 col-sm-6">
                                         <label for="jumlah_putra" class="form-label">Putra minimal</label>

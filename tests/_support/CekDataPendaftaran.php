@@ -96,6 +96,9 @@ trait CekDataPendaftaran
         $t('penanggung_jawab', ['pendaftaran_id' => $p3, 'nama' => 'Pak <i>Uji</i>', 'nomor_wa' => '081200000003']);
         $atlet($p3, 'GILANG <SCRIPT>', '9900000006', [$lari => 150000]);
 
+        // Regu A, inti menurut urutan daftar (K105): FAJAR (susulan) menjadi cadangan.
+        \App\Libraries\Pendaftaran\PeranAwalRegu::isi($this->db);
+
         return ['ku' => $ku, 'lari' => $lari, 'lompat' => $lompat, 'estafet' => $estafet];
     }
 }

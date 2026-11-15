@@ -45,6 +45,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             'kategori'         => ["enum('putra','putri','mix')", false, null],
             'jumlah_inti'      => ['tinyint unsigned', true, null],
             'batas_anggota'    => ['tinyint unsigned', true, null],
+            'regu_maksimal'    => ['tinyint unsigned', true, null],
             'jumlah_putra'     => ['tinyint unsigned', true, null],
             'jumlah_putri'     => ['tinyint unsigned', true, null],
             'biaya_beregu'     => ['int unsigned', true, null],
@@ -95,6 +96,8 @@ final class MigrasiStrukturTest extends UjiBasisData
             'atlet_id'       => ['int unsigned', false, null],
             'nomor_lomba_id' => ['int unsigned', false, null],
             'biaya'          => ['int unsigned', true, null],
+            'regu'           => ['char(1)', true, null],
+            'peran'          => ['varchar(8)', true, null],
             'dibuat_pada'    => ['datetime', true, null],
             'diubah_pada'    => ['datetime', true, null],
         ],
@@ -102,6 +105,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             'id'             => ['int unsigned', false, null],
             'pendaftaran_id' => ['int unsigned', false, null],
             'nomor_lomba_id' => ['int unsigned', false, null],
+            'regu'           => ['char(1)', false, 'A'],
             'biaya_tim'      => ['int unsigned', false, null],
             'dibuat_pada'    => ['datetime', true, null],
             'diubah_pada'    => ['datetime', true, null],
@@ -300,7 +304,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             'atlet:nisn',
             'atlet:nomor_dada',
             'atlet_nomor:atlet_id,nomor_lomba_id',
-            'pendaftaran_beregu:pendaftaran_id,nomor_lomba_id',
+            'pendaftaran_beregu:pendaftaran_id,nomor_lomba_id,regu',
         ] as $harapan) {
             $this->assertContains($harapan, $unik, "Kunci unik {$harapan}.");
         }

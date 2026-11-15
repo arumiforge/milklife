@@ -130,8 +130,8 @@ final class BuktiPendaftaranTest extends UjiBasisData
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000226')))->html();
         // Lunas: nomor dada anggota tim ikut dicetak (K87, menggantikan K52).
-        $this->assertStringContainsString('<td>FAJAR REKAAN (1001)</td>', $html);
-        $this->assertStringContainsString('Tanpa biaya (tim sudah terdaftar)', $html);
+        $this->assertStringContainsString('<td>FAJAR REKAAN (1001) [cadangan]</td>', $html);
+        $this->assertStringContainsString('Tanpa biaya (regu sudah terdaftar)', $html);
         $this->assertStringContainsString('Tidak ada nomor individu', $html);
         $this->assertStringContainsString('stempel stempel-lunas', $html);
         $this->assertStringNotContainsString('var:logo', $html, 'Tanpa logo bila belum diunggah.');

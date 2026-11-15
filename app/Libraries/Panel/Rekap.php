@@ -18,9 +18,10 @@ use InvalidArgumentException;
  *
  * - Saringan status (K60): `null` = semua, `lunas`, atau `menunggu`, menurut
  *   status pendaftaran tiap atlet. Rekap keuangan selalu memuat keduanya.
- * - Satu tim = satu sekolah di satu nomor beregu: anggota dari pendaftaran
- *   susulan ber-NPSN sama ikut tim yang sama (K07). Sekolah tanpa NPSN
- *   dihitung per pendaftaran.
+ * - Satu tim = satu regu sekolah di satu nomor beregu (K105): anggota dari
+ *   pendaftaran susulan ber-NPSN sama di regu yang sama ikut regu itu.
+ *   Sekolah tanpa NPSN dihitung per pendaftaran. Rekap tim beregu menandai
+ *   regu yang intinya kurang dari jumlah inti nomornya.
  * - Rekap keuangan punya bagian kedua `tim_tanpa_pembayar` (`kolom`,
  *   `baris`) dari `TimTanpaPembayar` (K68), ikut di halaman, Excel (lembar
  *   kedua), dan PDF; `ringkasan()['tim_tanpa_pembayar']` jumlahnya.
@@ -87,7 +88,7 @@ final class Rekap
 
         $atlet = $this->baca('SELECT COUNT(*) AS n FROM {atlet}')[0]['n'];
         $tim   = $this->baca(
-            'SELECT COUNT(DISTINCT an.nomor_lomba_id, ' . self::SEKOLAH . ') AS n FROM {atlet_nomor} an'
+            'SELECT COUNT(DISTINCT an.nomor_lomba_id, an.regu, ' . self::SEKOLAH . ') AS n FROM {atlet_nomor} an'
             . " JOIN {atlet} a ON a.id = an.atlet_id JOIN {pendaftaran} p ON p.id = a.pendaftaran_id JOIN {nomor_lomba} nl ON nl.id = an.nomor_lomba_id AND nl.jenis = 'beregu'",
         )[0]['n'];
 
@@ -135,25 +136,37 @@ final class Rekap
     private function timBeregu(?string $status): array
     {
         $baris = $this->baca(
-            'SELECT MAX(ku.nama) AS kelompok_umur, MAX(CONCAT(nl.nama, \' \', nl.kategori)) AS nomor_lomba,'
+            'SELECT MAX(ku.nama) AS kelompok_umur, MAX(CONCAT(nl.nama, \' \', nl.kategori)) AS nomor_lomba, an.regu,'
             . ' MAX(p.nama_sekolah) AS nama_sekolah, MAX(p.kabupaten) AS kabupaten, COUNT(*) AS jumlah_anggota,'
-            . " GROUP_CONCAT(CONCAT_WS(' ', a.nomor_dada, a.nama) ORDER BY a.nomor_dada IS NULL, a.nomor_dada, a.id SEPARATOR ', ') AS anggota"
+            . " SUM(an.peran = 'inti') AS jumlah_inti, MAX(nl.jumlah_inti) AS inti_wajib,"
+            . " GROUP_CONCAT(CONCAT(CONCAT_WS(' ', a.nomor_dada, a.nama), IF(an.peran = 'inti', '', ' (cadangan)'))"
+            . " ORDER BY an.peran = 'inti' DESC, a.nomor_dada IS NULL, a.nomor_dada, a.id SEPARATOR ', ') AS anggota"
             . ' FROM {atlet_nomor} an JOIN {atlet} a ON a.id = an.atlet_id JOIN {pendaftaran} p ON p.id = a.pendaftaran_id'
             . " JOIN {nomor_lomba} nl ON nl.id = an.nomor_lomba_id AND nl.jenis = 'beregu' JOIN {kelompok_umur} ku ON ku.id = nl.kelompok_umur_id"
             . self::saring($status, 'WHERE')
-            . ' GROUP BY nl.id, ' . self::SEKOLAH
-            . ' ORDER BY MAX(ku.urutan), MAX(ku.id), MAX(nl.urutan), nl.id, nama_sekolah',
+            . ' GROUP BY nl.id, an.regu, ' . self::SEKOLAH
+            . ' ORDER BY MAX(ku.urutan), MAX(ku.id), MAX(nl.urutan), nl.id, nama_sekolah, an.regu',
             $status,
         );
+
+        $baris = array_map(static function (array $b): array {
+            $kurang = (int) $b['jumlah_inti'] < (int) $b['inti_wajib'];
+            unset($b['inti_wajib']);
+
+            return ['regu' => 'Regu ' . $b['regu'], 'jumlah_inti' => (int) $b['jumlah_inti'], 'keterangan' => $kurang ? 'Inti kurang' : ''] + $b;
+        }, $baris);
 
         return [
             'kolom' => self::kolom([
                 'kelompok_umur'  => 'Kelompok Umur',
                 'nomor_lomba'    => 'Nomor Lomba',
+                'regu'           => 'Regu',
                 'nama_sekolah'   => 'Sekolah',
                 'kabupaten'      => 'Kabupaten',
+                'jumlah_inti'    => ['judul' => 'Inti', 'jenis' => 'angka'],
                 'jumlah_anggota' => ['judul' => 'Jumlah Anggota', 'jenis' => 'angka'],
                 'anggota'        => 'Anggota',
+                'keterangan'     => 'Keterangan',
             ]),
             'baris'  => $baris,
             'jumlah' => null,
@@ -172,7 +185,7 @@ final class Rekap
         );
 
         $tim = array_column($this->baca(
-            'SELECT ' . self::SEKOLAH . ' AS kunci, COUNT(DISTINCT an.nomor_lomba_id) AS n FROM {atlet_nomor} an'
+            'SELECT ' . self::SEKOLAH . ' AS kunci, COUNT(DISTINCT an.nomor_lomba_id, an.regu) AS n FROM {atlet_nomor} an'
             . ' JOIN {atlet} a ON a.id = an.atlet_id JOIN {pendaftaran} p ON p.id = a.pendaftaran_id'
             . " JOIN {nomor_lomba} nl ON nl.id = an.nomor_lomba_id AND nl.jenis = 'beregu'"
             . self::saring($status, 'WHERE') . ' GROUP BY kunci',
@@ -207,7 +220,7 @@ final class Rekap
         $baris = $this->baca(
             "SELECT ku.nama, ({$atlet} AND a.jenis_kelamin = 'L'" . self::saring($status) . ") AS putra,"
             . " ({$atlet} AND a.jenis_kelamin = 'P'" . self::saring($status) . ') AS putri,'
-            . ' (SELECT COUNT(DISTINCT an.nomor_lomba_id, ' . self::SEKOLAH . ') FROM {atlet_nomor} an'
+            . ' (SELECT COUNT(DISTINCT an.nomor_lomba_id, an.regu, ' . self::SEKOLAH . ') FROM {atlet_nomor} an'
             . ' JOIN {atlet} a ON a.id = an.atlet_id JOIN {pendaftaran} p ON p.id = a.pendaftaran_id'
             . " JOIN {nomor_lomba} nl ON nl.id = an.nomor_lomba_id AND nl.jenis = 'beregu'"
             . ' WHERE nl.kelompok_umur_id = ku.id' . self::saring($status) . ') AS tim'
@@ -264,7 +277,7 @@ final class Rekap
                     'nama_sekolah'   => 'Sekolah',
                     'kabupaten'      => 'Kabupaten',
                     'jumlah_anggota' => ['judul' => 'Anggota', 'jenis' => 'angka'],
-                    'tarif'          => ['judul' => 'Biaya Tim Belum Ditagih', 'jenis' => 'rupiah'],
+                    'tarif'          => ['judul' => 'Biaya Regu Belum Ditagih', 'jenis' => 'rupiah'],
                     'pendaftaran'    => 'Pendaftaran Anggota',
                 ]),
                 'baris' => array_map(static fn (array $t): array => [

@@ -132,15 +132,15 @@ $tabel = static function (array $bagian, string $id, string $keterangan) use ($s
     <?php if (isset($rekap['tim_tanpa_pembayar'])) : ?>
         <section class="card mt-4" aria-labelledby="judul-tim-tanpa-pembayar">
             <div class="card-body">
-                <h2 id="judul-tim-tanpa-pembayar" class="h5 mb-1">Tim tanpa pembayar biaya tim</h2>
+                <h2 id="judul-tim-tanpa-pembayar" class="h5 mb-1">Regu tanpa pembayar biaya regu</h2>
                 <?php if ($rekap['tim_tanpa_pembayar']['baris'] === []) : ?>
-                    <p class="text-body-secondary mb-0" id="tim-tanpa-pembayar-kosong">Semua tim beregu sudah punya pembayar biaya tim.</p>
+                    <p class="text-body-secondary mb-0" id="tim-tanpa-pembayar-kosong">Semua regu beregu sudah punya pembayar biaya regu.</p>
                 <?php else : ?>
                     <p class="small text-body-secondary mb-3">
-                        Pendaftaran yang membayar biaya tim ini sudah dihapus atau diubah, dan biayanya tidak dipindah otomatis.
-                        Tagihkan lewat Ubah di salah satu pendaftaran anggotanya dengan mencentang "Bebankan biaya tim ke pendaftaran ini".
+                        Pendaftaran yang membayar biaya regu ini sudah dihapus atau diubah, dan biayanya tidak dipindah otomatis.
+                        Tagihkan lewat Ubah di salah satu pendaftaran anggotanya dengan mencentang "Bebankan biaya regu ke pendaftaran ini".
                     </p>
-                    <?= $tabel($rekap['tim_tanpa_pembayar'], 'tabel-tim-tanpa-pembayar', 'Tim tanpa pembayar biaya tim') ?>
+                    <?= $tabel($rekap['tim_tanpa_pembayar'], 'tabel-tim-tanpa-pembayar', 'Regu tanpa pembayar biaya regu') ?>
                 <?php endif ?>
             </div>
         </section>

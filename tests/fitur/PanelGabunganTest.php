@@ -156,6 +156,7 @@ final class PanelGabunganTest extends UjiBasisData
                 'tanggal_lahir' => $a['tanggal_lahir'],
                 'jenis_kelamin' => $a['jenis_kelamin'],
                 'nomor'         => array_map('strval', $a['nomor']),
+                'regu'          => $a['regu'],
             ], $isian['atlet']),
         ];
     }
@@ -208,12 +209,12 @@ final class PanelGabunganTest extends UjiBasisData
         // B: susulan dari NPSN yang sama, tambahan anggota tim tanpa biaya tim.
         $kirimB            = self::kirimanContoh();
         $kirimB['sekolah'] = $kirimA['sekolah'];
-        $kirimB['atlet']   = [self::atletContoh('9900000005', [20, 12])];
+        $kirimB['atlet']   = [self::atletContoh('9900000005', [20, 12]) + ['regu' => [20 => ['regu' => 'A', 'peran' => 'cadangan']]]];
 
         // Tanpa konfirmasi tim susulan ditolak (K57).
         $tolak = $this->kirimWizard('pendaftaran/simpan', $kirimB);
         $tolak->assertStatus(422);
-        $this->assertSame(['konfirmasi.' . $this->idInduk['kanga']], array_column($this->json($tolak)['galat'], 'jalur'));
+        $this->assertSame(['konfirmasi.' . $this->idInduk['kanga'] . ':A'], array_column($this->json($tolak)['galat'], 'jalur'));
 
         $kirimB['konfirmasi_susulan'] = [20];
         $b                            = $this->simpanWizard($kirimB);
@@ -277,6 +278,7 @@ final class PanelGabunganTest extends UjiBasisData
         $isian['atlet'][] = [
             'id' => '', 'nama' => 'eko karangan 06', 'nisn' => '9900000006', 'tanggal_lahir' => '2017-02-03',
             'jenis_kelamin' => 'L', 'nomor' => [(string) $this->idInduk['kanga']],
+            'regu' => [$this->idInduk['kanga'] => ['regu' => 'A', 'peran' => 'cadangan']],
         ];
         $this->assertBerhasilDialihkan(
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $b['pid'], $isian),

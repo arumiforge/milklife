@@ -12,14 +12,17 @@
  * - F6-04: tombol Ubah di deretan tombol tindakan (menuju `admin/pendaftaran/<id>/ubah`).
  * - F6-03: satu baris include `admin/pendaftaran/_bukti_bayar` setelah kartu biaya.
  *
- * Tim tanpa pembayar (K68): peringatan di kartu tim yang ditandai, dan
- * jendela hapus menyebut tim yang akan kehilangan pembayarnya.
+ * Regu tanpa pembayar (K68): peringatan di kartu regu yang ditandai, dan
+ * jendela hapus menyebut regu yang akan kehilangan pembayarnya. Regu yang
+ * intinya kurang dari jumlah inti juga diberi peringatan (K105).
  *
  * @var CodeIgniter\View\View                $this
  * @var array<string, mixed>                 $p
- * @var array<int, array<string, mixed>>     $timTanpaPembayar `TimTanpaPembayar::untukPendaftaran()`
+ * @var array<string, array<string, mixed>>  $timTanpaPembayar `TimTanpaPembayar::untukPendaftaran()`, kunci "nomor:regu"
  * @var string                               $kalimatTimHapus  `TimTanpaPembayar::kalimatDitinggalkan()`, boleh kosong
  */
+
+use App\Libraries\Pendaftaran\Regu;
 
 $alamat      = 'admin/pendaftaran/' . (int) $p['id'];
 $lunas       = $p['status'] === 'lunas';
@@ -250,7 +253,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                                     <li>
                                                         <?= esc($nomor['nama']) ?>
                                                         <?php if ($nomor['jenis'] === 'beregu') : ?>
-                                                            <span class="badge rounded-pill text-bg-light border">Beregu</span>
+                                                            <span class="badge rounded-pill text-bg-light border">Regu <?= esc((string) $nomor['regu']) ?> · <?= esc(Regu::labelPeran($nomor['peran'])) ?></span>
                                                         <?php endif ?>
                                                     </li>
                                                 <?php endforeach; ?>
@@ -276,10 +279,10 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
     <?php if ($p['beregu'] !== []) : ?>
         <section class="card mb-4" aria-labelledby="judul-beregu">
             <div class="card-body p-3 p-lg-4">
-                <h2 id="judul-beregu" class="h5 mb-3">Tim beregu</h2>
+                <h2 id="judul-beregu" class="h5 mb-3">Regu beregu</h2>
                 <div class="row g-3">
                     <?php foreach ($p['beregu'] as $tim) : ?>
-                        <?php $nomorId = (int) $tim['nomor_lomba_id'] ?>
+                        <?php $kunci = (string) $tim['kunci'] ?>
                         <div class="col-12 col-lg-6">
                             <div class="border rounded p-3 h-100 tim-beregu">
                                 <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
@@ -287,21 +290,34 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                     <span class="text-nowrap">
                                         <?= (int) $tim['biaya_tim'] > 0
                                             ? esc(rupiah((int) $tim['biaya_tim']))
-                                            : '<span class="text-body-secondary">Tanpa biaya tim (tambahan anggota tim yang sudah terdaftar)</span>' ?>
+                                            : '<span class="text-body-secondary">Tanpa biaya regu (tambahan anggota regu yang sudah terdaftar)</span>' ?>
                                     </span>
                                 </div>
-                                <?php if (isset($timTanpaPembayar[$nomorId])) : ?>
-                                    <div class="alert alert-warning small py-2 px-3 mb-2 tim-tanpa-pembayar" data-nomor="<?= (int) $nomorId ?>">
+                                <?php if (isset($timTanpaPembayar[$kunci])) : ?>
+                                    <div class="alert alert-warning small py-2 px-3 mb-2 tim-tanpa-pembayar" data-regu="<?= esc($kunci, 'attr') ?>">
                                         <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-                                        Tim sekolah ini tidak punya pembayar biaya tim (<?= esc(rupiah((int) $timTanpaPembayar[$nomorId]['tarif'])) ?>), karena pendaftaran yang membayarnya sudah dihapus atau diubah.
-                                        Tagihkan lewat <a href="<?= site_url($alamat . '/ubah') ?>">Ubah</a> dengan mencentang "Bebankan biaya tim ke pendaftaran ini".
+                                        Regu sekolah ini tidak punya pembayar biaya regu (<?= esc(rupiah((int) $timTanpaPembayar[$kunci]['tarif'])) ?>), karena pendaftaran yang membayarnya sudah dihapus atau diubah.
+                                        Tagihkan lewat <a href="<?= site_url($alamat . '/ubah') ?>">Ubah</a> dengan mencentang "Bebankan biaya regu ke pendaftaran ini".
                                     </div>
                                 <?php endif ?>
-                                <p class="mb-1 small text-body-secondary"><?= count($tim['anggota']) ?> anggota</p>
+                                <?php if ($tim['kurang_inti']) : ?>
+                                    <div class="alert alert-warning small py-2 px-3 mb-2 regu-kurang-inti" data-regu="<?= esc($kunci, 'attr') ?>">
+                                        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                                        Regu ini baru punya <?= (int) $tim['inti_regu'] ?> atlet inti dari <?= (int) $tim['jumlah_inti'] ?>.
+                                        Tandai atlet cadangan sebagai Inti lewat Ubah, atau hubungi sekolahnya.
+                                    </div>
+                                <?php endif ?>
+                                <p class="mb-1 small text-body-secondary">
+                                    <?= count($tim['anggota']) ?> anggota di pendaftaran ini
+                                    <?php if ((int) $tim['anggota_regu'] !== count($tim['anggota'])) : ?>
+                                        · seluruh regu <?= (int) $tim['anggota_regu'] ?> atlet, <?= (int) $tim['inti_regu'] ?> inti
+                                    <?php endif ?>
+                                </p>
                                 <ol class="mb-0 ps-3">
                                     <?php foreach ($tim['anggota'] as $anggota) : ?>
                                         <li>
                                             <?= esc($anggota['nama']) ?>
+                                            <span class="badge rounded-pill <?= $anggota['peran'] === Regu::INTI ? 'text-bg-primary' : 'text-bg-light border' ?>"><?= esc(Regu::labelPeran($anggota['peran'])) ?></span>
                                             <span class="text-body-secondary small">(<?= esc($anggota['nisn']) ?><?= $anggota['nomor_dada'] === null ? '' : ', nomor dada ' . esc($anggota['nomor_dada']) ?>)</span>
                                         </li>
                                     <?php endforeach; ?>

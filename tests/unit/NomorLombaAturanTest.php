@@ -248,6 +248,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             'kategori'         => 'mix',
             'jumlah_inti'      => 8,
             'batas_anggota'    => 10,
+            'regu_maksimal'    => null,
             'jumlah_putra'     => 4,
             'jumlah_putri'     => 4,
             'biaya_beregu'     => 150000,
@@ -274,7 +275,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
 
         $this->assertSame([
             'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri',
-            'jumlah_inti' => '4', 'batas_anggota' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
+            'jumlah_inti' => '4', 'batas_anggota' => '', 'regu_maksimal' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
             'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1',
         ], $isian);
 
@@ -306,5 +307,19 @@ final class NomorLombaAturanTest extends CIUnitTestCase
     {
         $this->assertSame('Lari 60 m putra', NomorLombaModel::namaLengkap(['nama' => 'Lari 60 m', 'kategori' => 'putra']));
         $this->assertSame('Estafet 8 × 50 m mix', NomorLombaModel::namaLengkap(['nama' => 'Estafet 8 × 50 m', 'kategori' => 'mix']));
+    }
+
+    public function testReguPerSekolah(): void
+    {
+        $this->assertSame([], NomorLombaModel::periksaIsian(self::beregu(['kategori' => 'putra', 'regu_maksimal' => '3']), self::KU));
+        $this->assertSame([], NomorLombaModel::periksaIsian(self::beregu(['kategori' => 'putra', 'regu_maksimal' => '']), self::KU), 'Kosong = tidak dibatasi.');
+
+        foreach (['0', '27', 'tiga', '-1'] as $nilai) {
+            $galat = NomorLombaModel::periksaIsian(self::beregu(['kategori' => 'putra', 'regu_maksimal' => $nilai]), self::KU);
+            $this->assertSame(['regu_maksimal'], array_keys($galat), $nilai);
+        }
+
+        $this->assertSame(3, NomorLombaModel::untukDisimpan(self::beregu(['regu_maksimal' => '3']))['regu_maksimal']);
+        $this->assertSame('', NomorLombaModel::rapikanIsian(self::individu(['regu_maksimal' => '3']))['regu_maksimal']);
     }
 }

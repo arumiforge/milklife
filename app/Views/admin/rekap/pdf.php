@@ -93,7 +93,7 @@ $sel = static function (array $kolom, mixed $nilai): string {
 <?php endif ?>
 
 <?php if (isset($rekap['tim_tanpa_pembayar'])) : ?>
-    <h1>Tim Tanpa Pembayar Biaya Tim</h1>
+    <h1>Regu Tanpa Pembayar Biaya Regu</h1>
     <?php if ($rekap['tim_tanpa_pembayar']['baris'] === []) : ?>
         <div class="keterangan">Semua tim beregu sudah punya pembayar biaya tim.</div>
     <?php else : ?>

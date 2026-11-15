@@ -6,6 +6,8 @@ use App\Libraries\Jenjang;
 use App\Libraries\NomorWa;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\Kabupaten;
+use App\Libraries\Pendaftaran\DataIndukPendaftaran;
+use App\Libraries\Pendaftaran\Regu;
 use App\Models\NomorLombaModel;
 use App\Models\PendaftaranModel;
 use Closure;
@@ -161,11 +163,14 @@ final class DataPanelPendaftaran
      *             'id' => 11, 'nama' => '…', 'nisn' => '…', 'tanggal_lahir' => '2017-04-12',
      *             'jenis_kelamin' => 'L', 'jenis_kelamin_label' => 'Putra',
      *             'kelompok_umur' => 'KU 10', 'nomor_dada' => null,
-     *             'nomor_lomba' => [['nama' => 'Lari 60 m putra', 'jenis' => 'individu', 'biaya' => 150000]],
+     *             'nomor_lomba' => [['nama' => 'Lari 60 m putra', 'jenis' => 'individu', 'biaya' => 150000, 'regu' => null, 'peran' => null]],
      *         ]],
-     *         'beregu' => [[
-     *             'nomor_lomba_id' => 12, 'nomor_lomba' => "Kanga's Escape putra", 'biaya_tim' => 100000,   // 0 atau null: tanpa biaya tim (susulan)
-     *             'anggota' => [['nama' => '…', 'nisn' => '…', 'nomor_dada' => null]],
+     *         'beregu' => [[   // satu per regu (K105)
+     *             'nomor_lomba_id' => 12, 'regu' => 'A', 'kunci' => '12:A',
+     *             'nomor_lomba' => "Kanga's Escape putra Regu A", 'biaya_tim' => 100000,   // 0 atau null: tanpa biaya regu (susulan)
+     *             'anggota' => [['nama' => '…', 'nisn' => '…', 'nomor_dada' => null, 'peran' => 'inti']],   // inti dulu
+     *             'jumlah_inti' => 4, 'inti_regu' => 3, 'anggota_regu' => 5,   // seluruh regu sekolah (semua pendaftaran ber-NPSN sama)
+     *             'kurang_inti' => true,   // inti seluruh regu kurang dari jumlah inti nomor
      *         ]],
      *         'jumlah_atlet' => 2, 'tanpa_nomor_dada' => 2,
      *     ]
@@ -194,7 +199,7 @@ final class DataPanelPendaftaran
             ->get()->getResultArray();
 
         $nomor = $this->db->table('atlet_nomor an')
-            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya, nl.nama, nl.kategori, nl.jenis, nl.urutan')
+            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya, an.regu, an.peran, nl.nama, nl.kategori, nl.jenis, nl.urutan, nl.jumlah_inti')
             ->join('atlet a', 'a.id = an.atlet_id')
             ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
             ->where('a.pendaftaran_id', $id)
@@ -202,7 +207,7 @@ final class DataPanelPendaftaran
             ->get()->getResultArray();
 
         $tim = $this->db->table('pendaftaran_beregu pb')
-            ->select('pb.nomor_lomba_id, pb.biaya_tim, nl.nama, nl.kategori, nl.urutan')
+            ->select('pb.nomor_lomba_id, pb.regu, pb.biaya_tim, nl.nama, nl.kategori, nl.urutan, nl.jumlah_inti')
             ->join('nomor_lomba nl', 'nl.id = pb.nomor_lomba_id')
             ->where('pb.pendaftaran_id', $id)
             ->get()->getResultArray();
@@ -247,11 +252,16 @@ final class DataPanelPendaftaran
         $regu = [];
 
         foreach ($tim as $baris) {
-            $regu[(int) $baris['nomor_lomba_id']] = [
-                'nomor_lomba' => NomorLombaModel::namaLengkap($baris),
-                'biaya_tim'   => (int) $baris['biaya_tim'],
-                'anggota'     => [],
-                'urutan'      => [(int) $baris['urutan'], (int) $baris['nomor_lomba_id']],
+            $kunci        = Regu::kunci((int) $baris['nomor_lomba_id'], (string) $baris['regu']);
+            $regu[$kunci] = [
+                'nomor_lomba_id' => (int) $baris['nomor_lomba_id'],
+                'regu'           => (string) $baris['regu'],
+                'kunci'          => $kunci,
+                'nomor_lomba'    => Regu::nama(NomorLombaModel::namaLengkap($baris), (string) $baris['regu']),
+                'biaya_tim'      => (int) $baris['biaya_tim'],
+                'anggota'        => [],
+                'jumlah_inti'    => (int) $baris['jumlah_inti'],
+                'urutan'         => [(int) $baris['urutan'], (int) $baris['nomor_lomba_id'], (string) $baris['regu']],
             ];
         }
 
@@ -261,30 +271,55 @@ final class DataPanelPendaftaran
         foreach ($nomor as $baris) {
             $atletId = (int) $baris['atlet_id'];
 
+            $beregu = $baris['jenis'] === 'beregu';
+            $label  = $beregu && Regu::sah($baris['regu']) ? (string) $baris['regu'] : 'A';
+
             $nomorPerAtlet[$atletId][] = [
                 'nama'  => NomorLombaModel::namaLengkap($baris),
                 'jenis' => (string) $baris['jenis'],
                 'biaya' => $baris['biaya'] === null ? null : (int) $baris['biaya'],
+                'regu'  => $beregu ? $label : null,
+                'peran' => $beregu ? ($baris['peran'] === Regu::INTI ? Regu::INTI : Regu::CADANGAN) : null,
             ];
 
-            if ($baris['jenis'] !== 'beregu') {
+            if (! $beregu) {
                 continue;
             }
 
-            $n = (int) $baris['nomor_lomba_id'];
-            $a = $atletPerId[$atletId];
+            $n     = (int) $baris['nomor_lomba_id'];
+            $kunci = Regu::kunci($n, $label);
+            $a     = $atletPerId[$atletId];
 
-            $regu[$n] ??= [
-                'nomor_lomba' => NomorLombaModel::namaLengkap($baris),
-                'biaya_tim'   => null,
-                'anggota'     => [],
-                'urutan'      => [(int) $baris['urutan'], $n],
+            $regu[$kunci] ??= [
+                'nomor_lomba_id' => $n,
+                'regu'           => $label,
+                'kunci'          => $kunci,
+                'nomor_lomba'    => Regu::nama(NomorLombaModel::namaLengkap($baris), $label),
+                'biaya_tim'      => null,
+                'anggota'        => [],
+                'jumlah_inti'    => (int) $baris['jumlah_inti'],
+                'urutan'         => [(int) $baris['urutan'], $n, $label],
             ];
-            $regu[$n]['anggota'][] = [
+            $regu[$kunci]['anggota'][] = [
                 'nama'       => (string) $a['nama'],
                 'nisn'       => (string) $a['nisn'],
                 'nomor_dada' => $a['nomor_dada'],
+                'peran'      => $baris['peran'] === Regu::INTI ? Regu::INTI : Regu::CADANGAN,
             ];
+        }
+
+        // Keadaan seluruh regu sekolah: anggota dari pendaftaran lain ber-NPSN sama ikut dihitung.
+        $sekolah = $hasil['npsn'] !== null ? (new DataIndukPendaftaran())->dataSekolah($hasil['npsn'])['tim'] : [];
+
+        foreach ($regu as $kunci => $r) {
+            $anggota = $hasil['npsn'] !== null
+                ? ($sekolah[$r['nomor_lomba_id']][$r['regu']] ?? [])
+                : $r['anggota'];
+
+            usort($regu[$kunci]['anggota'], static fn (array $x, array $y): int => ($x['peran'] === Regu::INTI ? 0 : 1) <=> ($y['peran'] === Regu::INTI ? 0 : 1));
+            $regu[$kunci]['anggota_regu'] = count($anggota);
+            $regu[$kunci]['inti_regu']    = count(array_filter($anggota, static fn (array $x): bool => $x['peran'] === Regu::INTI));
+            $regu[$kunci]['kurang_inti']  = $regu[$kunci]['inti_regu'] < $r['jumlah_inti'];
         }
 
         foreach ($atlet as $a) {
@@ -307,12 +342,11 @@ final class DataPanelPendaftaran
 
         usort($regu, static fn (array $x, array $y): int => $x['urutan'] <=> $y['urutan']);
 
-        $hasil['beregu'] = array_map(static function (array $r): array {
-            $r = ['nomor_lomba_id' => $r['urutan'][1]] + $r;
+        $hasil['beregu'] = array_values(array_map(static function (array $r): array {
             unset($r['urutan']);
 
             return $r;
-        }, $regu);
+        }, $regu));
 
         return $hasil;
     }

@@ -351,38 +351,129 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertSame([], self::periksa($kiriman, [], ['aturan' => ['nomor_individu_maksimal' => 3, 'atlet_per_nomor_maksimal' => null]])['galat']);
     }
 
-    // Tim
+    // Regu (K105)
 
     /**
+     * Atlet Kanga's Escape di satu regu: `$inti` atlet pertama inti (bawaan:
+     * sampai 4), sisanya cadangan.
+     *
      * @return list<array<string, mixed>>
      */
-    private static function timKanga(int $jumlah, int $mulai = 10): array
+    private static function timKanga(int $jumlah, int $mulai = 10, string $regu = 'A', ?int $inti = null): array
     {
-        $atlet = [];
+        $inti ??= min($jumlah, 4);
+        $atlet  = [];
 
         for ($i = 0; $i < $jumlah; $i++) {
-            $atlet[] = self::atletContoh('99000000' . ($mulai + $i), [20]);
+            $atlet[] = self::atletContoh('99000000' . ($mulai + $i), [20]) + [
+                'regu' => [20 => ['regu' => $regu, 'peran' => $i < $inti ? 'inti' : 'cadangan']],
+            ];
         }
 
         return $atlet;
     }
 
+    /**
+     * Regu lama dari pendaftaran sebelumnya: `$inti` inti lalu cadangan.
+     *
+     * @return list<array{id: int, nama: string, jenis_kelamin: string, peran: string}>
+     */
+    private static function reguLama(int $jumlah, int $inti = 4, int $idAwal = 100): array
+    {
+        $hasil = [];
+
+        for ($i = 0; $i < $jumlah; $i++) {
+            $hasil[] = ['id' => $idAwal + $i, 'nama' => 'LAMA ' . $i, 'jenis_kelamin' => 'L', 'peran' => $i < $inti ? 'inti' : 'cadangan'];
+        }
+
+        return $hasil;
+    }
+
     public function testTimBaruLengkapDibayarPerTim(): void
     {
         $kiriman          = self::kirimanContoh();
-        $kiriman['atlet'] = self::timKanga(4);
+        $kiriman['atlet'] = self::timKanga(5);
 
         $hasil = self::periksa($kiriman);
 
         $this->assertSame([], $hasil['galat']);
-        $this->assertSame([['nomor_lomba_id' => 20, 'biaya_tim' => 100000]], $hasil['data']['beregu']);
-        $this->assertSame([['nomor_lomba_id' => 20, 'biaya' => null]], $hasil['data']['atlet'][0]['nomor']);
+        $this->assertSame([['nomor_lomba_id' => 20, 'regu' => 'A', 'biaya_tim' => 100000]], $hasil['data']['beregu']);
+        $this->assertSame([['nomor_lomba_id' => 20, 'biaya' => null, 'regu' => 'A', 'peran' => 'inti']], $hasil['data']['atlet'][0]['nomor']);
+        $this->assertSame('cadangan', $hasil['data']['atlet'][4]['nomor'][0]['peran']);
         $this->assertSame(100000, $hasil['data']['subtotal_beregu']);
         $this->assertSame(0, $hasil['data']['subtotal_individu']);
+        $this->assertSame([], $hasil['data']['turun_cadangan']);
         $this->assertSame(
-            [['nomor' => "Kanga's Escape putra", 'kelompok_umur' => 'KU 10', 'biaya' => 100000, 'susulan' => false, 'anggota' => 4, 'anggota_lama' => null]],
+            [['nomor' => "Kanga's Escape putra", 'regu' => 'A', 'kelompok_umur' => 'KU 10', 'biaya' => 100000, 'susulan' => false,
+                'anggota' => 5, 'inti' => 4, 'cadangan' => 1, 'anggota_lama' => null, 'turun' => 0]],
             $hasil['rincian']['beregu'],
         );
+    }
+
+    public function testDuaReguDibayarPerRegu(): void
+    {
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = array_merge(self::timKanga(4, 10, 'B'), self::timKanga(6, 20, 'A'));
+
+        $hasil = self::periksa($kiriman);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame([
+            ['nomor_lomba_id' => 20, 'regu' => 'A', 'biaya_tim' => 100000],
+            ['nomor_lomba_id' => 20, 'regu' => 'B', 'biaya_tim' => 100000],
+        ], $hasil['data']['beregu']);
+        $this->assertSame(200000, $hasil['data']['total']);
+        $this->assertSame(['A', 'B'], array_column($hasil['rincian']['beregu'], 'regu'));
+        $this->assertSame([6, 4], array_column($hasil['rincian']['beregu'], 'anggota'));
+    }
+
+    public function testSetiapReguDiperiksaSendiri(): void
+    {
+        // 8 atlet: Regu A lengkap, Regu B baru 3 atlet.
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = array_merge(self::timKanga(5, 10, 'A'), self::timKanga(3, 20, 'B'));
+
+        $hasil = self::periksa($kiriman);
+
+        $this->assertGalat($hasil, 'beregu.20:B', "Kanga's Escape putra Regu B baru punya 3 atlet");
+        $this->assertArrayNotHasKey('beregu.20:A', self::galat($hasil));
+    }
+
+    public function testPilihanReguDanPeranWajib(): void
+    {
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = self::timKanga(4);
+        unset($kiriman['atlet'][0]['regu']);
+        $kiriman['atlet'][1]['regu'][20]['peran'] = '';
+
+        $hasil = self::periksa($kiriman);
+
+        $this->assertGalat($hasil, 'atlet.0.regu', 'belum memilih regu');
+        $this->assertGalat($hasil, 'atlet.1.regu', 'belum ditandai Inti atau Cadangan');
+    }
+
+    public function testBatasReguPerNomor(): void
+    {
+        $induk = ['nomor_lomba' => [4 => ['regu_maksimal' => 2]]];
+
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = self::timKanga(4, 10, 'C');
+
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu C; satu sekolah paling banyak 2 regu di nomor ini. Pilih Regu A, atau B.');
+
+        $kiriman['atlet'] = self::timKanga(4, 10, 'b');
+        $this->assertSame([], self::periksa($kiriman, [], $induk)['galat'], 'Huruf kecil dirapikan menjadi B.');
+
+        $kiriman['atlet'] = self::timKanga(4, 10, 'AA');
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu AA');
+    }
+
+    public function testReguLamaTetapBolehWalauBatasDiturunkan(): void
+    {
+        [$kiriman, $ada] = self::susulanKanga('C');
+        $induk           = ['nomor_lomba' => [4 => ['regu_maksimal' => 1]]];
+
+        $this->assertSame([], self::periksa($kiriman, $ada, $induk)['galat']);
     }
 
     public function testTimBaruBelumLengkapDitolak(): void
@@ -392,42 +483,88 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
 
         $hasil = self::periksa($kiriman);
 
-        $this->assertGalat($hasil, 'beregu.20', 'baru punya 3 atlet');
+        $this->assertGalat($hasil, 'beregu.20:A', 'baru punya 3 atlet');
     }
 
     public function testTimSusulanTanpaBiayaTim(): void
     {
-        $kiriman            = self::kirimanContoh();
-        $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => ''];
-        $kiriman['atlet']   = self::timKanga(1);
-        $referensi          = ['npsn' => '99999911', 'nama' => 'SD KARANGAN MAJU', 'bentuk' => 'SD', 'jenjang' => 'SD', 'kabupaten' => 'Kudus'];
+        [$kiriman, $ada] = self::susulanKanga();
 
-        $hasil = self::periksa($kiriman, ['referensi' => $referensi, 'tim' => [20 => 4]]);
+        $hasil = self::periksa($kiriman, $ada);
 
         $this->assertSame([], $hasil['galat']);
-        $this->assertSame([['nomor_lomba_id' => 20, 'biaya_tim' => 0]], $hasil['data']['beregu']);
+        $this->assertSame([['nomor_lomba_id' => 20, 'regu' => 'A', 'biaya_tim' => 0]], $hasil['data']['beregu']);
         $this->assertTrue($hasil['rincian']['beregu'][0]['susulan']);
         $this->assertSame(4, $hasil['rincian']['beregu'][0]['anggota_lama']);
         $this->assertSame(0, $hasil['data']['total']);
 
-        // Melebihi batas anggota bersama tim lama.
-        $kiriman['atlet'] = self::timKanga(3);
-        $this->assertGalat(self::periksa($kiriman, ['referensi' => $referensi, 'tim' => [20 => 4]]), 'beregu.20', 'sudah punya 4 atlet dari pendaftaran sebelumnya');
+        // Melebihi batas anggota bersama regu lama.
+        $kiriman['atlet'] = self::timKanga(3, 10, 'A', 0);
+        $this->assertGalat(self::periksa($kiriman, $ada), 'beregu.20:A', 'sudah punya 4 atlet dari pendaftaran sebelumnya');
     }
 
-    // Konfirmasi tim susulan (K57)
+    public function testSusulanBolehMembuatReguBaruDenganBiaya(): void
+    {
+        [$kiriman, $ada]  = self::susulanKanga();
+        $kiriman['atlet'] = self::timKanga(4, 10, 'B');
+
+        $hasil = self::periksa($kiriman, $ada);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame([['nomor_lomba_id' => 20, 'regu' => 'B', 'biaya_tim' => 100000]], $hasil['data']['beregu']);
+        $this->assertFalse($hasil['rincian']['beregu'][0]['susulan']);
+    }
+
+    public function testSusulanIntiBaruMenurunkanIntiLama(): void
+    {
+        [$kiriman, $ada]  = self::susulanKanga();
+        $kiriman['atlet'] = self::timKanga(1, 10, 'A', 1);
+
+        // Tanpa menurunkan inti lama: inti menjadi 5.
+        $this->assertGalat(self::periksa($kiriman, $ada), 'beregu.20:A', 'punya 5 atlet inti (4 di antaranya dari pendaftaran sebelumnya)');
+
+        $kiriman['turun_cadangan'] = ['20:102'];
+        $hasil                     = self::periksa($kiriman, $ada);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame([['atlet_id' => 102, 'nomor_lomba_id' => 20]], $hasil['data']['turun_cadangan']);
+        $this->assertSame(1, $hasil['rincian']['beregu'][0]['turun']);
+    }
+
+    public function testTurunCadanganHarusIntiLamaDiReguYangDitambah(): void
+    {
+        [$kiriman, $ada]  = self::susulanKanga();
+        $kiriman['atlet'] = self::timKanga(1, 10, 'A', 1);
+
+        foreach (['20:999', '20:abc', '21:102', 'x'] as $turun) {
+            $kiriman['turun_cadangan'] = [$turun];
+            $this->assertNotSame([], self::periksa($kiriman, $ada)['galat'], $turun);
+        }
+
+        // Atlet lama cadangan tidak bisa "diturunkan".
+        $ada['tim'][20]['A'][] = ['id' => 150, 'nama' => 'CADANG', 'jenis_kelamin' => 'L', 'peran' => 'cadangan'];
+        $kiriman['turun_cadangan'] = ['20:150'];
+        $this->assertGalat(self::periksa($kiriman, $ada), 'turun.20');
+
+        // Regu B sekolah ini tidak ditambah kiriman ini.
+        $ada['tim'][20]['B']       = self::reguLama(4, 4, 200);
+        $kiriman['turun_cadangan'] = ['20:200'];
+        $this->assertGalat(self::periksa($kiriman, $ada), 'turun.20');
+    }
+
+    // Konfirmasi regu susulan (K57)
 
     /**
-     * @return array{0: array<string, mixed>, 1: array<string, mixed>} kiriman susulan satu atlet Kanga's Escape, data ada
+     * @return array{0: array<string, mixed>, 1: array<string, mixed>} kiriman susulan satu cadangan Kanga's Escape, data ada
      */
-    private static function susulanKanga(): array
+    private static function susulanKanga(string $regu = 'A'): array
     {
         $kiriman            = self::kirimanContoh();
         $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => ''];
-        $kiriman['atlet']   = self::timKanga(1);
+        $kiriman['atlet']   = self::timKanga(1, 10, $regu, 0);
         $referensi          = ['npsn' => '99999911', 'nama' => 'SD KARANGAN MAJU', 'bentuk' => 'SD', 'jenjang' => 'SD', 'kabupaten' => 'Kudus'];
 
-        return [$kiriman, ['referensi' => $referensi, 'tim' => [20 => 4]]];
+        return [$kiriman, ['referensi' => $referensi, 'tim' => [20 => [$regu => self::reguLama(4)]]]];
     }
 
     public function testTimSusulanTanpaKonfirmasiDitolak(): void
@@ -437,44 +574,44 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
 
         $hasil = self::periksa($kiriman, $ada);
 
-        $this->assertGalat($hasil, 'konfirmasi.20', "Tim Kanga's Escape putra: sekolah ini sudah punya tim di nomor ini (4 atlet dari pendaftaran sebelumnya)");
+        $this->assertGalat($hasil, 'konfirmasi.20:A', "Kanga's Escape putra Regu A: sekolah ini sudah punya regu ini (4 atlet dari pendaftaran sebelumnya)");
         $this->assertStringContainsString('Centang kotak konfirmasi', $hasil['galat'][0]['pesan']);
         $this->assertSame(3, $hasil['galat'][0]['langkah']);
         $this->assertCount(1, $hasil['galat']);
 
-        // Konfirmasi untuk nomor lain tidak berlaku.
-        $kiriman['konfirmasi_susulan'] = [21, 'bukan', -20, null];
-        $this->assertGalat(self::periksa($kiriman, $ada), 'konfirmasi.20');
+        // Konfirmasi untuk nomor atau regu lain tidak berlaku.
+        $kiriman['konfirmasi_susulan'] = ['21:A', '20:B', 20, 'bukan', null];
+        $this->assertGalat(self::periksa($kiriman, $ada), 'konfirmasi.20:A');
     }
 
     public function testTimSusulanDenganKonfirmasiDiterima(): void
     {
         [$kiriman, $ada] = self::susulanKanga();
 
-        foreach ([[20], ['20'], [21, 20]] as $konfirmasi) {
+        foreach ([['20:A'], ['21:A', '20:A']] as $konfirmasi) {
             $kiriman['konfirmasi_susulan'] = $konfirmasi;
             $hasil                         = self::periksa($kiriman, $ada);
 
             $this->assertSame([], $hasil['galat'], json_encode($konfirmasi));
-            $this->assertSame([['nomor_lomba_id' => 20, 'biaya_tim' => 0]], $hasil['data']['beregu']);
+            $this->assertSame([['nomor_lomba_id' => 20, 'regu' => 'A', 'biaya_tim' => 0]], $hasil['data']['beregu']);
             $this->assertTrue($hasil['rincian']['beregu'][0]['susulan']);
         }
     }
 
     public function testTanpaKunciKonfirmasiPerilakuLama(): void
     {
-        // Pemanggil admin (F6-04) tidak membawa kunci konfirmasi: tim susulan diterima seperti sebelumnya.
+        // Pemanggil admin (F6-04) tidak membawa kunci konfirmasi: regu susulan diterima seperti sebelumnya.
         [$kiriman, $ada] = self::susulanKanga();
 
         $hasil = self::periksa($kiriman, $ada);
 
         $this->assertSame([], $hasil['galat']);
-        $this->assertSame([['nomor_lomba_id' => 20, 'biaya_tim' => 0]], $hasil['data']['beregu']);
+        $this->assertSame([['nomor_lomba_id' => 20, 'regu' => 'A', 'biaya_tim' => 0]], $hasil['data']['beregu']);
     }
 
     public function testKonfirmasiTidakMemengaruhiTimBaru(): void
     {
-        // Pendaftaran tanpa tim susulan tidak perlu konfirmasi apa pun.
+        // Pendaftaran tanpa regu susulan tidak perlu konfirmasi apa pun.
         $kiriman                       = self::kirimanContoh();
         $kiriman['atlet']              = self::timKanga(4);
         $kiriman['konfirmasi_susulan'] = [];
@@ -482,10 +619,10 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $hasil = self::periksa($kiriman);
 
         $this->assertSame([], $hasil['galat']);
-        $this->assertSame([['nomor_lomba_id' => 20, 'biaya_tim' => 100000]], $hasil['data']['beregu']);
+        $this->assertSame([['nomor_lomba_id' => 20, 'regu' => 'A', 'biaya_tim' => 100000]], $hasil['data']['beregu']);
 
-        // Tanpa NPSN, data tim sekolah lain tidak membuat tim menjadi susulan.
-        $this->assertSame([], self::periksa($kiriman, ['tim' => [20 => 4]])['galat']);
+        // Tanpa NPSN, data regu sekolah lain tidak membuat regu menjadi susulan.
+        $this->assertSame([], self::periksa($kiriman, ['tim' => [20 => ['A' => self::reguLama(4)]]])['galat']);
     }
 
     public function testWajibKonfirmasiSusulanMerapikanKiriman(): void
@@ -493,18 +630,32 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertSame([], PemeriksaPendaftaran::wajibKonfirmasiSusulan(['atlet' => []])['konfirmasi_susulan']);
         $this->assertSame([], PemeriksaPendaftaran::wajibKonfirmasiSusulan(['konfirmasi_susulan' => 'semua'])['konfirmasi_susulan']);
         $this->assertSame(
-            [20, 21],
-            PemeriksaPendaftaran::wajibKonfirmasiSusulan(['konfirmasi_susulan' => [20, '21', '20', 0, -3, '4a', 1.5, null, ['x']]])['konfirmasi_susulan'],
+            ['20:A', '21:B'],
+            PemeriksaPendaftaran::wajibKonfirmasiSusulan(['konfirmasi_susulan' => ['20:A', '21:B', '20:A', 20, '0:A', '20:a', '20:AB', null, ['x']]])['konfirmasi_susulan'],
         );
     }
 
     public function testTimSekolahLainTidakDihitungTanpaNpsn(): void
     {
-        // Data tim hanya berlaku bila NPSN diisi; tanpa NPSN pendaftaran berdiri sendiri.
+        // Data regu hanya berlaku bila NPSN diisi; tanpa NPSN pendaftaran berdiri sendiri.
         $kiriman          = self::kirimanContoh();
         $kiriman['atlet'] = self::timKanga(1);
 
-        $this->assertGalat(self::periksa($kiriman, ['tim' => [20 => 4]]), 'beregu.20', 'baru punya 1 atlet');
+        $this->assertGalat(self::periksa($kiriman, ['tim' => [20 => ['A' => self::reguLama(4)]]]), 'beregu.20:A', 'baru punya 1 atlet');
+    }
+
+    public function testLonggarUntukReguTersimpan(): void
+    {
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = self::timKanga(3);
+        $induk            = self::indukContoh();
+
+        // Admin: regu A tersimpan di pendaftaran ini boleh kurang inti; regu baru tidak.
+        $longgar = new PemeriksaPendaftaran($induk, ['regu_tersimpan' => ['20:A']] + self::ADA_KOSONG, self::HARI_INI, [], true);
+        $this->assertSame([], $longgar->periksa($kiriman)['galat']);
+
+        $baru = new PemeriksaPendaftaran($induk, self::ADA_KOSONG, self::HARI_INI, [], true);
+        $this->assertNotSame([], $baru->periksa($kiriman)['galat']);
     }
 
     public function testTimMixDiperiksaPutraPutri(): void
@@ -513,10 +664,10 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $kiriman['atlet'] = [];
 
         for ($i = 0; $i < 8; $i++) {
-            $kiriman['atlet'][] = self::atletContoh('99000001' . $i . '0', [21], $i < 6 ? 'L' : 'P');
+            $kiriman['atlet'][] = self::atletContoh('99000001' . $i . '0', [21], $i < 6 ? 'L' : 'P') + ['regu' => [21 => ['regu' => 'A', 'peran' => 'inti']]];
         }
 
-        $this->assertGalat(self::periksa($kiriman), 'beregu.21', 'Tambah 2 putri');
+        $this->assertGalat(self::periksa($kiriman), 'beregu.21:A', 'Jadikan 2 putri sebagai inti');
     }
 
     // Kuota per nomor individu (K51)

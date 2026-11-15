@@ -157,6 +157,58 @@ final class MigrasiAturanDataTest extends UjiBasisData
         $this->db->table('pendaftaran_beregu')->insert(['pendaftaran_id' => $pendaftaran, 'nomor_lomba_id' => $nomor, 'biaya_tim' => 100000]);
     }
 
+    public function testReguBerbedaDiNomorYangSamaDiterima(): void
+    {
+        // K105: satu pendaftaran boleh punya Regu A dan Regu B di nomor yang sama.
+        $ku          = $this->buatKelompokUmur();
+        $nomor       = $this->buatNomorLomba($ku, ['nama' => 'Formula 1', 'jenis' => 'beregu', 'jumlah_inti' => 4]);
+        $pendaftaran = $this->buatPendaftaran();
+        $this->db->table('pendaftaran_beregu')->insert(['pendaftaran_id' => $pendaftaran, 'nomor_lomba_id' => $nomor, 'regu' => 'A', 'biaya_tim' => 100000]);
+        $this->db->table('pendaftaran_beregu')->insert(['pendaftaran_id' => $pendaftaran, 'nomor_lomba_id' => $nomor, 'regu' => 'B', 'biaya_tim' => 100000]);
+
+        $this->assertSame(2, $this->jumlah('pendaftaran_beregu'));
+
+        $this->expectException(DatabaseException::class);
+        $this->db->table('pendaftaran_beregu')->insert(['pendaftaran_id' => $pendaftaran, 'nomor_lomba_id' => $nomor, 'regu' => 'B', 'biaya_tim' => 0]);
+    }
+
+    public function testPeranAwalReguMengisiTimLama(): void
+    {
+        // Data dari sebelum ada regu: tim per NPSN menjadi Regu A, inti menurut urutan daftar.
+        $ku     = $this->buatKelompokUmur();
+        $nomor  = $this->buatNomorLomba($ku, ['nama' => 'Formula 1', 'jenis' => 'beregu', 'jumlah_inti' => 2]);
+        $lari   = $this->buatNomorLomba($ku);
+        $satu   = $this->buatPendaftaran();
+        $susul  = $this->buatPendaftaran();
+        $lain   = $this->buatPendaftaran(['npsn' => null]);
+        $atlet  = [];
+
+        foreach ([[$satu, '9900000001'], [$satu, '9900000002'], [$susul, '9900000003'], [$lain, '9900000004'], [$lain, '9900000005'], [$lain, '9900000006']] as [$p, $nisn]) {
+            $atlet[$nisn] = $this->buatAtlet($p, $ku, $nisn);
+            $this->db->table('atlet_nomor')->insert(['atlet_id' => $atlet[$nisn], 'nomor_lomba_id' => $nomor]);
+        }
+
+        $this->db->table('atlet_nomor')->insert(['atlet_id' => $atlet['9900000001'], 'nomor_lomba_id' => $lari, 'biaya' => 25000]);
+
+        $this->assertSame(6, \App\Libraries\Pendaftaran\PeranAwalRegu::isi($this->db));
+
+        $peran = [];
+
+        foreach ($this->db->table('atlet_nomor')->get()->getResultArray() as $b) {
+            $peran[(int) $b['atlet_id'] . '-' . (int) $b['nomor_lomba_id']] = [$b['regu'], $b['peran']];
+        }
+
+        $this->assertSame(['A', 'inti'], $peran[$atlet['9900000001'] . '-' . $nomor]);
+        $this->assertSame(['A', 'inti'], $peran[$atlet['9900000002'] . '-' . $nomor]);
+        $this->assertSame(['A', 'cadangan'], $peran[$atlet['9900000003'] . '-' . $nomor], 'Susulan NPSN sama melewati jumlah inti.');
+        $this->assertSame(['A', 'inti'], $peran[$atlet['9900000004'] . '-' . $nomor], 'Tanpa NPSN dihitung per pendaftaran.');
+        $this->assertSame(['A', 'cadangan'], $peran[$atlet['9900000006'] . '-' . $nomor]);
+        $this->assertSame([null, null], $peran[$atlet['9900000001'] . '-' . $lari], 'Nomor individu tidak disentuh.');
+
+        // Dijalankan lagi: tidak ada yang berubah.
+        $this->assertSame(0, \App\Libraries\Pendaftaran\PeranAwalRegu::isi($this->db));
+    }
+
     // ---------------------------------------------------------------
     // Kunci tamu
     // ---------------------------------------------------------------

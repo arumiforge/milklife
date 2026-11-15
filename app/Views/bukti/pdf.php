@@ -148,7 +148,7 @@ foreach ($p['individu'] as $baris) {
     </table>
 <?php endif ?>
 
-<h2>Nomor Lomba Beregu <span class="kecil">(<?= count($p['beregu']) ?> tim)</span></h2>
+<h2>Nomor Lomba Beregu <span class="kecil">(<?= count($p['beregu']) ?> regu)</span></h2>
 <?php if ($p['beregu'] === []) : ?>
     <p class="kosong">Tidak ada nomor beregu pada pendaftaran ini.</p>
 <?php else : ?>
@@ -161,8 +161,8 @@ foreach ($p['individu'] as $baris) {
                 <tr<?= $i % 2 === 1 ? ' class="genap"' : '' ?>>
                     <td class="no"><?= $i + 1 ?></td>
                     <td><?= esc($tim['nomor_lomba']) ?></td>
-                    <td><?= esc(implode(', ', array_map(static fn (array $a): string => $a['nama'] . ($nomorDada($a) !== '' ? ' (' . $nomorDada($a) . ')' : ''), $tim['anggota']))) ?></td>
-                    <td class="uang"><?= $tim['biaya_tim'] === null ? '<span class="kecil">Tanpa biaya (tim sudah terdaftar)</span>' : esc(rupiah($tim['biaya_tim'])) ?></td>
+                    <td><?= esc(implode(', ', array_map(static fn (array $a): string => $a['nama'] . ($nomorDada($a) !== '' ? ' (' . $nomorDada($a) . ')' : '') . (($a['peran'] ?? '') === 'cadangan' ? ' [cadangan]' : ''), $tim['anggota']))) ?></td>
+                    <td class="uang"><?= $tim['biaya_tim'] === null ? '<span class="kecil">Tanpa biaya (regu sudah terdaftar)</span>' : esc(rupiah($tim['biaya_tim'])) ?></td>
                 </tr>
             <?php endforeach ?>
             <tr class="jumlah"><td colspan="3">Subtotal beregu</td><td class="uang"><?= esc(rupiah($p['subtotal_beregu'])) ?></td></tr>

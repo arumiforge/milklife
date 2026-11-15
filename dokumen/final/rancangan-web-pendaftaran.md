@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100); **revisi 7 disetujui 15 November 2026** (K101) |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100); **revisi 7 disetujui 15 November 2026** (K101); **revisi 8 15 November 2026** (K105, diubah langsung sesuai K101) |
 | Tanggal | 10 November 2026, revisi 11, 12, 14, dan 15 November 2026 |
 | Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
 | Revisi 2 | SLB tidak ikut (K28); web lewat Cloudflare Tunnel (K31); asumsi 4–7 dikonfirmasi dan asumsi 8 diganti (K32); bukti bayar diunggah admin (K34); awalan nomor dada awal per kelompok umur (K33). Bagian yang berubah: 6.2, 6.9, 9, 11, 13, 15, 17, lampiran |
@@ -10,6 +10,7 @@
 | Revisi 4 | Disesuaikan dengan yang dibangun di Tahap 4–7: foto penanggung jawab wajib (K50); batas nomor individu per atlet dan atlet per nomor (K51, K53); konfirmasi tim susulan (K57); tim tanpa pembayar (K68); ID pendaftaran tetap saat diubah (K63); cek dan bukti tanpa tanggal lahir dan nomor dada (K49, K52); panel tanpa pendaftaran baru, nomor dada atlet tambahan, saringan status rekap (K58–K60); sesi lain keluar saat ganti sandi dan halaman galat ramah (K67); CI GitHub (K46); cadangan harian (K66); juknis tidak ditunggu (K55). Bagian yang berubah: 5, 6.3, 6.5, 6.6, 6.8, 6.9, 8, 9, 13, 14, 15, 16, 17 |
 | Revisi 5 | Kelompok umur ditentukan jenjang dulu, baru tahun lahir; rentang tahun lahir boleh beririsan antar-jenjang, tidak dalam satu jenjang (K95). Bagian yang berubah: 6.4, 17 |
 | Revisi 6 | Data sekolah dari Sekolah Kita dan menu Sekolah di panel untuk memberi nama pembeda (K97); kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan saat admin mengubah pendaftaran (K98); usulan nama sekolah dari pendaftar (K99). Disesuaikan juga dengan keputusan yang sudah berjalan: penulisan rupiah (K80), bukti transfer diunggah official dan pendaftaran baru masuk bersama bukti transfer (K83, K90), alamat dan isi bukti PDF serta halaman cek (K77, K78, K87–K89, K91). Bagian yang berubah: 5, 6.2, 6.7, 7, 8, 9, 11, 15, 17 |
+| Revisi 8 | Satu sekolah boleh mendaftarkan lebih dari satu regu per nomor beregu (Regu A, B, C, …) dengan batas regu per nomor lomba; setiap anggota ditandai inti atau cadangan; biaya beregu per regu; susulan memilih regu dan boleh menurunkan inti lama menjadi cadangan; tim lama menjadi Regu A (K105, menggantikan K07). Bagian yang berubah: 6.6, 6.7, 7, 8, 9, 11, lampiran |
 | Revisi 7 | Disesuaikan dengan keputusan Tahap 7 yang belum masuk: aset kecil dan penanda versi (K72, K86), data awal lengkap (K73), rincian biaya tersembunyi bawaan (K74), tampilan halaman depan (K75, K81–K86, K92, K93), kolom No, pilih massal, dan Backup data di panel (K76), tombol Halaman depan dan rekap gabungan (K85), validasi dan kenyamanan wizard (K88, K89), reset nomor dada setelah uji coba (K94); Backup data membawa usulan nama dan sekolah yang disunting. Bagian yang berubah: 4, 6.9, 7, 9, 10, lampiran |
 | Acara | MilkLife Athletics Challenge Seri 2 – 2026, Supersoccer Arena, Kudus, 9–12 Desember 2026 |
 | Dasar | Wawancara sesi 1 (lihat `agent/KEPUTUSAN.md`) dan flyer di `sumber/flyer/` |
@@ -155,17 +156,18 @@ Nama, nomor WA, dan foto. **Foto wajib diisi** (K50); foto diperkecil di peramba
 
 ### 6.6 Tim beregu
 
-- **Satu tim per nomor beregu per sekolah.**
-- Anggota minimal sama dengan jumlah inti nomor tersebut (4, 5, atau 8). Boleh lebih sebagai cadangan, tanpa label, sampai batas maksimal yang diatur admin.
-- Nomor mix: admin menetapkan jumlah putra dan jumlah putri minimal. Urutan lari tidak diatur sistem.
-- Pendaftaran susulan dari NPSN yang sama untuk nomor beregu yang sudah ada hanya menambah anggota, tanpa biaya beregu lagi. Anggota lama dan baru bersama-sama tidak boleh melewati batas anggota.
-- **Official mengonfirmasi sendiri setiap tim susulan** (K57): wizard menampilkan kotak centang per tim yang menyebut bahwa atletnya masuk ke tim sekolah yang sudah terdaftar tanpa biaya tim. Server menolak kiriman yang belum dikonfirmasi. Admin yang mengubah pendaftaran di panel tidak perlu konfirmasi ini.
-- **Tim tanpa pembayar** (K68): bila pendaftaran yang membayar biaya tim dihapus, atau timnya dihapus lewat Ubah, sementara anggota susulan di pendaftaran lain tetap ada, biaya tim **tidak dipindah otomatis**. Tim itu ditandai di rincian pendaftaran, dasbor, dan rekap keuangan, dan admin membebankan biaya timnya ke salah satu pendaftaran anggotanya lewat Ubah (9). Jendela hapus dan simpan Ubah memperingatkan bila tindakannya meninggalkan tim tanpa pembayar.
+- **Satu sekolah boleh punya lebih dari satu regu per nomor beregu** (K105). Regu diberi label huruf: Regu A, B, C, dan seterusnya. Batas regu per sekolah diatur admin **per nomor lomba** ("Regu per sekolah paling banyak", data awal 3); kosong berarti tidak dibatasi. Label yang boleh dipakai adalah huruf pertama sebanyak batas itu; regu yang sudah terdaftar tetap boleh dipakai walau batasnya diturunkan.
+- Official memilih regu untuk setiap atlet di nomor beregu dan menandainya **Inti** atau **Cadangan**. Satu regu berisi **tepat** sejumlah inti nomor tersebut (4, 5, atau 8), ditambah cadangan sampai batas anggota per regu yang diatur admin (data awal dua kali jumlah inti).
+- Nomor mix: admin menetapkan jumlah putra dan jumlah putri minimal, diperiksa pada atlet inti. Urutan lari tidak diatur sistem.
+- Pendaftaran susulan dari NPSN yang sama memilih regu: menambah anggota regu yang sudah ada (tanpa biaya regu lagi; anggota lama dan baru bersama-sama tidak boleh melewati batas anggota) atau membuat regu baru (lengkap, dengan biaya regu). Atlet susulan **boleh menjadi inti** dengan menurunkan inti lama menjadi cadangan, walau inti lama itu ada di pendaftaran lain; wizard menampilkan anggota regu lama dengan kotak "Jadikan cadangan".
+- **Official mengonfirmasi sendiri setiap regu susulan** (K57): wizard menampilkan kotak centang per regu yang menyebut bahwa atletnya masuk ke regu sekolah yang sudah terdaftar tanpa biaya regu. Server menolak kiriman yang belum dikonfirmasi. Admin yang mengubah pendaftaran di panel tidak perlu konfirmasi ini.
+- **Tim tanpa pembayar** (K68): bila pendaftaran yang membayar biaya regu dihapus, atau regunya dihapus lewat Ubah, sementara anggota susulan di pendaftaran lain tetap ada, biaya regu **tidak dipindah otomatis**. Regu itu ditandai di rincian pendaftaran, dasbor, dan rekap keuangan, dan admin membebankan biaya regunya ke salah satu pendaftaran anggotanya lewat Ubah (9). Jendela hapus dan simpan Ubah memperingatkan bila tindakannya meninggalkan regu tanpa pembayar.
+- Tim yang terdaftar sebelum ada regu menjadi Regu A; atlet yang paling awal didaftarkan sebanyak jumlah inti menjadi inti, sisanya cadangan (K105).
 
 ### 6.7 Biaya
 
 - **Individu:** biaya per atlet per nomor, besarnya mengikuti kelompok umur atlet. Dua nomor individu berarti dua kali biaya.
-- **Beregu:** biaya per tim, besarnya ditetapkan pada tiap nomor lomba.
+- **Beregu:** biaya per regu, besarnya ditetapkan pada tiap nomor lomba. Dua regu di nomor yang sama berarti dua kali biaya (K105).
 - Biaya disimpan bersama pendaftaran saat pendaftaran dibuat. Perubahan tarif oleh admin tidak mengubah pendaftaran yang sudah ada.
 - Semua angka dihitung ulang di server. Angka dari peramban tidak dipercaya.
 - Rupiah ditampilkan tanpa angka di belakang koma, dengan spasi setelah Rp, contoh `Rp 150.000` (K80).
@@ -201,12 +203,12 @@ Wizard satu halaman dengan pil langkah bercentang:
 4. **Biaya** — rincian dan konfirmasi.
 5. **Pembayaran** — rekening, unggah bukti transfer, kirim pendaftaran, selesai.
 
-**Langkah 3.** Setelah atlet ditambahkan, daftar sementara langsung terbentuk dalam dua bagian: daftar individu dan daftar tim beregu (dikelompokkan per nomor). Setiap baris punya tombol ubah dan hapus. Sebelum lanjut, sistem memeriksa kelengkapan setiap tim.
+**Langkah 3.** Nomor beregu yang dicentang di formulir atlet menampilkan pilihan regu dan Inti/Cadangan; pilihan bawaannya regu yang intinya belum lengkap, lalu regu baru (K105). Setelah atlet ditambahkan, daftar sementara langsung terbentuk dalam dua bagian: daftar individu dan daftar regu beregu (satu kartu per nomor per regu, anggota inti dulu). Setiap baris punya tombol ubah dan hapus. Sebelum lanjut, sistem memeriksa kelengkapan setiap regu.
 
 **Langkah 4.** Dua tabel terpisah:
 
 - Individu: No, Nama, NISN, Kelompok Umur, Nomor Lomba, Biaya, lalu subtotal individu.
-- Beregu: No, Nomor Lomba Beregu, Biaya, lalu subtotal beregu.
+- Beregu: No, Nomor Lomba Beregu (dengan regu, jumlah inti dan cadangan), Biaya, lalu subtotal beregu.
 
 Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah keduanya. Langkah ini belum menyimpan apa pun (K90).
 
@@ -224,7 +226,7 @@ Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah ked
 
 - NPSN menampilkan semua pendaftaran sekolah itu berurutan per pendaftaran: data sekolah sekali di atas, satu kartu per pendaftaran, dan total keseluruhan di bawah (K49).
 - ID pendaftaran menampilkan satu pendaftaran.
-- Data tampil sesuai MoU: sekolah, penanggung jawab, atlet (nama, NISN, jenis kelamin, kelompok umur, nomor lomba), tim beregu beserta anggotanya, biaya, dan status pembayaran.
+- Data tampil sesuai MoU: sekolah, penanggung jawab, atlet (nama, NISN, jenis kelamin, kelompok umur, nomor lomba), regu beregu beserta anggotanya (inti dan cadangan, K105), biaya, dan status pembayaran.
 - **Tanggal lahir tidak ditampilkan** (K52); tetap tersimpan dan terlihat di panel admin. Nomor dada tampil setelah pendaftaran Lunas (K88).
 - Pendaftaran yang belum Lunas punya kotak unggah bukti transfer tambahan (K83).
 - Nama nomor lomba ditulis bersama kategorinya, misalnya "Lari 60 m Putra" atau "Estafet 8 × 50 m Mix".
@@ -234,7 +236,7 @@ Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah ked
 
 - Kepala: logo persegi MilkLife, nama acara, seri, dan tahun. Lalu nama sekolah, kabupaten, tanggal pendaftaran, dan ID pendaftaran.
 - Penanggung jawab ditulis sebaris tanpa tabel: nama dan nomor WA, dipisah koma bila lebih dari satu (K52, K83).
-- Tabel individu satu baris per atlet per nomor lomba (dengan kategori), dan tabel beregu dengan anggota tiap tim. Lalu total pembayaran.
+- Tabel individu satu baris per atlet per nomor lomba (dengan kategori), dan tabel beregu satu baris per regu dengan anggotanya; cadangan diberi tanda "[cadangan]" (K105). Lalu total pembayaran.
 - Tanggal lahir tidak dicetak. Nomor dada dicetak setelah pendaftaran Lunas, di tabel individu dan di belakang nama anggota tim; sebelum Lunas kolomnya kosong (K87).
 - Status pembayaran berupa stempel miring di bagian akhir: hijau "LUNAS / PEMBAYARAN DITERIMA" atau oranye "MENUNGGU / KONFIRMASI PANITIA" (K78, K91).
 - Kode QR berisi alamat bukti di pojok kanan bawah halaman terakhir, dengan keterangan di kirinya untuk memeriksa keaslian (K89).
@@ -251,12 +253,12 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 - **Tindakan berisiko** (hapus, tandai lunas, kembalikan ke Menunggu): jendela konfirmasi yang menyebut apa yang akan terjadi. Daftar pendaftaran punya pilih massal untuk ketiga tindakan itu, paling banyak 100 sekaligus, dengan aturan yang sama seperti di rincian (K76).
 - **Backup data** (K76, K77): tombol di daftar pendaftaran mengunduh satu zip berisi data pendaftaran, foto penanggung jawab, bukti bayar, usulan nama sekolah (K99), dan sekolah yang namanya disunting admin (K97), untuk dimasukkan ke server baru dengan `php spark pendaftaran:impor`. Cadangan harian lengkap tetap lewat `cadangan:buat` (15).
 - **Tanpa pendaftaran baru** (K58): panel hanya melihat, menandai Lunas, mengubah, dan menghapus pendaftaran yang sudah ada. Sekolah yang terlambat didaftarkan lewat wizard setelah admin memakai buka manual (6.1).
-- **Ubah pendaftaran:** admin bisa mengubah data sekolah, penanggung jawab, atlet, dan nomor lomba. Aturan pada bagian 6 tetap berlaku dan biaya dihitung ulang. ID pendaftaran tidak berubah (6.8). Akibat pada status dan nomor dada mengikuti 6.9 (K32, K59).
+- **Ubah pendaftaran:** admin bisa mengubah data sekolah, penanggung jawab, atlet, nomor lomba, serta regu dan Inti/Cadangan tiap atlet beregu. Aturan pada bagian 6 tetap berlaku dan biaya dihitung ulang; regu yang sudah terdaftar boleh disimpan dengan inti kurang dari jumlah inti (tidak lebih), supaya perubahan lain tetap bisa disimpan, dan regu itu ditandai di rincian dan rekap tim beregu (K105). ID pendaftaran tidak berubah (6.8). Akibat pada status dan nomor dada mengikuti 6.9 (K32, K59).
   - Kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan untuk atlet yang sudah memakainya, ditandai "Sudah ditutup", sehingga perubahan lain (misalnya nomor WA) tetap bisa disimpan. Atlet baru dan nomor baru tidak bisa memakainya (K98).
   - Nama sekolah tersimpan yang berbeda dari data sekolah, misalnya nama usulan yang belum diputuskan, dipertahankan selama NPSN tidak diubah.
-- **Tim tanpa pembayar** (K68): rincian pendaftaran memberi peringatan pada tim yang kehilangan pembayar biaya timnya, dasbor menampilkan jumlahnya bila ada, dan rekap keuangan mendaftarnya beserta pendaftaran anggotanya. Di Ubah, tim itu punya kotak centang "Bebankan biaya tim ke pendaftaran ini" dengan tarif saat ini; bila pendaftarannya Lunas dan totalnya berubah, berlaku 6.9.
+- **Tim tanpa pembayar** (K68): rincian pendaftaran memberi peringatan pada regu yang kehilangan pembayar biaya regunya, dasbor menampilkan jumlahnya bila ada, dan rekap keuangan mendaftarnya beserta pendaftaran anggotanya. Di Ubah, regu itu punya kotak centang "Bebankan biaya regu ke pendaftaran ini" dengan tarif saat ini; bila pendaftarannya Lunas dan totalnya berubah, berlaku 6.9.
 - **Bukti bayar** (K34, K83, K90): official mengunggah bukti transfer saat mengirim pendaftaran, dan bisa menambah bukti lewat Cek Pendaftaran selama belum Lunas. Admin juga bisa mengunggah dari rincian pendaftaran. Paling banyak 5 gambar per pendaftaran. Gambar dikecilkan otomatis sebelum disimpan (sisi terpanjang 1600 piksel, JPEG). Admin bisa melihat, mengunduh, dan menghapus tiap gambar.
-- **Rekap:** peserta per nomor lomba, tim beregu, per sekolah, per kelompok umur, dan keuangan (tagihan, lunas, belum). Tersedia Excel dan PDF, ditambah tombol "Unduh Rekap Gabungan": satu Excel berisi semua data, satu sheet per bagian (K85). Rekap peserta memuat semua pendaftaran dengan saringan status (semua, Lunas, Menunggu), dan Excel serta PDF-nya mengikuti saringan itu; rekap keuangan selalu memuat keduanya (K60).
+- **Rekap:** peserta per nomor lomba, tim beregu (satu baris per regu, dengan jumlah inti dan tanda "Inti kurang", K105), per sekolah, per kelompok umur, dan keuangan (tagihan, lunas, belum). Tersedia Excel dan PDF, ditambah tombol "Unduh Rekap Gabungan": satu Excel berisi semua data, satu sheet per bagian (K85). Rekap peserta memuat semua pendaftaran dengan saringan status (semua, Lunas, Menunggu), dan Excel serta PDF-nya mengikuti saringan itu; rekap keuangan selalu memuat keduanya (K60).
 - **Data sekolah** (K97): menu Sekolah menampilkan semua sekolah di data referensi dengan saringan kabupaten, jenjang, nama yang sama dengan sekolah lain, dan sudah disunting, serta unduh Excel. Admin bisa mengubah nama, bentuk, jenjang, status, alamat, desa, kecamatan, dan kabupaten; NPSN tidak bisa diubah. Nama baru yang sama dengan sekolah lain ditolak. Saat menyimpan, admin bisa sekalian mengganti nama di pendaftaran yang sudah masuk dengan NPSN itu. Sekolah yang disunting tidak ditimpa saat data sekolah diimpor ulang.
 - **Usulan nama** (K99): usulan dari pendaftar (6.2) tampil di halaman Usulan nama dengan formulir Setujui (nama boleh dirapikan dulu) dan Tolak (alasan pilihan). Jumlah usulan yang menunggu tampil di dasbor dan di menu Sekolah, dan rincian pendaftaran pengusul diberi tanda. Menyetujui satu usulan menutup usulan lain yang masih menunggu untuk sekolah yang sama.
 - **Gambar belum ada:** kotak ikon "tanpa gambar", bukan gambar tiruan.
@@ -291,12 +293,12 @@ Nama tabel dan kolom berbahasa Indonesia.
 | `kelompok_umur` | nama, tahun lahir paling awal, tahun lahir paling akhir (masing-masing boleh kosong), biaya individu, urutan, aktif |
 | `kelompok_umur_jenjang` | kelompok umur, jenjang (A, B, atau C); satu baris per jenjang yang boleh ikut, unik per pasangan |
 | `awalan_nomor_dada` | kelompok umur, awalan (unik), urutan, nomor terakhir |
-| `nomor_lomba` | kelompok umur, nama, jenis, kategori, jumlah inti, batas anggota, jumlah putra/putri (mix), biaya beregu, urutan, aktif |
+| `nomor_lomba` | kelompok umur, nama, jenis, kategori, jumlah inti, batas anggota per regu, regu per sekolah paling banyak (kosong = tidak dibatasi), jumlah putra/putri (mix), biaya beregu, urutan, aktif |
 | `pendaftaran` | ID pendaftaran (unik), kode bukti (acak), jenjang, npsn, nama sekolah, kabupaten, subtotal individu, subtotal beregu, total, status, waktu lunas |
 | `penanggung_jawab` | pendaftaran, nama, nomor WA, foto |
 | `atlet` | pendaftaran, nama, NISN (unik), tanggal lahir, jenis kelamin, kelompok umur, nomor dada (unik) |
-| `atlet_nomor` | atlet, nomor lomba, biaya (terisi untuk individu) |
-| `pendaftaran_beregu` | pendaftaran, nomor lomba, biaya tim |
+| `atlet_nomor` | atlet, nomor lomba, biaya (terisi untuk individu), regu (A–Z) dan peran inti/cadangan (terisi untuk beregu) |
+| `pendaftaran_beregu` | pendaftaran, nomor lomba, regu, biaya regu; unik per pendaftaran, nomor, dan regu |
 | `bukti_bayar` | pendaftaran, berkas, ukuran, waktu unggah (paling banyak 5 per pendaftaran, dijaga aplikasi) |
 | `jadwal` | judul, keterangan, waktu, tempat atau tautan, urutan, tampil |
 | `unduhan` | judul, keterangan, berkas, urutan, tampil |
@@ -372,7 +374,7 @@ Semua asumsi sudah diputuskan pemilik. Juknis resmi tidak ditunggu; batas yang s
 
 ## Lampiran: data awal nomor lomba
 
-Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25, diperluas K73). Semua bisa diubah admin. Jenjang yang boleh ikut: KU 8–12 SD/MI, KU 15 SMP/MTs, KU 18 SMA/SMK/MA. Biaya individu: KU 8–12 Rp 25.000, KU 15 Rp 35.000, KU 18 Rp 50.000 per nomor. Batas anggota nomor beregu dua kali jumlah inti. Perintah yang sama juga mengisi rekening, isi halaman depan, jadwal, kontak, dan berkas unduhan; rekening, nomor WA, dan sebagian unduhan masih contoh yang diganti admin. Batas tahun lahir (K36): KU 8 lahir 2019 ke atas; KU 10 lahir 2016–2018; KU 12 lahir 2015; KU 15 lahir 2011–2014; KU 18 lahir 2008–2010. Awalan nomor dada diisi satu per kelompok umur (K33): KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5; admin bisa mengubah atau menambahnya. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
+Diambil dari flyer Seri 2 – 2026 dan diisi lewat perintah sekali jalan saat pemasangan (K25, diperluas K73). Semua bisa diubah admin. Jenjang yang boleh ikut: KU 8–12 SD/MI, KU 15 SMP/MTs, KU 18 SMA/SMK/MA. Biaya individu: KU 8–12 Rp 25.000, KU 15 Rp 35.000, KU 18 Rp 50.000 per nomor. Batas anggota nomor beregu dua kali jumlah inti per regu, dan paling banyak 3 regu per sekolah di setiap nomor beregu (K105). Perintah yang sama juga mengisi rekening, isi halaman depan, jadwal, kontak, dan berkas unduhan; rekening, nomor WA, dan sebagian unduhan masih contoh yang diganti admin. Batas tahun lahir (K36): KU 8 lahir 2019 ke atas; KU 10 lahir 2016–2018; KU 12 lahir 2015; KU 15 lahir 2011–2014; KU 18 lahir 2008–2010. Awalan nomor dada diisi satu per kelompok umur (K33): KU 8 = 1, KU 10 = 2, KU 12 = 3, KU 15 = 4, KU 18 = 5; admin bisa mengubah atau menambahnya. Nomor individu dibuat dua kali, putra dan putri; nomor beregu mengikuti kategori di tabel.
 
 | Kelompok umur | Individu (putra dan putri) | Beregu |
 |---|---|---|

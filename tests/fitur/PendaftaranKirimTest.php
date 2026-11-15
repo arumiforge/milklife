@@ -151,7 +151,7 @@ final class PendaftaranKirimTest extends UjiBasisData
         $this->kirimJson('pendaftaran/simpan', self::kirimanUntukBasisData($pertama, $this->id))->assertStatus(201);
 
         $susulan          = $pertama;
-        $susulan['atlet'] = [self::atletContoh('9900000075', [20])];
+        $susulan['atlet'] = [self::atletContoh('9900000075', [20]) + ['regu' => [20 => ['regu' => 'A', 'peran' => 'cadangan']]]];
 
         return $susulan;
     }
@@ -188,9 +188,9 @@ final class PendaftaranKirimTest extends UjiBasisData
 
                 $hasil->assertStatus(422);
                 $galat = self::json($hasil)['galat'];
-                $this->assertSame(['konfirmasi.' . $this->id['kanga']], array_column($galat, 'jalur'), $alamat);
+                $this->assertSame(['konfirmasi.' . $this->id['kanga'] . ':A'], array_column($galat, 'jalur'), $alamat);
                 $this->assertSame([3], array_column($galat, 'langkah'));
-                $this->assertStringContainsString("Tim Kanga's Escape putra", $galat[0]['pesan']);
+                $this->assertStringContainsString("Kanga's Escape putra Regu A", $galat[0]['pesan']);
                 $this->assertStringContainsString('Centang kotak konfirmasi', $galat[0]['pesan']);
             }
         }

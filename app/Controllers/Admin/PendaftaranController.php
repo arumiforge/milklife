@@ -377,7 +377,7 @@ class PendaftaranController extends BaseController
                 'total'            => $hasil['total'] ?? null,
                 'judul'            => match (true) {
                     $hasil['kembali_menunggu'] ?? false   => 'Status akan kembali ke Menunggu',
-                    ($hasil['tim_ditinggalkan'] ?? []) !== [] => 'Tim akan kehilangan pembayar',
+                    ($hasil['tim_ditinggalkan'] ?? []) !== [] => 'Regu akan kehilangan pembayar',
                     default                                 => 'Simpan perubahan?',
                 },
                 'kalimat'          => $hasil['galat'] === [] ? UbahPendaftaran::kalimatKonfirmasi($hasil) : null,
@@ -400,7 +400,7 @@ class PendaftaranController extends BaseController
         }
 
         if ($hasil['tim_dibebankan'] !== []) {
-            $pesan .= ' Biaya ' . count($hasil['tim_dibebankan']) . ' tim tanpa pembayar kini dibebankan ke pendaftaran ini.';
+            $pesan .= ' Biaya ' . count($hasil['tim_dibebankan']) . ' regu tanpa pembayar kini dibebankan ke pendaftaran ini.';
         }
 
         if ($hasil['tim_ditinggalkan'] !== []) {

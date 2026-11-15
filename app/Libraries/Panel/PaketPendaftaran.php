@@ -3,6 +3,8 @@
 namespace App\Libraries\Panel;
 
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
+use App\Libraries\Pendaftaran\PeranAwalRegu;
+use App\Libraries\Pendaftaran\Regu;
 use App\Models\SekolahModel;
 use App\Models\UsulanNamaSekolahModel;
 use CodeIgniter\Database\BaseConnection;
@@ -16,7 +18,7 @@ use ZipArchive;
  *
  * Isi zip:
  * - `data.json`: semua pendaftaran beserta penanggung jawab, atlet, nomor lomba
- *   yang diikuti, tim beregu, dan bukti bayar; juga `nomor_terakhir` tiap
+ *   yang diikuti (dengan regu dan peran inti/cadangan, K105), regu beregu, dan bukti bayar; juga `nomor_terakhir` tiap
  *   awalan nomor dada (supaya nomor dada tidak dipakai ulang, K05) dan nomor
  *   urut ID pendaftaran berikutnya; usulan nama sekolah dari pendaftar (K99)
  *   dan sekolah yang namanya disunting admin (K97), supaya keduanya tidak hilang
@@ -86,7 +88,11 @@ final class PaketPendaftaran
         $ikutNomor = [];
 
         foreach ($this->db->table('atlet_nomor')->orderBy('id')->get()->getResultArray() as $an) {
-            $ikutNomor[(int) $an['atlet_id']][] = $nomor[(int) $an['nomor_lomba_id']] + ['biaya' => $an['biaya'] === null ? null : (int) $an['biaya']];
+            $ikutNomor[(int) $an['atlet_id']][] = $nomor[(int) $an['nomor_lomba_id']] + [
+                'biaya' => $an['biaya'] === null ? null : (int) $an['biaya'],
+                'regu'  => $an['regu'] ?? null,
+                'peran' => $an['peran'] ?? null,
+            ];
         }
 
         $berkas = [];
@@ -131,7 +137,7 @@ final class PaketPendaftaran
                     'nomor'         => $ikutNomor[(int) $a['id']] ?? [],
                 ], $atlet[$id] ?? []),
                 'beregu' => array_map(static fn (array $t): array => $nomor[(int) $t['nomor_lomba_id']] + [
-                    'biaya_tim' => (int) $t['biaya_tim'], 'dibuat_pada' => $t['dibuat_pada'], 'diubah_pada' => $t['diubah_pada'],
+                    'regu' => (string) ($t['regu'] ?? 'A'), 'biaya_tim' => (int) $t['biaya_tim'], 'dibuat_pada' => $t['dibuat_pada'], 'diubah_pada' => $t['diubah_pada'],
                 ], $tim[$id] ?? []),
                 'bukti_bayar' => array_values(array_filter(array_map(function (array $b) use (&$berkas): ?array {
                     if (! $this->berkasSah($b['berkas'])) {
@@ -361,6 +367,8 @@ final class PaketPendaftaran
 
         try {
             $this->simpanBaris($isi, $ku, $nomor, $tabel, $jumlahAtlet);
+            // Paket dari sebelum ada regu (K105): Regu A, inti menurut urutan daftar.
+            PeranAwalRegu::isi($this->db);
             $this->db->transCommit();
         } catch (Throwable $e) {
             $this->db->transRollback();
@@ -427,7 +435,10 @@ final class PaketPendaftaran
                 foreach ($a['nomor'] ?? [] as $n) {
                     $tabel('atlet_nomor', [
                         'atlet_id' => $idAtlet, 'nomor_lomba_id' => $nomor[self::kunciNomor($n['kelompok_umur'], $n['nama'], $n['kategori'])],
-                        'biaya' => $n['biaya'] === null ? null : (int) $n['biaya'], 'dibuat_pada' => $a['dibuat_pada'], 'diubah_pada' => $a['diubah_pada'],
+                        'biaya' => $n['biaya'] === null ? null : (int) $n['biaya'],
+                        'regu'  => Regu::sah($n['regu'] ?? null) ? $n['regu'] : null,
+                        'peran' => Regu::peranSah($n['peran'] ?? null) ? $n['peran'] : null,
+                        'dibuat_pada' => $a['dibuat_pada'], 'diubah_pada' => $a['diubah_pada'],
                     ]);
                 }
             }
@@ -435,6 +446,7 @@ final class PaketPendaftaran
             foreach ($p['beregu'] ?? [] as $t) {
                 $tabel('pendaftaran_beregu', [
                     'pendaftaran_id' => $id, 'nomor_lomba_id' => $nomor[self::kunciNomor($t['kelompok_umur'], $t['nama'], $t['kategori'])],
+                    'regu' => Regu::sah($t['regu'] ?? null) ? $t['regu'] : 'A',
                     'biaya_tim' => (int) $t['biaya_tim'], 'dibuat_pada' => $t['dibuat_pada'], 'diubah_pada' => $t['diubah_pada'],
                 ]);
             }

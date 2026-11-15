@@ -77,23 +77,24 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
         </div>
 
         <?php if ($p['beregu'] !== []) : ?>
-            <h4 class="cek-subjudul"><i class="bi bi-flag" aria-hidden="true"></i> Tim beregu <span class="cek-jumlah"><?= count($p['beregu']) ?></span></h4>
+            <h4 class="cek-subjudul"><i class="bi bi-flag" aria-hidden="true"></i> Regu beregu <span class="cek-jumlah"><?= count($p['beregu']) ?></span></h4>
             <ul class="cek-tim">
                 <?php foreach ($p['beregu'] as $tim) : ?>
                     <li>
                         <div class="cek-tim-kepala">
                             <strong><?= esc($tim['nomor_lomba']) ?></strong>
-                            <span class="cek-tim-biaya"><?= $tim['biaya_tim'] === null ? 'tanpa biaya tim, tim sudah terdaftar' : esc(rupiah($tim['biaya_tim'])) ?></span>
+                            <span class="cek-tim-biaya"><?= $tim['biaya_tim'] === null ? 'tanpa biaya regu, regu sudah terdaftar' : esc(rupiah($tim['biaya_tim'])) ?></span>
                         </div>
                         <?php // Satu nama per baris dengan nomor dada (K88). ?>
                         <table class="table table-sm align-middle mb-0 mt-2 cek-tim-anggota">
-                            <thead><tr><th scope="col">No</th><th scope="col">Nama</th><th scope="col">NISN</th><th scope="col">No. Dada</th></tr></thead>
+                            <thead><tr><th scope="col">No</th><th scope="col">Nama</th><th scope="col">NISN</th><th scope="col">Peran</th><th scope="col">No. Dada</th></tr></thead>
                             <tbody>
                                 <?php foreach ($tim['anggota'] as $j => $anggota) : ?>
                                     <tr>
                                         <td class="text-body-secondary"><?= $j + 1 ?></td>
                                         <td class="fw-semibold"><?= esc($anggota['nama']) ?></td>
                                         <td><?= esc($anggota['nisn']) ?></td>
+                                        <td><?= ($anggota['peran'] ?? '') === 'cadangan' ? 'Cadangan' : 'Inti' ?></td>
                                         <td><?= $dada($anggota) ?></td>
                                     </tr>
                                 <?php endforeach ?>

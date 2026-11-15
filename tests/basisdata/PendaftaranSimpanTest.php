@@ -54,14 +54,21 @@ final class PendaftaranSimpanTest extends UjiBasisData
      *
      * @return array<string, mixed>
      */
-    private static function kirimanTimKanga(int $jumlah, int $mulai, string $npsn = '99999911'): array
+    /**
+     * Atlet Kanga's Escape di satu regu: `$inti` atlet pertama inti (bawaan:
+     * sampai 4), sisanya cadangan.
+     */
+    private static function kirimanTimKanga(int $jumlah, int $mulai, string $npsn = '99999911', string $regu = 'A', ?int $inti = null): array
     {
+        $inti ??= min($jumlah, 4);
         $kiriman            = self::kirimanContoh();
         $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => $npsn, 'nama' => ''];
         $kiriman['atlet']   = [];
 
         for ($i = 0; $i < $jumlah; $i++) {
-            $kiriman['atlet'][] = self::atletContoh(sprintf('99%08d', $mulai + $i), [20]);
+            $kiriman['atlet'][] = self::atletContoh(sprintf('99%08d', $mulai + $i), [20]) + [
+                'regu' => [20 => ['regu' => $regu, 'peran' => $i < $inti ? 'inti' : 'cadangan']],
+            ];
         }
 
         return $kiriman;
@@ -262,47 +269,112 @@ final class PendaftaranSimpanTest extends UjiBasisData
         $this->assertSame(0, $this->db->table('usulan_nama_sekolah')->countAllResults());
     }
 
-    // Satu tim per nomor beregu per sekolah (6.6)
+    // Regu beregu per sekolah (6.6, K105)
 
     public function testSusulanMenambahAnggotaTanpaBiayaTim(): void
     {
         $pertama = $this->simpan(self::kirimanTimKanga(4, 100));
         $this->assertSame([], $pertama['galat']);
 
-        $kedua = $this->simpan(self::kirimanTimKanga(2, 200));
+        $kedua = $this->simpan(self::kirimanTimKanga(2, 200, inti: 0));
         $this->assertSame([], $kedua['galat']);
         $this->assertTrue($kedua['rincian']['beregu'][0]['susulan']);
 
         $tim = $this->db->table('pendaftaran_beregu')->orderBy('id')->get()->getResultArray();
         $this->assertSame([100000, 0], array_map('intval', array_column($tim, 'biaya_tim')));
+        $this->assertSame(['A', 'A'], array_column($tim, 'regu'));
         $this->assertSame(0, (int) model(PendaftaranModel::class)->find($kedua['pendaftaran']['id'])['total']);
 
         $data = (new DataIndukPendaftaran())->dataSekolah('99999911');
-        $this->assertSame([$this->id['kanga'] => 6], $data['tim']);
+        $this->assertSame([$this->id['kanga']], array_keys($data['tim']));
+        $this->assertSame(['A'], array_keys($data['tim'][$this->id['kanga']]));
+        $this->assertSame(['inti', 'inti', 'inti', 'inti', 'cadangan', 'cadangan'], array_column($data['tim'][$this->id['kanga']]['A'], 'peran'));
 
-        // Tim sudah 6 = batas anggota.
-        $ketiga = $this->simpan(self::kirimanTimKanga(1, 300));
-        $this->assertSame('beregu.' . $this->id['kanga'], $ketiga['galat'][0]['jalur']);
-        $this->assertStringContainsString('Tim ini sudah penuh', $ketiga['galat'][0]['pesan']);
+        // Regu A sudah 6 = batas anggota.
+        $ketiga = $this->simpan(self::kirimanTimKanga(1, 300, inti: 0));
+        $this->assertSame('beregu.' . $this->id['kanga'] . ':A', $ketiga['galat'][0]['jalur']);
+        $this->assertStringContainsString('Regu ini sudah penuh', $ketiga['galat'][0]['pesan']);
+    }
+
+    public function testDuaReguSatuPendaftaranDanReguBaruSusulan(): void
+    {
+        $kiriman          = self::kirimanTimKanga(4, 100);
+        $kiriman['atlet'] = array_merge($kiriman['atlet'], self::kirimanTimKanga(5, 200, regu: 'B')['atlet']);
+
+        $pertama = $this->simpan($kiriman);
+        $this->assertSame([], $pertama['galat']);
+        $this->assertSame(200000, (int) model(PendaftaranModel::class)->find($pertama['pendaftaran']['id'])['total']);
+
+        // Susulan membuat Regu C dengan biaya regu penuh.
+        $kedua = $this->simpan(self::kirimanTimKanga(4, 300, regu: 'C'));
+        $this->assertSame([], $kedua['galat']);
+        $this->assertSame(100000, (int) model(PendaftaranModel::class)->find($kedua['pendaftaran']['id'])['total']);
+
+        $regu = $this->db->table('pendaftaran_beregu')->select('regu, biaya_tim')->orderBy('id')->get()->getResultArray();
+        $this->assertSame(['A', 'B', 'C'], array_column($regu, 'regu'));
+
+        $anggota = $this->db->table('atlet_nomor an')->select('an.regu, an.peran, COUNT(*) AS jumlah')
+            ->groupBy('an.regu, an.peran')->orderBy('an.regu')->orderBy('an.peran', 'DESC')->get()->getResultArray();
+        $this->assertSame([
+            ['regu' => 'A', 'peran' => 'inti', 'jumlah' => '4'],
+            ['regu' => 'B', 'peran' => 'inti', 'jumlah' => '4'],
+            ['regu' => 'B', 'peran' => 'cadangan', 'jumlah' => '1'],
+            ['regu' => 'C', 'peran' => 'inti', 'jumlah' => '4'],
+        ], $anggota);
+    }
+
+    public function testBatasReguPerNomorDariPengaturan(): void
+    {
+        $this->db->table('nomor_lomba')->where('id', $this->id['kanga'])->update(['regu_maksimal' => 1]);
+        $this->assertSame([], $this->simpan(self::kirimanTimKanga(4, 100))['galat']);
+
+        $hasil = $this->simpan(self::kirimanTimKanga(4, 200, regu: 'B'));
+        $this->assertSame('atlet.0.regu', $hasil['galat'][0]['jalur']);
+        $this->assertStringContainsString('paling banyak 1 regu', $hasil['galat'][0]['pesan']);
+    }
+
+    public function testSusulanIntiMenurunkanIntiLamaDiPendaftaranLain(): void
+    {
+        $pertama = $this->simpan(self::kirimanTimKanga(4, 100));
+        $this->assertSame([], $pertama['galat']);
+        $lama    = (new DataIndukPendaftaran())->dataSekolah('99999911')['tim'][$this->id['kanga']]['A'];
+        $diubah  = model(PendaftaranModel::class)->find($pertama['pendaftaran']['id'])['diubah_pada'];
+
+        $kiriman                   = self::kirimanTimKanga(1, 200, inti: 1);
+        $kiriman['turun_cadangan'] = ['20:' . $lama[3]['id']];
+        $this->db->table('pendaftaran')->where('id', $pertama['pendaftaran']['id'])->update(['diubah_pada' => '2026-11-01 00:00:00']);
+
+        $kedua = $this->simpan($kiriman);
+        $this->assertSame([], $kedua['galat']);
+        $this->assertSame(1, $kedua['rincian']['beregu'][0]['turun']);
+
+        $sekarang = (new DataIndukPendaftaran())->dataSekolah('99999911')['tim'][$this->id['kanga']]['A'];
+        $peran    = array_column($sekarang, 'peran', 'id');
+        $this->assertSame('cadangan', $peran[$lama[3]['id']]);
+        $this->assertSame(4, count(array_filter($peran, static fn (string $p): bool => $p === 'inti')));
+
+        // Pendaftaran pemilik inti lama ikut ditandai berubah (admin yang membukanya diminta memuat ulang).
+        $this->assertNotSame('2026-11-01 00:00:00', model(PendaftaranModel::class)->find($pertama['pendaftaran']['id'])['diubah_pada']);
+        $this->assertNotNull($diubah);
     }
 
     public function testSusulanTanpaKonfirmasiTidakDisimpan(): void
     {
-        // K57: kiriman wizard membawa daftar konfirmasi; tim susulan yang tidak
+        // K57: kiriman wizard membawa daftar konfirmasi; regu susulan yang tidak
         // ada di daftar itu ditolak dan tidak ada yang tersimpan.
         $this->assertSame([], $this->simpan(self::kirimanTimKanga(4, 100))['galat']);
 
-        $kiriman                       = self::kirimanTimKanga(2, 200);
+        $kiriman                       = self::kirimanTimKanga(2, 200, inti: 0);
         $kiriman['konfirmasi_susulan'] = [];
         $hasil                         = $this->simpan($kiriman);
 
-        $this->assertSame([['langkah' => 3, 'jalur' => 'konfirmasi.' . $this->id['kanga']]], array_map(
+        $this->assertSame([['langkah' => 3, 'jalur' => 'konfirmasi.' . $this->id['kanga'] . ':A']], array_map(
             static fn (array $g): array => ['langkah' => $g['langkah'], 'jalur' => $g['jalur']],
             $hasil['galat'],
         ));
         $this->assertSame(1, $this->db->table('pendaftaran')->countAllResults());
 
-        $kiriman['konfirmasi_susulan'] = [20];
+        $kiriman['konfirmasi_susulan'] = ['20:A'];
         $hasil                         = $this->simpan($kiriman);
 
         $this->assertSame([], $hasil['galat']);
@@ -314,11 +386,11 @@ final class PendaftaranSimpanTest extends UjiBasisData
     {
         $this->simpan(self::kirimanTimKanga(4, 100));
 
-        // Sekolah lain (tanpa NPSN) harus membentuk tim lengkap sendiri.
+        // Sekolah lain (tanpa NPSN) harus membentuk regu lengkap sendiri.
         $kiriman                    = self::kirimanTimKanga(2, 200, '');
         $kiriman['sekolah']['nama'] = 'SD Karangan Tanpa NPSN';
         $hasil                      = $this->simpan($kiriman);
-        $this->assertSame('beregu.' . $this->id['kanga'], $hasil['galat'][0]['jalur']);
+        $this->assertSame('beregu.' . $this->id['kanga'] . ':A', $hasil['galat'][0]['jalur']);
         $this->assertStringContainsString('baru punya 2 atlet', $hasil['galat'][0]['pesan']);
     }
 

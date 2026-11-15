@@ -382,6 +382,33 @@ fieldset.is-invalid > .invalid-feedback,
     font-size: 0.85rem;
 }
 
+/* Pilihan regu dan peran (inti/cadangan) di bawah nomor beregu yang dicentang (K105). */
+.pilihan-nomor-beregu {
+    grid-column: 1 / -1;
+}
+
+.pilihan-regu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin: 0.35rem 0 0.25rem;
+    padding: 0.5rem 0.625rem;
+    background-color: var(--ml-biru-muda-pucat);
+    border-radius: 0.5rem;
+}
+
+.pilihan-regu[hidden] {
+    display: none;
+}
+
+.pilihan-regu-isian {
+    display: flex;
+    flex: 1 1 9rem;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
 .formulir-atlet-tombol {
     display: flex;
     flex-wrap: wrap;
@@ -461,6 +488,20 @@ fieldset.is-invalid > .invalid-feedback,
     margin: 0.25rem 0 0.5rem;
     color: var(--ml-teks-redup);
     font-size: 0.875rem;
+}
+
+/* Anggota regu yang sudah terdaftar, dengan pilihan inti lama menjadi cadangan (K105). */
+.regu-lama {
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--bs-body-bg);
+    border: 1px dashed var(--bs-border-color);
+    border-radius: 0.5rem;
+    overflow-wrap: anywhere;
+}
+
+.regu-lama-baris + .regu-lama-baris {
+    margin-top: 0.25rem;
 }
 
 /* Konfirmasi tim susulan (K57): kotak centang dengan teks panjang yang
