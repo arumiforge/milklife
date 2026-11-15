@@ -701,11 +701,11 @@ final class PemeriksaPendaftaran
             $boleh = $this->reguDibolehkan($nomor);
 
             if ($label === '') {
-                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum memilih regu. Pilih Regu " . self::teksLabel($boleh) . '.');
+                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum memilih regu. Pilih " . Regu::awalan() . ' ' . self::teksLabel($boleh) . '.');
                 $sah = false;
             } elseif (! in_array($label, $boleh, true)) {
-                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} tidak punya Regu {$label}; satu sekolah paling banyak "
-                    . count($boleh) . ' regu di nomor ini. Pilih Regu ' . self::teksLabel($boleh) . '.');
+                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} tidak punya " . Regu::label($label) . '; satu sekolah paling banyak '
+                    . count($boleh) . ' regu di nomor ini. Pilih ' . Regu::awalan() . ' ' . self::teksLabel($boleh) . '.');
                 $sah = false;
             }
         }
@@ -878,7 +878,7 @@ final class PemeriksaPendaftaran
                     foreach (array_diff(array_map('strval', array_keys($perRegu)), $lama) as $baru) {
                         $this->tambah('beregu.' . Regu::kunci($nomorId, $baru), Regu::nama(NomorLombaModel::namaLengkap($nomor), $baru)
                             . ": satu sekolah paling banyak {$batasRegu} regu di nomor ini, sekarang " . count($semua) . ' regu'
-                            . ($lama !== [] ? ' (termasuk Regu ' . self::teksLabel($lama) . ' yang sudah terdaftar)' : '')
+                            . ($lama !== [] ? ' (termasuk ' . Regu::awalan() . ' ' . self::teksLabel($lama) . ' yang sudah terdaftar)' : '')
                             . '. Masukkan atletnya ke regu yang sudah ada.');
                     }
                 }

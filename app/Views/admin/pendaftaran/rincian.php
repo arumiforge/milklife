@@ -253,7 +253,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                                     <li>
                                                         <?= esc($nomor['nama']) ?>
                                                         <?php if ($nomor['jenis'] === 'beregu') : ?>
-                                                            <span class="badge rounded-pill text-bg-light border">Regu <?= esc((string) $nomor['regu']) ?> · <?= esc(Regu::labelPeran($nomor['peran'])) ?></span>
+                                                            <span class="badge rounded-pill text-bg-light border"><?= esc(Regu::label((string) $nomor['regu'])) ?> · <?= esc(Regu::labelPeran($nomor['peran'])) ?></span>
                                                         <?php endif ?>
                                                     </li>
                                                 <?php endforeach; ?>

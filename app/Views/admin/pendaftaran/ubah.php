@@ -155,7 +155,7 @@ $kartuPj = static function (string $k, ?int $urut, array $orang) use ($tandai, $
 // nama diketik. Nama tersimpan selalu tetap bisa dipilih.
 $pilihanRegu = static function (string $nameDasar, string $idDasar, int $nomorId, ?int $maksimal, array $terpilih, string $kelas, bool $tampil) use ($aturan): string {
     $bebas = ($aturan['regu_mode'] ?? Regu::MODE_KETENTUAN) === Regu::MODE_BEBAS;
-    $label = Regu::dibolehkan($maksimal, $aturan['regu_label'] ?? null);
+    $label = Regu::dibolehkan($maksimal, ($aturan['regu_label'] ?? []) ?: null);
     $regu  = (string) ($terpilih['regu'] ?? '');
     $peran = (string) ($terpilih['peran'] ?? '');
 
@@ -166,15 +166,15 @@ $pilihanRegu = static function (string $nameDasar, string $idDasar, int $nomorId
     ob_start(); ?>
     <div class="pilihan-regu-admin" data-regu-untuk="<?= $nomorId ?>"<?= $tampil ? '' : ' hidden' ?>>
         <div>
-            <label class="form-label small mb-0" for="<?= $idDasar ?>-regu-<?= $nomorId ?>">Regu</label>
+            <label class="form-label small mb-0" for="<?= $idDasar ?>-regu-<?= $nomorId ?>"><?= esc(Regu::awalan()) ?></label>
             <?php if ($bebas) : ?>
                 <input type="text" class="form-control form-control-sm<?= $kelas ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]"
                     value="<?= esc($regu, 'attr') ?>" maxlength="<?= Regu::PANJANG_MAKSIMAL ?>" placeholder="mis. A atau Merah" data-isian="regu">
             <?php else : ?>
                 <select class="form-select form-select-sm<?= $kelas ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]" data-isian="regu">
-                    <option value="">Pilih regu</option>
+                    <option value="">Pilih <?= esc(mb_strtolower(Regu::awalan())) ?></option>
                     <?php foreach ($label as $l) : ?>
-                        <option value="<?= esc($l, 'attr') ?>"<?= $l === $regu ? ' selected' : '' ?>>Regu <?= esc($l) ?></option>
+                        <option value="<?= esc($l, 'attr') ?>"<?= $l === $regu ? ' selected' : '' ?>><?= esc(Regu::label($l)) ?></option>
                     <?php endforeach; ?>
                 </select>
             <?php endif ?>

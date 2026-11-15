@@ -72,7 +72,13 @@ class Pendaftaran extends BaseConfig
     public string $nama_regu = 'ketentuan';
 
     /**
-     * Daftar nama regu mode Ketentuan admin, dipisah koma (K106).
+     * Daftar nama regu mode Ketentuan admin, dipisah koma (K106). Kosong =
+     * huruf A, B, C, … berurutan tanpa batas (K107).
      */
-    public string $label_regu = 'A, B, C';
+    public string $label_regu = '';
+
+    /**
+     * Kata di depan nama regu, contoh "Regu A" atau "Tim A" (K107).
+     */
+    public string $awalan_regu = 'Regu';
 }

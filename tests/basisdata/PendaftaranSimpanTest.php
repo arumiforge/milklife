@@ -91,7 +91,7 @@ final class PendaftaranSimpanTest extends UjiBasisData
         $this->assertNotContains($this->id['lari80putri'], array_column($induk['nomor_lomba'], 'id'));
         $this->assertSame(
             ['penanggung_jawab_minimal' => 1, 'penanggung_jawab_maksimal' => 5, 'nomor_individu_maksimal' => 2, 'atlet_per_nomor_maksimal' => null,
-                'regu_mode' => 'ketentuan', 'regu_label' => ['A', 'B', 'C']],
+                'regu_mode' => 'ketentuan', 'regu_label' => [], 'regu_awalan' => 'Regu'],
             $induk['aturan'],
         );
     }

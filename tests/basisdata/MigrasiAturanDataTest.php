@@ -209,6 +209,29 @@ final class MigrasiAturanDataTest extends UjiBasisData
         $this->assertSame(0, \App\Libraries\Pendaftaran\PeranAwalRegu::isi($this->db));
     }
 
+    public function testReguTanpaBatasMengosongkanNilaiAwalLama(): void
+    {
+        // K107: batas 3 dari pembaruan F7-12 dan daftar "A, B, C" bawaan lama dikosongkan; nilai lain dibiarkan.
+        $ku     = $this->buatKelompokUmur();
+        $tiga   = $this->buatNomorLomba($ku, ['nama' => 'Formula 1', 'jenis' => 'beregu', 'jumlah_inti' => 4, 'regu_maksimal' => 3]);
+        $dua    = $this->buatNomorLomba($ku, ['nama' => 'Kanga', 'jenis' => 'beregu', 'jumlah_inti' => 4, 'regu_maksimal' => 2]);
+        $waktu  = date('Y-m-d H:i:s');
+        $simpan = static fn (string $kunci, string $nilai): array => ['class' => 'Config\Pendaftaran', 'key' => $kunci, 'value' => $nilai, 'type' => 'string', 'created_at' => $waktu, 'updated_at' => $waktu];
+        $this->db->table('settings')->insertBatch([$simpan('label_regu', 'A, B, C'), $simpan('nama_regu', 'ketentuan')]);
+
+        (new \App\Database\Migrations\ReguTanpaBatas(\Config\Database::forge($this->db)))->up();
+
+        $this->assertNull($this->db->table('nomor_lomba')->where('id', $tiga)->get()->getRow()->regu_maksimal);
+        $this->assertSame('2', (string) $this->db->table('nomor_lomba')->where('id', $dua)->get()->getRow()->regu_maksimal);
+        $this->assertSame(0, $this->db->table('settings')->where('key', 'label_regu')->countAllResults());
+        $this->assertSame(1, $this->db->table('settings')->where('key', 'nama_regu')->countAllResults());
+
+        // Daftar yang sudah diubah admin tidak disentuh.
+        $this->db->table('settings')->insert($simpan('label_regu', 'Putra 1, Putra 2'));
+        (new \App\Database\Migrations\ReguTanpaBatas(\Config\Database::forge($this->db)))->up();
+        $this->assertSame(1, $this->db->table('settings')->where('key', 'label_regu')->countAllResults());
+    }
+
     // ---------------------------------------------------------------
     // Kunci tamu
     // ---------------------------------------------------------------

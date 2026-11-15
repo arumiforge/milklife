@@ -11,13 +11,17 @@ namespace App\Libraries\Pendaftaran;
  *
  * - **Ketentuan admin** (`ketentuan`, bawaan): official memilih dari daftar
  *   nama yang ditulis admin, misalnya "A, B, C". Banyaknya nama ikut
- *   membatasi regu per sekolah, bersama `regu_maksimal` nomor lomba.
+ *   membatasi regu per sekolah, bersama `regu_maksimal` nomor lomba. Daftar
+ *   kosong (bawaan) berarti huruf A, B, C, … berurutan tanpa batas selain
+ *   `regu_maksimal` (K107).
  * - **Bebas** (`bebas`): official mengetik nama regu sendiri; hanya
  *   `regu_maksimal` nomor lomba yang membatasi banyaknya regu.
  *
- * Nama regu selalu dirapikan dengan `rapikan()` (spasi, kata "Regu" di depan
- * dibuang, huruf awal tiap kata kapital), supaya "merah" dan "MERAH" adalah
- * regu yang sama. Kunci regu dalam satu sekolah adalah "nomor:nama".
+ * Kata di depan nama regu ("Regu", "Tim", …) juga diatur admin (`awalan()`,
+ * K107). Nama regu selalu dirapikan dengan `rapikan()` (spasi, kata "Regu"
+ * atau awalan di depan dibuang, huruf awal tiap kata kapital), supaya "merah"
+ * dan "MERAH" adalah regu yang sama. Kunci regu dalam satu sekolah adalah
+ * "nomor:nama".
  *
  *     Regu::rapikan(' regu  merah ');            // 'Merah'
  *     Regu::daftarLabel('a, B , putra 1, a');    // ['A', 'B', 'Putra 1']
@@ -48,9 +52,17 @@ final class Regu
     ];
 
     /**
-     * Nama regu bawaan mode Ketentuan admin.
+     * Daftar nama regu bawaan mode Ketentuan admin: kosong, yaitu huruf
+     * A, B, C, … tanpa batas selain batas regu nomor lomba (K107).
      */
-    public const LABEL_BAWAAN = 'A, B, C';
+    public const LABEL_BAWAAN = '';
+
+    /**
+     * Kata di depan nama regu bawaan, contoh "Regu A" (K107).
+     */
+    public const AWALAN_BAWAAN = 'Regu';
+
+    public const AWALAN_PANJANG_MAKSIMAL = 15;
 
     /**
      * Regu paling banyak per sekolah per nomor, juga banyaknya nama di daftar admin.
@@ -60,14 +72,20 @@ final class Regu
     public const PANJANG_MAKSIMAL = 30;
 
     /**
-     * Nama regu yang dirapikan: spasi berderet menjadi satu, kata "Regu" di
-     * depan dibuang, huruf awal tiap kata kapital dan sisanya kecil.
+     * Nama regu yang dirapikan: spasi berderet menjadi satu, kata "Regu" atau
+     * awalan dari pengaturan (misalnya "Tim") di depan dibuang, huruf awal
+     * tiap kata kapital dan sisanya kecil.
      */
     public static function rapikan(mixed $nama): string
     {
-        $teks = is_string($nama) || is_int($nama) ? (string) $nama : '';
-        $teks = trim((string) preg_replace('/\s+/u', ' ', $teks));
-        $teks = trim((string) preg_replace('/^regu(\s+|$)/iu', '', $teks));
+        $teks   = is_string($nama) || is_int($nama) ? (string) $nama : '';
+        $teks   = trim((string) preg_replace('/\s+/u', ' ', $teks));
+        $teks   = trim((string) preg_replace('/^regu(\s+|$)/iu', '', $teks));
+        $awalan = self::awalan();
+
+        if (strcasecmp($awalan, self::AWALAN_BAWAAN) !== 0) {
+            $teks = trim((string) preg_replace('/^' . preg_quote($awalan, '/') . '\s+/iu', '', $teks));
+        }
 
         return (string) preg_replace_callback(
             '/(^|[\s\-\/.])(\p{Ll})/u',
@@ -155,11 +173,55 @@ final class Regu
     }
 
     /**
-     * Nama regu untuk pesan dan tampilan, contoh "Kanga's Escape putra Regu A".
+     * Nama regu untuk pesan dan tampilan, contoh "Kanga's Escape putra Regu A"
+     * (atau "… Tim A" bila awalannya "Tim").
      */
     public static function nama(string $namaNomor, string $regu): string
     {
-        return trim($namaNomor . ' Regu ' . $regu);
+        return trim($namaNomor . ' ' . self::label($regu));
+    }
+
+    /**
+     * Nama regu dengan awalannya saja, contoh "Regu A" atau "Tim A".
+     */
+    public static function label(string $regu): string
+    {
+        return trim(self::awalan() . ' ' . $regu);
+    }
+
+    /**
+     * Kata di depan nama regu dari Pengaturan > Pendaftaran (K107), bawaan
+     * "Regu". Bila pengaturan tidak bisa dibaca (uji unit tanpa basis data),
+     * memakai bawaan.
+     */
+    public static function awalan(): string
+    {
+        try {
+            $awalan = self::rapikanAwalan(setting('Pendaftaran.awalan_regu'));
+        } catch (\Throwable) {
+            $awalan = '';
+        }
+
+        return self::awalanSah($awalan) ? $awalan : self::AWALAN_BAWAAN;
+    }
+
+    /**
+     * Awalan yang dirapikan: spasi di tepi dibuang dan spasi berderet menjadi satu.
+     * Huruf besar kecil dibiarkan seperti ditulis admin ("Tim", "TIM").
+     */
+    public static function rapikanAwalan(mixed $teks): string
+    {
+        return is_string($teks) ? trim((string) preg_replace('/\s+/u', ' ', $teks)) : '';
+    }
+
+    /**
+     * Awalan boleh dipakai: 2–15 huruf, angka, spasi, atau titik, diawali huruf.
+     */
+    public static function awalanSah(mixed $awalan): bool
+    {
+        return is_string($awalan)
+            && mb_strlen($awalan) <= self::AWALAN_PANJANG_MAKSIMAL
+            && preg_match('/^\p{L}[\p{L}\p{N} .]+$/uD', $awalan) === 1;
     }
 
     public static function labelPeran(?string $peran): string
@@ -168,18 +230,19 @@ final class Regu
     }
 
     /**
-     * Mode nama regu dan daftar nama dari Pengaturan > Pendaftaran.
+     * Mode nama regu, daftar nama, dan awalan dari Pengaturan > Pendaftaran.
+     * Daftar kosong berarti huruf A, B, C, … (K107).
      *
-     * @return array{regu_mode: string, regu_label: list<string>}
+     * @return array{regu_mode: string, regu_label: list<string>, regu_awalan: string}
      */
     public static function pengaturan(): array
     {
-        $mode  = (string) setting('Pendaftaran.nama_regu');
-        $label = self::daftarLabel(setting('Pendaftaran.label_regu'));
+        $mode = (string) setting('Pendaftaran.nama_regu');
 
         return [
-            'regu_mode'  => isset(self::MODE[$mode]) ? $mode : self::MODE_KETENTUAN,
-            'regu_label' => $label !== [] ? $label : self::daftarLabel(self::LABEL_BAWAAN),
+            'regu_mode'   => isset(self::MODE[$mode]) ? $mode : self::MODE_KETENTUAN,
+            'regu_label'  => self::daftarLabel(setting('Pendaftaran.label_regu')),
+            'regu_awalan' => self::awalan(),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Libraries\Panel;
 
 use App\Libraries\Jenjang;
+use App\Libraries\Pendaftaran\Regu;
 use CodeIgniter\Database\BaseConnection;
 use InvalidArgumentException;
 
@@ -153,14 +154,14 @@ final class Rekap
             $kurang = (int) $b['jumlah_inti'] < (int) $b['inti_wajib'];
             unset($b['inti_wajib']);
 
-            return ['regu' => 'Regu ' . $b['regu'], 'jumlah_inti' => (int) $b['jumlah_inti'], 'keterangan' => $kurang ? 'Inti kurang' : ''] + $b;
+            return ['regu' => Regu::label((string) $b['regu']), 'jumlah_inti' => (int) $b['jumlah_inti'], 'keterangan' => $kurang ? 'Inti kurang' : ''] + $b;
         }, $baris);
 
         return [
             'kolom' => self::kolom([
                 'kelompok_umur'  => 'Kelompok Umur',
                 'nomor_lomba'    => 'Nomor Lomba',
-                'regu'           => 'Regu',
+                'regu'           => Regu::awalan(),
                 'nama_sekolah'   => 'Sekolah',
                 'kabupaten'      => 'Kabupaten',
                 'jumlah_inti'    => ['judul' => 'Inti', 'jenis' => 'angka'],

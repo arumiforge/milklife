@@ -6,7 +6,9 @@
  *
  * Susunan hemat tempat untuk data banyak: kepala (logo kiri, judul tengah),
  * kotak info ringkas, tabel nomor individu satu baris per atlet (nomor
- * lombanya digabung), tabel nomor beregu, lalu status dan total berdampingan.
+ * lombanya digabung), tabel nomor beregu satu baris per anggota regu (nomor
+ * lomba, regu, dan biaya regu di baris pertama tiap regu; nomor dada dan
+ * peran inti/cadangan di kolom sendiri), lalu status dan total berdampingan.
  * Kode QR besar di pojok kanan bawah halaman terakhir dan keterangannya di
  * pojok kiri bawah (`bukti/pdf_qr`, ditulis `BuktiPendaftaran::pdf()`, K89). Kepala tabel diulang di setiap halaman; nomor halaman di kaki
  * (`BuktiPendaftaran::pdf()`).
@@ -17,6 +19,8 @@
  * @var bool                 $logo      logo persegi ada (`var:logo`, PNG transparan)
  *
  */
+
+use App\Libraries\Pendaftaran\Regu;
 
 // Ikon WhatsApp (Bootstrap Icons, MIT), disisipkan sebagai SVG.
 $ikonWa = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="#25D366" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>');
@@ -78,6 +82,9 @@ foreach ($p['individu'] as $baris) {
     table.data td.uang, table.data th.uang { text-align: right; white-space: nowrap; }
     table.data td.no { color: #5B6475; text-align: right; }
     table.data tr.jumlah td { font-weight: bold; color: #021F7B; border-bottom: none; border-top: 0.3mm solid #021F7B; background: #ffffff; }
+    table.data tr.awal-regu td { border-top: 0.3mm solid #9BCCEC; }
+    td.peran-inti { font-weight: bold; color: #234987; }
+    td.peran-cadangan { color: #5B6475; font-style: italic; }
     .kecil { font-size: 7.5pt; color: #5B6475; }
     .kosong { color: #5B6475; font-style: italic; margin: 0; }
 
@@ -148,24 +155,39 @@ foreach ($p['individu'] as $baris) {
     </table>
 <?php endif ?>
 
-<h2>Nomor Lomba Beregu <span class="kecil">(<?= count($p['beregu']) ?> regu)</span></h2>
+<h2>Nomor Lomba Beregu <span class="kecil">(<?= count($p['beregu']) ?> regu, <?= array_sum(array_map(static fn (array $t): int => count($t['anggota']), $p['beregu'])) ?> anggota)</span></h2>
 <?php if ($p['beregu'] === []) : ?>
     <p class="kosong">Tidak ada nomor beregu pada pendaftaran ini.</p>
 <?php else : ?>
-    <table class="data">
+    <table class="data beregu">
         <thead>
-            <tr><th width="7mm" style="text-align: right;">No</th><th width="45mm">Nomor Lomba</th><th>Anggota</th><th class="uang" width="22mm">Biaya</th></tr>
+            <tr><th width="7mm" style="text-align: right;">No</th><th width="36mm">Nomor Lomba</th><th width="12mm"><?= esc(Regu::awalan()) ?></th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Dada</th><th width="16mm">Peran</th><th class="uang" width="22mm">Biaya</th></tr>
         </thead>
         <tbody>
             <?php foreach ($p['beregu'] as $i => $tim) : ?>
-                <tr<?= $i % 2 === 1 ? ' class="genap"' : '' ?>>
-                    <td class="no"><?= $i + 1 ?></td>
-                    <td><?= esc($tim['nomor_lomba']) ?></td>
-                    <td><?= esc(implode(', ', array_map(static fn (array $a): string => $a['nama'] . ($nomorDada($a) !== '' ? ' (' . $nomorDada($a) . ')' : '') . (($a['peran'] ?? '') === 'cadangan' ? ' [cadangan]' : ''), $tim['anggota']))) ?></td>
-                    <td class="uang"><?= $tim['biaya_tim'] === null ? '<span class="kecil">Tanpa biaya (regu sudah terdaftar)</span>' : esc(rupiah($tim['biaya_tim'])) ?></td>
-                </tr>
+                <?php foreach ($tim['anggota'] as $j => $a) : ?>
+                    <?php $cadangan = ($a['peran'] ?? '') === Regu::CADANGAN ?>
+                    <tr class="<?= trim(($i % 2 === 1 ? 'genap ' : '') . ($j === 0 ? 'awal-regu' : '')) ?>">
+                        <?php if ($j === 0) : ?>
+                            <td class="no"><?= $i + 1 ?></td>
+                            <td><?= esc($tim['nama_nomor'] ?? $tim['nomor_lomba']) ?></td>
+                            <td><b><?= esc($tim['regu'] ?? '') ?></b></td>
+                        <?php else : ?>
+                            <td></td><td></td><td></td>
+                        <?php endif ?>
+                        <td><?= esc($a['nama']) ?></td>
+                        <td><?= esc($a['nisn'] ?? '') ?></td>
+                        <td><b><?= esc($nomorDada($a)) ?></b></td>
+                        <td class="<?= $cadangan ? 'peran-cadangan' : 'peran-inti' ?>"><?= esc(Regu::labelPeran($a['peran'] ?? Regu::INTI)) ?></td>
+                        <?php if ($j === 0) : ?>
+                            <td class="uang"><?= $tim['biaya_tim'] === null ? '<span class="kecil">Tanpa biaya<br>' . esc(mb_strtolower(Regu::awalan())) . ' sudah terdaftar</span>' : esc(rupiah($tim['biaya_tim'])) ?></td>
+                        <?php else : ?>
+                            <td></td>
+                        <?php endif ?>
+                    </tr>
+                <?php endforeach ?>
             <?php endforeach ?>
-            <tr class="jumlah"><td colspan="3">Subtotal beregu</td><td class="uang"><?= esc(rupiah($p['subtotal_beregu'])) ?></td></tr>
+            <tr class="jumlah"><td colspan="7">Subtotal beregu</td><td class="uang"><?= esc(rupiah($p['subtotal_beregu'])) ?></td></tr>
         </tbody>
     </table>
 <?php endif ?>

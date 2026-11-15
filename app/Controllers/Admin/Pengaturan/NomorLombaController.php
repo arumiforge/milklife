@@ -102,7 +102,7 @@ class NomorLombaController extends BaseController
             'kategori'         => 'putra',
             'jumlah_inti'      => '',
             'batas_anggota'    => '',
-            'regu_maksimal'    => '3',
+            'regu_maksimal'    => '',
             'jumlah_putra'     => '',
             'jumlah_putri'     => '',
             'biaya_beregu'     => '',

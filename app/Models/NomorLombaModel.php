@@ -381,7 +381,7 @@ class NomorLombaModel extends Model
         $regu = $isian['regu_maksimal'] ?? '';
 
         if ($regu !== '' && self::angka($regu, 1, Regu::PALING_BANYAK) === null) {
-            $galat['regu_maksimal'] = 'Regu per sekolah harus angka 1 sampai ' . Regu::PALING_BANYAK . ', misalnya 3 (Regu A, B, C). Kosongkan bila tidak dibatasi.';
+            $galat['regu_maksimal'] = 'Regu per sekolah harus angka 1 sampai ' . Regu::PALING_BANYAK . ', misalnya 3. Kosongkan bila tidak dibatasi.';
         }
 
         $biaya = angka_rupiah($isian['biaya_beregu']);
