@@ -113,6 +113,7 @@ final class BuktiPendaftaran
             'namaAcara' => mb_strtoupper(AcaraController::namaTampil()),
             'seriTahun' => trim(($seri !== '' ? 'Seri ' . $seri : '') . ($tahun !== '' ? ' Tahun ' . $tahun : '')),
             'logo'      => $this->logoPng() !== null,
+            'dicetak'   => tanggal_id(date('Y-m-d H:i:s'), true),
         ], ['saveData' => false]);
     }
 
@@ -155,15 +156,17 @@ final class BuktiPendaftaran
             'margin_right'  => 15,
             'margin_top'    => 10,
             'margin_bottom' => 20,
+            'margin_header' => 10,
             'margin_footer' => 8,
+            // Kepala (logo, judul, garis oranye) diulang di setiap halaman (K108);
+            // margin atas mengikuti tinggi kepala ditambah jarak 5 mm.
+            'setAutoTopMargin'  => 'stretch',
+            'autoMarginPadding' => 5,
         ]);
         if ($this->logoPng() !== null) {
             $mpdf->imageVars['logo'] = $this->logoPng();
         }
         $mpdf->imageVars['qr'] = KodeQr::png(self::alamat($this->pendaftaran), $this->logoPng());
-        $mpdf->SetHTMLFooter('<table width="100%" style="font-family: dejavusans; font-size: 7pt; color: #5B6475; border-top: 0.2mm solid #D6DEEA;"><tr>'
-            . '<td style="padding-top: 1.5mm;">' . esc($this->pendaftaran['id_pendaftaran']) . ' · dicetak ' . esc(tanggal_id(date('Y-m-d H:i:s'), true)) . '</td>'
-            . '<td style="padding-top: 1.5mm; text-align: right;">Halaman {PAGENO} dari {nbpg}</td></tr></table>');
         $mpdf->SetTitle('Bukti Pendaftaran ' . $this->pendaftaran['id_pendaftaran']);
         $mpdf->WriteHTML($this->html());
 

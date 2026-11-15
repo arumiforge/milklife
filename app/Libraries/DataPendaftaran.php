@@ -52,13 +52,18 @@ use CodeIgniter\Database\BaseConnection;
  *             'nomor_lomba' => 'Lari 60 m putra', 'biaya' => 150000,
  *         ]],
  *         'beregu'            => [[                 // satu baris per regu, inti dulu lalu cadangan
- *             'nomor_lomba' => 'Estafet 4 × 50 m mix Regu A', // Regu::nama()
- *             'nama_nomor'  => 'Estafet 4 × 50 m mix',
- *             'regu'        => 'A',
+ *             'nomor_lomba'  => 'Estafet 4 × 50 m mix Regu A', // Regu::nama(); tanpa "Regu A" bila tunggal
+ *             'nama_nomor'   => 'Estafet 4 × 50 m mix',
+ *             'regu'         => 'A',
+ *             'regu_tunggal' => false,              // true: satu-satunya regu sekolah di nomor ini (K108)
  *             'biaya_tim'   => 200000,               // null: pendaftaran susulan yang hanya menambah anggota
  *             'anggota'     => [['nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'nomor_dada' => null, 'peran' => 'inti']],
  *         ]],
  *     ]
+ *
+ * Regu tunggal (K108): bila sekolah (NPSN sama, semua pendaftarannya; tanpa
+ * NPSN: pendaftaran itu saja) hanya punya satu regu di satu nomor beregu,
+ * nama regunya tidak ditulis di `nomor_lomba` regu maupun atlet.
  */
 final class DataPendaftaran
 {
@@ -148,9 +153,12 @@ final class DataPendaftaran
             ->whereIn('pb.pendaftaran_id', $ids)
             ->get()->getResultArray();
 
-        $hasil = [];
+        $jumlahRegu  = $this->jumlahRegu($kepala);
+        $sekolahDari = [];
+        $hasil       = [];
 
         foreach ($kepala as $baris) {
+            $sekolahDari[(int) $baris['id']] = self::kunciSekolah($baris);
             $hasil[(int) $baris['id']] = [
                 'id'                => (int) $baris['id'],
                 'id_pendaftaran'    => (string) $baris['id_pendaftaran'],
@@ -183,14 +191,22 @@ final class DataPendaftaran
         // Tim dari pendaftaran_beregu dulu (punya biaya), lalu anggota dari atlet_nomor.
         $regu = [];
 
+        // Satu-satunya regu sekolah di nomor itu (K108).
+        $tunggal = static fn (int $pendaftaranId, int $nomorId): bool => ($jumlahRegu[$sekolahDari[$pendaftaranId]][$nomorId] ?? 0) <= 1;
+
         foreach ($tim as $baris) {
-            $regu[(int) $baris['pendaftaran_id']][Regu::kunci((int) $baris['nomor_lomba_id'], (string) $baris['regu'])] = [
-                'nomor_lomba' => Regu::nama(NomorLombaModel::namaLengkap($baris), (string) $baris['regu']),
-                'nama_nomor'  => NomorLombaModel::namaLengkap($baris),
-                'regu'        => (string) $baris['regu'],
-                'biaya_tim'   => (int) $baris['biaya_tim'],
-                'anggota'     => [],
-                'urutan'      => [(int) $baris['urutan'], (int) $baris['nomor_lomba_id'], (string) $baris['regu']],
+            $p = (int) $baris['pendaftaran_id'];
+            $n = (int) $baris['nomor_lomba_id'];
+            $t = $tunggal($p, $n);
+
+            $regu[$p][Regu::kunci($n, (string) $baris['regu'])] = [
+                'nomor_lomba'  => Regu::nama(NomorLombaModel::namaLengkap($baris), (string) $baris['regu'], $t),
+                'nama_nomor'   => NomorLombaModel::namaLengkap($baris),
+                'regu'         => (string) $baris['regu'],
+                'regu_tunggal' => $t,
+                'biaya_tim'    => (int) $baris['biaya_tim'],
+                'anggota'      => [],
+                'urutan'       => [(int) $baris['urutan'], $n, (string) $baris['regu']],
             ];
         }
 
@@ -211,16 +227,18 @@ final class DataPendaftaran
                 $label = Regu::sah($baris['regu']) ? (string) $baris['regu'] : 'A';
                 $peran = $baris['peran'] === Regu::INTI ? Regu::INTI : Regu::CADANGAN;
                 $kunci = Regu::kunci($n, $label);
+                $t     = $tunggal($p, $n);
 
-                $nomorPerAtlet[(int) $baris['atlet_id']][] = Regu::nama(NomorLombaModel::namaLengkap($baris), $label) . ' (' . Regu::labelPeran($peran) . ')';
+                $nomorPerAtlet[(int) $baris['atlet_id']][] = Regu::nama(NomorLombaModel::namaLengkap($baris), $label, $t) . ' (' . Regu::labelPeran($peran) . ')';
 
                 $regu[$p][$kunci] ??= [
-                    'nomor_lomba' => Regu::nama(NomorLombaModel::namaLengkap($baris), $label),
-                    'nama_nomor'  => NomorLombaModel::namaLengkap($baris),
-                    'regu'        => $label,
-                    'biaya_tim'   => null,
-                    'anggota'     => [],
-                    'urutan'      => [(int) $baris['urutan'], $n, $label],
+                    'nomor_lomba'  => Regu::nama(NomorLombaModel::namaLengkap($baris), $label, $t),
+                    'nama_nomor'   => NomorLombaModel::namaLengkap($baris),
+                    'regu'         => $label,
+                    'regu_tunggal' => $t,
+                    'biaya_tim'    => null,
+                    'anggota'      => [],
+                    'urutan'       => [(int) $baris['urutan'], $n, $label],
                 ];
                 $regu[$p][$kunci]['anggota'][] = [
                     'nama'       => (string) $a['nama'],
@@ -271,5 +289,70 @@ final class DataPendaftaran
         }
 
         return array_values($hasil);
+    }
+
+    /**
+     * Kunci sekolah untuk menghitung regu: NPSN, atau pendaftaran itu sendiri bila tanpa NPSN.
+     *
+     * @param array<string, mixed> $baris baris `pendaftaran` (`id`, `npsn`)
+     */
+    private static function kunciSekolah(array $baris): string
+    {
+        $npsn = (string) ($baris['npsn'] ?? '');
+
+        return $npsn !== '' ? 'n' . $npsn : 'p' . (int) $baris['id'];
+    }
+
+    /**
+     * Banyaknya regu tiap sekolah di tiap nomor beregu, dihitung dari semua
+     * pendaftaran sekolah itu (K108): kunci sekolah => nomor => jumlah regu.
+     *
+     * @param list<array<string, mixed>> $kepala
+     *
+     * @return array<string, array<int, int>>
+     */
+    private function jumlahRegu(array $kepala): array
+    {
+        $npsn      = [];
+        $tanpaNpsn = [];
+
+        foreach ($kepala as $baris) {
+            if ((string) ($baris['npsn'] ?? '') !== '') {
+                $npsn[(string) $baris['npsn']] = true;
+            } else {
+                $tanpaNpsn[] = (int) $baris['id'];
+            }
+        }
+
+        $saring = function ($kueri) use ($npsn, $tanpaNpsn) {
+            return $kueri->groupStart()
+                ->whereIn('p.npsn', $npsn === [] ? [''] : array_map('strval', array_keys($npsn)))
+                ->orWhereIn('p.id', $tanpaNpsn === [] ? [0] : $tanpaNpsn)
+                ->groupEnd();
+        };
+
+        $baris = array_merge(
+            $saring($this->db->table('atlet_nomor an')
+                ->select('p.id, p.npsn, an.nomor_lomba_id, an.regu')
+                ->join('atlet a', 'a.id = an.atlet_id')
+                ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+                ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
+                ->where('nl.jenis', 'beregu'))
+                ->distinct()->get()->getResultArray(),
+            $saring($this->db->table('pendaftaran_beregu pb')
+                ->select('p.id, p.npsn, pb.nomor_lomba_id, pb.regu')
+                ->join('pendaftaran p', 'p.id = pb.pendaftaran_id'))
+                ->distinct()->get()->getResultArray(),
+        );
+
+        $regu = [];
+
+        foreach ($baris as $b) {
+            $label = Regu::sah($b['regu']) ? (string) $b['regu'] : 'A';
+
+            $regu[self::kunciSekolah($b)][(int) $b['nomor_lomba_id']][$label] = true;
+        }
+
+        return array_map(static fn (array $perNomor): array => array_map('count', $perNomor), $regu);
     }
 }

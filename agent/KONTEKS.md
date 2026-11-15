@@ -17,7 +17,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi terakhir 10, K107).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi terakhir 11, K108).
 - Rencana implementasi Tahap 1: `dokumen/draf/rencana-implementasi-tahap-1.md`.
 - Rencana implementasi Tahap 2: `dokumen/draf/rencana-implementasi-tahap-2.md`.
 - Rencana implementasi Tahap 3: `dokumen/draf/rencana-implementasi-tahap-3.md`.
@@ -41,6 +41,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Nomor dada dibuat saat ditandai Lunas dan **tidak pernah dipakai ulang**, juga setelah pendaftaran dihapus atau dikembalikan ke Menunggu.
 - Admin yang mengubah pendaftaran Lunas: bila total berubah, status kembali ke Menunggu (K32); bila tetap, atlet baru langsung mendapat nomor dada (K59). ID pendaftaran tidak berubah (K63).
 - Satu sekolah boleh punya **beberapa regu** per nomor beregu (Regu A, B, C, …; bawaannya tidak dibatasi, batas bisa diisi per nomor lomba, K107). Setiap anggota regu ditandai inti atau cadangan; inti tepat sejumlah inti nomor; biaya beregu **per regu** (K105, menggantikan K07). Nama regu dari daftar admin (kosong = huruf otomatis) atau diketik official, dan kata awalannya ("Regu", "Tim") diatur di Pengaturan > Pendaftaran (K106, K107).
+- Bila sekolah hanya punya **satu regu** di satu nomor, tampilan untuk official (wizard, cek, bukti) **tidak menulis nama regunya**, dan wizard menyembunyikan pilihan regu sampai official menekan "Daftarkan regu lain"; data tetap menyimpan nama regu "A", dan panel admin serta rekap tetap menampilkannya (K108).
 - Pendaftaran susulan ke regu sekolah yang sudah terdaftar wajib dikonfirmasi official di wizard (K57), tanpa biaya regu; atlet susulan boleh menjadi inti dengan menurunkan inti lama. Admin tidak membuat pendaftaran baru dari panel (K58).
 - Foto penanggung jawab dan bukti bayar disimpan di `writable/unggahan/` (di luar `public/`) dan hanya disajikan lewat rute admin.
 - Nama sekolah **tidak unik**: data resmi memakai nama umum untuk banyak madrasah. Sekolah selalu dikenali lewat NPSN; nama pembeda diberi admin di menu Sekolah (K97), dan sekolah yang disunting tidak ditimpa impor ulang.

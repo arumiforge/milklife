@@ -404,7 +404,7 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertSame(0, $hasil['data']['subtotal_individu']);
         $this->assertSame([], $hasil['data']['turun_cadangan']);
         $this->assertSame(
-            [['nomor' => "Kanga's Escape putra", 'regu' => 'A', 'kelompok_umur' => 'KU 10', 'biaya' => 100000, 'susulan' => false,
+            [['nomor' => "Kanga's Escape putra", 'nomor_lomba_id' => 20, 'regu' => 'A', 'regu_tunggal' => true, 'kelompok_umur' => 'KU 10', 'biaya' => 100000, 'susulan' => false,
                 'anggota' => 5, 'inti' => 4, 'cadangan' => 1, 'anggota_lama' => null, 'turun' => 0]],
             $hasil['rincian']['beregu'],
         );
@@ -425,6 +425,31 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertSame(200000, $hasil['data']['total']);
         $this->assertSame(['A', 'B'], array_column($hasil['rincian']['beregu'], 'regu'));
         $this->assertSame([6, 4], array_column($hasil['rincian']['beregu'], 'anggota'));
+        // Dua regu di satu nomor: nama regu tetap ditulis (K108).
+        $this->assertSame([false, false], array_column($hasil['rincian']['beregu'], 'regu_tunggal'));
+    }
+
+    public function testReguTunggalTanpaNamaRegu(): void
+    {
+        // Satu-satunya regu sekolah di nomor ini: pesan menulis nama nomor saja (K108).
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = self::timKanga(3);
+
+        $hasil = self::periksa($kiriman);
+        $this->assertGalat($hasil, 'beregu.20:A', "Kanga's Escape putra baru punya 3 atlet");
+        $this->assertStringNotContainsString('Regu A', self::galat($hasil)['beregu.20:A']);
+
+        // Regu lama sekolah ini (NPSN sama) ikut dihitung: regu baru B membuat nama regu ditulis.
+        [$susulan, $ada]   = self::susulanKanga();
+        $susulan['atlet']  = self::timKanga(3, 10, 'B');
+        $this->assertGalat(self::periksa($susulan, $ada), 'beregu.20:B', "Kanga's Escape putra Regu B baru punya 3 atlet");
+
+        // Admin (longgar) tetap melihat nama regu.
+        $induk  = self::indukContoh();
+        $longgar = new PemeriksaPendaftaran($induk, self::ADA_KOSONG, self::HARI_INI, [], true);
+        $kiriman['atlet'] = self::timKanga(9, 10, 'A', 5);
+        $galat = self::galat($longgar->periksa($kiriman));
+        $this->assertStringContainsString("Kanga's Escape putra Regu A", (string) ($galat['beregu.20:A'] ?? ''));
     }
 
     public function testSetiapReguDiperiksaSendiri(): void
@@ -501,7 +526,8 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
 
         // "merah" dan "Regu Merah" satu regu: 8 atlet, inti 8 > 4.
         $kiriman['atlet'] = array_merge(self::timKanga(4, 10, 'merah'), self::timKanga(4, 20, 'Regu Merah'));
-        $this->assertGalat(self::periksa($kiriman, [], $induk), 'beregu.20:Merah', 'Regu Merah punya 8 atlet');
+        // Satu-satunya regu di nomor ini, jadi pesannya tanpa nama regu (K108).
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'beregu.20:Merah', "Kanga's Escape putra punya 8 atlet");
 
         $kiriman['atlet'] = self::timKanga(4, 10, '');
         $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'belum diberi nama regu');
@@ -632,7 +658,8 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
 
         $hasil = self::periksa($kiriman, $ada);
 
-        $this->assertGalat($hasil, 'konfirmasi.20:A', "Kanga's Escape putra Regu A: sekolah ini sudah punya regu ini (4 atlet dari pendaftaran sebelumnya)");
+        // Sekolah hanya punya satu regu di nomor ini: tanpa nama regu (K108).
+        $this->assertGalat($hasil, 'konfirmasi.20:A', "Kanga's Escape putra: sekolah ini sudah punya regu ini (4 atlet dari pendaftaran sebelumnya)");
         $this->assertStringContainsString('Centang kotak konfirmasi', $hasil['galat'][0]['pesan']);
         $this->assertSame(3, $hasil['galat'][0]['langkah']);
         $this->assertCount(1, $hasil['galat']);

@@ -90,8 +90,9 @@ use DateTimeImmutable;
  *
  * `rincian`: `sekolah` (nama, npsn, kabupaten, jenjang, jenjang_label),
  * `individu` (nama, nisn, kelompok_umur, nomor, biaya; satu baris per atlet per
- * nomor individu), `beregu` (nomor, regu, biaya, susulan, anggota, inti,
- * cadangan, anggota_lama, turun),
+ * nomor individu), `beregu` (nomor, nomor_lomba_id, regu, regu_tunggal, biaya,
+ * susulan, anggota, inti, cadangan, anggota_lama, turun; `regu_tunggal` = satu-
+ * satunya regu sekolah di nomor itu, ditulis tanpa nama regu, K108),
  * `subtotal_individu`, `subtotal_beregu`, `total`.
  */
 final class PemeriksaPendaftaran
@@ -884,6 +885,12 @@ final class PemeriksaPendaftaran
                 }
             }
 
+            // Regu tunggal (K108): sekolah hanya punya satu regu di nomor ini (lama
+            // dan kiriman), jadi pesan untuk official tidak menulis nama regunya.
+            // Admin tetap melihat nama regu.
+            $tunggal = ! $this->longgar
+                && count(array_unique(array_merge($this->reguLamaNomor($nomorId), array_map('strval', array_keys($perRegu))))) <= 1;
+
             foreach ($perRegu as $label => $baru) {
                 $label    = (string) $label;
                 $kunci    = Regu::kunci($nomorId, $label);
@@ -909,12 +916,12 @@ final class PemeriksaPendaftaran
                 // Admin: regu yang sudah terdaftar (di pendaftaran ini atau lain) boleh kurang inti.
                 $longgar = $this->longgar && ($lama !== null || isset($tersimpan[$kunci]));
 
-                foreach (KelengkapanTim::periksa($nomor, $label, $baru, $lama, $longgar) as $pesan) {
+                foreach (KelengkapanTim::periksa($nomor, $label, $baru, $lama, $longgar, $tunggal) as $pesan) {
                     $this->tambah("beregu.{$kunci}", $pesan);
                 }
 
                 if ($lama !== null && $konfirmasi !== null && ! in_array($kunci, $konfirmasi, true)) {
-                    $this->tambah("konfirmasi.{$kunci}", Regu::nama(NomorLombaModel::namaLengkap($nomor), $label)
+                    $this->tambah("konfirmasi.{$kunci}", Regu::nama(NomorLombaModel::namaLengkap($nomor), $label, $tunggal)
                         . ': sekolah ini sudah punya regu ini (' . count($lama) . ' atlet dari pendaftaran sebelumnya), '
                         . 'jadi atlet yang dipilih menjadi tambahan anggota regu itu tanpa biaya regu. '
                         . 'Centang kotak konfirmasi pada regu ini di daftar sementara, atau pilih regu lain, lalu lanjutkan lagi.');
@@ -930,6 +937,7 @@ final class PemeriksaPendaftaran
                     'cadangan'     => count($baru) - $inti,
                     'anggota_lama' => $lama !== null ? count($lama) : null,
                     'turun'        => $jumlahTurun,
+                    'tunggal'      => $tunggal,
                 ];
             }
         }
@@ -1029,16 +1037,18 @@ final class PemeriksaPendaftaran
             $dataBeregu[]    = ['nomor_lomba_id' => (int) $tim['nomor']['id'], 'regu' => $tim['regu'], 'biaya_tim' => $biaya];
             $biayaBeregu[]   = $biaya;
             $rincianBeregu[] = [
-                'nomor'         => NomorLombaModel::namaLengkap($tim['nomor']),
-                'regu'          => $tim['regu'],
-                'kelompok_umur' => (string) ($this->kelompokUmur[(int) $tim['nomor']['kelompok_umur_id']]['nama'] ?? ''),
-                'biaya'         => $biaya,
-                'susulan'       => $tim['susulan'],
-                'anggota'       => $tim['anggota'],
-                'inti'          => $tim['inti'],
-                'cadangan'      => $tim['cadangan'],
-                'anggota_lama'  => $tim['anggota_lama'],
-                'turun'         => $tim['turun'],
+                'nomor'          => NomorLombaModel::namaLengkap($tim['nomor']),
+                'nomor_lomba_id' => (int) $tim['nomor']['id'],
+                'regu'           => $tim['regu'],
+                'regu_tunggal'   => $tim['tunggal'],
+                'kelompok_umur'  => (string) ($this->kelompokUmur[(int) $tim['nomor']['kelompok_umur_id']]['nama'] ?? ''),
+                'biaya'          => $biaya,
+                'susulan'        => $tim['susulan'],
+                'anggota'        => $tim['anggota'],
+                'inti'           => $tim['inti'],
+                'cadangan'       => $tim['cadangan'],
+                'anggota_lama'   => $tim['anggota_lama'],
+                'turun'          => $tim['turun'],
             ];
         }
 

@@ -4,19 +4,25 @@
  * `App\Libraries\BuktiPendaftaran`. CSS ditulis di sini karena mPDF tidak
  * memuat berkas tema.
  *
- * Susunan hemat tempat untuk data banyak: kepala (logo kiri, judul tengah),
- * kotak info ringkas, tabel nomor individu satu baris per atlet (nomor
- * lombanya digabung), tabel nomor beregu satu baris per anggota regu (nomor
- * lomba, regu, dan biaya regu di baris pertama tiap regu; nomor dada dan
- * peran inti/cadangan di kolom sendiri), lalu status dan total berdampingan.
+ * Susunan hemat tempat untuk data banyak: kepala (logo kiri, judul tengah,
+ * garis oranye) yang diulang di setiap halaman (K108), data pendaftaran
+ * bergaya formulir resmi (nama sekolah sendiri di atas, lalu label kiri dan
+ * isi kanan), tabel nomor individu satu baris per atlet (nomor lombanya
+ * digabung), tabel nomor beregu satu baris per anggota regu (no, nomor lomba,
+ * regu, dan biaya regu berupa sel gabungan setinggi anggota regunya; nomor
+ * dada dan peran inti/cadangan di kolom sendiri), lalu status dan
+ * total berdampingan. Kolom regu hanya ada bila sekolah punya lebih dari satu
+ * regu di salah satu nomor; regu tunggal tidak ditulis nama regunya (K108).
  * Kode QR besar di pojok kanan bawah halaman terakhir dan keterangannya di
- * pojok kiri bawah (`bukti/pdf_qr`, ditulis `BuktiPendaftaran::pdf()`, K89). Kepala tabel diulang di setiap halaman; nomor halaman di kaki
- * (`BuktiPendaftaran::pdf()`).
+ * pojok kiri bawah (`bukti/pdf_qr`, ditulis `BuktiPendaftaran::pdf()`, K89).
+ * Kepala tabel diulang di setiap halaman; ID, waktu cetak, dan nomor halaman
+ * di kaki setiap halaman.
  *
  * @var array<string, mixed> $p         satu pendaftaran (App\Libraries\DataPendaftaran)
  * @var string               $namaAcara nama acara berhuruf besar
  * @var string               $seriTahun 'Seri 2 Tahun 2026'
  * @var bool                 $logo      logo persegi ada (`var:logo`, PNG transparan)
+ * @var string               $dicetak   waktu cetak untuk kaki halaman
  *
  */
 
@@ -54,27 +60,41 @@ foreach ($p['individu'] as $baris) {
         $perAtlet[$baris['nisn']]['biaya'] = ($perAtlet[$baris['nisn']]['biaya'] ?? 0) + $baris['biaya'];
     }
 }
+
+// Kolom regu hanya bila ada regu yang bukan satu-satunya regu sekolah di nomornya (K108).
+$kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['regu_tunggal'] ?? false)) !== [];
 ?>
 <!doctype html>
 <html lang="id">
 <head>
 <meta charset="utf-8">
 <style>
+    @page { header: html_kepala; footer: html_kaki; }
     body { font-family: dejavusans; font-size: 8.5pt; color: #1b2433; }
-    .kepala { width: 100%; border-bottom: 0.8mm solid #E85F31; padding-bottom: 3mm; }
+    .kepala { width: 100%; border-bottom: 0.8mm solid #E85F31; padding-bottom: 3mm; font-family: dejavusans; }
     .kepala td { vertical-align: middle; }
     .judul { text-align: center; }
     .label-bukti { font-size: 8pt; font-weight: bold; color: #C4461B; letter-spacing: 1.5pt; }
     .nama-acara { font-size: 17pt; font-weight: bold; color: #021F7B; }
     .seri-tahun { font-size: 10.5pt; font-weight: bold; color: #234987; }
 
-    table.info { width: 100%; margin-top: 4mm; border-collapse: separate; border-spacing: 1.2mm; }
-    table.info td { background: #F3F6FB; border-left: 0.8mm solid #9BCCEC; padding: 1.6mm 2.2mm; vertical-align: top; }
-    .info-label { font-size: 6.5pt; color: #5B6475; text-transform: uppercase; letter-spacing: 0.4pt; }
-    .info-isi { font-size: 9.5pt; font-weight: bold; color: #021F7B; }
-    .info-isi-biasa { font-size: 8.5pt; color: #1b2433; }
+    /* Data pendaftaran bergaya formulir resmi: nama sekolah sendiri di atas, lalu label kiri berlatar, isi kanan (K108). */
+    table.sekolah { width: 100%; border-collapse: collapse; border: 0.3mm solid #021F7B; margin-bottom: 2mm; }
+    table.sekolah td { padding: 2.2mm 2.4mm; vertical-align: middle; }
+    td.sekolah-label { width: 34mm; background: #021F7B; color: #ffffff; font-size: 7.5pt; }
+    td.sekolah-nama { font-size: 11pt; font-weight: bold; color: #021F7B; line-height: 1.3; }
+    table.info { width: 100%; border-collapse: collapse; border: 0.3mm solid #021F7B; }
+    table.info td { border: 0.15mm solid #C9D3E3; padding: 1.7mm 2.4mm; vertical-align: middle; }
+    table.info td.info-label { width: 34mm; background: #EEF2F8; font-size: 7.5pt; color: #3A4660; }
+    table.info td.info-isi { font-size: 9pt; font-weight: bold; color: #021F7B; }
+    table.info td.info-id { font-family: dejavusansmono; font-size: 10.5pt; font-weight: bold; color: #021F7B; letter-spacing: 0.6pt; }
+    table.info td.status-lunas { font-size: 9pt; font-weight: bold; color: #198754; }
+    table.info td.status-menunggu { font-size: 9pt; font-weight: bold; color: #C4461B; }
+    table.info td.info-pj { font-size: 8.5pt; color: #1b2433; line-height: 1.5; }
+    .wa { color: #3A4660; }
 
     h2 { font-size: 9.5pt; color: #021F7B; margin: 4mm 0 1.5mm; padding-left: 2mm; border-left: 1mm solid #E85F31; }
+    h2.pertama { margin-top: 0; }
     table.data { width: 100%; border-collapse: collapse; }
     table.data th { background: #021F7B; color: #ffffff; text-align: left; padding: 1.3mm 1.5mm; font-size: 7.5pt; font-weight: bold; }
     table.data td { border-bottom: 0.15mm solid #D6DEEA; padding: 1.1mm 1.5mm; vertical-align: top; }
@@ -83,6 +103,8 @@ foreach ($p['individu'] as $baris) {
     table.data td.no { color: #5B6475; text-align: right; }
     table.data tr.jumlah td { font-weight: bold; color: #021F7B; border-bottom: none; border-top: 0.3mm solid #021F7B; background: #ffffff; }
     table.data tr.awal-regu td { border-top: 0.3mm solid #9BCCEC; }
+    table.data td.gabung { background: #F3F6FB; border-bottom: 0.3mm solid #9BCCEC; }
+    table.data td.regu { font-weight: bold; text-align: center; color: #021F7B; font-size: 9.5pt; }
     td.peran-inti { font-weight: bold; color: #234987; }
     td.peran-cadangan { color: #5B6475; font-style: italic; }
     .kecil { font-size: 7.5pt; color: #5B6475; }
@@ -99,6 +121,8 @@ foreach ($p['individu'] as $baris) {
 </head>
 <body>
 
+<?php // Kepala dan kaki di setiap halaman (`@page`, K108); mPDF menyesuaikan margin atas dengan tinggi kepala (`BuktiPendaftaran::pdf()`). ?>
+<htmlpageheader name="kepala">
 <table class="kepala">
     <tr>
         <td width="26mm"><?php if ($logo) : ?><img src="var:logo" height="22mm"><?php endif ?></td>
@@ -111,22 +135,46 @@ foreach ($p['individu'] as $baris) {
         <td width="26mm"></td>
     </tr>
 </table>
+</htmlpageheader>
+<htmlpagefooter name="kaki">
+<table width="100%" style="font-family: dejavusans; font-size: 7pt; color: #5B6475; border-top: 0.2mm solid #D6DEEA;">
+    <tr>
+        <td style="padding-top: 1.5mm;"><?= esc($p['id_pendaftaran']) ?> · dicetak <?= esc($dicetak) ?></td>
+        <td style="padding-top: 1.5mm; text-align: right;">Halaman {PAGENO} dari {nbpg}</td>
+    </tr>
+</table>
+</htmlpagefooter>
 
+<h2 class="pertama">Data Pendaftaran</h2>
+<?php // Nama sekolah dipisah di atas karena bisa panjang; data lain berukuran tetap di bawahnya (K108). ?>
+<table class="sekolah">
+    <tr>
+        <td class="sekolah-label">Nama Sekolah</td>
+        <td class="sekolah-nama"><?= esc($p['nama_sekolah']) ?></td>
+    </tr>
+</table>
 <table class="info">
     <tr>
-        <td width="34%"><div class="info-label">ID Pendaftaran</div><div class="info-isi"><?= esc($p['id_pendaftaran']) ?></div></td>
-        <td width="33%"><div class="info-label">Tanggal Pendaftaran</div><div class="info-isi"><?= esc(tanggal_id($p['dibuat_pada'])) ?></div></td>
-        <td width="33%"><div class="info-label">Status Pembayaran</div><div class="info-isi"><?= esc($p['status_label']) ?></div></td>
+        <td class="info-label">ID Pendaftaran</td>
+        <td class="info-id" width="58mm"><?= esc($p['id_pendaftaran']) ?></td>
+        <td class="info-label">Tanggal Pendaftaran</td>
+        <td class="info-isi"><?= esc(tanggal_id($p['dibuat_pada'])) ?></td>
     </tr>
     <tr>
-        <td colspan="2"><div class="info-label">Nama Sekolah</div><div class="info-isi"><?= esc($p['nama_sekolah']) ?></div></td>
-        <td><div class="info-label">Kabupaten / Kota</div><div class="info-isi"><?= esc($p['kabupaten']) ?></div></td>
+        <td class="info-label">NPSN</td>
+        <td class="info-isi"><?= esc($p['npsn'] ?? '–') ?></td>
+        <td class="info-label">Jenjang</td>
+        <td class="info-isi"><?= esc($p['jenjang_label'] ?? '') ?></td>
     </tr>
     <tr>
-        <td colspan="3">
-            <div class="info-label">Penanggung Jawab (Official)</div>
-            <div class="info-isi-biasa"><?php foreach ($p['penanggung_jawab'] as $i => $pj) : ?><?= $i > 0 ? ', ' : '' ?><b><?= esc($pj['nama']) ?></b> <img src="<?= $ikonWa ?>" width="3mm" height="3mm" style="vertical-align: middle;"> <?= esc($pj['nomor_wa']) ?><?php endforeach ?></div>
-        </td>
+        <td class="info-label">Kabupaten / Kota</td>
+        <td class="info-isi"><?= esc($p['kabupaten']) ?></td>
+        <td class="info-label">Status Pembayaran</td>
+        <td class="status-<?= $lunas ? 'lunas' : 'menunggu' ?>"><?= esc($p['status_label']) ?></td>
+    </tr>
+    <tr>
+        <td class="info-label">Penanggung Jawab (Official)</td>
+        <td class="info-pj" colspan="3"><?php foreach ($p['penanggung_jawab'] as $i => $pj) : ?><?= $i > 0 ? ', ' : '' ?><b><?= esc($pj['nama']) ?></b> <span class="wa">(<img src="<?= $ikonWa ?>" width="2.8mm" height="2.8mm" style="vertical-align: middle;"> <?= esc($pj['nomor_wa']) ?>)</span><?php endforeach ?></td>
     </tr>
 </table>
 
@@ -161,33 +209,31 @@ foreach ($p['individu'] as $baris) {
 <?php else : ?>
     <table class="data beregu">
         <thead>
-            <tr><th width="7mm" style="text-align: right;">No</th><th width="36mm">Nomor Lomba</th><th width="12mm"><?= esc(Regu::awalan()) ?></th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Dada</th><th width="16mm">Peran</th><th class="uang" width="22mm">Biaya</th></tr>
+            <tr><th width="7mm" style="text-align: right;">No</th><th width="36mm">Nomor Lomba</th><?php if ($kolomRegu) : ?><th width="12mm" style="text-align: center;"><?= esc(Regu::awalan()) ?></th><?php endif ?><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Dada</th><th width="16mm">Peran</th><th class="uang" width="22mm">Biaya</th></tr>
         </thead>
         <tbody>
             <?php foreach ($p['beregu'] as $i => $tim) : ?>
+                <?php // No, nomor lomba, regu, dan biaya digabung sepanjang anggota regu (rowspan, K108). ?>
+                <?php $baris = max(1, count($tim['anggota'])) ?>
                 <?php foreach ($tim['anggota'] as $j => $a) : ?>
                     <?php $cadangan = ($a['peran'] ?? '') === Regu::CADANGAN ?>
-                    <tr class="<?= trim(($i % 2 === 1 ? 'genap ' : '') . ($j === 0 ? 'awal-regu' : '')) ?>">
+                    <tr<?= $j === 0 ? ' class="awal-regu"' : '' ?>>
                         <?php if ($j === 0) : ?>
-                            <td class="no"><?= $i + 1 ?></td>
-                            <td><?= esc($tim['nama_nomor'] ?? $tim['nomor_lomba']) ?></td>
-                            <td><b><?= esc($tim['regu'] ?? '') ?></b></td>
-                        <?php else : ?>
-                            <td></td><td></td><td></td>
+                            <td class="no gabung" rowspan="<?= $baris ?>"><?= $i + 1 ?></td>
+                            <td class="gabung" rowspan="<?= $baris ?>"><b><?= esc($tim['nama_nomor'] ?? $tim['nomor_lomba']) ?></b></td>
+                            <?php if ($kolomRegu) : ?><td class="gabung regu" rowspan="<?= $baris ?>"><?= ($tim['regu_tunggal'] ?? false) ? '' : esc($tim['regu'] ?? '') ?></td><?php endif ?>
                         <?php endif ?>
                         <td><?= esc($a['nama']) ?></td>
                         <td><?= esc($a['nisn'] ?? '') ?></td>
                         <td><b><?= esc($nomorDada($a)) ?></b></td>
                         <td class="<?= $cadangan ? 'peran-cadangan' : 'peran-inti' ?>"><?= esc(Regu::labelPeran($a['peran'] ?? Regu::INTI)) ?></td>
                         <?php if ($j === 0) : ?>
-                            <td class="uang"><?= $tim['biaya_tim'] === null ? '<span class="kecil">Tanpa biaya<br>' . esc(mb_strtolower(Regu::awalan())) . ' sudah terdaftar</span>' : esc(rupiah($tim['biaya_tim'])) ?></td>
-                        <?php else : ?>
-                            <td></td>
+                            <td class="uang gabung" rowspan="<?= $baris ?>"><?= $tim['biaya_tim'] === null ? '<span class="kecil">Tanpa biaya<br>' . esc(mb_strtolower(Regu::awalan())) . ' sudah terdaftar</span>' : esc(rupiah($tim['biaya_tim'])) ?></td>
                         <?php endif ?>
                     </tr>
                 <?php endforeach ?>
             <?php endforeach ?>
-            <tr class="jumlah"><td colspan="7">Subtotal beregu</td><td class="uang"><?= esc(rupiah($p['subtotal_beregu'])) ?></td></tr>
+            <tr class="jumlah"><td colspan="<?= $kolomRegu ? 7 : 6 ?>">Subtotal beregu</td><td class="uang"><?= esc(rupiah($p['subtotal_beregu'])) ?></td></tr>
         </tbody>
     </table>
 <?php endif ?>

@@ -98,15 +98,27 @@ final class BuktiPendaftaranTest extends UjiBasisData
 
         foreach ([
             'BUKTI PENDAFTARAN', 'MILKLIFE ATHLETICS CHALLENGE', 'Seri 2 Tahun 2026',
-            'Nama Sekolah</div><div class="info-isi">SD NEGERI CONTOH 1</div>', 'Tanggal Pendaftaran</div><div class="info-isi">12 November 2026</div>',
-            'Kabupaten / Kota</div><div class="info-isi">Kudus</div>', 'ID Pendaftaran</div><div class="info-isi">MAC2A0000126</div>',
+            // Nama sekolah di blok sendiri paling atas, data lain berlabel di bawahnya (K108).
+            '<td class="sekolah-label">Nama Sekolah</td>', '<td class="sekolah-nama">SD NEGERI CONTOH 1</td>',
+            '<td class="info-label">Tanggal Pendaftaran</td>', '<td class="info-isi">12 November 2026</td>',
+            '<td class="info-label">Kabupaten / Kota</td>', '<td class="info-isi">Kudus</td>',
+            '<td class="info-label">ID Pendaftaran</td>', '<td class="info-id" width="58mm">MAC2A0000126</td>',
+            '<td class="info-label">NPSN</td>', '<td class="info-isi">20300001</td>', '<td class="info-isi">SD/MI</td>',
             'Penanggung Jawab (Official)', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
             'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp 150.000',
-            '<td>Estafet 4 × 50 m putra</td>', '<td><b>A</b></td>', '<th width="12mm">Regu</th>', '<td>DIMAS CONTOH</td>', '<td>EKO KARANGAN</td>', '(1 regu, 4 anggota)', 'Rp 200.000',
-            'Rp 450.000', 'Rp 650.000', 'stempel stempel-menunggu', 'Status Pembayaran</div><div class="info-isi">Menunggu Konfirmasi Pembayaran',
+            // Regu tunggal: tanpa kolom regu, nomor lomba dan biaya digabung setinggi regunya (K108).
+            '<td class="gabung" rowspan="4"><b>Estafet 4 × 50 m putra</b></td>', '<td class="uang gabung" rowspan="4">Rp 200.000</td>',
+            '<td>DIMAS CONTOH</td>', '<td>EKO KARANGAN</td>', '(1 regu, 4 anggota)', '<td colspan="6">Subtotal beregu</td>',
+            'Rp 450.000', 'Rp 650.000', 'stempel stempel-menunggu', '<td class="status-menunggu">Menunggu Konfirmasi Pembayaran</td>',
+            // Kepala dan kaki di setiap halaman (K108).
+            '@page { header: html_kepala; footer: html_kaki; }', '<htmlpageheader name="kepala">', '<htmlpagefooter name="kaki">',
+            'MAC2A0000126 · dicetak ', 'Halaman {PAGENO} dari {nbpg}',
         ] as $teks) {
             $this->assertStringContainsString($teks, $html);
         }
+
+        $this->assertStringNotContainsString('gabung regu', $html);
+        $this->assertStringNotContainsString('Regu</th>', $html);
 
         // Tarif sekarang (Rp 175.000) tidak dipakai; foto tidak ikut.
         $this->assertStringNotContainsString('Rp 175.000', $html);
@@ -123,6 +135,39 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->assertStringContainsString('kode QR di sebelah kanan', $qr);
         // Kepala tabel diulang di setiap halaman.
         $this->assertStringContainsString('<thead>', $html);
+    }
+
+    public function testKolomReguBilaSekolahPunyaDuaRegu(): void
+    {
+        // Susulan membuat Regu B: kolom regu tampil dan berisi nama regunya (K108).
+        $id = $this->isiDataCek();
+        $p2 = (int) db_connect()->table('pendaftaran')->where('id_pendaftaran', 'MAC2A0000226')->get()->getRow()->id;
+        db_connect()->table('atlet_nomor')->where('nomor_lomba_id', $id['estafet'])->where('atlet_id IN (SELECT id FROM atlet WHERE pendaftaran_id = ' . $p2 . ')', null, false)
+            ->update(['regu' => 'B', 'peran' => 'inti']);
+
+        $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000126')))->html();
+        $this->assertStringContainsString('Regu</th>', $html);
+        $this->assertStringContainsString('<td class="gabung regu" rowspan="4">A</td>', $html);
+        $this->assertStringContainsString('<td colspan="7">Subtotal beregu</td>', $html);
+
+        $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000226')))->html();
+        $this->assertStringContainsString('<td class="gabung regu" rowspan="1">B</td>', $html);
+    }
+
+    public function testPdfBanyakHalamanTetapTerbentuk(): void
+    {
+        // Banyak atlet: kepala diulang dan PDF lebih dari satu halaman (K108).
+        $this->lengkapiPengaturanCek();
+        $this->isiDataCek();
+        $p = (new DataPendaftaran())->cariId('MAC2A0000126');
+
+        for ($i = 0; $i < 60; $i++) {
+            $p['individu'][] = ['nama' => 'ATLET KARANGAN ' . $i, 'nisn' => sprintf('98%08d', $i), 'tanggal_lahir' => '2016-05-01', 'kelompok_umur' => 'KU 10', 'nomor_dada' => null, 'nomor_lomba' => 'Lari 60 m putra', 'biaya' => 25000];
+        }
+
+        $pdf = (new BuktiPendaftaran($p))->pdf();
+        $this->assertStringStartsWith('%PDF', $pdf);
+        $this->assertGreaterThan(1, preg_match_all('#/Type\s*/Page[^s]#', $pdf));
     }
 
     public function testSusulanLunasDanTeksDiEscape(): void
