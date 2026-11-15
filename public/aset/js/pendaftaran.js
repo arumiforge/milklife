@@ -167,7 +167,7 @@
                 // Konfirmasi regu susulan (K57) berbentuk "nomor:regu" (K105); bentuk lama
                 // (id nomor saja) dibuang, jadi kotaknya tampil belum tercentang.
                 isi.konfirmasiSusulan = Array.isArray(isi.konfirmasiSusulan)
-                    ? isi.konfirmasiSusulan.filter(function (k) { return /^\d+:[A-Z]$/.test(String(k)); })
+                    ? isi.konfirmasiSusulan.filter(function (k) { return /^\d+:\S.*$/.test(String(k)); })
                     : [];
                 isi.turunCadangan = Array.isArray(isi.turunCadangan)
                     ? isi.turunCadangan.filter(function (k) { return /^\d+:\d+$/.test(String(k)); })
@@ -945,10 +945,24 @@
     var REGU_BEBAS = DATA.aturan.regu_mode === 'bebas';
     var LABEL_REGU = Array.isArray(DATA.aturan.regu_label) && DATA.aturan.regu_label.length ? DATA.aturan.regu_label : null;
     var HURUF = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    /** Kata di depan nama regu dari pengaturan admin (K107), misalnya "Regu" atau "Tim". */
+    var AWALAN_REGU = String(DATA.aturan.regu_awalan || 'Regu');
 
-    /** Nama regu yang dirapikan seperti `Regu::rapikan()`: "  regu  merah " → "Merah". */
+    /** "Regu A" atau "Tim A". */
+    function labelReguLengkap(label) {
+        return AWALAN_REGU + ' ' + label;
+    }
+
+    function escRegex(t) {
+        return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    /** Nama regu yang dirapikan seperti `Regu::rapikan()`: "  regu  merah " → "Merah" (juga "Tim Merah" bila awalannya Tim). */
     function rapikanRegu(teks) {
         var t = String(teks || '').replace(/\s+/g, ' ').trim().replace(/^regu(\s+|$)/i, '').trim();
+        if (AWALAN_REGU.toLowerCase() !== 'regu') {
+            t = t.replace(new RegExp('^' + escRegex(AWALAN_REGU) + '\\s+', 'i'), '').trim();
+        }
         return t.toLowerCase().replace(/(^|[\s\-\/.])(\p{Ll})/gu, function (m, a, b) { return a + b.toUpperCase(); });
     }
 
@@ -1006,6 +1020,27 @@
         return hasil;
     }
 
+    /**
+     * Pilihan regu di formulir. Huruf otomatis (daftar admin kosong, K107):
+     * hanya regu yang sudah dipakai sekolah ini atau daftar sementara, `terpilih`,
+     * dan satu regu baru berikutnya, supaya daftar tidak berisi 26 huruf.
+     */
+    function opsiRegu(nomor, terpilih) {
+        var semua = labelRegu(nomor);
+        if (LABEL_REGU) {
+            return semua;
+        }
+        var terisi = reguLamaNomor(nomor.id).concat(reguDraf(nomor.id, atletDiubah));
+        var hasil = semua.filter(function (l) { return terisi.indexOf(l) !== -1 || l === terpilih; });
+        // Satu regu kosong untuk regu baru, bila belum ada di pilihan.
+        var adaKosong = hasil.some(function (l) { return terisi.indexOf(l) === -1; });
+        var baru = semua.filter(function (l) { return hasil.indexOf(l) === -1; })[0];
+        if (!adaKosong && baru) {
+            hasil.push(baru);
+        }
+        return semua.filter(function (l) { return hasil.indexOf(l) !== -1; });
+    }
+
     /** Apakah nama regu boleh dipakai di nomor ini. */
     function reguBoleh(nomor, label) {
         return REGU_BEBAS ? namaReguSah(label) : labelRegu(nomor).indexOf(label) !== -1;
@@ -1024,7 +1059,7 @@
     }
 
     function namaRegu(nomor, label) {
-        return nomor.nama_lengkap + ' Regu ' + label;
+        return nomor.nama_lengkap + ' ' + labelReguLengkap(label);
     }
 
     /** Inti lama yang dipilih menjadi cadangan (K105). */
@@ -1117,9 +1152,17 @@
             kotak.appendChild(daftar);
         } else {
             regu = buat('select', 'form-select form-select-sm');
-            labelRegu(nomor).forEach(function (l) {
+            var jumlahDraf = {};
+            draf.atlet.forEach(function (a) {
+                var p = a !== atletDiubah && a.nomor.indexOf(nomor.id) !== -1 ? pilihanRegu(a, nomor.id) : null;
+                if (p) {
+                    jumlahDraf[p.regu] = (jumlahDraf[p.regu] || 0) + 1;
+                }
+            });
+            opsiRegu(nomor, label).forEach(function (l) {
                 var lama = reguLama(nomor.id, l);
-                var opsi = buat('option', null, 'Regu ' + l + (lama ? ' · sudah terdaftar, ' + lama.length + ' atlet' : ''));
+                var keterangan = lama ? ' · sudah terdaftar, ' + lama.length + ' atlet' : (jumlahDraf[l] ? ' · ' + jumlahDraf[l] + ' atlet di daftar' : ' · baru');
+                var opsi = buat('option', null, labelReguLengkap(l) + keterangan);
                 opsi.value = l;
                 opsi.selected = l === label;
                 regu.appendChild(opsi);
@@ -1155,7 +1198,7 @@
         };
         regu.addEventListener('change', pilihPeran);
 
-        var l1 = buat('label', 'pilihan-regu-label', 'Regu');
+        var l1 = buat('label', 'pilihan-regu-label', AWALAN_REGU);
         l1.htmlFor = reguId;
         var l2 = buat('span', 'pilihan-regu-label', 'Sebagai');
         var b1 = buat('div', 'pilihan-regu-isian');
@@ -1606,24 +1649,20 @@
         return pesan;
     }
 
-    /**
-     * Baris atlet di daftar sementara. `hapusNomor`: ID nomor lomba yang
-     * dihapus tombol Hapus baris ini; nomor lain atlet itu tetap. Bila atlet
-     * tidak punya nomor lain (atau `hapusNomor` kosong), atletnya ikut dihapus.
-     */
+    /** Tanda Inti atau Cadangan. */
     function lencanaPeran(peran) {
         return buat('span', 'lencana-peran lencana-' + peran, peran === 'inti' ? 'Inti' : 'Cadangan');
     }
 
-    function barisAtlet(atlet, indeks, jalur, keterangan, hapusNomor, peran) {
-        var li = buat('li', 'baris-atlet' + (peran ? ' baris-' + peran : ''));
+    /**
+     * Baris atlet nomor individu di daftar sementara. `hapusNomor`: lihat
+     * `tombolBaris()`.
+     */
+    function barisAtlet(atlet, indeks, jalur, keterangan, hapusNomor) {
+        var li = buat('li', 'baris-atlet');
         li.setAttribute('data-baris-jalur', jalur);
         var isi = buat('div', 'baris-atlet-isi');
         var nama = buat('strong', 'baris-atlet-nama', atlet.nama);
-        if (peran) {
-            nama.appendChild(document.createTextNode(' '));
-            nama.appendChild(lencanaPeran(peran));
-        }
         isi.appendChild(nama);
         var ku = tentukanKu(Number(String(atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah()).ku;
         isi.appendChild(buat('span', 'baris-atlet-keterangan', ['NISN ' + atlet.nisn, ku ? ku.nama : null, atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
@@ -1636,20 +1675,37 @@
         }
         li.appendChild(isi);
 
+        li.appendChild(tombolBaris(atlet, hapusNomor, false));
+        return li;
+    }
+
+    /** Teks tombol; `ringkas`: hanya tampil di layar lebar, di ponsel tombolnya berikon saja. */
+    function teksTombol(teks, ringkas) {
+        return ringkas ? buat('span', 'd-none d-sm-inline', teks) : document.createTextNode(teks);
+    }
+
+    /**
+     * Tombol Ubah dan Hapus satu atlet. `hapusNomor`: ID nomor lomba yang
+     * dihapus; nomor lain atlet itu tetap. Bila atlet tidak punya nomor lain
+     * (atau `hapusNomor` kosong), atletnya ikut dihapus.
+     */
+    function tombolBaris(atlet, hapusNomor, ringkas) {
         var tombol = buat('div', 'baris-atlet-tombol');
         var ubah = buat('button', 'btn btn-sm btn-outline-primary');
         ubah.type = 'button';
         ubah.appendChild(ikon('pencil'));
-        ubah.appendChild(document.createTextNode(' Ubah'));
+        ubah.appendChild(teksTombol(' Ubah', ringkas));
         ubah.setAttribute('aria-label', 'Ubah ' + atlet.nama);
+        ubah.title = 'Ubah';
         ubah.addEventListener('click', function () { muatAtlet(atlet); });
         var hapus = buat('button', 'btn btn-sm btn-outline-danger');
         hapus.type = 'button';
         hapus.appendChild(ikon('trash'));
-        hapus.appendChild(document.createTextNode(' Hapus'));
+        hapus.appendChild(teksTombol(' Hapus', ringkas));
         var namaNomor = (hapusNomor || []).map(function (id) { return NOMOR[id] ? NOMOR[id].nama_lengkap : ''; }).join(', ');
         var sisa = atlet.nomor.filter(function (id) { return (hapusNomor || []).indexOf(id) === -1; });
         hapus.setAttribute('aria-label', 'Hapus ' + (namaNomor ? namaNomor + ' untuk ' : '') + atlet.nama);
+        hapus.title = 'Hapus';
         hapus.addEventListener('click', function () {
             var hanyaNomor = namaNomor && sisa.length > 0;
             yakin(
@@ -1678,8 +1734,47 @@
         });
         tombol.appendChild(ubah);
         tombol.appendChild(hapus);
-        li.appendChild(tombol);
+        tombol.appendChild(ubah);
+        tombol.appendChild(hapus);
+        return tombol;
+    }
+
+    /**
+     * Baris ringkas anggota regu di kartu regu: nomor urut, nama, keterangan,
+     * dan tombol. Peran ditandai oleh kelompok Inti/Cadangan tempat baris ini.
+     */
+    function barisAnggota(a, urut, n) {
+        var li = buat('li', 'anggota-regu anggota-' + a.peran);
+        li.setAttribute('data-baris-jalur', 'atlet.' + a.indeks);
+        li.appendChild(buat('span', 'anggota-regu-urut', String(urut)));
+        var isi = buat('div', 'anggota-regu-isi');
+        isi.appendChild(buat('strong', 'anggota-regu-nama', a.atlet.nama));
+        var ku = tentukanKu(Number(String(a.atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah()).ku;
+        isi.appendChild(buat('span', 'anggota-regu-keterangan', ['NISN ' + a.atlet.nisn, ku ? ku.nama : null, a.atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
+        var masalah = masalahAtlet(a.atlet);
+        if (masalah) {
+            isi.appendChild(buat('p', 'galat-baris', masalah));
+        }
+        li.appendChild(isi);
+        li.appendChild(tombolBaris(a.atlet, [n.id], true));
         return li;
+    }
+
+    /** Satu kelompok anggota regu (Inti atau Cadangan) dengan judul dan hitungan. */
+    function kelompokPeran(peran, anggota, mulai, n, hitungan, kurang) {
+        var wadah = buat('div', 'kelompok-peran kelompok-' + peran);
+        var judul = buat('div', 'kelompok-peran-judul');
+        judul.appendChild(lencanaPeran(peran));
+        judul.appendChild(buat('span', 'kelompok-peran-hitungan' + (kurang ? ' hitungan-salah' : ''), hitungan));
+        wadah.appendChild(judul);
+        if (anggota.length === 0) {
+            wadah.appendChild(buat('p', 'kelompok-peran-kosong', peran === 'inti' ? 'Belum ada atlet inti.' : 'Belum ada cadangan. Cadangan boleh tidak ada.'));
+            return wadah;
+        }
+        var ul = buat('ol', 'anggota-regu-daftar');
+        anggota.forEach(function (a, i) { ul.appendChild(barisAnggota(a, mulai + i, n)); });
+        wadah.appendChild(ul);
+        return wadah;
     }
 
     /**
@@ -1815,34 +1910,36 @@
             kartu.setAttribute('data-baris-jalur', 'beregu.' + kunci);
             var kepala = buat('div', 'kartu-tim-kepala');
             var judul = buat('div', 'kartu-tim-judul');
-            judul.appendChild(buat('strong', null, n.nama_lengkap));
-            judul.appendChild(buat('span', 'regu-pil', 'Regu ' + t.regu));
+            judul.appendChild(buat('strong', 'kartu-tim-nomor', n.nama_lengkap));
+            judul.appendChild(buat('span', 'regu-pil', labelReguLengkap(t.regu)));
             kepala.appendChild(judul);
             var lencana = buat('span');
             lencanaTim(lencana, t);
             kepala.appendChild(lencana);
             kartu.appendChild(kepala);
-            var cadangan = t.anggota.length - t.inti;
+
+            var inti = t.anggota.filter(function (a) { return a.peran === 'inti'; });
+            var cadangan = t.anggota.filter(function (a) { return a.peran !== 'inti'; });
+            var batasCadangan = Math.max(0, n.batas_anggota - n.jumlah_inti);
             var ringkas = buat('div', 'kartu-tim-ringkas');
             [
+                t.susulan ? ['', 'tambahan untuk ' + labelReguLengkap(t.regu) + ' yang sudah terdaftar (' + t.lama + ' atlet)'] : null,
                 ['', t.anggota.length + ' atlet'],
-                ['inti', t.inti + ' inti'],
-                ['cadangan', cadangan + ' cadangan'],
-                t.susulan ? ['', 'tambahan regu terdaftar (' + t.lama + ' atlet)'] : null,
                 ['biaya', t.susulan ? 'tanpa biaya regu' : rupiah(n.biaya_beregu)]
             ].filter(Boolean).forEach(function (b) {
                 ringkas.appendChild(buat('span', 'nomor-beregu-chip' + (b[0] ? ' chip-' + b[0] : ''), b[1]));
             });
             kartu.appendChild(ringkas);
-            if (!t.susulan) {
-                kartu.appendChild(buat('p', 'kartu-tim-keterangan', 'Tepat ' + n.jumlah_inti + ' inti, paling banyak ' + n.batas_anggota + ' atlet per regu.'));
-            }
             t.pesan.forEach(function (p) { kartu.appendChild(buat('p', 'galat-baris', p)); });
-            var ul = buat('ul', 'daftar-atlet');
-            t.anggota.slice().sort(function (a, b) { return (a.peran === 'inti' ? 0 : 1) - (b.peran === 'inti' ? 0 : 1); }).forEach(function (a) {
-                ul.appendChild(barisAtlet(a.atlet, a.indeks, 'atlet.' + a.indeks, null, [n.id], a.peran));
-            });
-            kartu.appendChild(ul);
+
+            var badan = buat('div', 'kartu-tim-badan');
+            badan.appendChild(kelompokPeran('inti', inti, 1, n,
+                t.susulan ? inti.length + ' atlet baru' : inti.length + ' dari ' + n.jumlah_inti, !t.susulan && inti.length !== n.jumlah_inti));
+            if (cadangan.length > 0 || batasCadangan > 0) {
+                badan.appendChild(kelompokPeran('cadangan', cadangan, inti.length + 1, n,
+                    t.susulan ? cadangan.length + ' atlet baru' : cadangan.length + ' dari paling banyak ' + batasCadangan, !t.susulan && cadangan.length > batasCadangan));
+            }
+            kartu.appendChild(badan);
             if (t.susulan) {
                 kartu.appendChild(daftarReguLama(n, t));
                 kartu.appendChild(kotakKonfirmasi(n, t, lencana));
@@ -2135,7 +2232,7 @@
         if (rincian.beregu.length > 0) {
             wadah.appendChild(tabel('Beregu', ['No', 'Nomor Lomba Beregu', 'Biaya'],
                 rincian.beregu.map(function (b, i) {
-                    return [String(i + 1), b.nomor + ' Regu ' + b.regu + ' (' + b.kelompok_umur + ', ' + b.anggota + ' atlet: ' + b.inti + ' inti, ' + b.cadangan + ' cadangan'
+                    return [String(i + 1), b.nomor + ' ' + labelReguLengkap(b.regu) + ' (' + b.kelompok_umur + ', ' + b.anggota + ' atlet: ' + b.inti + ' inti, ' + b.cadangan + ' cadangan'
                         + (b.susulan ? '; tambahan anggota regu yang sudah terdaftar' : '')
                         + (b.turun ? '; ' + b.turun + ' inti lama menjadi cadangan' : '') + ')', b.susulan ? 'Rp 0' : rupiah(b.biaya)];
                 }),

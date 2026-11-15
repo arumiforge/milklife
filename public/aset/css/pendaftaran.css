@@ -529,14 +529,6 @@ fieldset.is-invalid > .invalid-feedback,
     display: block;
 }
 
-.baris-atlet.baris-inti {
-    border-left: 0.25rem solid var(--ml-biru);
-}
-
-.baris-atlet.baris-cadangan {
-    border-left: 0.25rem dashed var(--ml-garis);
-}
-
 .formulir-atlet-tombol {
     display: flex;
     flex-wrap: wrap;
@@ -599,9 +591,21 @@ fieldset.is-invalid > .invalid-feedback,
 
 .kartu-tim {
     margin-bottom: 1rem;
-    padding: 0.75rem;
-    background-color: var(--ml-biru-muda-pucat);
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
     border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+/* Kepala kartu regu: nama nomor, nama regu, status, dan ringkasan. */
+.kartu-tim-kepala {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem 0;
+    background-color: var(--ml-biru-muda-pucat);
 }
 
 .kartu-tim-judul {
@@ -609,7 +613,9 @@ fieldset.is-invalid > .invalid-feedback,
     flex-wrap: wrap;
     align-items: center;
     gap: 0.4rem;
+    min-width: 0;
     color: var(--ml-biru-tua);
+    overflow-wrap: anywhere;
 }
 
 .regu-pil {
@@ -619,20 +625,137 @@ fieldset.is-invalid > .invalid-feedback,
     color: var(--ml-putih);
     background-color: var(--ml-oranye-tombol);
     border-radius: 999px;
+    white-space: nowrap;
 }
 
-.kartu-tim-kepala {
+.kartu-tim > .kartu-tim-ringkas {
+    margin-top: 0;
+    padding: 0.4rem 0.75rem 0.65rem;
+    background-color: var(--ml-biru-muda-pucat);
+    border-bottom: 1px solid var(--ml-garis);
+}
+
+.kartu-tim > .galat-baris {
+    margin: 0.5rem 0.75rem 0;
+}
+
+.kartu-tim-badan {
+    padding: 0.25rem 0.75rem 0.5rem;
+}
+
+/* Kelompok Inti dan Cadangan di dalam kartu regu. */
+.kelompok-peran + .kelompok-peran {
+    margin-top: 0.25rem;
+    border-top: 1px dashed var(--ml-garis);
+}
+
+.kelompok-peran-judul {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
     gap: 0.5rem;
+    padding: 0.5rem 0 0.25rem;
 }
 
-.kartu-tim-keterangan {
-    margin: 0.25rem 0 0.5rem;
+.kelompok-peran-hitungan {
+    font-size: 0.8rem;
     color: var(--ml-teks-redup);
-    font-size: 0.875rem;
+}
+
+.kelompok-peran-hitungan.hitungan-salah {
+    font-weight: 600;
+    color: var(--bs-danger-text-emphasis);
+}
+
+.kelompok-peran-kosong {
+    margin: 0 0 0.35rem;
+    font-size: 0.85rem;
+    color: var(--ml-teks-redup);
+}
+
+.anggota-regu-daftar {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Satu anggota regu per baris: nomor urut, nama dan keterangan, tombol. */
+.anggota-regu {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+}
+
+.anggota-regu + .anggota-regu {
+    border-top: 1px solid var(--ml-latar);
+}
+
+.anggota-regu-urut {
+    flex: 0 0 1.6rem;
+    height: 1.6rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.6rem;
+    text-align: center;
+    color: var(--ml-putih);
+    background-color: var(--ml-biru);
+    border-radius: 50%;
+}
+
+.anggota-cadangan .anggota-regu-urut {
+    color: var(--ml-teks-redup);
+    background-color: var(--ml-putih);
+    border: 1px dashed var(--ml-teks-redup);
+    line-height: calc(1.6rem - 2px);
+}
+
+.anggota-regu-isi {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.anggota-regu-nama {
+    margin-right: 0.4rem;
+}
+
+.anggota-regu-keterangan {
+    font-size: 0.8rem;
+    color: var(--ml-teks-redup);
+}
+
+.anggota-regu .galat-baris {
+    margin: 0.15rem 0 0;
+}
+
+.anggota-regu .baris-atlet-tombol {
+    flex: 0 0 auto;
+}
+
+.anggota-regu .baris-atlet-tombol .btn {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+}
+
+/* Di ponsel keterangan turun ke bawah nama. */
+@media (max-width: 575.98px) {
+    .anggota-regu-nama {
+        display: block;
+    }
+}
+
+.kartu-tim .regu-lama,
+.kartu-tim .konfirmasi-susulan {
+    margin-right: 0.75rem;
+    margin-left: 0.75rem;
+}
+
+.kartu-tim > :last-child {
+    margin-bottom: 0.75rem;
+}
+
+.kartu-tim > .kartu-tim-badan:last-child {
+    margin-bottom: 0;
 }
 
 /* Anggota regu yang sudah terdaftar, dengan pilihan inti lama menjadi cadangan (K105). */

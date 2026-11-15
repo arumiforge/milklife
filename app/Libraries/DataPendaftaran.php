@@ -51,10 +51,12 @@ use CodeIgniter\Database\BaseConnection;
  *             'kelompok_umur' => 'KU 10', 'nomor_dada' => null,
  *             'nomor_lomba' => 'Lari 60 m putra', 'biaya' => 150000,
  *         ]],
- *         'beregu'            => [[                 // satu baris per nomor beregu
- *             'nomor_lomba' => 'Estafet 4 × 50 m mix',
+ *         'beregu'            => [[                 // satu baris per regu, inti dulu lalu cadangan
+ *             'nomor_lomba' => 'Estafet 4 × 50 m mix Regu A', // Regu::nama()
+ *             'nama_nomor'  => 'Estafet 4 × 50 m mix',
+ *             'regu'        => 'A',
  *             'biaya_tim'   => 200000,               // null: pendaftaran susulan yang hanya menambah anggota
- *             'anggota'     => [['nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'nomor_dada' => null]],
+ *             'anggota'     => [['nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'nomor_dada' => null, 'peran' => 'inti']],
  *         ]],
  *     ]
  */
@@ -184,6 +186,7 @@ final class DataPendaftaran
         foreach ($tim as $baris) {
             $regu[(int) $baris['pendaftaran_id']][Regu::kunci((int) $baris['nomor_lomba_id'], (string) $baris['regu'])] = [
                 'nomor_lomba' => Regu::nama(NomorLombaModel::namaLengkap($baris), (string) $baris['regu']),
+                'nama_nomor'  => NomorLombaModel::namaLengkap($baris),
                 'regu'        => (string) $baris['regu'],
                 'biaya_tim'   => (int) $baris['biaya_tim'],
                 'anggota'     => [],
@@ -213,6 +216,7 @@ final class DataPendaftaran
 
                 $regu[$p][$kunci] ??= [
                     'nomor_lomba' => Regu::nama(NomorLombaModel::namaLengkap($baris), $label),
+                    'nama_nomor'  => NomorLombaModel::namaLengkap($baris),
                     'regu'        => $label,
                     'biaya_tim'   => null,
                     'anggota'     => [],

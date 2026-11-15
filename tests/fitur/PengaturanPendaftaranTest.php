@@ -51,6 +51,7 @@ final class PengaturanPendaftaranTest extends UjiBasisData
             'atlet_per_nomor_maksimal'  => '2',
             'nama_regu'                 => 'ketentuan',
             'label_regu'                => 'A, B, C',
+            'awalan_regu'               => 'Regu',
         ];
     }
 
@@ -318,13 +319,31 @@ final class PengaturanPendaftaranTest extends UjiBasisData
 
     // ---------- Nama regu (K106) ----------
 
-    public function testNamaReguBawaanKetentuanAdminABC(): void
+    public function testNamaReguBawaanKetentuanAdminHurufOtomatis(): void
     {
         $hasil = $this->bukaSebagaiAdmin(self::ALAMAT);
 
         $hasil->assertSee('Nama regu beregu');
         $this->assertSame('checked', $this->xpathDari($hasil)->query('//input[@id="nama_regu-ketentuan"]')->item(0)->getAttribute('checked'));
-        $this->assertSame('A, B, C', $this->xpathDari($hasil)->query('//input[@id="label_regu"]')->item(0)->getAttribute('value'));
+        // K107: daftar kosong = huruf A, B, C, … tanpa batas; awalan bawaan "Regu".
+        $this->assertSame('', $this->xpathDari($hasil)->query('//input[@id="label_regu"]')->item(0)->getAttribute('value'));
+        $this->assertSame('Regu', $this->nilai($this->xpathDari($hasil), 'awalan_regu'));
+    }
+
+    public function testSimpanAwalanNamaRegu(): void
+    {
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, ['awalan_regu' => '  TIM '] + self::isianBenar()), self::ALAMAT, 'Pengaturan pendaftaran tersimpan.');
+        $this->assertSame('TIM', setting('Pendaftaran.awalan_regu'));
+        $this->assertSame('TIM', \App\Libraries\Pendaftaran\Regu::awalan());
+        $this->assertSame('TIM A', \App\Libraries\Pendaftaran\Regu::label('A'));
+        $this->assertSame('Merah', \App\Libraries\Pendaftaran\Regu::rapikan('tim merah'));
+        $this->assertSame('Merah', \App\Libraries\Pendaftaran\Regu::rapikan('Regu merah'));
+
+        foreach (['', 'T', '1 Tim', 'Tim#'] as $awalan) {
+            $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['awalan_regu' => $awalan] + self::isianBenar());
+            $this->assertIsianSalahDitampilkanUlang($hasil, ['awalan_regu']);
+            $hasil->assertSee('Awalan nama regu harus 2 sampai 15 huruf');
+        }
     }
 
     public function testSimpanNamaReguBebasDanDaftarDirapikan(): void
@@ -334,14 +353,15 @@ final class PengaturanPendaftaranTest extends UjiBasisData
         $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Pengaturan pendaftaran tersimpan.');
         $this->assertSame('bebas', setting('Pendaftaran.nama_regu'));
         $this->assertSame('Putra 1, Putra 2', setting('Pendaftaran.label_regu'));
-        $this->assertSame(['regu_mode' => 'bebas', 'regu_label' => ['Putra 1', 'Putra 2']], \App\Libraries\Pendaftaran\Regu::pengaturan());
+        $this->assertSame(['regu_mode' => 'bebas', 'regu_label' => ['Putra 1', 'Putra 2'], 'regu_awalan' => 'Regu'], \App\Libraries\Pendaftaran\Regu::pengaturan());
     }
 
-    public function testDaftarNamaReguWajibPadaKetentuanAdmin(): void
+    public function testDaftarNamaReguBolehKosong(): void
     {
-        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['label_regu' => ''] + self::isianBenar());
-        $this->assertIsianSalahDitampilkanUlang($hasil, ['label_regu']);
-        $hasil->assertSee('Daftar nama regu belum diisi.');
+        // K107: daftar kosong berarti huruf A, B, C, … pada kedua mode.
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, ['label_regu' => ''] + self::isianBenar()), self::ALAMAT, 'Pengaturan pendaftaran tersimpan.');
+        $this->assertSame('', setting('Pendaftaran.label_regu'));
+        $this->assertSame([], \App\Libraries\Pendaftaran\Regu::pengaturan()['regu_label']);
 
         foreach (['A, B, a' => 'tertulis lebih dari sekali', 'A, B#, C' => 'belum benar'] as $daftar => $pesan) {
             $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['label_regu' => $daftar] + self::isianBenar());
@@ -349,9 +369,8 @@ final class PengaturanPendaftaranTest extends UjiBasisData
             $hasil->assertSee($pesan);
         }
 
-        // Mode Bebas: daftar boleh kosong, daftar lama tetap tersimpan.
         $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, ['nama_regu' => 'bebas', 'label_regu' => ''] + self::isianBenar()), self::ALAMAT, 'Pengaturan pendaftaran tersimpan.');
-        $this->assertSame('A, B, C', setting('Pendaftaran.label_regu'));
+        $this->assertSame('', setting('Pendaftaran.label_regu'));
     }
 
     public function testTokenCsrfWajib(): void

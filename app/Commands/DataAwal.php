@@ -81,11 +81,6 @@ class DataAwal extends BaseCommand
     public const KALI_BATAS_ANGGOTA = 2;
 
     /**
-     * Regu per sekolah paling banyak di setiap nomor beregu (K105): Regu A, B, C.
-     */
-    public const REGU_MAKSIMAL = 3;
-
-    /**
      * Contoh jadwal (diisi bila tabel `jadwal` masih kosong):
      * [judul, waktu `Y-m-d H:i:s` WIB, tempat, tautan, keterangan].
      *
@@ -577,7 +572,7 @@ class DataAwal extends BaseCommand
                     'urutan'       => ++$urutan,
                     'jumlah_inti'   => $inti,
                     'batas_anggota' => $inti * self::KALI_BATAS_ANGGOTA,
-                    'regu_maksimal' => self::REGU_MAKSIMAL,
+                    'regu_maksimal' => null,
                     'jumlah_putra'  => $k === 'mix' ? intdiv($inti, 2) : null,
                     'jumlah_putri'  => $k === 'mix' ? $inti - intdiv($inti, 2) : null,
                     'biaya_beregu'  => $biaya,

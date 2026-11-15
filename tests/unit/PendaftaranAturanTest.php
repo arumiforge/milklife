@@ -369,6 +369,28 @@ final class PendaftaranAturanTest extends CIUnitTestCase
         $this->assertFalse(Regu::sah(str_repeat('A', 31)));
     }
 
+    public function testAwalanNamaRegu(): void
+    {
+        // K107: tanpa pengaturan (uji unit tanpa basis data) awalannya "Regu".
+        $this->assertSame('Regu', Regu::awalan());
+        $this->assertSame('Regu A', Regu::label('A'));
+        $this->assertSame("Kanga's Escape putra Regu B", Regu::nama("Kanga's Escape putra", 'B'));
+
+        $this->assertSame('Tim', Regu::rapikanAwalan('  Tim '));
+        $this->assertSame('TIM Sekolah', Regu::rapikanAwalan('TIM   Sekolah'));
+        $this->assertSame('', Regu::rapikanAwalan(null));
+        $this->assertTrue(Regu::awalanSah('Tim'));
+        $this->assertTrue(Regu::awalanSah('Tim U.12'));
+        $this->assertFalse(Regu::awalanSah('T'));
+        $this->assertFalse(Regu::awalanSah(''));
+        $this->assertFalse(Regu::awalanSah('1Tim'));
+        $this->assertFalse(Regu::awalanSah('Tim#'));
+        $this->assertFalse(Regu::awalanSah(str_repeat('a', 16)));
+
+        // Daftar nama regu bawaan kosong: huruf A, B, C, … (K107).
+        $this->assertSame([], Regu::daftarLabel(Regu::LABEL_BAWAAN));
+    }
+
     public function testDaftarNamaReguDariAdmin(): void
     {
         $this->assertSame(['A', 'B', 'Putra 1'], Regu::daftarLabel('a, B , putra 1, A,, x#'));

@@ -125,7 +125,7 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
                                 Aturan inti dan cadangan tetap berlaku, dan batas regu tiap nomor diatur di <a href="<?= site_url('admin/pengaturan/nomor-lomba') ?>">Nomor Lomba</a>.
                             </p>
                             <?php $keteranganRegu = [
-                                'ketentuan' => 'Official memilih dari daftar nama regu di bawah. Banyaknya nama juga membatasi regu per sekolah.',
+                                'ketentuan' => 'Official memilih dari daftar nama regu di bawah, atau huruf A, B, C, … bila daftarnya kosong. Banyaknya nama di daftar juga membatasi regu per sekolah.',
                                 'bebas'     => 'Official menulis nama regu sendiri, misalnya "Merah" atau "Putra 1".',
                             ] ?>
                             <?php foreach ($pilihanRegu as $nilai => $label) : ?>
@@ -143,8 +143,13 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
                                 <div id="nama_regu-galat" class="invalid-feedback d-block"><?= esc($galat['nama_regu']) ?></div>
                             <?php endif ?>
                         </fieldset>
-                        <div class="mt-3">
-                            <?= $kotak('label_regu', 'Daftar nama regu', 'text', 'Dipisah koma, misalnya A, B, C atau Putra 1, Putra 2. Dipakai pada pilihan "Ketentuan admin"; kata "Regu" tidak perlu ditulis.', ['maxlength' => '400']) ?>
+                        <div class="row g-3 mt-0">
+                            <div class="col-12 col-sm-4">
+                                <?= $kotak('awalan_regu', 'Awalan nama regu', 'text', 'Kata di depan nama regu: "Regu" tampil "Regu A", "Tim" tampil "Tim A".', ['maxlength' => '15', 'required' => 'required']) ?>
+                            </div>
+                            <div class="col-12 col-sm-8">
+                                <?= $kotak('label_regu', 'Daftar nama regu', 'text', 'Dipisah koma, misalnya A, B, C atau Putra 1, Putra 2; awalan tidak perlu ditulis. Kosongkan supaya official memilih huruf A, B, C, … tanpa batas. Dipakai pada pilihan "Ketentuan admin".', ['maxlength' => '400', 'placeholder' => 'Kosong: A, B, C, … tanpa batas']) ?>
+                            </div>
                         </div>
                     </div>
                 </div>
