@@ -111,7 +111,7 @@ $persenLunas = $angka['tagihan'] > 0 ? (int) round($angka['lunas'] / $angka['tag
         <?php if ($angka['tim_tanpa_pembayar'] > 0) : ?>
             <div class="alert alert-warning mt-3 mb-0" id="tim-tanpa-pembayar">
                 <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-                <strong><?= (int) $angka['tim_tanpa_pembayar'] ?></strong> tim beregu tidak punya pembayar biaya tim.
+                <strong><?= (int) $angka['tim_tanpa_pembayar'] ?></strong> regu beregu tidak punya pembayar biaya regu.
                 <a href="<?= site_url('admin/rekap/keuangan') ?>#judul-tim-tanpa-pembayar">Lihat daftarnya di rekap keuangan</a>.
             </div>
         <?php endif ?>

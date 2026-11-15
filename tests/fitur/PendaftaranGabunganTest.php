@@ -80,7 +80,7 @@ final class PendaftaranGabunganTest extends UjiBasisData
         // Pendaftaran susulan dari NPSN yang sama: tambahan anggota tim, tanpa biaya tim.
         $susulan            = self::kirimanContoh();
         $susulan['sekolah'] = $pertama['sekolah'];
-        $susulan['atlet']   = [self::atletContoh('9900000005', [20, 12])];
+        $susulan['atlet']   = [self::atletContoh('9900000005', [20, 12]) + ['regu' => [20 => ['regu' => 'A', 'peran' => 'cadangan']]]];
 
         // Official mencentang konfirmasi tim susulan (K57).
         $susulan['konfirmasi_susulan'] = [20];

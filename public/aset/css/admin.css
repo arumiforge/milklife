@@ -1131,3 +1131,22 @@ div.dt-container .dt-layout-table {
     border-radius: 0.5rem !important;
     box-shadow: 0 6px 20px rgba(2, 31, 123, 0.15) !important;
 }
+
+/* Pilihan regu dan inti/cadangan di Ubah pendaftaran, hanya untuk nomor beregu yang dicentang (K105). */
+.pilihan-regu-admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin: 0.35rem 0 0.6rem 1.5rem;
+    padding: 0.5rem 0.65rem;
+    background-color: var(--bs-tertiary-bg);
+    border-radius: 0.5rem;
+}
+
+.pilihan-regu-admin > div {
+    min-width: 9rem;
+}
+
+.pilihan-regu-admin[hidden] {
+    display: none;
+}

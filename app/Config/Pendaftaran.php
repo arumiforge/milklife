@@ -64,4 +64,15 @@ class Pendaftaran extends BaseConfig
      * `null` = tidak dibatasi; nilai awal tidak dibatasi (K53).
      */
     public ?int $atlet_per_nomor_maksimal = null;
+
+    /**
+     * Nama regu beregu (K106): `ketentuan` = official memilih dari
+     * `label_regu`; `bebas` = official mengetik nama regu sendiri.
+     */
+    public string $nama_regu = 'ketentuan';
+
+    /**
+     * Daftar nama regu mode Ketentuan admin, dipisah koma (K106).
+     */
+    public string $label_regu = 'A, B, C';
 }

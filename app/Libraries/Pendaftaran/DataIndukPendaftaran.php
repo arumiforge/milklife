@@ -7,7 +7,6 @@ use App\Models\AtletModel;
 use App\Models\AtletNomorModel;
 use App\Models\KelompokUmurModel;
 use App\Models\NomorLombaModel;
-use App\Models\PendaftaranBereguModel;
 use App\Models\SekolahModel;
 
 /**
@@ -122,6 +121,7 @@ class DataIndukPendaftaran
                 'kategori'         => (string) $nomor['kategori'],
                 'jumlah_inti'      => self::angka($nomor['jumlah_inti']),
                 'batas_anggota'    => self::angka($nomor['batas_anggota']),
+                'regu_maksimal'    => self::angka($nomor['regu_maksimal'] ?? null),
                 'jumlah_putra'     => self::angka($nomor['jumlah_putra']),
                 'jumlah_putri'     => self::angka($nomor['jumlah_putri']),
                 'biaya_beregu'     => self::angka($nomor['biaya_beregu']),
@@ -143,7 +143,7 @@ class DataIndukPendaftaran
      *                              'teks_tahun_lahir' => 'Lahir 2016–2018', 'biaya_individu' => 150000, 'jenjang' => ['A']]],
      *         'nomor_lomba'   => [['id' => 7, 'kelompok_umur_id' => 2, 'nama' => 'Lari 60 m', 'nama_lengkap' => 'Lari 60 m putra',
      *                              'jenis' => 'individu', 'kategori' => 'putra', 'kategori_label' => 'Putra',
-     *                              'jumlah_inti' => null, 'batas_anggota' => null, 'jumlah_putra' => null,
+     *                              'jumlah_inti' => null, 'batas_anggota' => null, 'regu_maksimal' => null, 'jumlah_putra' => null,
      *                              'jumlah_putri' => null, 'biaya_beregu' => null]],
      *         'aturan'        => aturan(),
      *         'tampilan_usia' => 'tahun',            // atau 'tahun_bulan'
@@ -175,7 +175,9 @@ class DataIndukPendaftaran
     /**
      * Batas-batas dari pengaturan Pendaftaran.
      *
-     * @return array{penanggung_jawab_minimal: int, penanggung_jawab_maksimal: int, nomor_individu_maksimal: int, atlet_per_nomor_maksimal: int|null}
+     * `regu_mode` dan `regu_label`: nama regu beregu (K106, `Regu::pengaturan()`).
+     *
+     * @return array{penanggung_jawab_minimal: int, penanggung_jawab_maksimal: int, nomor_individu_maksimal: int, atlet_per_nomor_maksimal: int|null, regu_mode: string, regu_label: list<string>}
      */
     public static function aturan(): array
     {
@@ -186,16 +188,17 @@ class DataIndukPendaftaran
             'penanggung_jawab_maksimal' => (int) setting('Pendaftaran.penanggung_jawab_maksimal'),
             'nomor_individu_maksimal'   => (int) setting('Pendaftaran.nomor_individu_maksimal'),
             'atlet_per_nomor_maksimal'  => $kuota !== null && $kuota > 0 ? $kuota : null,
-        ];
+        ] + Regu::pengaturan();
     }
 
     /**
      * Data yang sudah ada untuk kiriman ini: sekolah referensi, NISN yang
-     * sudah terdaftar, tim dan jumlah atlet per nomor individu milik NPSN ini.
+     * sudah terdaftar, regu beregu dan jumlah atlet per nomor individu milik
+     * NPSN ini.
      *
      * @param list<string> $nisn
      *
-     * @return array{referensi: array<string, mixed>|null, nisn_terdaftar: list<string>, tim: array<int, int>, individu: array<int, int>}
+     * @return array{referensi: array<string, mixed>|null, nisn_terdaftar: list<string>, tim: array<int, array<string, list<array<string, mixed>>>>, individu: array<int, int>}
      */
     public function ada(?string $npsn, array $nisn): array
     {
@@ -206,29 +209,91 @@ class DataIndukPendaftaran
     }
 
     /**
-     * Tim beregu (nomor => jumlah anggota) dan jumlah atlet per nomor
-     * individu milik sebuah NPSN dari semua pendaftarannya. Kosong bila NPSN
-     * kosong: pendaftaran tanpa NPSN berdiri sendiri (6.2).
+     * Regu beregu dan jumlah atlet per nomor individu milik sebuah NPSN dari
+     * semua pendaftarannya (kecuali `$kecuali`, pendaftaran yang sedang
+     * diubah admin). Kosong bila NPSN kosong: pendaftaran tanpa NPSN berdiri
+     * sendiri (6.2).
      *
-     * @return array{tim: array<int, int>, individu: array<int, int>}
+     * `tim`: nomor => regu => anggota (`id` atlet, `nama`, `jenis_kelamin`,
+     * `peran`), inti dulu lalu urut pendaftaran (K105). Regu yang tercatat di
+     * `pendaftaran_beregu` tetapi tanpa anggota tetap ada dengan list kosong.
+     *
+     * @return array{tim: array<int, array<string, list<array{id: int, nama: string, jenis_kelamin: string, peran: string}>>>, individu: array<int, int>}
      */
-    public function dataSekolah(?string $npsn): array
+    public function dataSekolah(?string $npsn, ?int $kecuali = null): array
     {
         if ($npsn === null) {
             return ['tim' => [], 'individu' => []];
         }
 
-        $anggota = model(AtletNomorModel::class)->jumlahPerNomorUntukNpsn($npsn, 'beregu');
-        $tim     = [];
+        $db  = db_connect();
+        $tim = [];
 
-        foreach (model(PendaftaranBereguModel::class)->nomorUntukNpsn($npsn) as $nomorId) {
-            $tim[$nomorId] = $anggota[$nomorId] ?? 0;
+        $regu = $db->table('pendaftaran_beregu pb')->distinct()
+            ->select('pb.nomor_lomba_id, pb.regu')
+            ->join('pendaftaran p', 'p.id = pb.pendaftaran_id')
+            ->where('p.npsn', $npsn);
+
+        if ($kecuali !== null) {
+            $regu->where('p.id !=', $kecuali);
         }
 
-        return [
-            'tim'      => $tim,
-            'individu' => model(AtletNomorModel::class)->jumlahPerNomorUntukNpsn($npsn, 'individu'),
-        ];
+        foreach ($regu->orderBy('pb.nomor_lomba_id')->orderBy('pb.regu')->get()->getResultArray() as $b) {
+            $tim[(int) $b['nomor_lomba_id']][(string) $b['regu']] = [];
+        }
+
+        $anggota = $db->table('atlet_nomor an')
+            ->select('an.nomor_lomba_id, an.regu, an.peran, a.id, a.nama, a.jenis_kelamin')
+            ->join('atlet a', 'a.id = an.atlet_id')
+            ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+            ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
+            ->where('p.npsn', $npsn)
+            ->where('nl.jenis', 'beregu');
+
+        if ($kecuali !== null) {
+            $anggota->where('p.id !=', $kecuali);
+        }
+
+        $baris = $anggota->orderBy("an.peran = 'inti'", 'DESC', false)->orderBy('p.id')->orderBy('a.id')->get()->getResultArray();
+
+        foreach ($baris as $b) {
+            $nomorId = (int) $b['nomor_lomba_id'];
+            $label   = Regu::sah($b['regu']) ? (string) $b['regu'] : 'A';
+
+            // Anggota tanpa baris regu (tidak seharusnya terjadi) tetap dihitung.
+            $tim[$nomorId][$label][] = [
+                'id'            => (int) $b['id'],
+                'nama'          => (string) $b['nama'],
+                'jenis_kelamin' => (string) $b['jenis_kelamin'],
+                'peran'         => $b['peran'] === Regu::INTI ? Regu::INTI : Regu::CADANGAN,
+            ];
+        }
+
+        foreach ($tim as &$perRegu) {
+            ksort($perRegu);
+        }
+
+        unset($perRegu);
+
+        $individu = $db->table('atlet_nomor an')
+            ->select('an.nomor_lomba_id, COUNT(*) AS jumlah')
+            ->join('atlet a', 'a.id = an.atlet_id')
+            ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+            ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
+            ->where('p.npsn', $npsn)
+            ->where('nl.jenis', 'individu');
+
+        if ($kecuali !== null) {
+            $individu->where('p.id !=', $kecuali);
+        }
+
+        $jumlah = [];
+
+        foreach ($individu->groupBy('an.nomor_lomba_id')->get()->getResultArray() as $b) {
+            $jumlah[(int) $b['nomor_lomba_id']] = (int) $b['jumlah'];
+        }
+
+        return ['tim' => $tim, 'individu' => $jumlah];
     }
 
     private static function angka(mixed $nilai): ?int

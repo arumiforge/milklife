@@ -99,6 +99,47 @@ trait PendaftaranContoh
     }
 
     /**
+     * Lengkapi pilihan regu atlet di nomor beregu `indukContoh()` (20 Kanga's
+     * Escape, 21 Estafet) yang belum diisi: Regu A, inti sampai jumlah inti
+     * nomor itu (dihitung per regu dalam kiriman), sisanya cadangan (K105).
+     * Pilihan yang sudah ditulis uji tidak diubah.
+     *
+     * @param array<string, mixed> $kiriman
+     *
+     * @return array<string, mixed>
+     */
+    protected static function lengkapiRegu(array $kiriman, int $intiLama = 0): array
+    {
+        $inti  = [20 => 4, 21 => 8];
+        $hitung = [];
+
+        foreach ($kiriman['atlet'] ?? [] as $atlet) {
+            foreach ($atlet['regu'] ?? [] as $n => $pilih) {
+                if (($pilih['peran'] ?? '') === 'inti') {
+                    $kunci          = $n . ':' . ($pilih['regu'] ?? 'A');
+                    $hitung[$kunci] = ($hitung[$kunci] ?? $intiLama) + 1;
+                }
+            }
+        }
+
+        foreach ($kiriman['atlet'] ?? [] as $i => $atlet) {
+            foreach ($atlet['nomor'] ?? [] as $n) {
+                if (! isset($inti[$n]) || isset($atlet['regu'][$n])) {
+                    continue;
+                }
+
+                $kunci          = $n . ':A';
+                $ke             = $hitung[$kunci] ?? $intiLama;
+                $hitung[$kunci] = $ke + 1;
+
+                $kiriman['atlet'][$i]['regu'][$n] = ['regu' => 'A', 'peran' => $ke < $inti[$n] ? 'inti' : 'cadangan'];
+            }
+        }
+
+        return $kiriman;
+    }
+
+    /**
      * Kiriman sah: SD tanpa NPSN di Kudus, satu penanggung jawab, dua atlet
      * KU 10 (satu dengan dua nomor individu, satu dengan satu).
      *
@@ -257,12 +298,34 @@ trait PendaftaranContoh
             20 => $id['kanga'], 21 => $id['estafet'], 30 => $id['lari60putraKu12'], 40 => $id['lari80putri'],
         ];
 
+        $kiriman = self::lengkapiRegu($kiriman);
+
         foreach ($kiriman['atlet'] as $i => $atlet) {
             $kiriman['atlet'][$i]['nomor'] = array_map(static fn (int $n): int => $peta[$n], $atlet['nomor']);
+            $regu                          = [];
+
+            foreach ($atlet['regu'] ?? [] as $n => $pilih) {
+                $regu[$peta[(int) $n] ?? $n] = $pilih;
+            }
+
+            $kiriman['atlet'][$i]['regu'] = $regu;
         }
 
+        // "nomor:regu" (K57/K105); angka saja berarti Regu A.
         if (isset($kiriman['konfirmasi_susulan'])) {
-            $kiriman['konfirmasi_susulan'] = array_map(static fn (int $n): int => $peta[$n], $kiriman['konfirmasi_susulan']);
+            $kiriman['konfirmasi_susulan'] = array_map(static function (int|string $k) use ($peta): string {
+                [$n, $r] = explode(':', (string) $k) + [1 => 'A'];
+
+                return $peta[(int) $n] . ':' . $r;
+            }, $kiriman['konfirmasi_susulan']);
+        }
+
+        if (isset($kiriman['turun_cadangan'])) {
+            $kiriman['turun_cadangan'] = array_map(static function (string $k) use ($peta): string {
+                [$n, $a] = explode(':', $k);
+
+                return $peta[(int) $n] . ':' . $a;
+            }, $kiriman['turun_cadangan']);
         }
 
         // Bukti transfer wajib saat simpan (K90).

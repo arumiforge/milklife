@@ -67,7 +67,9 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
         $this->assertSame([
             'npsn'           => '99999911',
             'nomor_lomba_id' => $this->idInduk['kanga'],
-            'nomor_lomba'    => "Kanga's Escape putra",
+            'regu'           => 'A',
+            'kunci'          => $this->idInduk['kanga'] . ':A',
+            'nomor_lomba'    => "Kanga's Escape putra Regu A",
             'kelompok_umur'  => 'KU 10',
             'nama_sekolah'   => 'SD KARANGAN MAJU',
             'kabupaten'      => 'Kudus',
@@ -76,7 +78,7 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
             'pendaftaran'    => [['id' => $b['id'], 'id_pendaftaran' => $b['id_pendaftaran'], 'status' => 'menunggu', 'jumlah_anggota' => 2]],
         ], $daftar[0]);
         $this->assertSame(1, $tim->jumlah());
-        $this->assertSame([$this->idInduk['kanga']], array_keys($tim->untukPendaftaran($b['id'])));
+        $this->assertSame([$this->idInduk['kanga'] . ':A'], array_keys($tim->untukPendaftaran($b['id'])));
     }
 
     public function testDitandaiSetelahTimnyaDihapusLewatUbah(): void
@@ -88,7 +90,7 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
         $periksa = (new UbahPendaftaran())->periksa($a['id'], $kiriman);
         $this->assertSame([], $periksa['galat']);
         $this->assertSame([$b['id_pendaftaran']], array_column($periksa['tim_ditinggalkan'][0]['pendaftaran'], 'id_pendaftaran'));
-        $this->assertStringContainsString('Perhatian: pendaftaran ini membayar biaya tim', UbahPendaftaran::kalimatKonfirmasi($periksa));
+        $this->assertStringContainsString('Perhatian: pendaftaran ini membayar biaya regu', UbahPendaftaran::kalimatKonfirmasi($periksa));
         $this->assertSame([], (new TimTanpaPembayar())->daftar(), 'Pratinjau tidak menulis apa pun.');
 
         $hasil = (new UbahPendaftaran())->simpan($a['id'], $kiriman);
@@ -190,12 +192,12 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
         (new HapusPendaftaran())->hapus($a['id']);
 
         $isian = (new UbahPendaftaran())->isian($b['id']);
-        $this->assertSame([$this->idInduk['kanga']], array_keys($isian['tim_tanpa_pembayar']));
-        $this->assertFalse($isian['tim_tanpa_pembayar'][$this->idInduk['kanga']]['dibebankan']);
-        $this->assertSame(100000, $isian['tim_tanpa_pembayar'][$this->idInduk['kanga']]['tarif']);
+        $this->assertSame([$this->idInduk['kanga'] . ':A'], array_keys($isian['tim_tanpa_pembayar']));
+        $this->assertFalse($isian['tim_tanpa_pembayar'][$this->idInduk['kanga'] . ':A']['dibebankan']);
+        $this->assertSame(100000, $isian['tim_tanpa_pembayar'][$this->idInduk['kanga'] . ':A']['tarif']);
 
-        $tampilUlang = (new UbahPendaftaran())->isian($b['id'], [UbahPendaftaran::KUNCI_BEBANKAN => [(string) $this->idInduk['kanga']]]);
-        $this->assertTrue($tampilUlang['tim_tanpa_pembayar'][$this->idInduk['kanga']]['dibebankan']);
+        $tampilUlang = (new UbahPendaftaran())->isian($b['id'], [UbahPendaftaran::KUNCI_BEBANKAN => [$this->idInduk['kanga'] . ':A']]);
+        $this->assertTrue($tampilUlang['tim_tanpa_pembayar'][$this->idInduk['kanga'] . ':A']['dibebankan']);
     }
 
     public function testTandaHilangSetelahDibebankanLewatUbahDenganTarifSekarang(): void
@@ -204,12 +206,12 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
         (new HapusPendaftaran())->hapus($a['id']);
         $this->db->table('nomor_lomba')->where('id', $this->idInduk['kanga'])->update(['biaya_beregu' => 120000]);
 
-        $kiriman = $this->tambahAnggota($this->kirimanDari($b['id']), 2) + [UbahPendaftaran::KUNCI_BEBANKAN => [(string) $this->idInduk['kanga']]];
+        $kiriman = $this->tambahAnggota($this->kirimanDari($b['id']), 2) + [UbahPendaftaran::KUNCI_BEBANKAN => [$this->idInduk['kanga'] . ':A']];
         $hasil   = (new UbahPendaftaran())->simpan($b['id'], $kiriman);
 
         $this->assertSame([], $hasil['galat']);
         $this->assertTrue($hasil['tersimpan']);
-        $this->assertSame([$this->idInduk['kanga']], $hasil['tim_dibebankan']);
+        $this->assertSame([$this->idInduk['kanga'] . ':A'], $hasil['tim_dibebankan']);
         $this->assertSame(120000, $hasil['subtotal_beregu']);
         $this->assertSame(120000, $hasil['total']);
         $this->assertSame('menunggu', $hasil['status']);
@@ -227,12 +229,12 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
     {
         [, $b] = $this->timDuaPendaftaran();
 
-        $kiriman = $this->kirimanDari($b['id']) + [UbahPendaftaran::KUNCI_BEBANKAN => [$this->idInduk['kanga']]];
+        $kiriman = $this->kirimanDari($b['id']) + [UbahPendaftaran::KUNCI_BEBANKAN => [$this->idInduk['kanga'] . ':A']];
         $hasil   = (new UbahPendaftaran())->simpan($b['id'], $kiriman);
 
         $this->assertFalse($hasil['tersimpan']);
-        $this->assertSame([UbahPendaftaran::KUNCI_BEBANKAN . '.' . $this->idInduk['kanga']], array_column($hasil['galat'], 'jalur'));
-        $this->assertStringContainsString('sudah punya pembayar biaya tim', $hasil['galat'][0]['pesan']);
+        $this->assertSame([UbahPendaftaran::KUNCI_BEBANKAN . '.' . $this->idInduk['kanga'] . ':A'], array_column($hasil['galat'], 'jalur'));
+        $this->assertStringContainsString('sudah punya pembayar biaya regu', $hasil['galat'][0]['pesan']);
         $this->assertSame(0, $this->biayaTim($b['id']));
     }
 
@@ -241,7 +243,7 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
         [$a, $b] = $this->timDuaPendaftaran();
         (new HapusPendaftaran())->hapus($a['id']);
 
-        $kiriman = $this->tambahAnggota($this->kirimanDari($b['id']), 2) + [UbahPendaftaran::KUNCI_BEBANKAN => [$this->idInduk['estafet'], 'bukan angka']];
+        $kiriman = $this->tambahAnggota($this->kirimanDari($b['id']), 2) + [UbahPendaftaran::KUNCI_BEBANKAN => [$this->idInduk['estafet'] . ':A', $this->idInduk['kanga'] . ':B', 'bukan angka']];
         $hasil   = (new UbahPendaftaran())->periksa($b['id'], $kiriman);
 
         $this->assertSame([], $hasil['galat']);
@@ -255,7 +257,7 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
         $b = $this->buatPendaftaranPanel(['foto' => true, 'status' => 'lunas', 'atlet' => [$this->atletPanel(), ...$this->timPanel('kanga', 2)], 'susulan' => ['kanga']]);
         (new HapusPendaftaran())->hapus($a['id']);
 
-        $kiriman = $this->tambahAnggota($this->kirimanDari($b['id']), 2) + [UbahPendaftaran::KUNCI_BEBANKAN => [$this->idInduk['kanga']]];
+        $kiriman = $this->tambahAnggota($this->kirimanDari($b['id']), 2) + [UbahPendaftaran::KUNCI_BEBANKAN => [$this->idInduk['kanga'] . ':A']];
 
         $periksa = (new UbahPendaftaran())->periksa($b['id'], $kiriman);
         $this->assertTrue($periksa['kembali_menunggu']);
@@ -292,7 +294,7 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
 
         $this->assertSame(1, (new Rekap())->ringkasan()['tim_tanpa_pembayar']);
         $this->assertCount(1, $rekap['baris']);
-        $this->assertSame("Kanga's Escape putra", $rekap['baris'][0]['nomor_lomba']);
+        $this->assertSame("Kanga's Escape putra Regu A", $rekap['baris'][0]['nomor_lomba']);
         $this->assertSame(100000, $rekap['baris'][0]['tarif']);
         $this->assertSame($b['id_pendaftaran'] . ' (Menunggu, 2 anggota)', $rekap['baris'][0]['pendaftaran']);
         $this->assertSame('rupiah', $rekap['kolom']['tarif']['jenis']);
@@ -355,6 +357,7 @@ final class PanelTimTanpaPembayarTest extends UjiBasisData
                 'tanggal_lahir' => $a['tanggal_lahir'],
                 'jenis_kelamin' => $a['jenis_kelamin'],
                 'nomor'         => [$this->idInduk['kanga']],
+                'regu'          => [$this->idInduk['kanga'] => ['regu' => 'A', 'peran' => 'cadangan']],
             ];
         }
 

@@ -154,7 +154,10 @@ class AtletController extends BaseController
         return static function (): BaseBuilder {
             $db = db_connect();
 
-            $nomor = '(SELECT GROUP_CONCAT(CONCAT(nl.nama, \' \', nl.kategori) ORDER BY nl.urutan, nl.id SEPARATOR \', \')'
+            // Nomor beregu ditulis bersama regu dan perannya, misalnya "Formula 1 putra Regu A (cadangan)" (K105).
+            $nomor = '(SELECT GROUP_CONCAT(CONCAT(nl.nama, \' \', nl.kategori,'
+                . ' IF(an.regu IS NULL, \'\', CONCAT(\' Regu \', an.regu, IF(an.peran = \'cadangan\', \' (cadangan)\', \'\'))))'
+                . ' ORDER BY nl.urutan, nl.id SEPARATOR \', \')'
                 . ' FROM ' . $db->prefixTable('atlet_nomor') . ' an'
                 . ' JOIN ' . $db->prefixTable('nomor_lomba') . ' nl ON nl.id = an.nomor_lomba_id'
                 . ' WHERE an.atlet_id = a.id)';

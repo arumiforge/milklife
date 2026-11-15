@@ -2,6 +2,7 @@
 
 namespace App\Libraries;
 
+use App\Libraries\Pendaftaran\Regu;
 use App\Models\NomorLombaModel;
 use CodeIgniter\Database\BaseConnection;
 
@@ -132,7 +133,7 @@ final class DataPendaftaran
             ->get()->getResultArray();
 
         $nomor = $this->db->table('atlet_nomor an')
-            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya, nl.nama, nl.kategori, nl.jenis, nl.urutan')
+            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya, an.regu, an.peran, nl.nama, nl.kategori, nl.jenis, nl.urutan')
             ->join('atlet a', 'a.id = an.atlet_id')
             ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
             ->whereIn('a.pendaftaran_id', $ids)
@@ -140,7 +141,7 @@ final class DataPendaftaran
             ->get()->getResultArray();
 
         $tim = $this->db->table('pendaftaran_beregu pb')
-            ->select('pb.pendaftaran_id, pb.nomor_lomba_id, pb.biaya_tim, nl.nama, nl.kategori, nl.urutan')
+            ->select('pb.pendaftaran_id, pb.nomor_lomba_id, pb.regu, pb.biaya_tim, nl.nama, nl.kategori, nl.urutan')
             ->join('nomor_lomba nl', 'nl.id = pb.nomor_lomba_id')
             ->whereIn('pb.pendaftaran_id', $ids)
             ->get()->getResultArray();
@@ -181,11 +182,12 @@ final class DataPendaftaran
         $regu = [];
 
         foreach ($tim as $baris) {
-            $regu[(int) $baris['pendaftaran_id']][(int) $baris['nomor_lomba_id']] = [
-                'nomor_lomba' => NomorLombaModel::namaLengkap($baris),
+            $regu[(int) $baris['pendaftaran_id']][Regu::kunci((int) $baris['nomor_lomba_id'], (string) $baris['regu'])] = [
+                'nomor_lomba' => Regu::nama(NomorLombaModel::namaLengkap($baris), (string) $baris['regu']),
+                'regu'        => (string) $baris['regu'],
                 'biaya_tim'   => (int) $baris['biaya_tim'],
                 'anggota'     => [],
-                'urutan'      => [(int) $baris['urutan'], (int) $baris['nomor_lomba_id']],
+                'urutan'      => [(int) $baris['urutan'], (int) $baris['nomor_lomba_id'], (string) $baris['regu']],
             ];
         }
 
@@ -201,25 +203,32 @@ final class DataPendaftaran
             $a = $atletPerId[(int) $baris['atlet_id']];
             $p = (int) $a['pendaftaran_id'];
 
-            $nomorPerAtlet[(int) $baris['atlet_id']][] = NomorLombaModel::namaLengkap($baris);
-
             if ($baris['jenis'] === 'beregu') {
-                $n = (int) $baris['nomor_lomba_id'];
+                $n     = (int) $baris['nomor_lomba_id'];
+                $label = Regu::sah($baris['regu']) ? (string) $baris['regu'] : 'A';
+                $peran = $baris['peran'] === Regu::INTI ? Regu::INTI : Regu::CADANGAN;
+                $kunci = Regu::kunci($n, $label);
 
-                $regu[$p][$n] ??= [
-                    'nomor_lomba' => NomorLombaModel::namaLengkap($baris),
+                $nomorPerAtlet[(int) $baris['atlet_id']][] = Regu::nama(NomorLombaModel::namaLengkap($baris), $label) . ' (' . Regu::labelPeran($peran) . ')';
+
+                $regu[$p][$kunci] ??= [
+                    'nomor_lomba' => Regu::nama(NomorLombaModel::namaLengkap($baris), $label),
+                    'regu'        => $label,
                     'biaya_tim'   => null,
                     'anggota'     => [],
-                    'urutan'      => [(int) $baris['urutan'], $n],
+                    'urutan'      => [(int) $baris['urutan'], $n, $label],
                 ];
-                $regu[$p][$n]['anggota'][] = [
+                $regu[$p][$kunci]['anggota'][] = [
                     'nama'       => (string) $a['nama'],
                     'nisn'       => (string) $a['nisn'],
                     'nomor_dada' => $a['nomor_dada'],
+                    'peran'      => $peran,
                 ];
 
                 continue;
             }
+
+            $nomorPerAtlet[(int) $baris['atlet_id']][] = NomorLombaModel::namaLengkap($baris);
 
             $hasil[$p]['individu'][] = [
                 'nama'          => (string) $a['nama'],
@@ -250,6 +259,8 @@ final class DataPendaftaran
 
             $hasil[$p]['beregu'] = array_map(static function (array $r): array {
                 unset($r['urutan']);
+                // Inti dulu, lalu cadangan (urutan daftar tetap di dalamnya).
+                usort($r['anggota'], static fn (array $x, array $y): int => ($x['peran'] === Regu::INTI ? 0 : 1) <=> ($y['peran'] === Regu::INTI ? 0 : 1));
 
                 return $r;
             }, $daftar);

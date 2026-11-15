@@ -105,10 +105,13 @@ class PendaftaranController extends BaseController
      * `sekolah`: `npsn`, `nama`, `jenjang` (kode A/B/C atau null), `jenjang_label`,
      * `kabupaten` (salah satu lima kabupaten, atau null).
      *
-     * `susulan`: data pendaftaran sebelumnya dari NPSN ini, untuk aturan tim
-     * dan kuota di wizard (6.6, K51). Hanya jumlah, tanpa data siswa:
-     * `tim` (id nomor beregu => jumlah anggota tim sekolah ini) dan
-     * `individu` (id nomor individu => jumlah atlet sekolah ini).
+     * `susulan`: data pendaftaran sebelumnya dari NPSN ini, untuk aturan regu
+     * dan kuota di wizard (6.6, K51, K105): `tim` (id nomor beregu => label
+     * regu => anggota: id atlet, nama, jenis kelamin, peran inti/cadangan)
+     * dan `individu` (id nomor individu => jumlah atlet sekolah ini). Nama
+     * anggota regu ditampilkan supaya official bisa memilih inti lama yang
+     * menjadi cadangan; data yang sama sudah tampil di halaman cek lewat NPSN
+     * (K03), tanpa NISN dan tanggal lahir.
      */
     public function sekolah(): ResponseInterface
     {

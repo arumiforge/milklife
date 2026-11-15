@@ -4,6 +4,7 @@ use App\Libraries\Pendaftaran\BiayaPendaftaran;
 use App\Libraries\Pendaftaran\IdPendaftaran;
 use App\Libraries\Pendaftaran\Kabupaten;
 use App\Libraries\Pendaftaran\KelengkapanTim;
+use App\Libraries\Pendaftaran\Regu;
 use App\Libraries\Pendaftaran\KelompokUmurAtlet;
 use App\Libraries\Pendaftaran\UsiaAtlet;
 use CodeIgniter\Test\CIUnitTestCase;
@@ -225,61 +226,157 @@ final class PendaftaranAturanTest extends CIUnitTestCase
         throw new RuntimeException('Nomor contoh tidak ada.');
     }
 
+    /**
+     * Anggota regu: `$jk` berupa string jenis kelamin per anggota, `$inti`
+     * anggota pertama menjadi inti, sisanya cadangan.
+     *
+     * @return list<array{jenis_kelamin: string, peran: string}>
+     */
+    private static function anggota(string $jk, int $inti): array
+    {
+        $hasil = [];
+
+        foreach (str_split($jk) as $i => $huruf) {
+            $hasil[] = ['jenis_kelamin' => $huruf, 'peran' => $i < $inti ? 'inti' : 'cadangan'];
+        }
+
+        return $hasil;
+    }
+
     public function testTimLengkap(): void
     {
-        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), ['L', 'L', 'L', 'L']));
-        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), array_fill(0, 6, 'L')));
-        $this->assertSame([], KelengkapanTim::periksa(self::nomor(21), ['L', 'L', 'L', 'L', 'P', 'P', 'P', 'P']));
-        $this->assertSame([], KelengkapanTim::periksa(self::nomor(21), ['L', 'L', 'L', 'L', 'L', 'P', 'P', 'P', 'P', 'P']));
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLLL', 4)));
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), 'B', self::anggota('LLLLLL', 4)));
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLLLPPPP', 8)));
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLLLPPPPLP', 8)));
     }
 
     public function testTimKurangDariInti(): void
     {
         $this->assertSame(
-            ["Tim Kanga's Escape putra baru punya 3 atlet. Tambah 1 atlet lagi; tim ini minimal 4 atlet."],
-            KelengkapanTim::periksa(self::nomor(20), ['L', 'L', 'L']),
+            ["Kanga's Escape putra Regu A baru punya 3 atlet. Tambah 1 atlet lagi; satu regu tepat 4 atlet inti."],
+            KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLL', 3)),
+        );
+    }
+
+    public function testIntiHarusTepat(): void
+    {
+        // Cukup atlet, tetapi baru 3 yang ditandai inti.
+        $this->assertSame(
+            ["Kanga's Escape putra Regu A baru punya 3 atlet inti. Tandai 1 atlet lagi sebagai Inti; satu regu tepat 4 atlet inti."],
+            KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLLLL', 3)),
+        );
+        $this->assertSame(
+            ["Kanga's Escape putra Regu A punya 5 atlet inti, padahal satu regu tepat 4 atlet inti. Jadikan 1 atlet cadangan."],
+            KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLLLL', 5)),
         );
     }
 
     public function testTimMelebihiBatas(): void
     {
         $this->assertSame(
-            ["Tim Kanga's Escape putra punya 7 atlet, padahal paling banyak 6. Hapus 1 atlet dari nomor ini."],
-            KelengkapanTim::periksa(self::nomor(20), array_fill(0, 7, 'L')),
+            ["Kanga's Escape putra Regu A punya 7 atlet, padahal paling banyak 6. Pindahkan 1 atlet ke regu lain atau hapus dari nomor ini."],
+            KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLLLLLL', 4)),
         );
     }
 
-    public function testTimMixKurangPutri(): void
+    public function testTimMixDiperiksaPadaInti(): void
     {
-        $pesan = KelengkapanTim::periksa(self::nomor(21), ['L', 'L', 'L', 'L', 'L', 'L', 'P', 'P']);
+        $pesan = KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLLLLLPP', 8));
+        $this->assertSame(["Estafet 8 × 50 m mix Regu A: atlet inti minimal 4 putra dan 4 putri; sekarang 6 putra dan 2 putri. Jadikan 2 putri sebagai inti."], $pesan);
 
-        $this->assertSame(['Tim Estafet 8 × 50 m mix minimal 4 putra dan 4 putri; sekarang 6 putra dan 2 putri. Tambah 2 putri.'], $pesan);
+        // Putri ada, tetapi sebagai cadangan.
+        $pesan = KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLLLLLPPPP', 8));
+        $this->assertStringContainsString('sekarang 6 putra dan 2 putri', $pesan[0]);
     }
 
-    public function testTimMixKurangIntiDanPutraPutri(): void
+    public function testTimMixKurangIntiTidakMemeriksaPutraPutri(): void
     {
-        $pesan = KelengkapanTim::periksa(self::nomor(21), ['L', 'P']);
+        $pesan = KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LP', 2));
 
-        $this->assertCount(2, $pesan);
+        $this->assertCount(1, $pesan);
         $this->assertStringContainsString('baru punya 2 atlet', $pesan[0]);
-        $this->assertStringContainsString('Tambah 3 putra dan 3 putri', $pesan[1]);
     }
 
-    public function testTimSusulanHanyaMenambahAnggota(): void
+    public function testTimSusulanMenambahCadangan(): void
     {
-        // Sudah 4 anggota, batas 6: satu atau dua tambahan boleh, tanpa syarat inti.
-        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), ['L'], 4));
-        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), ['L', 'L'], 4));
-        // Mix susulan tidak diperiksa putra/putri lagi.
-        $this->assertSame([], KelengkapanTim::periksa(self::nomor(21), ['P'], 8));
+        // Regu lama lengkap 4 inti, batas 6: satu atau dua cadangan tambahan boleh.
+        $lama = self::anggota('LLLL', 4);
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('L', 0), $lama));
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LL', 0), $lama));
+        // Mix: inti lama sudah memenuhi putra/putri.
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('P', 0), self::anggota('LLLLPPPP', 8)));
+    }
+
+    public function testTimSusulanIntiBaruHarusMenggantikanIntiLama(): void
+    {
+        $lama  = self::anggota('LLLL', 4);
+        $pesan = KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('L', 1), $lama);
+        $this->assertSame(["Kanga's Escape putra Regu A punya 5 atlet inti (4 di antaranya dari pendaftaran sebelumnya), padahal satu regu tepat 4 atlet inti. Jadikan 1 atlet cadangan, atau pilih inti lama yang menjadi cadangan."], $pesan);
+
+        // Satu inti lama sudah diturunkan menjadi cadangan.
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('L', 1), self::anggota('LLLL', 3)));
     }
 
     public function testTimSusulanMelebihiBatas(): void
     {
         $this->assertSame(
-            ["Tim Kanga's Escape putra sudah punya 5 atlet dari pendaftaran sebelumnya, dan paling banyak 6 atlet. Atlet tambahan paling banyak 1; hapus 1 atlet dari nomor ini."],
-            KelengkapanTim::periksa(self::nomor(20), ['L', 'L'], 5),
+            ["Kanga's Escape putra Regu A sudah punya 5 atlet dari pendaftaran sebelumnya, dan paling banyak 6 atlet. Atlet tambahan paling banyak 1; pindahkan 1 atlet ke regu lain atau hapus dari nomor ini."],
+            KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LL', 0), self::anggota('LLLLL', 4)),
         );
-        $this->assertStringContainsString('Tim ini sudah penuh', KelengkapanTim::periksa(self::nomor(20), ['L'], 6)[0]);
+        $this->assertStringContainsString('Regu ini sudah penuh', KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('L', 0), self::anggota('LLLLLL', 4))[0]);
+    }
+
+    public function testLonggarBolehKurangIntiTetapiTidakLebih(): void
+    {
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLL', 3), longgar: true));
+        $this->assertSame([], KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLL', 3), longgar: true));
+        $this->assertStringContainsString('padahal satu regu tepat 4 atlet inti', KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLLLL', 5), longgar: true)[0]);
+        $this->assertStringContainsString('paling banyak 6', KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLLLLLL', 2), longgar: true)[0]);
+    }
+
+    public function testLabelRegu(): void
+    {
+        $this->assertSame(['A', 'B', 'C'], Regu::dibolehkan(3));
+        $this->assertSame(['A'], Regu::dibolehkan(1));
+        $this->assertCount(26, Regu::dibolehkan(null));
+        $this->assertSame('40:B', Regu::kunci(40, 'B'));
+        $this->assertSame([40, 'B'], Regu::pecah('40:B'));
+        $this->assertNull(Regu::pecah('40:'));
+        $this->assertNull(Regu::pecah('40:A#'));
+        $this->assertNull(Regu::pecah('0:A'));
+        $this->assertNull(Regu::pecah(40));
+        $this->assertTrue(Regu::peranSah('cadangan'));
+        $this->assertFalse(Regu::peranSah('Inti'));
+    }
+
+    public function testNamaReguDirapikan(): void
+    {
+        // K106: "merah", "MERAH", dan "Regu Merah" adalah regu yang sama.
+        $this->assertSame('Merah', Regu::rapikan('  regu   MERAH '));
+        $this->assertSame('Merah', Regu::rapikan('merah'));
+        $this->assertSame('A', Regu::rapikan('a'));
+        $this->assertSame('Putra 1', Regu::rapikan('PUTRA 1'));
+        $this->assertSame('U-12/A', Regu::rapikan('u-12/a'));
+        $this->assertSame('', Regu::rapikan('Regu'));
+        $this->assertSame('', Regu::rapikan(null));
+
+        $this->assertTrue(Regu::sah('Putra 1'));
+        $this->assertTrue(Regu::sah('Mérah'));
+        $this->assertFalse(Regu::sah(''));
+        $this->assertFalse(Regu::sah('-A'));
+        $this->assertFalse(Regu::sah('A#'));
+        $this->assertFalse(Regu::sah(str_repeat('A', 31)));
+    }
+
+    public function testDaftarNamaReguDariAdmin(): void
+    {
+        $this->assertSame(['A', 'B', 'Putra 1'], Regu::daftarLabel('a, B , putra 1, A,, x#'));
+        $this->assertSame([], Regu::daftarLabel(null));
+        $this->assertSame(['Putra 1', 'Putra 2'], Regu::dibolehkan(2, ['Putra 1', 'Putra 2', 'Putra 3']));
+        $this->assertSame(['Putra 1'], Regu::dibolehkan(5, ['Putra 1']), 'Daftar admin juga membatasi.');
+        $this->assertSame([40, 'Putra 1'], Regu::pecah('40:Putra 1'));
+        $this->assertNotSame(Regu::idAman('40:A'), Regu::idAman('40:B'));
+        $this->assertMatchesRegularExpression('/^[a-z0-9]+$/', Regu::idAman('40:Putra 1'));
     }
 }

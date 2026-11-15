@@ -267,7 +267,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $kiriman = $this->kirimanDari($p['id']);
 
         for ($i = 0; $i < 4; $i++) {
-            $kiriman['atlet'][] = $this->atletBaru(['kanga']);
+            $kiriman['atlet'][] = $this->atletBaru(['kanga'], peran: 'inti');
         }
 
         $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
@@ -304,7 +304,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $kiriman['atlet'][] = $this->atletBaru(['kanga']);
         $hasil              = (new UbahPendaftaran())->simpan($b['id'], $kiriman);
 
-        $this->assertSame(['beregu.' . $this->idInduk['kanga']], array_column($hasil['galat'], 'jalur'));
+        $this->assertSame(['beregu.' . $this->idInduk['kanga'] . ':A'], array_column($hasil['galat'], 'jalur'));
     }
 
     public function testTimSusulanBaruTanpaBiayaTanpaKonfirmasi(): void
@@ -314,12 +314,72 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
 
         $kiriman = $this->kirimanDari($b['id']);
         $kiriman['atlet'][0]['nomor'][] = $this->idInduk['kanga'];
+        $kiriman['atlet'][0]['regu'][$this->idInduk['kanga']] = ['regu' => 'A', 'peran' => 'cadangan'];
 
         $hasil = (new UbahPendaftaran())->simpan($b['id'], $kiriman);
 
         $this->assertSame([], $hasil['galat']);
         $this->assertSame(0, $hasil['subtotal_beregu']);
         $this->assertSame(0, (int) $this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $b['id'])->get()->getRow()->biaya_tim);
+    }
+
+    // ---------------------------------------------------------------
+    // Regu (K105)
+    // ---------------------------------------------------------------
+
+    public function testAdminMengubahReguDanPeran(): void
+    {
+        $p = $this->buatPendaftaranPanel(['foto' => true, 'atlet' => $this->timPanel('kanga', 5)]);
+
+        // Tukar inti: atlet ke-5 (cadangan) menjadi inti, atlet ke-1 menjadi cadangan.
+        $kiriman = $this->kirimanDari($p['id']);
+        $kanga   = $this->idInduk['kanga'];
+        $this->assertSame('cadangan', $kiriman['atlet'][4]['regu'][$kanga]['peran']);
+        $kiriman['atlet'][4]['regu'][$kanga]['peran'] = 'inti';
+        $kiriman['atlet'][0]['regu'][$kanga]['peran'] = 'cadangan';
+
+        $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame(100000, $hasil['total']);
+
+        $peran = array_column($this->db->table('atlet_nomor')->select('atlet_id, peran')->whereIn('atlet_id', $p['atlet'])->orderBy('atlet_id')->get()->getResultArray(), 'peran');
+        $this->assertSame(['cadangan', 'inti', 'inti', 'inti', 'inti'], $peran);
+    }
+
+    public function testAdminBolehMenyimpanReguTersimpanYangKurangInti(): void
+    {
+        $p       = $this->buatPendaftaranPanel(['foto' => true, 'atlet' => $this->timPanel('kanga', 4)]);
+        $kiriman = $this->kirimanDari($p['id']);
+        $kiriman['atlet'][0]['regu'][$this->idInduk['kanga']]['peran'] = 'cadangan';
+
+        $this->assertSame([], (new UbahPendaftaran())->simpan($p['id'], $kiriman)['galat']);
+
+        // Inti lebih dari jumlah inti tetap ditolak.
+        $kiriman = $this->kirimanDari($p['id']);
+        $kiriman['atlet'][] = $this->atletBaru(['kanga'], peran: 'inti');
+        $kiriman['atlet'][] = $this->atletBaru(['kanga'], peran: 'inti');
+
+        $this->assertSame(['beregu.' . $this->idInduk['kanga'] . ':A'], array_column((new UbahPendaftaran())->simpan($p['id'], $kiriman)['galat'], 'jalur'));
+    }
+
+    public function testAdminMenambahReguBaruHarusLengkapDanDitagih(): void
+    {
+        $p       = $this->buatPendaftaranPanel(['foto' => true, 'atlet' => $this->timPanel('kanga', 4)]);
+        $kiriman = $this->kirimanDari($p['id']);
+
+        for ($i = 0; $i < 3; $i++) {
+            $kiriman['atlet'][] = $this->atletBaru(['kanga'], peran: 'inti', regu: 'B');
+        }
+
+        $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+        $this->assertSame(['beregu.' . $this->idInduk['kanga'] . ':B'], array_column($hasil['galat'], 'jalur'));
+
+        $kiriman['atlet'][] = $this->atletBaru(['kanga'], peran: 'inti', regu: 'B');
+        $hasil              = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame(200000, $hasil['total']);
+        $this->assertSame(['A', 'B'], array_column($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $p['id'])->orderBy('regu')->get()->getResultArray(), 'regu'));
     }
 
     // ---------------------------------------------------------------
@@ -596,13 +656,22 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
     }
 
     /**
+     * Atlet baru; di nomor beregu masuk `$regu` sebagai `$peran` (K105).
+     *
      * @param list<string> $nomor kunci nomor lomba
      *
      * @return array<string, mixed>
      */
-    private function atletBaru(array $nomor, ?string $nisn = null): array
+    private function atletBaru(array $nomor, ?string $nisn = null, string $peran = 'cadangan', string $regu = 'A'): array
     {
-        $a = $this->atletPanel($nisn === null ? [] : ['nisn' => $nisn]);
+        $a     = $this->atletPanel($nisn === null ? [] : ['nisn' => $nisn]);
+        $pilih = [];
+
+        foreach ($nomor as $k) {
+            if (in_array($k, ['kanga', 'estafet'], true)) {
+                $pilih[$this->idInduk[$k]] = ['regu' => $regu, 'peran' => $peran];
+            }
+        }
 
         return [
             'nama'          => $a['nama'],
@@ -610,6 +679,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
             'tanggal_lahir' => $a['tanggal_lahir'],
             'jenis_kelamin' => $a['jenis_kelamin'],
             'nomor'         => array_map(fn (string $k): int => $this->idInduk[$k], $nomor),
+            'regu'          => $pilih,
         ];
     }
 

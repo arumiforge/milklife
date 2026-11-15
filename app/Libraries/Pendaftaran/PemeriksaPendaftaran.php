@@ -25,16 +25,28 @@ use DateTimeImmutable;
  *         ],
  *         'atlet' => [
  *             ['nama' => 'Budi Contoh', 'nisn' => '0012345678', 'tanggal_lahir' => '2016-05-01',
- *              'jenis_kelamin' => 'L', 'nomor' => [12, 40]],   // id nomor lomba
+ *              'jenis_kelamin' => 'L', 'nomor' => [12, 40],    // id nomor lomba
+ *              'regu' => ['40' => ['regu' => 'A', 'peran' => 'inti']]], // per nomor beregu (K105)
  *         ],
- *         'konfirmasi_susulan' => [40],   // pilihan: id nomor beregu yang tim susulannya dikonfirmasi (K57)
+ *         'konfirmasi_susulan' => ['40:A'],  // pilihan: regu susulan yang dikonfirmasi (K57), "nomor:regu"
+ *         'turun_cadangan'     => ['40:17'], // pilihan: inti lama (id atlet) yang menjadi cadangan, "nomor:atlet"
  *     ]
  *
- * ## Konfirmasi tim susulan (K57)
+ * ## Regu (K105)
  *
- * Bila kiriman membawa kunci `konfirmasi_susulan` (list id nomor lomba),
- * setiap tim susulan (sekolah sudah punya tim di nomor itu) yang id nomornya
- * tidak ada di list ditolak dengan galat langkah 3, jalur `konfirmasi.<id>`.
+ * Satu sekolah boleh punya beberapa regu per nomor beregu, berlabel huruf
+ * (`Regu`). Setiap atlet di nomor beregu memilih regu dan peran (inti atau
+ * cadangan). Atlet satu kiriman dengan nomor dan label yang sama membentuk
+ * satu regu. Regu yang sudah dimiliki sekolah (NPSN sama, pendaftaran
+ * sebelumnya) menjadi regu susulan: tanpa biaya regu, anggota lama dan baru
+ * diperiksa bersama (`KelengkapanTim`). Inti lama boleh diturunkan menjadi
+ * cadangan lewat `turun_cadangan` supaya atlet susulan bisa menjadi inti.
+ *
+ * ## Konfirmasi regu susulan (K57)
+ *
+ * Bila kiriman membawa kunci `konfirmasi_susulan` (list "nomor:regu"),
+ * setiap regu susulan yang tidak ada di list ditolak dengan galat langkah 3,
+ * jalur `konfirmasi.<nomor>:<regu>`.
  * Tanpa kunci itu tidak ada pemeriksaan konfirmasi, jadi pemanggil admin
  * (ubah pendaftaran, F6-04) tidak memintanya. Titik akhir publik wizard
  * memakai `wajibKonfirmasiSusulan()` supaya kunci itu selalu ada, termasuk
@@ -54,7 +66,9 @@ use DateTimeImmutable;
  *     [
  *         'referensi'      => ['npsn' => …, 'nama' => …, 'bentuk' => 'SD', 'jenjang' => 'SD', 'kabupaten' => 'Kudus'], // atau null
  *         'nisn_terdaftar' => ['0012345678'],      // NISN kiriman yang sudah ada di basis data
- *         'tim'            => [40 => 5],           // nomor beregu => jumlah anggota tim sekolah ini
+ *         'tim'            => [40 => ['A' => [['id' => 17, 'nama' => '…', 'jenis_kelamin' => 'L', 'peran' => 'inti'], …]]],
+ *                                                  // nomor beregu => regu => anggota dari pendaftaran lain sekolah ini
+ *         'regu_tersimpan' => ['40:A'],            // pilihan, admin: regu milik pendaftaran yang diubah
  *         'individu'       => [12 => 1],           // nomor individu => jumlah atlet sekolah ini
  *     ]
  *
@@ -70,11 +84,14 @@ use DateTimeImmutable;
  * `penanggung_jawab` (nama, nomor_wa baku, foto = bita JPEG), `atlet` (nama
  * huruf besar, nisn, tanggal_lahir, jenis_kelamin, kelompok_umur_id, nomor:
  * list `{nomor_lomba_id, biaya}` dengan biaya `null` untuk beregu), `beregu`
- * (nomor_lomba_id, biaya_tim), `subtotal_individu`, `subtotal_beregu`, `total`.
+ * (nomor_lomba_id, regu, biaya_tim), `turun_cadangan` (atlet_id,
+ * nomor_lomba_id), `subtotal_individu`, `subtotal_beregu`, `total`. Nomor
+ * beregu atlet juga membawa `regu` dan `peran`.
  *
  * `rincian`: `sekolah` (nama, npsn, kabupaten, jenjang, jenjang_label),
  * `individu` (nama, nisn, kelompok_umur, nomor, biaya; satu baris per atlet per
- * nomor individu), `beregu` (nomor, biaya, susulan, anggota, anggota_lama),
+ * nomor individu), `beregu` (nomor, regu, biaya, susulan, anggota, inti,
+ * cadangan, anggota_lama, turun),
  * `subtotal_individu`, `subtotal_beregu`, `total`.
  */
 final class PemeriksaPendaftaran
@@ -94,7 +111,13 @@ final class PemeriksaPendaftaran
      */
     public const KUNCI_KONFIRMASI = 'konfirmasi_susulan';
 
-    private const LANGKAH = ['sekolah' => 1, 'penanggung_jawab' => 2, 'atlet' => 3, 'beregu' => 3, 'individu' => 3, 'konfirmasi' => 3];
+    /**
+     * Kunci kiriman berisi inti lama ("nomor:id atlet") yang menjadi
+     * cadangan karena atlet susulan menjadi inti (K105).
+     */
+    public const KUNCI_TURUN = 'turun_cadangan';
+
+    private const LANGKAH = ['sekolah' => 1, 'penanggung_jawab' => 2, 'atlet' => 3, 'beregu' => 3, 'individu' => 3, 'konfirmasi' => 3, 'turun' => 3];
 
     private const JENIS_KELAMIN_KATEGORI = ['putra' => 'L', 'putri' => 'P'];
 
@@ -126,6 +149,13 @@ final class PemeriksaPendaftaran
     private array $galat = [];
 
     /**
+     * Regu sekolah ini dari pendaftaran lain: nomor => regu => anggota.
+     *
+     * @var array<int, array<string, list<array<string, mixed>>>>
+     */
+    private array $timAda = [];
+
+    /**
      * @param array<string, mixed> $induk    Bila admin mengubah pendaftaran, boleh ditambah
      *                                       `kelompok_umur_nonaktif` dan `nomor_lomba_nonaktif`
      *                                       (`DataIndukPendaftaran::nonaktif()`).
@@ -135,12 +165,15 @@ final class PemeriksaPendaftaran
      *                                       pendaftaran): kelompok umur dan nomor lomba yang sudah
      *                                       dimatikan tetap diterima untuk atlet yang sudah memakainya
      *                                       (K98), tidak untuk atlet atau nomor baru.
+     * @param bool $longgar                   Admin mengubah pendaftaran: regu yang sudah terdaftar boleh
+     *                                       kurang inti (`KelengkapanTim`, K105).
      */
     public function __construct(
         private readonly array $induk,
         private readonly array $ada,
         private readonly string $hariIni,
         private readonly array $simpanan = [],
+        private readonly bool $longgar = false,
     ) {
         foreach ($induk['kelompok_umur'] ?? [] as $ku) {
             $this->kelompokUmur[(int) $ku['id']] = $ku;
@@ -224,8 +257,8 @@ final class PemeriksaPendaftaran
 
     /**
      * Kiriman wizard publik dengan kunci `konfirmasi_susulan` yang pasti ada
-     * dan rapi (list id bilangan bulat positif), supaya pemeriksaan
-     * konfirmasi tim susulan (K57) selalu berjalan. Isian yang bukan id
+     * dan rapi (list "nomor:regu"), supaya pemeriksaan konfirmasi regu
+     * susulan (K57) selalu berjalan. Isian yang bukan "nomor:regu"
      * diabaikan; kunci yang hilang menjadi list kosong.
      *
      * @param array<string, mixed> $kiriman
@@ -240,19 +273,42 @@ final class PemeriksaPendaftaran
     }
 
     /**
-     * @return list<int>
+     * @return list<string> kunci "nomor:regu"
      */
     private static function idKonfirmasi(mixed $nilai): array
     {
         $hasil = [];
 
-        foreach (self::daftar($nilai) as $id) {
-            if ((is_int($id) || (is_string($id) && ctype_digit($id))) && (int) $id > 0) {
-                $hasil[(int) $id] = (int) $id;
+        foreach (self::daftar($nilai) as $kunci) {
+            $pecah = Regu::pecah($kunci);
+
+            if ($pecah !== null) {
+                $hasil[$kunci] = $kunci;
             }
         }
 
         return array_values($hasil);
+    }
+
+    /**
+     * Inti lama yang diturunkan menjadi cadangan: nomor => id atlet => true.
+     * `null` bila ada isian yang bentuknya tidak sah.
+     *
+     * @return array<int, array<int, true>>|null
+     */
+    private static function turunKiriman(mixed $nilai): ?array
+    {
+        $hasil = [];
+
+        foreach (self::daftar($nilai) as $isian) {
+            if (! is_string($isian) || preg_match('/^([1-9]\d*):([1-9]\d*)$/D', $isian, $m) !== 1) {
+                return null;
+            }
+
+            $hasil[(int) $m[1]][(int) $m[2]] = true;
+        }
+
+        return $hasil;
     }
 
     /**
@@ -271,17 +327,18 @@ final class PemeriksaPendaftaran
         $konfirmasi = array_key_exists(self::KUNCI_KONFIRMASI, $kiriman) ? self::idKonfirmasi($kiriman[self::KUNCI_KONFIRMASI]) : null;
 
         $sekolah         = $this->periksaSekolah(is_array($kiriman['sekolah'] ?? null) ? $kiriman['sekolah'] : []);
+        $this->timAda    = $sekolah['npsn'] !== null ? self::timAda($this->ada['tim'] ?? []) : [];
         $penanggungJawab = $this->periksaPenanggungJawab(self::daftar($kiriman['penanggung_jawab'] ?? null), $periksaFoto);
         [$atlet, $individu, $regu] = $this->periksaAtlet(self::daftar($kiriman['atlet'] ?? null), $sekolah['jenjang']);
 
-        $beregu = $this->periksaTim($regu, $sekolah['npsn'], $konfirmasi);
+        [$beregu, $turun] = $this->periksaTim($regu, $konfirmasi, $kiriman[self::KUNCI_TURUN] ?? null);
         $this->periksaKuota($individu, $sekolah['npsn']);
 
         if ($this->galat !== []) {
             return ['galat' => $this->galat, 'data' => null, 'rincian' => null];
         }
 
-        return $this->susun($sekolah, $penanggungJawab, $atlet, $beregu);
+        return $this->susun($sekolah, $penanggungJawab, $atlet, $beregu, $turun);
     }
 
     // ---------------------------------------------------------------
@@ -432,8 +489,8 @@ final class PemeriksaPendaftaran
     /**
      * @param list<mixed> $daftar
      *
-     * @return array{0: list<array<string, mixed>>, 1: array<int, int>, 2: array<int, list<string>>}
-     *                                                                                                atlet bersih, jumlah atlet per nomor individu, jenis kelamin anggota per nomor beregu
+     * @return array{0: list<array<string, mixed>>, 1: array<int, int>, 2: array<int, array<string, list<array{jenis_kelamin: string|null, peran: string}>>>}
+     *                                                                                                atlet bersih, jumlah atlet per nomor individu, anggota per nomor beregu per regu
      */
     private function periksaAtlet(array $daftar, ?string $jenjang): array
     {
@@ -508,16 +565,26 @@ final class PemeriksaPendaftaran
                 }
             }
 
-            $nomor = $this->periksaNomorAtlet($isian['nomor'] ?? null, $jalur, $ke, $ku, $jk, $maksimalIndividu, $simpan['nomor'] ?? []);
+            $nomor       = $this->periksaNomorAtlet($isian['nomor'] ?? null, $jalur, $ke, $ku, $jk, $maksimalIndividu, $simpan['nomor'] ?? []);
+            $pilihanRegu = is_array($isian['regu'] ?? null) ? $isian['regu'] : [];
 
-            foreach ($nomor as $baris) {
+            foreach ($nomor as $j => $baris) {
                 $id = (int) $baris['id'];
 
                 if ($baris['jenis'] === 'individu') {
                     $individu[$id] = ($individu[$id] ?? 0) + 1;
-                } elseif ($jk !== null) {
-                    $regu[$id][] = $jk;
+
+                    continue;
                 }
+
+                $pilih = $this->periksaRegu($pilihanRegu[$id] ?? null, $baris, $jalur, $ke);
+
+                if ($pilih === null) {
+                    continue;
+                }
+
+                $nomor[$j] += $pilih;
+                $regu[$id][$pilih['regu']][] = ['jenis_kelamin' => $jk, 'peran' => $pilih['peran']];
             }
 
             $hasil[] = [
@@ -605,39 +672,269 @@ final class PemeriksaPendaftaran
         return $sah;
     }
 
+    /**
+     * Regu dan peran satu atlet di satu nomor beregu (K105).
+     *
+     * @param array<string, mixed> $nomor
+     *
+     * @return array{regu: string, peran: string}|null
+     */
+    private function periksaRegu(mixed $pilihan, array $nomor, string $jalur, string $ke): ?array
+    {
+        $pilihan   = is_array($pilihan) ? $pilihan : [];
+        $label     = Regu::rapikan($pilihan['regu'] ?? null);
+        $peran     = strtolower(trim(self::teks($pilihan['peran'] ?? null)));
+        $namaNomor = NomorLombaModel::namaLengkap($nomor);
+        $sah       = true;
+
+        if ($this->reguBebas()) {
+            // Nama regu diketik official (K106); banyaknya regu diperiksa di periksaTim().
+            if ($label === '') {
+                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum diberi nama regu. Tulis nama regunya, misalnya A atau Merah.");
+                $sah = false;
+            } elseif (! Regu::sah($label)) {
+                $this->tambah("{$jalur}.regu", "{$ke}: nama regu {$namaNomor} hanya boleh berisi huruf, angka, spasi, titik, garis miring, atau tanda hubung, paling banyak "
+                    . Regu::PANJANG_MAKSIMAL . ' huruf. Ganti nama regunya.');
+                $sah = false;
+            }
+        } else {
+            $boleh = $this->reguDibolehkan($nomor);
+
+            if ($label === '') {
+                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum memilih regu. Pilih Regu " . self::teksLabel($boleh) . '.');
+                $sah = false;
+            } elseif (! in_array($label, $boleh, true)) {
+                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} tidak punya Regu {$label}; satu sekolah paling banyak "
+                    . count($boleh) . ' regu di nomor ini. Pilih Regu ' . self::teksLabel($boleh) . '.');
+                $sah = false;
+            }
+        }
+
+        if (! Regu::peranSah($peran)) {
+            $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum ditandai Inti atau Cadangan. Pilih salah satu.");
+            $sah = false;
+        }
+
+        return $sah ? ['regu' => $label, 'peran' => $peran] : null;
+    }
+
+    /**
+     * Mode nama regu Bebas: official mengetik nama regu sendiri (K106).
+     */
+    private function reguBebas(): bool
+    {
+        return ($this->induk['aturan']['regu_mode'] ?? Regu::MODE_KETENTUAN) === Regu::MODE_BEBAS;
+    }
+
+    /**
+     * Regu yang sudah dimiliki sekolah ini (pendaftaran lain) atau pendaftaran
+     * yang sedang diubah di satu nomor: tetap boleh dipakai walau batas regu,
+     * mode, atau daftar nama regu diubah.
+     *
+     * @return list<string>
+     */
+    private function reguLamaNomor(int $nomorId): array
+    {
+        $lama = array_map('strval', array_keys($this->timAda[$nomorId] ?? []));
+
+        foreach ($this->ada['regu_tersimpan'] ?? [] as $kunci) {
+            $pecah = Regu::pecah($kunci);
+
+            if ($pecah !== null && $pecah[0] === $nomorId) {
+                $lama[] = $pecah[1];
+            }
+        }
+
+        return array_values(array_unique($lama));
+    }
+
+    /**
+     * Nama regu yang boleh dipakai di nomor ini pada mode Ketentuan admin:
+     * nama pertama dari daftar admin (huruf A, B, C, … bila daftarnya tidak
+     * ada) sebanyak batas regu nomor itu, ditambah regu lama (`reguLamaNomor()`).
+     *
+     * @param array<string, mixed> $nomor
+     *
+     * @return list<string>
+     */
+    private function reguDibolehkan(array $nomor): array
+    {
+        $daftar = $this->induk['aturan']['regu_label'] ?? null;
+        $boleh  = Regu::dibolehkan(isset($nomor['regu_maksimal']) ? (int) $nomor['regu_maksimal'] : null, is_array($daftar) && $daftar !== [] ? $daftar : null);
+
+        foreach ($this->reguLamaNomor((int) $nomor['id']) as $label) {
+            if (! in_array($label, $boleh, true)) {
+                $boleh[] = $label;
+            }
+        }
+
+        return $boleh;
+    }
+
+    /**
+     * "A, B, atau C".
+     *
+     * @param list<string> $label
+     */
+    private static function teksLabel(array $label): string
+    {
+        if (count($label) <= 1) {
+            return implode('', $label);
+        }
+
+        // Huruf berurutan yang panjang ditulis "A sampai Z".
+        if (count($label) > 5 && array_filter($label, static fn (string $l): bool => strlen($l) !== 1) === []) {
+            return $label[0] . ' sampai ' . $label[count($label) - 1];
+        }
+
+        $akhir = array_pop($label);
+
+        return implode(', ', $label) . (count($label) > 1 ? ', atau ' : ' atau ') . $akhir;
+    }
+
+    /**
+     * Regu sekolah dari `ada['tim']`, dirapikan: nomor => regu => anggota.
+     *
+     * @return array<int, array<string, list<array<string, mixed>>>>
+     */
+    private static function timAda(mixed $tim): array
+    {
+        $hasil = [];
+
+        foreach (is_array($tim) ? $tim : [] as $nomorId => $regu) {
+            foreach (is_array($regu) ? $regu : [] as $label => $anggota) {
+                if (Regu::sah((string) $label)) {
+                    $hasil[(int) $nomorId][(string) $label] = array_values(is_array($anggota) ? $anggota : []);
+                }
+            }
+        }
+
+        return $hasil;
+    }
+
     // ---------------------------------------------------------------
     // Tim dan kuota
     // ---------------------------------------------------------------
 
     /**
-     * @param array<int, list<string>> $regu
-     * @param list<int>|null           $konfirmasi id nomor yang tim susulannya dikonfirmasi; null = tidak diperiksa (K57)
+     * Kelengkapan setiap regu, regu susulan, konfirmasinya (K57), dan inti
+     * lama yang diturunkan menjadi cadangan (K105).
      *
-     * @return list<array{nomor: array<string, mixed>, susulan: bool, anggota: int, anggota_lama: int|null}>
+     * @param array<int, array<string, list<array{jenis_kelamin: string|null, peran: string}>>> $regu
+     * @param list<string>|null $konfirmasi "nomor:regu" yang regu susulannya dikonfirmasi; null = tidak diperiksa (K57)
+     *
+     * @return array{0: list<array<string, mixed>>, 1: list<array{atlet_id: int, nomor_lomba_id: int}>}
      */
-    private function periksaTim(array $regu, ?string $npsn, ?array $konfirmasi = null): array
+    private function periksaTim(array $regu, ?array $konfirmasi, mixed $turunKiriman): array
     {
-        $timAda = $npsn !== null ? ($this->ada['tim'] ?? []) : [];
-        $hasil  = [];
+        $turun = self::turunKiriman($turunKiriman);
+        $hasil = [];
+        $data  = [];
 
-        foreach ($regu as $nomorId => $jenisKelamin) {
-            $nomor = $this->nomorLomba[$nomorId];
-            $lama  = array_key_exists($nomorId, $timAda) ? (int) $timAda[$nomorId] : null;
-
-            foreach (KelengkapanTim::periksa($nomor, $jenisKelamin, $lama) as $pesan) {
-                $this->tambah("beregu.{$nomorId}", $pesan);
-            }
-
-            if ($lama !== null && $konfirmasi !== null && ! in_array($nomorId, $konfirmasi, true)) {
-                $this->tambah("konfirmasi.{$nomorId}", 'Tim ' . NomorLombaModel::namaLengkap($nomor) . ": sekolah ini sudah punya tim di nomor ini ({$lama} atlet dari pendaftaran sebelumnya), "
-                    . 'jadi atlet yang dipilih menjadi tambahan anggota tim itu tanpa biaya tim. '
-                    . 'Centang kotak konfirmasi pada tim ini di daftar sementara, lalu lanjutkan lagi.');
-            }
-
-            $hasil[] = ['nomor' => $nomor, 'susulan' => $lama !== null, 'anggota' => count($jenisKelamin), 'anggota_lama' => $lama];
+        if ($turun === null) {
+            $this->tambah('turun', 'Pilihan inti lama yang menjadi cadangan tidak dikenal. Muat ulang halaman, lalu pilih lagi.');
+            $turun = [];
         }
 
-        return $hasil;
+        // Setiap inti lama yang diturunkan harus anggota inti regu sekolah ini
+        // yang juga mendapat atlet dari kiriman ini.
+        foreach ($turun as $nomorId => $daftarAtlet) {
+            foreach (array_keys($daftarAtlet) as $atletId) {
+                $ketemu = null;
+
+                foreach ($this->timAda[$nomorId] ?? [] as $label => $anggota) {
+                    foreach ($anggota as $a) {
+                        if ((int) ($a['id'] ?? 0) === $atletId && ($a['peran'] ?? '') === Regu::INTI) {
+                            $ketemu = (string) $label;
+                        }
+                    }
+                }
+
+                if ($ketemu === null || ! isset($regu[$nomorId][$ketemu])) {
+                    $this->tambah("turun.{$nomorId}", 'Pilihan inti lama yang menjadi cadangan tidak dikenal atau bukan di regu yang ditambah. Muat ulang halaman, lalu pilih lagi.');
+
+                    continue;
+                }
+
+                $data[] = ['atlet_id' => $atletId, 'nomor_lomba_id' => $nomorId];
+            }
+        }
+
+        $tersimpan = array_flip(array_map('strval', $this->ada['regu_tersimpan'] ?? []));
+
+        foreach ($regu as $nomorId => $perRegu) {
+            $nomor = $this->nomorLomba[$nomorId];
+            ksort($perRegu);
+
+            // Mode Bebas (K106): banyaknya regu sekolah di nomor ini, termasuk regu lama,
+            // tidak boleh melewati batas regu nomor itu. Regu lama tetap boleh.
+            $batasRegu = isset($nomor['regu_maksimal']) && $nomor['regu_maksimal'] !== null ? (int) $nomor['regu_maksimal'] : null;
+
+            if ($this->reguBebas() && $batasRegu !== null && $batasRegu > 0) {
+                $lama  = $this->reguLamaNomor($nomorId);
+                $semua = array_values(array_unique(array_merge($lama, array_map('strval', array_keys($perRegu)))));
+
+                if (count($semua) > $batasRegu) {
+                    foreach (array_diff(array_map('strval', array_keys($perRegu)), $lama) as $baru) {
+                        $this->tambah('beregu.' . Regu::kunci($nomorId, $baru), Regu::nama(NomorLombaModel::namaLengkap($nomor), $baru)
+                            . ": satu sekolah paling banyak {$batasRegu} regu di nomor ini, sekarang " . count($semua) . ' regu'
+                            . ($lama !== [] ? ' (termasuk Regu ' . self::teksLabel($lama) . ' yang sudah terdaftar)' : '')
+                            . '. Masukkan atletnya ke regu yang sudah ada.');
+                    }
+                }
+            }
+
+            foreach ($perRegu as $label => $baru) {
+                $label    = (string) $label;
+                $kunci    = Regu::kunci($nomorId, $label);
+                $anggota  = $this->timAda[$nomorId][$label] ?? null;
+                $lama     = null;
+                $jumlahTurun = 0;
+
+                if ($anggota !== null) {
+                    $lama = [];
+
+                    foreach ($anggota as $a) {
+                        $peran = (string) ($a['peran'] ?? '');
+
+                        if ($peran === Regu::INTI && isset($turun[$nomorId][(int) ($a['id'] ?? 0)])) {
+                            $peran = Regu::CADANGAN;
+                            $jumlahTurun++;
+                        }
+
+                        $lama[] = ['jenis_kelamin' => $a['jenis_kelamin'] ?? null, 'peran' => $peran];
+                    }
+                }
+
+                // Admin: regu yang sudah terdaftar (di pendaftaran ini atau lain) boleh kurang inti.
+                $longgar = $this->longgar && ($lama !== null || isset($tersimpan[$kunci]));
+
+                foreach (KelengkapanTim::periksa($nomor, $label, $baru, $lama, $longgar) as $pesan) {
+                    $this->tambah("beregu.{$kunci}", $pesan);
+                }
+
+                if ($lama !== null && $konfirmasi !== null && ! in_array($kunci, $konfirmasi, true)) {
+                    $this->tambah("konfirmasi.{$kunci}", Regu::nama(NomorLombaModel::namaLengkap($nomor), $label)
+                        . ': sekolah ini sudah punya regu ini (' . count($lama) . ' atlet dari pendaftaran sebelumnya), '
+                        . 'jadi atlet yang dipilih menjadi tambahan anggota regu itu tanpa biaya regu. '
+                        . 'Centang kotak konfirmasi pada regu ini di daftar sementara, atau pilih regu lain, lalu lanjutkan lagi.');
+                }
+
+                $inti    = count(array_filter($baru, static fn (array $a): bool => $a['peran'] === Regu::INTI));
+                $hasil[] = [
+                    'nomor'        => $nomor,
+                    'regu'         => $label,
+                    'susulan'      => $lama !== null,
+                    'anggota'      => count($baru),
+                    'inti'         => $inti,
+                    'cadangan'     => count($baru) - $inti,
+                    'anggota_lama' => $lama !== null ? count($lama) : null,
+                    'turun'        => $jumlahTurun,
+                ];
+            }
+        }
+
+        return [$hasil, $data];
     }
 
     /**
@@ -681,10 +978,11 @@ final class PemeriksaPendaftaran
      * @param list<array<string, mixed>> $penanggungJawab
      * @param list<array<string, mixed>> $atlet
      * @param list<array<string, mixed>> $beregu
+     * @param list<array{atlet_id: int, nomor_lomba_id: int}> $turun
      *
      * @return array{galat: list<array{langkah: int, jalur: string, pesan: string}>, data: array<string, mixed>, rincian: array<string, mixed>}
      */
-    private function susun(array $sekolah, array $penanggungJawab, array $atlet, array $beregu): array
+    private function susun(array $sekolah, array $penanggungJawab, array $atlet, array $beregu, array $turun): array
     {
         $dataAtlet     = [];
         $rincianIndiv  = [];
@@ -707,7 +1005,7 @@ final class PemeriksaPendaftaran
                         'biaya'         => $biaya,
                     ];
                 } else {
-                    $nomor[] = ['nomor_lomba_id' => (int) $n['id'], 'biaya' => null];
+                    $nomor[] = ['nomor_lomba_id' => (int) $n['id'], 'biaya' => null, 'regu' => $n['regu'], 'peran' => $n['peran']];
                 }
             }
 
@@ -728,15 +1026,19 @@ final class PemeriksaPendaftaran
         foreach ($beregu as $tim) {
             $biaya = BiayaPendaftaran::tim((int) ($tim['nomor']['biaya_beregu'] ?? 0), $tim['susulan']);
 
-            $dataBeregu[]    = ['nomor_lomba_id' => (int) $tim['nomor']['id'], 'biaya_tim' => $biaya];
+            $dataBeregu[]    = ['nomor_lomba_id' => (int) $tim['nomor']['id'], 'regu' => $tim['regu'], 'biaya_tim' => $biaya];
             $biayaBeregu[]   = $biaya;
             $rincianBeregu[] = [
                 'nomor'         => NomorLombaModel::namaLengkap($tim['nomor']),
+                'regu'          => $tim['regu'],
                 'kelompok_umur' => (string) ($this->kelompokUmur[(int) $tim['nomor']['kelompok_umur_id']]['nama'] ?? ''),
                 'biaya'         => $biaya,
                 'susulan'       => $tim['susulan'],
                 'anggota'       => $tim['anggota'],
+                'inti'          => $tim['inti'],
+                'cadangan'      => $tim['cadangan'],
                 'anggota_lama'  => $tim['anggota_lama'],
+                'turun'         => $tim['turun'],
             ];
         }
 
@@ -749,6 +1051,7 @@ final class PemeriksaPendaftaran
                 'penanggung_jawab' => $penanggungJawab,
                 'atlet'            => $dataAtlet,
                 'beregu'           => $dataBeregu,
+                'turun_cadangan'   => $turun,
             ] + $total,
             'rincian' => [
                 'sekolah' => [

@@ -20,7 +20,7 @@ use Throwable;
  * Satu-satunya jalan menulis pendaftaran baru (rencana Tahap 4, "Penyimpanan").
  *
  * 1. Kunci bernama MySQL per NPSN, supaya dua kiriman bersamaan dari sekolah
- *    yang sama tidak sama-sama membuat tim di nomor yang sama atau melewati
+ *    yang sama tidak sama-sama membuat regu yang sama atau melewati
  *    kuota (6.6, K51).
  * 2. Data yang sudah ada dibaca ulang dan seluruh kiriman diperiksa
  *    (`PemeriksaPendaftaran`).
@@ -29,7 +29,8 @@ use Throwable;
  * 4. Foto penanggung jawab dan bukti transfer disimpan di luar `public/`.
  * 5. Satu transaksi: pendaftaran (status menunggu), ID
  *    pendaftaran dari nomor baris (6.8), penanggung jawab, atlet, nomor atlet
- *    (biaya individu disalin), tim beregu, dan baris bukti bayar.
+ *    (biaya individu disalin; regu dan peran untuk beregu), regu beregu,
+ *    inti lama yang diturunkan menjadi cadangan (K105), dan baris bukti bayar.
  * 6. Bila gagal, transaksi dibatalkan dan foto serta bukti dihapus. NISN yang ternyata
  *    terdaftar pada saat yang sama ditolak kunci unik basis data dan
  *    dilaporkan sebagai galat NISN biasa.
@@ -193,6 +194,8 @@ final class SimpanPendaftaran
                         'atlet_id'       => $atletId,
                         'nomor_lomba_id' => $nomor['nomor_lomba_id'],
                         'biaya'          => $nomor['biaya'],
+                        'regu'           => $nomor['regu'] ?? null,
+                        'peran'          => $nomor['peran'] ?? null,
                     ]));
                 }
             }
@@ -201,9 +204,12 @@ final class SimpanPendaftaran
                 self::pastikan(model(PendaftaranBereguModel::class)->insert([
                     'pendaftaran_id' => $id,
                     'nomor_lomba_id' => $tim['nomor_lomba_id'],
+                    'regu'           => $tim['regu'],
                     'biaya_tim'      => $tim['biaya_tim'],
                 ]));
             }
+
+            $this->turunkanInti($data['turun_cadangan'] ?? []);
 
             self::pastikan(model(BuktiBayarModel::class)->insert(['pendaftaran_id' => $id] + $bukti));
 
@@ -251,6 +257,37 @@ final class SimpanPendaftaran
         $ada = $this->data->ada(PemeriksaPendaftaran::npsnKiriman($kiriman), PemeriksaPendaftaran::nisnKiriman($kiriman));
 
         return (new PemeriksaPendaftaran($this->data->induk(), $ada, $hariIni))->periksa($kiriman);
+    }
+
+    /**
+     * Inti lama di pendaftaran lain menjadi cadangan karena atlet susulan
+     * menjadi inti (K105). Waktu ubah pendaftaran pemiliknya ikut diperbarui,
+     * supaya admin yang sedang membuka halaman ubahnya diminta memuat ulang.
+     *
+     * @param list<array{atlet_id: int, nomor_lomba_id: int}> $turun
+     */
+    private function turunkanInti(array $turun): void
+    {
+        if ($turun === []) {
+            return;
+        }
+
+        $sekarang    = Time::now(config('App')->appTimezone)->format('Y-m-d H:i:s');
+        $pendaftaran = [];
+
+        foreach ($turun as $t) {
+            self::pastikan($this->db->table('atlet_nomor')
+                ->where('atlet_id', $t['atlet_id'])->where('nomor_lomba_id', $t['nomor_lomba_id'])->where('peran', Regu::INTI)
+                ->update(['peran' => Regu::CADANGAN, 'diubah_pada' => $sekarang]));
+
+            if ($this->db->affectedRows() !== 1) {
+                throw new RuntimeException('Inti lama yang diturunkan menjadi cadangan tidak ditemukan.');
+            }
+
+            $pendaftaran[] = (int) ($this->db->table('atlet')->select('pendaftaran_id')->where('id', $t['atlet_id'])->get()->getRowArray()['pendaftaran_id'] ?? 0);
+        }
+
+        self::pastikan($this->db->table('pendaftaran')->whereIn('id', array_values(array_unique($pendaftaran)))->update(['diubah_pada' => $sekarang]));
     }
 
     private function ambilKunci(string $kunci): bool

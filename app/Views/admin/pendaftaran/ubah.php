@@ -29,11 +29,14 @@
  * @var array{nomor_lomba: array<int, string>, kelompok_umur: array<int, string>} $nonaktif
  * @var list<array{jalur: string, pesan: string}> $galat
  *
- * Tim tanpa pembayar (K68): kotak centang `bebankan_tim[]` per tim yang
- * ditandai (`isian['tim_tanpa_pembayar']`).
+ * Regu tanpa pembayar (K68): kotak centang `bebankan_tim[]` ("nomor:regu")
+ * per regu yang ditandai (`isian['tim_tanpa_pembayar']`). Setiap nomor
+ * beregu punya pilihan regu dan inti/cadangan, `atlet[<k>][regu][<id>][...]`
+ * (K105), yang tampil bila nomornya dicentang.
  */
 
 use App\Libraries\Panel\UbahPendaftaran;
+use App\Libraries\Pendaftaran\Regu;
 
 $p      = $isian['pendaftaran'];
 $alamat = 'admin/pendaftaran/' . (int) $p['id'];
@@ -42,7 +45,7 @@ $lunas  = $p['status'] === 'lunas';
 // Galat per isian (jalur → pesan) dan ringkasan untuk admin/_galat_isian.
 $galatIsian = [];
 $ringkasan  = [];
-$polaIsian  = '/^(sekolah\.(jenjang|kabupaten|npsn|nama)|penanggung_jawab\.\d+\.(nama|nomor_wa|foto)|atlet\.\d+\.(nama|nisn|tanggal_lahir|jenis_kelamin|nomor))$/D';
+$polaIsian  = '/^(sekolah\.(jenjang|kabupaten|npsn|nama)|penanggung_jawab\.\d+\.(nama|nomor_wa|foto)|atlet\.\d+\.(nama|nisn|tanggal_lahir|jenis_kelamin|nomor|regu))$/D';
 
 foreach ($galat as $i => $g) {
     $jalur = (string) $g['jalur'];
@@ -147,7 +150,51 @@ $kartuPj = static function (string $k, ?int $urut, array $orang) use ($tandai, $
  *
  * @param array<string, mixed> $atlet
  */
-$kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai, $galatIsian, $induk, $nomorPerKu, $nomorAktif, $nonaktif): string {
+// Pilihan regu dan peran untuk satu nomor beregu (K105, K106). Mode Ketentuan
+// admin: daftar nama dari Pengaturan sebanyak batas regu nomor itu; mode Bebas:
+// nama diketik. Nama tersimpan selalu tetap bisa dipilih.
+$pilihanRegu = static function (string $nameDasar, string $idDasar, int $nomorId, ?int $maksimal, array $terpilih, string $kelas, bool $tampil) use ($aturan): string {
+    $bebas = ($aturan['regu_mode'] ?? Regu::MODE_KETENTUAN) === Regu::MODE_BEBAS;
+    $label = Regu::dibolehkan($maksimal, $aturan['regu_label'] ?? null);
+    $regu  = (string) ($terpilih['regu'] ?? '');
+    $peran = (string) ($terpilih['peran'] ?? '');
+
+    if ($regu !== '' && Regu::sah($regu) && ! in_array($regu, $label, true)) {
+        $label[] = $regu;
+    }
+
+    ob_start(); ?>
+    <div class="pilihan-regu-admin" data-regu-untuk="<?= $nomorId ?>"<?= $tampil ? '' : ' hidden' ?>>
+        <div>
+            <label class="form-label small mb-0" for="<?= $idDasar ?>-regu-<?= $nomorId ?>">Regu</label>
+            <?php if ($bebas) : ?>
+                <input type="text" class="form-control form-control-sm<?= $kelas ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]"
+                    value="<?= esc($regu, 'attr') ?>" maxlength="<?= Regu::PANJANG_MAKSIMAL ?>" placeholder="mis. A atau Merah" data-isian="regu">
+            <?php else : ?>
+                <select class="form-select form-select-sm<?= $kelas ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]" data-isian="regu">
+                    <option value="">Pilih regu</option>
+                    <?php foreach ($label as $l) : ?>
+                        <option value="<?= esc($l, 'attr') ?>"<?= $l === $regu ? ' selected' : '' ?>>Regu <?= esc($l) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif ?>
+        </div>
+        <div>
+            <label class="form-label small mb-0" for="<?= $idDasar ?>-peran-<?= $nomorId ?>">Sebagai</label>
+            <select class="form-select form-select-sm<?= $kelas ?>" id="<?= $idDasar ?>-peran-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][peran]" data-isian="regu">
+                <option value="">Pilih</option>
+                <?php foreach (Regu::PERAN as $nilai => $teks) : ?>
+                    <option value="<?= $nilai ?>"<?= $nilai === $peran ? ' selected' : '' ?>><?= $teks ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+    <?php
+
+    return (string) ob_get_clean();
+};
+
+$kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai, $galatIsian, $induk, $nomorPerKu, $nomorAktif, $nonaktif, $pilihanRegu): string {
     $jalur     = 'atlet.' . $k;
     $idDasar   = 'atlet-' . $k;
     $nameDasar = 'atlet[' . $k . ']';
@@ -156,7 +203,9 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
     $lahir     = $tandai($galatIsian, $jalur . '.tanggal_lahir', $idDasar . '-tanggal-lahir');
     $jk        = $tandai($galatIsian, $jalur . '.jenis_kelamin', $idDasar . '-jenis-kelamin');
     $nomor     = $tandai($galatIsian, $jalur . '.nomor', $idDasar . '-nomor');
+    $reguSalah = $tandai($galatIsian, $jalur . '.regu', $idDasar . '-nomor');
     $dipilih   = array_map('intval', $atlet['nomor']);
+    $reguAtlet = $atlet['regu'] ?? [];
     $tertutup  = array_values(array_filter($dipilih, static fn (int $id): bool => ! isset($nomorAktif[$id])));
 
     ob_start(); ?>
@@ -216,6 +265,9 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
                         <?= esc($nonaktif['nomor_lomba'][$id] ?? 'Nomor lomba') ?>
                         <span class="badge rounded-pill text-bg-secondary">Sudah ditutup</span>
                     </label>
+                    <?php if (isset($reguAtlet[$id])) : ?>
+                        <?= $pilihanRegu($nameDasar, $idDasar, $id, null, $reguAtlet[$id], $reguSalah['kelas'], true) ?>
+                    <?php endif ?>
                 </div>
             <?php endforeach; ?>
             <?php foreach ($induk['kelompok_umur'] as $ku) : ?>
@@ -236,12 +288,16 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
                                         <span class="badge rounded-pill text-bg-light border">Beregu</span>
                                     <?php endif ?>
                                 </label>
+                                <?php if ($n['jenis'] === 'beregu') : ?>
+                                    <?= $pilihanRegu($nameDasar, $idDasar, (int) $n['id'], $n['regu_maksimal'] ?? null, $reguAtlet[(int) $n['id']] ?? [], $reguSalah['kelas'], in_array((int) $n['id'], $dipilih, true)) ?>
+                                <?php endif ?>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
             <?= $nomor['pesan'] ?>
+            <?= $reguSalah['pesan'] ?>
         </fieldset>
     </li>
     <?php
@@ -250,7 +306,7 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
 };
 
 $pjKosong    = ['id' => null, 'nama' => '', 'nomor_wa' => '', 'foto' => '', 'ada_foto' => false];
-$atletKosong = ['id' => null, 'nama' => '', 'nisn' => '', 'tanggal_lahir' => '', 'jenis_kelamin' => '', 'nomor' => [], 'nomor_dada' => null];
+$atletKosong = ['id' => null, 'nama' => '', 'nisn' => '', 'tanggal_lahir' => '', 'jenis_kelamin' => '', 'nomor' => [], 'regu' => [], 'nomor_dada' => null];
 
 $dataSkrip = [
     'jenjang'                => $induk['jenjang'],
@@ -291,8 +347,8 @@ $galatSekolah = [
 
     <div class="alert alert-info" id="keterangan-ubah">
         <ul class="mb-0 ps-3">
-            <li>Aturan pendaftaran tetap berlaku: NISN tidak boleh dipakai pendaftaran lain, kelompok umur mengikuti tahun lahir dan jenjang sekolah, dan tim beregu harus lengkap.</li>
-            <li>Biaya nomor lomba dan tim yang tidak berubah tetap seperti saat mendaftar; nomor lomba dan tim baru memakai tarif sekarang.</li>
+            <li>Aturan pendaftaran tetap berlaku: NISN tidak boleh dipakai pendaftaran lain, kelompok umur mengikuti tahun lahir dan jenjang sekolah, dan regu beregu baru harus lengkap (tepat sejumlah inti). Regu yang sudah terdaftar boleh kurang inti, tetapi tidak lebih; regu yang kurang inti ditandai di rincian.</li>
+            <li>Biaya nomor lomba dan regu yang tidak berubah tetap seperti saat mendaftar; nomor lomba dan regu baru memakai tarif sekarang (biaya beregu dihitung per regu).</li>
             <?php if ($lunas) : ?>
                 <li>Pendaftaran ini sudah Lunas. Bila totalnya berubah, status kembali menjadi Menunggu Konfirmasi Pembayaran. Bila totalnya tetap, atlet baru langsung mendapat nomor dada.</li>
             <?php endif ?>
@@ -388,17 +444,18 @@ $galatSekolah = [
         <?php if ($isian['tim_tanpa_pembayar'] !== []) : ?>
             <section class="card border-warning mb-4" aria-labelledby="judul-tim-tanpa-pembayar" id="tim-tanpa-pembayar">
                 <div class="card-body p-3 p-lg-4">
-                    <h2 id="judul-tim-tanpa-pembayar" class="h5 mb-1">Tim tanpa pembayar biaya tim</h2>
+                    <h2 id="judul-tim-tanpa-pembayar" class="h5 mb-1">Regu tanpa pembayar biaya regu</h2>
                     <p class="small text-body-secondary mb-3">
-                        Pendaftaran yang membayar biaya tim ini sudah dihapus atau diubah. Biayanya tidak dipindah otomatis.
+                        Pendaftaran yang membayar biaya regu ini sudah dihapus atau diubah. Biayanya tidak dipindah otomatis.
                         Centang untuk menagihkannya ke pendaftaran ini dengan tarif saat ini; total dihitung ulang saat disimpan.
                     </p>
-                    <?php foreach ($isian['tim_tanpa_pembayar'] as $nomorId => $tim) : ?>
+                    <?php foreach ($isian['tim_tanpa_pembayar'] as $kunci => $tim) : ?>
+                        <?php $idKotak = 'bebankan-tim-' . Regu::idAman((string) $kunci) ?>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="<?= esc(UbahPendaftaran::KUNCI_BEBANKAN, 'attr') ?>[]" value="<?= (int) $nomorId ?>"
-                                id="bebankan-tim-<?= (int) $nomorId ?>"<?= $tim['dibebankan'] ? ' checked' : '' ?>>
-                            <label class="form-check-label" for="bebankan-tim-<?= (int) $nomorId ?>">
-                                Bebankan biaya tim ke pendaftaran ini: <?= esc($tim['nomor_lomba']) ?>, <?= esc(rupiah((int) $tim['tarif'])) ?>
+                            <input class="form-check-input" type="checkbox" name="<?= esc(UbahPendaftaran::KUNCI_BEBANKAN, 'attr') ?>[]" value="<?= esc((string) $kunci, 'attr') ?>"
+                                id="<?= esc($idKotak, 'attr') ?>"<?= $tim['dibebankan'] ? ' checked' : '' ?>>
+                            <label class="form-check-label" for="<?= esc($idKotak, 'attr') ?>">
+                                Bebankan biaya regu ke pendaftaran ini: <?= esc($tim['nomor_lomba']) ?>, <?= esc(rupiah((int) $tim['tarif'])) ?>
                             </label>
                         </div>
                     <?php endforeach; ?>

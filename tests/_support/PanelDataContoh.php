@@ -151,7 +151,9 @@ trait PanelDataContoh
      *                                     (folder sementara disiapkan otomatis)
      *                                   - `atlet`: daftar dari `atletPanel()`/`timPanel()`; bawaan satu putra
      *                                     (Lari 60 m dan Frog Jump) dan satu putri (Lari 60 m)
-     *                                   - `susulan`: kunci nomor beregu yang timnya tanpa biaya (K07)
+     *                                   - `susulan`: kunci nomor beregu (atau "kunci:regu") yang regunya tanpa biaya
+     *                                   Atlet boleh membawa `regu` => [kunci nomor => ['regu' => 'B', 'peran' => 'cadangan']];
+     *                                   bawaannya Regu A, inti sampai jumlah inti lalu cadangan (K105).
      *                                   - `dibuat_pada`: waktu daftar, `Y-m-d H:i:s`
      *
      * @return array{id: int, id_pendaftaran: string, atlet: list<int>, penanggung_jawab: list<int>, subtotal_individu: int, subtotal_beregu: int, total: int}
@@ -174,7 +176,7 @@ trait PanelDataContoh
 
         // Biaya dari data induk di basis data.
         $biayaKu = array_column($this->db->table('kelompok_umur')->select('id, biaya_individu')->get()->getResultArray(), 'biaya_individu', 'id');
-        $nomorDb = array_column($this->db->table('nomor_lomba')->select('id, jenis, biaya_beregu')->get()->getResultArray(), null, 'id');
+        $nomorDb = array_column($this->db->table('nomor_lomba')->select('id, jenis, biaya_beregu, jumlah_inti')->get()->getResultArray(), null, 'id');
 
         $subtotalIndividu = 0;
         $tim              = [];
@@ -186,7 +188,9 @@ trait PanelDataContoh
                 if ($nomor['jenis'] === 'individu') {
                     $subtotalIndividu += (int) $biayaKu[$this->idInduk[$satu['ku']]];
                 } else {
-                    $tim[$kunci] = in_array($kunci, $susulan, true) ? 0 : (int) $nomor['biaya_beregu'];
+                    $regu = $satu['regu'][$kunci]['regu'] ?? 'A';
+
+                    $tim[$kunci . ':' . $regu] = in_array($kunci, $susulan, true) || in_array($kunci . ':' . $regu, $susulan, true) ? 0 : (int) $nomor['biaya_beregu'];
                 }
             }
         }
@@ -248,20 +252,26 @@ trait PanelDataContoh
             $idAtlet[] = $atletId;
 
             foreach ($satu['nomor'] as $kunci) {
-                $nomor = $nomorDb[$this->idInduk[$kunci]];
+                $nomor  = $nomorDb[$this->idInduk[$kunci]];
+                $beregu = $nomor['jenis'] === 'beregu';
+                $regu   = $beregu ? ($satu['regu'][$kunci]['regu'] ?? 'A') : null;
+                $peran  = $beregu ? ($satu['regu'][$kunci]['peran'] ?? $this->peranBerikut($sekolah['npsn'], $id, (int) $nomor['id'], $regu, (int) $nomor['jumlah_inti'])) : null;
                 $this->db->table('atlet_nomor')->insert([
                     'atlet_id'       => $atletId,
                     'nomor_lomba_id' => $this->idInduk[$kunci],
-                    'biaya'          => $nomor['jenis'] === 'individu' ? (int) $biayaKu[$this->idInduk[$satu['ku']]] : null,
+                    'biaya'          => $beregu ? null : (int) $biayaKu[$this->idInduk[$satu['ku']]],
+                    'regu'           => $regu,
+                    'peran'          => $peran,
                     'dibuat_pada'    => $waktu,
                     'diubah_pada'    => $waktu,
                 ]);
             }
         }
 
-        foreach ($tim as $kunci => $biaya) {
+        foreach ($tim as $kunciRegu => $biaya) {
+            [$kunci, $regu] = explode(':', $kunciRegu);
             $this->db->table('pendaftaran_beregu')->insert([
-                'pendaftaran_id' => $id, 'nomor_lomba_id' => $this->idInduk[$kunci], 'biaya_tim' => $biaya,
+                'pendaftaran_id' => $id, 'nomor_lomba_id' => $this->idInduk[$kunci], 'regu' => $regu, 'biaya_tim' => $biaya,
                 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu,
             ]);
         }
@@ -275,6 +285,22 @@ trait PanelDataContoh
             'subtotal_beregu'   => $subtotalBeregu,
             'total'             => $subtotalIndividu + $subtotalBeregu,
         ];
+    }
+
+    /**
+     * Peran atlet berikutnya di sebuah regu: inti selama inti regu itu (NPSN
+     * sama, atau pendaftaran ini bila tanpa NPSN) belum sejumlah inti nomor.
+     */
+    private function peranBerikut(?string $npsn, int $pendaftaranId, int $nomorId, string $regu, int $jumlahInti): string
+    {
+        $kueri = $this->db->table('atlet_nomor an')
+            ->join('atlet a', 'a.id = an.atlet_id')
+            ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+            ->where('an.nomor_lomba_id', $nomorId)->where('an.regu', $regu)->where('an.peran', 'inti');
+
+        $npsn !== null ? $kueri->where('p.npsn', $npsn) : $kueri->where('p.id', $pendaftaranId);
+
+        return $kueri->countAllResults() < $jumlahInti ? 'inti' : 'cadangan';
     }
 
     /**

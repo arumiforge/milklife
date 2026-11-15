@@ -125,12 +125,17 @@ final class PendaftaranSekolahTest extends UjiBasisData
 
         $isi = $this->cari('99999911', 200);
 
-        $this->assertSame([(string) $this->id['kanga'] => 4], $isi['susulan']['tim']);
+        // Regu per nomor beregu dengan nama, jenis kelamin, dan peran anggotanya (K105).
+        $regu = $isi['susulan']['tim'][(string) $this->id['kanga']]['A'];
+        $this->assertCount(4, $regu);
+        $this->assertSame(['id', 'nama', 'jenis_kelamin', 'peran'], array_keys($regu[0]));
+        $this->assertSame(['inti', 'inti', 'inti', 'inti'], array_column($regu, 'peran'));
         $this->assertSame([(string) $this->id['lari60putra'] => 1, (string) $this->id['frog'] => 1], $isi['susulan']['individu']);
 
         $teks = json_encode($isi, JSON_UNESCAPED_UNICODE);
-        $this->assertStringNotContainsString('9900000001', $teks);
-        $this->assertStringNotContainsString('BUDI', $teks);
+        // NISN dan tanggal lahir tidak ikut.
+        $this->assertStringNotContainsString('990000000', $teks);
+        $this->assertStringNotContainsString('2017-', $teks);
     }
 
     public function testPembatasanLaju(): void

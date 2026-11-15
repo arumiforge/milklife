@@ -93,7 +93,7 @@
                 el.addEventListener('change', function () { saringNomor(kartu); });
             });
             $$('input[data-isian="nomor"]', kartu).forEach(function (el) {
-                el.addEventListener('change', function () { saringNomor(kartu); });
+                el.addEventListener('change', function () { saringNomor(kartu); tampilkanRegu(el); });
             });
             saringNomor(kartu);
         }
@@ -216,6 +216,15 @@
 
     function cocokJenisKelamin(kategori, jk) {
         return kategori === 'mix' || (kategori === 'putra' && jk === 'L') || (kategori === 'putri' && jk === 'P');
+    }
+
+    // Pilihan regu dan inti/cadangan hanya tampil untuk nomor beregu yang dicentang (K105).
+    function tampilkanRegu(kotak) {
+        var pilihan = kotak.closest('.form-check');
+        var regu = pilihan ? pilihan.querySelector('[data-regu-untuk]') : null;
+        if (regu) {
+            regu.hidden = !kotak.checked;
+        }
     }
 
     function saringNomor(kartu) {

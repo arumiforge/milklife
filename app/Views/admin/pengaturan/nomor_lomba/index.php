@@ -36,7 +36,8 @@ $ringkasTim = static function (array $nomor): string {
     $bagian = [];
 
     if ($nomor['jumlah_inti'] !== null) {
-        $bagian[] = $nomor['jumlah_inti'] . ' inti' . ($nomor['batas_anggota'] !== null ? ', paling banyak ' . $nomor['batas_anggota'] : '');
+        $bagian[] = $nomor['jumlah_inti'] . ' inti' . ($nomor['batas_anggota'] !== null ? ', paling banyak ' . $nomor['batas_anggota'] : '')
+            . ', ' . (($nomor['regu_maksimal'] ?? null) !== null ? 'paling banyak ' . $nomor['regu_maksimal'] . ' regu per sekolah' : 'regu tidak dibatasi');
     }
 
     if ($nomor['kategori'] === 'mix' && $nomor['jumlah_putra'] !== null && $nomor['jumlah_putri'] !== null) {
@@ -198,7 +199,7 @@ $ringkasTim = static function (array $nomor): string {
                                             <span class="fw-semibold"><?= esc($nomor['nama']) ?></span>
                                             <span class="d-md-none text-body-secondary"><?= esc($nomor['kategori']) ?></span>
                                             <span class="d-block d-md-none small text-body-secondary">
-                                                <?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?><?= $tim !== '' ? ' · ' . esc($tim) : '' ?><?= $biaya !== '' ? ' · ' . $biaya . ' per tim' : '' ?>
+                                                <?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?><?= $tim !== '' ? ' · ' . esc($tim) : '' ?><?= $biaya !== '' ? ' · ' . $biaya . ' per regu' : '' ?>
                                             </span>
                                             <?php if ($belum) : ?>
                                                 <span class="d-block small text-warning-emphasis mt-1">

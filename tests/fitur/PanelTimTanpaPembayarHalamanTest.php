@@ -60,9 +60,9 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
         $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id'] . '/ubah'))->query('//input[@name="bebankan_tim[]"]')->length);
 
         $rekap = $this->bukaSebagaiAdmin('admin/rekap/keuangan');
-        $rekap->assertSee('Semua tim beregu sudah punya pembayar biaya tim.');
+        $rekap->assertSee('Semua regu beregu sudah punya pembayar biaya regu.');
         $this->assertStringNotContainsString('Perhatian', $this->kalimatHapus($b['id']));
-        $this->assertStringContainsString('Perhatian: pendaftaran ini membayar biaya tim', $this->kalimatHapus($a['id']));
+        $this->assertStringContainsString('Perhatian: pendaftaran ini membayar biaya regu', $this->kalimatHapus($a['id']));
         $this->assertStringContainsString($b['id_pendaftaran'], $this->kalimatHapus($a['id']));
     }
 
@@ -71,14 +71,14 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
         [$a, $b] = $this->contoh();
 
         $hapus = $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['id'] . '/hapus');
-        $this->assertStringContainsString("Tim Kanga's Escape putra kini tanpa pembayar biaya tim", (string) session('pesan_sukses'));
+        $this->assertStringContainsString("Kanga's Escape putra Regu A kini tanpa pembayar biaya regu", (string) session('pesan_sukses'));
         $hapus->assertRedirectTo(site_url('admin/pendaftaran'));
 
         // Rincian B: peringatan di kartu tim.
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id']));
         $tanda = $xpath->query('//*[contains(@class, "tim-tanpa-pembayar")]');
         $this->assertSame(1, $tanda->length);
-        $this->assertSame((string) $this->idInduk['kanga'], $tanda->item(0)->getAttribute('data-nomor'));
+        $this->assertSame($this->idInduk['kanga'] . ':A', $tanda->item(0)->getAttribute('data-regu'));
         $this->assertStringContainsString('Rp 100.000', $tanda->item(0)->textContent);
 
         // Dasbor: jumlahnya.
@@ -96,13 +96,13 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
 
         $lembar = $this->bacaExcel($this->bukaSebagaiAdmin('admin/rekap/keuangan/excel'));
         $this->assertSame(['Keuangan', 'Tim Tanpa Pembayar'], array_keys($lembar));
-        $this->assertSame('Biaya Tim Belum Ditagih', $lembar['Tim Tanpa Pembayar'][0][5]);
-        $this->assertSame("Kanga's Escape putra", $lembar['Tim Tanpa Pembayar'][1][1]);
+        $this->assertSame('Biaya Regu Belum Ditagih', $lembar['Tim Tanpa Pembayar'][0][5]);
+        $this->assertSame("Kanga's Escape putra Regu A", $lembar['Tim Tanpa Pembayar'][1][1]);
         $this->assertSame(100000, (int) $lembar['Tim Tanpa Pembayar'][1][5]);
         $this->assertCount(2, $lembar['Tim Tanpa Pembayar']);
 
         $html = (new RekapPdf('keuangan', null, (new Rekap())->susun('keuangan')))->html(false);
-        $this->assertStringContainsString('Tim Tanpa Pembayar Biaya Tim', $html);
+        $this->assertStringContainsString('Regu Tanpa Pembayar Biaya Regu', $html);
         $this->assertStringContainsString(esc($b['id_pendaftaran']), $html);
 
         $pdf = $this->bukaSebagaiAdmin('admin/rekap/keuangan/pdf');
@@ -124,12 +124,12 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id'] . '/ubah'));
         $kotak = $xpath->query('//input[@name="bebankan_tim[]"]');
         $this->assertSame(1, $kotak->length);
-        $this->assertSame((string) $this->idInduk['kanga'], $kotak->item(0)->getAttribute('value'));
-        $this->assertStringContainsString('Bebankan biaya tim ke pendaftaran ini', $xpath->query('//*[@id="tim-tanpa-pembayar"]')->item(0)->textContent);
+        $this->assertSame($this->idInduk['kanga'] . ':A', $kotak->item(0)->getAttribute('value'));
+        $this->assertStringContainsString('Bebankan biaya regu ke pendaftaran ini', $xpath->query('//*[@id="tim-tanpa-pembayar"]')->item(0)->textContent);
 
         // Tim B tinggal 2 anggota: lengkapi sekaligus membebankan biayanya.
         $isian                 = $this->isianDari($b['id'], 2);
-        $isian['bebankan_tim'] = [(string) $this->idInduk['kanga']];
+        $isian['bebankan_tim'] = [$this->idInduk['kanga'] . ':A'];
 
         $pratinjau = json_decode((string) $this->kirimSebagaiAdmin('admin/pendaftaran/' . $b['id'], $isian + ['pratinjau' => '1'])->response()->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $this->assertSame([], $pratinjau['galat']);
@@ -140,7 +140,7 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $hasil,
             'admin/pendaftaran/' . $b['id'],
-            'Perubahan pendaftaran ' . $b['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 100.000. Biaya 1 tim tanpa pembayar kini dibebankan ke pendaftaran ini.',
+            'Perubahan pendaftaran ' . $b['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 100.000. Biaya 1 regu tanpa pembayar kini dibebankan ke pendaftaran ini.',
         );
         $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id']))->query('//*[contains(@class, "tim-tanpa-pembayar")]')->length);
         $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'))->query('//*[@id="tim-tanpa-pembayar"]')->length);
@@ -151,9 +151,11 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
         [$a, $b] = $this->contoh();
         (new HapusPendaftaran())->hapus($a['id']);
 
-        // Tim belum lengkap: galat kelengkapan, centangnya tetap.
+        // Isian lain salah (NISN): galat, centangnya tetap. Regu yang kurang inti
+        // sendiri boleh disimpan admin (K105).
         $isian                 = $this->isianDari($b['id']);
-        $isian['bebankan_tim'] = [(string) $this->idInduk['kanga']];
+        $isian['atlet'][0]['nisn'] = '123';
+        $isian['bebankan_tim'] = [$this->idInduk['kanga'] . ':A'];
 
         $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/' . $b['id'], $isian);
         $hasil->assertStatus(200);
@@ -171,12 +173,12 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
         $pratinjau = json_decode((string) $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['id'], $isian + ['pratinjau' => '1'])->response()->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertSame([], $pratinjau['galat']);
-        $this->assertSame('Tim akan kehilangan pembayar', $pratinjau['judul']);
-        $this->assertStringContainsString('Perhatian: pendaftaran ini membayar biaya tim', $pratinjau['kalimat']);
+        $this->assertSame('Regu akan kehilangan pembayar', $pratinjau['judul']);
+        $this->assertStringContainsString('Perhatian: pendaftaran ini membayar biaya regu', $pratinjau['kalimat']);
 
         $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['id'], $isian);
 
-        $this->assertStringContainsString("Tim Kanga's Escape putra kini tanpa pembayar biaya tim", (string) session('pesan_sukses'));
+        $this->assertStringContainsString("Kanga's Escape putra Regu A kini tanpa pembayar biaya regu", (string) session('pesan_sukses'));
         $this->assertSame(1, (new Rekap())->ringkasan()['tim_tanpa_pembayar']);
     }
 
@@ -214,12 +216,14 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
             'tanggal_lahir' => $a['tanggal_lahir'],
             'jenis_kelamin' => $a['jenis_kelamin'],
             'nomor'         => array_map('strval', $a['nomor']),
+            'regu'          => $a['regu'],
         ], $isian['atlet']);
 
         foreach ($this->timPanel('kanga', $tambahKanga) as $a) {
             $atlet[] = [
                 'id' => '', 'nama' => $a['nama'], 'nisn' => $a['nisn'], 'tanggal_lahir' => $a['tanggal_lahir'],
                 'jenis_kelamin' => $a['jenis_kelamin'], 'nomor' => [(string) $this->idInduk['kanga']],
+                'regu' => [$this->idInduk['kanga'] => ['regu' => 'A', 'peran' => 'cadangan']],
             ];
         }
 

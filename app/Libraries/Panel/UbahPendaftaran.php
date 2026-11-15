@@ -7,6 +7,7 @@ use App\Libraries\Pendaftaran\BiayaPendaftaran;
 use App\Libraries\Pendaftaran\DataIndukPendaftaran;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PemeriksaPendaftaran;
+use App\Libraries\Pendaftaran\Regu;
 use App\Models\NomorLombaModel;
 use App\Models\SekolahModel;
 use CodeIgniter\Database\BaseConnection;
@@ -33,31 +34,34 @@ use Throwable;
  *         ],
  *         'atlet' => [
  *             ['id' => 11, 'nama' => 'Budi Contoh', 'nisn' => '0012345678', 'tanggal_lahir' => '2016-05-01',
- *              'jenis_kelamin' => 'L', 'nomor' => [12, 40]],
+ *              'jenis_kelamin' => 'L', 'nomor' => [12, 40], 'regu' => [40 => ['regu' => 'A', 'peran' => 'inti']]],
  *             ['nama' => '…', …],                                                                   // atlet baru
  *         ],
  *     ]
  *
  * Penanggung jawab dan atlet tersimpan yang tidak ada di kiriman dihapus.
- * Kunci `konfirmasi_susulan` diabaikan: admin tidak diminta mengonfirmasi
- * tim susulan (K57). Kunci `bebankan_tim` (`KUNCI_BEBANKAN`) berisi nomor
- * beregu tim tanpa pembayar yang biaya timnya dibebankan ke pendaftaran ini
- * (K68).
+ * Kunci `konfirmasi_susulan` dan `turun_cadangan` diabaikan: admin tidak
+ * diminta mengonfirmasi regu susulan (K57), dan inti atlet pendaftaran lain
+ * diubah lewat Ubah pendaftaran itu. Kunci `bebankan_tim` (`KUNCI_BEBANKAN`)
+ * berisi regu ("nomor:regu") tanpa pembayar yang biaya regunya dibebankan ke
+ * pendaftaran ini (K68, K105).
  *
  * ## Aturan
  *
  * - Pemeriksaan memakai `PemeriksaPendaftaran` (dan lewat itu
  *   `KelengkapanTim`) dengan data "sudah ada" tanpa pendaftaran ini: NISN
  *   milik pendaftaran lain ditolak, NISN milik pendaftaran ini diterima, dan
- *   tim serta kuota dihitung dari pendaftaran lain dengan NPSN yang sama.
- *   Buka-tutup pendaftaran tidak diperiksa.
+ *   regu serta kuota dihitung dari pendaftaran lain dengan NPSN yang sama.
+ *   Regu yang sudah terdaftar boleh kurang inti (mode longgar
+ *   `KelengkapanTim`, K105), supaya perubahan lain tetap bisa disimpan; regu
+ *   baru harus lengkap. Buka-tutup pendaftaran tidak diperiksa.
  * - Biaya (asumsi 4 rencana Tahap 6): baris atlet-nomor (atlet tersimpan,
- *   nomor yang sama) dan tim (nomor beregu yang sama) yang tetap ada
- *   mempertahankan biaya tersimpan; baris baru memakai tarif saat ini (tim
- *   susulan tetap Rp 0, K07). Subtotal dan total dihitung ulang dari baris itu.
- * - Tim tanpa pembayar (K68, `TimTanpaPembayar`): nomor di `bebankan_tim`
- *   yang tim pendaftaran ini dan biaya timnya Rp 0 diberi tarif saat ini;
- *   bila tim itu sudah punya pembayar lain, kiriman ditolak. Nomor lain
+ *   nomor yang sama) dan regu (nomor dan label regu yang sama) yang tetap ada
+ *   mempertahankan biaya tersimpan; baris baru memakai tarif saat ini (regu
+ *   susulan tetap Rp 0). Subtotal dan total dihitung ulang dari baris itu.
+ * - Regu tanpa pembayar (K68, `TimTanpaPembayar`): regu di `bebankan_tim`
+ *   milik pendaftaran ini yang biaya regunya Rp 0 diberi tarif saat ini;
+ *   bila regu itu sudah punya pembayar lain, kiriman ditolak. Regu lain
  *   diabaikan. `tim_ditinggalkan` menyebut tim yang kehilangan pembayar
  *   karena perubahan ini (untuk jendela konfirmasi dan pesan sesudahnya).
  * - K32: pendaftaran Lunas yang totalnya berubah kembali ke Menunggu.
@@ -98,7 +102,7 @@ use Throwable;
  *         'subtotal_individu' => 300000, 'subtotal_beregu' => 100000, 'total' => 400000,
  *         'atlet_baru'        => 1,       // atlet tanpa id di kiriman
  *         'nomor_dada'        => [21 => '2005'],   // nomor dada yang baru dibagikan (K59), hanya simpan()
- *         'tim_dibebankan'    => [12],    // nomor beregu yang biaya timnya baru dibebankan (K68)
+ *         'tim_dibebankan'    => ['12:A'], // regu yang biaya regunya baru dibebankan (K68)
  *         'tim_ditinggalkan'  => [ … ],   // `TimTanpaPembayar::ditinggalkan()` untuk perubahan ini
  *     ]
  */
@@ -110,7 +114,7 @@ final class UbahPendaftaran
     public const TUNGGU_KUNCI = 10;
 
     /**
-     * Kunci kiriman: nomor beregu yang biaya timnya dibebankan ke pendaftaran ini (K68).
+     * Kunci kiriman: regu ("nomor:regu") yang biaya regunya dibebankan ke pendaftaran ini (K68).
      */
     public const KUNCI_BEBANKAN = 'bebankan_tim';
 
@@ -143,8 +147,9 @@ final class UbahPendaftaran
      *         'sekolah'          => ['jenjang' => 'A', 'kabupaten' => 'Kudus', 'npsn' => '99999911', 'nama' => '…'],
      *         'penanggung_jawab' => [['id' => 7, 'nama' => '…', 'nomor_wa' => '0812-…', 'foto' => '', 'ada_foto' => true]],
      *         'atlet'            => [['id' => 11, 'nama' => '…', 'nisn' => '…', 'tanggal_lahir' => '2017-04-12',
-     *                                 'jenis_kelamin' => 'L', 'nomor' => [3, 7], 'nomor_dada' => '2001']],
-     *         'tim_tanpa_pembayar' => [12 => [… bentuk TimTanpaPembayar …, 'dibebankan' => false]],
+     *                                 'jenis_kelamin' => 'L', 'nomor' => [3, 7], 'regu' => [7 => ['regu' => 'A', 'peran' => 'inti']],
+     *                                 'nomor_dada' => '2001']],
+     *         'tim_tanpa_pembayar' => ['12:A' => [… bentuk TimTanpaPembayar …, 'dibebankan' => false]],
      *     ]
      *
      * `id` bernilai `null` untuk baris baru; `foto` berisi data URL foto baru
@@ -175,10 +180,10 @@ final class UbahPendaftaran
             'tim_tanpa_pembayar' => [],
         ];
 
-        $bebankan = self::nomorBebankan($kiriman ?? []);
+        $bebankan = self::reguBebankan($kiriman ?? []);
 
-        foreach ((new TimTanpaPembayar($this->db))->untukPendaftaran($id) as $nomorId => $tim) {
-            $hasil['tim_tanpa_pembayar'][$nomorId] = $tim + ['dibebankan' => in_array($nomorId, $bebankan, true)];
+        foreach ((new TimTanpaPembayar($this->db))->untukPendaftaran($id) as $kunci => $tim) {
+            $hasil['tim_tanpa_pembayar'][$kunci] = $tim + ['dibebankan' => in_array($kunci, $bebankan, true)];
         }
 
         if ($kiriman === null) {
@@ -204,6 +209,7 @@ final class UbahPendaftaran
                 'tanggal_lahir' => (string) $a['tanggal_lahir'],
                 'jenis_kelamin' => (string) $a['jenis_kelamin'],
                 'nomor'         => array_keys($lama['nomor'][(int) $a['id']] ?? []),
+                'regu'          => $lama['regu'][(int) $a['id']] ?? [],
                 'nomor_dada'    => $a['nomor_dada'] === null || $a['nomor_dada'] === '' ? null : (string) $a['nomor_dada'],
                 'ku_lama'       => (int) $a['kelompok_umur_id'],
             ], array_values($lama['atlet']));
@@ -249,6 +255,7 @@ final class UbahPendaftaran
                 'tanggal_lahir' => self::teks($a['tanggal_lahir'] ?? null),
                 'jenis_kelamin' => self::teks($a['jenis_kelamin'] ?? null),
                 'nomor'         => array_values(array_filter(array_map(self::id(...), self::daftar($a['nomor'] ?? null)))),
+                'regu'          => self::reguIsian($a['regu'] ?? null),
                 'nomor_dada'    => $simpan !== null && $simpan['nomor_dada'] !== null && $simpan['nomor_dada'] !== '' ? (string) $simpan['nomor_dada'] : null,
                 'ku_lama'       => $simpan !== null ? (int) $simpan['kelompok_umur_id'] : null,
             ];
@@ -457,19 +464,31 @@ final class UbahPendaftaran
 
                     $simpan = $lama['nomor'][$idAtlet] ?? [];
                     $hapus  = array_diff(array_keys($simpan), array_column($atlet['nomor'], 'nomor_lomba_id'));
+                    $reguLama = $lama['regu'][$idAtlet] ?? [];
 
                     if ($hapus !== []) {
                         $this->pastikan($this->db->table('atlet_nomor')->where('atlet_id', $idAtlet)->whereIn('nomor_lomba_id', array_values($hapus))->delete());
                     }
                 } else {
                     $this->pastikan($this->db->table('atlet')->insert($baris + ['pendaftaran_id' => $id, 'dibuat_pada' => $sekarang]));
-                    $idAtlet = (int) $this->db->insertID();
-                    $simpan  = [];
+                    $idAtlet  = (int) $this->db->insertID();
+                    $simpan   = [];
+                    $reguLama = [];
                     self::pastikanId($idAtlet);
                 }
 
                 foreach ($atlet['nomor'] as $nomor) {
+                    $regu = ['regu' => $nomor['regu'] ?? null, 'peran' => $nomor['peran'] ?? null];
+
                     if (array_key_exists($nomor['nomor_lomba_id'], $simpan)) {
+                        // Regu atau peran (inti/cadangan) yang berubah (K105).
+                        $sebelum = $reguLama[$nomor['nomor_lomba_id']] ?? ['regu' => null, 'peran' => null];
+
+                        if ($regu['regu'] !== null && $regu !== $sebelum) {
+                            $this->pastikan($this->db->table('atlet_nomor')->where('atlet_id', $idAtlet)->where('nomor_lomba_id', $nomor['nomor_lomba_id'])
+                                ->update($regu + ['diubah_pada' => $sekarang]));
+                        }
+
                         continue;
                     }
 
@@ -477,31 +496,40 @@ final class UbahPendaftaran
                         'atlet_id'       => $idAtlet,
                         'nomor_lomba_id' => $nomor['nomor_lomba_id'],
                         'biaya'          => $nomor['biaya'],
+                        'regu'           => $regu['regu'],
+                        'peran'          => $regu['peran'],
                         'dibuat_pada'    => $sekarang,
                         'diubah_pada'    => $sekarang,
                     ]));
                 }
             }
 
-            // Tim beregu.
-            $timBaru = array_column($rencana['beregu'], 'biaya_tim', 'nomor_lomba_id');
-            $hapus   = array_diff(array_keys($lama['beregu']), array_keys($timBaru));
+            // Regu beregu (K105), satu baris per nomor per regu.
+            $timBaru = [];
 
-            if ($hapus !== []) {
-                $this->pastikan($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->whereIn('nomor_lomba_id', array_values($hapus))->delete());
+            foreach ($rencana['beregu'] as $tim) {
+                $timBaru[Regu::kunci((int) $tim['nomor_lomba_id'], (string) $tim['regu'])] = (int) $tim['biaya_tim'];
             }
 
-            foreach ($timBaru as $nomorId => $biaya) {
-                if (! array_key_exists($nomorId, $lama['beregu'])) {
+            foreach (array_diff(array_keys($lama['beregu']), array_keys($timBaru)) as $kunci) {
+                [$nomorId, $regu] = Regu::pecah($kunci) ?? [0, ''];
+                $this->pastikan($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->where('nomor_lomba_id', $nomorId)->where('regu', $regu)->delete());
+            }
+
+            foreach ($timBaru as $kunci => $biaya) {
+                [$nomorId, $regu] = Regu::pecah($kunci) ?? [0, ''];
+
+                if (! array_key_exists($kunci, $lama['beregu'])) {
                     $this->pastikan($this->db->table('pendaftaran_beregu')->insert([
                         'pendaftaran_id' => $id,
                         'nomor_lomba_id' => $nomorId,
+                        'regu'           => $regu,
                         'biaya_tim'      => $biaya,
                         'dibuat_pada'    => $sekarang,
                         'diubah_pada'    => $sekarang,
                     ]));
-                } elseif (in_array($nomorId, $rencana['tim_dibebankan'], true)) {
-                    $this->pastikan($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->where('nomor_lomba_id', $nomorId)
+                } elseif (in_array($kunci, $rencana['tim_dibebankan'], true)) {
+                    $this->pastikan($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->where('nomor_lomba_id', $nomorId)->where('regu', $regu)
                         ->update(['biaya_tim' => $biaya, 'diubah_pada' => $sekarang]));
                 }
             }
@@ -577,8 +605,8 @@ final class UbahPendaftaran
         $idAtlet = [];
         $fotoIsi = [];
 
-        $bebankan = self::nomorBebankan($kiriman);
-        unset($kiriman[PemeriksaPendaftaran::KUNCI_KONFIRMASI], $kiriman[self::KUNCI_BEBANKAN]);
+        $bebankan = self::reguBebankan($kiriman);
+        unset($kiriman[PemeriksaPendaftaran::KUNCI_KONFIRMASI], $kiriman[PemeriksaPendaftaran::KUNCI_TURUN], $kiriman[self::KUNCI_BEBANKAN]);
 
         foreach ($pj as $i => $orang) {
             $orang = is_array($orang) ? $orang : [];
@@ -629,7 +657,10 @@ final class UbahPendaftaran
         $ada           = [
             'referensi'      => $npsn !== null ? model(SekolahModel::class)->cariNpsn($npsn) : null,
             'nisn_terdaftar' => $this->nisnLain($pendaftaranId, PemeriksaPendaftaran::nisnKiriman($kiriman)),
-        ] + $this->sekolahLain($pendaftaranId, $npsn);
+            // Regu milik pendaftaran ini: boleh dipertahankan walau batas regu diturunkan,
+            // dan boleh kurang inti (K105).
+            'regu_tersimpan' => array_keys($lama['beregu']),
+        ] + $this->data->dataSekolah($npsn, $pendaftaranId);
 
         // Nama tersimpan yang berbeda dari data sekolah (usulan pendaftar yang
         // belum diputuskan, K99, atau nama yang sengaja tidak diganti admin)
@@ -642,7 +673,7 @@ final class UbahPendaftaran
         // Kelompok umur dan nomor lomba yang sudah dimatikan tetap diterima
         // untuk atlet yang sudah memakainya (K98).
         [$induk, $simpanan] = $this->indukDenganSimpanan($lama);
-        $periksa            = (new PemeriksaPendaftaran($induk, $ada, $hariIni, $simpanan))->periksa($kiriman, false);
+        $periksa            = (new PemeriksaPendaftaran($induk, $ada, $hariIni, $simpanan, true))->periksa($kiriman, false);
 
         foreach ($periksa['galat'] as $g) {
             $galat[] = ['jalur' => $g['jalur'], 'pesan' => $g['pesan']];
@@ -695,28 +726,29 @@ final class UbahPendaftaran
             $data['atlet'][$i]['id'] = $idAtlet[$i];
         }
 
-        // Biaya tim: tim tersimpan dipertahankan, tim baru tarif saat ini (susulan Rp 0);
-        // tim tanpa pembayar yang dicentang mendapat tarif saat ini (K68).
+        // Biaya regu: regu tersimpan dipertahankan, regu baru tarif saat ini (susulan Rp 0);
+        // regu tanpa pembayar yang dicentang mendapat tarif saat ini (K68).
         $biayaBeregu = [];
         $timTanpa    = new TimTanpaPembayar($this->db);
         $npsnBaru    = $data['sekolah']['npsn'] ?? null;
 
         foreach ($data['beregu'] as $j => $tim) {
             $nomorId = (int) $tim['nomor_lomba_id'];
+            $kunci   = Regu::kunci($nomorId, (string) $tim['regu']);
 
-            if (array_key_exists($nomorId, $lama['beregu'])) {
-                $tim['biaya_tim'] = $lama['beregu'][$nomorId];
+            if (array_key_exists($kunci, $lama['beregu'])) {
+                $tim['biaya_tim'] = $lama['beregu'][$kunci];
             }
 
-            if (in_array($nomorId, $bebankan, true) && (int) $tim['biaya_tim'] === 0) {
-                $tarif = $timTanpa->tarifBebankan($pendaftaranId, $npsnBaru, $nomorId);
+            if (in_array($kunci, $bebankan, true) && (int) $tim['biaya_tim'] === 0) {
+                $tarif = $timTanpa->tarifBebankan($pendaftaranId, $npsnBaru, $nomorId, (string) $tim['regu']);
 
                 if ($tarif === null) {
-                    $galat[] = ['jalur' => self::KUNCI_BEBANKAN . '.' . $nomorId, 'pesan' => $timTanpa->namaNomor($nomorId)
-                        . ': tim ini sudah punya pembayar biaya tim atau tarifnya Rp 0, jadi tidak perlu dibebankan. Hapus centang "Bebankan biaya tim", lalu simpan lagi.'];
+                    $galat[] = ['jalur' => self::KUNCI_BEBANKAN . '.' . $kunci, 'pesan' => $timTanpa->namaNomor($nomorId, (string) $tim['regu'])
+                        . ': regu ini sudah punya pembayar biaya regu atau tarifnya Rp 0, jadi tidak perlu dibebankan. Hapus centang "Bebankan biaya regu", lalu simpan lagi.'];
                 } else {
                     $tim['biaya_tim']            = $tarif;
-                    $rencana['tim_dibebankan'][] = $nomorId;
+                    $rencana['tim_dibebankan'][] = $kunci;
                 }
             }
 
@@ -728,7 +760,10 @@ final class UbahPendaftaran
             return ['galat' => $galat] + $rencana;
         }
 
-        $rencana['tim_ditinggalkan'] = $timTanpa->ditinggalkan($pendaftaranId, $npsnBaru, array_map('intval', array_column($data['beregu'], 'nomor_lomba_id')));
+        $rencana['tim_ditinggalkan'] = $timTanpa->ditinggalkan($pendaftaranId, $npsnBaru, array_map(
+            static fn (array $t): string => Regu::kunci((int) $t['nomor_lomba_id'], (string) $t['regu']),
+            $data['beregu'],
+        ));
 
         foreach ($data['penanggung_jawab'] as $i => $orang) {
             $data['penanggung_jawab'][$i] = [
@@ -811,49 +846,6 @@ final class UbahPendaftaran
         return array_map(static fn (array $b): string => (string) $b['nisn'], $baris);
     }
 
-    /**
-     * Tim beregu (nomor => jumlah anggota) dan jumlah atlet per nomor
-     * individu milik NPSN ini dari pendaftaran lain (sama dengan
-     * `DataIndukPendaftaran::dataSekolah()` tanpa pendaftaran ini).
-     *
-     * @return array{tim: array<int, int>, individu: array<int, int>}
-     */
-    private function sekolahLain(int $pendaftaranId, ?string $npsn): array
-    {
-        if ($npsn === null) {
-            return ['tim' => [], 'individu' => []];
-        }
-
-        $jumlah = [];
-        $baris  = $this->db->table('atlet_nomor an')
-            ->select('an.nomor_lomba_id, nl.jenis, COUNT(*) AS jumlah')
-            ->join('atlet a', 'a.id = an.atlet_id')
-            ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
-            ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
-            ->where('p.npsn', $npsn)
-            ->where('p.id !=', $pendaftaranId)
-            ->groupBy('an.nomor_lomba_id, nl.jenis')
-            ->get()->getResultArray();
-
-        foreach ($baris as $b) {
-            $jumlah[(string) $b['jenis']][(int) $b['nomor_lomba_id']] = (int) $b['jumlah'];
-        }
-
-        $tim = [];
-        $ada = $this->db->table('pendaftaran_beregu pb')->distinct()
-            ->select('pb.nomor_lomba_id')
-            ->join('pendaftaran p', 'p.id = pb.pendaftaran_id')
-            ->where('p.npsn', $npsn)
-            ->where('p.id !=', $pendaftaranId)
-            ->get()->getResultArray();
-
-        foreach ($ada as $b) {
-            $tim[(int) $b['nomor_lomba_id']] = $jumlah['beregu'][(int) $b['nomor_lomba_id']] ?? 0;
-        }
-
-        return ['tim' => $tim, 'individu' => $jumlah['individu'] ?? []];
-    }
-
     // ---------------------------------------------------------------
     // Data tersimpan
     // ---------------------------------------------------------------
@@ -861,7 +853,9 @@ final class UbahPendaftaran
     /**
      * Data tersimpan satu pendaftaran, atau `null`.
      *
-     * @return array{pendaftaran: array<string, mixed>, penanggung_jawab: array<int, array<string, mixed>>, atlet: array<int, array<string, mixed>>, nomor: array<int, array<int, int|null>>, beregu: array<int, int>}|null
+     * `regu`: atlet => nomor beregu => ['regu' => 'A', 'peran' => 'inti']; `beregu`: "nomor:regu" => biaya regu.
+     *
+     * @return array{pendaftaran: array<string, mixed>, penanggung_jawab: array<int, array<string, mixed>>, atlet: array<int, array<string, mixed>>, nomor: array<int, array<int, int|null>>, regu: array<int, array<int, array{regu: string|null, peran: string|null}>>, beregu: array<string, int>}|null
      */
     private function bacaLama(int $id): ?array
     {
@@ -885,24 +879,30 @@ final class UbahPendaftaran
 
         $nomor = [];
         $baris = $this->db->table('atlet_nomor an')
-            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya')
+            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya, an.regu, an.peran, nl.jenis')
             ->join('atlet a', 'a.id = an.atlet_id')
             ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
             ->where('a.pendaftaran_id', $id)
             ->orderBy('an.atlet_id')->orderBy('nl.urutan')->orderBy('nl.id')
             ->get()->getResultArray();
 
+        $regu  = [];
+
         foreach ($baris as $b) {
             $nomor[(int) $b['atlet_id']][(int) $b['nomor_lomba_id']] = $b['biaya'] === null ? null : (int) $b['biaya'];
+
+            if ($b['jenis'] === 'beregu') {
+                $regu[(int) $b['atlet_id']][(int) $b['nomor_lomba_id']] = ['regu' => $b['regu'], 'peran' => $b['peran']];
+            }
         }
 
         $beregu = [];
 
-        foreach ($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->get()->getResultArray() as $b) {
-            $beregu[(int) $b['nomor_lomba_id']] = (int) $b['biaya_tim'];
+        foreach ($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->orderBy('nomor_lomba_id')->orderBy('regu')->get()->getResultArray() as $b) {
+            $beregu[Regu::kunci((int) $b['nomor_lomba_id'], (string) $b['regu'])] = (int) $b['biaya_tim'];
         }
 
-        return ['pendaftaran' => $p, 'penanggung_jawab' => $pj, 'atlet' => $atlet, 'nomor' => $nomor, 'beregu' => $beregu];
+        return ['pendaftaran' => $p, 'penanggung_jawab' => $pj, 'atlet' => $atlet, 'nomor' => $nomor, 'regu' => $regu, 'beregu' => $beregu];
     }
 
     /**
@@ -1069,15 +1069,33 @@ final class UbahPendaftaran
     }
 
     /**
-     * Nomor beregu yang dicentang "Bebankan biaya tim" di kiriman.
+     * Regu ("nomor:regu") yang dicentang "Bebankan biaya regu" di kiriman.
      *
      * @param array<string, mixed> $kiriman
      *
-     * @return list<int>
+     * @return list<string>
      */
-    private static function nomorBebankan(array $kiriman): array
+    private static function reguBebankan(array $kiriman): array
     {
-        return array_values(array_filter(array_map(self::id(...), self::daftar($kiriman[self::KUNCI_BEBANKAN] ?? null))));
+        return array_values(array_filter(self::daftar($kiriman[self::KUNCI_BEBANKAN] ?? null), static fn (mixed $k): bool => Regu::pecah($k) !== null));
+    }
+
+    /**
+     * Pilihan regu atlet dari kiriman, dirapikan untuk ditampilkan ulang.
+     *
+     * @return array<int, array{regu: string, peran: string}>
+     */
+    private static function reguIsian(mixed $nilai): array
+    {
+        $hasil = [];
+
+        foreach (is_array($nilai) ? $nilai : [] as $nomorId => $pilih) {
+            if (self::id($nomorId) !== null && is_array($pilih)) {
+                $hasil[(int) $nomorId] = ['regu' => self::teks($pilih['regu'] ?? null), 'peran' => self::teks($pilih['peran'] ?? null)];
+            }
+        }
+
+        return $hasil;
     }
 
     private static function npsn(mixed $nilai): ?string

@@ -198,6 +198,7 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
         $isian['atlet'][] = [
             'id' => '', 'nama' => $baru['nama'], 'nisn' => $baru['nisn'], 'tanggal_lahir' => $baru['tanggal_lahir'],
             'jenis_kelamin' => 'L', 'nomor' => [(string) $this->idInduk['kanga']],
+            'regu' => [$this->idInduk['kanga'] => ['regu' => 'A', 'peran' => 'cadangan']],
         ];
 
         $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/' . $p['id'], $isian);
@@ -239,6 +240,7 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
                 'tanggal_lahir' => $a['tanggal_lahir'],
                 'jenis_kelamin' => $a['jenis_kelamin'],
                 'nomor'         => array_map('strval', $a['nomor']),
+                'regu'          => $a['regu'],
             ], $isian['atlet']),
         ];
     }
