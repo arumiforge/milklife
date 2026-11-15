@@ -375,6 +375,8 @@ final class PendaftaranAturanTest extends CIUnitTestCase
         $this->assertSame('Regu', Regu::awalan());
         $this->assertSame('Regu A', Regu::label('A'));
         $this->assertSame("Kanga's Escape putra Regu B", Regu::nama("Kanga's Escape putra", 'B'));
+        // Regu tunggal: nama nomor saja (K108).
+        $this->assertSame("Kanga's Escape putra", Regu::nama("Kanga's Escape putra", 'A', true));
 
         $this->assertSame('Tim', Regu::rapikanAwalan('  Tim '));
         $this->assertSame('TIM Sekolah', Regu::rapikanAwalan('TIM   Sekolah'));

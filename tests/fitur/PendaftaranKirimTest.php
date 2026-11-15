@@ -190,7 +190,8 @@ final class PendaftaranKirimTest extends UjiBasisData
                 $galat = self::json($hasil)['galat'];
                 $this->assertSame(['konfirmasi.' . $this->id['kanga'] . ':A'], array_column($galat, 'jalur'), $alamat);
                 $this->assertSame([3], array_column($galat, 'langkah'));
-                $this->assertStringContainsString("Kanga's Escape putra Regu A", $galat[0]['pesan']);
+                // Satu-satunya regu sekolah di nomor ini: tanpa nama regu (K108).
+                $this->assertStringContainsString("Kanga's Escape putra: sekolah ini sudah punya regu ini", $galat[0]['pesan']);
                 $this->assertStringContainsString('Centang kotak konfirmasi', $galat[0]['pesan']);
             }
         }

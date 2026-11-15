@@ -36,12 +36,15 @@ final class DataPendaftaranTest extends UjiBasisData
         $this->assertSame(['BUDI KARANGAN', 'CANDRA REKAAN', 'CANDRA REKAAN'], array_column($p['individu'], 'nama'));
 
         $this->assertCount(1, $p['beregu']);
-        $this->assertSame('Estafet 4 × 50 m putra Regu A', $p['beregu'][0]['nomor_lomba']);
+        // Satu-satunya regu sekolah di nomor ini: tanpa nama regu (K108).
+        $this->assertSame('Estafet 4 × 50 m putra', $p['beregu'][0]['nomor_lomba']);
+        $this->assertTrue($p['beregu'][0]['regu_tunggal']);
+        $this->assertSame('A', $p['beregu'][0]['regu']);
         $this->assertSame(200000, $p['beregu'][0]['biaya_tim']);
         $this->assertSame(['9900000001', '9900000002', '9900000003', '9900000004'], array_column($p['beregu'][0]['anggota'], 'nisn'));
 
         $this->assertCount(4, $p['atlet']);
-        $this->assertSame(['Lari 60 m putra', 'Lompat Jauh putra', 'Estafet 4 × 50 m putra Regu A (Inti)'], $p['atlet'][1]['nomor_lomba']);
+        $this->assertSame(['Lari 60 m putra', 'Lompat Jauh putra', 'Estafet 4 × 50 m putra (Inti)'], $p['atlet'][1]['nomor_lomba']);
         $this->assertSame('Laki-laki', $p['atlet'][0]['jenis_kelamin_label']);
         $this->assertSame('KU Contoh', $p['atlet'][0]['kelompok_umur']);
         $this->assertNull($p['atlet'][0]['nomor_dada']);
@@ -71,6 +74,26 @@ final class DataPendaftaranTest extends UjiBasisData
         $this->assertSame([], $susulan['individu']);
         $this->assertNull($susulan['beregu'][0]['biaya_tim']);
         $this->assertSame([['nama' => 'FAJAR REKAAN', 'nisn' => '9900000005', 'nomor_dada' => '1001', 'peran' => 'cadangan']], $susulan['beregu'][0]['anggota']);
+    }
+
+    public function testReguKeduaSekolahMenampilkanNamaRegu(): void
+    {
+        // Susulan membuat Regu B: kedua pendaftaran sekolah ini menulis nama regu (K108).
+        $id = $this->isiDataCek();
+        $p2 = (int) $this->db->table('pendaftaran')->where('id_pendaftaran', 'MAC2A0000226')->get()->getRow()->id;
+        $this->db->table('atlet_nomor')->where('nomor_lomba_id', $id['estafet'])->where('atlet_id IN (SELECT id FROM atlet WHERE pendaftaran_id = ' . $p2 . ')', null, false)
+            ->update(['regu' => 'B', 'peran' => 'inti']);
+        $this->db->table('pendaftaran_beregu')->insert(['pendaftaran_id' => $p2, 'nomor_lomba_id' => $id['estafet'], 'regu' => 'B', 'biaya_tim' => 200000]);
+
+        $daftar = (new DataPendaftaran())->cariNpsn('20300001');
+
+        $this->assertSame('Estafet 4 × 50 m putra Regu A', $daftar[0]['beregu'][0]['nomor_lomba']);
+        $this->assertFalse($daftar[0]['beregu'][0]['regu_tunggal']);
+        $this->assertSame('Estafet 4 × 50 m putra Regu B', $daftar[1]['beregu'][0]['nomor_lomba']);
+        $this->assertSame(['Estafet 4 × 50 m putra Regu B (Inti)'], $daftar[1]['atlet'][0]['nomor_lomba']);
+
+        // Satu pendaftaran dibaca sendiri tetap menghitung regu sekolah dari pendaftaran lain.
+        $this->assertSame('Estafet 4 × 50 m putra Regu A', (new DataPendaftaran())->cariId('MAC2A0000126')['beregu'][0]['nomor_lomba']);
     }
 
     public function testPendaftaranTanpaNpsn(): void

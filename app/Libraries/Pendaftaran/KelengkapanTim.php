@@ -19,6 +19,7 @@ use App\Models\NomorLombaModel;
  *     KelengkapanTim::periksa($nomor, 'A', $anggota);                 // list pesan, [] bila lengkap
  *     KelengkapanTim::periksa($nomor, 'A', $baru, lama: $anggotaLama); // susulan
  *     KelengkapanTim::periksa($nomor, 'A', $anggota, longgar: true);   // admin, regu tersimpan
+ *     KelengkapanTim::periksa($nomor, 'A', $anggota, tunggal: true);   // pesan tanpa nama regu (K108)
  *
  * `$nomor` adalah baris `nomor_lomba` (`nama`, `kategori`, `jumlah_inti`,
  * `batas_anggota`, `jumlah_putra`, `jumlah_putri`).
@@ -31,12 +32,14 @@ final class KelengkapanTim
      * @param list<array{jenis_kelamin: string|null, peran: string}>|null $lama Anggota regu dari pendaftaran
      *                                                                         sebelumnya (inti yang diturunkan
      *                                                                         sudah cadangan); `null` = regu baru.
+     * @param bool                                                     $tunggal Satu-satunya regu sekolah di nomor ini:
+     *                                                                          pesan menulis nama nomor saja (K108).
      *
      * @return list<string>
      */
-    public static function periksa(array $nomor, string $regu, array $baru, ?array $lama = null, bool $longgar = false): array
+    public static function periksa(array $nomor, string $regu, array $baru, ?array $lama = null, bool $longgar = false, bool $tunggal = false): array
     {
-        $nama   = Regu::nama(NomorLombaModel::namaLengkap($nomor), $regu);
+        $nama   = Regu::nama(NomorLombaModel::namaLengkap($nomor), $regu, $tunggal);
         $semua  = array_merge($lama ?? [], $baru);
         $jumlah = count($semua);
         $jLama  = count($lama ?? []);

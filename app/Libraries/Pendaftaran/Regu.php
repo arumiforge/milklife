@@ -29,6 +29,12 @@ namespace App\Libraries\Pendaftaran;
  *     Regu::kunci(40, 'B');                      // '40:B'
  *     Regu::pecah('40:Putra 1');                 // [40, 'Putra 1']
  *     Regu::nama("Kanga's Escape putra", 'B');   // "Kanga's Escape putra Regu B"
+ *     Regu::nama("Kanga's Escape putra", 'A', tunggal: true); // "Kanga's Escape putra"
+ *
+ * Regu tunggal (K108): bila sekolah hanya punya satu regu di satu nomor,
+ * tampilan untuk official (wizard, cek, bukti, pesan pemeriksaan) tidak
+ * menulis nama regunya. Data tetap menyimpan nama regu (bawaannya "A"), dan
+ * panel admin serta rekap tetap menampilkannya.
  */
 final class Regu
 {
@@ -174,11 +180,12 @@ final class Regu
 
     /**
      * Nama regu untuk pesan dan tampilan, contoh "Kanga's Escape putra Regu A"
-     * (atau "… Tim A" bila awalannya "Tim").
+     * (atau "… Tim A" bila awalannya "Tim"). Regu tunggal (sekolah hanya
+     * punya satu regu di nomor itu, K108) ditulis dengan nama nomornya saja.
      */
-    public static function nama(string $namaNomor, string $regu): string
+    public static function nama(string $namaNomor, string $regu, bool $tunggal = false): string
     {
-        return trim($namaNomor . ' ' . self::label($regu));
+        return $tunggal ? trim($namaNomor) : trim($namaNomor . ' ' . self::label($regu));
     }
 
     /**
