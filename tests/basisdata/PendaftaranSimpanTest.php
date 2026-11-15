@@ -323,6 +323,27 @@ final class PendaftaranSimpanTest extends UjiBasisData
         ], $anggota);
     }
 
+    public function testNamaReguBebasTersimpanUtuh(): void
+    {
+        // K106: nama regu diketik official, sampai 30 huruf.
+        setting('Pendaftaran.nama_regu', 'bebas');
+        $nama = 'Merah Putih Garuda Nusantara 1';
+
+        $hasil = $this->simpan(self::kirimanTimKanga(4, 100, regu: mb_strtolower($nama)));
+        $this->assertSame([], $hasil['galat']);
+
+        $this->assertSame([$nama], array_column($this->db->table('pendaftaran_beregu')->get()->getResultArray(), 'regu'));
+        $this->assertSame([$nama], array_keys((new DataIndukPendaftaran())->dataSekolah('99999911')['tim'][$this->id['kanga']]));
+
+        // Susulan ke regu yang sama dengan penulisan lain.
+        $kiriman                       = self::kirimanTimKanga(1, 200, regu: 'REGU ' . strtoupper($nama), inti: 0);
+        $kiriman['konfirmasi_susulan'] = ['20:' . $nama];
+        $kedua                         = $this->simpan($kiriman);
+
+        $this->assertSame([], $kedua['galat']);
+        $this->assertTrue($kedua['rincian']['beregu'][0]['susulan']);
+    }
+
     public function testBatasReguPerNomorDariPengaturan(): void
     {
         $this->db->table('nomor_lomba')->where('id', $this->id['kanga'])->update(['regu_maksimal' => 1]);

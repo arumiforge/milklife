@@ -1136,8 +1136,15 @@ div.dt-container .dt-layout-table {
 .pilihan-regu-admin {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0.25rem 0 0.5rem 1.5rem;
+    gap: 0.5rem 0.75rem;
+    margin: 0.35rem 0 0.6rem 1.5rem;
+    padding: 0.5rem 0.65rem;
+    background-color: var(--bs-tertiary-bg);
+    border-radius: 0.5rem;
+}
+
+.pilihan-regu-admin > div {
+    min-width: 9rem;
 }
 
 .pilihan-regu-admin[hidden] {

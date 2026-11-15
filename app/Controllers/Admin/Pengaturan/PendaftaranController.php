@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin\Pengaturan;
 
 use App\Controllers\BaseController;
+use App\Libraries\Pendaftaran\Regu;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
 use DateTimeImmutable;
@@ -53,6 +54,8 @@ class PendaftaranController extends BaseController
             'penanggung_jawab_maksimal' => (string) setting('Pendaftaran.penanggung_jawab_maksimal'),
             'nomor_individu_maksimal'   => (string) setting('Pendaftaran.nomor_individu_maksimal'),
             'atlet_per_nomor_maksimal'  => (string) setting('Pendaftaran.atlet_per_nomor_maksimal'),
+            'nama_regu'                 => Regu::pengaturan()['regu_mode'],
+            'label_regu'                => implode(', ', Regu::pengaturan()['regu_label']),
         ]);
     }
 
@@ -63,7 +66,7 @@ class PendaftaranController extends BaseController
         foreach ([
             'mulai', 'akhir', 'buka_manual_sampai', 'tampilan_usia',
             'penanggung_jawab_minimal', 'penanggung_jawab_maksimal', 'nomor_individu_maksimal',
-            'atlet_per_nomor_maksimal',
+            'atlet_per_nomor_maksimal', 'nama_regu', 'label_regu',
         ] as $kotak) {
             $isian[$kotak] = trim((string) $this->request->getPost($kotak));
         }
@@ -85,6 +88,10 @@ class PendaftaranController extends BaseController
         setting('Pendaftaran.penanggung_jawab_maksimal', (int) $isian['penanggung_jawab_maksimal']);
         setting('Pendaftaran.nomor_individu_maksimal', (int) $isian['nomor_individu_maksimal']);
         setting('Pendaftaran.atlet_per_nomor_maksimal', $isian['atlet_per_nomor_maksimal'] === '' ? null : (int) $isian['atlet_per_nomor_maksimal']);
+        setting('Pendaftaran.nama_regu', $isian['nama_regu']);
+        // Daftar nama regu disimpan rapi; pada mode Bebas yang kosong tetap memakai daftar lama.
+        $label = Regu::daftarLabel($isian['label_regu']);
+        setting('Pendaftaran.label_regu', implode(', ', $label !== [] ? $label : Regu::pengaturan()['regu_label']));
 
         return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Pengaturan pendaftaran tersimpan.');
     }
@@ -174,15 +181,62 @@ class PendaftaranController extends BaseController
             }
         }
 
+        // Nama regu beregu (K106).
+        if (! isset(Regu::MODE[$isian['nama_regu']])) {
+            $galat['nama_regu'] = 'Cara memberi nama regu belum dipilih. Pilih "Ketentuan admin" atau "Bebas".';
+        }
+
+        $galatLabel = self::periksaLabelRegu($isian['label_regu'], $isian['nama_regu'] === Regu::MODE_KETENTUAN);
+
+        if ($galatLabel !== null) {
+            $galat['label_regu'] = $galatLabel;
+        }
+
         // Urutkan pesan seperti urutan kotak di formulir, supaya ringkasan mudah diikuti.
         $urutan = array_flip([
             'mulai', 'akhir', 'buka_manual_sampai',
             'penanggung_jawab_minimal', 'penanggung_jawab_maksimal', 'nomor_individu_maksimal',
-            'atlet_per_nomor_maksimal', 'tampilan_usia',
+            'atlet_per_nomor_maksimal', 'nama_regu', 'label_regu', 'tampilan_usia',
         ]);
         uksort($galat, static fn (string $a, string $b): int => $urutan[$a] <=> $urutan[$b]);
 
         return [$galat, $waktu];
+    }
+
+    /**
+     * Pesan salah daftar nama regu, atau `null` bila benar. Wajib diisi pada
+     * mode Ketentuan admin; pada mode Bebas boleh kosong.
+     */
+    private static function periksaLabelRegu(string $teks, bool $wajib): ?string
+    {
+        $bagian = array_values(array_filter(array_map('trim', explode(',', $teks)), static fn (string $b): bool => $b !== ''));
+
+        if ($bagian === []) {
+            return $wajib ? 'Daftar nama regu belum diisi. Tulis nama regu dipisah koma, misalnya A, B, C.' : null;
+        }
+
+        $sudah = [];
+
+        foreach ($bagian as $b) {
+            $nama = Regu::rapikan($b);
+
+            if ($nama === '' || ! Regu::sah($nama)) {
+                return "Nama regu \"{$b}\" belum benar. Pakai huruf, angka, spasi, titik, garis miring, atau tanda hubung, paling banyak "
+                    . Regu::PANJANG_MAKSIMAL . ' huruf per nama, dan pisahkan dengan koma.';
+            }
+
+            if (isset($sudah[mb_strtolower($nama)])) {
+                return "Nama regu \"{$nama}\" tertulis lebih dari sekali. Hapus salah satunya.";
+            }
+
+            $sudah[mb_strtolower($nama)] = true;
+        }
+
+        if (count($sudah) > Regu::PALING_BANYAK) {
+            return 'Daftar nama regu paling banyak ' . Regu::PALING_BANYAK . ' nama. Kurangi daftarnya.';
+        }
+
+        return null;
     }
 
     /**
@@ -233,6 +287,7 @@ class PendaftaranController extends BaseController
             'isian'             => $isian,
             'galat'             => $galat,
             'pilihanUsia'       => self::TAMPILAN_USIA,
+            'pilihanRegu'       => Regu::MODE,
             'tanggalMulaiAcara' => tanggal_id(setting('Acara.tanggal_mulai')),
         ]);
     }

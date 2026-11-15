@@ -150,34 +150,44 @@ $kartuPj = static function (string $k, ?int $urut, array $orang) use ($tandai, $
  *
  * @param array<string, mixed> $atlet
  */
-// Pilihan regu dan peran untuk satu nomor beregu (K105): label A sampai batas
-// regu nomor itu, ditambah label tersimpan bila batasnya sudah diturunkan.
-$pilihanRegu = static function (string $nameDasar, string $idDasar, int $nomorId, ?int $maksimal, array $terpilih, string $kelas, bool $tampil): string {
-    $label = Regu::dibolehkan($maksimal);
+// Pilihan regu dan peran untuk satu nomor beregu (K105, K106). Mode Ketentuan
+// admin: daftar nama dari Pengaturan sebanyak batas regu nomor itu; mode Bebas:
+// nama diketik. Nama tersimpan selalu tetap bisa dipilih.
+$pilihanRegu = static function (string $nameDasar, string $idDasar, int $nomorId, ?int $maksimal, array $terpilih, string $kelas, bool $tampil) use ($aturan): string {
+    $bebas = ($aturan['regu_mode'] ?? Regu::MODE_KETENTUAN) === Regu::MODE_BEBAS;
+    $label = Regu::dibolehkan($maksimal, $aturan['regu_label'] ?? null);
     $regu  = (string) ($terpilih['regu'] ?? '');
     $peran = (string) ($terpilih['peran'] ?? '');
 
     if ($regu !== '' && Regu::sah($regu) && ! in_array($regu, $label, true)) {
         $label[] = $regu;
-        sort($label);
     }
 
     ob_start(); ?>
     <div class="pilihan-regu-admin" data-regu-untuk="<?= $nomorId ?>"<?= $tampil ? '' : ' hidden' ?>>
-        <label class="visually-hidden" for="<?= $idDasar ?>-regu-<?= $nomorId ?>">Regu</label>
-        <select class="form-select form-select-sm w-auto<?= $kelas ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]" data-isian="regu">
-            <option value="">Pilih regu</option>
-            <?php foreach ($label as $l) : ?>
-                <option value="<?= esc($l, 'attr') ?>"<?= $l === $regu ? ' selected' : '' ?>>Regu <?= esc($l) ?></option>
-            <?php endforeach; ?>
-        </select>
-        <label class="visually-hidden" for="<?= $idDasar ?>-peran-<?= $nomorId ?>">Inti atau cadangan</label>
-        <select class="form-select form-select-sm w-auto<?= $kelas ?>" id="<?= $idDasar ?>-peran-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][peran]" data-isian="regu">
-            <option value="">Inti/cadangan</option>
-            <?php foreach (Regu::PERAN as $nilai => $teks) : ?>
-                <option value="<?= $nilai ?>"<?= $nilai === $peran ? ' selected' : '' ?>><?= $teks ?></option>
-            <?php endforeach; ?>
-        </select>
+        <div>
+            <label class="form-label small mb-0" for="<?= $idDasar ?>-regu-<?= $nomorId ?>">Regu</label>
+            <?php if ($bebas) : ?>
+                <input type="text" class="form-control form-control-sm<?= $kelas ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]"
+                    value="<?= esc($regu, 'attr') ?>" maxlength="<?= Regu::PANJANG_MAKSIMAL ?>" placeholder="mis. A atau Merah" data-isian="regu">
+            <?php else : ?>
+                <select class="form-select form-select-sm<?= $kelas ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]" data-isian="regu">
+                    <option value="">Pilih regu</option>
+                    <?php foreach ($label as $l) : ?>
+                        <option value="<?= esc($l, 'attr') ?>"<?= $l === $regu ? ' selected' : '' ?>>Regu <?= esc($l) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif ?>
+        </div>
+        <div>
+            <label class="form-label small mb-0" for="<?= $idDasar ?>-peran-<?= $nomorId ?>">Sebagai</label>
+            <select class="form-select form-select-sm<?= $kelas ?>" id="<?= $idDasar ?>-peran-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][peran]" data-isian="regu">
+                <option value="">Pilih</option>
+                <?php foreach (Regu::PERAN as $nilai => $teks) : ?>
+                    <option value="<?= $nilai ?>"<?= $nilai === $peran ? ' selected' : '' ?>><?= $teks ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
     </div>
     <?php
 
@@ -440,7 +450,7 @@ $galatSekolah = [
                         Centang untuk menagihkannya ke pendaftaran ini dengan tarif saat ini; total dihitung ulang saat disimpan.
                     </p>
                     <?php foreach ($isian['tim_tanpa_pembayar'] as $kunci => $tim) : ?>
-                        <?php $idKotak = 'bebankan-tim-' . str_replace(':', '-', (string) $kunci) ?>
+                        <?php $idKotak = 'bebankan-tim-' . Regu::idAman((string) $kunci) ?>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="<?= esc(UbahPendaftaran::KUNCI_BEBANKAN, 'attr') ?>[]" value="<?= esc((string) $kunci, 'attr') ?>"
                                 id="<?= esc($idKotak, 'attr') ?>"<?= $tim['dibebankan'] ? ' checked' : '' ?>>

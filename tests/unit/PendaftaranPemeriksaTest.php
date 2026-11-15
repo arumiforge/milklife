@@ -459,13 +459,71 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $kiriman          = self::kirimanContoh();
         $kiriman['atlet'] = self::timKanga(4, 10, 'C');
 
-        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu C; satu sekolah paling banyak 2 regu di nomor ini. Pilih Regu A, atau B.');
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu C; satu sekolah paling banyak 2 regu di nomor ini. Pilih Regu A atau B.');
 
         $kiriman['atlet'] = self::timKanga(4, 10, 'b');
         $this->assertSame([], self::periksa($kiriman, [], $induk)['galat'], 'Huruf kecil dirapikan menjadi B.');
 
         $kiriman['atlet'] = self::timKanga(4, 10, 'AA');
-        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu AA');
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu Aa');
+    }
+
+    public function testKetentuanAdminMemakaiDaftarNamaRegu(): void
+    {
+        // K106: daftar dari admin, dipotong batas regu nomor (2).
+        $induk = ['aturan' => ['regu_mode' => 'ketentuan', 'regu_label' => ['Putra 1', 'Putra 2', 'Putra 3']], 'nomor_lomba' => [4 => ['regu_maksimal' => 2]]];
+
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = self::timKanga(4, 10, 'regu putra 2');
+        $hasil            = self::periksa($kiriman, [], $induk);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame('Putra 2', $hasil['data']['beregu'][0]['regu']);
+
+        $kiriman['atlet'] = self::timKanga(4, 10, 'Putra 3');
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'Pilih Regu Putra 1 atau Putra 2.');
+
+        $kiriman['atlet'] = self::timKanga(4, 10, 'A');
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu A');
+    }
+
+    public function testBebasMenerimaNamaReguOfficial(): void
+    {
+        $induk = ['aturan' => ['regu_mode' => 'bebas', 'regu_label' => ['A', 'B', 'C']]];
+
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = array_merge(self::timKanga(4, 10, 'merah'), self::timKanga(4, 20, 'MERAH PUTIH'));
+        $hasil            = self::periksa($kiriman, [], $induk);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame(['Merah', 'Merah Putih'], array_column($hasil['data']['beregu'], 'regu'));
+        $this->assertSame(200000, $hasil['data']['total']);
+
+        // "merah" dan "Regu Merah" satu regu: 8 atlet, inti 8 > 4.
+        $kiriman['atlet'] = array_merge(self::timKanga(4, 10, 'merah'), self::timKanga(4, 20, 'Regu Merah'));
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'beregu.20:Merah', 'Regu Merah punya 8 atlet');
+
+        $kiriman['atlet'] = self::timKanga(4, 10, '');
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'belum diberi nama regu');
+
+        $kiriman['atlet'] = self::timKanga(4, 10, 'Merah!');
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'hanya boleh berisi huruf');
+    }
+
+    public function testBebasTetapDibatasiReguPerNomor(): void
+    {
+        // Batas 2 regu: sekolah sudah punya Regu Merah, kiriman membuat dua regu baru.
+        [$kiriman, $ada] = self::susulanKanga('Merah');
+        $induk           = ['aturan' => ['regu_mode' => 'bebas'], 'nomor_lomba' => [4 => ['regu_maksimal' => 2]]];
+        $kiriman['atlet'] = array_merge(self::timKanga(4, 10, 'Biru'), self::timKanga(4, 20, 'Hijau'));
+
+        $hasil = self::periksa($kiriman, $ada, $induk);
+        $this->assertGalat($hasil, 'beregu.20:Biru', 'paling banyak 2 regu di nomor ini, sekarang 3 regu (termasuk Regu Merah yang sudah terdaftar)');
+        $this->assertGalat($hasil, 'beregu.20:Hijau');
+
+        // Satu regu baru masih muat.
+        $kiriman['atlet'] = self::timKanga(4, 10, 'Biru');
+        $this->assertSame([], self::periksa($kiriman, $ada, $induk)['galat']);
     }
 
     public function testReguLamaTetapBolehWalauBatasDiturunkan(): void
@@ -630,7 +688,7 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertSame([], PemeriksaPendaftaran::wajibKonfirmasiSusulan(['atlet' => []])['konfirmasi_susulan']);
         $this->assertSame([], PemeriksaPendaftaran::wajibKonfirmasiSusulan(['konfirmasi_susulan' => 'semua'])['konfirmasi_susulan']);
         $this->assertSame(
-            ['20:A', '21:B'],
+            ['20:A', '21:B', '20:a', '20:AB'],   // nama regu boleh lebih dari satu huruf (K106)
             PemeriksaPendaftaran::wajibKonfirmasiSusulan(['konfirmasi_susulan' => ['20:A', '21:B', '20:A', 20, '0:A', '20:a', '20:AB', null, ['x']]])['konfirmasi_susulan'],
         );
     }

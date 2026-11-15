@@ -174,7 +174,7 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                                             value="<?= esc($isian['regu_maksimal'] ?? '', 'attr') ?>" aria-describedby="<?= $jelas('regu_maksimal', 'regu_maksimal-bantuan') ?>">
                                         <span class="input-group-text">regu</span>
                                     </div>
-                                    <div id="regu_maksimal-bantuan" class="form-text">Contoh: 3 berarti Regu A, B, dan C. Kosongkan bila tidak dibatasi.</div>
+                                    <div id="regu_maksimal-bantuan" class="form-text">Contoh: 3 berarti paling banyak tiga regu per sekolah. Nama regunya diatur di Pengaturan, Pendaftaran. Kosongkan bila tidak dibatasi.</div>
                                     <?= $pesan('regu_maksimal') ?>
                                 </div>
                                 <div class="col-12 col-sm-6">

@@ -8,7 +8,7 @@
 
 ## Tujuan
 
-Official bisa mendaftarkan lebih dari satu regu sekolahnya di satu nomor beregu (Regu A, B, C), menandai setiap anggota inti atau cadangan, dan membayar biaya beregu per regu. Pendaftaran susulan memilih regu dan boleh mengganti inti (K105, menggantikan K07).
+Official bisa mendaftarkan lebih dari satu regu sekolahnya di satu nomor beregu, menandai setiap anggota inti atau cadangan, dan membayar biaya beregu per regu. Pendaftaran susulan memilih regu dan boleh mengganti inti (K105, menggantikan K07). Nama regu mengikuti pengaturan admin: dari daftar admin atau diketik official (K106).
 
 ## Hasil
 
@@ -23,8 +23,10 @@ Official bisa mendaftarkan lebih dari satu regu sekolahnya di satu nomor beregu 
 - [x] Tim tanpa pembayar, rekap (tim beregu per regu dengan jumlah inti dan "Inti kurang"; jumlah tim per sekolah dan kelompok umur dihitung per regu), dasbor
 - [x] Cek pendaftaran dan bukti PDF menampilkan regu dan peran
 - [x] Backup data (`PaketPendaftaran`) membawa regu dan peran; paket lama diisi seperti migrasi
-- [x] Rancangan final revisi 8, KONTEKS, KEPUTUSAN (K105)
+- [x] Rancangan final revisi 8 dan 9, KONTEKS, KEPUTUSAN (K105, K106)
 - [x] Uji unit dan basis data untuk aturan regu, simpan, susulan dengan penurunan inti, batas regu, migrasi data lama
+- [x] K106: Pengaturan > Pendaftaran punya pilihan nama regu **Ketentuan admin** (daftar nama dari admin, bawaan "A, B, C") atau **Bebas** (diketik official); migrasi `PerpanjangNamaRegu` (nama regu sampai 30 huruf); pemeriksaan server, Ubah admin, dan wizard mengikuti mode itu
+- [x] K106: tampilan wizard dirapikan: kartu nomor beregu dengan judul dan keping keterangan (inti, cadangan, syarat mix, batas regu, biaya per regu), tombol Inti/Cadangan, kartu regu dengan pil nama regu dan ringkasan, tanda Inti/Cadangan di setiap anggota
 
 ## Selesai bila
 

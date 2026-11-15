@@ -49,6 +49,8 @@ final class PengaturanPendaftaranTest extends UjiBasisData
             'penanggung_jawab_maksimal' => '5',
             'nomor_individu_maksimal'   => '2',
             'atlet_per_nomor_maksimal'  => '2',
+            'nama_regu'                 => 'ketentuan',
+            'label_regu'                => 'A, B, C',
         ];
     }
 
@@ -205,7 +207,7 @@ final class PengaturanPendaftaranTest extends UjiBasisData
 
         $this->assertIsianSalahDitampilkanUlang($hasil, [
             'mulai', 'akhir', 'tampilan_usia',
-            'penanggung_jawab_minimal', 'penanggung_jawab_maksimal', 'nomor_individu_maksimal',
+            'penanggung_jawab_minimal', 'penanggung_jawab_maksimal', 'nomor_individu_maksimal', 'nama_regu',
         ]);
         $hasil->assertSee('Waktu buka belum diisi.');
         $hasil->assertSee('Waktu tutup belum diisi.');
@@ -312,6 +314,44 @@ final class PengaturanPendaftaranTest extends UjiBasisData
         $this->assertNull(setting('Pendaftaran.atlet_per_nomor_maksimal'));
 
         $this->assertSame('', $this->nilai($this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT)), 'atlet_per_nomor_maksimal'));
+    }
+
+    // ---------- Nama regu (K106) ----------
+
+    public function testNamaReguBawaanKetentuanAdminABC(): void
+    {
+        $hasil = $this->bukaSebagaiAdmin(self::ALAMAT);
+
+        $hasil->assertSee('Nama regu beregu');
+        $this->assertSame('checked', $this->xpathDari($hasil)->query('//input[@id="nama_regu-ketentuan"]')->item(0)->getAttribute('checked'));
+        $this->assertSame('A, B, C', $this->xpathDari($hasil)->query('//input[@id="label_regu"]')->item(0)->getAttribute('value'));
+    }
+
+    public function testSimpanNamaReguBebasDanDaftarDirapikan(): void
+    {
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['nama_regu' => 'bebas', 'label_regu' => ' regu putra 1 ,putra 2,, '] + self::isianBenar());
+
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Pengaturan pendaftaran tersimpan.');
+        $this->assertSame('bebas', setting('Pendaftaran.nama_regu'));
+        $this->assertSame('Putra 1, Putra 2', setting('Pendaftaran.label_regu'));
+        $this->assertSame(['regu_mode' => 'bebas', 'regu_label' => ['Putra 1', 'Putra 2']], \App\Libraries\Pendaftaran\Regu::pengaturan());
+    }
+
+    public function testDaftarNamaReguWajibPadaKetentuanAdmin(): void
+    {
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['label_regu' => ''] + self::isianBenar());
+        $this->assertIsianSalahDitampilkanUlang($hasil, ['label_regu']);
+        $hasil->assertSee('Daftar nama regu belum diisi.');
+
+        foreach (['A, B, a' => 'tertulis lebih dari sekali', 'A, B#, C' => 'belum benar'] as $daftar => $pesan) {
+            $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['label_regu' => $daftar] + self::isianBenar());
+            $this->assertIsianSalahDitampilkanUlang($hasil, ['label_regu']);
+            $hasil->assertSee($pesan);
+        }
+
+        // Mode Bebas: daftar boleh kosong, daftar lama tetap tersimpan.
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, ['nama_regu' => 'bebas', 'label_regu' => ''] + self::isianBenar()), self::ALAMAT, 'Pengaturan pendaftaran tersimpan.');
+        $this->assertSame('A, B, C', setting('Pendaftaran.label_regu'));
     }
 
     public function testTokenCsrfWajib(): void

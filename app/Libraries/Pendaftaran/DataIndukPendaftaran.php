@@ -175,7 +175,9 @@ class DataIndukPendaftaran
     /**
      * Batas-batas dari pengaturan Pendaftaran.
      *
-     * @return array{penanggung_jawab_minimal: int, penanggung_jawab_maksimal: int, nomor_individu_maksimal: int, atlet_per_nomor_maksimal: int|null}
+     * `regu_mode` dan `regu_label`: nama regu beregu (K106, `Regu::pengaturan()`).
+     *
+     * @return array{penanggung_jawab_minimal: int, penanggung_jawab_maksimal: int, nomor_individu_maksimal: int, atlet_per_nomor_maksimal: int|null, regu_mode: string, regu_label: list<string>}
      */
     public static function aturan(): array
     {
@@ -186,7 +188,7 @@ class DataIndukPendaftaran
             'penanggung_jawab_maksimal' => (int) setting('Pendaftaran.penanggung_jawab_maksimal'),
             'nomor_individu_maksimal'   => (int) setting('Pendaftaran.nomor_individu_maksimal'),
             'atlet_per_nomor_maksimal'  => $kuota !== null && $kuota > 0 ? $kuota : null,
-        ];
+        ] + Regu::pengaturan();
     }
 
     /**

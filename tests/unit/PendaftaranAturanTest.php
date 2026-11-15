@@ -342,10 +342,41 @@ final class PendaftaranAturanTest extends CIUnitTestCase
         $this->assertCount(26, Regu::dibolehkan(null));
         $this->assertSame('40:B', Regu::kunci(40, 'B'));
         $this->assertSame([40, 'B'], Regu::pecah('40:B'));
-        $this->assertNull(Regu::pecah('40:b'));
+        $this->assertNull(Regu::pecah('40:'));
+        $this->assertNull(Regu::pecah('40:A#'));
         $this->assertNull(Regu::pecah('0:A'));
         $this->assertNull(Regu::pecah(40));
         $this->assertTrue(Regu::peranSah('cadangan'));
         $this->assertFalse(Regu::peranSah('Inti'));
+    }
+
+    public function testNamaReguDirapikan(): void
+    {
+        // K106: "merah", "MERAH", dan "Regu Merah" adalah regu yang sama.
+        $this->assertSame('Merah', Regu::rapikan('  regu   MERAH '));
+        $this->assertSame('Merah', Regu::rapikan('merah'));
+        $this->assertSame('A', Regu::rapikan('a'));
+        $this->assertSame('Putra 1', Regu::rapikan('PUTRA 1'));
+        $this->assertSame('U-12/A', Regu::rapikan('u-12/a'));
+        $this->assertSame('', Regu::rapikan('Regu'));
+        $this->assertSame('', Regu::rapikan(null));
+
+        $this->assertTrue(Regu::sah('Putra 1'));
+        $this->assertTrue(Regu::sah('Mérah'));
+        $this->assertFalse(Regu::sah(''));
+        $this->assertFalse(Regu::sah('-A'));
+        $this->assertFalse(Regu::sah('A#'));
+        $this->assertFalse(Regu::sah(str_repeat('A', 31)));
+    }
+
+    public function testDaftarNamaReguDariAdmin(): void
+    {
+        $this->assertSame(['A', 'B', 'Putra 1'], Regu::daftarLabel('a, B , putra 1, A,, x#'));
+        $this->assertSame([], Regu::daftarLabel(null));
+        $this->assertSame(['Putra 1', 'Putra 2'], Regu::dibolehkan(2, ['Putra 1', 'Putra 2', 'Putra 3']));
+        $this->assertSame(['Putra 1'], Regu::dibolehkan(5, ['Putra 1']), 'Daftar admin juga membatasi.');
+        $this->assertSame([40, 'Putra 1'], Regu::pecah('40:Putra 1'));
+        $this->assertNotSame(Regu::idAman('40:A'), Regu::idAman('40:B'));
+        $this->assertMatchesRegularExpression('/^[a-z0-9]+$/', Regu::idAman('40:Putra 1'));
     }
 }

@@ -8,6 +8,7 @@
  * @var array<string, string>  $isian             nilai kotak (tersimpan atau yang tadi diketik); waktu dalam bentuk `Y-m-d\TH:i`
  * @var array<string, string>  $galat             kotak => pesan; kosong bila tidak ada isian salah
  * @var array<string, string>  $pilihanUsia       nilai => label pilihan tampilan usia
+ * @var array<string, string>  $pilihanRegu       mode nama regu (`Regu::MODE`)
  * @var string                 $tanggalMulaiAcara tanggal mulai acara dalam bahasa Indonesia, `''` bila belum diisi
  */
 
@@ -111,6 +112,39 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
                             <div class="col-12 col-sm-6">
                                 <?= $kotak('atlet_per_nomor_maksimal', 'Atlet per sekolah pada satu nomor individu, paling banyak', 'number', 'Dihitung bersama pendaftaran sebelumnya dari NPSN yang sama. Kosongkan bila tidak dibatasi.', $angka + ['max' => '100']) ?>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body p-3 p-md-4">
+                        <fieldset aria-describedby="nama_regu-keterangan<?= isset($galat['nama_regu']) ? ' nama_regu-galat' : '' ?>">
+                            <legend class="h5 mb-1">Nama regu beregu</legend>
+                            <p id="nama_regu-keterangan" class="text-body-secondary small mb-3">
+                                Satu sekolah boleh mendaftarkan beberapa regu di satu nomor beregu. Pilih cara official memberi nama regunya.
+                                Aturan inti dan cadangan tetap berlaku, dan batas regu tiap nomor diatur di <a href="<?= site_url('admin/pengaturan/nomor-lomba') ?>">Nomor Lomba</a>.
+                            </p>
+                            <?php $keteranganRegu = [
+                                'ketentuan' => 'Official memilih dari daftar nama regu di bawah. Banyaknya nama juga membatasi regu per sekolah.',
+                                'bebas'     => 'Official menulis nama regu sendiri, misalnya "Merah" atau "Putra 1".',
+                            ] ?>
+                            <?php foreach ($pilihanRegu as $nilai => $label) : ?>
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input<?= isset($galat['nama_regu']) ? ' is-invalid' : '' ?>" type="radio"
+                                        name="nama_regu" id="nama_regu-<?= esc($nilai, 'attr') ?>"
+                                        value="<?= esc($nilai, 'attr') ?>"<?= ($isian['nama_regu'] ?? '') === $nilai ? ' checked' : '' ?>>
+                                    <label class="form-check-label" for="nama_regu-<?= esc($nilai, 'attr') ?>">
+                                        <span class="fw-semibold"><?= esc($label) ?></span>
+                                        <span class="d-block small text-body-secondary"><?= esc($keteranganRegu[$nilai] ?? '') ?></span>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                            <?php if (isset($galat['nama_regu'])) : ?>
+                                <div id="nama_regu-galat" class="invalid-feedback d-block"><?= esc($galat['nama_regu']) ?></div>
+                            <?php endif ?>
+                        </fieldset>
+                        <div class="mt-3">
+                            <?= $kotak('label_regu', 'Daftar nama regu', 'text', 'Dipisah koma, misalnya A, B, C atau Putra 1, Putra 2. Dipakai pada pilihan "Ketentuan admin"; kata "Regu" tidak perlu ditulis.', ['maxlength' => '400']) ?>
                         </div>
                     </div>
                 </div>

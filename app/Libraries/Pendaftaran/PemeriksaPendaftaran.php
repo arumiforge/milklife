@@ -682,19 +682,32 @@ final class PemeriksaPendaftaran
     private function periksaRegu(mixed $pilihan, array $nomor, string $jalur, string $ke): ?array
     {
         $pilihan   = is_array($pilihan) ? $pilihan : [];
-        $label     = strtoupper(trim(self::teks($pilihan['regu'] ?? null)));
+        $label     = Regu::rapikan($pilihan['regu'] ?? null);
         $peran     = strtolower(trim(self::teks($pilihan['peran'] ?? null)));
         $namaNomor = NomorLombaModel::namaLengkap($nomor);
-        $boleh     = $this->reguDibolehkan($nomor);
         $sah       = true;
 
-        if ($label === '') {
-            $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum memilih regu. Pilih Regu " . self::teksLabel($boleh) . '.');
-            $sah = false;
-        } elseif (! Regu::sah($label) || ! in_array($label, $boleh, true)) {
-            $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} tidak punya Regu {$label}; satu sekolah paling banyak "
-                . count($boleh) . ' regu di nomor ini. Pilih Regu ' . self::teksLabel($boleh) . '.');
-            $sah = false;
+        if ($this->reguBebas()) {
+            // Nama regu diketik official (K106); banyaknya regu diperiksa di periksaTim().
+            if ($label === '') {
+                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum diberi nama regu. Tulis nama regunya, misalnya A atau Merah.");
+                $sah = false;
+            } elseif (! Regu::sah($label)) {
+                $this->tambah("{$jalur}.regu", "{$ke}: nama regu {$namaNomor} hanya boleh berisi huruf, angka, spasi, titik, garis miring, atau tanda hubung, paling banyak "
+                    . Regu::PANJANG_MAKSIMAL . ' huruf. Ganti nama regunya.');
+                $sah = false;
+            }
+        } else {
+            $boleh = $this->reguDibolehkan($nomor);
+
+            if ($label === '') {
+                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum memilih regu. Pilih Regu " . self::teksLabel($boleh) . '.');
+                $sah = false;
+            } elseif (! in_array($label, $boleh, true)) {
+                $this->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} tidak punya Regu {$label}; satu sekolah paling banyak "
+                    . count($boleh) . ' regu di nomor ini. Pilih Regu ' . self::teksLabel($boleh) . '.');
+                $sah = false;
+            }
         }
 
         if (! Regu::peranSah($peran)) {
@@ -706,9 +719,39 @@ final class PemeriksaPendaftaran
     }
 
     /**
-     * Label regu yang boleh dipakai di nomor ini: huruf pertama sebanyak
-     * batas regu, ditambah regu yang sudah dimiliki sekolah ini atau
-     * pendaftaran yang sedang diubah (tetap boleh walau batas diturunkan).
+     * Mode nama regu Bebas: official mengetik nama regu sendiri (K106).
+     */
+    private function reguBebas(): bool
+    {
+        return ($this->induk['aturan']['regu_mode'] ?? Regu::MODE_KETENTUAN) === Regu::MODE_BEBAS;
+    }
+
+    /**
+     * Regu yang sudah dimiliki sekolah ini (pendaftaran lain) atau pendaftaran
+     * yang sedang diubah di satu nomor: tetap boleh dipakai walau batas regu,
+     * mode, atau daftar nama regu diubah.
+     *
+     * @return list<string>
+     */
+    private function reguLamaNomor(int $nomorId): array
+    {
+        $lama = array_map('strval', array_keys($this->timAda[$nomorId] ?? []));
+
+        foreach ($this->ada['regu_tersimpan'] ?? [] as $kunci) {
+            $pecah = Regu::pecah($kunci);
+
+            if ($pecah !== null && $pecah[0] === $nomorId) {
+                $lama[] = $pecah[1];
+            }
+        }
+
+        return array_values(array_unique($lama));
+    }
+
+    /**
+     * Nama regu yang boleh dipakai di nomor ini pada mode Ketentuan admin:
+     * nama pertama dari daftar admin (huruf A, B, C, … bila daftarnya tidak
+     * ada) sebanyak batas regu nomor itu, ditambah regu lama (`reguLamaNomor()`).
      *
      * @param array<string, mixed> $nomor
      *
@@ -716,23 +759,14 @@ final class PemeriksaPendaftaran
      */
     private function reguDibolehkan(array $nomor): array
     {
-        $id    = (int) $nomor['id'];
-        $boleh = Regu::dibolehkan(isset($nomor['regu_maksimal']) ? (int) $nomor['regu_maksimal'] : null);
+        $daftar = $this->induk['aturan']['regu_label'] ?? null;
+        $boleh  = Regu::dibolehkan(isset($nomor['regu_maksimal']) ? (int) $nomor['regu_maksimal'] : null, is_array($daftar) && $daftar !== [] ? $daftar : null);
 
-        foreach (array_keys($this->timAda[$id] ?? []) as $label) {
-            $boleh[] = (string) $label;
-        }
-
-        foreach ($this->ada['regu_tersimpan'] ?? [] as $kunci) {
-            $pecah = Regu::pecah($kunci);
-
-            if ($pecah !== null && $pecah[0] === $id) {
-                $boleh[] = $pecah[1];
+        foreach ($this->reguLamaNomor((int) $nomor['id']) as $label) {
+            if (! in_array($label, $boleh, true)) {
+                $boleh[] = $label;
             }
         }
-
-        $boleh = array_values(array_unique($boleh));
-        sort($boleh);
 
         return $boleh;
     }
@@ -748,13 +782,14 @@ final class PemeriksaPendaftaran
             return implode('', $label);
         }
 
-        if (count($label) > 5) {
+        // Huruf berurutan yang panjang ditulis "A sampai Z".
+        if (count($label) > 5 && array_filter($label, static fn (string $l): bool => strlen($l) !== 1) === []) {
             return $label[0] . ' sampai ' . $label[count($label) - 1];
         }
 
         $akhir = array_pop($label);
 
-        return implode(', ', $label) . ', atau ' . $akhir;
+        return implode(', ', $label) . (count($label) > 1 ? ', atau ' : ' atau ') . $akhir;
     }
 
     /**
@@ -830,6 +865,24 @@ final class PemeriksaPendaftaran
         foreach ($regu as $nomorId => $perRegu) {
             $nomor = $this->nomorLomba[$nomorId];
             ksort($perRegu);
+
+            // Mode Bebas (K106): banyaknya regu sekolah di nomor ini, termasuk regu lama,
+            // tidak boleh melewati batas regu nomor itu. Regu lama tetap boleh.
+            $batasRegu = isset($nomor['regu_maksimal']) && $nomor['regu_maksimal'] !== null ? (int) $nomor['regu_maksimal'] : null;
+
+            if ($this->reguBebas() && $batasRegu !== null && $batasRegu > 0) {
+                $lama  = $this->reguLamaNomor($nomorId);
+                $semua = array_values(array_unique(array_merge($lama, array_map('strval', array_keys($perRegu)))));
+
+                if (count($semua) > $batasRegu) {
+                    foreach (array_diff(array_map('strval', array_keys($perRegu)), $lama) as $baru) {
+                        $this->tambah('beregu.' . Regu::kunci($nomorId, $baru), Regu::nama(NomorLombaModel::namaLengkap($nomor), $baru)
+                            . ": satu sekolah paling banyak {$batasRegu} regu di nomor ini, sekarang " . count($semua) . ' regu'
+                            . ($lama !== [] ? ' (termasuk Regu ' . self::teksLabel($lama) . ' yang sudah terdaftar)' : '')
+                            . '. Masukkan atletnya ke regu yang sudah ada.');
+                    }
+                }
+            }
 
             foreach ($perRegu as $label => $baru) {
                 $label    = (string) $label;

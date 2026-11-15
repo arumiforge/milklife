@@ -382,17 +382,80 @@ fieldset.is-invalid > .invalid-feedback,
     font-size: 0.85rem;
 }
 
-/* Pilihan regu dan peran (inti/cadangan) di bawah nomor beregu yang dicentang (K105). */
+/* ---------- Nomor beregu dan regu (K105, K106) ---------- */
+
+/* Pilihan nomor beregu: judul tebal, keterangan per regu sebagai keping kecil. */
 .pilihan-nomor-beregu {
     grid-column: 1 / -1;
+    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.625rem;
 }
 
+.pilihan-nomor-beregu:has(> .form-check-input:checked) {
+    border-color: var(--ml-biru);
+    box-shadow: 0 0 0 0.15rem rgba(var(--ml-biru-rgb), 0.12);
+}
+
+.pilihan-nomor-beregu > .form-check-input {
+    margin-top: 0.3rem;
+}
+
+.nomor-beregu-judul {
+    display: block;
+    font-weight: 600;
+    color: var(--ml-biru-tua);
+}
+
+.nomor-beregu-info,
+.kartu-tim-ringkas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
+}
+
+.nomor-beregu-chip {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--ml-teks-redup);
+    background-color: var(--ml-latar);
+    border: 1px solid var(--ml-garis);
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.nomor-beregu-chip.chip-inti {
+    color: var(--ml-biru-tua);
+    background-color: var(--ml-biru-muda-pucat);
+    border-color: var(--ml-biru-muda);
+    font-weight: 600;
+}
+
+.nomor-beregu-chip.chip-cadangan {
+    color: var(--ml-teks);
+    background-color: var(--ml-putih);
+    border-style: dashed;
+}
+
+.nomor-beregu-chip.chip-biaya {
+    color: var(--ml-oranye-gelap);
+    background-color: var(--ml-krem);
+    border-color: transparent;
+    font-weight: 600;
+}
+
+/* Pilihan regu dan Inti/Cadangan di bawah nomor beregu yang dicentang. */
 .pilihan-regu {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 0.75rem;
-    margin: 0.35rem 0 0.25rem;
-    padding: 0.5rem 0.625rem;
+    align-items: flex-start;
+    gap: 0.5rem 1rem;
+    margin: 0.6rem 0 0.15rem;
+    padding: 0.6rem 0.75rem;
     background-color: var(--ml-biru-muda-pucat);
     border-radius: 0.5rem;
 }
@@ -403,10 +466,75 @@ fieldset.is-invalid > .invalid-feedback,
 
 .pilihan-regu-isian {
     display: flex;
-    flex: 1 1 9rem;
+    flex: 1 1 10rem;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.2rem;
     min-width: 0;
+}
+
+.pilihan-regu-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ml-biru-tua);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.pilihan-peran {
+    width: 100%;
+}
+
+.pilihan-regu .form-select,
+.pilihan-regu .form-control,
+.pilihan-peran .btn {
+    min-height: 2.25rem;
+}
+
+.pilihan-peran .btn {
+    flex: 1 1 0;
+}
+
+.pilihan-regu-bantuan {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--ml-teks-redup);
+}
+
+/* Tanda peran anggota regu. */
+.lencana-peran {
+    display: inline-block;
+    padding: 0.05rem 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.5;
+    vertical-align: 0.1em;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.lencana-inti {
+    color: var(--ml-putih);
+    background-color: var(--ml-biru);
+}
+
+.lencana-cadangan {
+    color: var(--ml-teks-redup);
+    background-color: var(--ml-putih);
+    border: 1px dashed var(--ml-teks-redup);
+}
+
+.baris-atlet-nama {
+    display: block;
+}
+
+.baris-atlet.baris-inti {
+    border-left: 0.25rem solid var(--ml-biru);
+}
+
+.baris-atlet.baris-cadangan {
+    border-left: 0.25rem dashed var(--ml-garis);
 }
 
 .formulir-atlet-tombol {
@@ -474,6 +602,23 @@ fieldset.is-invalid > .invalid-feedback,
     padding: 0.75rem;
     background-color: var(--ml-biru-muda-pucat);
     border-radius: 0.75rem;
+}
+
+.kartu-tim-judul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--ml-biru-tua);
+}
+
+.regu-pil {
+    padding: 0.1rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ml-putih);
+    background-color: var(--ml-oranye-tombol);
+    border-radius: 999px;
 }
 
 .kartu-tim-kepala {
