@@ -79,7 +79,8 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000126')))->html();
         $this->assertStringContainsString('stempel stempel-lunas', $html);
         $this->assertStringContainsString('<b>2001</b>', $html);
-        $this->assertStringContainsString('BUDI KARANGAN (2001)', $html, 'Nomor dada anggota tim beregu.');
+        // Tabel beregu satu baris per anggota, nomor dada di kolom sendiri (K107).
+        $this->assertMatchesRegularExpression('#<td>BUDI KARANGAN</td>\s*<td>9900000001</td>\s*<td><b>2001</b></td>\s*<td class="peran-inti">Inti</td>#', $html, 'Nomor dada anggota tim beregu.');
 
         Services::resetSingle('throttler');
         $hasil = $this->get($alamat);
@@ -101,7 +102,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
             'Kabupaten / Kota</div><div class="info-isi">Kudus</div>', 'ID Pendaftaran</div><div class="info-isi">MAC2A0000126</div>',
             'Penanggung Jawab (Official)', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
             'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp 150.000',
-            'Estafet 4 × 50 m putra', 'BUDI KARANGAN, CANDRA REKAAN, DIMAS CONTOH, EKO KARANGAN', 'Rp 200.000',
+            '<td>Estafet 4 × 50 m putra</td>', '<td><b>A</b></td>', '<th width="12mm">Regu</th>', '<td>DIMAS CONTOH</td>', '<td>EKO KARANGAN</td>', '(1 regu, 4 anggota)', 'Rp 200.000',
             'Rp 450.000', 'Rp 650.000', 'stempel stempel-menunggu', 'Status Pembayaran</div><div class="info-isi">Menunggu Konfirmasi Pembayaran',
         ] as $teks) {
             $this->assertStringContainsString($teks, $html);
@@ -130,8 +131,8 @@ final class BuktiPendaftaranTest extends UjiBasisData
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000226')))->html();
         // Lunas: nomor dada anggota tim ikut dicetak (K87, menggantikan K52).
-        $this->assertStringContainsString('<td>FAJAR REKAAN (1001) [cadangan]</td>', $html);
-        $this->assertStringContainsString('Tanpa biaya (regu sudah terdaftar)', $html);
+        $this->assertMatchesRegularExpression('#<td>FAJAR REKAAN</td>\s*<td>\d+</td>\s*<td><b>1001</b></td>\s*<td class="peran-cadangan">Cadangan</td>#', $html);
+        $this->assertStringContainsString('Tanpa biaya<br>regu sudah terdaftar', $html);
         $this->assertStringContainsString('Tidak ada nomor individu', $html);
         $this->assertStringContainsString('stempel stempel-lunas', $html);
         $this->assertStringNotContainsString('var:logo', $html, 'Tanpa logo bila belum diunggah.');
