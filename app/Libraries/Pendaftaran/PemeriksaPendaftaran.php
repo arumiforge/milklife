@@ -441,16 +441,16 @@ final class PemeriksaPendaftaran
         $jumlah   = count($daftar);
 
         if ($jumlah < $minimal) {
-            $this->tambah('penanggung_jawab', "Isi minimal {$minimal} penanggung jawab. Sekarang baru {$jumlah}.");
+            $this->tambah('penanggung_jawab', "Isi minimal {$minimal} ofisial. Sekarang baru {$jumlah}.");
         } elseif ($jumlah > $maksimal) {
-            $this->tambah('penanggung_jawab', "Penanggung jawab paling banyak {$maksimal} orang. Hapus " . ($jumlah - $maksimal) . ' orang.');
+            $this->tambah('penanggung_jawab', "Ofisial paling banyak {$maksimal} orang. Hapus " . ($jumlah - $maksimal) . ' orang.');
         }
 
         $hasil = [];
 
         foreach ($daftar as $i => $orang) {
             $orang = is_array($orang) ? $orang : [];
-            $ke    = 'Penanggung jawab ' . ($i + 1);
+            $ke    = 'Ofisial ' . ($i + 1);
             $nama  = self::rapikanSpasi(self::teks($orang['nama'] ?? null));
             $wa    = NomorWa::normalkan(self::teks($orang['nomor_wa'] ?? null));
             $foto  = $orang['foto'] ?? null;

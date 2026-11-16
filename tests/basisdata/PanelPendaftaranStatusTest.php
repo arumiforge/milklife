@@ -114,7 +114,7 @@ final class PanelPendaftaranStatusTest extends UjiBasisData
 
         $this->assertFalse($hasil['berhasil']);
         $this->assertSame([], $hasil['nomor']);
-        $this->assertStringContainsString('awalan nomor dada KU 10 (2) sudah penuh', (string) $hasil['pesan']);
+        $this->assertStringContainsString('awalan nomor atlet (BIB) KU 10 (2) sudah penuh', (string) $hasil['pesan']);
         $this->assertStringContainsString('Tambahkan awalan baru untuk KU 10', (string) $hasil['pesan']);
         $this->assertStringNotContainsString('KU 12', (string) $hasil['pesan']);
 
@@ -142,7 +142,7 @@ final class PanelPendaftaranStatusTest extends UjiBasisData
         $hasil = (new StatusPembayaran())->tandaiLunas($p['id']);
 
         $this->assertFalse($hasil['berhasil']);
-        $this->assertStringContainsString('KU 15 belum punya awalan nomor dada', (string) $hasil['pesan']);
+        $this->assertStringContainsString('KU 15 belum punya awalan nomor atlet (BIB)', (string) $hasil['pesan']);
         $this->assertSame('menunggu', $this->pendaftaran($p['id'])['status']);
     }
 
@@ -292,7 +292,7 @@ final class PanelPendaftaranStatusTest extends UjiBasisData
 
         try {
             (new StatusPembayaran($this->db))->tandaiLunas($dua['id']);
-            $this->fail('Penandaan kedua seharusnya menunggu kunci awalan nomor dada.');
+            $this->fail('Penandaan kedua seharusnya menunggu kunci awalan nomor atlet (BIB).');
         } catch (DatabaseException $e) {
             $this->assertStringContainsStringIgnoringCase('lock wait timeout', $e->getMessage());
         }

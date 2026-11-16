@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Libraries\DataPendaftaran;
 use App\Libraries\Panel\EksporExcel;
 use App\Libraries\Panel\TabelSisiServer;
+use App\Libraries\Panel\UrutkanNomorDada;
 use App\Models\KelompokUmurModel;
 use App\Models\NomorLombaModel;
 use Closure;
@@ -26,6 +27,9 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   lomba atlet digabung dalam satu kolom.
  * - `excel`: semua baris yang lolos saringan, pencarian, dan urutan yang sama
  *   (`EksporExcel`), tanpa batas halaman.
+ *
+ * Tombol "Urutkan nomor dada" membuka `admin/atlet/nomor-dada`
+ * (`NomorDadaController`, K111).
  *
  * Saringan nomor lomba memilih atlet yang ikut nomor itu (individu atau
  * beregu); atlet tetap tampil dengan semua nomor lombanya.
@@ -55,9 +59,10 @@ class AtletController extends BaseController
         }
 
         return view('admin/atlet/index', [
-            'kelompokUmur' => $kelompokUmur,
-            'nomorLomba'   => $nomorLomba,
-            'jenisKelamin' => DataPendaftaran::JENIS_KELAMIN,
+            'kelompokUmur'  => $kelompokUmur,
+            'nomorLomba'    => $nomorLomba,
+            'jenisKelamin'  => DataPendaftaran::JENIS_KELAMIN,
+            'diurutkanPada' => UrutkanNomorDada::waktuTerakhir(),
         ]);
     }
 
@@ -91,7 +96,7 @@ class AtletController extends BaseController
     public static function lembarExcel(array $saringan = []): EksporExcel
     {
         $excel = new EksporExcel('Atlet', [
-            'nomor_dada'     => 'Nomor Dada',
+            'nomor_dada'     => 'Nomor Atlet (BIB)',
             'nama'           => 'Nama',
             'nisn'           => 'NISN',
             'jenis_kelamin'  => 'Jenis Kelamin',
@@ -155,7 +160,7 @@ class AtletController extends BaseController
             $db = db_connect();
 
             // Nomor beregu ditulis bersama regu dan perannya, misalnya "Formula 1 putra Regu A (cadangan)" (K105).
-            $nomor = '(SELECT GROUP_CONCAT(CONCAT(nl.nama, \' \', nl.kategori,'
+            $nomor = '(SELECT GROUP_CONCAT(CONCAT(nl.nama, \' \', IF(nl.kategori = \'mix\', \'mixed\', nl.kategori),'
                 . ' IF(an.regu IS NULL, \'\', CONCAT(\' Regu \', an.regu, IF(an.peran = \'cadangan\', \' (cadangan)\', \'\'))))'
                 . ' ORDER BY nl.urutan, nl.id SEPARATOR \', \')'
                 . ' FROM ' . $db->prefixTable('atlet_nomor') . ' an'

@@ -21,7 +21,7 @@ use CodeIgniter\Database\BaseConnection;
  * Pemakaian:
  *
  *     $data = new DataPendaftaran();
- *     $satu = $data->cariId('MAC2A0000126');   // larik atau null
+ *     $satu = $data->cariId('MAC2A0000126');   // larik atau null; ID lama yang sudah digabung memberi pendaftaran gabungannya (K109)
  *     $semua = $data->cariNpsn('20300001');    // list, urut dari yang pertama dibuat
  *
  * Bentuk satu pendaftaran (teks belum di-escape, uang belum diformat):
@@ -39,6 +39,7 @@ use CodeIgniter\Database\BaseConnection;
  *         'subtotal_individu' => 300000,
  *         'subtotal_beregu'   => 200000,
  *         'total'             => 500000,
+ *         'gabungan_dari'     => ['MAC2A0000926'],  // ID lama yang sudah digabung ke sini (K109)
  *         'penanggung_jawab'  => [['nama' => 'Ibu Contoh', 'nomor_wa' => '0812-3456-7890']], // NomorWa::tampilan()
  *         'atlet'             => [[
  *             'nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'tanggal_lahir' => '2016-05-01',
@@ -88,11 +89,46 @@ final class DataPendaftaran
      */
     public function cariId(string $id): ?array
     {
+        $id     = strtoupper(trim($id));
         $kepala = $this->db->table('pendaftaran')
-            ->where('id_pendaftaran', strtoupper(trim($id)))
+            ->where('id_pendaftaran', $id)
             ->get()->getResultArray();
 
+        if ($kepala === []) {
+            // ID lama dari pendaftaran yang sudah digabung (K109).
+            $kepala = $this->db->table('pendaftaran p')
+                ->select('p.*')
+                ->join('pendaftaran_gabungan g', 'g.pendaftaran_id = p.id')
+                ->where('g.id_pendaftaran_lama', $id)
+                ->get()->getResultArray();
+        }
+
         return $this->lengkapi($kepala)[0] ?? null;
+    }
+
+    /**
+     * Pendaftaran gabungan untuk ID dan kode bukti lama (K109), atau `null`.
+     * Dipakai alamat bukti lama: kode QR di bukti yang sudah dicetak.
+     *
+     * @return array{id: int, id_pendaftaran: string, kode_bukti: string|null}|null
+     */
+    public function cariBuktiLama(string $id, string $kode): ?array
+    {
+        if ($kode === '') {
+            return null;
+        }
+
+        $baris = $this->db->table('pendaftaran_gabungan g')
+            ->select('g.kode_bukti_lama, p.id, p.id_pendaftaran, p.kode_bukti')
+            ->join('pendaftaran p', 'p.id = g.pendaftaran_id')
+            ->where('g.id_pendaftaran_lama', strtoupper(trim($id)))
+            ->get()->getRowArray();
+
+        if (! is_array($baris) || ! hash_equals((string) ($baris['kode_bukti_lama'] ?? ''), $kode)) {
+            return null;
+        }
+
+        return ['id' => (int) $baris['id'], 'id_pendaftaran' => (string) $baris['id_pendaftaran'], 'kode_bukti' => $baris['kode_bukti']];
     }
 
     /**
@@ -153,6 +189,12 @@ final class DataPendaftaran
             ->whereIn('pb.pendaftaran_id', $ids)
             ->get()->getResultArray();
 
+        $lama = $this->db->table('pendaftaran_gabungan')
+            ->select('pendaftaran_id, id_pendaftaran_lama')
+            ->whereIn('pendaftaran_id', $ids)
+            ->orderBy('id')
+            ->get()->getResultArray();
+
         $jumlahRegu  = $this->jumlahRegu($kepala);
         $sekolahDari = [];
         $hasil       = [];
@@ -174,11 +216,16 @@ final class DataPendaftaran
                 'subtotal_individu' => (int) $baris['subtotal_individu'],
                 'subtotal_beregu'   => (int) $baris['subtotal_beregu'],
                 'total'             => (int) $baris['total'],
+                'gabungan_dari'     => [],
                 'penanggung_jawab'  => [],
                 'atlet'             => [],
                 'individu'          => [],
                 'beregu'            => [],
             ];
+        }
+
+        foreach ($lama as $baris) {
+            $hasil[(int) $baris['pendaftaran_id']]['gabungan_dari'][] = (string) $baris['id_pendaftaran_lama'];
         }
 
         foreach ($pj as $baris) {

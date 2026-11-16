@@ -12,6 +12,7 @@
  * @var bool                     $siap  pengaturan lengkap
  * @var string                   $kode  isian yang sudah dirapikan
  * @var string|null              $galat pesan untuk official
+ * @var string|null              $info  keterangan ID lama yang sudah digabung (K109)
  * @var list<array<string, mixed>> $hasil lihat App\Libraries\DataPendaftaran
  */
 $sekolah = $hasil[0] ?? null;
@@ -49,6 +50,9 @@ $sekolah = $hasil[0] ?? null;
                 <div class="form-text" id="kode-keterangan">NPSN menampilkan semua pendaftaran sekolah itu. ID pendaftaran (contoh MAC2A0000126) menampilkan satu pendaftaran.</div>
                 <?php if ($galat !== null) : ?>
                     <div class="alert alert-warning mt-3 mb-0" id="kode-galat" role="alert"><?= esc($galat) ?></div>
+                <?php endif ?>
+                <?php if (($info ?? null) !== null) : ?>
+                    <div class="alert alert-info mt-3 mb-0" id="kode-info" role="status"><?= esc($info) ?></div>
                 <?php endif ?>
             </form>
 

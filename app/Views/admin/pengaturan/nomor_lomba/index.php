@@ -99,7 +99,7 @@ $ringkasTim = static function (array $nomor): string {
                 <i class="bi bi-exclamation-circle-fill flex-shrink-0" aria-hidden="true"></i>
                 <div>
                     <strong><?= $jumlahBelum ?> nomor beregu belum lengkap.</strong>
-                    Isi jumlah inti, batas anggota, dan biaya beregu (untuk nomor mix juga jumlah putra dan putri minimal) supaya pendaftaran bisa dibuka.
+                    Isi jumlah inti, batas anggota, dan biaya beregu (untuk nomor mixed juga jumlah putra dan putri minimal) supaya pendaftaran bisa dibuka.
                     <?php if (! $saringBelumLengkap) : ?>
                         <a class="alert-link" href="<?= site_url($alamat) ?>?belum-lengkap=1">Tampilkan yang belum lengkap saja</a>
                     <?php endif ?>

@@ -104,6 +104,26 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $this->seeInDatabase('pendaftaran', ['id' => $p['id'], 'nama_sekolah' => 'MIS KARANGAN REKAAN']);
     }
 
+    public function testIdLamaPendaftaranGabunganIkutPindah(): void
+    {
+        $awal  = $this->buatPendaftaranPanel(['status' => 'lunas']);
+        $susul = $this->buatPendaftaranPanel(['atlet' => [$this->atletPanel()]]);
+        $alamatLama = App\Libraries\BuktiPendaftaran::alamat(['id' => $susul['id'], 'id_pendaftaran' => $susul['id_pendaftaran']]);
+        $this->kirimSebagaiAdmin('admin/pendaftaran/' . $susul['id'] . '/lunas');
+        $catatan = $this->db->table('pendaftaran_gabungan')->select('pendaftaran_id, id_pendaftaran_lama, kode_bukti_lama')->get()->getResultArray();
+        $this->assertCount(1, $catatan);
+
+        (new PaketPendaftaran())->ekspor($this->zip);
+        $this->db->query('DELETE FROM pendaftaran');
+        $this->hapusBerkas();
+        (new PaketPendaftaran())->impor($this->zip);
+
+        // K109: ID dan kode bukti lama tetap mengarah ke pendaftaran gabungan.
+        $this->assertSame($catatan, $this->db->table('pendaftaran_gabungan')->select('pendaftaran_id, id_pendaftaran_lama, kode_bukti_lama')->get()->getResultArray());
+        $this->assertStringEndsWith('/' . $catatan[0]['kode_bukti_lama'] . '/' . $susul['id_pendaftaran'], $alamatLama);
+        $this->assertSame($awal['id_pendaftaran'], (new App\Libraries\DataPendaftaran())->cariId($susul['id_pendaftaran'])['id_pendaftaran']);
+    }
+
     public function testImporDitolakBilaNomorLombaTidakAdaDanTidakAdaYangTersimpan(): void
     {
         $this->buatPendaftaranPanel(['foto' => true]);

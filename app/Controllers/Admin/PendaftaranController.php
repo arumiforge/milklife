@@ -8,6 +8,7 @@ use App\Models\PendaftaranModel;
 use App\Models\UsulanNamaSekolahModel;
 use App\Libraries\Panel\DataPanelPendaftaran;
 use App\Libraries\Panel\EksporExcel;
+use App\Libraries\Panel\GabungPendaftaran;
 use App\Libraries\Panel\HapusPendaftaran;
 use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Panel\StatusPembayaran;
@@ -134,7 +135,7 @@ class PendaftaranController extends BaseController
         $jalur = (new DataPanelPendaftaran())->jalurFoto($id, $penanggungJawabId);
 
         if ($jalur === null) {
-            throw PageNotFoundException::forPageNotFound('Foto penanggung jawab tidak ditemukan.');
+            throw PageNotFoundException::forPageNotFound('Foto ofisial tidak ditemukan.');
         }
 
         return $this->response
@@ -162,8 +163,14 @@ class PendaftaranController extends BaseController
 
         $jumlah = count($hasil['nomor']);
         $pesan  = 'Pendaftaran ditandai Lunas. ' . ($jumlah > 0
-            ? $jumlah . ' atlet mendapat nomor dada baru.'
-            : 'Semua atlet sudah punya nomor dada.');
+            ? $jumlah . ' atlet mendapat nomor atlet (BIB) baru.'
+            : 'Semua atlet sudah punya nomor atlet (BIB).');
+
+        // K109: pendaftaran ini mungkin sudah pindah ke pendaftaran gabungan.
+        if ($hasil['gabung'] !== null) {
+            $pesan .= ' ' . GabungPendaftaran::kalimat($hasil['gabung']);
+            $alamat = self::ALAMAT . '/' . $hasil['gabung']['tujuan']['id'];
+        }
 
         return redirect()->to($alamat)->with('pesan_sukses', $pesan);
     }
@@ -184,7 +191,7 @@ class PendaftaranController extends BaseController
             return redirect()->to($alamat)->with('pesan_galat', (string) $hasil['pesan']);
         }
 
-        return redirect()->to($alamat)->with('pesan_sukses', 'Status kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.');
+        return redirect()->to($alamat)->with('pesan_sukses', 'Status kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor atlet (BIB) tetap.');
     }
 
     public function hapus(int $id): RedirectResponse
@@ -243,6 +250,7 @@ class PendaftaranController extends BaseController
         $nomor    = 0;
         $gagal    = [];
         $tinggal  = [];
+        $gabung   = [];
 
         foreach ($id as $satu) {
             if (! isset($kode[$satu])) {
@@ -284,11 +292,16 @@ class PendaftaranController extends BaseController
 
             $berhasil++;
             $nomor += count($hasil['nomor'] ?? []);
+
+            if (($hasil['gabung'] ?? null) !== null) {
+                $gabung[] = GabungPendaftaran::kalimat($hasil['gabung']);
+            }
         }
 
         $pesan = match ($tindakan) {
-            'lunas'    => $berhasil . ' pendaftaran ditandai Lunas.' . ($nomor > 0 ? ' ' . $nomor . ' atlet mendapat nomor dada baru.' : ''),
-            'menunggu' => $berhasil . ' pendaftaran kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.',
+            'lunas'    => $berhasil . ' pendaftaran ditandai Lunas.' . ($nomor > 0 ? ' ' . $nomor . ' atlet mendapat nomor atlet (BIB) baru.' : '')
+                . ($gabung === [] ? '' : ' ' . implode(' ', $gabung)),
+            'menunggu' => $berhasil . ' pendaftaran kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor atlet (BIB) tetap.',
             default    => $berhasil . ' pendaftaran dihapus beserta atlet dan berkasnya. NISN atletnya bisa didaftarkan lagi.'
                 . ($tinggal === [] ? '' : ' ' . TimTanpaPembayar::kalimatSesudah($tinggal)),
         };
@@ -396,7 +409,7 @@ class PendaftaranController extends BaseController
         }
 
         if ($hasil['nomor_dada'] !== []) {
-            $pesan .= ' ' . count($hasil['nomor_dada']) . ' atlet baru mendapat nomor dada.';
+            $pesan .= ' ' . count($hasil['nomor_dada']) . ' atlet baru mendapat nomor atlet (BIB).';
         }
 
         if ($hasil['tim_dibebankan'] !== []) {
@@ -405,6 +418,12 @@ class PendaftaranController extends BaseController
 
         if ($hasil['tim_ditinggalkan'] !== []) {
             $pesan .= ' ' . TimTanpaPembayar::kalimatSesudah($hasil['tim_ditinggalkan']);
+        }
+
+        // K109: pendaftaran ini mungkin sudah pindah ke pendaftaran gabungan.
+        if (($hasil['gabung'] ?? null) !== null) {
+            $pesan .= ' ' . GabungPendaftaran::kalimat($hasil['gabung']);
+            $id = $hasil['gabung']['tujuan']['id'];
         }
 
         return redirect()->to(self::ALAMAT . '/' . $id)->with('pesan_sukses', $pesan);

@@ -107,7 +107,7 @@ class KelompokUmurController extends BaseController
 
         $model->hapusLengkap($id);
 
-        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Kelompok umur ' . $ku['nama'] . ' sudah dihapus beserta jenjang dan awalan nomor dadanya.');
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Kelompok umur ' . $ku['nama'] . ' sudah dihapus beserta jenjang dan awalan nomor atletnya.');
     }
 
     /**

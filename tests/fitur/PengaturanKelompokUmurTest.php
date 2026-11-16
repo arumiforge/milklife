@@ -88,7 +88,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
 
         $baris = $this->barisTabel($hasil);
         $this->assertSame(['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 0));
-        $this->assertSame(['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2015', 'Lahir 2011–2014', 'Lahir 2008–2010'], array_column($baris, 1));
+        $this->assertSame(['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2014–2015', 'Lahir 2011–2014', 'Lahir 2008–2010'], array_column($baris, 1));
         $this->assertSame(['SD/MI', 'SD/MI', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], array_column($baris, 2));
         $this->assertSame(['Rp 25.000', 'Rp 25.000', 'Rp 25.000', 'Rp 35.000', 'Rp 50.000'], array_column($baris, 3));
         $this->assertSame(['1', '2', '3', '4', '5'], array_column($baris, 4));
@@ -117,7 +117,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $formBebas = $xpath->query('//form[@action="' . site_url(self::ALAMAT . "/{$bebas}/hapus") . '"]')->item(0);
         $this->assertNotNull($formBebas);
         $this->assertSame('post', $formBebas->getAttribute('method'));
-        $this->assertSame('Kelompok umur KU Bebas akan dihapus beserta jenjang dan awalan nomor dadanya. Tindakan ini tidak bisa dibatalkan.', $formBebas->getAttribute('data-konfirmasi'));
+        $this->assertSame('Kelompok umur KU Bebas akan dihapus beserta jenjang dan awalan nomor atletnya. Tindakan ini tidak bisa dibatalkan.', $formBebas->getAttribute('data-konfirmasi'));
         $this->assertSame(1, $xpath->query('.//input[@name="' . config('Security')->tokenName . '"]', $formBebas)->length);
 
         // Kelompok umur data awal punya nomor lomba: tanpa jendela konfirmasi, server menjelaskan sebabnya.
@@ -219,7 +219,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, $this->isian(['nama' => 'KU 13', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A'], 'aktif' => '1']));
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_awal', 'tahun_lahir_akhir']);
-        $hasil->assertSee('Tahun lahir ini bertabrakan dengan KU 12 (lahir 2015) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif.');
+        $hasil->assertSee('Tahun lahir ini bertabrakan dengan KU 12 (lahir 2014–2015) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif.');
         $this->seeNumRecords(0, 'kelompok_umur', ['nama' => 'KU 13']);
 
         // Kelompok umur yang mati boleh disimpan dengan rentang yang sama.
@@ -260,7 +260,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         }
 
         $this->assertSame(['B'], $this->nilaiSemua($xpath, '//input[@name="jenjang[]" and @checked]/@value'));
-        $this->assertTeksTampil($hasil, 'Awalan 6 sudah dipakai sampai nomor dada 6045, jadi tidak bisa dihapus.');
+        $this->assertTeksTampil($hasil, 'Awalan 6 sudah dipakai sampai nomor atlet (BIB) 6045, jadi tidak bisa dihapus.');
         $hasil->assertDontSee('Sudah dipakai kelompok umur lain');
     }
 
@@ -361,7 +361,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10', 'awalan' => '6']));
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['awalan']);
-        $hasil->assertSee('Awalan 2 sudah dipakai untuk nomor dada, jadi tidak bisa dihapus.');
+        $hasil->assertSee('Awalan 2 sudah dipakai untuk nomor atlet (BIB), jadi tidak bisa dihapus.');
         $this->seeNumRecords(2, 'awalan_nomor_dada', ['kelompok_umur_id' => $id]);
 
         // Menambah awalan baru di belakang awalan yang penuh boleh.
@@ -381,7 +381,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}/hapus");
 
-        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Kelompok umur KU 10 sudah dihapus beserta jenjang dan awalan nomor dadanya.');
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Kelompok umur KU 10 sudah dihapus beserta jenjang dan awalan nomor atletnya.');
         $this->seeNumRecords(0, 'kelompok_umur', []);
         $this->seeNumRecords(0, 'kelompok_umur_jenjang', []);
         $this->seeNumRecords(0, 'awalan_nomor_dada', []);
@@ -406,7 +406,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}/hapus");
 
-        $this->assertGagalDialihkan($hasil, self::ALAMAT, 'Awalan nomor dada 2 milik KU 10 sudah dipakai, jadi kelompok umur ini tidak bisa dihapus. Matikan saja supaya tidak muncul di pendaftaran.');
+        $this->assertGagalDialihkan($hasil, self::ALAMAT, 'Awalan nomor atlet (BIB) 2 milik KU 10 sudah dipakai, jadi kelompok umur ini tidak bisa dihapus. Matikan saja supaya tidak muncul di pendaftaran.');
         $this->seeNumRecords(1, 'kelompok_umur', []);
         $this->seeNumRecords(1, 'kelompok_umur_jenjang', []);
         $this->seeNumRecords(1, 'awalan_nomor_dada', []);

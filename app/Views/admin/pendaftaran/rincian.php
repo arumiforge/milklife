@@ -32,16 +32,16 @@ $strip       = '<span class="text-body-secondary">–</span>';
 
 $kalimatLunas = 'Pendaftaran ' . $namaSingkat . ' akan ditandai Lunas. '
     . ($p['tanpa_nomor_dada'] > 0
-        ? $p['tanpa_nomor_dada'] . ' atlet yang belum punya nomor dada akan mendapat nomor baru, dan nomor itu tidak bisa ditarik kembali.'
-        : 'Semua atlet sudah punya nomor dada.')
+        ? $p['tanpa_nomor_dada'] . ' atlet yang belum punya nomor atlet (BIB) akan mendapat nomor baru, dan nomor itu tidak bisa ditarik kembali.'
+        : 'Semua atlet sudah punya nomor atlet (BIB).')
     . ' Pastikan transfernya sudah diperiksa.';
 
 $kalimatMenunggu = 'Status pendaftaran ' . $namaSingkat . ' akan kembali menjadi Menunggu Konfirmasi Pembayaran. '
-    . 'Nomor dada atlet tetap dipegang dan tidak dihapus.';
+    . 'Nomor atlet (BIB) tetap dipegang atletnya dan tidak dihapus.';
 
 $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_sekolah'] . ' beserta ' . $p['jumlah_atlet']
-    . ' atlet, penanggung jawab, tim beregu, foto, dan bukti bayarnya akan dihapus. NISN atletnya bisa didaftarkan lagi.'
-    . ($adaNomor ? ' Nomor dada yang sudah dibagikan tidak dipakai ulang.' : '')
+    . ' atlet, ofisial, tim beregu, foto, dan bukti bayarnya akan dihapus. NISN atletnya bisa didaftarkan lagi.'
+    . ($adaNomor ? ' Nomor atlet (BIB) yang sudah dibagikan tidak dipakai ulang.' : '')
     . ' Tindakan ini tidak bisa dibatalkan.'
     . ($kalimatTimHapus === '' ? '' : ' ' . $kalimatTimHapus);
 ?>
@@ -128,7 +128,11 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                 <dt class="col-sm-4 col-lg-3 fw-semibold">Tanggal daftar</dt>
                 <dd class="col-sm-8 col-lg-9"><?= esc(tanggal_id($p['dibuat_pada'], true)) ?: $strip ?></dd>
                 <dt class="col-sm-4 col-lg-3 fw-semibold">Waktu lunas</dt>
-                <dd class="col-sm-8 col-lg-9 mb-0" id="waktu-lunas"><?= $lunas && $p['waktu_lunas'] !== null ? esc(tanggal_id($p['waktu_lunas'], true)) : '<span class="text-body-secondary">Belum lunas</span>' ?></dd>
+                <dd class="col-sm-8 col-lg-9<?= $p['gabungan_dari'] === [] ? ' mb-0' : '' ?>" id="waktu-lunas"><?= $lunas && $p['waktu_lunas'] !== null ? esc(tanggal_id($p['waktu_lunas'], true)) : '<span class="text-body-secondary">Belum lunas</span>' ?></dd>
+                <?php if ($p['gabungan_dari'] !== []): ?>
+                    <dt class="col-sm-4 col-lg-3 fw-semibold">Gabungan dari</dt>
+                    <dd class="col-sm-8 col-lg-9 mb-0" id="gabungan-dari"><?= esc(implode(', ', $p['gabungan_dari'])) ?></dd>
+                <?php endif ?>
             </dl>
         </div>
     </section>
@@ -155,9 +159,9 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
         <section class="col-12 col-xl-7" aria-labelledby="judul-penanggung-jawab">
             <div class="card h-100">
                 <div class="card-body p-3 p-lg-4">
-                    <h2 id="judul-penanggung-jawab" class="h5 mb-3">Penanggung jawab</h2>
+                    <h2 id="judul-penanggung-jawab" class="h5 mb-3">Ofisial</h2>
                     <?php if ($p['penanggung_jawab'] === []) : ?>
-                        <p class="text-body-secondary mb-0">Belum ada penanggung jawab.</p>
+                        <p class="text-body-secondary mb-0">Belum ada ofisial.</p>
                     <?php else : ?>
                         <ul class="list-unstyled row g-3 mb-0">
                             <?php foreach ($p['penanggung_jawab'] as $orang) : ?>
@@ -215,7 +219,13 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
             <div class="d-flex flex-wrap align-items-baseline justify-content-between gap-2 px-3 px-lg-4 pt-3 pt-lg-4 pb-2">
                 <h2 id="judul-atlet" class="h5 mb-0">Atlet <span class="text-body-secondary fw-normal">(<?= (int) $p['jumlah_atlet'] ?>)</span></h2>
                 <?php if (! $lunas && $p['tanpa_nomor_dada'] > 0) : ?>
-                    <p class="small text-body-secondary mb-0">Nomor dada dibuat saat pendaftaran ditandai Lunas.</p>
+                    <p class="small text-body-secondary mb-0">Nomor atlet (BIB) dibuat saat pendaftaran ditandai Lunas.</p>
+                <?php elseif ($lunas && ($diurutkanPada = App\Libraries\Panel\UrutkanNomorDada::waktuTerakhir()) !== null) : ?>
+                    <?php // K111: nomor dada sudah diurutkan ulang per sekolah. ?>
+                    <p class="small text-body-secondary mb-0" id="keterangan-nomor-dada">
+                        Nomor atlet (BIB) diurutkan ulang per sekolah pada <?= esc(tanggal_id($diurutkanPada)) ?>.
+                        <a href="<?= site_url('admin/atlet/nomor-dada') ?>">Urutkan nomor atlet (BIB)</a>
+                    </p>
                 <?php endif ?>
             </div>
             <?php if ($p['atlet'] === []) : ?>
@@ -232,7 +242,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                 <th scope="col">Jenis kelamin</th>
                                 <th scope="col">Kelompok umur</th>
                                 <th scope="col">Nomor lomba</th>
-                                <th scope="col" class="pe-3 pe-lg-4">Nomor dada</th>
+                                <th scope="col" class="pe-3 pe-lg-4">Nomor atlet (BIB)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -262,7 +272,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                     </td>
                                     <td class="pe-3 pe-lg-4 nomor-dada">
                                         <?php if ($atlet['nomor_dada'] === null) : ?>
-                                            <?= $strip ?><span class="visually-hidden">Belum ada nomor dada</span>
+                                            <?= $strip ?><span class="visually-hidden">Belum ada nomor atlet (BIB)</span>
                                         <?php else : ?>
                                             <span class="fw-bold fs-5"><?= esc($atlet['nomor_dada']) ?></span>
                                         <?php endif ?>
@@ -318,7 +328,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                         <li>
                                             <?= esc($anggota['nama']) ?>
                                             <span class="badge rounded-pill <?= $anggota['peran'] === Regu::INTI ? 'text-bg-primary' : 'text-bg-light border' ?>"><?= esc(Regu::labelPeran($anggota['peran'])) ?></span>
-                                            <span class="text-body-secondary small">(<?= esc($anggota['nisn']) ?><?= $anggota['nomor_dada'] === null ? '' : ', nomor dada ' . esc($anggota['nomor_dada']) ?>)</span>
+                                            <span class="text-body-secondary small">(<?= esc($anggota['nisn']) ?><?= $anggota['nomor_dada'] === null ? '' : ', nomor atlet (BIB) ' . esc($anggota['nomor_dada']) ?>)</span>
                                         </li>
                                     <?php endforeach; ?>
                                 </ol>

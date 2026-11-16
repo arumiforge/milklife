@@ -235,7 +235,7 @@ final class RingkasanDasbor
     private function nomorLomba(): array
     {
         $baris = $this->baca(
-            "SELECT CONCAT(ku.nama, ' · ', nl.nama, ' ', nl.kategori) AS label, COUNT(*) AS n FROM {atlet_nomor} an"
+            "SELECT CONCAT(ku.nama, ' · ', nl.nama, ' ', IF(nl.kategori = 'mix', 'mixed', nl.kategori)) AS label, COUNT(*) AS n FROM {atlet_nomor} an"
             . ' JOIN {nomor_lomba} nl ON nl.id = an.nomor_lomba_id JOIN {kelompok_umur} ku ON ku.id = nl.kelompok_umur_id'
             . ' GROUP BY nl.id, ku.nama, nl.nama, nl.kategori ORDER BY n DESC, MIN(ku.urutan), MIN(nl.urutan) LIMIT 10',
         );

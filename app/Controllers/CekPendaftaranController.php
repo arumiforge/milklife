@@ -13,9 +13,11 @@ use App\Models\BuktiBayarModel;
  *
  * Formulir memakai GET (`?kode=`): tidak mengubah data, jadi hasilnya bisa
  * dibuka ulang. NPSN menampilkan semua pendaftaran sekolah itu berurutan
- * per pendaftaran (K49); ID menampilkan satu pendaftaran. Hanya bisa dipakai
- * bila pengaturan lengkap (rancangan 6.1). Setiap pencarian dihitung oleh
- * pembatas laju per alamat IP (rancangan 13).
+ * per pendaftaran (K49); ID menampilkan satu pendaftaran. ID lama dari
+ * pendaftaran yang sudah digabung menampilkan pendaftaran gabungannya dengan
+ * keterangan (K109). Hanya bisa dipakai bila pengaturan lengkap (rancangan
+ * 6.1). Setiap pencarian dihitung oleh pembatas laju per alamat IP
+ * (rancangan 13).
  */
 class CekPendaftaranController extends BaseController
 {
@@ -42,6 +44,7 @@ class CekPendaftaranController extends BaseController
             'siap'      => $isi->bukaTutup()->keadaan() !== BukaTutupPendaftaran::DISIAPKAN,
             'kode'      => '',
             'galat'     => null,
+            'info'      => null,
             'hasil'     => [],
         ];
 
@@ -80,6 +83,12 @@ class CekPendaftaranController extends BaseController
             $satu          = $baca->cariId($kode);
             $data['hasil'] = $satu === null ? [] : [$satu];
             $data['galat'] = $satu === null ? 'Pendaftaran dengan ID ' . $kode . ' tidak ditemukan. Periksa lagi ID pada bukti pendaftaran atau pesan konfirmasi WA, misalnya MAC2A0000126.' : null;
+
+            // ID lama dari pendaftaran yang sudah digabung (K109).
+            if ($satu !== null && $satu['id_pendaftaran'] !== $kode) {
+                $data['info'] = 'Pendaftaran ' . $kode . ' sudah digabung ke ' . $satu['id_pendaftaran'] . ' bersama pendaftaran lain dari sekolah yang sama setelah pembayaran dikonfirmasi. '
+                    . 'Pakai ID ' . $satu['id_pendaftaran'] . ' dan cetak ulang bukti pendaftarannya.';
+            }
         } else {
             $data['galat'] = 'Isian belum sesuai. Tulis 8 angka NPSN sekolah (contoh 20300001), atau ID pendaftaran yang diawali MAC (contoh MAC2A0000126).';
         }

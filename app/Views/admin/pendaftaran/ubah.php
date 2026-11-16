@@ -99,7 +99,7 @@ $kartuPj = static function (string $k, ?int $urut, array $orang) use ($tandai, $
     <li class="col-12 col-lg-6 kartu-pj" data-kunci="<?= esc($k, 'attr') ?>">
         <div class="border rounded p-3 h-100">
             <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                <h3 class="h6 mb-0">Penanggung jawab <span class="urut-kartu"><?= $urut === null ? '' : $urut ?></span></h3>
+                <h3 class="h6 mb-0">Ofisial <span class="urut-kartu"><?= $urut === null ? '' : $urut ?></span></h3>
                 <button type="button" class="btn btn-sm btn-outline-danger hapus-kartu">
                     <i class="bi bi-trash" aria-hidden="true"></i> Hapus
                 </button>
@@ -112,7 +112,7 @@ $kartuPj = static function (string $k, ?int $urut, array $orang) use ($tandai, $
                     <?php elseif ($orang['ada_foto']) : ?>
                         <img class="img-fluid rounded border" loading="lazy" src="<?= site_url($alamat . '/foto/' . (int) $orang['id']) ?>" alt="<?= esc('Foto ' . $orang['nama'], 'attr') ?>">
                     <?php else : ?>
-                        <?= view('tata_letak/_tanpa_gambar', ['rasio' => '1x1', 'label' => 'Foto penanggung jawab'], ['saveData' => false]) ?>
+                        <?= view('tata_letak/_tanpa_gambar', ['rasio' => '1x1', 'label' => 'Foto ofisial'], ['saveData' => false]) ?>
                     <?php endif ?>
                 </div>
                 <div class="flex-grow-1">
@@ -214,7 +214,7 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
             <h3 class="h6 mb-0">
                 Atlet <span class="urut-kartu"><?= $urut === null ? '' : $urut ?></span>
                 <?php if ($atlet['nomor_dada'] !== null) : ?>
-                    <span class="badge rounded-pill text-bg-light border ms-1">Nomor dada <?= esc($atlet['nomor_dada']) ?></span>
+                    <span class="badge rounded-pill text-bg-light border ms-1">Nomor atlet (BIB) <?= esc($atlet['nomor_dada']) ?></span>
                 <?php elseif ($atlet['id'] === null) : ?>
                     <span class="badge rounded-pill text-bg-info ms-1">Baru</span>
                 <?php endif ?>
@@ -350,9 +350,9 @@ $galatSekolah = [
             <li>Aturan pendaftaran tetap berlaku: NISN tidak boleh dipakai pendaftaran lain, kelompok umur mengikuti tahun lahir dan jenjang sekolah, dan regu beregu baru harus lengkap (tepat sejumlah inti). Regu yang sudah terdaftar boleh kurang inti, tetapi tidak lebih; regu yang kurang inti ditandai di rincian.</li>
             <li>Biaya nomor lomba dan regu yang tidak berubah tetap seperti saat mendaftar; nomor lomba dan regu baru memakai tarif sekarang (biaya beregu dihitung per regu).</li>
             <?php if ($lunas) : ?>
-                <li>Pendaftaran ini sudah Lunas. Bila totalnya berubah, status kembali menjadi Menunggu Konfirmasi Pembayaran. Bila totalnya tetap, atlet baru langsung mendapat nomor dada.</li>
+                <li>Pendaftaran ini sudah Lunas. Bila totalnya berubah, status kembali menjadi Menunggu Konfirmasi Pembayaran. Bila totalnya tetap, atlet baru langsung mendapat nomor atlet (BIB).</li>
             <?php endif ?>
-            <li>Nomor dada yang sudah dibagikan tetap dipegang atletnya.</li>
+            <li>Nomor atlet (BIB) yang sudah dibagikan tetap dipegang atletnya.</li>
         </ul>
     </div>
 
@@ -406,9 +406,9 @@ $galatSekolah = [
 
         <section class="card mb-4" aria-labelledby="judul-penanggung-jawab">
             <div class="card-body p-3 p-lg-4">
-                <h2 id="judul-penanggung-jawab" class="h5 mb-1">Penanggung jawab</h2>
+                <h2 id="judul-penanggung-jawab" class="h5 mb-1">Ofisial</h2>
                 <p class="small text-body-secondary mb-3">
-                    Minimal <?= (int) $aturan['penanggung_jawab_minimal'] ?>, paling banyak <?= (int) $aturan['penanggung_jawab_maksimal'] ?> orang. Setiap penanggung jawab wajib berfoto.
+                    Minimal <?= (int) $aturan['penanggung_jawab_minimal'] ?>, paling banyak <?= (int) $aturan['penanggung_jawab_maksimal'] ?> orang. Setiap ofisial wajib berfoto.
                 </p>
                 <ul class="list-unstyled row g-3 mb-3" id="daftar-pj">
                     <?php foreach ($isian['penanggung_jawab'] as $i => $orang) : ?>
@@ -416,7 +416,7 @@ $galatSekolah = [
                     <?php endforeach; ?>
                 </ul>
                 <button type="button" class="btn btn-outline-primary" id="tambah-pj">
-                    <i class="bi bi-person-plus" aria-hidden="true"></i> Tambah penanggung jawab
+                    <i class="bi bi-person-plus" aria-hidden="true"></i> Tambah ofisial
                 </button>
             </div>
         </section>

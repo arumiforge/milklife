@@ -52,11 +52,10 @@ Logo bank bawaan dari pemilik (K73), dipasang `php spark data:awal` sebagai logo
 
 ## `unduhan/`
 
-Contoh berkas unduhan (K73), **berkas kosong** yang dipasang `php spark data:awal` bila tabel unduhan masih kosong, bersama flyer dan banner asli dari `sumber/flyer/`. Admin mengganti isinya lewat Pengaturan > Unduhan sebelum produksi.
+Contoh berkas unduhan (K73), **berkas kosong** yang dipasang `php spark data:awal` bila tabel unduhan masih kosong, bersama flyer dan banner asli dari `sumber/flyer/` dan petunjuk teknis resmi dari `sumber/juknis/` (K112). Admin mengganti isinya lewat Pengaturan > Unduhan sebelum produksi.
 
 | Berkas | Judul unduhan |
 |---|---|
-| `petunjuk-teknis.pdf` | Petunjuk teknis lomba |
 | `surat-keterangan-sekolah.docx` | Surat keterangan sekolah |
 | `daftar-atlet.xlsx` | Daftar atlet sekolah |
 | `denah-lokasi.png` | Denah lokasi |

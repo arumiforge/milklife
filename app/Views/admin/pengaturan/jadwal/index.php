@@ -25,7 +25,7 @@ use App\Models\TautanModel;
                 <span class="ikon-bulat mb-3"><i class="bi bi-clock" aria-hidden="true"></i></span>
                 <h2 id="judul-jadwal-kosong" class="h4">Belum ada jadwal</h2>
                 <p class="text-body-secondary mx-auto mb-4">
-                    Tambahkan sosialisasi daring, technical meeting, atau kegiatan lain supaya sekolah tahu
+                    Tambahkan sosialisasi daring, pertemuan teknik (technical meeting), atau kegiatan lain supaya sekolah tahu
                     kapan dan di mana harus hadir. Jadwal tampil di halaman depan.
                 </p>
                 <a class="btn btn-primary" href="<?= site_url('admin/pengaturan/jadwal/tambah') ?>">

@@ -126,13 +126,13 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                         </div>
 
                         <div class="mb-4">
-                            <label for="awalan" class="form-label fw-semibold">Awalan nomor dada</label>
+                            <label for="awalan" class="form-label fw-semibold">Awalan nomor atlet (BIB)</label>
                             <input type="text" inputmode="numeric" autocomplete="off"
                                 class="form-control<?= $salah('awalan') ?>" id="awalan" name="awalan"
                                 value="<?= esc((string) $isian['awalan'], 'attr') ?>" placeholder="Contoh: 2"<?= $jelaskan('awalan', 'awalan-bantuan') ?>>
                             <?= $pesan('awalan') ?>
                             <div id="awalan-bantuan" class="form-text">
-                                Angka pertama nomor dada, satu angka 1 sampai 9. Satu awalan cukup untuk 999 atlet; bila perlu lebih,
+                                Angka pertama nomor atlet (BIB), satu angka 1 sampai 9. Satu awalan cukup untuk 999 atlet; bila perlu lebih,
                                 tulis beberapa awalan dipisah koma, misalnya <strong>2, 6</strong>. Awalan dipakai berurutan seperti ditulis.
                                 <?php if ($awalanLain !== []) : ?>
                                     <span class="d-block mt-1">
@@ -143,7 +143,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                                 <?php foreach ($terpakai as $a) : ?>
                                     <span class="d-block mt-1 text-body">
                                         <i class="bi bi-lock" aria-hidden="true"></i>
-                                        Awalan <?= esc((string) $a['awalan']) ?> sudah dipakai sampai nomor dada
+                                        Awalan <?= esc((string) $a['awalan']) ?> sudah dipakai sampai nomor atlet (BIB)
                                         <?= esc($a['awalan'] . str_pad((string) $a['nomor_terakhir'], 3, '0', STR_PAD_LEFT)) ?>, jadi tidak bisa dihapus.
                                     </span>
                                 <?php endforeach; ?>

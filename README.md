@@ -56,7 +56,7 @@ Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 
    php spark sekolah:impor
    ```
 
-7. Isi data awal Seri 2 (K73): data acara, jadwal pendaftaran, lima kelompok umur beserta batas tahun lahir, jenjang, biaya individu, dan awalan nomor dadanya (KU 8 = 1 sampai KU 18 = 5), semua nomor lomba beserta aturan timnya, rekening pembayaran, isi halaman depan, jadwal, kontak, dan berkas unduhan. Perintah ini hanya dijalankan **sekali** saat pemasangan; bila data sudah ada, perintah menolak supaya isian admin tidak tertimpa.
+7. Isi data awal Seri 2 (K73): data acara, jadwal pendaftaran, lima kelompok umur beserta batas tahun lahir, jenjang, biaya individu, dan awalan nomor atletnya (KU 8 = 1 sampai KU 18 = 5), semua nomor lomba beserta aturan timnya, rekening pembayaran, isi halaman depan, jadwal, kontak, dan berkas unduhan. Perintah ini hanya dijalankan **sekali** saat pemasangan; bila data sudah ada, perintah menolak supaya isian admin tidak tertimpa.
 
    ```
    php spark data:awal
@@ -123,7 +123,7 @@ Semua dijalankan dari folder proyek dengan `php spark <perintah>`.
 | `aset:minify` | Membuat versi kecil CSS, JavaScript, dan SVG. Wajib di produksi setiap memperbarui versi |
 | `cadangan:buat` | Mencadangkan basis data dan unggahan ke satu berkas zip |
 | `pendaftaran:impor <berkas.zip>` | Memasukkan zip dari tombol **Backup data** di panel ke server baru yang belum punya pendaftaran, beserta usulan nama sekolah dan nama sekolah yang disunting admin. Jalankan `sekolah:impor` lebih dulu |
-| `nomor-dada:reset` | Mengosongkan semua nomor dada setelah uji coba (K94). Jangan dijalankan setelah nomor dada dibagikan ke peserta |
+| `nomor-dada:reset` | Mengosongkan semua nomor atlet (BIB) setelah uji coba (K94). Jangan dijalankan setelah nomor atlet dibagikan ke peserta |
 | `dokumen:pdf` | Membuat ulang PDF di `dokumen/pdf/` dari dokumen final |
 
 ## Memperbarui pustaka
@@ -149,7 +149,7 @@ composer uji
 | `app/Views/tata_letak/` | Tata letak halaman: `publik.php`, `admin.php`, `polos.php` |
 | `public/` | Folder yang dibuka peramban: `index.php` dan aset |
 | `public/unggahan/` | Gambar dan berkas unggahan admin; tidak masuk git |
-| `writable/unggahan/` | Foto penanggung jawab dan bukti bayar, di luar folder publik dan hanya disajikan ke admin; tidak masuk git |
+| `writable/unggahan/` | Foto ofisial dan bukti bayar, di luar folder publik dan hanya disajikan ke admin; tidak masuk git |
 | `public/aset/` | CSS, JavaScript, dan pustaka tampilan (Bootstrap, Bootstrap Icons) |
 | `tests/` | Uji: `unit/` (aturan murni), `basisdata/` (migrasi dan model), `fitur/` (halaman dan rute) |
 | `writable/` | Sesi, log, dan berkas sementara buatan aplikasi; isinya tidak masuk git |

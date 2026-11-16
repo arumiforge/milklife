@@ -104,6 +104,8 @@ use Throwable;
  *         'nomor_dada'        => [21 => '2005'],   // nomor dada yang baru dibagikan (K59), hanya simpan()
  *         'tim_dibebankan'    => ['12:A'], // regu yang biaya regunya baru dibebankan (K68)
  *         'tim_ditinggalkan'  => [ … ],   // `TimTanpaPembayar::ditinggalkan()` untuk perubahan ini
+ *         'gabung'            => null,    // hanya simpan(): `GabungPendaftaran::gabungNpsn()` bila pendaftaran
+ *                                         // Lunas ini digabung dengan pendaftaran Lunas lain ber-NPSN sama (K109)
  *     ]
  */
 final class UbahPendaftaran
@@ -364,6 +366,7 @@ final class UbahPendaftaran
         $fotoBaru  = [];
         $fotoLama  = [];
         $nomorDada = [];
+        $gabung    = null;
 
         try {
             foreach ($rencana['penanggung_jawab'] as $i => $orang) {
@@ -542,12 +545,15 @@ final class UbahPendaftaran
                     $this->db->transRollback();
                     $this->hapusFoto($fotoBaru);
 
-                    return self::ringkas(self::gagal($lama, 'simpan', 'Perubahan belum disimpan. Pendaftaran ini sudah Lunas, jadi atlet baru langsung mendapat nomor dada, '
-                        . 'tetapi awalan nomor dada ' . implode(', ', $beri['penuh']) . ' sudah penuh atau belum ada. '
+                    return self::ringkas(self::gagal($lama, 'simpan', 'Perubahan belum disimpan. Pendaftaran ini sudah Lunas, jadi atlet baru langsung mendapat nomor atlet (BIB), '
+                        . 'tetapi awalan nomor atlet (BIB) ' . implode(', ', $beri['penuh']) . ' sudah penuh atau belum ada. '
                         . 'Tambahkan awalan baru di Pengaturan, Kelompok Umur, lalu simpan lagi.'));
                 }
 
                 $nomorDada = $beri['nomor'];
+
+                // K109: NPSN baru mungkin sudah punya pendaftaran Lunas lain; gabungkan.
+                $gabung = (new GabungPendaftaran($this->db))->gabungNpsn($rencana['sekolah']['npsn']);
             }
 
             if ($this->db->transStatus() === false) {
@@ -576,10 +582,11 @@ final class UbahPendaftaran
             throw $e;
         }
 
-        $this->hapusFoto($fotoLama);
+        $this->hapusFoto(array_merge($fotoLama, $gabung['foto'] ?? []));
 
         $rencana['tersimpan']  = true;
         $rencana['nomor_dada'] = $nomorDada;
+        $rencana['gabung']     = $gabung;
 
         return self::ringkas($rencana);
     }
@@ -611,7 +618,7 @@ final class UbahPendaftaran
         foreach ($pj as $i => $orang) {
             $orang = is_array($orang) ? $orang : [];
             $id    = self::id($orang['id'] ?? null);
-            $ke    = 'Penanggung jawab ' . ($i + 1);
+            $ke    = 'Ofisial ' . ($i + 1);
 
             if ($id !== null && (! isset($lama['penanggung_jawab'][$id]) || in_array($id, $idPj, true))) {
                 $galat[] = ['jalur' => "penanggung_jawab.{$i}", 'pesan' => "{$ke}: data tersimpannya tidak dikenal. Muat ulang halaman ini, lalu ubah lagi."];
@@ -697,6 +704,7 @@ final class UbahPendaftaran
             'nomor_dada'        => [],
             'tim_dibebankan'    => [],
             'tim_ditinggalkan'  => [],
+            'gabung'            => null,
         ];
 
         if ($galat !== []) {
@@ -794,7 +802,7 @@ final class UbahPendaftaran
     {
         return 'Pendaftaran ini sudah Lunas, dan perubahan ini mengubah total dari ' . rupiah($totalLama) . ' menjadi ' . rupiah($totalBaru) . '. '
             . 'Setelah disimpan, status kembali menjadi Menunggu Konfirmasi Pembayaran dan perlu ditandai Lunas lagi setelah selisihnya diurus. '
-            . 'Nomor dada yang sudah dibagikan tetap dipegang atletnya.';
+            . 'Nomor atlet (BIB) yang sudah dibagikan tetap dipegang atletnya.';
     }
 
     /**
@@ -819,7 +827,7 @@ final class UbahPendaftaran
                 : 'Total berubah dari ' . rupiah((int) $hasil['total_lama']) . ' menjadi ' . rupiah((int) $hasil['total']) . '.');
 
         if ($hasil['status'] === 'lunas' && $hasil['atlet_baru'] > 0) {
-            $kalimat .= ' Pendaftaran ini sudah Lunas, jadi ' . $hasil['atlet_baru'] . ' atlet baru langsung mendapat nomor dada, dan nomor itu tidak bisa ditarik kembali.';
+            $kalimat .= ' Pendaftaran ini sudah Lunas, jadi ' . $hasil['atlet_baru'] . ' atlet baru langsung mendapat nomor atlet (BIB), dan nomor itu tidak bisa ditarik kembali.';
         }
 
         return $kalimat . $tim;
@@ -995,7 +1003,7 @@ final class UbahPendaftaran
         return array_intersect_key($rencana, array_flip([
             'galat', 'id_pendaftaran', 'perlu_setuju', 'tersimpan', 'status_lama', 'status', 'kembali_menunggu',
             'total_lama', 'subtotal_individu', 'subtotal_beregu', 'total', 'atlet_baru', 'nomor_dada',
-            'tim_dibebankan', 'tim_ditinggalkan',
+            'tim_dibebankan', 'tim_ditinggalkan', 'gabung',
         ]));
     }
 

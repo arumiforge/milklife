@@ -372,7 +372,7 @@ final class MigrasiAturanDataTest extends UjiBasisData
         $this->db->table('awalan_nomor_dada')->insert(['kelompok_umur_id' => $ku, 'awalan' => '1']);
         $nomor       = $this->buatNomorLomba($ku);
         $pendaftaran = $this->buatPendaftaran();
-        $this->db->table('jadwal')->insert(['judul' => 'Technical meeting']);
+        $this->db->table('jadwal')->insert(['judul' => 'Pertemuan teknik (Technical meeting)']);
         $this->db->table('unduhan')->insert(['judul' => 'Juknis', 'berkas' => 'juknis.pdf']);
         $this->db->table('tautan')->insert(['jenis' => 'narahubung', 'label' => 'Panitia', 'nilai' => '081200000000']);
 

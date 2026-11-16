@@ -147,7 +147,7 @@ class JadwalController extends BaseController
         $galat = [];
 
         if ($isian['judul'] === '') {
-            $galat['judul'] = 'Judul belum diisi. Tulis nama kegiatannya, misalnya Technical Meeting.';
+            $galat['judul'] = 'Judul belum diisi. Tulis nama kegiatannya, misalnya Pertemuan Teknik (Technical Meeting).';
         } elseif (mb_strlen($isian['judul']) > JadwalModel::PANJANG['judul']) {
             $galat['judul'] = 'Judul terlalu panjang. Persingkat menjadi paling banyak ' . JadwalModel::PANJANG['judul'] . ' huruf.';
         }

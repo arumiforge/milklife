@@ -26,7 +26,7 @@ class ResetNomorDada extends BaseCommand
 {
     protected $group       = 'Aplikasi';
     protected $name        = 'nomor-dada:reset';
-    protected $description = 'Mengosongkan semua nomor dada (setelah uji coba) dan mengembalikan pendaftaran Lunas ke Menunggu.';
+    protected $description = 'Mengosongkan semua nomor atlet (BIB) (setelah uji coba) dan mengembalikan pendaftaran Lunas ke Menunggu.';
     protected $usage       = 'nomor-dada:reset [--ya]';
     protected $options     = [
         '--ya' => 'Jalankan tanpa pertanyaan konfirmasi.',
@@ -38,7 +38,7 @@ class ResetNomorDada extends BaseCommand
         $nomor  = $db->table('atlet')->where('nomor_dada IS NOT NULL')->countAllResults();
         $lunas  = $db->table('pendaftaran')->where('status', 'lunas')->countAllResults();
 
-        CLI::write("Akan dikosongkan: {$nomor} nomor dada. Pendaftaran Lunas yang kembali menjadi Menunggu: {$lunas}.", 'yellow');
+        CLI::write("Akan dikosongkan: {$nomor} nomor atlet (BIB). Pendaftaran Lunas yang kembali menjadi Menunggu: {$lunas}.", 'yellow');
         CLI::write('Penghitung semua awalan kembali ke awal. Tindakan ini tidak bisa dibatalkan; buat cadangan dulu bila ragu (php spark cadangan:buat).');
 
         if (! array_key_exists('ya', $params) && CLI::getOption('ya') === null
@@ -56,7 +56,11 @@ class ResetNomorDada extends BaseCommand
         $db->table('pendaftaran')->where('status', 'lunas')->update(['status' => 'menunggu', 'waktu_lunas' => null, 'diubah_pada' => $sekarang]);
         $db->transComplete();
 
-        CLI::write('Selesai. Semua nomor dada kosong; tandai Lunas lagi di panel untuk memberi nomor baru mulai dari awal.', 'green');
+        // Keterangan "nomor dada diurutkan ulang" (K111) tidak berlaku lagi.
+        setting('NomorDada.diurutkan_pada', null);
+        setting('NomorDada.diurutkan_oleh', null);
+
+        CLI::write('Selesai. Semua nomor atlet (BIB) kosong; tandai Lunas lagi di panel untuk memberi nomor baru mulai dari awal.', 'green');
 
         return EXIT_SUCCESS;
     }

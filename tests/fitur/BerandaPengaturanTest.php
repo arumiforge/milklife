@@ -93,7 +93,7 @@ final class BerandaPengaturanTest extends UjiHalaman
         }
 
         $this->assertSame(['Wajib diisi sebelum pendaftaran dibuka', 'Isi halaman depan', 'Akun Anda'], $judul);
-        $hasil->assertSee('Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor dada.');
+        $hasil->assertSee('Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor atlet (BIB).');
 
         // Tanda lengkap/belum (F2-09) hanya ada pada lima kartu wajib.
         $bertanda = [];

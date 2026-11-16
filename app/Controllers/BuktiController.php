@@ -27,6 +27,9 @@ use CodeIgniter\HTTP\ResponseInterface;
  * hasil pencarian `kembali` dengan pesan kilat). Alamat bukti berkode acak
  * menjadi izinnya, jadi ID atau NPSN saja tidak cukup. Pendaftaran Lunas
  * tidak menerima bukti lagi; batas 5 gambar sama dengan panel admin.
+ *
+ * Alamat bukti lama dari pendaftaran yang sudah digabung (K109) diarahkan ke
+ * alamat bukti pendaftaran gabungannya.
  */
 class BuktiController extends BaseController
 {
@@ -56,7 +59,15 @@ class BuktiController extends BaseController
         }
 
         $pendaftaran = $this->cariPendaftaran($kode, $id);
-        $bukti       = new BuktiPendaftaran($pendaftaran);
+
+        // Alamat bukti lama dari pendaftaran yang sudah digabung (K109): kode QR
+        // di bukti yang sudah dicetak diarahkan ke bukti pendaftaran gabungan.
+        if (strcasecmp((string) $pendaftaran['id_pendaftaran'], $id) !== 0) {
+            return redirect()->to(BuktiPendaftaran::alamat($pendaftaran))
+                ->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        }
+
+        $bukti = new BuktiPendaftaran($pendaftaran);
 
         return $this->response
             ->setContentType('application/pdf')
@@ -96,12 +107,23 @@ class BuktiController extends BaseController
 
     /**
      * Pendaftaran dengan kode bukti yang cocok, atau halaman tidak ditemukan.
+     * ID dan kode bukti lama dari pendaftaran yang sudah digabung (K109)
+     * memberi pendaftaran gabungannya.
      *
      * @return array<string, mixed>
      */
     private function cariPendaftaran(string $kode, string $id): array
     {
-        $pendaftaran = preg_match('/^MAC[0-9A-Za-z]{1,17}$/', $id) === 1 ? (new DataPendaftaran())->cariId($id) : null;
+        $baca        = new DataPendaftaran();
+        $sah         = preg_match('/^MAC[0-9A-Za-z]{1,17}$/', $id) === 1;
+        $pendaftaran = $sah ? $baca->cariId($id) : null;
+
+        if ($pendaftaran !== null && strcasecmp((string) $pendaftaran['id_pendaftaran'], $id) !== 0) {
+            // ID lama: hanya sah bersama kode bukti lamanya.
+            $tujuan      = $baca->cariBuktiLama($id, $kode);
+            $pendaftaran = $tujuan === null ? null : $baca->cariId($tujuan['id_pendaftaran']);
+            $kode        = (string) ($pendaftaran['kode_bukti'] ?? '');
+        }
 
         if ($pendaftaran === null || ! hash_equals((string) ($pendaftaran['kode_bukti'] ?? ''), $kode)) {
             throw PageNotFoundException::forPageNotFound('Bukti pendaftaran tidak ditemukan. Buka bukti lewat tombol di halaman Cek Pendaftaran, atau pindai kode QR di bukti yang sudah dicetak.');

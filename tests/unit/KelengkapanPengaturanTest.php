@@ -193,7 +193,7 @@ final class KelengkapanPengaturanTest extends CIUnitTestCase
         $this->assertFalse($butir['lengkap']);
         $this->assertSame(
             'KU 12 belum punya batas tahun lahir. KU 10, KU 12 belum punya jenjang sekolah. '
-            . 'KU 12 belum punya biaya individu. KU 10 belum punya awalan nomor dada.',
+            . 'KU 12 belum punya biaya individu. KU 10 belum punya awalan nomor atlet (BIB).',
             $butir['keterangan'],
         );
     }

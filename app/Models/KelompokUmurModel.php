@@ -435,7 +435,7 @@ class KelompokUmurModel extends Model
         );
 
         if ($terpakai !== []) {
-            return 'Awalan nomor dada ' . implode(', ', $terpakai) . " milik {$nama} sudah dipakai, jadi kelompok umur ini tidak bisa dihapus." . $matikan;
+            return 'Awalan nomor atlet (BIB) ' . implode(', ', $terpakai) . " milik {$nama} sudah dipakai, jadi kelompok umur ini tidak bisa dihapus." . $matikan;
         }
 
         $nomor = $this->db->table('nomor_lomba')->where('kelompok_umur_id', $id)->countAllResults();
@@ -501,7 +501,7 @@ class KelompokUmurModel extends Model
 
         foreach (model(AwalanNomorDadaModel::class)->milikKelompokUmur($id) as $baris) {
             if ((int) $baris['nomor_terakhir'] > 0 && ! in_array((string) $baris['awalan'], $awalan, true)) {
-                return 'Awalan ' . $baris['awalan'] . ' sudah dipakai untuk nomor dada, jadi tidak bisa dihapus. Tulis lagi angka ' . $baris['awalan'] . ' di kotak awalan.';
+                return 'Awalan ' . $baris['awalan'] . ' sudah dipakai untuk nomor atlet (BIB), jadi tidak bisa dihapus. Tulis lagi angka ' . $baris['awalan'] . ' di kotak awalan.';
             }
         }
 

@@ -15,6 +15,8 @@ use Throwable;
  *   atlet yang belum punya nomor dada mendapat nomor. Bila awalan satu
  *   kelompok umur saja tidak cukup, seluruh penandaan dibatalkan: status
  *   tetap Menunggu dan tidak ada nomor yang dibagikan.
+ *   Setelah itu pendaftaran Lunas lain dengan NPSN sama digabung menjadi
+ *   satu (`GabungPendaftaran`, K109).
  * - `kembaliMenunggu()`: status kembali ke Menunggu, `waktu_lunas` dikosongkan.
  *   Nomor dada tidak dihapus; saat ditandai Lunas lagi nomornya tetap.
  * - `beriNomorDada()`: beri nomor kepada atlet satu pendaftaran yang belum
@@ -57,6 +59,11 @@ use Throwable;
  */
 final class StatusPembayaran
 {
+    /**
+     * Lama menunggu kunci sekolah (`GET_LOCK`), dalam detik.
+     */
+    public const TUNGGU_KUNCI = 10;
+
     private BaseConnection $db;
 
     public function __construct(?BaseConnection $db = null)
@@ -65,12 +72,50 @@ final class StatusPembayaran
     }
 
     /**
-     * Tandai Lunas dan beri nomor dada kepada atlet yang belum punya.
+     * Tandai Lunas dan beri nomor dada kepada atlet yang belum punya. Bila
+     * sudah ada pendaftaran Lunas lain dengan NPSN sama, keduanya digabung
+     * (`GabungPendaftaran`, K109) dalam transaksi yang sama.
      *
-     * @return array{berhasil: bool, pesan: string|null, nomor: array<int, string>}
+     * @return array{berhasil: bool, pesan: string|null, nomor: array<int, string>, gabung: array<string, mixed>|null}
      *         `nomor`: id atlet => nomor dada yang baru dibagikan.
+     *         `gabung`: hasil `GabungPendaftaran::gabungNpsn()`, atau `null` bila tidak ada yang digabung.
      */
     public function tandaiLunas(int $pendaftaranId): array
+    {
+        // Kunci sekolah yang sama dengan wizard dan Ubah, supaya dua pendaftaran
+        // ber-NPSN sama yang ditandai Lunas bersamaan tetap tergabung (K109).
+        $npsn  = $this->npsn($pendaftaranId);
+        $kunci = $npsn !== null ? 'milklife-pendaftaran-' . $npsn : null;
+
+        if ($kunci !== null && $this->db->transDepth === 0) {
+            $dapat = $this->db->query('SELECT GET_LOCK(?, ?) AS dapat', [$kunci, self::TUNGGU_KUNCI]);
+
+            if (! is_object($dapat) || (int) ($dapat->getRowArray()['dapat'] ?? 0) !== 1) {
+                return ['berhasil' => false, 'pesan' => 'Pendaftaran lain dari sekolah ini sedang disimpan. Tunggu beberapa detik, lalu coba lagi.', 'nomor' => [], 'gabung' => null];
+            }
+        } else {
+            $kunci = null;
+        }
+
+        try {
+            $hasil = $this->tandaiLunasTerkunci($pendaftaranId);
+        } finally {
+            if ($kunci !== null) {
+                $this->db->query('SELECT RELEASE_LOCK(?)', [$kunci]);
+            }
+        }
+
+        if ($hasil['gabung'] !== null && $hasil['gabung']['foto'] !== [] && $this->db->transDepth === 0) {
+            (new GabungPendaftaran($this->db))->hapusFoto($hasil['gabung']['foto']);
+        }
+
+        return $hasil;
+    }
+
+    /**
+     * @return array{berhasil: bool, pesan: string|null, nomor: array<int, string>, gabung: array<string, mixed>|null}
+     */
+    private function tandaiLunasTerkunci(int $pendaftaranId): array
     {
         $this->mulai();
 
@@ -80,13 +125,13 @@ final class StatusPembayaran
             if ($baris === null) {
                 $this->db->transRollback();
 
-                return ['berhasil' => false, 'pesan' => 'Pendaftaran ini tidak ditemukan. Mungkin sudah dihapus.', 'nomor' => []];
+                return ['berhasil' => false, 'pesan' => 'Pendaftaran ini tidak ditemukan. Mungkin sudah dihapus.', 'nomor' => [], 'gabung' => null];
             }
 
             if ($baris['status'] === 'lunas') {
                 $this->db->transRollback();
 
-                return ['berhasil' => false, 'pesan' => 'Pendaftaran ini sudah Lunas.', 'nomor' => []];
+                return ['berhasil' => false, 'pesan' => 'Pendaftaran ini sudah Lunas.', 'nomor' => [], 'gabung' => null];
             }
 
             $nomor = $this->beriNomorDada($pendaftaranId);
@@ -94,7 +139,7 @@ final class StatusPembayaran
             if ($nomor['penuh'] !== []) {
                 $this->db->transRollback();
 
-                return ['berhasil' => false, 'pesan' => $nomor['pesan'], 'nomor' => []];
+                return ['berhasil' => false, 'pesan' => $nomor['pesan'], 'nomor' => [], 'gabung' => null];
             }
 
             $sekarang = self::sekarang();
@@ -104,9 +149,12 @@ final class StatusPembayaran
                 'diubah_pada' => $sekarang,
             ]));
 
+            // K109: pendaftaran Lunas lain dengan NPSN sama digabung menjadi satu.
+            $gabung = (new GabungPendaftaran($this->db))->gabungNpsn($baris['npsn'] ?? null);
+
             $this->selesai();
 
-            return ['berhasil' => true, 'pesan' => null, 'nomor' => $nomor['nomor']];
+            return ['berhasil' => true, 'pesan' => null, 'nomor' => $nomor['nomor'], 'gabung' => $gabung];
         } catch (Throwable $e) {
             $this->batal();
 
@@ -273,13 +321,13 @@ final class StatusPembayaran
         foreach ($penuh as $kuId => $awalan) {
             $namaKu   = $nama[$kuId] ?? 'kelompok umur ini';
             $bagian[] = $awalan === []
-                ? $namaKu . ' belum punya awalan nomor dada'
-                : 'awalan nomor dada ' . $namaKu . ' (' . implode(', ', array_column($awalan, 'awalan')) . ') sudah penuh';
+                ? $namaKu . ' belum punya awalan nomor atlet (BIB)'
+                : 'awalan nomor atlet (BIB) ' . $namaKu . ' (' . implode(', ', array_column($awalan, 'awalan')) . ') sudah penuh';
         }
 
         $semuaNama = array_map(static fn (int $kuId): string => $nama[$kuId] ?? 'kelompok umur ini', array_keys($penuh));
 
-        return 'Pendaftaran belum ditandai Lunas dan belum ada nomor dada yang dibuat karena ' . self::gabung($bagian) . '. '
+        return 'Pendaftaran belum ditandai Lunas dan belum ada nomor atlet (BIB) yang dibuat karena ' . self::gabung($bagian) . '. '
             . 'Tambahkan awalan baru untuk ' . self::gabung($semuaNama) . ' di Pengaturan, Kelompok Umur, lalu tandai Lunas lagi.';
     }
 
@@ -288,7 +336,17 @@ final class StatusPembayaran
      */
     private function kunciPendaftaran(int $pendaftaranId): ?array
     {
-        return $this->baca('SELECT id, status FROM pendaftaran WHERE id = ? FOR UPDATE', [$pendaftaranId])[0] ?? null;
+        return $this->baca('SELECT id, status, npsn FROM pendaftaran WHERE id = ? FOR UPDATE', [$pendaftaranId])[0] ?? null;
+    }
+
+    /**
+     * NPSN pendaftaran (tanpa kunci), atau `null` bila kosong atau tidak ditemukan.
+     */
+    private function npsn(int $pendaftaranId): ?string
+    {
+        $npsn = trim((string) ($this->baca('SELECT npsn FROM pendaftaran WHERE id = ?', [$pendaftaranId])[0]['npsn'] ?? ''));
+
+        return $npsn === '' ? null : $npsn;
     }
 
     /**

@@ -90,20 +90,20 @@ final class FotoPenanggungJawab
         $gambar = @imagecreatefromstring($isi);
 
         if ($gambar === false) {
-            throw new RuntimeException('Foto penanggung jawab tidak bisa dibaca.');
+            throw new RuntimeException('Foto ofisial tidak bisa dibaca.');
         }
 
         $folder = self::folderDasar() . self::FOLDER;
 
         if (! is_dir($folder) && ! mkdir($folder, 0775, true) && ! is_dir($folder)) {
-            throw new RuntimeException('Folder foto penanggung jawab tidak bisa dibuat.');
+            throw new RuntimeException('Folder foto ofisial tidak bisa dibuat.');
         }
 
         $jalur = self::FOLDER . '/' . bin2hex(random_bytes(16)) . '.jpg';
 
         try {
             if (! imagejpeg($gambar, self::folderDasar() . $jalur, 85)) {
-                throw new RuntimeException('Foto penanggung jawab tidak bisa disimpan.');
+                throw new RuntimeException('Foto ofisial tidak bisa disimpan.');
             }
         } finally {
             imagedestroy($gambar);

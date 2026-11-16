@@ -250,7 +250,7 @@ final class KelengkapanPengaturan
             'batas tahun lahir'      => [],
             'jenjang sekolah'        => [],
             'biaya individu'         => [],
-            'awalan nomor dada'      => [],
+            'awalan nomor atlet (BIB)'      => [],
         ];
 
         foreach ($aktif as $ku) {
@@ -269,7 +269,7 @@ final class KelengkapanPengaturan
             }
 
             if (array_filter(self::larik($ku['awalan'] ?? []), self::teksTerisi(...)) === []) {
-                $kurang['awalan nomor dada'][] = $nama;
+                $kurang['awalan nomor atlet (BIB)'][] = $nama;
             }
         }
 

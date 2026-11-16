@@ -121,11 +121,11 @@ class BerandaPengaturanController extends BaseController
         $daftar = [
             ['acara', 'Data Acara', 'calendar-event', 'admin/pengaturan/acara', 'Nama, seri, tahun, tempat, dan tanggal acara.', $wajib],
             ['pendaftaran', 'Pendaftaran', 'door-open', 'admin/pengaturan/pendaftaran', 'Jadwal buka dan tutup, buka manual, tampilan usia, dan batas-batas pendaftaran.', $wajib],
-            ['kelompok-umur', 'Kelompok Umur', 'people', 'admin/pengaturan/kelompok-umur', 'Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor dada.', $wajib],
+            ['kelompok-umur', 'Kelompok Umur', 'people', 'admin/pengaturan/kelompok-umur', 'Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor atlet (BIB).', $wajib],
             ['nomor-lomba', 'Nomor Lomba', 'trophy', 'admin/pengaturan/nomor-lomba', 'Nomor individu dan beregu tiap kelompok umur, beserta biaya beregu.', $wajib],
             ['pembayaran', 'Pembayaran', 'bank', 'admin/pengaturan/pembayaran', 'Rekening, nomor WA konfirmasi, dan isi pesan pembayaran.', $wajib],
             ['halaman-depan', 'Halaman Depan', 'window', 'admin/pengaturan/halaman-depan', 'Gambar kepala, logo, judul, teks, dan pesan WA.', $depan],
-            ['jadwal', 'Jadwal', 'clock', 'admin/pengaturan/jadwal', 'Sosialisasi, technical meeting, dan jadwal lain.', $depan],
+            ['jadwal', 'Jadwal', 'clock', 'admin/pengaturan/jadwal', 'Sosialisasi, pertemuan teknik (technical meeting), dan jadwal lain.', $depan],
             ['unduhan', 'Unduhan', 'download', 'admin/pengaturan/unduhan', 'Flyer, juknis, dan berkas lain untuk diunduh sekolah.', $depan],
             ['kontak', 'Kontak', 'telephone', 'admin/pengaturan/kontak', 'Narahubung dan media sosial.', $depan],
             ['akun', 'Akun', 'person-gear', 'admin/akun', 'Ganti nama, nama pengguna, dan kata sandi Anda.', $sendiri],

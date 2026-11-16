@@ -109,7 +109,7 @@ final class Rekap
     private function nomorLomba(?string $status): array
     {
         $baris = $this->baca(
-            'SELECT ku.nama AS kelompok_umur, CONCAT(nl.nama, \' \', nl.kategori) AS nomor_lomba, a.nomor_dada, a.nama, a.nisn,'
+            'SELECT ku.nama AS kelompok_umur, CONCAT(nl.nama, \' \', IF(nl.kategori = \'mix\', \'mixed\', nl.kategori)) AS nomor_lomba, a.nomor_dada, a.nama, a.nisn,'
             . ' p.nama_sekolah, p.kabupaten, p.status'
             . ' FROM {atlet_nomor} an JOIN {atlet} a ON a.id = an.atlet_id JOIN {pendaftaran} p ON p.id = a.pendaftaran_id'
             . ' JOIN {nomor_lomba} nl ON nl.id = an.nomor_lomba_id JOIN {kelompok_umur} ku ON ku.id = nl.kelompok_umur_id'
@@ -122,7 +122,7 @@ final class Rekap
             'kolom' => self::kolom([
                 'kelompok_umur' => 'Kelompok Umur',
                 'nomor_lomba'   => 'Nomor Lomba',
-                'nomor_dada'    => 'Nomor Dada',
+                'nomor_dada'    => 'Nomor Atlet (BIB)',
                 'nama'          => 'Nama',
                 'nisn'          => 'NISN',
                 'nama_sekolah'  => 'Sekolah',
@@ -137,7 +137,7 @@ final class Rekap
     private function timBeregu(?string $status): array
     {
         $baris = $this->baca(
-            'SELECT MAX(ku.nama) AS kelompok_umur, MAX(CONCAT(nl.nama, \' \', nl.kategori)) AS nomor_lomba, an.regu,'
+            'SELECT MAX(ku.nama) AS kelompok_umur, MAX(CONCAT(nl.nama, \' \', IF(nl.kategori = \'mix\', \'mixed\', nl.kategori))) AS nomor_lomba, an.regu,'
             . ' MAX(p.nama_sekolah) AS nama_sekolah, MAX(p.kabupaten) AS kabupaten, COUNT(*) AS jumlah_anggota,'
             . " SUM(an.peran = 'inti') AS jumlah_inti, MAX(nl.jumlah_inti) AS inti_wajib,"
             . " GROUP_CONCAT(CONCAT(CONCAT_WS(' ', a.nomor_dada, a.nama), IF(an.peran = 'inti', '', ' (cadangan)'))"

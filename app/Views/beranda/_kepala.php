@@ -139,7 +139,7 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
     <?php if ($kelompokUmur !== []) : ?>
         <div class="pembuka-ku">
             <div class="container">
-                <p class="pembuka-ku-label"><span>Kelompok usia</span></p>
+                <p class="pembuka-ku-label"><span>Kelompok umur</span></p>
                 <ul class="pembuka-ku-daftar">
                     <?php foreach ($kelompokUmur as $i => $ku) : ?>
                         <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>

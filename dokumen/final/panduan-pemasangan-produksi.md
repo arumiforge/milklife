@@ -2,9 +2,10 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101) |
+| Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026 |
+| Tanggal | 12 November 2026, revisi 14 dan 16 November 2026 |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -62,7 +63,7 @@ Panduan ini ditulis untuk Windows dengan Laragon. Semua perintah diketik di **te
    composer install --no-dev --optimize-autoloader
    ```
 
-4. Klik **Reload** di Laragon. Laragon membuat alamat lokal `http://milklife.test` yang langsung menunjuk ke folder `C:\laragon\www\milklife\public`. Folder `public` saja yang dibuka peramban; kode, `.env`, foto penanggung jawab, dan bukti bayar ada di luar folder itu.
+4. Klik **Reload** di Laragon. Laragon membuat alamat lokal `http://milklife.test` yang langsung menunjuk ke folder `C:\laragon\www\milklife\public`. Folder `public` saja yang dibuka peramban; kode, `.env`, foto ofisial, dan bukti bayar ada di luar folder itu.
 
 ## 4. Basis data
 
@@ -170,7 +171,7 @@ Mengapa `127.0.0.1` dan bukan alamat jaringan server (misalnya `192.168.1.10`): 
 `php spark cadangan:buat` menulis satu berkas `cadangan-milklife-<tahun-bulan-tanggal-jammenit>.zip` berisi:
 
 - `basisdata.sql`: seluruh isi basis data (pendaftaran, atlet, pengaturan, akun admin);
-- `writable/unggahan/`: foto penanggung jawab dan bukti bayar;
+- `writable/unggahan/`: foto ofisial dan bukti bayar;
 - `public/unggahan/`: gambar halaman depan, logo, dan berkas unduhan yang diunggah admin.
 
 Setelah berhasil, cadangan yang berumur 14 hari atau lebih di folder itu dihapus, jadi yang tersimpan adalah 14 cadangan terakhir. Bila gagal, tidak ada cadangan lama yang dihapus. Berkas zip ini berisi data pribadi siswa: jangan dibagikan dan jangan diunggah ke tempat umum.
@@ -251,7 +252,7 @@ Lakukan hanya bila data rusak atau terhapus, atau saat pindah ke komputer baru. 
    php spark migrate --all
    ```
 
-6. Buka panel admin dan periksa: jumlah pendaftaran di dasbor, satu rincian pendaftaran beserta foto penanggung jawab dan bukti bayarnya, dan halaman depan.
+6. Buka panel admin dan periksa: jumlah pendaftaran di dasbor, satu rincian pendaftaran beserta foto ofisial dan bukti bayarnya, dan halaman depan.
 7. Hapus folder `C:\pemulihan` setelah selesai, karena isinya data pribadi.
 
 **Pindah ke komputer baru**: ikuti bagian 2 sampai 5 (pakai salinan `.env` lama bila ada), jalankan `php spark migrate --all`, lalu langkah 2–6 di atas. Lewati `sekolah:impor`, `data:awal`, dan `admin:buat`, karena semuanya sudah ada di cadangan. Jalankan `php spark aset:minify`, lalu bagian 7 dan 8. Tunnel yang sudah ada bisa dipakai lagi: copot dulu `cloudflared` di komputer lama (**Apps & features** → `cloudflared` → **Uninstall**), lalu pasang di komputer baru dengan perintah `service install` dari dasbor tunnel itu.
@@ -277,6 +278,16 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    ```
 
    `sekolah:impor` memasukkan data sekolah terbaru bila versi baru membawanya. Sekolah yang sudah disunting admin tidak ditimpa, dan tidak ada sekolah yang dihapus.
+
+   Pembaruan yang membawa penggabungan pendaftaran (16 November 2026, K109) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
+
+   ```
+   php spark pendaftaran:gabung
+   ```
+
+   Perintah ini menampilkan sekolah yang punya lebih dari satu pendaftaran Lunas, lalu meminta Anda mengetik `GABUNG`. Setiap sekolah digabung ke pendaftaran yang Lunas paling dulu; ID dan kode QR bukti lama tetap mengarah ke pendaftaran gabungan. Bila muncul "Tidak ada yang perlu digabung", tidak ada yang berubah.
+
+   Pembaruan yang sama mengubah KU 12 menjadi kelahiran 2014–2015 sesuai juknis (K112), otomatis saat `migrate`, asalkan KU 12 di panel masih kelahiran 2015 saja. Periksa di **Pengaturan → Kelompok Umur**. Ganti juga berkas contoh "Petunjuk teknis lomba" di **Pengaturan → Unduhan** dengan PDF juknis, dan samakan jadwal pertemuan teknik (Minggu, 6 Desember 2026 pukul 10.00, Super Cafe SSA Kudus) di **Pengaturan → Jadwal**.
 
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 
@@ -305,7 +316,7 @@ Isi:
 - [ ] Halaman depan: acara, jadwal, nomor lomba, biaya, rekening pembayaran, kontak, dan unduhan (juknis) benar.
 - [ ] Jadwal buka dan tutup pendaftaran benar.
 - [ ] Menu **Sekolah**: sekolah bernama sama dengan sekolah lain (saringan Nama → "Sama dengan sekolah lain") yang diperkirakan ikut sudah diberi nama pembeda, misalnya dengan nama desa (K97). Sisanya bisa diusulkan pendaftar sendiri saat mendaftar (K99).
-- [ ] Coba satu pendaftaran dengan data karangan sampai selesai, buka halaman cek dan bukti PDF-nya, lalu hapus pendaftaran itu dari panel. **Jangan** menandainya Lunas: nomor dada yang sudah terpakai tidak pernah dipakai ulang.
+- [ ] Coba satu pendaftaran dengan data karangan sampai selesai, buka halaman cek dan bukti PDF-nya, lalu hapus pendaftaran itu dari panel. **Jangan** menandainya Lunas: nomor atlet (BIB) yang sudah terpakai tidak pernah dipakai ulang.
 
 Cadangan:
 

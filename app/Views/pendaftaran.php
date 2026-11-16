@@ -15,7 +15,7 @@
 
 $langkah = [
     1 => 'Data Sekolah',
-    2 => 'Penanggung Jawab',
+    2 => 'Ofisial',
     3 => 'Atlet',
     4 => 'Biaya',
     5 => 'Pembayaran',

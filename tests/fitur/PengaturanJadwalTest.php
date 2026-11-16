@@ -21,8 +21,8 @@ final class PengaturanJadwalTest extends UjiBasisData
      * @var array<string, string>
      */
     private const ISIAN = [
-        'judul'      => 'Technical Meeting',
-        'keterangan' => 'Wajib dihadiri satu official tiap sekolah.',
+        'judul'      => 'Pertemuan Teknik (Technical Meeting)',
+        'keterangan' => 'Wajib dihadiri satu ofisial tiap sekolah.',
         'waktu'      => '2026-12-05T09:00',
         'tempat'     => 'Aula Sekolah Karangan',
         'tautan'     => '',
@@ -82,7 +82,7 @@ final class PengaturanJadwalTest extends UjiBasisData
     public function testDaftarMenampilkanJadwalMenurutUrutan(): void
     {
         $kedua = $this->buatJadwal([
-            'judul'  => 'Technical Meeting',
+            'judul'  => 'Pertemuan Teknik (Technical Meeting)',
             'urutan' => 2,
             'waktu'  => '2026-12-05 09:00:00',
             'tempat' => 'Aula <Karangan>',
@@ -119,7 +119,7 @@ final class PengaturanJadwalTest extends UjiBasisData
         $this->assertNotNull($hapus);
         $this->assertSame('post', $hapus->getAttribute('method'));
         $this->assertSame(site_url(self::ALAMAT . "/{$kedua}/hapus"), $hapus->getAttribute('action'));
-        $this->assertStringContainsString('Technical Meeting', $hapus->getAttribute('data-konfirmasi'));
+        $this->assertStringContainsString('Pertemuan Teknik (Technical Meeting)', $hapus->getAttribute('data-konfirmasi'));
         $this->assertSame(1, $xpath->query('.//input[@name="' . config('Security')->tokenName . '"]', $hapus)->length);
         $hasil->assertSee(aset('js/konfirmasi.js'));
         $this->assertSame(1, $xpath->query('.//a[@href="' . site_url(self::ALAMAT . "/{$kedua}/ubah") . '"]', $baris->item(1))->length);
@@ -170,10 +170,10 @@ final class PengaturanJadwalTest extends UjiBasisData
     {
         $this->buatJadwal(['urutan' => 6]);
 
-        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['judul' => 'Pengambilan Nomor Dada', 'urutan' => '']);
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['judul' => 'Pengambilan Nomor Atlet (BIB)', 'urutan' => '']);
 
         $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
-        $this->seeInDatabase('jadwal', ['judul' => 'Pengambilan Nomor Dada', 'waktu' => null, 'urutan' => 7, 'tampil' => 0]);
+        $this->seeInDatabase('jadwal', ['judul' => 'Pengambilan Nomor Atlet (BIB)', 'waktu' => null, 'urutan' => 7, 'tampil' => 0]);
     }
 
     public function testIsianSalahDitampilkanUlang(): void
@@ -212,7 +212,7 @@ final class PengaturanJadwalTest extends UjiBasisData
     public function testFormulirUbahTerisi(): void
     {
         $id = $this->buatJadwal([
-            'judul'      => 'Technical Meeting',
+            'judul'      => 'Pertemuan Teknik (Technical Meeting)',
             'keterangan' => 'Bawa surat tugas.',
             'waktu'      => '2026-12-05 09:00:00',
             'tempat'     => 'Aula',
@@ -226,7 +226,7 @@ final class PengaturanJadwalTest extends UjiBasisData
 
         $xpath = $this->xpathDari($hasil);
         $this->assertSame(site_url(self::ALAMAT . "/{$id}"), $xpath->query('//main//form[@method="post"]')->item(0)->getAttribute('action'));
-        $this->assertSame('Technical Meeting', $xpath->query('//input[@name="judul"]')->item(0)->getAttribute('value'));
+        $this->assertSame('Pertemuan Teknik (Technical Meeting)', $xpath->query('//input[@name="judul"]')->item(0)->getAttribute('value'));
         $this->assertSame('2026-12-05T09:00', $xpath->query('//input[@name="waktu"]')->item(0)->getAttribute('value'));
         $this->assertSame('https://zoom.us/j/1', $xpath->query('//input[@name="tautan"]')->item(0)->getAttribute('value'));
         $this->assertSame('Bawa surat tugas.', $xpath->query('//textarea[@name="keterangan"]')->item(0)->textContent);
@@ -285,12 +285,12 @@ final class PengaturanJadwalTest extends UjiBasisData
 
     public function testHapusBerhasil(): void
     {
-        $id   = $this->buatJadwal(['judul' => 'Technical Meeting']);
+        $id   = $this->buatJadwal(['judul' => 'Pertemuan Teknik (Technical Meeting)']);
         $lain = $this->buatJadwal(['judul' => 'Sosialisasi Daring']);
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}/hapus");
 
-        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Jadwal "Technical Meeting" sudah dihapus.');
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Jadwal "Pertemuan Teknik (Technical Meeting)" sudah dihapus.');
         $this->dontSeeInDatabase('jadwal', ['id' => $id]);
         $this->seeInDatabase('jadwal', ['id' => $lain]);
     }

@@ -55,7 +55,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
             $this->daftarTeks($xpath, '//article[contains(@class, "lomba-ku")]/h3'),
         );
         $this->assertSame(
-            ['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2015', 'Lahir 2011–2014', 'Lahir 2008–2010'],
+            ['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2014–2015', 'Lahir 2011–2014', 'Lahir 2008–2010'],
             $this->daftarTeks($xpath, '//*[contains(@class, "lomba-tahun-lahir")]'),
         );
 
@@ -79,7 +79,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
             $this->daftarTeks($xpath, $ku10 . '//ul[contains(@class, "lomba-daftar-individu")]/li'),
         );
         $this->assertSame(
-            ["Kanga's Escape — Putra, Putri", 'Formula 1 — Putra, Putri', 'Estafet 8 × 50 m — Mix'],
+            ["Kanga's Escape — Putra, Putri", 'Formula 1 — Putra, Putri', 'Estafet 8 × 50 m — Mixed'],
             $this->daftarTeks($xpath, $ku10 . '//*[contains(@class, "lomba-beregu-kepala")]'),
         );
         $this->assertSame(
@@ -186,10 +186,10 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
         $this->assertSame([
             ['Estafet Rusa — Putra, Putri', '4 atlet inti per regu', 'Rp 100.000 per regu'],
-            ['Estafet Campur — Mix', '8 atlet inti per regu', 'Minimal 4 putra dan 4 putri', 'Rp 150.000 per regu'],
+            ['Estafet Campur — Mixed', '8 atlet inti per regu', 'Minimal 4 putra dan 4 putri', 'Rp 150.000 per regu'],
             ['Tarik Tambang — Putra', '5 atlet per regu', 'Gratis'],
             ['Tarik Tambang — Putri', '5 atlet per regu', 'Biaya regu segera diumumkan'],
-            ['Estafet Kosong — Mix', 'Biaya regu segera diumumkan'],
+            ['Estafet Kosong — Mixed', 'Biaya regu segera diumumkan'],
         ], array_map(fn (DOMElement $li): array => [
             $this->teksSimpul($xpath->query('.//*[contains(@class, "lomba-beregu-kepala")]', $li)->item(0)),
             ...array_map($this->teksSimpul(...), iterator_to_array($xpath->query('.//ul[contains(@class, "lomba-beregu-info")]/li', $li))),
@@ -231,7 +231,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $this->assertSame(0, $xpath->query('//*[contains(@class, "lomba-biaya-individu") or contains(@class, "lomba-biaya-beregu")]')->length);
         $this->assertSame(['Tahun lahir', 'Jenjang sekolah'], $this->daftarTeks($xpath, '//dl[contains(@class, "lomba-ku-info")]//dt'));
         $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran saat mendaftar.', $this->teks($xpath, '//*[contains(@class, "lomba-pengantar")]'));
-        $this->assertSame(['Estafet Rusa — Putra, Putri', 'Estafet Kosong — Mix'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-beregu-kepala")]'));
+        $this->assertSame(['Estafet Rusa — Putra, Putri', 'Estafet Kosong — Mixed'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-beregu-kepala")]'));
         $this->assertSame(['4 atlet per regu'], $this->daftarTeks($xpath, '//ul[contains(@class, "lomba-beregu-info")]/li'));
 
         foreach (['Rp', 'Gratis', 'Biaya segera diumumkan', 'Biaya tim', 'Biaya individu'] as $teks) {
@@ -299,7 +299,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
         $this->assertSame(['KU <b>Tebal</b>'], $this->daftarTeks($xpath, '//article[contains(@class, "lomba-ku")]/h3'));
         $this->assertSame(['Lari <script>alert(1)</script> — Putra'], $this->daftarTeks($xpath, '//ul[contains(@class, "lomba-daftar-individu")]/li'));
-        $this->assertSame(['Estafet <i>Miring</i> & "Kutip" — Mix'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-beregu-kepala")]'));
+        $this->assertSame(['Estafet <i>Miring</i> & "Kutip" — Mixed'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-beregu-kepala")]'));
 
         $hasil->assertDontSee('<b>Tebal</b>');
         $hasil->assertDontSee('<script>alert(1)</script>');

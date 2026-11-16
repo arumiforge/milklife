@@ -22,7 +22,7 @@
  * @var string               $namaAcara nama acara berhuruf besar
  * @var string               $seriTahun 'Seri 2 Tahun 2026'
  * @var bool                 $logo      logo persegi ada (`var:logo`, PNG transparan)
- * @var string               $dicetak   waktu cetak untuk kaki halaman
+ * @var string               $dicetak   tanggal cetak (tanpa pukul) untuk kaki halaman
  *
  */
 
@@ -156,7 +156,8 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
 <table class="info">
     <tr>
         <td class="info-label">ID Pendaftaran</td>
-        <td class="info-id" width="58mm"><?= esc($p['id_pendaftaran']) ?></td>
+        <?php // ID lama yang sudah digabung ke pendaftaran ini (K109); gaya langsung karena mPDF tidak menerapkan pemilih bersarang di sel. ?>
+        <td class="info-id" width="58mm"><?= esc($p['id_pendaftaran']) ?><?php if (($p['gabungan_dari'] ?? []) !== []) : ?><div class="gabungan" style="font-family: dejavusans; font-size: 6.5pt; font-weight: normal; color: #5B6475; letter-spacing: 0;">Gabungan dari <?= esc(implode(', ', $p['gabungan_dari'])) ?></div><?php endif ?></td>
         <td class="info-label">Tanggal Pendaftaran</td>
         <td class="info-isi"><?= esc(tanggal_id($p['dibuat_pada'])) ?></td>
     </tr>
@@ -173,7 +174,7 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
         <td class="status-<?= $lunas ? 'lunas' : 'menunggu' ?>"><?= esc($p['status_label']) ?></td>
     </tr>
     <tr>
-        <td class="info-label">Penanggung Jawab (Official)</td>
+        <td class="info-label">Ofisial</td>
         <td class="info-pj" colspan="3"><?php foreach ($p['penanggung_jawab'] as $i => $pj) : ?><?= $i > 0 ? ', ' : '' ?><b><?= esc($pj['nama']) ?></b> <span class="wa">(<img src="<?= $ikonWa ?>" width="2.8mm" height="2.8mm" style="vertical-align: middle;"> <?= esc($pj['nomor_wa']) ?>)</span><?php endforeach ?></td>
     </tr>
 </table>
@@ -184,7 +185,7 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
 <?php else : ?>
     <table class="data">
         <thead>
-            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Dada</th><th width="27mm" style="white-space: nowrap;">Kelompok Umur</th><th>Nomor Lomba</th><th class="uang" width="22mm">Biaya</th></tr>
+            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Atlet</th><th width="27mm" style="white-space: nowrap;">Kelompok Umur</th><th>Nomor Lomba</th><th class="uang" width="22mm">Biaya</th></tr>
         </thead>
         <tbody>
             <?php foreach (array_values($perAtlet) as $i => $atlet) : ?>
@@ -209,7 +210,7 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
 <?php else : ?>
     <table class="data beregu">
         <thead>
-            <tr><th width="7mm" style="text-align: right;">No</th><th width="36mm">Nomor Lomba</th><?php if ($kolomRegu) : ?><th width="12mm" style="text-align: center;"><?= esc(Regu::awalan()) ?></th><?php endif ?><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Dada</th><th width="16mm">Peran</th><th class="uang" width="22mm">Biaya</th></tr>
+            <tr><th width="7mm" style="text-align: right;">No</th><th width="36mm">Nomor Lomba</th><?php if ($kolomRegu) : ?><th width="12mm" style="text-align: center;"><?= esc(Regu::awalan()) ?></th><?php endif ?><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Atlet</th><th width="16mm">Peran</th><th class="uang" width="22mm">Biaya</th></tr>
         </thead>
         <tbody>
             <?php foreach ($p['beregu'] as $i => $tim) : ?>

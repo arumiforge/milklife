@@ -655,7 +655,7 @@
             var kartu = templatPj.content.firstElementChild.cloneNode(true);
             var awalan = 'pj-' + i + '-';
 
-            $('[data-judul]', kartu).textContent = 'Penanggung jawab ' + (i + 1);
+            $('[data-judul]', kartu).textContent = 'Ofisial ' + (i + 1);
 
             ['nama', 'nomor_wa'].forEach(function (kunci) {
                 var masukan = $('[data-isian="' + kunci + '"]', kartu);
@@ -683,7 +683,7 @@
                 $('.foto-kosong', kartu).hidden = ada;
                 if (ada) {
                     pratinjau.src = draf.penanggungJawab[i].foto;
-                    pratinjau.alt = 'Foto penanggung jawab ' + (i + 1);
+                    pratinjau.alt = 'Foto ofisial ' + (i + 1);
                 }
                 $('[data-teks-foto]', kartu).textContent = ada ? 'Ganti foto' : 'Ambil atau pilih foto';
             }
@@ -710,7 +710,7 @@
 
             var hapus = $('[data-hapus]', kartu);
             hapus.hidden = draf.penanggungJawab.length <= minimalPj;
-            hapus.setAttribute('aria-label', 'Hapus penanggung jawab ' + (i + 1));
+            hapus.setAttribute('aria-label', 'Hapus ofisial ' + (i + 1));
             hapus.addEventListener('click', function () {
                 draf.penanggungJawab.splice(i, 1);
                 rincian = null;
@@ -790,11 +790,11 @@
         var jumlah = draf.penanggungJawab.length;
 
         if (jumlah < minimalPj) {
-            galat.push({ jalur: 'penanggung_jawab', pesan: 'Isi minimal ' + minimalPj + ' penanggung jawab.' });
+            galat.push({ jalur: 'penanggung_jawab', pesan: 'Isi minimal ' + minimalPj + ' ofisial.' });
         }
 
         draf.penanggungJawab.forEach(function (orang, i) {
-            var ke = 'Penanggung jawab ' + (i + 1) + ': ';
+            var ke = 'Ofisial ' + (i + 1) + ': ';
             if (rapikanSpasi(orang.nama) === '') {
                 galat.push({ jalur: 'penanggung_jawab.' + i + '.nama', pesan: ke + 'nama belum diisi.' });
             }
@@ -1071,7 +1071,7 @@
 
     /**
      * Regu tunggal (K108): sekolah hanya punya satu regu di nomor ini, jadi
-     * nama regunya tidak ditulis ("Estafet 4 × 50 m mix", bukan "… Regu A").
+     * nama regunya tidak ditulis ("Estafet 4 × 50 m mixed", bukan "… Regu A").
      */
     function reguTunggal(nomorId) {
         return reguSekolah(nomorId, null).length <= 1;
@@ -2304,7 +2304,7 @@
             sekolah.appendChild(buat('span', 'd-block small text-body-secondary', 'Nama usulan, menunggu persetujuan panitia. Nama di data sekolah: ' + s.nama_resmi + '.'));
         }
         sekolah.appendChild(buat('span', 'small text-body-secondary', [s.npsn ? 'NPSN ' + s.npsn : 'Tanpa NPSN', s.jenjang_label, s.kabupaten].filter(Boolean).join(' · ')
-            + ' · ' + draf.penanggungJawab.length + ' penanggung jawab · ' + draf.atlet.length + ' atlet'));
+            + ' · ' + draf.penanggungJawab.length + ' ofisial · ' + draf.atlet.length + ' atlet'));
         wadah.appendChild(sekolah);
 
         if (rincian.individu.length > 0) {
@@ -2543,7 +2543,7 @@
     });
 
     $('#tombol-mulai-ulang').addEventListener('click', function () {
-        yakin('Mulai dari awal?', 'Semua isian dikosongkan. Data sekolah, penanggung jawab, dan atlet di halaman ini akan hilang.', 'Kosongkan isian').then(function (setuju) {
+        yakin('Mulai dari awal?', 'Semua isian dikosongkan. Data sekolah, ofisial, dan atlet di halaman ini akan hilang.', 'Kosongkan isian').then(function (setuju) {
             if (!setuju) {
                 return;
             }

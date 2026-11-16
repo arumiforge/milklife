@@ -444,7 +444,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
 
         $cek = (new UbahPendaftaran())->periksa($p['id'], $kiriman);
         $this->assertFalse($cek['kembali_menunggu']);
-        $this->assertStringContainsString('1 atlet baru langsung mendapat nomor dada', UbahPendaftaran::kalimatKonfirmasi($cek));
+        $this->assertStringContainsString('1 atlet baru langsung mendapat nomor atlet (BIB)', UbahPendaftaran::kalimatKonfirmasi($cek));
 
         $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
 
@@ -470,7 +470,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
 
         $this->assertFalse($hasil['tersimpan']);
-        $this->assertStringContainsString('awalan nomor dada KU 10 sudah penuh', $hasil['galat'][0]['pesan']);
+        $this->assertStringContainsString('awalan nomor atlet (BIB) KU 10 sudah penuh', $hasil['galat'][0]['pesan']);
         $this->assertSame($p['atlet'], $this->idAtlet($p['id']));
         $this->assertSame('SD KARANGAN MAJU', $this->pendaftaran($p['id'])['nama_sekolah']);
         $this->assertSame($fotoAwal, $this->berkasFoto(), 'Foto baru dihapus lagi dan foto lama tetap.');
@@ -526,6 +526,24 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $this->assertSame($this->idInduk['ku15'], (int) $this->db->table('atlet')->where('id', $p['atlet'][0])->get()->getRow()->kelompok_umur_id);
     }
 
+    public function testK109NpsnDiubahKeSekolahYangSudahLunasLangsungDigabung(): void
+    {
+        $lama = $this->buatPendaftaranPanel(['status' => 'lunas', 'dibuat_pada' => '2026-11-10 08:00:00', 'atlet' => [$this->atletPanel(['nomor_dada' => '2001'])]]);
+        $p    = $this->buatPendaftaranPanel(['status' => 'lunas', 'foto' => true, 'sekolah' => ['npsn' => null], 'atlet' => [$this->atletPanel(['nomor_dada' => '2002'])]]);
+
+        $kiriman                    = $this->kirimanDari($p['id']);
+        $kiriman['sekolah']['npsn'] = '99999911';
+        $hasil                      = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
+
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame('lunas', $hasil['status']);
+        $this->assertSame(['id' => $lama['id'], 'id_pendaftaran' => $lama['id_pendaftaran']], $hasil['gabung']['tujuan']);
+        $this->assertSame([$p['id_pendaftaran']], $hasil['gabung']['digabung']);
+        $this->assertNull($this->db->table('pendaftaran')->where('id', $p['id'])->get()->getRowArray());
+        $this->assertSame([$lama['atlet'][0], $p['atlet'][0]], $this->idAtlet($lama['id']));
+        $this->assertSame($lama['total'] + $p['total'], (int) $this->db->table('pendaftaran')->where('id', $lama['id'])->get()->getRow()->total);
+    }
+
     public function testMenungguTetapMenungguDanTanpaNomorDada(): void
     {
         $p       = $this->buatPendaftaranPanel(['foto' => true]);
@@ -570,7 +588,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
 
         $foto = new FotoPenanggungJawab();
         $this->assertFileDoesNotExist((string) $foto->jalurPenuh($lama[0]['foto']), 'Foto yang diganti dihapus.');
-        $this->assertFileDoesNotExist((string) $foto->jalurPenuh($lama[1]['foto']), 'Foto penanggung jawab yang dihapus ikut dihapus.');
+        $this->assertFileDoesNotExist((string) $foto->jalurPenuh($lama[1]['foto']), 'Foto ofisial yang dihapus ikut dihapus.');
         $this->assertCount(2, $this->berkasFoto());
     }
 
