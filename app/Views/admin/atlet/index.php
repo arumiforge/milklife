@@ -30,12 +30,12 @@ use App\Controllers\Admin\AtletController;
         <p class="teks-info mb-0">
             Semua atlet dari setiap pendaftaran. Untuk mengubah data atlet, buka rincian pendaftarannya lewat ID pendaftaran.
             <?php if ($diurutkanPada !== null) : ?>
-                <br><span id="keterangan-nomor-dada">Nomor dada diurutkan ulang per sekolah pada <?= esc(tanggal_id($diurutkanPada)) ?>.</span>
+                <br><span id="keterangan-nomor-dada">Nomor atlet (BIB) diurutkan ulang per sekolah pada <?= esc(tanggal_id($diurutkanPada)) ?>.</span>
             <?php endif ?>
         </p>
         <?php // Urutkan ulang nomor dada per sekolah (K111). ?>
         <a class="btn btn-outline-primary" href="<?= site_url('admin/atlet/nomor-dada') ?>" id="tombol-urutkan-nomor-dada">
-            <i class="bi bi-sort-numeric-down" aria-hidden="true"></i> Urutkan nomor dada
+            <i class="bi bi-sort-numeric-down" aria-hidden="true"></i> Urutkan nomor atlet (BIB)
         </a>
     </div>
 
@@ -101,7 +101,7 @@ use App\Controllers\Admin\AtletController;
                 <thead>
                     <tr>
                         <th data-bentuk="nomor" class="text-end">No</th>
-                        <th data-kolom="nomor_dada">Nomor dada</th>
+                        <th data-kolom="nomor_dada">Nomor atlet (BIB)</th>
                         <th data-kolom="nama">Nama</th>
                         <th data-kolom="nisn">NISN</th>
                         <th data-kolom="jenis_kelamin">Jenis kelamin</th>

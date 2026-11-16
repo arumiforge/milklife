@@ -37,7 +37,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
     public function testJadwalTampilBerurutanDenganRincian(): void
     {
-        $this->tambahJadwal(['judul' => 'Technical meeting', 'urutan' => 2, 'waktu' => '2026-12-08 13:30:00', 'tempat' => 'Aula Karangan', 'keterangan' => "Bawa surat tugas.\nSatu orang per sekolah."]);
+        $this->tambahJadwal(['judul' => 'Pertemuan teknik (Technical meeting)', 'urutan' => 2, 'waktu' => '2026-12-08 13:30:00', 'tempat' => 'Aula Karangan', 'keterangan' => "Bawa surat tugas.\nSatu orang per sekolah."]);
         $this->tambahJadwal(['judul' => 'Sosialisasi daring', 'urutan' => 1, 'tautan' => 'https://contoh.test/rapat']);
         $this->tambahJadwal(['judul' => 'Jadwal rahasia', 'urutan' => 3, 'tampil' => 0]);
 
@@ -56,7 +56,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
         // Urutan dari angka urutan.
         $this->assertSame('Sosialisasi daring', $this->teks($xpath, './/h3', $butir->item(0)));
-        $this->assertSame('Technical meeting', $this->teks($xpath, './/h3', $butir->item(1)));
+        $this->assertSame('Pertemuan teknik (Technical meeting)', $this->teks($xpath, './/h3', $butir->item(1)));
 
         // Waktu kosong, tanpa tempat dan keterangan; tautan di tab baru.
         $this->assertSame('Waktu segera diumumkan', $this->teks($xpath, './/*[contains(@class, "jadwal-waktu")]', $butir->item(0)));

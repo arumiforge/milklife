@@ -230,7 +230,7 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
         // Tombol tindakan dengan jendela konfirmasi.
         $lunas = $xpath->query('//form[@action="' . site_url('admin/pendaftaran/' . $p['id'] . '/lunas') . '"]')->item(0);
         $this->assertNotNull($lunas);
-        $this->assertStringContainsString('5 atlet yang belum punya nomor dada akan mendapat nomor baru', $lunas->getAttribute('data-konfirmasi'));
+        $this->assertStringContainsString('5 atlet yang belum punya nomor atlet (BIB) akan mendapat nomor baru', $lunas->getAttribute('data-konfirmasi'));
         $this->assertSame(0, $xpath->query('//form[@action="' . site_url('admin/pendaftaran/' . $p['id'] . '/menunggu') . '"]')->length);
 
         $hapus = $xpath->query('//form[@action="' . site_url('admin/pendaftaran/' . $p['id'] . '/hapus') . '"]')->item(0);
@@ -269,10 +269,10 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
 
         $menunggu = $xpath->query('//form[@action="' . site_url('admin/pendaftaran/' . $p['id'] . '/menunggu') . '"]')->item(0);
         $this->assertNotNull($menunggu);
-        $this->assertStringContainsString('Nomor dada atlet tetap', $menunggu->getAttribute('data-konfirmasi'));
+        $this->assertStringContainsString('Nomor atlet (BIB) tetap', $menunggu->getAttribute('data-konfirmasi'));
 
         $hapus = $xpath->query('//form[@action="' . site_url('admin/pendaftaran/' . $p['id'] . '/hapus') . '"]')->item(0);
-        $this->assertStringContainsString('Nomor dada yang sudah dibagikan tidak dipakai ulang', $hapus->getAttribute('data-konfirmasi'));
+        $this->assertStringContainsString('Nomor atlet (BIB) yang sudah dibagikan tidak dipakai ulang', $hapus->getAttribute('data-konfirmasi'));
 
         $this->assertStringNotContainsString('Belum lunas', trim($xpath->query('//*[@id="waktu-lunas"]')->item(0)->textContent));
     }

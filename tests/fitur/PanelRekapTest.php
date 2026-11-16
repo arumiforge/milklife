@@ -243,7 +243,7 @@ final class PanelRekapTest extends UjiBasisData
         $unduhan->buildHeaders();
         $this->assertStringContainsString('filename="RekapNomorLombaLunas_', $unduhan->getHeaderLine('Content-Disposition'));
         $baris = $this->bacaExcel($hasil);
-        $this->assertSame(['Kelompok Umur', 'Nomor Lomba', 'Nomor Dada', 'Nama', 'NISN', 'Sekolah', 'Kabupaten', 'Status'], $baris[0]);
+        $this->assertSame(['Kelompok Umur', 'Nomor Lomba', 'Nomor Atlet (BIB)', 'Nama', 'NISN', 'Sekolah', 'Kabupaten', 'Status'], $baris[0]);
         $this->assertCount(6, $baris);
 
         // Baris jumlah ikut di akhir, rupiah tetap angka.

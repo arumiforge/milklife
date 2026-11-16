@@ -206,7 +206,7 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $hasil,
             'admin/pendaftaran/' . $p['id'],
-            'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 100.000. 1 atlet baru mendapat nomor dada.',
+            'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 100.000. 1 atlet baru mendapat nomor atlet (BIB).',
         );
         $this->assertSame(0, $this->db->table('atlet')->where('pendaftaran_id', $p['id'])->where('nomor_dada', null)->countAllResults());
     }

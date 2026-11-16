@@ -13,14 +13,14 @@ $kurang = array_filter($ringkasan['per_kelompok_umur'], static fn (array $ku): b
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Urutkan Nomor Dada<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Urutkan Nomor Atlet (BIB)<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Urutkan Nomor Dada<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Urutkan Nomor Atlet (BIB)<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
     <p class="teks-info mb-4">
-        Nomor dada dibagikan saat technical meeting. Sebelum itu, nomor bisa dibuat ulang supaya nomor atlet satu sekolah berurutan,
+        Nomor atlet (BIB) dibagikan saat pertemuan teknik (technical meeting). Sebelum itu, nomor bisa dibuat ulang supaya nomor atlet satu sekolah berurutan,
         walau pendaftarannya masuk tidak berurutan. Sekolah yang mendaftar lebih dulu mendapat nomor lebih kecil, dan di dalam satu sekolah
         atlet diurutkan menurut urutan mendaftar. Nomor dimulai lagi dari 001 di awalan setiap kelompok umur.
     </p>
@@ -32,7 +32,7 @@ $kurang = array_filter($ringkasan['per_kelompok_umur'], static fn (array $ku): b
                     <h2 class="h5" id="judul-ringkasan">Yang akan diberi nomor</h2>
 
                     <?php if ($ringkasan['atlet'] === 0) : ?>
-                        <p class="text-body-secondary mb-0" id="ringkasan-kosong">Belum ada atlet dari pendaftaran Lunas. Nomor dada hanya dibuat untuk pendaftaran yang sudah Lunas.</p>
+                        <p class="text-body-secondary mb-0" id="ringkasan-kosong">Belum ada atlet dari pendaftaran Lunas. Nomor atlet (BIB) hanya dibuat untuk pendaftaran yang sudah Lunas.</p>
                     <?php else : ?>
                         <p id="ringkasan-jumlah"><strong><?= $ringkasan['atlet'] ?></strong> atlet dari <strong><?= $ringkasan['sekolah'] ?></strong> sekolah dengan pendaftaran Lunas.</p>
                         <div class="table-responsive">
@@ -69,7 +69,7 @@ $kurang = array_filter($ringkasan['per_kelompok_umur'], static fn (array $ku): b
 
                     <p class="small mb-3" id="terakhir-diurutkan">
                         <?php if ($ringkasan['diurutkan_pada'] === null) : ?>
-                            Nomor dada belum pernah diurutkan ulang.
+                            Nomor atlet (BIB) belum pernah diurutkan ulang.
                         <?php else : ?>
                             Terakhir diurutkan ulang <?= esc(tanggal_id($ringkasan['diurutkan_pada'])) ?><?= $ringkasan['diurutkan_oleh'] !== null ? ' oleh ' . esc($ringkasan['diurutkan_oleh']) : '' ?>.
                             Halaman Cek Pendaftaran, bukti PDF, dan rincian pendaftaran menuliskan keterangan ini.
@@ -77,8 +77,8 @@ $kurang = array_filter($ringkasan['per_kelompok_umur'], static fn (array $ku): b
                     </p>
 
                     <div class="alert alert-warning small" role="note">
-                        Semua nomor dada lama diganti. Jangan urutkan ulang setelah nomor dada dibagikan ke peserta.
-                        Pendaftaran yang ditandai Lunas sesudahnya mendapat nomor lanjutan, jadi urutkan lagi sebelum technical meeting bila perlu.
+                        Semua nomor atlet (BIB) lama diganti. Jangan urutkan ulang setelah nomor atlet dibagikan ke peserta.
+                        Pendaftaran yang ditandai Lunas sesudahnya mendapat nomor lanjutan, jadi urutkan lagi sebelum pertemuan teknik (technical meeting) bila perlu.
                     </div>
 
                     <?php if ($kurang !== []) : ?>
@@ -89,8 +89,8 @@ $kurang = array_filter($ringkasan['per_kelompok_umur'], static fn (array $ku): b
                     <?php endif ?>
 
                     <form action="<?= site_url('admin/atlet/nomor-dada') ?>" method="post" id="formulir-urutkan"
-                        data-konfirmasi="<?= esc('Nomor dada ' . $ringkasan['atlet'] . ' atlet akan dibuat ulang, berurutan per sekolah. Nomor lama tidak berlaku lagi.', 'attr') ?>"
-                        data-konfirmasi-judul="Urutkan ulang nomor dada?"
+                        data-konfirmasi="<?= esc('Nomor atlet (BIB) ' . $ringkasan['atlet'] . ' atlet akan dibuat ulang, berurutan per sekolah. Nomor lama tidak berlaku lagi.', 'attr') ?>"
+                        data-konfirmasi-judul="Urutkan ulang nomor atlet (BIB)?"
                         data-konfirmasi-tombol="Urutkan ulang">
                         <?= csrf_field() ?>
                         <label class="form-label" for="konfirmasi">Ketik <strong><?= NomorDadaController::KATA_KONFIRMASI ?></strong> untuk melanjutkan</label>
@@ -98,7 +98,7 @@ $kurang = array_filter($ringkasan['per_kelompok_umur'], static fn (array $ku): b
                             pattern="[Uu][Rr][Uu][Tt][Kk][Aa][Nn]" title="Ketik <?= NomorDadaController::KATA_KONFIRMASI ?>"<?= $ringkasan['atlet'] === 0 ? ' disabled' : '' ?>>
                         <button type="submit" class="btn btn-danger"<?= $ringkasan['atlet'] === 0 ? ' disabled' : '' ?>>
                             <i class="bi bi-sort-numeric-down" aria-hidden="true"></i>
-                            Urutkan ulang nomor dada
+                            Urutkan ulang nomor atlet (BIB)
                         </button>
                     </form>
                 </div>

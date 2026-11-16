@@ -49,7 +49,7 @@ final class NomorDada
     public static function bagikan(array $awalan, int $jumlah): ?array
     {
         if ($jumlah < 0) {
-            throw new InvalidArgumentException('Jumlah nomor dada tidak boleh negatif.');
+            throw new InvalidArgumentException('Jumlah nomor atlet (BIB) tidak boleh negatif.');
         }
 
         $nomor    = [];
@@ -127,7 +127,7 @@ final class NomorDada
             $kode = self::awalanSah($satu['awalan'] ?? null);
 
             if (isset($ada[$kode])) {
-                throw new InvalidArgumentException("Awalan nomor dada {$kode} tertulis lebih dari sekali.");
+                throw new InvalidArgumentException("Awalan nomor atlet (BIB) {$kode} tertulis lebih dari sekali.");
             }
 
             $ada[$kode] = true;
@@ -143,7 +143,7 @@ final class NomorDada
         $kode = is_int($awalan) ? (string) $awalan : $awalan;
 
         if (! is_string($kode) || preg_match('/^[1-9]$/D', $kode) !== 1) {
-            throw new InvalidArgumentException('Awalan nomor dada harus satu angka 1 sampai 9.');
+            throw new InvalidArgumentException('Awalan nomor atlet (BIB) harus satu angka 1 sampai 9.');
         }
 
         return $kode;

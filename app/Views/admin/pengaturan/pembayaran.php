@@ -44,7 +44,7 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="teks-info mb-4">
-        Rekening ini tampil di langkah terakhir pendaftaran. Official sekolah mentransfer ke rekening ini,
+        Rekening ini tampil di langkah terakhir pendaftaran. Ofisial sekolah mentransfer ke rekening ini,
         lalu menekan tombol WA untuk mengirim pesan konfirmasi ke nomor di bawah.
     </p>
 
@@ -68,7 +68,7 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
 
                         <?= $kotakTeks('bank', 'Nama bank', 'Contoh: BRI, BCA, atau Bank Jateng.', $isian, $galat, ['maxlength' => '50', 'autocomplete' => 'off']) ?>
                         <?= $kotakTeks('nomor_rekening', 'Nomor rekening', 'Boleh diketik dengan spasi atau tanda hubung; yang disimpan hanya angkanya.', $isian, $galat, ['inputmode' => 'numeric', 'autocomplete' => 'off']) ?>
-                        <?= $kotakTeks('pemilik_rekening', 'Nama pemilik rekening', 'Tulis persis seperti di buku tabungan, supaya official yakin rekeningnya benar.', $isian, $galat, ['maxlength' => '100', 'autocomplete' => 'off']) ?>
+                        <?= $kotakTeks('pemilik_rekening', 'Nama pemilik rekening', 'Tulis persis seperti di buku tabungan, supaya ofisial yakin rekeningnya benar.', $isian, $galat, ['maxlength' => '100', 'autocomplete' => 'off']) ?>
 
                         <div class="mb-0">
                             <span class="form-label d-block" id="logo_bank-label">Logo bank</span>
@@ -122,7 +122,7 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
                                 <div id="templat_pesan-galat" class="invalid-feedback"><?= esc($galat['templat_pesan']) ?></div>
                             <?php endif ?>
                             <div id="templat_pesan-bantuan" class="form-text">
-                                Penanda di bawah diganti dengan data pendaftaran saat official menekan tombol WA. Tekan penanda untuk menambahkannya ke pesan.
+                                Penanda di bawah diganti dengan data pendaftaran saat ofisial menekan tombol WA. Tekan penanda untuk menambahkannya ke pesan.
                             </div>
                         </div>
 

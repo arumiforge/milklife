@@ -87,11 +87,11 @@ class DataAwal extends BaseCommand
      * @var list<array{0: string, 1: string, 2: string, 3: string, 4: string}>
      */
     public const JADWAL = [
-        ['Zoom Meeting Sosialisasi', '2026-10-05 19:00:00', 'Zoom Meeting', 'https://zoom.us/j/1234567890', "Penjelasan aturan lomba dan cara mendaftar untuk guru dan official sekolah.\nTautan Zoom di atas masih contoh."],
+        ['Zoom Meeting Sosialisasi', '2026-10-05 19:00:00', 'Zoom Meeting', 'https://zoom.us/j/1234567890', "Penjelasan aturan lomba dan cara mendaftar untuk guru dan ofisial sekolah.\nTautan Zoom di atas masih contoh."],
         ['Batas akhir pendaftaran dan pembayaran', '2026-11-30 23:59:00', 'Web pendaftaran', '', 'Pendaftaran ditutup otomatis. Pastikan bukti transfer sudah diunggah di web pendaftaran sebelum batas ini.'],
         // Technical meeting dan waktu lomba dari juknis (K112); nomor dada dibagikan saat technical meeting.
-        ['Technical Meeting dan pembagian nomor dada', '2026-12-06 10:00:00', 'Super Cafe SSA Kudus', '', "Pembahasan teknis lomba bersama official sekolah, sekaligus pembagian nomor dada.\nWajib dihadiri setiap sekolah yang mendaftarkan siswanya. Bawa bukti pendaftaran (PDF atau cetak) dengan status Lunas."],
-        ['Pelaksanaan lomba', '2026-12-09 06:30:00', 'Supersoccer Arena, Kudus', '', 'Lomba berlangsung 9–12 Desember 2026, pagi pukul 06.30–10.00 dan sore pukul 14.30–17.00. Jadwal per nomor lomba diumumkan saat technical meeting.'],
+        ['Pertemuan Teknik (Technical Meeting) dan pembagian nomor atlet (BIB)', '2026-12-06 10:00:00', 'Super Cafe SSA Kudus', '', "Pembahasan teknis lomba bersama ofisial sekolah, sekaligus pembagian nomor atlet (BIB).\nWajib dihadiri setiap sekolah yang mendaftarkan siswanya. Bawa bukti pendaftaran (PDF atau cetak) dengan status Lunas."],
+        ['Pelaksanaan lomba', '2026-12-09 06:30:00', 'Supersoccer Arena, Kudus', '', 'Lomba berlangsung 9–12 Desember 2026, pagi pukul 06.30–10.00 dan sore pukul 14.30–17.00. Jadwal per nomor lomba diumumkan saat pertemuan teknik (technical meeting).'],
     ];
 
     /**
@@ -385,7 +385,7 @@ class DataAwal extends BaseCommand
         $jumlahAwalan = $db->table('awalan_nomor_dada')->countAllResults();
 
         if ($jumlahAwalan > 0) {
-            return "sudah ada {$jumlahAwalan} awalan nomor dada di basis data.";
+            return "sudah ada {$jumlahAwalan} awalan nomor atlet (BIB) di basis data.";
         }
 
         $jumlahNomorLomba = $db->table('nomor_lomba')->countAllResults();
@@ -450,7 +450,7 @@ class DataAwal extends BaseCommand
                     'dibuat_pada'      => $waktu,
                     'diubah_pada'      => $waktu,
                 ])) {
-                    throw new RuntimeException('Awalan nomor dada ' . $ku['nama'] . ' gagal disimpan.');
+                    throw new RuntimeException('Awalan nomor atlet (BIB) ' . $ku['nama'] . ' gagal disimpan.');
                 }
 
                 $baris    = self::barisNomorLomba($idKu, $ku, $waktu);
@@ -603,7 +603,7 @@ class DataAwal extends BaseCommand
             // Rata kiri menurut jumlah huruf, bukan bita (tanda "–" tiga bita).
             $lahir = $jumlah['lahir'] . ',' . str_repeat(' ', max(1, 20 - mb_strlen($jumlah['lahir'])));
 
-            CLI::write(sprintf('  %-21s: %sawalan nomor dada %s, %2d nomor individu, %d nomor beregu', $nama, $lahir, $jumlah['awalan'], $jumlah['individu'], $jumlah['beregu']));
+            CLI::write(sprintf('  %-21s: %sawalan nomor atlet (BIB) %s, %2d nomor individu, %d nomor beregu', $nama, $lahir, $jumlah['awalan'], $jumlah['individu'], $jumlah['beregu']));
         }
 
         CLI::write('Nomor lomba  : ' . ($hasil['nomor_individu'] + $hasil['nomor_beregu']) . ' (' . $hasil['nomor_individu'] . ' individu, ' . $hasil['nomor_beregu'] . ' beregu)');

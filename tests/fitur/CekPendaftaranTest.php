@@ -101,7 +101,7 @@ final class CekPendaftaranTest extends UjiBasisData
         $this->assertStringContainsString('FAJAR REKAAN', $tim->item(0)->textContent);
         $this->assertStringContainsString('1001', $tim->item(0)->textContent);
         $this->assertSame(4, $xpath->query('.//table[contains(@class, "cek-tim-anggota")]//tbody/tr', $kartu->item(0))->length, 'Empat anggota estafet, satu per baris.');
-        $this->assertStringNotContainsString('1001', $kartu->item(0)->textContent, 'Pendaftaran Menunggu tanpa nomor dada.');
+        $this->assertStringNotContainsString('1001', $kartu->item(0)->textContent, 'Pendaftaran Menunggu tanpa nomor atlet (BIB).');
 
         // Foto penanggung jawab tidak pernah tampil.
         $hasil->assertDontSee('foto-penanggung-jawab');

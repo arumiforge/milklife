@@ -136,7 +136,7 @@ final class KelompokUmurModelTest extends UjiBasisData
         $this->db->table('awalan_nomor_dada')->where('awalan', '2')->update(['nomor_terakhir' => 45]);
 
         [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10', 'awalan' => '6']), $id);
-        $this->assertSame('Awalan 2 sudah dipakai untuk nomor dada, jadi tidak bisa dihapus. Tulis lagi angka 2 di kotak awalan.', $galat['awalan']);
+        $this->assertSame('Awalan 2 sudah dipakai untuk nomor atlet (BIB), jadi tidak bisa dihapus. Tulis lagi angka 2 di kotak awalan.', $galat['awalan']);
 
         // Awalan yang belum dipakai boleh dihapus; yang terpakai boleh pindah urutan.
         [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 10', 'awalan' => '7, 2']), $id);
@@ -353,7 +353,7 @@ final class KelompokUmurModelTest extends UjiBasisData
         $this->db->table('awalan_nomor_dada')->where('awalan', '6')->update(['nomor_terakhir' => 3]);
 
         $this->assertSame(
-            'Awalan nomor dada 6 milik KU 10 sudah dipakai, jadi kelompok umur ini tidak bisa dihapus. Matikan saja supaya tidak muncul di pendaftaran.',
+            'Awalan nomor atlet (BIB) 6 milik KU 10 sudah dipakai, jadi kelompok umur ini tidak bisa dihapus. Matikan saja supaya tidak muncul di pendaftaran.',
             $this->model->alasanTidakBisaDihapus($this->model->find($id)),
         );
     }

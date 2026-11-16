@@ -35,25 +35,25 @@ class NomorDadaController extends BaseController
     public function urutkan(): RedirectResponse
     {
         if (strtoupper(trim((string) $this->request->getPost('konfirmasi'))) !== self::KATA_KONFIRMASI) {
-            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Nomor dada belum diurutkan. Ketik ' . self::KATA_KONFIRMASI . ' di kotak konfirmasi, lalu tekan tombolnya lagi.');
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Nomor atlet (BIB) belum diurutkan. Ketik ' . self::KATA_KONFIRMASI . ' di kotak konfirmasi, lalu tekan tombolnya lagi.');
         }
 
         try {
             $hasil = (new UrutkanNomorDada())->urutkan((string) (session(SesiAdmin::KUNCI_NAMA) ?? 'Admin'));
         } catch (DatabaseException $e) {
-            log_message('error', 'Urutkan nomor dada gagal: {pesan}', ['pesan' => $e->getMessage()]);
+            log_message('error', 'Urutkan nomor atlet (BIB) gagal: {pesan}', ['pesan' => $e->getMessage()]);
 
-            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Nomor dada belum diurutkan karena data sedang dipakai, misalnya ada pendaftaran yang sedang ditandai Lunas. Tunggu sebentar, lalu coba lagi.');
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Nomor atlet (BIB) belum diurutkan karena data sedang dipakai, misalnya ada pendaftaran yang sedang ditandai Lunas. Tunggu sebentar, lalu coba lagi.');
         }
 
         if (! $hasil['berhasil']) {
             return redirect()->to(self::ALAMAT)->with('pesan_galat', (string) $hasil['pesan']);
         }
 
-        $pesan = 'Nomor dada ' . $hasil['atlet'] . ' atlet dari ' . $hasil['sekolah'] . ' sekolah sudah diurutkan ulang per sekolah.';
+        $pesan = 'Nomor atlet (BIB) ' . $hasil['atlet'] . ' atlet dari ' . $hasil['sekolah'] . ' sekolah sudah diurutkan ulang per sekolah.';
 
         if ($hasil['dikosongkan'] > 0) {
-            $pesan .= ' Nomor dada ' . $hasil['dikosongkan'] . ' atlet dari pendaftaran yang belum Lunas dikosongkan; mereka mendapat nomor baru saat ditandai Lunas.';
+            $pesan .= ' Nomor atlet (BIB) ' . $hasil['dikosongkan'] . ' atlet dari pendaftaran yang belum Lunas dikosongkan; mereka mendapat nomor baru saat ditandai Lunas.';
         }
 
         return redirect()->to(self::ALAMAT)->with('pesan_sukses', $pesan);

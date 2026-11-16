@@ -142,7 +142,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
 
         $this->assertSame(['kategori'], array_keys($galat));
         $this->assertSame(
-            'Nomor individu tidak bisa berkategori mix. Pilih putra atau putri, atau ubah jenisnya menjadi beregu.',
+            'Nomor individu tidak bisa berkategori mixed. Pilih putra atau putri, atau ubah jenisnya menjadi beregu.',
             $galat['kategori'],
         );
     }
@@ -306,7 +306,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
     public function testNamaLengkap(): void
     {
         $this->assertSame('Lari 60 m putra', NomorLombaModel::namaLengkap(['nama' => 'Lari 60 m', 'kategori' => 'putra']));
-        $this->assertSame('Estafet 8 × 50 m mix', NomorLombaModel::namaLengkap(['nama' => 'Estafet 8 × 50 m', 'kategori' => 'mix']));
+        $this->assertSame('Estafet 8 × 50 m mixed', NomorLombaModel::namaLengkap(['nama' => 'Estafet 8 × 50 m', 'kategori' => 'mix']));
     }
 
     public function testReguPerSekolah(): void

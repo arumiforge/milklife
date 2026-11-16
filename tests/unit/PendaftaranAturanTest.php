@@ -283,7 +283,7 @@ final class PendaftaranAturanTest extends CIUnitTestCase
     public function testTimMixDiperiksaPadaInti(): void
     {
         $pesan = KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLLLLLPP', 8));
-        $this->assertSame(["Estafet 8 × 50 m mix Regu A: atlet inti minimal 4 putra dan 4 putri; sekarang 6 putra dan 2 putri. Jadikan 2 putri sebagai inti."], $pesan);
+        $this->assertSame(["Estafet 8 × 50 m mixed Regu A: atlet inti minimal 4 putra dan 4 putri; sekarang 6 putra dan 2 putri. Jadikan 2 putri sebagai inti."], $pesan);
 
         // Putri ada, tetapi sebagai cadangan.
         $pesan = KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLLLLLPPPP', 8));

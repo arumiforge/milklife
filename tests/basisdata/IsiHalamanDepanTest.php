@@ -224,7 +224,7 @@ final class IsiHalamanDepanTest extends UjiBasisData
                 ],
                 'nomor_beregu' => [
                     [
-                        'id' => $mix, 'nama' => 'Estafet 4 × 50 m', 'kategori' => 'mix', 'kategori_label' => 'Mix',
+                        'id' => $mix, 'nama' => 'Estafet 4 × 50 m', 'kategori' => 'mix', 'kategori_label' => 'Mixed',
                         'jumlah_inti' => 4, 'batas_anggota' => 6, 'jumlah_putra' => 2, 'jumlah_putri' => 2, 'biaya_beregu' => 200000,
                     ],
                     [
@@ -260,7 +260,7 @@ final class IsiHalamanDepanTest extends UjiBasisData
     public function testJadwalHanyaYangTampil(): void
     {
         $this->db->table('jadwal')->insertBatch([
-            ['judul' => 'Technical meeting', 'waktu' => '2026-12-05 09:00:00', 'tempat' => ' Aula Karangan ', 'tautan' => null, 'keterangan' => null, 'urutan' => 2, 'tampil' => 1],
+            ['judul' => 'Pertemuan teknik (Technical meeting)', 'waktu' => '2026-12-05 09:00:00', 'tempat' => ' Aula Karangan ', 'tautan' => null, 'keterangan' => null, 'urutan' => 2, 'tampil' => 1],
             ['judul' => ' Sosialisasi daring ', 'waktu' => null, 'tempat' => null, 'tautan' => 'https://meet.contoh.test/abc', 'keterangan' => "Bawa data siswa.  \r\nGratis.", 'urutan' => 1, 'tampil' => 1],
             ['judul' => 'Rapat tersembunyi', 'waktu' => null, 'tempat' => null, 'tautan' => null, 'keterangan' => null, 'urutan' => 3, 'tampil' => 0],
             ['judul' => 'Tautan tidak sah', 'waktu' => null, 'tempat' => null, 'tautan' => 'javascript:alert(1)', 'keterangan' => null, 'urutan' => 4, 'tampil' => 1],
@@ -268,13 +268,13 @@ final class IsiHalamanDepanTest extends UjiBasisData
 
         $hasil = (new IsiHalamanDepan())->jadwal();
 
-        $this->assertSame(['Sosialisasi daring', 'Technical meeting', 'Tautan tidak sah'], array_column($hasil, 'judul'));
+        $this->assertSame(['Sosialisasi daring', 'Pertemuan teknik (Technical meeting)', 'Tautan tidak sah'], array_column($hasil, 'judul'));
         $this->assertSame(
             ['judul' => 'Sosialisasi daring', 'keterangan' => "Bawa data siswa.\nGratis.", 'waktu' => null, 'tempat' => '', 'tautan' => 'https://meet.contoh.test/abc'],
             array_diff_key($hasil[0], ['id' => true]),
         );
         $this->assertSame(
-            ['judul' => 'Technical meeting', 'keterangan' => '', 'waktu' => '2026-12-05 09:00:00', 'tempat' => 'Aula Karangan', 'tautan' => ''],
+            ['judul' => 'Pertemuan teknik (Technical meeting)', 'keterangan' => '', 'waktu' => '2026-12-05 09:00:00', 'tempat' => 'Aula Karangan', 'tautan' => ''],
             array_diff_key($hasil[1], ['id' => true]),
         );
         $this->assertSame('', $hasil[2]['tautan']);

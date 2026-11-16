@@ -32,7 +32,7 @@ final class PanelPendaftaranTindakanTest extends UjiBasisData
         $p     = $this->buatPendaftaranPanel();
         $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/' . $p['id'] . '/lunas');
 
-        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran/' . $p['id'], 'Pendaftaran ditandai Lunas. 2 atlet mendapat nomor dada baru.');
+        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran/' . $p['id'], 'Pendaftaran ditandai Lunas. 2 atlet mendapat nomor atlet (BIB) baru.');
         $this->assertSame('lunas', $this->statusPendaftaran($p['id']));
         $this->assertSame(['2001', '2002'], $this->nomorDada($p['atlet']));
 
@@ -62,12 +62,12 @@ final class PanelPendaftaranTindakanTest extends UjiBasisData
 
         $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/' . $p['id'] . '/menunggu');
 
-        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran/' . $p['id'], 'Status kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.');
+        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran/' . $p['id'], 'Status kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor atlet (BIB) tetap.');
         $this->assertSame('menunggu', $this->statusPendaftaran($p['id']));
         $this->assertSame(['2001', '2002'], $this->nomorDada($p['atlet']));
 
         $lagi = $this->kirimSebagaiAdmin('admin/pendaftaran/' . $p['id'] . '/lunas');
-        $this->assertBerhasilDialihkan($lagi, 'admin/pendaftaran/' . $p['id'], 'Pendaftaran ditandai Lunas. Semua atlet sudah punya nomor dada.');
+        $this->assertBerhasilDialihkan($lagi, 'admin/pendaftaran/' . $p['id'], 'Pendaftaran ditandai Lunas. Semua atlet sudah punya nomor atlet (BIB).');
         $this->assertSame(['2001', '2002'], $this->nomorDada($p['atlet']));
     }
 
@@ -158,17 +158,17 @@ final class PanelPendaftaranTindakanTest extends UjiBasisData
         $b = $this->buatPendaftaranPanel(['sekolah' => ['nama' => 'SD KARANGAN JAYA', 'npsn' => '99999912']]);
 
         $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/massal', ['tindakan' => 'lunas', 'id' => [$a['id'], $b['id']]]);
-        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran', '2 pendaftaran ditandai Lunas. 4 atlet mendapat nomor dada baru.');
+        $this->assertBerhasilDialihkan($hasil, 'admin/pendaftaran', '2 pendaftaran ditandai Lunas. 4 atlet mendapat nomor atlet (BIB) baru.');
         $this->assertSame(['lunas', 'lunas'], [$this->statusPendaftaran($a['id']), $this->statusPendaftaran($b['id'])]);
 
         // Yang sudah Menunggu tidak diubah dan disebut dengan ID-nya; yang lain tetap diproses.
         $this->kirimSebagaiAdmin('admin/pendaftaran/' . $b['id'] . '/menunggu');
         $hasil = $this->kirimSebagaiAdmin('admin/pendaftaran/massal', ['tindakan' => 'menunggu', 'id' => [$a['id'], $b['id']]]);
         $hasil->assertRedirectTo(site_url('admin/pendaftaran'));
-        $this->assertSame('1 pendaftaran kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.', $_SESSION['pesan_sukses']);
+        $this->assertSame('1 pendaftaran kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor atlet (BIB) tetap.', $_SESSION['pesan_sukses']);
         $this->assertStringStartsWith('1 pendaftaran tidak diubah: ' . $b['id_pendaftaran'] . ': ', (string) $_SESSION['pesan_galat']);
         $this->assertSame('menunggu', $this->statusPendaftaran($a['id']));
-        $this->assertNotContains(null, $this->nomorDada($a['atlet']), 'Nomor dada tetap.');
+        $this->assertNotContains(null, $this->nomorDada($a['atlet']), 'Nomor atlet (BIB) tetap.');
     }
 
     public function testMassalHapus(): void

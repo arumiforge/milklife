@@ -47,7 +47,7 @@ final class PanelGabungPendaftaranHalamanTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $hasil,
             'admin/pendaftaran/' . $awal['id'],
-            'Pendaftaran ditandai Lunas. 1 atlet mendapat nomor dada baru. Pendaftaran ' . $susul['id_pendaftaran'] . ' digabung ke ' . $awal['id_pendaftaran']
+            'Pendaftaran ditandai Lunas. 1 atlet mendapat nomor atlet (BIB) baru. Pendaftaran ' . $susul['id_pendaftaran'] . ' digabung ke ' . $awal['id_pendaftaran']
             . ' karena NPSN-nya sama. ID lama tetap bisa dipakai di Cek Pendaftaran, dan kode QR bukti lama membuka bukti gabungan.',
         );
 

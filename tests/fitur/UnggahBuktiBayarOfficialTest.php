@@ -33,7 +33,7 @@ final class UnggahBuktiBayarOfficialTest extends UjiBasisData
 
         Services::resetSingle('throttler');
         service('cache')->clean();
-        $this->folder = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'milklife-bukti-official-' . bin2hex(random_bytes(6)) . DIRECTORY_SEPARATOR;
+        $this->folder = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'milklife-bukti-ofisial-' . bin2hex(random_bytes(6)) . DIRECTORY_SEPARATOR;
         mkdir($this->folder, 0777, true);
         BerkasBuktiBayar::gantiFolderDasar($this->folder);
 

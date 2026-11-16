@@ -48,9 +48,9 @@
     };
 
     var KALIMAT = {
-        lunas: ['Tandai Lunas?', ' pendaftaran akan ditandai Lunas dan atletnya mendapat nomor dada. Pastikan transfernya sudah diperiksa.', 'Tandai Lunas', 'utama'],
-        menunggu: ['Kembalikan ke Menunggu?', ' pendaftaran akan kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.', 'Kembalikan ke Menunggu', 'utama'],
-        hapus: ['Hapus pendaftaran?', ' pendaftaran akan dihapus beserta atlet, foto penanggung jawab, dan bukti bayarnya. Tindakan ini tidak bisa dibatalkan.', 'Hapus', 'bahaya']
+        lunas: ['Tandai Lunas?', ' pendaftaran akan ditandai Lunas dan atletnya mendapat nomor atlet (BIB). Pastikan transfernya sudah diperiksa.', 'Tandai Lunas', 'utama'],
+        menunggu: ['Kembalikan ke Menunggu?', ' pendaftaran akan kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor atlet (BIB) tetap.', 'Kembalikan ke Menunggu', 'utama'],
+        hapus: ['Hapus pendaftaran?', ' pendaftaran akan dihapus beserta atlet, foto ofisial, dan bukti bayarnya. Tindakan ini tidak bisa dibatalkan.', 'Hapus', 'bahaya']
     };
 
     function siapkanMassal() {

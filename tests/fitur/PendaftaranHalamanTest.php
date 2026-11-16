@@ -60,7 +60,7 @@ final class PendaftaranHalamanTest extends UjiBasisData
 
         // Lima pil langkah dan lima bagian langkah.
         $pil = array_map(static fn (DOMNode $n): string => trim(preg_replace('/\s+/', ' ', $n->textContent)), iterator_to_array($xpath->query('//ol[contains(@class, "pil-langkah")]//*[contains(@class, "pil-judul")]')));
-        $this->assertSame(['Data Sekolah', 'Penanggung Jawab', 'Atlet', 'Biaya', 'Pembayaran'], $pil);
+        $this->assertSame(['Data Sekolah', 'Ofisial', 'Atlet', 'Biaya', 'Pembayaran'], $pil);
         $this->assertSame(5, $xpath->query('//section[contains(@class, "langkah")][@data-langkah]')->length);
 
         // Pilihan jenjang dan lima kabupaten.

@@ -226,7 +226,7 @@ final class DataAwalTest extends UjiBasisData
         $this->db->table('kelompok_umur')->truncate();
         $this->db->query('SET FOREIGN_KEY_CHECKS = 1');
 
-        $this->assertSame('sudah ada 1 awalan nomor dada di basis data.', DataAwal::alasanMenolak($this->db));
+        $this->assertSame('sudah ada 1 awalan nomor atlet (BIB) di basis data.', DataAwal::alasanMenolak($this->db));
         $this->assertSame(EXIT_ERROR, $this->jalankan());
         $this->seeNumRecords(1, 'awalan_nomor_dada', []);
     }
@@ -330,9 +330,9 @@ final class DataAwalTest extends UjiBasisData
         $this->assertStringContainsString('1 Oktober 2026 pukul 00.00 sampai 30 November 2026 pukul 23.59', $keluaran);
         $this->assertStringContainsString('Kelompok umur: 5', $keluaran);
         $this->assertStringContainsString('Nomor lomba  : 69 (58 individu, 11 beregu)', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 10\s+: lahir 2016–2018,\s+awalan nomor dada 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 8 \(Seneng Playon\)\s+: lahir 2019 ke atas,\s+awalan nomor dada 1/', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2014–2015,\s+awalan nomor dada 3/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 10\s+: lahir 2016–2018,\s+awalan nomor atlet \(BIB\) 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 8 \(Seneng Playon\)\s+: lahir 2019 ke atas,\s+awalan nomor atlet \(BIB\) 1/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2014–2015,\s+awalan nomor atlet \(BIB\) 3/', $keluaran);
         $this->assertStringNotContainsString('Patokan usia', $keluaran);
         $this->assertStringContainsString('Gambar kepala bawaan dipasang', $keluaran);
         $this->assertStringContainsString('Logo persegi bawaan dipasang', $keluaran);

@@ -288,7 +288,7 @@ final class PanelGabunganTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['pid'], $isian),
             'admin/pendaftaran/' . $a['pid'],
-            'Perubahan pendaftaran ' . $a['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 400.000. 1 atlet baru mendapat nomor dada.',
+            'Perubahan pendaftaran ' . $a['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 400.000. 1 atlet baru mendapat nomor atlet (BIB).',
         );
         $this->assertSame('lunas', $this->statusPendaftaran($a['pid']));
         $this->assertSame(['2001', '2002', '2003', '2004', '2005', '2006'], $this->nomorDada($a['pid']));
@@ -308,7 +308,7 @@ final class PanelGabunganTest extends UjiBasisData
             . 'Status kembali menjadi Menunggu Konfirmasi Pembayaran; tandai Lunas lagi setelah selisihnya diurus.',
         );
         $this->assertSame('menunggu', $this->statusPendaftaran($a['pid']));
-        $this->assertSame(['2001', '2002', '2003', '2004', '2005', '2006'], $this->nomorDada($a['pid']), 'Nomor dada tetap.');
+        $this->assertSame(['2001', '2002', '2003', '2004', '2005', '2006'], $this->nomorDada($a['pid']), 'Nomor atlet (BIB) tetap.');
         $this->assertCount(4, $this->berkasBuktiBayarTersimpan(), 'Bukti bayar tidak tersentuh oleh ubah.');
 
         // ---------- 7. Hapus, NISN bisa didaftarkan lagi, nomor dada tidak dipakai ulang ----------
@@ -319,7 +319,7 @@ final class PanelGabunganTest extends UjiBasisData
         );
         $this->assertSame(0, $this->db->table('pendaftaran')->where('id', $c['pid'])->countAllResults());
         // Foto C ikut terhapus; foto B sudah dihapus saat digabung karena penanggung jawabnya sama dengan A (nomor WA sama, K109).
-        $this->assertCount(1, $this->berkasFoto(), 'Foto penanggung jawab C ikut terhapus.');
+        $this->assertCount(1, $this->berkasFoto(), 'Foto ofisial C ikut terhapus.');
 
         $d = $this->simpanWizard($kirimC);
         $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin('admin/pendaftaran/' . $d['pid'] . '/lunas'), 'admin/pendaftaran/' . $d['pid']);

@@ -54,7 +54,7 @@ $pesan = static fn (string $kotak): string => isset($galat[$kotak])
                                 <label for="judul" class="form-label">Judul</label>
                                 <input type="text" class="form-control<?= $salah('judul') ?>" id="judul" name="judul"
                                     value="<?= esc($isian['judul'], 'attr') ?>" maxlength="<?= JadwalModel::PANJANG['judul'] ?>" required<?= $uraian('judul') ?>>
-                                <div id="judul-bantuan" class="form-text">Contoh: Technical Meeting, Sosialisasi Daring.</div>
+                                <div id="judul-bantuan" class="form-text">Contoh: Pertemuan Teknik (Technical Meeting), Sosialisasi Daring.</div>
                                 <?= $pesan('judul') ?>
                             </div>
 

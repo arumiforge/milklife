@@ -225,7 +225,7 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
 
         $hasil = self::periksa($kiriman);
 
-        $this->assertGalat($hasil, 'penanggung_jawab.0.nama', 'Penanggung jawab 1: nama belum diisi');
+        $this->assertGalat($hasil, 'penanggung_jawab.0.nama', 'Ofisial 1: nama belum diisi');
         $this->assertGalat($hasil, 'penanggung_jawab.0.nomor_wa', 'nomor WA belum benar');
         $this->assertGalat($hasil, 'penanggung_jawab.0.foto', 'foto belum diisi');
     }

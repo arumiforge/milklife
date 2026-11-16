@@ -31,7 +31,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
     <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3 mb-4">
         <p class="teks-info mb-0 flex-grow-1">
             Kelompok umur atlet ditentukan dari tahun lahirnya. Tiap kelompok umur aktif perlu batas tahun lahir,
-            jenjang sekolah yang boleh ikut, biaya per nomor individu, dan awalan nomor dada.
+            jenjang sekolah yang boleh ikut, biaya per nomor individu, dan awalan nomor atlet (BIB).
         </p>
         <a class="btn btn-primary flex-shrink-0" href="<?= site_url('admin/pengaturan/kelompok-umur/tambah') ?>">
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
@@ -67,7 +67,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
                                 <th scope="col">Tahun lahir</th>
                                 <th scope="col">Jenjang yang boleh ikut</th>
                                 <th scope="col" class="text-end">Biaya per nomor</th>
-                                <th scope="col">Awalan nomor dada</th>
+                                <th scope="col">Awalan nomor atlet (BIB)</th>
                                 <th scope="col">Status</th>
                                 <th scope="col" class="pe-3 pe-lg-4 text-end"><span class="visually-hidden">Tindakan</span></th>
                             </tr>
@@ -113,7 +113,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
                                             </a>
                                             <form action="<?= site_url('admin/pengaturan/kelompok-umur/' . (int) $ku['id'] . '/hapus') ?>" method="post" class="m-0"
                                                 <?php if ($bisaHapus) : ?>
-                                                    data-konfirmasi="<?= esc('Kelompok umur ' . $ku['nama'] . ' akan dihapus beserta jenjang dan awalan nomor dadanya. Tindakan ini tidak bisa dibatalkan.', 'attr') ?>"
+                                                    data-konfirmasi="<?= esc('Kelompok umur ' . $ku['nama'] . ' akan dihapus beserta jenjang dan awalan nomor atletnya. Tindakan ini tidak bisa dibatalkan.', 'attr') ?>"
                                                     data-konfirmasi-judul="Hapus kelompok umur?"
                                                     data-konfirmasi-tombol="Hapus kelompok umur"
                                                 <?php endif ?>>
@@ -133,7 +133,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
             </div>
         </section>
         <p class="teks-catatan mt-3 mb-0">
-            Kelompok umur yang sudah punya nomor lomba, atlet, atau nomor dada tidak bisa dihapus.
+            Kelompok umur yang sudah punya nomor lomba, atlet, atau nomor atlet (BIB) tidak bisa dihapus.
             Ubah statusnya menjadi mati supaya tidak muncul di pendaftaran.
         </p>
     <?php endif ?>

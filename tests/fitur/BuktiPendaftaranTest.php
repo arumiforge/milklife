@@ -70,7 +70,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         // Menunggu: stempel menunggu, nomor dada kosong walau sudah tersimpan.
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId('MAC2A0000126')))->html();
         $this->assertStringContainsString('stempel stempel-menunggu', $html);
-        $this->assertStringContainsString('No. Dada', $html);
+        $this->assertStringContainsString('No. Atlet', $html);
         $this->assertStringNotContainsString('2001', $html);
 
         // Ditandai Lunas: alamat yang sama (kode QR) langsung memuat status baru,
@@ -80,7 +80,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->assertStringContainsString('stempel stempel-lunas', $html);
         $this->assertStringContainsString('<b>2001</b>', $html);
         // Tabel beregu satu baris per anggota, nomor dada di kolom sendiri (K107).
-        $this->assertMatchesRegularExpression('#<td>BUDI KARANGAN</td>\s*<td>9900000001</td>\s*<td><b>2001</b></td>\s*<td class="peran-inti">Inti</td>#', $html, 'Nomor dada anggota tim beregu.');
+        $this->assertMatchesRegularExpression('#<td>BUDI KARANGAN</td>\s*<td>9900000001</td>\s*<td><b>2001</b></td>\s*<td class="peran-inti">Inti</td>#', $html, 'Nomor atlet (BIB) anggota tim beregu.');
 
         Services::resetSingle('throttler');
         $hasil = $this->get($alamat);
@@ -104,7 +104,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
             '<td class="info-label">Kabupaten / Kota</td>', '<td class="info-isi">Kudus</td>',
             '<td class="info-label">ID Pendaftaran</td>', '<td class="info-id" width="58mm">MAC2A0000126</td>',
             '<td class="info-label">NPSN</td>', '<td class="info-isi">20300001</td>', '<td class="info-isi">SD/MI</td>',
-            'Penanggung Jawab (Official)', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
+            'Ofisial', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
             'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp 150.000',
             // Regu tunggal: tanpa kolom regu, nomor lomba dan biaya digabung setinggi regunya (K108).
             '<td class="gabung" rowspan="4"><b>Estafet 4 × 50 m putra</b></td>', '<td class="uang gabung" rowspan="4">Rp 200.000</td>',
@@ -125,7 +125,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $this->assertStringNotContainsString('foto-penanggung-jawab', $html);
         // Tanggal lahir dan nomor dada tidak dicetak (K52).
         $this->assertStringNotContainsString('1 Mei 2016', $html);
-        $this->assertStringNotContainsString('Nomor Dada', $html);
+        $this->assertStringNotContainsString('Nomor Atlet (BIB)', $html);
         // Logo persegi bawaan (K47) disisipkan sebagai PNG transparan; kode QR
         // ditulis terpisah di dasar halaman terakhir (K89).
         $this->assertStringContainsString('<img src="var:logo"', $html);

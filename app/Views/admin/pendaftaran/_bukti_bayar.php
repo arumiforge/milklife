@@ -71,7 +71,7 @@ $untukPembaca = $kodeBukti === '' ? '' : ' pendaftaran ' . $kodeBukti;
                         <span class="bukti-kosong-ikon"><i class="bi bi-receipt-cutoff" aria-hidden="true"></i></span>
                         <p class="bukti-kosong-judul">Belum ada bukti bayar</p>
                         <p class="bukti-kosong-teks">
-                            Official bisa mengunggah bukti transfer sendiri saat mendaftar atau lewat Cek Pendaftaran.
+                            Ofisial bisa mengunggah bukti transfer sendiri saat mendaftar atau lewat Cek Pendaftaran.
                             Bila bukti dikirim lewat WA, simpan di sini, paling banyak <?= $batasBukti ?> gambar.
                         </p>
                     </div>

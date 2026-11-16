@@ -105,7 +105,7 @@ final class KepalaKeamananTest extends UjiBasisData
         $id = $this->buatBuktiBayarPanel($p['id'])[0];
 
         foreach ([
-            'foto penanggung jawab' => 'admin/pendaftaran/' . $p['id'] . '/foto/' . $p['penanggung_jawab'][0],
+            'foto ofisial' => 'admin/pendaftaran/' . $p['id'] . '/foto/' . $p['penanggung_jawab'][0],
             'bukti bayar'           => 'admin/pendaftaran/' . $p['id'] . '/bukti-bayar/' . $id,
             'unduh bukti bayar'     => 'admin/pendaftaran/' . $p['id'] . '/bukti-bayar/' . $id . '/unduh',
         ] as $nama => $alamat) {

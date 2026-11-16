@@ -17,7 +17,7 @@ $jumlahBukti = (int) ($p['jumlah_bukti_bayar'] ?? 0);
 // Nomor dada tampil setelah Lunas (K88); sebelumnya tanda pisah.
 $dada = static fn (array $a): string => $lunas && ($a['nomor_dada'] ?? null) !== null
     ? '<strong>' . esc((string) $a['nomor_dada']) . '</strong>'
-    : '<span class="text-body-secondary" title="Nomor dada keluar setelah pembayaran Lunas">–</span>';
+    : '<span class="text-body-secondary" title="Nomor atlet (BIB) keluar setelah pembayaran Lunas">–</span>';
 $batasBukti  = App\Models\BuktiBayarModel::BATAS;
 ?>
 <article class="card cek-kartu <?= $lunas ? 'cek-kartu-lunas' : 'cek-kartu-menunggu' ?>" aria-labelledby="<?= $idJudul ?>">
@@ -40,7 +40,7 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
     </div>
 
     <div class="card-body">
-        <h4 class="cek-subjudul"><i class="bi bi-person-badge" aria-hidden="true"></i> Penanggung jawab</h4>
+        <h4 class="cek-subjudul"><i class="bi bi-person-badge" aria-hidden="true"></i> Ofisial</h4>
         <ul class="cek-penanggung-jawab">
             <?php foreach ($p['penanggung_jawab'] as $pj) : ?>
                 <li><i class="bi bi-person-circle" aria-hidden="true"></i> <strong><?= esc($pj['nama']) ?></strong> <span><i class="bi bi-whatsapp" aria-hidden="true"></i> <?= esc($pj['nomor_wa']) ?></span></li>
@@ -60,7 +60,7 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
                         <th scope="col">Nama</th>
                         <th scope="col">NISN</th>
                         <th scope="col">L/P</th>
-                        <th scope="col">No. Dada</th>
+                        <th scope="col">No. Atlet</th>
                         <th scope="col">Kelompok umur</th>
                         <th scope="col">Nomor lomba</th>
                     </tr>
@@ -92,7 +92,7 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
                         </div>
                         <?php // Satu nama per baris dengan nomor dada (K88). ?>
                         <table class="table table-sm align-middle mb-0 mt-2 cek-tim-anggota">
-                            <thead><tr><th scope="col">No</th><th scope="col">Nama</th><th scope="col">NISN</th><th scope="col">Peran</th><th scope="col">No. Dada</th></tr></thead>
+                            <thead><tr><th scope="col">No</th><th scope="col">Nama</th><th scope="col">NISN</th><th scope="col">Peran</th><th scope="col">No. Atlet</th></tr></thead>
                             <tbody>
                                 <?php foreach ($tim['anggota'] as $j => $anggota) : ?>
                                     <tr>

@@ -258,7 +258,7 @@ final class PengaturanPendaftaranTest extends UjiBasisData
         // Paling sedikit 1.
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['penanggung_jawab_minimal' => '0'] + self::isianBenar());
         $this->assertIsianSalahDitampilkanUlang($hasil, ['penanggung_jawab_minimal']);
-        $hasil->assertSee('Jumlah penanggung jawab paling sedikit harus angka 1 sampai 20');
+        $hasil->assertSee('Jumlah ofisial paling sedikit harus angka 1 sampai 20');
 
         // Paling banyak tidak kurang dari paling sedikit.
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, [

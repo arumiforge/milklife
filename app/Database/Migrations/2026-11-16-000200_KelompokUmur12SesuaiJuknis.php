@@ -18,7 +18,7 @@ class KelompokUmur12SesuaiJuknis extends Migration
 {
     public function up(): void
     {
-        if (! $this->db->tableExists('kelompok_umur') || ! $this->db->fieldExists('tahun_lahir_awal', 'kelompok_umur')) {
+        if (! $this->adaKolomTahunLahir()) {
             return;
         }
 
@@ -53,12 +53,25 @@ class KelompokUmur12SesuaiJuknis extends Migration
     public function down(): void
     {
         // Saat semua migrasi dibatalkan, kolom ini bisa sudah tidak ada.
-        if (! $this->db->tableExists('kelompok_umur') || ! $this->db->fieldExists('tahun_lahir_awal', 'kelompok_umur')) {
+        if (! $this->adaKolomTahunLahir()) {
             return;
         }
 
         $this->db->table('kelompok_umur')
             ->where('nama', 'KU 12')->where('tahun_lahir_awal', 2014)->where('tahun_lahir_akhir', 2015)
             ->update(['tahun_lahir_awal' => 2015]);
+    }
+
+    /**
+     * Kolom batas tahun lahir ada. Dibaca langsung dari basis data, bukan
+     * tembolok nama kolom CodeIgniter, yang bisa usang saat semua migrasi
+     * dibatalkan lalu dijalankan lagi dalam satu proses.
+     */
+    private function adaKolomTahunLahir(): bool
+    {
+        return $this->db->query(
+            "SELECT COUNT(*) AS ada FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = 'tahun_lahir_awal'",
+            [$this->db->prefixTable('kelompok_umur')],
+        )->getRow()->ada > 0;
     }
 }

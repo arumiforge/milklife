@@ -306,7 +306,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianBeregu($ku, ['urutan' => '12', 'aktif' => '0']));
 
         $id = $this->idNomor('Estafet 4 × 100 m', 'mix', 'KU 18');
-        $this->assertDialihkanKeKelompokUmur($hasil, $ku, $id, 'Nomor Estafet 4 × 100 m mix di KU 18 tersimpan.');
+        $this->assertDialihkanKeKelompokUmur($hasil, $ku, $id, 'Nomor Estafet 4 × 100 m mixed di KU 18 tersimpan.');
         $this->seeInDatabase('nomor_lomba', [
             'id'            => $id,
             'jenis'         => 'beregu',
@@ -341,7 +341,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
         ]);
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['kategori']);
-        $hasil->assertSee('Nomor individu tidak bisa berkategori mix.');
+        $hasil->assertSee('Nomor individu tidak bisa berkategori mixed.');
         $this->assertSame(0, $this->jumlahNomor());
         $this->assertSame('Lari 60 m', $this->xpathDari($hasil)->query('//input[@name="nama"]')->item(0)?->getAttribute('value'));
     }
@@ -464,7 +464,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
             'biaya_beregu'  => '150000',
         ]));
 
-        $this->assertDialihkanKeKelompokUmur($hasil, $ku, $id, 'Perubahan nomor Estafet 8 × 50 m mix di KU 10 tersimpan.');
+        $this->assertDialihkanKeKelompokUmur($hasil, $ku, $id, 'Perubahan nomor Estafet 8 × 50 m mixed di KU 10 tersimpan.');
         $baris = $this->baris($id);
         $this->assertSame('10', (string) $baris['batas_anggota']);
         $this->assertSame('4', (string) $baris['jumlah_putri']);
@@ -498,7 +498,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", self::isianBeregu($ku12, ['nama' => 'Estafet 8 × 50 m', 'jumlah_inti' => '8', 'batas_anggota' => '8']));
 
-        $this->assertDialihkanKeKelompokUmur($hasil, $ku12, $id, 'Perubahan nomor Estafet 8 × 50 m mix di KU 12 tersimpan.');
+        $this->assertDialihkanKeKelompokUmur($hasil, $ku12, $id, 'Perubahan nomor Estafet 8 × 50 m mixed di KU 12 tersimpan.');
         $baris = $this->baris($id);
         $this->assertSame((string) $ku12, (string) $baris['kelompok_umur_id']);
         $this->assertSame('beregu', $baris['jenis']);
@@ -578,7 +578,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
 
         // Nama, biaya beregu, urutan, dan aktif tetap bisa diubah.
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", self::isianBeregu($ku, ['nama' => 'Estafet 4 × 50 m', 'biaya_beregu' => '120000', 'urutan' => '7', 'aktif' => '0']));
-        $this->assertDialihkanKeKelompokUmur($hasil, $ku, $id, 'Perubahan nomor Estafet 4 × 50 m mix di KU 10 tersimpan.');
+        $this->assertDialihkanKeKelompokUmur($hasil, $ku, $id, 'Perubahan nomor Estafet 4 × 50 m mixed di KU 10 tersimpan.');
         $this->seeInDatabase('nomor_lomba', ['id' => $id, 'nama' => 'Estafet 4 × 50 m', 'biaya_beregu' => 120000, 'urutan' => 7, 'aktif' => 0, 'jumlah_inti' => 4]);
     }
 

@@ -321,13 +321,13 @@ final class StatusPembayaran
         foreach ($penuh as $kuId => $awalan) {
             $namaKu   = $nama[$kuId] ?? 'kelompok umur ini';
             $bagian[] = $awalan === []
-                ? $namaKu . ' belum punya awalan nomor dada'
-                : 'awalan nomor dada ' . $namaKu . ' (' . implode(', ', array_column($awalan, 'awalan')) . ') sudah penuh';
+                ? $namaKu . ' belum punya awalan nomor atlet (BIB)'
+                : 'awalan nomor atlet (BIB) ' . $namaKu . ' (' . implode(', ', array_column($awalan, 'awalan')) . ') sudah penuh';
         }
 
         $semuaNama = array_map(static fn (int $kuId): string => $nama[$kuId] ?? 'kelompok umur ini', array_keys($penuh));
 
-        return 'Pendaftaran belum ditandai Lunas dan belum ada nomor dada yang dibuat karena ' . self::gabung($bagian) . '. '
+        return 'Pendaftaran belum ditandai Lunas dan belum ada nomor atlet (BIB) yang dibuat karena ' . self::gabung($bagian) . '. '
             . 'Tambahkan awalan baru untuk ' . self::gabung($semuaNama) . ' di Pengaturan, Kelompok Umur, lalu tandai Lunas lagi.';
     }
 

@@ -170,7 +170,7 @@ final class UrutkanNomorDada
             }
 
             if ($this->db->transStatus() === false) {
-                throw $this->galat('Nomor dada gagal diurutkan');
+                throw $this->galat('Nomor atlet (BIB) gagal diurutkan');
             }
 
             $this->db->transCommit();
@@ -223,9 +223,9 @@ final class UrutkanNomorDada
             return null;
         }
 
-        return 'Nomor dada sudah diurutkan ulang per sekolah oleh panitia pada ' . tanggal_id($waktu)
+        return 'Nomor atlet (BIB) sudah diurutkan ulang per sekolah oleh panitia pada ' . tanggal_id($waktu)
             . ', supaya nomor atlet satu sekolah berurutan. Nomor yang berlaku adalah nomor di sini; '
-            . 'abaikan nomor dada pada bukti pendaftaran yang dicetak sebelum tanggal itu.';
+            . 'abaikan nomor atlet (BIB) pada bukti pendaftaran yang dicetak sebelum tanggal itu.';
     }
 
     /**
@@ -274,8 +274,8 @@ final class UrutkanNomorDada
     {
         $nama = array_column($this->db->table('kelompok_umur')->select('id, nama')->whereIn('id', array_keys($penuh))->get()->getResultArray(), 'nama', 'id');
 
-        return 'Nomor dada belum diurutkan ulang dan tidak ada yang berubah karena ' . implode(', ', array_map(
-            static fn (int $id, array $awalan): string => ($nama[$id] ?? 'kelompok umur ini') . ($awalan === [] ? ' belum punya awalan nomor dada' : ' kekurangan awalan nomor dada'),
+        return 'Nomor atlet (BIB) belum diurutkan ulang dan tidak ada yang berubah karena ' . implode(', ', array_map(
+            static fn (int $id, array $awalan): string => ($nama[$id] ?? 'kelompok umur ini') . ($awalan === [] ? ' belum punya awalan nomor atlet (BIB)' : ' kekurangan awalan nomor atlet (BIB)'),
             array_keys($penuh),
             $penuh,
         )) . '. Tambahkan awalan di Pengaturan, Kelompok Umur, lalu urutkan lagi.';
@@ -291,7 +291,7 @@ final class UrutkanNomorDada
         $hasil = $this->db->query($sql, $ikat);
 
         if (! is_object($hasil)) {
-            throw $this->galat('Data nomor dada gagal dibaca');
+            throw $this->galat('Data nomor atlet (BIB) gagal dibaca');
         }
 
         return $hasil->getResultArray();
@@ -300,7 +300,7 @@ final class UrutkanNomorDada
     private function pastikan(mixed $hasil): void
     {
         if ($hasil === false) {
-            throw $this->galat('Nomor dada gagal ditulis');
+            throw $this->galat('Nomor atlet (BIB) gagal ditulis');
         }
     }
 

@@ -40,7 +40,7 @@ class NomorLombaModel extends Model
     public const KATEGORI = [
         'putra' => 'Putra',
         'putri' => 'Putri',
-        'mix'   => 'Mix',
+        'mix'   => 'Mixed',   // istilah juknis (K113); kode tetap 'mix'
     ];
 
     /**
@@ -162,9 +162,9 @@ class NomorLombaModel extends Model
         }
 
         if (! isset(self::KATEGORI[$isian['kategori']])) {
-            $galat['kategori'] = 'Kategori belum dipilih. Pilih putra, putri, atau mix.';
+            $galat['kategori'] = 'Kategori belum dipilih. Pilih putra, putri, atau mixed.';
         } elseif ($isian['jenis'] === 'individu' && $isian['kategori'] === 'mix') {
-            $galat['kategori'] = 'Nomor individu tidak bisa berkategori mix. Pilih putra atau putri, atau ubah jenisnya menjadi beregu.';
+            $galat['kategori'] = 'Nomor individu tidak bisa berkategori mixed. Pilih putra atau putri, atau ubah jenisnya menjadi beregu.';
         }
 
         if ($isian['jenis'] === 'beregu') {
@@ -264,13 +264,16 @@ class NomorLombaModel extends Model
     }
 
     /**
-     * Nama lengkap untuk kalimat, misalnya "Lari 60 m putra" atau "Estafet 8 × 50 m mix".
+     * Nama lengkap untuk kalimat, misalnya "Lari 60 m putra" atau "Estafet 8 × 50 m mixed".
      *
      * @param array<string, mixed> $baris
      */
     public static function namaLengkap(array $baris): string
     {
-        return trim((string) ($baris['nama'] ?? '') . ' ' . (string) ($baris['kategori'] ?? ''));
+        $kategori = (string) ($baris['kategori'] ?? '');
+
+        // Kode kategori `mix` ditulis "mixed" seperti di juknis (K113).
+        return trim((string) ($baris['nama'] ?? '') . ' ' . ($kategori === 'mix' ? 'mixed' : $kategori));
     }
 
     /**

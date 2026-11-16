@@ -58,13 +58,13 @@ final class PanelUrutkanNomorDadaHalamanTest extends UjiBasisData
 
         $halaman = $this->bukaSebagaiAdmin(self::ALAMAT);
         $halaman->assertOK();
-        $halaman->assertSee('Nomor dada belum pernah diurutkan ulang.');
+        $halaman->assertSee('Nomor atlet (BIB) belum pernah diurutkan ulang.');
         $this->assertStringContainsString('2 atlet dari 1 sekolah', $this->teksSimpul($this->xpathDari($halaman)->query('//*[@id="ringkasan-jumlah"]')->item(0)));
 
         $this->assertGagalDialihkan(
             $this->kirimSebagaiAdmin(self::ALAMAT, ['konfirmasi' => 'ya']),
             self::ALAMAT,
-            'Nomor dada belum diurutkan. Ketik URUTKAN di kotak konfirmasi, lalu tekan tombolnya lagi.',
+            'Nomor atlet (BIB) belum diurutkan. Ketik URUTKAN di kotak konfirmasi, lalu tekan tombolnya lagi.',
         );
         $this->assertNull(setting('NomorDada.diurutkan_pada'));
     }
@@ -80,7 +80,7 @@ final class PanelUrutkanNomorDadaHalamanTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $this->kirimSebagaiAdmin(self::ALAMAT, ['konfirmasi' => 'urutkan']),
             self::ALAMAT,
-            'Nomor dada 2 atlet dari 2 sekolah sudah diurutkan ulang per sekolah.',
+            'Nomor atlet (BIB) 2 atlet dari 2 sekolah sudah diurutkan ulang per sekolah.',
         );
         $this->assertSame('2001', $this->db->table('atlet')->where('id', $x['atlet'][0])->get()->getRow()->nomor_dada);
 
@@ -92,7 +92,7 @@ final class PanelUrutkanNomorDadaHalamanTest extends UjiBasisData
         // Cek Pendaftaran.
         $cek = $this->get('cek-pendaftaran?kode=' . $x['id_pendaftaran']);
         $cek->assertOK();
-        $cek->assertSee('Nomor dada sudah diurutkan ulang per sekolah oleh panitia');
+        $cek->assertSee('Nomor atlet (BIB) sudah diurutkan ulang per sekolah oleh panitia');
 
         // Bukti PDF: keterangan di blok penutup, dasar halaman terakhir.
         $penutup = view('bukti/pdf_qr', ['keteranganNomorDada' => App\Libraries\Panel\UrutkanNomorDada::keterangan('lunas')]);

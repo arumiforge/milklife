@@ -135,7 +135,7 @@ class PendaftaranController extends BaseController
         $jalur = (new DataPanelPendaftaran())->jalurFoto($id, $penanggungJawabId);
 
         if ($jalur === null) {
-            throw PageNotFoundException::forPageNotFound('Foto penanggung jawab tidak ditemukan.');
+            throw PageNotFoundException::forPageNotFound('Foto ofisial tidak ditemukan.');
         }
 
         return $this->response
@@ -163,8 +163,8 @@ class PendaftaranController extends BaseController
 
         $jumlah = count($hasil['nomor']);
         $pesan  = 'Pendaftaran ditandai Lunas. ' . ($jumlah > 0
-            ? $jumlah . ' atlet mendapat nomor dada baru.'
-            : 'Semua atlet sudah punya nomor dada.');
+            ? $jumlah . ' atlet mendapat nomor atlet (BIB) baru.'
+            : 'Semua atlet sudah punya nomor atlet (BIB).');
 
         // K109: pendaftaran ini mungkin sudah pindah ke pendaftaran gabungan.
         if ($hasil['gabung'] !== null) {
@@ -191,7 +191,7 @@ class PendaftaranController extends BaseController
             return redirect()->to($alamat)->with('pesan_galat', (string) $hasil['pesan']);
         }
 
-        return redirect()->to($alamat)->with('pesan_sukses', 'Status kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.');
+        return redirect()->to($alamat)->with('pesan_sukses', 'Status kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor atlet (BIB) tetap.');
     }
 
     public function hapus(int $id): RedirectResponse
@@ -299,9 +299,9 @@ class PendaftaranController extends BaseController
         }
 
         $pesan = match ($tindakan) {
-            'lunas'    => $berhasil . ' pendaftaran ditandai Lunas.' . ($nomor > 0 ? ' ' . $nomor . ' atlet mendapat nomor dada baru.' : '')
+            'lunas'    => $berhasil . ' pendaftaran ditandai Lunas.' . ($nomor > 0 ? ' ' . $nomor . ' atlet mendapat nomor atlet (BIB) baru.' : '')
                 . ($gabung === [] ? '' : ' ' . implode(' ', $gabung)),
-            'menunggu' => $berhasil . ' pendaftaran kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor dada atlet tetap.',
+            'menunggu' => $berhasil . ' pendaftaran kembali menjadi Menunggu Konfirmasi Pembayaran. Nomor atlet (BIB) tetap.',
             default    => $berhasil . ' pendaftaran dihapus beserta atlet dan berkasnya. NISN atletnya bisa didaftarkan lagi.'
                 . ($tinggal === [] ? '' : ' ' . TimTanpaPembayar::kalimatSesudah($tinggal)),
         };
@@ -409,7 +409,7 @@ class PendaftaranController extends BaseController
         }
 
         if ($hasil['nomor_dada'] !== []) {
-            $pesan .= ' ' . count($hasil['nomor_dada']) . ' atlet baru mendapat nomor dada.';
+            $pesan .= ' ' . count($hasil['nomor_dada']) . ' atlet baru mendapat nomor atlet (BIB).';
         }
 
         if ($hasil['tim_dibebankan'] !== []) {

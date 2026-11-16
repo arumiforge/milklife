@@ -545,8 +545,8 @@ final class UbahPendaftaran
                     $this->db->transRollback();
                     $this->hapusFoto($fotoBaru);
 
-                    return self::ringkas(self::gagal($lama, 'simpan', 'Perubahan belum disimpan. Pendaftaran ini sudah Lunas, jadi atlet baru langsung mendapat nomor dada, '
-                        . 'tetapi awalan nomor dada ' . implode(', ', $beri['penuh']) . ' sudah penuh atau belum ada. '
+                    return self::ringkas(self::gagal($lama, 'simpan', 'Perubahan belum disimpan. Pendaftaran ini sudah Lunas, jadi atlet baru langsung mendapat nomor atlet (BIB), '
+                        . 'tetapi awalan nomor atlet (BIB) ' . implode(', ', $beri['penuh']) . ' sudah penuh atau belum ada. '
                         . 'Tambahkan awalan baru di Pengaturan, Kelompok Umur, lalu simpan lagi.'));
                 }
 
@@ -618,7 +618,7 @@ final class UbahPendaftaran
         foreach ($pj as $i => $orang) {
             $orang = is_array($orang) ? $orang : [];
             $id    = self::id($orang['id'] ?? null);
-            $ke    = 'Penanggung jawab ' . ($i + 1);
+            $ke    = 'Ofisial ' . ($i + 1);
 
             if ($id !== null && (! isset($lama['penanggung_jawab'][$id]) || in_array($id, $idPj, true))) {
                 $galat[] = ['jalur' => "penanggung_jawab.{$i}", 'pesan' => "{$ke}: data tersimpannya tidak dikenal. Muat ulang halaman ini, lalu ubah lagi."];
@@ -802,7 +802,7 @@ final class UbahPendaftaran
     {
         return 'Pendaftaran ini sudah Lunas, dan perubahan ini mengubah total dari ' . rupiah($totalLama) . ' menjadi ' . rupiah($totalBaru) . '. '
             . 'Setelah disimpan, status kembali menjadi Menunggu Konfirmasi Pembayaran dan perlu ditandai Lunas lagi setelah selisihnya diurus. '
-            . 'Nomor dada yang sudah dibagikan tetap dipegang atletnya.';
+            . 'Nomor atlet (BIB) yang sudah dibagikan tetap dipegang atletnya.';
     }
 
     /**
@@ -827,7 +827,7 @@ final class UbahPendaftaran
                 : 'Total berubah dari ' . rupiah((int) $hasil['total_lama']) . ' menjadi ' . rupiah((int) $hasil['total']) . '.');
 
         if ($hasil['status'] === 'lunas' && $hasil['atlet_baru'] > 0) {
-            $kalimat .= ' Pendaftaran ini sudah Lunas, jadi ' . $hasil['atlet_baru'] . ' atlet baru langsung mendapat nomor dada, dan nomor itu tidak bisa ditarik kembali.';
+            $kalimat .= ' Pendaftaran ini sudah Lunas, jadi ' . $hasil['atlet_baru'] . ' atlet baru langsung mendapat nomor atlet (BIB), dan nomor itu tidak bisa ditarik kembali.';
         }
 
         return $kalimat . $tim;

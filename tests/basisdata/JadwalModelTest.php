@@ -21,10 +21,10 @@ final class JadwalModelTest extends UjiBasisData
 
     public function testSimpanMengisiWaktuDibuatDanDiubah(): void
     {
-        $id = $this->model->insert(['judul' => 'Technical Meeting', 'urutan' => 1]);
+        $id = $this->model->insert(['judul' => 'Pertemuan Teknik (Technical Meeting)', 'urutan' => 1]);
 
         $jadwal = $this->model->find($id);
-        $this->assertSame('Technical Meeting', $jadwal['judul']);
+        $this->assertSame('Pertemuan Teknik (Technical Meeting)', $jadwal['judul']);
         $this->assertNull($jadwal['waktu']);
         $this->assertNull($jadwal['tautan']);
         $this->assertSame('1', (string) $jadwal['tampil'], 'Jadwal baru tampil bila tidak disebut lain.');

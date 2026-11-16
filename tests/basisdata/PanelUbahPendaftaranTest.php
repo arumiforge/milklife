@@ -444,7 +444,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
 
         $cek = (new UbahPendaftaran())->periksa($p['id'], $kiriman);
         $this->assertFalse($cek['kembali_menunggu']);
-        $this->assertStringContainsString('1 atlet baru langsung mendapat nomor dada', UbahPendaftaran::kalimatKonfirmasi($cek));
+        $this->assertStringContainsString('1 atlet baru langsung mendapat nomor atlet (BIB)', UbahPendaftaran::kalimatKonfirmasi($cek));
 
         $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
 
@@ -470,7 +470,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
 
         $this->assertFalse($hasil['tersimpan']);
-        $this->assertStringContainsString('awalan nomor dada KU 10 sudah penuh', $hasil['galat'][0]['pesan']);
+        $this->assertStringContainsString('awalan nomor atlet (BIB) KU 10 sudah penuh', $hasil['galat'][0]['pesan']);
         $this->assertSame($p['atlet'], $this->idAtlet($p['id']));
         $this->assertSame('SD KARANGAN MAJU', $this->pendaftaran($p['id'])['nama_sekolah']);
         $this->assertSame($fotoAwal, $this->berkasFoto(), 'Foto baru dihapus lagi dan foto lama tetap.');
@@ -588,7 +588,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
 
         $foto = new FotoPenanggungJawab();
         $this->assertFileDoesNotExist((string) $foto->jalurPenuh($lama[0]['foto']), 'Foto yang diganti dihapus.');
-        $this->assertFileDoesNotExist((string) $foto->jalurPenuh($lama[1]['foto']), 'Foto penanggung jawab yang dihapus ikut dihapus.');
+        $this->assertFileDoesNotExist((string) $foto->jalurPenuh($lama[1]['foto']), 'Foto ofisial yang dihapus ikut dihapus.');
         $this->assertCount(2, $this->berkasFoto());
     }
 

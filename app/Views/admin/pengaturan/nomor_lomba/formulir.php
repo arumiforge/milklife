@@ -139,7 +139,7 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                             <?php if ($dipakai) : ?>
                                 <input type="hidden" name="kategori" value="<?= esc($isian['kategori'], 'attr') ?>">
                             <?php endif ?>
-                            <div id="kategori-bantuan" class="form-text">Mix hanya untuk nomor beregu: satu tim berisi putra dan putri.</div>
+                            <div id="kategori-bantuan" class="form-text">Mixed hanya untuk nomor beregu: satu tim berisi putra dan putri.</div>
                             <?= $pesan('kategori') ?>
                         </fieldset>
 
@@ -190,7 +190,7 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                             </div>
 
                             <div id="bagian-mix" class="mt-3"<?= $mix ? '' : ' hidden' ?>>
-                                <p class="fw-semibold mb-1">Nomor mix</p>
+                                <p class="fw-semibold mb-1">Nomor mixed</p>
                                 <p class="form-text mt-0">Jumlah putra dan putri paling sedikit di antara anggota inti satu regu. Jumlah keduanya tidak boleh lebih dari jumlah inti.</p>
                                 <div class="row g-3">
                                     <div class="col-12 col-sm-6">

@@ -98,7 +98,7 @@ final class PanelUrutkanNomorDadaTest extends UjiBasisData
         $hasil = (new UrutkanNomorDada())->urutkan('Admin Uji');
 
         $this->assertFalse($hasil['berhasil']);
-        $this->assertStringContainsString('KU 10 belum punya awalan nomor dada', (string) $hasil['pesan']);
+        $this->assertStringContainsString('KU 10 belum punya awalan nomor atlet (BIB)', (string) $hasil['pesan']);
         $this->assertSame(['2001', '2002'], $this->nomor($a['atlet']));
         $this->assertNull(UrutkanNomorDada::waktuTerakhir());
     }
@@ -120,7 +120,7 @@ final class PanelUrutkanNomorDadaTest extends UjiBasisData
 
         $this->assertNull(UrutkanNomorDada::keterangan('lunas'));
         setting('NomorDada.diurutkan_pada', '2026-12-05 10:15:00');
-        $this->assertStringStartsWith('Nomor dada sudah diurutkan ulang per sekolah oleh panitia pada 5 Desember 2026, supaya', (string) UrutkanNomorDada::keterangan('lunas'));
+        $this->assertStringStartsWith('Nomor atlet (BIB) sudah diurutkan ulang per sekolah oleh panitia pada 5 Desember 2026, supaya', (string) UrutkanNomorDada::keterangan('lunas'));
         $this->assertNull(UrutkanNomorDada::keterangan('menunggu'));
     }
 

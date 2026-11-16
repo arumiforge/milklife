@@ -96,7 +96,7 @@ class AtletController extends BaseController
     public static function lembarExcel(array $saringan = []): EksporExcel
     {
         $excel = new EksporExcel('Atlet', [
-            'nomor_dada'     => 'Nomor Dada',
+            'nomor_dada'     => 'Nomor Atlet (BIB)',
             'nama'           => 'Nama',
             'nisn'           => 'NISN',
             'jenis_kelamin'  => 'Jenis Kelamin',
@@ -160,7 +160,7 @@ class AtletController extends BaseController
             $db = db_connect();
 
             // Nomor beregu ditulis bersama regu dan perannya, misalnya "Formula 1 putra Regu A (cadangan)" (K105).
-            $nomor = '(SELECT GROUP_CONCAT(CONCAT(nl.nama, \' \', nl.kategori,'
+            $nomor = '(SELECT GROUP_CONCAT(CONCAT(nl.nama, \' \', IF(nl.kategori = \'mix\', \'mixed\', nl.kategori),'
                 . ' IF(an.regu IS NULL, \'\', CONCAT(\' Regu \', an.regu, IF(an.peran = \'cadangan\', \' (cadangan)\', \'\'))))'
                 . ' ORDER BY nl.urutan, nl.id SEPARATOR \', \')'
                 . ' FROM ' . $db->prefixTable('atlet_nomor') . ' an'

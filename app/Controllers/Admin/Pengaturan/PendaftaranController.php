@@ -158,11 +158,11 @@ class PendaftaranController extends BaseController
         $batasPj  = self::PENANGGUNG_JAWAB_PALING_BANYAK;
 
         if ($minimal === null || $minimal < 1 || $minimal > $batasPj) {
-            $galat['penanggung_jawab_minimal'] = "Jumlah penanggung jawab paling sedikit harus angka 1 sampai {$batasPj}, misalnya 1.";
+            $galat['penanggung_jawab_minimal'] = "Jumlah ofisial paling sedikit harus angka 1 sampai {$batasPj}, misalnya 1.";
         }
 
         if ($maksimal === null || $maksimal < 1 || $maksimal > $batasPj) {
-            $galat['penanggung_jawab_maksimal'] = "Jumlah penanggung jawab paling banyak harus angka 1 sampai {$batasPj}, misalnya 5.";
+            $galat['penanggung_jawab_maksimal'] = "Jumlah ofisial paling banyak harus angka 1 sampai {$batasPj}, misalnya 5.";
         } elseif (! isset($galat['penanggung_jawab_minimal']) && $maksimal < $minimal) {
             $galat['penanggung_jawab_maksimal'] = "Jumlah paling banyak tidak boleh lebih kecil dari jumlah paling sedikit ({$minimal}). Naikkan jumlah paling banyak atau turunkan jumlah paling sedikit.";
         }

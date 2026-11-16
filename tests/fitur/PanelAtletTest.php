@@ -325,7 +325,7 @@ final class PanelAtletTest extends UjiBasisData
 
         $baris = $this->bacaExcel($hasil);
         $this->assertSame(
-            ['Nomor Dada', 'Nama', 'NISN', 'Jenis Kelamin', 'Tanggal Lahir', 'Kelompok Umur', 'Nomor Lomba', 'Sekolah', 'ID Pendaftaran', 'Status'],
+            ['Nomor Atlet (BIB)', 'Nama', 'NISN', 'Jenis Kelamin', 'Tanggal Lahir', 'Kelompok Umur', 'Nomor Lomba', 'Sekolah', 'ID Pendaftaran', 'Status'],
             $baris[0],
         );
         $this->assertCount(8, $baris);
