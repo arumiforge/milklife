@@ -263,30 +263,35 @@ final class PanelGabunganTest extends UjiBasisData
         // Tiga bukti dari wizard (K90) ditambah satu unggahan admin.
         $this->assertCount(4, $this->berkasBuktiBayarTersimpan());
 
-        // ---------- 5. Tandai Lunas dan nomor dada ----------
-        foreach ([$a, $b, $c] as $p) {
+        // ---------- 5. Tandai Lunas, nomor dada, dan penggabungan (K109) ----------
+        foreach ([$a, $c] as $p) {
             $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin('admin/pendaftaran/' . $p['pid'] . '/lunas'), 'admin/pendaftaran/' . $p['pid']);
         }
 
-        $this->assertSame(['2001', '2002', '2003', '2004'], $this->nomorDada($a['pid']));
-        $this->assertSame(['2005'], $this->nomorDada($b['pid']));
+        // B (NPSN sama dengan A) digabung ke A yang Lunas lebih dulu.
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin('admin/pendaftaran/' . $b['pid'] . '/lunas'), 'admin/pendaftaran/' . $a['pid']);
+        $this->assertStringContainsString('Pendaftaran ' . $b['id_pendaftaran'] . ' digabung ke ' . $a['id_pendaftaran'], (string) $_SESSION['pesan_sukses']);
+        $this->assertSame(0, $this->db->table('pendaftaran')->where('id', $b['pid'])->countAllResults());
+
+        $this->assertSame(['2001', '2002', '2003', '2004', '2005'], $this->nomorDada($a['pid']));
         $this->assertSame(['4001'], $this->nomorDada($c['pid']));
+        $this->assertSame(400000, (int) $this->db->table('pendaftaran')->where('id', $a['pid'])->get()->getRow()->total);
 
         // ---------- 6. Ubah ----------
-        // K59: B Lunas, tambahan anggota tim susulan; total tetap, atlet baru langsung bernomor dada.
-        $isian            = $this->isianUbah($b['pid']);
+        // K59: A Lunas, tambahan anggota tim; total tetap, atlet baru langsung bernomor dada.
+        $isian            = $this->isianUbah($a['pid']);
         $isian['atlet'][] = [
             'id' => '', 'nama' => 'eko karangan 06', 'nisn' => '9900000006', 'tanggal_lahir' => '2017-02-03',
             'jenis_kelamin' => 'L', 'nomor' => [(string) $this->idInduk['kanga']],
             'regu' => [$this->idInduk['kanga'] => ['regu' => 'A', 'peran' => 'cadangan']],
         ];
         $this->assertBerhasilDialihkan(
-            $this->kirimSebagaiAdmin('admin/pendaftaran/' . $b['pid'], $isian),
-            'admin/pendaftaran/' . $b['pid'],
-            'Perubahan pendaftaran ' . $b['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 150.000. 1 atlet baru mendapat nomor dada.',
+            $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['pid'], $isian),
+            'admin/pendaftaran/' . $a['pid'],
+            'Perubahan pendaftaran ' . $a['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 400.000. 1 atlet baru mendapat nomor dada.',
         );
-        $this->assertSame('lunas', $this->statusPendaftaran($b['pid']));
-        $this->assertSame(['2005', '2006'], $this->nomorDada($b['pid']));
+        $this->assertSame('lunas', $this->statusPendaftaran($a['pid']));
+        $this->assertSame(['2001', '2002', '2003', '2004', '2005', '2006'], $this->nomorDada($a['pid']));
 
         // K32: A Lunas, nama atlet diubah dan satu nomor individu ditambah; total naik, status kembali Menunggu.
         $isian                      = $this->isianUbah($a['pid']);
@@ -299,11 +304,11 @@ final class PanelGabunganTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['pid'], $isian + ['setuju_menunggu' => '1']),
             'admin/pendaftaran/' . $a['pid'],
-            'Perubahan pendaftaran ' . $a['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 400.000. '
+            'Perubahan pendaftaran ' . $a['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 550.000. '
             . 'Status kembali menjadi Menunggu Konfirmasi Pembayaran; tandai Lunas lagi setelah selisihnya diurus.',
         );
         $this->assertSame('menunggu', $this->statusPendaftaran($a['pid']));
-        $this->assertSame(['2001', '2002', '2003', '2004'], $this->nomorDada($a['pid']), 'Nomor dada tetap.');
+        $this->assertSame(['2001', '2002', '2003', '2004', '2005', '2006'], $this->nomorDada($a['pid']), 'Nomor dada tetap.');
         $this->assertCount(4, $this->berkasBuktiBayarTersimpan(), 'Bukti bayar tidak tersentuh oleh ubah.');
 
         // ---------- 7. Hapus, NISN bisa didaftarkan lagi, nomor dada tidak dipakai ulang ----------
@@ -313,7 +318,8 @@ final class PanelGabunganTest extends UjiBasisData
             'Pendaftaran ' . $c['id_pendaftaran'] . ' (SMP KARANGAN JAYA) sudah dihapus beserta 1 atlet. NISN atletnya bisa didaftarkan lagi.',
         );
         $this->assertSame(0, $this->db->table('pendaftaran')->where('id', $c['pid'])->countAllResults());
-        $this->assertCount(2, $this->berkasFoto(), 'Foto penanggung jawab C ikut terhapus.');
+        // Foto C ikut terhapus; foto B sudah dihapus saat digabung karena penanggung jawabnya sama dengan A (nomor WA sama, K109).
+        $this->assertCount(1, $this->berkasFoto(), 'Foto penanggung jawab C ikut terhapus.');
 
         $d = $this->simpanWizard($kirimC);
         $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin('admin/pendaftaran/' . $d['pid'] . '/lunas'), 'admin/pendaftaran/' . $d['pid']);
@@ -321,7 +327,7 @@ final class PanelGabunganTest extends UjiBasisData
 
         // ---------- 8. Cek dan bukti membaca data yang sudah diubah ----------
         $teks = $this->teks($this->get('cek-pendaftaran?kode=99999911'));
-        foreach (['BUDI KARANGAN UBAH', 'EKO KARANGAN 06', 'Frog Jump putra', 'Rp 400.000', 'Rp 150.000', 'Rp 550.000', 'Lunas', 'Menunggu Konfirmasi Pembayaran'] as $harap) {
+        foreach (['BUDI KARANGAN UBAH', 'EKO KARANGAN 06', 'Frog Jump putra', 'Rp 550.000', 'Menunggu Konfirmasi Pembayaran', 'Gabungan dari ' . $b['id_pendaftaran']] as $harap) {
             $this->assertStringContainsString($harap, $teks);
         }
         $this->assertStringNotContainsString('BUDI KARANGAN 01', $teks);
@@ -329,7 +335,8 @@ final class PanelGabunganTest extends UjiBasisData
 
         $html = (new BuktiPendaftaran((new DataPendaftaran())->cariId($a['id_pendaftaran'])))->html();
         $this->assertStringContainsString('BUDI KARANGAN UBAH', $html);
-        $this->assertStringContainsString('Rp 400.000', $html);
+        $this->assertStringContainsString('Rp 550.000', $html);
+        $this->assertStringContainsString('Gabungan dari ' . $b['id_pendaftaran'], $html);
         $this->assertStringContainsString('stempel stempel-menunggu', $html);
 
         $pdf = $this->get('bukti/' . (string) db_connect()->table('pendaftaran')->where('id_pendaftaran', $a['id_pendaftaran'])->get()->getRow()->kode_bukti . '/' . $a['id_pendaftaran']);
@@ -339,11 +346,11 @@ final class PanelGabunganTest extends UjiBasisData
         // ---------- 9. Atlet ----------
         $atlet = $this->dataTabel('admin/atlet/data');
         $this->assertSame(7, $atlet['recordsTotal']);
-        $this->assertSame(3, $this->dataTabel('admin/atlet/data', ['status' => 'lunas'])['recordsFiltered']);
+        $this->assertSame(1, $this->dataTabel('admin/atlet/data', ['status' => 'lunas'])['recordsFiltered']);
         $this->assertSame(6, $this->dataTabel('admin/atlet/data', ['nomor_lomba' => (string) $this->idInduk['kanga']])['recordsFiltered']);
 
         $excel = $this->bacaExcel($this->bukaSebagaiAdmin('admin/atlet/excel?status=menunggu'));
-        $this->assertCount(5, $excel, 'Judul dan empat atlet A.');
+        $this->assertCount(7, $excel, 'Judul dan enam atlet A (termasuk atlet B yang digabung).');
         $this->assertContains('BUDI KARANGAN UBAH', array_column(array_slice($excel, 1), 1));
 
         // ---------- 10. Rekap ----------
@@ -351,12 +358,12 @@ final class PanelGabunganTest extends UjiBasisData
 
         $keuangan = $rekap('keuangan');
         $this->assertSame(750000, $keuangan['jumlah']['total']);
-        $this->assertSame(350000, $keuangan['jumlah']['lunas']);
+        $this->assertSame(200000, $keuangan['jumlah']['lunas']);
 
         $tim = $rekap('tim-beregu');
         $this->assertCount(1, $tim['baris'], 'Satu tim per sekolah per nomor, termasuk anggota susulan.');
         $this->assertSame(6, (int) $tim['baris'][0]['jumlah_anggota']);
-        $this->assertSame(2, (int) $rekap('tim-beregu', 'lunas')['baris'][0]['jumlah_anggota']);
+        $this->assertSame([], $rekap('tim-beregu', 'lunas')['baris'], 'A (dengan B) kembali Menunggu.');
 
         $excel = $this->bacaExcel($this->bukaSebagaiAdmin('admin/rekap/sekolah/excel'));
         $this->assertSame('Jumlah', end($excel)[0]);
@@ -376,13 +383,13 @@ final class PanelGabunganTest extends UjiBasisData
         }
 
         $this->assertSame([
-            'pendaftaran' => '3',
+            'pendaftaran' => '2',
             'atlet'       => '7',
             'sekolah'     => '2',
             'tim'         => '1',
             'tagihan'     => rupiah(750000),
-            'lunas'       => rupiah(350000),
-            'belum'       => rupiah(400000),
+            'lunas'       => rupiah(200000),
+            'belum'       => rupiah(550000),
         ], $angka);
     }
 }

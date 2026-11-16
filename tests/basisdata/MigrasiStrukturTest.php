@@ -154,6 +154,14 @@ final class MigrasiStrukturTest extends UjiBasisData
             'dibuat_pada'     => ['datetime', true, null],
             'diubah_pada'     => ['datetime', true, null],
         ],
+        // K109: ID dan kode bukti lama pendaftaran yang sudah digabung.
+        'pendaftaran_gabungan' => [
+            'id'                  => ['int unsigned', false, null],
+            'pendaftaran_id'      => ['int unsigned', false, null],
+            'id_pendaftaran_lama' => ['varchar(20)', false, null],
+            'kode_bukti_lama'     => ['char(24)', true, null],
+            'dibuat_pada'         => ['datetime', true, null],
+        ],
         'tautan' => [
             'id'          => ['int unsigned', false, null],
             'jenis'       => ["enum('narahubung','media_sosial')", false, null],
@@ -186,6 +194,8 @@ final class MigrasiStrukturTest extends UjiBasisData
         'bukti_bayar.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
         // K99: usulan nama sekolah tetap ada bila pendaftaran pengusulnya dihapus.
         'usulan_nama_sekolah.pendaftaran_id' => ['pendaftaran', 'SET NULL'],
+        // K109: ID lama ikut terhapus bersama pendaftaran gabungannya.
+        'pendaftaran_gabungan.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void
@@ -305,6 +315,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             'atlet:nomor_dada',
             'atlet_nomor:atlet_id,nomor_lomba_id',
             'pendaftaran_beregu:pendaftaran_id,nomor_lomba_id,regu',
+            'pendaftaran_gabungan:id_pendaftaran_lama',
         ] as $harapan) {
             $this->assertContains($harapan, $unik, "Kunci unik {$harapan}.");
         }

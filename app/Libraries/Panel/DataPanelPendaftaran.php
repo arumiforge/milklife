@@ -86,6 +86,8 @@ final class DataPanelPendaftaran
                 'status'         => 'p.status',
                 // Dicari, tidak tampil sebagai kolom sendiri.
                 'cari_id'        => ['sql' => 'p.id_pendaftaran', 'cari' => true, 'urut' => false],
+                // ID lama pendaftaran yang sudah digabung ke pendaftaran ini (K109).
+                'cari_id_lama'   => ['sql' => '(SELECT GROUP_CONCAT(g.id_pendaftaran_lama) FROM pendaftaran_gabungan g WHERE g.pendaftaran_id = p.id)', 'cari' => true, 'urut' => false],
                 'alamat'         => ['urut' => false],
             ],
             saringan: [
@@ -230,6 +232,9 @@ final class DataPanelPendaftaran
             'subtotal_individu' => (int) $p['subtotal_individu'],
             'subtotal_beregu'   => (int) $p['subtotal_beregu'],
             'total'             => (int) $p['total'],
+            // ID pendaftaran lama yang sudah digabung ke sini (K109).
+            'gabungan_dari'     => array_column($this->db->table('pendaftaran_gabungan')->select('id_pendaftaran_lama')
+                ->where('pendaftaran_id', $id)->orderBy('id')->get()->getResultArray(), 'id_pendaftaran_lama'),
             'penanggung_jawab'  => [],
             'atlet'             => [],
             'beregu'            => [],

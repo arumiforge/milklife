@@ -22,7 +22,9 @@ use ZipArchive;
  *   awalan nomor dada (supaya nomor dada tidak dipakai ulang, K05) dan nomor
  *   urut ID pendaftaran berikutnya; usulan nama sekolah dari pendaftar (K99)
  *   dan sekolah yang namanya disunting admin (K97), supaya keduanya tidak hilang
- *   di server baru. Dua kunci terakhir boleh tidak ada (paket lama).
+ *   di server baru. Dua kunci terakhir boleh tidak ada (paket lama). Setiap
+ *   pendaftaran juga membawa `gabungan_dari`: ID dan kode bukti lama yang
+ *   sudah digabung ke situ (K109), supaya kode QR bukti lama tetap berlaku.
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -84,6 +86,7 @@ final class PaketPendaftaran
         $atlet = $kelompok($this->db->table('atlet')->orderBy('id')->get()->getResultArray());
         $tim   = $kelompok($this->db->table('pendaftaran_beregu')->orderBy('id')->get()->getResultArray());
         $bukti = $kelompok($this->db->table('bukti_bayar')->orderBy('id')->get()->getResultArray());
+        $lama  = $kelompok($this->db->table('pendaftaran_gabungan')->orderBy('id')->get()->getResultArray());
 
         $ikutNomor = [];
 
@@ -148,6 +151,10 @@ final class PaketPendaftaran
 
                     return ['berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah']];
                 }, $bukti[$id] ?? []))),
+                // ID dan kode bukti lama yang sudah digabung ke sini (K109).
+                'gabungan_dari' => array_map(static fn (array $g): array => [
+                    'id_pendaftaran' => $g['id_pendaftaran_lama'], 'kode_bukti' => $g['kode_bukti_lama'], 'dibuat_pada' => $g['dibuat_pada'],
+                ], $lama[$id] ?? []),
             ];
         }
 
@@ -454,6 +461,17 @@ final class PaketPendaftaran
             foreach ($p['bukti_bayar'] ?? [] as $b) {
                 if ($this->berkasSah($b['berkas'] ?? null)) {
                     $tabel('bukti_bayar', ['pendaftaran_id' => $id, 'berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah']]);
+                }
+            }
+
+            foreach ($p['gabungan_dari'] ?? [] as $g) {
+                if (is_string($g['id_pendaftaran'] ?? null) && preg_match('/^MAC[0-9A-Z]{1,17}$/D', $g['id_pendaftaran']) === 1) {
+                    $tabel('pendaftaran_gabungan', [
+                        'pendaftaran_id'      => $id,
+                        'id_pendaftaran_lama' => $g['id_pendaftaran'],
+                        'kode_bukti_lama'     => is_string($g['kode_bukti'] ?? null) && preg_match('/^[0-9a-f]{24}$/D', $g['kode_bukti']) === 1 ? $g['kode_bukti'] : null,
+                        'dibuat_pada'         => $g['dibuat_pada'] ?? null,
+                    ]);
                 }
             }
         }

@@ -17,7 +17,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi terakhir 11, K108).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi terakhir 12, K109).
 - Rencana implementasi Tahap 1: `dokumen/draf/rencana-implementasi-tahap-1.md`.
 - Rencana implementasi Tahap 2: `dokumen/draf/rencana-implementasi-tahap-2.md`.
 - Rencana implementasi Tahap 3: `dokumen/draf/rencana-implementasi-tahap-3.md`.
@@ -47,3 +47,4 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Nama sekolah **tidak unik**: data resmi memakai nama umum untuk banyak madrasah. Sekolah selalu dikenali lewat NPSN; nama pembeda diberi admin di menu Sekolah (K97), dan sekolah yang disunting tidak ditimpa impor ulang.
 - Pendaftar boleh **mengusulkan nama sekolah** yang lebih lengkap; pendaftarannya langsung memakai nama itu sampai admin menyetujui atau menolak (K99).
 - Saat admin mengubah pendaftaran, kelompok umur dan nomor lomba yang sudah dimatikan **tetap boleh dipertahankan** untuk atlet yang sudah memakainya, tidak untuk atlet atau nomor baru (K98).
+- Pendaftaran Lunas dengan NPSN sama **digabung otomatis** ke pendaftaran yang Lunas paling dulu (K109); pendaftaran yang pindah dihapus, tetapi ID dan kode bukti lamanya dicatat di `pendaftaran_gabungan` sehingga cek dan kode QR lama tetap sampai. Jadi satu NPSN paling banyak punya satu pendaftaran Lunas; yang Menunggu dan yang tanpa NPSN tidak digabung.

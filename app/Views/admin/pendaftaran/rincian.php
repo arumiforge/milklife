@@ -128,7 +128,11 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                 <dt class="col-sm-4 col-lg-3 fw-semibold">Tanggal daftar</dt>
                 <dd class="col-sm-8 col-lg-9"><?= esc(tanggal_id($p['dibuat_pada'], true)) ?: $strip ?></dd>
                 <dt class="col-sm-4 col-lg-3 fw-semibold">Waktu lunas</dt>
-                <dd class="col-sm-8 col-lg-9 mb-0" id="waktu-lunas"><?= $lunas && $p['waktu_lunas'] !== null ? esc(tanggal_id($p['waktu_lunas'], true)) : '<span class="text-body-secondary">Belum lunas</span>' ?></dd>
+                <dd class="col-sm-8 col-lg-9<?= $p['gabungan_dari'] === [] ? ' mb-0' : '' ?>" id="waktu-lunas"><?= $lunas && $p['waktu_lunas'] !== null ? esc(tanggal_id($p['waktu_lunas'], true)) : '<span class="text-body-secondary">Belum lunas</span>' ?></dd>
+                <?php if ($p['gabungan_dari'] !== []): ?>
+                    <dt class="col-sm-4 col-lg-3 fw-semibold">Gabungan dari</dt>
+                    <dd class="col-sm-8 col-lg-9 mb-0" id="gabungan-dari"><?= esc(implode(', ', $p['gabungan_dari'])) ?></dd>
+                <?php endif ?>
             </dl>
         </div>
     </section>

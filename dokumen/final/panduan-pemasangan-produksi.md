@@ -2,9 +2,10 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, diubah langsung sesuai K101) |
+| Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026 |
+| Tanggal | 12 November 2026, revisi 14 dan 16 November 2026 |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -277,6 +278,14 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    ```
 
    `sekolah:impor` memasukkan data sekolah terbaru bila versi baru membawanya. Sekolah yang sudah disunting admin tidak ditimpa, dan tidak ada sekolah yang dihapus.
+
+   Pembaruan yang membawa penggabungan pendaftaran (16 November 2026, K109) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
+
+   ```
+   php spark pendaftaran:gabung
+   ```
+
+   Perintah ini menampilkan sekolah yang punya lebih dari satu pendaftaran Lunas, lalu meminta Anda mengetik `GABUNG`. Setiap sekolah digabung ke pendaftaran yang Lunas paling dulu; ID dan kode QR bukti lama tetap mengarah ke pendaftaran gabungan. Bila muncul "Tidak ada yang perlu digabung", tidak ada yang berubah.
 
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 

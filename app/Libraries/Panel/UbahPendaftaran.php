@@ -104,6 +104,8 @@ use Throwable;
  *         'nomor_dada'        => [21 => '2005'],   // nomor dada yang baru dibagikan (K59), hanya simpan()
  *         'tim_dibebankan'    => ['12:A'], // regu yang biaya regunya baru dibebankan (K68)
  *         'tim_ditinggalkan'  => [ … ],   // `TimTanpaPembayar::ditinggalkan()` untuk perubahan ini
+ *         'gabung'            => null,    // hanya simpan(): `GabungPendaftaran::gabungNpsn()` bila pendaftaran
+ *                                         // Lunas ini digabung dengan pendaftaran Lunas lain ber-NPSN sama (K109)
  *     ]
  */
 final class UbahPendaftaran
@@ -364,6 +366,7 @@ final class UbahPendaftaran
         $fotoBaru  = [];
         $fotoLama  = [];
         $nomorDada = [];
+        $gabung    = null;
 
         try {
             foreach ($rencana['penanggung_jawab'] as $i => $orang) {
@@ -548,6 +551,9 @@ final class UbahPendaftaran
                 }
 
                 $nomorDada = $beri['nomor'];
+
+                // K109: NPSN baru mungkin sudah punya pendaftaran Lunas lain; gabungkan.
+                $gabung = (new GabungPendaftaran($this->db))->gabungNpsn($rencana['sekolah']['npsn']);
             }
 
             if ($this->db->transStatus() === false) {
@@ -576,10 +582,11 @@ final class UbahPendaftaran
             throw $e;
         }
 
-        $this->hapusFoto($fotoLama);
+        $this->hapusFoto(array_merge($fotoLama, $gabung['foto'] ?? []));
 
         $rencana['tersimpan']  = true;
         $rencana['nomor_dada'] = $nomorDada;
+        $rencana['gabung']     = $gabung;
 
         return self::ringkas($rencana);
     }
@@ -697,6 +704,7 @@ final class UbahPendaftaran
             'nomor_dada'        => [],
             'tim_dibebankan'    => [],
             'tim_ditinggalkan'  => [],
+            'gabung'            => null,
         ];
 
         if ($galat !== []) {
@@ -995,7 +1003,7 @@ final class UbahPendaftaran
         return array_intersect_key($rencana, array_flip([
             'galat', 'id_pendaftaran', 'perlu_setuju', 'tersimpan', 'status_lama', 'status', 'kembali_menunggu',
             'total_lama', 'subtotal_individu', 'subtotal_beregu', 'total', 'atlet_baru', 'nomor_dada',
-            'tim_dibebankan', 'tim_ditinggalkan',
+            'tim_dibebankan', 'tim_ditinggalkan', 'gabung',
         ]));
     }
 

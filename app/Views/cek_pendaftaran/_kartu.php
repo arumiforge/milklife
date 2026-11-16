@@ -25,6 +25,7 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
         <div>
             <?php if ($banyak) : ?><p class="cek-kartu-urutan">Pendaftaran <?= $urutan ?></p><?php endif ?>
             <h3 class="cek-kartu-id" id="<?= $idJudul ?>"><span class="visually-hidden">ID </span><?= esc($p['id_pendaftaran']) ?></h3>
+            <?php if (($p['gabungan_dari'] ?? []) !== []) : ?><p class="mb-1 small">Gabungan dari <?= esc(implode(', ', $p['gabungan_dari'])) ?></p><?php endif ?>
             <p class="mb-0 small"><i class="bi bi-clock" aria-hidden="true"></i> Didaftarkan <?= esc(tanggal_id($p['dibuat_pada'], true)) ?></p>
         </div>
         <div class="cek-kartu-tindakan">

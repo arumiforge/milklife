@@ -156,7 +156,8 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
 <table class="info">
     <tr>
         <td class="info-label">ID Pendaftaran</td>
-        <td class="info-id" width="58mm"><?= esc($p['id_pendaftaran']) ?></td>
+        <?php // ID lama yang sudah digabung ke pendaftaran ini (K109); gaya langsung karena mPDF tidak menerapkan pemilih bersarang di sel. ?>
+        <td class="info-id" width="58mm"><?= esc($p['id_pendaftaran']) ?><?php if (($p['gabungan_dari'] ?? []) !== []) : ?><div class="gabungan" style="font-family: dejavusans; font-size: 6.5pt; font-weight: normal; color: #5B6475; letter-spacing: 0;">Gabungan dari <?= esc(implode(', ', $p['gabungan_dari'])) ?></div><?php endif ?></td>
         <td class="info-label">Tanggal Pendaftaran</td>
         <td class="info-isi"><?= esc(tanggal_id($p['dibuat_pada'])) ?></td>
     </tr>
