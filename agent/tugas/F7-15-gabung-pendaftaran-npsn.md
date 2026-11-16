@@ -29,6 +29,7 @@ Sekolah yang mendaftar lebih dari sekali (pendaftaran susulan) punya satu pendaf
 
 ## Catatan
 
+- PR: [#87](https://github.com/arumiforge/milklife/pull/87).
 - Migrasi baru: `2026-11-16-000100_BuatTabelPendaftaranGabungan`.
 - Penggabungan tidak bisa dipisah. Pendaftaran gabungan yang dikembalikan ke Menunggu, diubah, atau dihapus berlaku untuk seluruh isinya.
 - Penanggung jawab gabungan bisa melebihi batas pengaturan (bawaan 5); admin yang membuka Ubah diminta mengurangi dulu.
