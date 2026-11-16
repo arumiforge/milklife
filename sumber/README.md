@@ -7,5 +7,4 @@ Bahan dari pemilik dan dokumen resmi, disimpan persis seperti diterima. Berkas d
 | `flyer/flyer-seri2-2025.png` | Flyer Seri 2 – 2025, acuan gaya dan warna | 10 November 2026 |
 | `flyer/flyer-seri2-2026.jpg` | Flyer Seri 2 – 2026: kategori, nomor lomba, biaya, jadwal pendaftaran, narahubung | 10 November 2026 |
 | `flyer/banner-seri2-2026.jpg` | Banner mendatar Seri 2 – 2026 | 10 November 2026 |
-
-Belum ada: juknis resmi.
+| `juknis/petunjuk-teknis-seri2-2026.pdf` | Surat pemberitahuan dan petunjuk teknis resmi Seri 2 – 2026 (8 halaman): kelompok umur dan batas kelahiran, nomor lomba, peraturan peserta, technical meeting, pendaftaran, biaya | 16 November 2026 (K112) |

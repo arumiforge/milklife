@@ -153,9 +153,10 @@ final class DataAwalTest extends UjiBasisData
             $this->assertStringStartsWith($this->folderUnggahan, (string) $unggahan->jalurPenuh($b['berkas']), 'Uji tidak menulis ke public/unggahan.');
         }
 
-        // Flyer berisi gambar asli; contoh dokumen berupa berkas kosong.
+        // Flyer dan juknis (K112) berisi berkas asli; contoh dokumen lain berupa berkas kosong.
         $this->assertSame(filesize(ROOTPATH . 'sumber/flyer/flyer-seri2-2026.jpg'), $unggahan->ukuran($baris[0]['berkas']));
-        $this->assertSame(0, $unggahan->ukuran($baris[2]['berkas']));
+        $this->assertSame(filesize(ROOTPATH . 'sumber/juknis/petunjuk-teknis-seri2-2026.pdf'), $unggahan->ukuran($baris[2]['berkas']));
+        $this->assertSame(0, $unggahan->ukuran($baris[3]['berkas']));
 
         // Tabel yang sudah berisi tidak ditambah lagi.
         $this->assertSame(['tersimpan' => 0, 'gagal' => []], DataAwal::pasangUnduhanBawaan($this->db));
@@ -174,7 +175,7 @@ final class DataAwalTest extends UjiBasisData
         // K36: KU 8 lahir 2019 ke atas (akhir kosong), KU 10 2016–2018,
         // KU 12 2015, KU 15 2011–2014, KU 18 2008–2010.
         $this->assertSame(
-            [['2019', null], ['2016', '2018'], ['2015', '2015'], ['2011', '2014'], ['2008', '2010']],
+            [['2019', null], ['2016', '2018'], ['2014', '2015'], ['2011', '2014'], ['2008', '2010']],
             array_map(static fn (array $ku): array => [$ku['tahun_lahir_awal'], $ku['tahun_lahir_akhir']], $baris),
         );
 
@@ -331,7 +332,7 @@ final class DataAwalTest extends UjiBasisData
         $this->assertStringContainsString('Nomor lomba  : 69 (58 individu, 11 beregu)', $keluaran);
         $this->assertMatchesRegularExpression('/KU 10\s+: lahir 2016–2018,\s+awalan nomor dada 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
         $this->assertMatchesRegularExpression('/KU 8 \(Seneng Playon\)\s+: lahir 2019 ke atas,\s+awalan nomor dada 1/', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2015,\s+awalan nomor dada 3/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2014–2015,\s+awalan nomor dada 3/', $keluaran);
         $this->assertStringNotContainsString('Patokan usia', $keluaran);
         $this->assertStringContainsString('Gambar kepala bawaan dipasang', $keluaran);
         $this->assertStringContainsString('Logo persegi bawaan dipasang', $keluaran);

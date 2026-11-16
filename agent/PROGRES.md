@@ -23,6 +23,8 @@ Diperbarui: 16 November 2026
 | [F7-13 Regu tanpa batas bawaan, awalan regu, bukti PDF beregu per baris](tugas/F7-13-regu-tanpa-batas-awalan.md) | menunggu tinjauan | sisipan | |
 | [F7-14 Regu tunggal tanpa nama regu, bukti PDF lebih formal](tugas/F7-14-regu-tunggal-bukti-formal.md) | menunggu tinjauan | sisipan | [#86](https://github.com/arumiforge/milklife/pull/86) |
 | [F7-15 Gabung pendaftaran Lunas ber-NPSN sama](tugas/F7-15-gabung-pendaftaran-npsn.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
+| [F7-16 Urutkan ulang nomor dada per sekolah](tugas/F7-16-urutkan-nomor-dada.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
+| [F7-17 Cocokkan aturan web dengan juknis resmi](tugas/F7-17-cocokkan-juknis.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
 
 ## Berikutnya
 

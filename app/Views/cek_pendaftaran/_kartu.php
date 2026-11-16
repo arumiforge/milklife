@@ -48,6 +48,10 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
         </ul>
 
         <h4 class="cek-subjudul"><i class="bi bi-people" aria-hidden="true"></i> Atlet <span class="cek-jumlah"><?= count($p['atlet']) ?></span></h4>
+        <?php $keteranganNomorDada = App\Libraries\Panel\UrutkanNomorDada::keterangan((string) $p['status']); ?>
+        <?php if ($keteranganNomorDada !== null) : ?>
+            <p class="alert alert-info small py-2 mb-2 keterangan-nomor-dada" role="note"><i class="bi bi-info-circle" aria-hidden="true"></i> <?= esc($keteranganNomorDada) ?></p>
+        <?php endif ?>
         <div class="table-responsive">
             <table class="table table-hover align-middle cek-tabel">
                 <thead>

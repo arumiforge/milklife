@@ -273,6 +273,8 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:awal', []));
         $xpath = $this->xpathDari($this->get('/'));
         $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/following-sibling::*[1][@id="lomba"]')->length);
+        // Istilah sama dengan bagian lain: "Kelompok umur", bukan "Kelompok usia" (K112).
+        $this->assertSame('Kelompok umur', trim($xpath->query('//*[contains(@class, "pembuka-ku-label")]')->item(0)->textContent));
 
         // Tiap kartu menaut ke rincian kelompok umurnya di bagian lomba.
         $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[contains(@class, "pembuka-ku-kartu")]'));

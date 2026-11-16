@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
+use App\Libraries\Panel\UrutkanNomorDada;
 use Mpdf\Mpdf;
 
 /**
@@ -113,7 +114,8 @@ final class BuktiPendaftaran
             'namaAcara' => mb_strtoupper(AcaraController::namaTampil()),
             'seriTahun' => trim(($seri !== '' ? 'Seri ' . $seri : '') . ($tahun !== '' ? ' Tahun ' . $tahun : '')),
             'logo'      => $this->logoPng() !== null,
-            'dicetak'   => tanggal_id(date('Y-m-d H:i:s'), true),
+            // Tanggal cetak saja, tanpa pukul (K113).
+            'dicetak'   => tanggal_id(date('Y-m-d')),
         ], ['saveData' => false]);
     }
 
@@ -176,7 +178,10 @@ final class BuktiPendaftaran
             $mpdf->AddPage();
         }
         $mpdf->y = $mpdf->h - $mpdf->bMargin - self::TINGGI_BLOK_QR;
-        $mpdf->WriteHTML(view('bukti/pdf_qr', [], ['saveData' => false]));
+        $mpdf->WriteHTML(view('bukti/pdf_qr', [
+            // Nomor dada diurutkan ulang panitia (K111): keterangan di dasar halaman.
+            'keteranganNomorDada' => UrutkanNomorDada::keterangan((string) ($this->pendaftaran['status'] ?? '')),
+        ], ['saveData' => false]));
 
         return $mpdf->Output('', 'S');
     }

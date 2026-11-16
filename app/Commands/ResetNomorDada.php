@@ -56,6 +56,10 @@ class ResetNomorDada extends BaseCommand
         $db->table('pendaftaran')->where('status', 'lunas')->update(['status' => 'menunggu', 'waktu_lunas' => null, 'diubah_pada' => $sekarang]);
         $db->transComplete();
 
+        // Keterangan "nomor dada diurutkan ulang" (K111) tidak berlaku lagi.
+        setting('NomorDada.diurutkan_pada', null);
+        setting('NomorDada.diurutkan_oleh', null);
+
         CLI::write('Selesai. Semua nomor dada kosong; tandai Lunas lagi di panel untuk memberi nomor baru mulai dari awal.', 'green');
 
         return EXIT_SUCCESS;

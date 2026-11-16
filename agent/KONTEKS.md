@@ -17,7 +17,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi terakhir 12, K109).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi terakhir 13, K111–K112).
 - Rencana implementasi Tahap 1: `dokumen/draf/rencana-implementasi-tahap-1.md`.
 - Rencana implementasi Tahap 2: `dokumen/draf/rencana-implementasi-tahap-2.md`.
 - Rencana implementasi Tahap 3: `dokumen/draf/rencana-implementasi-tahap-3.md`.
@@ -27,7 +27,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Rencana implementasi Tahap 7: `dokumen/draf/rencana-implementasi-tahap-7.md`.
 - Arsip tahap selesai: `agent/arsip/`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
-- Bahan asli: `sumber/flyer/`.
+- Bahan asli: `sumber/flyer/` dan juknis resmi `sumber/juknis/` (K112).
 - Data sekolah: `data/sekolah/sekolah.json` (sumber dan cara memperbarui di `data/README.md`).
 
 ## Hal yang mudah keliru
@@ -38,7 +38,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Kelompok umur ditentukan **tahun lahir**, bukan usia (K36); usia hanya ditampilkan. Tidak ada tanggal patokan usia (K37).
 - Tahun lahir menentukan kelompok umur, tetapi **jenjang sekolah membatasinya**: atlet ditolak bila kelompok umurnya tidak dibuka untuk jenjang sekolahnya (K23). Jenjang yang boleh ikut diatur admin, tidak tertulis di kode.
 - Halaman cek menampilkan data siswa penuh atas persetujuan MoU. Repo ini publik, jadi data siswa tidak boleh masuk git.
-- Nomor dada dibuat saat ditandai Lunas dan **tidak pernah dipakai ulang**, juga setelah pendaftaran dihapus atau dikembalikan ke Menunggu.
+- Nomor dada dibuat saat ditandai Lunas dan **tidak pernah dipakai ulang**, juga setelah pendaftaran dihapus atau dikembalikan ke Menunggu. Dua pengecualian, keduanya hanya sebelum nomor dibagikan saat technical meeting: `nomor-dada:reset` (K94) dan tombol **Urutkan nomor dada** di halaman Atlet yang membuat ulang semua nomor berurutan per sekolah (K111).
 - Admin yang mengubah pendaftaran Lunas: bila total berubah, status kembali ke Menunggu (K32); bila tetap, atlet baru langsung mendapat nomor dada (K59). ID pendaftaran tidak berubah (K63).
 - Satu sekolah boleh punya **beberapa regu** per nomor beregu (Regu A, B, C, …; bawaannya tidak dibatasi, batas bisa diisi per nomor lomba, K107). Setiap anggota regu ditandai inti atau cadangan; inti tepat sejumlah inti nomor; biaya beregu **per regu** (K105, menggantikan K07). Nama regu dari daftar admin (kosong = huruf otomatis) atau diketik official, dan kata awalannya ("Regu", "Tim") diatur di Pengaturan > Pendaftaran (K106, K107).
 - Bila sekolah hanya punya **satu regu** di satu nomor, tampilan untuk official (wizard, cek, bukti) **tidak menulis nama regunya**, dan wizard menyembunyikan pilihan regu sampai official menekan "Daftarkan regu lain"; data tetap menyimpan nama regu "A", dan panel admin serta rekap tetap menampilkannya (K108).

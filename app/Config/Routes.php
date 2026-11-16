@@ -83,6 +83,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('atlet', 'AtletController::index');
     $routes->get('atlet/data', 'AtletController::data');
     $routes->get('atlet/excel', 'AtletController::excel');
+    // Urutkan ulang nomor dada per sekolah (K111).
+    $routes->get('atlet/nomor-dada', 'NomorDadaController::index');
+    $routes->post('atlet/nomor-dada', 'NomorDadaController::urutkan');
 
     // Rekap (F6-06). Jenis rekap: nomor-lomba, tim-beregu, sekolah,
     // kelompok-umur, keuangan; jenis lain tidak ditemukan. `rekap` tanpa

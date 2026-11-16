@@ -10,6 +10,7 @@
  * @var list<array{id: int|string, nama: string}>              $kelompokUmur
  * @var array<string, list<array{id: int, nama: string}>>      $nomorLomba   nama kelompok umur => nomor lomba
  * @var array<string, string>                                 $jenisKelamin kode => label
+ * @var string|null                                           $diurutkanPada waktu nomor dada terakhir diurutkan ulang (K111)
  */
 
 use App\Controllers\Admin\AtletController;
@@ -25,9 +26,18 @@ use App\Controllers\Admin\AtletController;
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
-    <p class="teks-info mb-4">
-        Semua atlet dari setiap pendaftaran. Untuk mengubah data atlet, buka rincian pendaftarannya lewat ID pendaftaran.
-    </p>
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <p class="teks-info mb-0">
+            Semua atlet dari setiap pendaftaran. Untuk mengubah data atlet, buka rincian pendaftarannya lewat ID pendaftaran.
+            <?php if ($diurutkanPada !== null) : ?>
+                <br><span id="keterangan-nomor-dada">Nomor dada diurutkan ulang per sekolah pada <?= esc(tanggal_id($diurutkanPada)) ?>.</span>
+            <?php endif ?>
+        </p>
+        <?php // Urutkan ulang nomor dada per sekolah (K111). ?>
+        <a class="btn btn-outline-primary" href="<?= site_url('admin/atlet/nomor-dada') ?>" id="tombol-urutkan-nomor-dada">
+            <i class="bi bi-sort-numeric-down" aria-hidden="true"></i> Urutkan nomor dada
+        </a>
+    </div>
 
     <div class="card">
         <div class="card-body">

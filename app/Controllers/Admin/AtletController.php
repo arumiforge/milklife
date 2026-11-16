@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Libraries\DataPendaftaran;
 use App\Libraries\Panel\EksporExcel;
 use App\Libraries\Panel\TabelSisiServer;
+use App\Libraries\Panel\UrutkanNomorDada;
 use App\Models\KelompokUmurModel;
 use App\Models\NomorLombaModel;
 use Closure;
@@ -26,6 +27,9 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   lomba atlet digabung dalam satu kolom.
  * - `excel`: semua baris yang lolos saringan, pencarian, dan urutan yang sama
  *   (`EksporExcel`), tanpa batas halaman.
+ *
+ * Tombol "Urutkan nomor dada" membuka `admin/atlet/nomor-dada`
+ * (`NomorDadaController`, K111).
  *
  * Saringan nomor lomba memilih atlet yang ikut nomor itu (individu atau
  * beregu); atlet tetap tampil dengan semua nomor lombanya.
@@ -55,9 +59,10 @@ class AtletController extends BaseController
         }
 
         return view('admin/atlet/index', [
-            'kelompokUmur' => $kelompokUmur,
-            'nomorLomba'   => $nomorLomba,
-            'jenisKelamin' => DataPendaftaran::JENIS_KELAMIN,
+            'kelompokUmur'  => $kelompokUmur,
+            'nomorLomba'    => $nomorLomba,
+            'jenisKelamin'  => DataPendaftaran::JENIS_KELAMIN,
+            'diurutkanPada' => UrutkanNomorDada::waktuTerakhir(),
         ]);
     }
 

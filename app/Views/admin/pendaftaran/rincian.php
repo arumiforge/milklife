@@ -220,6 +220,12 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                 <h2 id="judul-atlet" class="h5 mb-0">Atlet <span class="text-body-secondary fw-normal">(<?= (int) $p['jumlah_atlet'] ?>)</span></h2>
                 <?php if (! $lunas && $p['tanpa_nomor_dada'] > 0) : ?>
                     <p class="small text-body-secondary mb-0">Nomor dada dibuat saat pendaftaran ditandai Lunas.</p>
+                <?php elseif ($lunas && ($diurutkanPada = App\Libraries\Panel\UrutkanNomorDada::waktuTerakhir()) !== null) : ?>
+                    <?php // K111: nomor dada sudah diurutkan ulang per sekolah. ?>
+                    <p class="small text-body-secondary mb-0" id="keterangan-nomor-dada">
+                        Nomor dada diurutkan ulang per sekolah pada <?= esc(tanggal_id($diurutkanPada)) ?>.
+                        <a href="<?= site_url('admin/atlet/nomor-dada') ?>">Urutkan nomor dada</a>
+                    </p>
                 <?php endif ?>
             </div>
             <?php if ($p['atlet'] === []) : ?>

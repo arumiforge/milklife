@@ -22,7 +22,7 @@
  * @var string               $namaAcara nama acara berhuruf besar
  * @var string               $seriTahun 'Seri 2 Tahun 2026'
  * @var bool                 $logo      logo persegi ada (`var:logo`, PNG transparan)
- * @var string               $dicetak   waktu cetak untuk kaki halaman
+ * @var string               $dicetak   tanggal cetak (tanpa pukul) untuk kaki halaman
  *
  */
 
