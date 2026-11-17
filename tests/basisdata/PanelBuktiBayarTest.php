@@ -30,11 +30,11 @@ final class PanelBuktiBayarTest extends UjiBasisData
 
     public function testStrukturTabel(): void
     {
-        $kolom = $this->db->query(
+        $kolom = self::bakukanKolom($this->db->query(
             'SELECT COLUMN_NAME AS kolom, COLUMN_TYPE AS tipe, IS_NULLABLE AS kosong
              FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION',
             [$this->db->getDatabase(), 'bukti_bayar'],
-        )->getResultArray();
+        )->getResultArray());
 
         $this->assertSame([
             ['kolom' => 'id', 'tipe' => 'int unsigned', 'kosong' => 'NO'],

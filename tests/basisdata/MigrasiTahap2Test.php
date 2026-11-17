@@ -20,11 +20,11 @@ final class MigrasiTahap2Test extends UjiBasisData
 
         $this->assertSame(['mesin' => 'InnoDB', 'kolasi' => 'utf8mb4_unicode_ci'], $tabel);
 
-        $kolom = $this->db->query(
+        $kolom = self::bakukanKolom($this->db->query(
             'SELECT COLUMN_NAME AS nama, COLUMN_TYPE AS tipe, IS_NULLABLE AS kosong, EXTRA AS ekstra
              FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION',
             [$this->db->getDatabase(), 'kelompok_umur_jenjang'],
-        )->getResultArray();
+        )->getResultArray());
 
         $this->assertSame([
             ['nama' => 'id', 'tipe' => 'int unsigned', 'kosong' => 'NO', 'ekstra' => 'auto_increment'],
@@ -156,7 +156,7 @@ final class MigrasiTahap2Test extends UjiBasisData
 
         $kolom = [];
 
-        foreach ($baris as $b) {
+        foreach (self::bakukanKolom($baris) as $b) {
             $kolom[$b['nama']] = ['tipe' => $b['tipe'], 'kosong' => $b['kosong']];
         }
 

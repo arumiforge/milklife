@@ -26,8 +26,9 @@ Diperbarui: 17 November 2026
 | [F7-16 Urutkan ulang nomor atlet (BIB) per sekolah](tugas/F7-16-urutkan-nomor-dada.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
 | [F7-17 Cocokkan aturan web dengan juknis resmi](tugas/F7-17-cocokkan-juknis.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
 | [F7-18 Istilah seragam mengikuti juknis](tugas/F7-18-istilah-juknis.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
-| [F7-19 Tambahkan nama desa ke sekolah bernama sama](tugas/F7-19-nama-desa-sekolah-kembar.md) | menunggu tinjauan | sisipan | [#88](https://github.com/arumiforge/milklife/pull/88) |
-| [F7-20 Pemeriksaan setelah git pull](tugas/F7-20-periksa-pembaruan.md) | menunggu tinjauan | sisipan | |
+| [F7-19 Tambahkan nama desa ke sekolah bernama sama](tugas/F7-19-nama-desa-sekolah-kembar.md) | selesai | sisipan | [#88](https://github.com/arumiforge/milklife/pull/88) |
+| [F7-20 Pemeriksaan setelah git pull](tugas/F7-20-periksa-pembaruan.md) | selesai | sisipan | [#89](https://github.com/arumiforge/milklife/pull/89) |
+| [F7-21 Uji lengkap di MariaDB dan pemeriksaan peramban](tugas/F7-21-uji-mariadb-peramban.md) | menunggu tinjauan | sisipan | |
 
 ## Berikutnya
 

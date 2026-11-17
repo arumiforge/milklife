@@ -203,9 +203,11 @@
     white-space: nowrap;
 }
 
+/* Kelompok tombol tidak menyusut; judul yang panjang yang dipotong
+   dengan elipsis, supaya tombol Keluar tidak terdorong ke luar layar. */
 .kepala-admin-pengguna {
     display: flex;
-    flex: 0 1 auto;
+    flex: 0 0 auto;
     min-width: 0;
     align-items: center;
     gap: 0.75rem;
