@@ -1,6 +1,6 @@
 # Progres
 
-Diperbarui: 16 November 2026
+Diperbarui: 17 November 2026
 
 ## Sedang berjalan
 
@@ -26,6 +26,7 @@ Diperbarui: 16 November 2026
 | [F7-16 Urutkan ulang nomor atlet (BIB) per sekolah](tugas/F7-16-urutkan-nomor-dada.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
 | [F7-17 Cocokkan aturan web dengan juknis resmi](tugas/F7-17-cocokkan-juknis.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
 | [F7-18 Istilah seragam mengikuti juknis](tugas/F7-18-istilah-juknis.md) | menunggu tinjauan | sisipan | [#87](https://github.com/arumiforge/milklife/pull/87) |
+| [F7-19 Tambahkan nama desa ke sekolah bernama sama](tugas/F7-19-nama-desa-sekolah-kembar.md) | menunggu tinjauan | sisipan | |
 
 ## Berikutnya
 
