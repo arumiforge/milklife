@@ -26,6 +26,8 @@ use Throwable;
  *   berbiaya 0) dijumlahkan biayanya ke baris tujuan.
  * - Subtotal dan total dijumlahkan. Nama sekolah, jenjang, kabupaten, ID,
  *   kode bukti, dan `waktu_lunas` tujuan tetap.
+ * - Riwayat tindakan admin (F8-01) pindah ke tujuan, dan tujuan mencatat
+ *   "Digabung dari MAC…".
  * - ID dan kode bukti lama dicatat di `pendaftaran_gabungan`, termasuk catatan
  *   lama milik pendaftaran yang ikut digabung, supaya kode QR bukti lama dan
  *   Cek Pendaftaran dengan ID lama tetap sampai ke pendaftaran gabungan.
@@ -166,6 +168,12 @@ final class GabungPendaftaran
 
         $foto = $this->pindahkanPenanggungJawab($dari, $ke, $sekarang);
         $this->pindahkanRegu($dari, $ke, $sekarang);
+
+        // Riwayat tindakan admin (F8-01) ikut pindah; tujuan mencatat asal gabungannya.
+        $riwayat = new RiwayatAdmin($this->db);
+        $riwayat->pindahkan($dari, $ke);
+        $riwayat->catat($ke, (string) $tujuan['id_pendaftaran'], RiwayatAdmin::GABUNG, 'Digabung dari ' . $sumber['id_pendaftaran']
+            . ' karena NPSN-nya sama. Atlet, ofisial, regu, dan bukti bayarnya pindah ke sini; total ditambah ' . rupiah((int) $sumber['total']) . '.');
 
         // Catatan lama milik sumber ikut menunjuk tujuan, lalu sumber sendiri dicatat.
         $this->pastikan($this->db->table('pendaftaran_gabungan')->where('pendaftaran_id', $dari)->update(['pendaftaran_id' => $ke]));

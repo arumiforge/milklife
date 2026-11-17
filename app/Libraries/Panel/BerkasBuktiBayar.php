@@ -219,13 +219,14 @@ final class BerkasBuktiBayar
      * Periksa, simpan, lalu catat satu bukti bayar untuk pendaftaran
      * `$pendaftaranId`. Dipakai panel admin dan official (K83).
      *
+     * `$olehAdmin`: unggahan dari panel admin, dicatat di riwayat (F8-01).
      * Hasil `null` bila tersimpan, `self::PENUH` bila batas sudah tercapai,
      * selain itu pesan galat ramah. Berkas disimpan di luar transaksi
      * (mengecilkan gambar butuh waktu); di dalam transaksi baris pendaftaran
      * dikunci supaya dua unggahan bersamaan tidak sama-sama lolos batas.
      * Bila baris gagal dicatat, berkas baru dihapus lagi.
      */
-    public function unggahKe(int $pendaftaranId, ?UploadedFile $unggahan): ?string
+    public function unggahKe(int $pendaftaranId, ?UploadedFile $unggahan, bool $olehAdmin = false): ?string
     {
         $model = model(BuktiBayarModel::class);
 
@@ -271,6 +272,19 @@ final class BerkasBuktiBayar
             $this->hapus($hasil['berkas']);
 
             return 'Bukti bayar belum tersimpan karena ada gangguan di server. Coba unggah sekali lagi; bila masih gagal, hubungi panitia.';
+        }
+
+        // F8-01: unggahan admin dicatat di riwayat tindakan admin, di transaksi yang sama.
+        if ($olehAdmin) {
+            try {
+                (new RiwayatAdmin($db))->catatUntuk($pendaftaranId, RiwayatAdmin::UNGGAH_BUKTI, 'Bukti bayar diunggah admin (gambar ke-'
+                    . $model->jumlahMilik($pendaftaranId) . ' dari paling banyak ' . BuktiBayarModel::BATAS . ').');
+            } catch (Throwable $e) {
+                $db->transRollback();
+                $this->hapus($hasil['berkas']);
+
+                throw $e;
+            }
         }
 
         $db->transCommit();

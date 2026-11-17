@@ -449,6 +449,12 @@ final class TolakAtlet
                 'dibuat_pada'             => $sekarang,
             ]));
         }
+
+        // F8-01: riwayat tindakan admin, di transaksi yang sama.
+        $totalLama = (int) $form['pendaftaran']['total'];
+        (new RiwayatAdmin($db))->catat((int) $form['pendaftaran']['id'], (string) $form['pendaftaran']['id_pendaftaran'], RiwayatAdmin::TOLAK_ATLET,
+            count($ditolak) . ' atlet ditolak: ' . implode(', ', array_map(RiwayatAdmin::namaAtlet(...), $ditolak)) . '. Alasan: ' . rtrim($alasan, '. ') . '. '
+            . ($totalLama === $totalSesudah ? 'Total tetap ' . rupiah($totalSesudah) . '.' : 'Total ' . rupiah($totalLama) . ' → ' . rupiah($totalSesudah) . '.'));
     }
 
     private function pastikan(mixed $hasil): void

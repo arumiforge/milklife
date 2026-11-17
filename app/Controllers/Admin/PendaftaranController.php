@@ -13,6 +13,7 @@ use App\Libraries\Panel\GabungPendaftaran;
 use App\Libraries\Panel\AsalRincian;
 use App\Libraries\Panel\HapusPendaftaran;
 use App\Libraries\Panel\PaketPendaftaran;
+use App\Libraries\Panel\RiwayatAdmin;
 use App\Libraries\Panel\StatusPembayaran;
 use App\Libraries\Panel\TimTanpaPembayar;
 use App\Libraries\Panel\TolakAtlet;
@@ -38,6 +39,9 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   pindah server (`PaketPendaftaran`, K76).
  * - `massal`: lunas, menunggu, atau hapus untuk pendaftaran yang dicentang di
  *   daftar (K76), satu per satu dengan aturan yang sama.
+ *
+ * - `riwayat`: cari riwayat tindakan admin menurut ID pendaftaran, termasuk
+ *   yang sudah dihapus (F8-01).
  *
  * `ubah` dan `perbarui` ditambahkan F6-04. Rincian, hapus, dan perbarui
  * menyebut tim tanpa pembayar (K68, `TimTanpaPembayar`).
@@ -135,6 +139,23 @@ class PendaftaranController extends BaseController
             // Usulan nama sekolah dari pendaftaran ini yang belum diputuskan (K99).
             'usulanNama'       => model(UsulanNamaSekolahModel::class)
                 ->where('pendaftaran_id', $id)->where('status', UsulanNamaSekolahModel::MENUNGGU)->first(),
+            // Riwayat tindakan admin (F8-01).
+            'riwayat'          => (new RiwayatAdmin())->untukPendaftaran($id),
+        ]);
+    }
+
+    /**
+     * Cari riwayat tindakan admin menurut ID pendaftaran (F8-01), termasuk
+     * pendaftaran yang sudah dihapus atau digabung: `admin/riwayat?id=MAC…`.
+     */
+    public function riwayat(): string
+    {
+        $kata = trim((string) $this->request->getGet('id'));
+
+        return view('admin/pendaftaran/riwayat', [
+            'kata'    => $kata,
+            'riwayat' => $kata === '' ? [] : (new RiwayatAdmin())->cari($kata),
+            'batas'   => RiwayatAdmin::BATAS_CARI,
         ]);
     }
 
@@ -274,7 +295,7 @@ class PendaftaranController extends BaseController
             try {
                 if ($tindakan === 'hapus') {
                     $tim   = (new TimTanpaPembayar())->ditinggalkan($satu);
-                    $hasil = (new HapusPendaftaran())->hapus($satu);
+                    $hasil = (new HapusPendaftaran())->hapus($satu, true);
 
                     if ($hasil === null) {
                         $gagal[] = $kode[$satu] . ': tidak ditemukan';
@@ -288,7 +309,7 @@ class PendaftaranController extends BaseController
                     continue;
                 }
 
-                $hasil = $tindakan === 'lunas' ? $status->tandaiLunas($satu) : $status->kembaliMenunggu($satu);
+                $hasil = $tindakan === 'lunas' ? $status->tandaiLunas($satu, true) : $status->kembaliMenunggu($satu, true);
             } catch (DatabaseException $e) {
                 log_message('error', 'Tindakan massal {tindakan} pendaftaran {id} gagal: {pesan}', ['tindakan' => $tindakan, 'id' => $satu, 'pesan' => $e->getMessage()]);
                 $gagal[] = $kode[$satu] . ': data sedang dipakai, coba lagi';
