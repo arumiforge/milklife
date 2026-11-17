@@ -63,8 +63,10 @@ final class RingkasanDasbor
         )[0];
 
         // Menunggu dan sudah punya bukti bayar: tinggal diperiksa lalu ditandai Lunas.
+        // Pendaftaran tanpa atlet (semua atletnya ditolak, K117) tidak perlu diperiksa.
         $periksa = $this->baca(
-            "SELECT COUNT(DISTINCT p.id) AS n FROM {pendaftaran} p JOIN {bukti_bayar} b ON b.pendaftaran_id = p.id WHERE p.status = 'menunggu'",
+            "SELECT COUNT(DISTINCT p.id) AS n FROM {pendaftaran} p JOIN {bukti_bayar} b ON b.pendaftaran_id = p.id WHERE p.status = 'menunggu'"
+            . ' AND EXISTS (SELECT 1 FROM {atlet} pa WHERE pa.pendaftaran_id = p.id)',
         )[0]['n'];
 
         $pengunjung = $this->pengunjungHariIni();

@@ -34,11 +34,14 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
 
 <?= $this->section('judul_halaman') ?>Tolak Atlet<?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak', ['jejak' => [
+    App\Libraries\Panel\AsalRincian::untuk((int) $p['id']),
+    ['label' => $p['id_pendaftaran'], 'alamat' => $alamat],
+    ['label' => 'Tolak atlet'],
+]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4" id="tolak-atlet" data-id="<?= (int) $p['id'] ?>">
-    <a class="tautan-kembali mb-3" href="<?= site_url($alamat) ?>">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke rincian pendaftaran
-    </a>
 
     <section class="card mb-4" aria-labelledby="judul-tolak">
         <div class="card-body p-3 p-lg-4">

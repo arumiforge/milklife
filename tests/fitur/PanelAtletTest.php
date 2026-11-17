@@ -229,7 +229,7 @@ final class PanelAtletTest extends UjiBasisData
         $this->assertSame('SD KARANGAN MAJU', $budi['nama_sekolah']);
         $this->assertSame('menunggu', $budi['status']);
         $this->assertSame(
-            ['alamat' => site_url('admin/pendaftaran/' . $contoh['a']['id']), 'teks' => $contoh['a']['id_pendaftaran']],
+            ['alamat' => site_url('admin/pendaftaran/' . $contoh['a']['id'] . '?dari=atlet'), 'teks' => $contoh['a']['id_pendaftaran']],
             $budi['id_pendaftaran'],
         );
 

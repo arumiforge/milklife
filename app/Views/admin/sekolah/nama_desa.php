@@ -22,11 +22,10 @@ $lewati = $rencana['lewati'];
 
 <?= $this->section('judul_halaman') ?>Sekolah<?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak', ['jejak' => [['label' => 'Sekolah', 'alamat' => 'admin/sekolah'], ['label' => 'Tambahkan nama desa']]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
-    <a class="tautan-kembali mb-3" href="<?= site_url('admin/sekolah') ?>">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke daftar sekolah
-    </a>
 
     <p class="teks-info mb-3">
         Sekolah yang namanya sama dengan sekolah lain diberi nama baru dengan menambahkan nama desanya, misalnya

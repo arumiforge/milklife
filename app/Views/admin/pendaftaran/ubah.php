@@ -329,11 +329,14 @@ $galatSekolah = [
 
 <?= $this->section('judul_halaman') ?>Ubah Pendaftaran<?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak', ['jejak' => [
+    App\Libraries\Panel\AsalRincian::untuk((int) $p['id']),
+    ['label' => $p['id_pendaftaran'], 'alamat' => $alamat],
+    ['label' => 'Ubah'],
+]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4" id="ubah-pendaftaran" data-status="<?= esc($p['status'], 'attr') ?>">
-    <a class="tautan-kembali mb-3" href="<?= site_url($alamat) ?>">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke rincian pendaftaran
-    </a>
 
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <h2 class="h4 mb-0"><?= esc($p['id_pendaftaran']) ?></h2>

@@ -73,7 +73,7 @@ class AtletController extends BaseController
         // Kolom ID pendaftaran menjadi tautan ke rincian pendaftarannya.
         $jawaban['data'] = array_map(static function (array $baris): array {
             $baris['id_pendaftaran'] = [
-                'alamat' => site_url('admin/pendaftaran/' . $baris['pendaftaran_id']),
+                'alamat' => site_url('admin/pendaftaran/' . $baris['pendaftaran_id'] . '?dari=atlet'),
                 'teks'   => $baris['id_pendaftaran'],
             ];
 

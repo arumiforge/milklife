@@ -61,6 +61,8 @@ use CodeIgniter\Database\BaseConnection;
  *             'anggota'     => [['nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'nomor_dada' => null, 'peran' => 'inti']],
  *         ]],
  *         'atlet_ditolak'     => [ … ],             // AtletDitolak::untukPendaftaran(), hanya yang belum didaftarkan ulang (K116)
+ *         'atlet_didaftarkan_ulang' => [ … ],       // bentuk sama, yang NISN-nya sudah terdaftar lagi (K117)
+ *         'ditolak_semua'     => false,             // true: semua atlet ditolak, status_label menjadi LABEL_DITOLAK_SEMUA (K117)
  *     ]
  *
  * Regu tunggal (K108): bila sekolah (NPSN sama, semua pendaftarannya; tanpa
@@ -73,6 +75,11 @@ final class DataPendaftaran
         'menunggu' => 'Menunggu Konfirmasi Pembayaran',
         'lunas'    => 'Lunas',
     ];
+
+    /**
+     * Label status pendaftaran yang semua atletnya ditolak panitia (K117).
+     */
+    public const LABEL_DITOLAK_SEMUA = 'Semua atlet ditolak';
 
     public const JENIS_KELAMIN = ['L' => 'Laki-laki', 'P' => 'Perempuan'];
 
@@ -223,12 +230,21 @@ final class DataPendaftaran
                 'individu'          => [],
                 'beregu'            => [],
                 'atlet_ditolak'     => [],
+                'atlet_didaftarkan_ulang' => [],
+                'ditolak_semua'     => false,
             ];
         }
 
-        // Atlet yang ditolak panitia dan belum didaftarkan ulang (K116).
-        foreach ((new AtletDitolak($this->db))->untukPendaftaran($ids) as $pid => $baris) {
-            $hasil[$pid]['atlet_ditolak'] = $baris;
+        // Atlet yang ditolak panitia (K116): yang belum didaftarkan ulang
+        // tampil lengkap, yang sudah cukup namanya (K117).
+        foreach ((new AtletDitolak($this->db))->untukPendaftaran($ids, semua: true) as $pid => $baris) {
+            foreach ($baris as $d) {
+                if ($d['didaftarkan_ulang'] === null) {
+                    $hasil[$pid]['atlet_ditolak'][] = $d;
+                } else {
+                    $hasil[$pid]['atlet_didaftarkan_ulang'][] = $d;
+                }
+            }
         }
 
         foreach ($lama as $baris) {
@@ -340,6 +356,16 @@ final class DataPendaftaran
 
                 return $r;
             }, $daftar);
+        }
+
+        // Semua atlet ditolak (K117): tidak ada atlet tersisa, tetapi ada catatan
+        // penolakan. Status tersimpan tetap Menunggu; tampilan menulis "Semua
+        // atlet ditolak" dan tidak meminta bukti bayar.
+        foreach ($hasil as $pid => $h) {
+            if ($h['status'] !== 'lunas' && $h['atlet'] === [] && ($h['atlet_ditolak'] !== [] || $h['atlet_didaftarkan_ulang'] !== [])) {
+                $hasil[$pid]['ditolak_semua'] = true;
+                $hasil[$pid]['status_label']  = self::LABEL_DITOLAK_SEMUA;
+            }
         }
 
         return array_values($hasil);
