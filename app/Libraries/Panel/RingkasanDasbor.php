@@ -41,7 +41,7 @@ final class RingkasanDasbor
      * Angka kartu tambahan.
      *
      * @return array{
-     *     pendaftaran_lunas: int, pendaftaran_menunggu: int, perlu_diperiksa: int,
+     *     pendaftaran_lunas: int, pendaftaran_menunggu: int, perlu_diperiksa: int, bukti_baru: int,
      *     atlet_putra: int, atlet_putri: int, nomor_dada: int, kabupaten: int,
      *     pendaftaran_hari_ini: int, atlet_hari_ini: int, rata_atlet: float,
      *     pengunjung_hari_ini: int, kunjungan_hari_ini: int
@@ -69,12 +69,19 @@ final class RingkasanDasbor
             . ' AND EXISTS (SELECT 1 FROM {atlet} pa WHERE pa.pendaftaran_id = p.id)',
         )[0]['n'];
 
+        // F8-02: pendaftaran dengan bukti bayar baru yang belum diperiksa, tanpa
+        // pendaftaran "Semua atlet ditolak" (K117).
+        $buktiBaru = $this->baca(
+            'SELECT COUNT(*) AS n FROM {pendaftaran} p WHERE ' . BuktiDiperiksa::SQL_ADA_BUKTI_BARU . ' AND ' . BuktiDiperiksa::SQL_BUKAN_DITOLAK_SEMUA,
+        )[0]['n'];
+
         $pengunjung = $this->pengunjungHariIni();
 
         return [
             'pendaftaran_lunas'    => (int) $p['lunas'],
             'pendaftaran_menunggu' => (int) $p['menunggu'],
             'perlu_diperiksa'      => (int) $periksa,
+            'bukti_baru'           => (int) $buktiBaru,
             'atlet_putra'          => (int) $a['putra'],
             'atlet_putri'          => (int) $a['putri'],
             'nomor_dada'           => (int) $a['nomor_dada'],

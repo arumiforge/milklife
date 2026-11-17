@@ -6,6 +6,7 @@
  *   pilih          kotak centang milik formulir #form-massal (K76)
  *   idPendaftaran  ID pendaftaran sebagai tautan ke rinciannya
  *   rincian        tombol "Rincian" ke halaman rincian
+ *   statusBukti    lencana status + tanda "Bukti baru" (F8-02)
  * Alamat rincian dari kunci `alamat` di setiap baris JSON
  * (App\Libraries\Panel\DataPanelPendaftaran::bentukBaris()).
  *
@@ -37,6 +38,31 @@
         }
         return '<a class="fw-semibold text-nowrap" href="' + escape(alamat) + '">' + escape(nilai) + '</a>';
     };
+
+    // F8-02: lencana status, ditambah tanda "Bukti baru" bila ada bukti bayar yang belum diperiksa.
+    window.TabelAdmin.bentuk.statusBukti = function (nilai, baris) {
+        var html = window.TabelAdmin.bentuk.status(nilai, baris);
+        var baru = parseInt(baris && baris.bukti_baru, 10) || 0;
+        if (baru > 0) {
+            html += ' <span class="badge text-bg-info text-nowrap" title="' + baru + ' bukti bayar baru belum diperiksa">Bukti baru</span>';
+        }
+        return html;
+    };
+
+    // F8-02: saringan dari alamat, misalnya admin/pendaftaran?bukti=baru dari kartu dasbor.
+    // Hanya nilai yang ada di pilihan; tombol "Kosongkan saringan" tetap mengosongkannya.
+    (function () {
+        var formulir = document.getElementById('saringan-pendaftaran');
+        if (!formulir || !window.URLSearchParams) {
+            return;
+        }
+        new URLSearchParams(window.location.search).forEach(function (nilai, nama) {
+            var kotak = formulir.elements.namedItem(nama);
+            if (kotak && kotak.tagName === 'SELECT' && Array.prototype.some.call(kotak.options, function (o) { return o.value === nilai; })) {
+                kotak.value = nilai;
+            }
+        });
+    }());
 
     window.TabelAdmin.bentuk.pilih = function (nilai, baris) {
         var id = parseInt(nilai, 10);

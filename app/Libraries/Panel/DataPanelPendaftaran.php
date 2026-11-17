@@ -32,7 +32,8 @@ use CodeIgniter\Database\BaseConnection;
  * `nama_sekolah`, `npsn`, `jenjang` (label), `kabupaten`, `jumlah_atlet`,
  * `subtotal_individu`, `subtotal_beregu`, `total`, `status` (`lunas`/
  * `menunggu`), `status_label`, `waktu_lunas`, `alamat` (rincian).
- * Saringan: `status`, `jenjang` (A/B/C), `kabupaten`.
+ * `bukti_baru` (jumlah bukti bayar baru yang belum diperiksa, F8-02).
+ * Saringan: `status`, `jenjang` (A/B/C), `kabupaten`, `bukti` (`baru`).
  *
  * Rincian: `rincian($id)` (bentuknya di docblock metode itu).
  */
@@ -62,6 +63,11 @@ final class DataPanelPendaftaran
      * Jumlah atlet yang pernah ditolak dari pendaftaran ini (K116, K117).
      */
     private const JUMLAH_DITOLAK = '(SELECT COUNT(*) FROM atlet_ditolak jd WHERE jd.pendaftaran_id = p.id)';
+
+    /**
+     * Jumlah bukti bayar baru yang belum diperiksa admin (F8-02).
+     */
+    private const JUMLAH_BUKTI_BARU = '(SELECT COUNT(*) FROM bukti_bayar jb WHERE jb.pendaftaran_id = p.id AND jb.diperiksa_pada IS NULL)';
 
     private BaseConnection $db;
 
@@ -100,6 +106,12 @@ final class DataPanelPendaftaran
                 'status'    => ['sql' => 'p.status', 'nilai' => array_keys(PendaftaranModel::STATUS)],
                 'jenjang'   => ['sql' => 'p.jenjang', 'nilai' => Jenjang::kode()],
                 'kabupaten' => ['sql' => 'p.kabupaten', 'nilai' => Kabupaten::semua()],
+                // F8-02: `bukti=baru` hanya pendaftaran dengan bukti bayar baru yang belum diperiksa.
+                'bukti'     => static function (BaseBuilder $builder, string $nilai): void {
+                    if ($nilai === 'baru') {
+                        $builder->where(BuktiDiperiksa::SQL_ADA_BUKTI_BARU, null, false);
+                    }
+                },
             ],
             urutBawaan: ['p.id' => 'desc'],
         );
@@ -120,7 +132,8 @@ final class DataPanelPendaftaran
             'p.id, p.id_pendaftaran, p.dibuat_pada, p.nama_sekolah, p.npsn, p.jenjang, p.kabupaten, '
             . 'p.subtotal_individu, p.subtotal_beregu, p.total, p.status, p.waktu_lunas, '
             . self::JUMLAH_ATLET . ' AS jumlah_atlet, '
-            . self::JUMLAH_DITOLAK . ' AS jumlah_ditolak',
+            . self::JUMLAH_DITOLAK . ' AS jumlah_ditolak, '
+            . self::JUMLAH_BUKTI_BARU . ' AS bukti_baru',
             false,
         );
     }
@@ -151,6 +164,8 @@ final class DataPanelPendaftaran
             // Semua atlet ditolak (K117): status tersimpan tetap Menunggu, tabel menulis lencana merah.
             'ditolak_semua'     => self::ditolakSemua($baris),
             'jumlah_ditolak'    => (int) ($baris['jumlah_ditolak'] ?? 0),
+            // F8-02: bukti bayar baru dari ofisial yang belum diperiksa.
+            'bukti_baru'        => (int) ($baris['bukti_baru'] ?? 0),
             'waktu_lunas'       => $baris['waktu_lunas'],
             'alamat'            => site_url('admin/pendaftaran/' . (int) $baris['id'] . '?dari=pendaftaran'),
         ];

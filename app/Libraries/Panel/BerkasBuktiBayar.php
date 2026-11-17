@@ -219,7 +219,8 @@ final class BerkasBuktiBayar
      * Periksa, simpan, lalu catat satu bukti bayar untuk pendaftaran
      * `$pendaftaranId`. Dipakai panel admin dan official (K83).
      *
-     * `$olehAdmin`: unggahan dari panel admin, dicatat di riwayat (F8-01).
+     * `$olehAdmin`: unggahan dari panel admin, dicatat di riwayat (F8-01) dan
+     * langsung dianggap sudah diperiksa (F8-02); unggahan ofisial belum.
      * Hasil `null` bila tersimpan, `self::PENUH` bila batas sudah tercapai,
      * selain itu pesan galat ramah. Berkas disimpan di luar transaksi
      * (mengecilkan gambar butuh waktu); di dalam transaksi baris pendaftaran
@@ -259,7 +260,11 @@ final class BerkasBuktiBayar
                 return self::PENUH;
             }
 
-            $baru = $model->insert(['pendaftaran_id' => $pendaftaranId] + $hasil);
+            // F8-02: bukti yang diunggah admin sendiri langsung dianggap sudah diperiksa.
+            $baru = $model->insert(['pendaftaran_id' => $pendaftaranId] + $hasil + ($olehAdmin ? [
+                'diperiksa_pada' => date('Y-m-d H:i:s'),
+                'diperiksa_oleh' => mb_substr(RiwayatAdmin::pelakuSesi()['nama'], 0, 100),
+            ] : []));
         } catch (Throwable $e) {
             $db->transRollback();
             $this->hapus($hasil['berkas']);
