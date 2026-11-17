@@ -50,11 +50,68 @@ final class PaketPendaftaran
      */
     private const POLA_BERKAS = '#^(' . FotoPenanggungJawab::FOLDER . '|' . BerkasBuktiBayar::FOLDER . ')/[0-9a-f]{32}\.jpg$#D';
 
+    /**
+     * Folder zip sementara tombol Backup data di panel (F7-25, K118).
+     */
+    public const FOLDER_SEMENTARA = WRITEPATH . 'cache/ekspor';
+
+    /**
+     * Umur zip sementara (detik) sebelum dihapus saat ekspor berikutnya.
+     */
+    public const UMUR_SEMENTARA = 3600;
+
     private BaseConnection $db;
 
     public function __construct(?BaseConnection $db = null)
     {
         $this->db = $db ?? db_connect();
+    }
+
+    /**
+     * Jalur baru untuk zip sementara tombol Backup data (F7-25, K118).
+     *
+     * Zip dikirim ke peramban langsung dari berkas (tanpa dimuat ke memori),
+     * jadi tidak bisa dihapus di permintaan yang sama. Sebagai gantinya, setiap
+     * ekspor baru menghapus zip sementara yang lebih tua dari
+     * `UMUR_SEMENTARA`. Nama berkas acak supaya dua admin yang mengekspor
+     * bersamaan tidak saling menimpa.
+     *
+     * @param string|null $folder   Untuk uji; bawaan `FOLDER_SEMENTARA`.
+     * @param int|null    $sekarang Untuk uji; bawaan `time()`.
+     *
+     * @throws RuntimeException Bila folder tidak bisa dibuat.
+     */
+    public static function jalurSementara(?string $folder = null, ?int $sekarang = null): string
+    {
+        $folder = rtrim($folder ?? self::FOLDER_SEMENTARA, '/');
+
+        if (! is_dir($folder) && ! @mkdir($folder, 0700, true) && ! is_dir($folder)) {
+            throw new RuntimeException('Folder sementara untuk Backup data tidak bisa dibuat. Minta pengelola server memeriksa izin tulis folder writable/cache.');
+        }
+
+        self::hapusSementaraLama($folder, $sekarang ?? time());
+
+        return $folder . '/Backup_' . bin2hex(random_bytes(16)) . '.zip';
+    }
+
+    /**
+     * Hapus zip sementara di `$folder` yang lebih tua dari `UMUR_SEMENTARA`.
+     *
+     * @return int Jumlah berkas yang dihapus.
+     */
+    public static function hapusSementaraLama(string $folder, int $sekarang): int
+    {
+        $jumlah = 0;
+
+        foreach (glob(rtrim($folder, '/') . '/Backup_*.zip') ?: [] as $berkas) {
+            $waktu = @filemtime($berkas);
+
+            if (is_file($berkas) && $waktu !== false && $sekarang - $waktu > self::UMUR_SEMENTARA && @unlink($berkas)) {
+                $jumlah++;
+            }
+        }
+
+        return $jumlah;
     }
 
     /**
