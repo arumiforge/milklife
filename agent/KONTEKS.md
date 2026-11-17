@@ -4,12 +4,13 @@
 
 Web pendaftaran **MilkLife Athletics Challenge Seri 2 – 2026** untuk sekolah se-Karesidenan Pati (Blora, Rembang, Pati, Kudus, Jepara). Acara berada di bawah Bakti Olahraga Djarum Foundation, berlangsung 9–12 Desember 2026 di Supersoccer Arena, Kudus.
 
-Web ini mengurus pendaftaran, cek pendaftaran, dan rekap panitia. Pelaksanaan lomba di luar cakupan.
+Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 juga hari lomba (daftar ulang lewat kode QR, cetak nomor atlet (BIB), daftar peserta per nomor), hasil lomba semua babak, dan klasemen juara umum sekolah per jenjang. Aturan teknis lomba di lapangan (urutan pelari, penjurian) tetap di luar cakupan.
 
 ## Pengguna
 
 - **Ofisial sekolah**: tanpa akun, mendaftar lewat wizard, memeriksa rekap lewat NPSN atau ID pendaftaran.
-- **Admin**: satu peran, mengatur seluruh aturan dan memeriksa pembayaran.
+- **Admin**: satu peran, mengatur seluruh aturan, memeriksa pembayaran, dan (Tahap 8) mencatat hasil lomba.
+- **Pengunjung umum**: melihat hasil dan klasemen yang sudah diterbitkan (K124).
 
 ## Teknologi
 
@@ -25,6 +26,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Rencana implementasi Tahap 5: `dokumen/draf/rencana-implementasi-tahap-5.md`.
 - Rencana implementasi Tahap 6: `dokumen/draf/rencana-implementasi-tahap-6.md`.
 - Rencana implementasi Tahap 7: `dokumen/draf/rencana-implementasi-tahap-7.md`.
+- Rencana implementasi Tahap 8: `dokumen/draf/rencana-implementasi-tahap-8.md`.
 - Arsip tahap selesai: `agent/arsip/`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
 - Bahan asli: `sumber/flyer/` dan juknis resmi `sumber/juknis/` (K112).
@@ -49,3 +51,5 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Saat admin mengubah pendaftaran, kelompok umur dan nomor lomba yang sudah dimatikan **tetap boleh dipertahankan** untuk atlet yang sudah memakainya, tidak untuk atlet atau nomor baru (K98).
 - Admin bisa **menolak atlet** dari pendaftaran Menunggu (K116): atletnya dikeluarkan sehingga NISN bisa didaftarkan lagi, salinannya disimpan di `atlet_ditolak` dan tampil di Cek Pendaftaran sampai NISN itu terdaftar lagi. Pendaftaran yang semua atletnya ditolak tetap berstatus `menunggu` di basis data, tetapi tampil **"Semua atlet ditolak"** tanpa tagihan (K117); atlet ditolak punya menu admin sendiri, **Atlet ditolak**.
 - Pendaftaran Lunas dengan NPSN sama **digabung otomatis** ke pendaftaran yang Lunas paling dulu (K109); pendaftaran yang pindah dihapus, tetapi ID dan kode bukti lamanya dicatat di `pendaftaran_gabungan` sehingga cek dan kode QR lama tetap sampai. Jadi satu NPSN paling banyak punya satu pendaftaran Lunas; yang Menunggu dan yang tanpa NPSN tidak digabung.
+- **Cloudflare Turnstile** (K122) menjaga kirim pendaftaran, Cek Pendaftaran, dan masuk admin; mati bila kunci di `.env` kosong. Kunci rahasia tidak pernah masuk git.
+- **Juara umum** dihitung per jenjang dari jumlah juara I, lalu II, lalu III, hanya dari babak Final; kontingen = sekolah per NPSN; regu juara = satu piala (K124).
