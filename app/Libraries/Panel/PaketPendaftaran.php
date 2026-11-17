@@ -26,6 +26,8 @@ use ZipArchive;
  *   pendaftaran juga membawa `gabungan_dari`: ID dan kode bukti lama yang
  *   sudah digabung ke situ (K109), supaya kode QR bukti lama tetap berlaku,
  *   dan `atlet_ditolak`: atlet yang ditolak panitia (K116; boleh tidak ada).
+ *   Atlet membawa `hadir_pada` dan `hadir_oleh` (tanda hadir hari lomba,
+ *   F8-03; boleh tidak ada di paket lama).
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -194,6 +196,8 @@ final class PaketPendaftaran
                     'jenis_kelamin' => $a['jenis_kelamin'],
                     'kelompok_umur' => $ku[$a['kelompok_umur_id']] ?? '',
                     'nomor_dada'    => $a['nomor_dada'],
+                    'hadir_pada'    => $a['hadir_pada'] ?? null,
+                    'hadir_oleh'    => $a['hadir_oleh'] ?? null,
                     'dibuat_pada'   => $a['dibuat_pada'],
                     'diubah_pada'   => $a['diubah_pada'],
                     'nomor'         => $ikutNomor[(int) $a['id']] ?? [],
@@ -510,6 +514,8 @@ final class PaketPendaftaran
                     'jenis_kelamin'    => (string) $a['jenis_kelamin'],
                     'kelompok_umur_id' => $ku[$a['kelompok_umur']],
                     'nomor_dada'       => $a['nomor_dada'],
+                    'hadir_pada'       => $a['hadir_pada'] ?? null,
+                    'hadir_oleh'       => $a['hadir_oleh'] ?? null,
                     'dibuat_pada'      => $a['dibuat_pada'],
                     'diubah_pada'      => $a['diubah_pada'],
                 ]);

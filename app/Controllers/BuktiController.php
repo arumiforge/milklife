@@ -7,7 +7,9 @@ use App\Libraries\BuktiPendaftaran;
 use App\Libraries\DataPendaftaran;
 use App\Libraries\IsiHalamanDepan;
 use App\Libraries\Panel\BerkasBuktiBayar;
+use App\Libraries\SesiAdmin;
 use App\Models\BuktiBayarModel;
+use CodeIgniter\Config\Factories;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -30,6 +32,9 @@ use CodeIgniter\HTTP\ResponseInterface;
  *
  * Alamat bukti lama dari pendaftaran yang sudah digabung (K109) diarahkan ke
  * alamat bukti pendaftaran gabungannya.
+ *
+ * Admin yang sedang masuk mendapat halaman pilihan "Buka daftar ulang" atau
+ * bukti PDF (F8-03); `?pdf=1` langsung memberi PDF-nya.
  */
 class BuktiController extends BaseController
 {
@@ -65,6 +70,19 @@ class BuktiController extends BaseController
         if (strcasecmp((string) $pendaftaran['id_pendaftaran'], $id) !== 0) {
             return redirect()->to(BuktiPendaftaran::alamat($pendaftaran))
                 ->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        }
+
+        // Admin yang sedang masuk dan memindai kode QR dengan aplikasi kamera
+        // (F8-03): pilihan "Buka daftar ulang" atau PDF-nya (`?pdf=1`).
+        if ($this->request->getGet('pdf') !== '1' && $this->adminMasuk()) {
+            return $this->response
+                ->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+                ->setBody(view('admin/hari_lomba/bukti_admin', [
+                    'idPendaftaran'     => (string) $pendaftaran['id_pendaftaran'],
+                    'namaSekolah'       => (string) $pendaftaran['nama_sekolah'],
+                    'alamatDaftarUlang' => site_url('admin/daftar-ulang') . '?id=' . rawurlencode((string) $pendaftaran['id_pendaftaran']),
+                    'alamatPdf'         => BuktiPendaftaran::alamat($pendaftaran) . '?pdf=1',
+                ]));
         }
 
         $bukti = new BuktiPendaftaran($pendaftaran);
@@ -103,6 +121,21 @@ class BuktiController extends BaseController
         $jumlah = model(BuktiBayarModel::class)->jumlahMilik((int) $pendaftaran['id']);
 
         return $this->jawabUnggah($pendaftaran, 201, 'Bukti bayar terkirim (' . $jumlah . ' dari ' . BuktiBayarModel::BATAS . ' gambar). Panitia akan memeriksanya; status berubah menjadi Lunas setelah transfer diterima.');
+    }
+
+    /**
+     * Admin sedang masuk (F8-03). Sesi hanya dibaca bila kuki sesinya ada,
+     * supaya pengunjung biasa tidak dibuatkan sesi baru.
+     */
+    private function adminMasuk(): bool
+    {
+        if ($this->request->getCookie(config('Session')->cookieName) === null) {
+            return false;
+        }
+
+        $id = (int) session(SesiAdmin::KUNCI_ID);
+
+        return $id > 0 && Factories::libraries(SesiAdmin::class)->periksa($id, session(SesiAdmin::KUNCI_SIDIK)) === SesiAdmin::SAH;
     }
 
     /**

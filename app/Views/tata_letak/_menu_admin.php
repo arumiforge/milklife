@@ -34,6 +34,8 @@ $menuAdmin = [
     // Atlet yang ditolak panitia, terpisah dari atlet terdaftar (K117).
     ['label' => 'Atlet ditolak', 'label_pendek' => 'Ditolak', 'ikon' => 'person-x', 'alamat' => 'admin/atlet-ditolak'],
     ['label' => 'Rekap', 'ikon' => 'bar-chart-line', 'alamat' => 'admin/rekap'],
+    // Hari lomba (F8-03): daftar ulang, cetak BIB, daftar peserta.
+    ['label' => 'Hari lomba', 'label_pendek' => 'Lomba', 'ikon' => 'flag', 'alamat' => 'admin/daftar-ulang', 'aktif_juga' => ['admin/nomor-atlet', 'admin/daftar-peserta']],
     // Data sekolah (K97).
     ['label' => 'Sekolah', 'ikon' => 'building', 'alamat' => 'admin/sekolah'],
     ['label' => 'Pengaturan', 'ikon' => 'gear', 'alamat' => 'admin/pengaturan', 'aktif_juga' => ['admin/akun']],
