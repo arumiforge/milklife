@@ -133,6 +133,111 @@ final class PendaftaranKirimTest extends UjiBasisData
     }
 
     /**
+     * Jumlah baris di semua tabel yang ditulis `SimpanPendaftaran`, dan berkas foto.
+     *
+     * @return array<string, mixed>
+     */
+    private function potretTulisan(): array
+    {
+        $jumlah = [];
+
+        foreach (['pendaftaran', 'penanggung_jawab', 'atlet', 'atlet_nomor', 'pendaftaran_beregu', 'bukti_bayar', 'usulan_nama_sekolah'] as $tabel) {
+            $jumlah[$tabel] = $this->db->table($tabel)->countAllResults();
+        }
+
+        return $jumlah + [
+            'diubah' => $this->db->table('pendaftaran')->select('diubah_pada')->get()->getResultArray(),
+            'foto'   => $this->berkasFoto(),
+        ];
+    }
+
+    /**
+     * B2 (K118): jawaban pertama tidak sampai, ofisial menekan Kirim lagi
+     * dengan kunci yang sama dan mendapat pendaftaran yang sudah tersimpan.
+     */
+    public function testKirimGandaDenganKunciSamaMenjawabPendaftaranYangAda(): void
+    {
+        setting('Pembayaran.templat_pesan', 'Konfirmasi {id_pendaftaran} total {total}');
+        $kiriman = ['kunci_kirim' => str_repeat('9f', 16)] + $this->kirimanSah();
+
+        $pertama = $this->kirimJson('pendaftaran/simpan', $kiriman);
+        $pertama->assertStatus(201);
+        $satu = self::json($pertama);
+        $this->assertFalse($satu['ulang']);
+        $this->seeInDatabase('pendaftaran', ['id_pendaftaran' => $satu['id_pendaftaran'], 'kunci_kirim' => str_repeat('9f', 16)]);
+
+        $sebelum = $this->potretTulisan();
+
+        foreach ([1, 2] as $ke) {
+            $ulang = $this->kirimJson('pendaftaran/simpan', $kiriman);
+
+            $ulang->assertStatus(201);
+            $dua = self::json($ulang);
+            $this->assertSame('tersimpan', $dua['status'], "Kirim ulang ke-{$ke}.");
+            $this->assertTrue($dua['ulang']);
+            $this->assertStringContainsString('sudah tersimpan sebelumnya dengan ID ' . $satu['id_pendaftaran'], $dua['pesan']);
+
+            foreach (['id_pendaftaran', 'bukti', 'wa'] as $kunci) {
+                $this->assertSame($satu[$kunci], $dua[$kunci], $kunci);
+            }
+
+            foreach (['subtotal_individu', 'subtotal_beregu', 'total'] as $kunci) {
+                $this->assertSame($satu['rincian'][$kunci], $dua['rincian'][$kunci], $kunci);
+            }
+
+            $this->assertSame($satu['rincian']['sekolah']['nama'], $dua['rincian']['sekolah']['nama']);
+            $this->assertSame($satu['rincian']['sekolah']['npsn'], $dua['rincian']['sekolah']['npsn']);
+            $this->assertSame(array_column($satu['rincian']['individu'], 'nisn'), array_column($dua['rincian']['individu'], 'nisn'));
+            $this->assertSame(array_column($satu['rincian']['individu'], 'biaya'), array_column($dua['rincian']['individu'], 'biaya'));
+            $this->assertSame(array_column($satu['rincian']['beregu'], 'biaya'), array_column($dua['rincian']['beregu'], 'biaya'));
+
+            // Tidak ada yang ditulis: baris, waktu ubah, foto, dan bukti transfer tetap.
+            $this->assertSame($sebelum, $this->potretTulisan());
+        }
+
+        // Pendaftaran sudah ditutup saat kirim ulang: jawabannya tetap pendaftaran yang tersimpan.
+        setting('Pendaftaran.akhir', '2026-01-02 00:00:00');
+        $tutup = $this->kirimJson('pendaftaran/simpan', $kiriman);
+        $tutup->assertStatus(201);
+        $this->assertSame($satu['id_pendaftaran'], self::json($tutup)['id_pendaftaran']);
+        $this->assertSame($sebelum, $this->potretTulisan());
+    }
+
+    public function testKunciBerbedaAtauTanpaKunciTetapDitolakKarenaNisnTerdaftar(): void
+    {
+        $this->kirimJson('pendaftaran/simpan', ['kunci_kirim' => str_repeat('ab', 16)] + $this->kirimanSah())->assertStatus(201);
+
+        foreach ([str_repeat('cd', 16), null, 'pendek', str_repeat('ab', 16) . ' ', ['bukan teks']] as $kunci) {
+            $kiriman = $this->kirimanSah();
+
+            if ($kunci !== null) {
+                $kiriman['kunci_kirim'] = $kunci;
+            }
+
+            $hasil = $this->kirimJson('pendaftaran/simpan', $kiriman);
+            $hasil->assertStatus(422);
+            $this->assertStringContainsString('sudah terdaftar', self::json($hasil)['galat'][0]['pesan']);
+        }
+
+        $this->assertSame(1, $this->db->table('pendaftaran')->countAllResults());
+    }
+
+    public function testKunciDariPendaftaranYangDihapusMenyimpanBaru(): void
+    {
+        $kiriman = ['kunci_kirim' => str_repeat('e5', 16)] + $this->kirimanSah();
+        $satu    = self::json($this->kirimJson('pendaftaran/simpan', $kiriman));
+        $this->db->table('pendaftaran')->where('id_pendaftaran', $satu['id_pendaftaran'])->delete();
+
+        $hasil = $this->kirimJson('pendaftaran/simpan', $kiriman);
+
+        $hasil->assertStatus(201);
+        $dua = self::json($hasil);
+        $this->assertFalse($dua['ulang']);
+        $this->assertNotSame($satu['id_pendaftaran'], $dua['id_pendaftaran']);
+        $this->seeInDatabase('pendaftaran', ['id_pendaftaran' => $dua['id_pendaftaran'], 'kunci_kirim' => str_repeat('e5', 16)]);
+    }
+
+    /**
      * Kiriman susulan dari NPSN 99999911 yang sudah punya tim Kanga's Escape
      * (4 atlet): satu atlet tambahan di nomor itu.
      *

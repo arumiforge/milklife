@@ -40,6 +40,8 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $b = $this->buatPendaftaranPanel(['sekolah' => ['nama' => 'SMP KARANGAN JAYA', 'npsn' => null]]);
         $c = $this->buatPendaftaranPanel(['sekolah' => ['nama' => 'SD KARANGAN HILANG', 'npsn' => '99999919']]);
         $this->buatBuktiBayarPanel($a['id'], 2);
+        // Kunci kirim wizard (K118) ikut pindah; $b dari halaman lama tanpa kunci.
+        $this->db->table('pendaftaran')->where('id', $a['id'])->update(['kunci_kirim' => str_repeat('a1', 16)]);
         $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['id'] . '/lunas');
         $this->kirimSebagaiAdmin('admin/pendaftaran/' . $c['id'] . '/lunas');
         $this->kirimSebagaiAdmin('admin/pendaftaran/' . $c['id'] . '/hapus');
@@ -108,10 +110,14 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
     {
         $awal  = $this->buatPendaftaranPanel(['status' => 'lunas']);
         $susul = $this->buatPendaftaranPanel(['atlet' => [$this->atletPanel()]]);
+        // Kunci kirim (K118) tidak menghalangi penggabungan; kunci tujuan tetap.
+        $this->db->table('pendaftaran')->where('id', $awal['id'])->update(['kunci_kirim' => str_repeat('b2', 16)]);
+        $this->db->table('pendaftaran')->where('id', $susul['id'])->update(['kunci_kirim' => str_repeat('c3', 16)]);
         $alamatLama = App\Libraries\BuktiPendaftaran::alamat(['id' => $susul['id'], 'id_pendaftaran' => $susul['id_pendaftaran']]);
         $this->kirimSebagaiAdmin('admin/pendaftaran/' . $susul['id'] . '/lunas');
         $catatan = $this->db->table('pendaftaran_gabungan')->select('pendaftaran_id, id_pendaftaran_lama, kode_bukti_lama')->get()->getResultArray();
         $this->assertCount(1, $catatan);
+        $this->assertSame([str_repeat('b2', 16)], array_column($this->db->table('pendaftaran')->select('kunci_kirim')->get()->getResultArray(), 'kunci_kirim'));
 
         (new PaketPendaftaran())->ekspor($this->zip);
         $this->db->query('DELETE FROM pendaftaran');
@@ -122,6 +128,7 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $this->assertSame($catatan, $this->db->table('pendaftaran_gabungan')->select('pendaftaran_id, id_pendaftaran_lama, kode_bukti_lama')->get()->getResultArray());
         $this->assertStringEndsWith('/' . $catatan[0]['kode_bukti_lama'] . '/' . $susul['id_pendaftaran'], $alamatLama);
         $this->assertSame($awal['id_pendaftaran'], (new App\Libraries\DataPendaftaran())->cariId($susul['id_pendaftaran'])['id_pendaftaran']);
+        $this->seeInDatabase('pendaftaran', ['id' => $awal['id'], 'kunci_kirim' => str_repeat('b2', 16)]);
     }
 
     public function testAtletDitolakIkutPindah(): void
@@ -203,7 +210,7 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $baris = fn (string $sql): array => $this->db->query($sql)->getResultArray();
 
         return [
-            'pendaftaran' => $baris('SELECT id, id_pendaftaran, kode_bukti, jenjang, npsn, nama_sekolah, kabupaten, subtotal_individu, subtotal_beregu, total, status, waktu_lunas, dibuat_pada FROM pendaftaran ORDER BY id'),
+            'pendaftaran' => $baris('SELECT id, id_pendaftaran, kode_bukti, kunci_kirim, jenjang, npsn, nama_sekolah, kabupaten, subtotal_individu, subtotal_beregu, total, status, waktu_lunas, dibuat_pada FROM pendaftaran ORDER BY id'),
             'pj'          => $baris('SELECT p.id_pendaftaran, j.nama, j.nomor_wa, j.foto FROM penanggung_jawab j JOIN pendaftaran p ON p.id = j.pendaftaran_id ORDER BY j.id'),
             'atlet'       => $baris('SELECT p.id_pendaftaran, a.nama, a.nisn, a.tanggal_lahir, a.jenis_kelamin, k.nama ku, a.nomor_dada FROM atlet a JOIN pendaftaran p ON p.id = a.pendaftaran_id JOIN kelompok_umur k ON k.id = a.kelompok_umur_id ORDER BY a.id'),
             'nomor'       => $baris('SELECT a.nisn, n.nama, n.kategori, an.biaya FROM atlet_nomor an JOIN atlet a ON a.id = an.atlet_id JOIN nomor_lomba n ON n.id = an.nomor_lomba_id ORDER BY a.nisn, n.id'),
