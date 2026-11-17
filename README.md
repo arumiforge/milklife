@@ -117,6 +117,7 @@ Semua dijalankan dari folder proyek dengan `php spark <perintah>`.
 
 | Perintah | Kegunaan |
 |---|---|
+| `pembaruan:periksa` | Setelah `git pull`: memeriksa perintah apa yang masih perlu dijalankan (Composer, migrasi, `sekolah:impor`, `pendaftaran:gabung`, `aset:minify`). Tidak mengubah apa pun |
 | `sekolah:impor [berkas]` | Mengisi atau memperbarui daftar sekolah. Aman diulang |
 | `data:awal` | Mengisi data awal Seri 2. Sekali saat pemasangan |
 | `admin:buat` | Membuat akun admin atau mengganti kata sandinya |

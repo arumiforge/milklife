@@ -127,10 +127,11 @@ class MinifyAset extends BaseCommand
 
     /**
      * Berkas CSS/JS/SVG asli di bawah `$folder`, relatif dan berurutan.
+     * Juga dipakai `PemeriksaPembaruan` untuk mencari berkas `.min` yang usang.
      *
      * @return list<string>
      */
-    private static function daftarBerkas(string $folder): array
+    public static function daftarBerkas(string $folder): array
     {
         $iterator = new RecursiveIteratorIterator(new RecursiveCallbackFilterIterator(
             new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS),
