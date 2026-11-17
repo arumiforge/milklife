@@ -159,7 +159,8 @@ final class GabungPendaftaran
         $dari = (int) $sumber['id'];
         $ke   = (int) $tujuan['id'];
 
-        foreach (['atlet', 'bukti_bayar', 'usulan_nama_sekolah'] as $tabel) {
+        // Catatan atlet yang ditolak (K116) ikut pindah supaya tetap tampil di Cek Pendaftaran.
+        foreach (['atlet', 'bukti_bayar', 'usulan_nama_sekolah', 'atlet_ditolak'] as $tabel) {
             $this->pastikan($this->db->table($tabel)->where('pendaftaran_id', $dari)->update(['pendaftaran_id' => $ke]));
         }
 

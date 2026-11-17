@@ -13,6 +13,7 @@
  * @var string                   $kode  isian yang sudah dirapikan
  * @var string|null              $galat pesan untuk official
  * @var string|null              $info  keterangan ID lama yang sudah digabung (K109)
+ * @var string|null              $waTanya alamat WA tanya admin, untuk atlet yang ditolak (K116)
  * @var list<array<string, mixed>> $hasil lihat App\Libraries\DataPendaftaran
  */
 $sekolah = $hasil[0] ?? null;
@@ -72,8 +73,20 @@ $sekolah = $hasil[0] ?? null;
                         </div>
                     </div>
 
+                    <?php $jumlahDitolak = array_sum(array_map(static fn (array $h): int => count($h['atlet_ditolak'] ?? []), $hasil)); ?>
+                    <?php if ($jumlahDitolak > 0) : ?>
+                        <div class="alert alert-danger d-flex gap-2" role="alert" id="ringkasan-atlet-ditolak">
+                            <i class="bi bi-exclamation-octagon flex-shrink-0" aria-hidden="true"></i>
+                            <div>
+                                <strong><?= $jumlahDitolak ?> atlet ditolak panitia.</strong>
+                                Alasan, kelompok umur yang sesuai, dan perubahan biayanya ada di bagian "Atlet ditolak panitia" pada pendaftarannya di bawah.
+                                Daftarkan ulang atletnya lewat menu Pendaftaran.
+                            </div>
+                        </div>
+                    <?php endif ?>
+
                     <?php foreach ($hasil as $nomor => $pendaftaran) : ?>
-                        <?= view('cek_pendaftaran/_kartu', ['p' => $pendaftaran, 'urutan' => $nomor + 1, 'banyak' => count($hasil) > 1, 'kode' => $kode], ['saveData' => false]) ?>
+                        <?= view('cek_pendaftaran/_kartu', ['p' => $pendaftaran, 'urutan' => $nomor + 1, 'banyak' => count($hasil) > 1, 'kode' => $kode, 'waTanya' => $waTanya ?? null], ['saveData' => false]) ?>
                     <?php endforeach ?>
 
                     <?php if (count($hasil) > 1) : ?>

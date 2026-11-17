@@ -162,6 +162,25 @@ final class MigrasiStrukturTest extends UjiBasisData
             'kode_bukti_lama'     => ['char(24)', true, null],
             'dibuat_pada'         => ['datetime', true, null],
         ],
+        // K116: salinan atlet yang ditolak panitia, untuk Cek Pendaftaran.
+        'atlet_ditolak' => [
+            'id'                      => ['int unsigned', false, null],
+            'pendaftaran_id'          => ['int unsigned', false, null],
+            'nama'                    => ['varchar(100)', false, null],
+            'nisn'                    => ['char(10)', false, null],
+            'tanggal_lahir'           => ['date', false, null],
+            'jenis_kelamin'           => ["enum('L','P')", false, null],
+            'kelompok_umur'           => ['varchar(50)', false, null],
+            'nomor_lomba'             => ['text', false, null],
+            'biaya_individu'          => ['int unsigned', false, '0'],
+            'kelompok_umur_sesuai_id' => ['int unsigned', true, null],
+            'kelompok_umur_sesuai'    => ['varchar(255)', true, null],
+            'alasan'                  => ['text', false, null],
+            'total_sebelum'           => ['int unsigned', false, '0'],
+            'total_sesudah'           => ['int unsigned', false, '0'],
+            'ditolak_oleh'            => ['varchar(100)', true, null],
+            'dibuat_pada'             => ['datetime', true, null],
+        ],
         'tautan' => [
             'id'          => ['int unsigned', false, null],
             'jenis'       => ["enum('narahubung','media_sosial')", false, null],
@@ -196,6 +215,8 @@ final class MigrasiStrukturTest extends UjiBasisData
         'usulan_nama_sekolah.pendaftaran_id' => ['pendaftaran', 'SET NULL'],
         // K109: ID lama ikut terhapus bersama pendaftaran gabungannya.
         'pendaftaran_gabungan.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
+        // K116: catatan atlet ditolak ikut terhapus bersama pendaftarannya.
+        'atlet_ditolak.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void
@@ -320,7 +341,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             $this->assertContains($harapan, $unik, "Kunci unik {$harapan}.");
         }
 
-        foreach (['pendaftaran:npsn', 'pendaftaran:status', 'atlet:nama'] as $harapan) {
+        foreach (['pendaftaran:npsn', 'pendaftaran:status', 'atlet:nama', 'atlet_ditolak:nisn'] as $harapan) {
             $this->assertContains($harapan, $tidakUnik, "Indeks {$harapan}.");
         }
     }

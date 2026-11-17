@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Libraries\AtletDitolak;
 use App\Libraries\Jenjang;
 use App\Models\PendaftaranModel;
 use App\Models\UsulanNamaSekolahModel;
@@ -13,6 +14,7 @@ use App\Libraries\Panel\HapusPendaftaran;
 use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Panel\StatusPembayaran;
 use App\Libraries\Panel\TimTanpaPembayar;
+use App\Libraries\Panel\TolakAtlet;
 use App\Libraries\Panel\UbahPendaftaran;
 use App\Libraries\Pendaftaran\DataIndukPendaftaran;
 use App\Libraries\Pendaftaran\Kabupaten;
@@ -114,10 +116,14 @@ class PendaftaranController extends BaseController
             throw PageNotFoundException::forPageNotFound('Pendaftaran tidak ditemukan. Mungkin sudah dihapus.');
         }
 
-        $tim = new TimTanpaPembayar();
+        $tim       = new TimTanpaPembayar();
+        $kecocokan = array_column((new TolakAtlet())->formulir($id)['atlet'] ?? [], null, 'id');
 
         return view('admin/pendaftaran/rincian', [
             'p'                => $pendaftaran,
+            // K116: kelompok umur yang tidak cocok lagi dengan pengaturan, dan atlet yang sudah ditolak.
+            'kecocokan'        => $kecocokan,
+            'atletDitolak'     => (new AtletDitolak())->untukPendaftaran([$id], semua: true)[$id] ?? [],
             'timTanpaPembayar' => $tim->untukPendaftaran($id),
             'kalimatTimHapus'  => TimTanpaPembayar::kalimatDitinggalkan($tim->ditinggalkan($id)),
             // Usulan nama sekolah dari pendaftaran ini yang belum diputuskan (K99).

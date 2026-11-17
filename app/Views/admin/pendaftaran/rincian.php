@@ -20,6 +20,12 @@
  * @var array<string, mixed>                 $p
  * @var array<string, array<string, mixed>>  $timTanpaPembayar `TimTanpaPembayar::untukPendaftaran()`, kunci "nomor:regu"
  * @var string                               $kalimatTimHapus  `TimTanpaPembayar::kalimatDitinggalkan()`, boleh kosong
+ * @var array<int, array<string, mixed>>     $kecocokan        K116: per id atlet, `TolakAtlet::formulir()` (`cocok`, `sesuai_id`, `sesuai`)
+ * @var list<array<string, mixed>>           $atletDitolak     K116: `AtletDitolak::untukPendaftaran(semua: true)`
+ *
+ * Tolak atlet (K116): tombol "Tolak atlet" untuk pendaftaran Menunggu yang
+ * punya atlet, tanda di kolom kelompok umur bila tidak cocok lagi dengan
+ * pengaturan, dan daftar atlet yang sudah ditolak beserta keadaannya.
  */
 
 use App\Libraries\Pendaftaran\Regu;
@@ -104,6 +110,13 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                 Tandai Lunas
                             </button>
                         </form>
+                    <?php endif ?>
+
+                    <?php if (! $lunas && $p['atlet'] !== []) : ?>
+                        <a class="btn btn-outline-danger" href="<?= site_url($alamat . '/tolak-atlet') ?>" id="tombol-tolak-atlet">
+                            <i class="bi bi-person-x" aria-hidden="true"></i>
+                            Tolak atlet
+                        </a>
                     <?php endif ?>
 
                     <a class="btn btn-outline-primary" href="<?= site_url($alamat . '/ubah') ?>" id="tombol-ubah">
@@ -253,7 +266,16 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                     <td class="text-nowrap"><?= esc($atlet['nisn']) ?></td>
                                     <td class="text-nowrap"><?= esc(tanggal_id($atlet['tanggal_lahir'])) ?></td>
                                     <td><?= esc($atlet['jenis_kelamin_label']) ?></td>
-                                    <td class="text-nowrap"><?= esc($atlet['kelompok_umur']) ?></td>
+                                    <td>
+                                        <span class="text-nowrap"><?= esc($atlet['kelompok_umur']) ?></span>
+                                        <?php $cocok = $kecocokan[(int) $atlet['id']] ?? null; ?>
+                                        <?php if ($cocok !== null && ! $cocok['cocok']) : ?>
+                                            <div class="small text-danger-emphasis ku-tidak-cocok">
+                                                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                                                Tidak cocok dengan pengaturan sekarang<?= $cocok['sesuai_id'] === null ? '' : ', seharusnya ' . esc($cocok['sesuai']) ?>.
+                                            </div>
+                                        <?php endif ?>
+                                    </td>
                                     <td>
                                         <?php if ($atlet['nomor_lomba'] === []) : ?>
                                             <?= $strip ?>
@@ -285,6 +307,59 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
             <?php endif ?>
         </div>
     </section>
+
+    <?php if ($atletDitolak !== []) : ?>
+        <section class="card mb-4 border-danger-subtle" aria-labelledby="judul-atlet-ditolak" id="atlet-ditolak">
+            <div class="card-body p-0">
+                <div class="px-3 px-lg-4 pt-3 pt-lg-4 pb-2">
+                    <h2 id="judul-atlet-ditolak" class="h5 mb-1">Atlet ditolak <span class="text-body-secondary fw-normal">(<?= count($atletDitolak) ?>)</span></h2>
+                    <p class="small text-body-secondary mb-0">Tampil di Cek Pendaftaran sampai NISN-nya didaftarkan lagi.</p>
+                </div>
+                <div class="tabel-gulir">
+                    <table class="table align-middle mb-0" id="tabel-atlet-ditolak">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="ps-3 ps-lg-4">Nama</th>
+                                <th scope="col">NISN</th>
+                                <th scope="col">Tanggal lahir</th>
+                                <th scope="col">Kelompok umur</th>
+                                <th scope="col">Nomor lomba</th>
+                                <th scope="col" style="min-width: 16rem;">Alasan</th>
+                                <th scope="col">Ditolak</th>
+                                <th scope="col" class="pe-3 pe-lg-4">Keadaan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($atletDitolak as $d) : ?>
+                                <tr data-id="<?= (int) $d['id'] ?>">
+                                    <th scope="row" class="ps-3 ps-lg-4 fw-semibold"><?= esc($d['nama']) ?></th>
+                                    <td class="text-nowrap"><?= esc($d['nisn']) ?></td>
+                                    <td class="text-nowrap"><?= esc(tanggal_id($d['tanggal_lahir'])) ?></td>
+                                    <td>
+                                        <span class="text-nowrap"><?= esc($d['kelompok_umur']) ?></span>
+                                        <?php if ($d['sesuai_beda']) : ?>
+                                            <div class="small text-body-secondary">Sesuai: <?= esc($d['kelompok_umur_sesuai']) ?></div>
+                                        <?php endif ?>
+                                    </td>
+                                    <td style="min-width: 9rem;"><?= esc(implode(', ', array_column($d['nomor_lomba'], 'nama'))) ?: $strip ?></td>
+                                    <td class="small"><?= nl2br(esc($d['alasan'])) ?></td>
+                                    <td class="small text-nowrap"><?= esc(tanggal_id($d['dibuat_pada'], true)) ?><br><span class="text-body-secondary"><?= esc($d['ditolak_oleh'] ?? '') ?></span></td>
+                                    <td class="pe-3 pe-lg-4 small">
+                                        <?php if ($d['didaftarkan_ulang'] !== null) : ?>
+                                            <span class="badge rounded-pill text-bg-success">Sudah didaftarkan ulang</span>
+                                            <div class="text-nowrap"><?= esc($d['didaftarkan_ulang']) ?></div>
+                                        <?php else : ?>
+                                            <span class="badge rounded-pill text-bg-warning">Belum didaftarkan ulang</span>
+                                        <?php endif ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    <?php endif ?>
 
     <?php if ($p['beregu'] !== []) : ?>
         <section class="card mb-4" aria-labelledby="judul-beregu">

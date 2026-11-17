@@ -8,6 +8,12 @@
  * @var int                  $urutan nomor kartu, mulai 1
  * @var bool                 $banyak lebih dari satu pendaftaran ditampilkan
  * @var string               $kode   isian pencarian, tujuan kembali setelah unggah bukti bayar
+ * @var string|null          $waTanya alamat WA tanya admin, atau null
+ *
+ * Atlet yang ditolak panitia dan belum didaftarkan ulang (K116) tampil di
+ * bawah tabel atlet: alasan, kelompok umur dan nomor lomba yang sesuai beserta
+ * biayanya, perubahan total, dan ajakan mendaftar ulang. Tanggal lahir tetap
+ * tidak ditampilkan (K52); hanya tahun lahirnya.
  *
  * Pendaftaran yang belum Lunas punya kotak unggah bukti bayar (K83).
  */
@@ -80,6 +86,71 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
                 </tbody>
             </table>
         </div>
+
+        <?php $ditolak = $p['atlet_ditolak'] ?? []; ?>
+        <?php if ($ditolak !== []) : ?>
+            <div class="border border-danger-subtle rounded p-3 mb-4 cek-atlet-ditolak" id="atlet-ditolak-<?= $urutan ?>">
+                <h4 class="cek-subjudul text-danger-emphasis mt-0"><i class="bi bi-person-x" aria-hidden="true"></i> Atlet ditolak panitia <span class="cek-jumlah"><?= count($ditolak) ?></span></h4>
+                <p class="small mb-3">
+                    Atlet di bawah ini sudah dikeluarkan dari pendaftaran ini dan tidak dihitung lagi di total biaya.
+                    NISN-nya bisa dipakai lagi: daftarkan ulang lewat menu Pendaftaran pada kelompok umur yang sesuai.
+                    Keterangan ini hilang sendiri setelah atletnya terdaftar lagi.
+                </p>
+                <ul class="list-unstyled mb-0">
+                    <?php foreach ($ditolak as $d) : ?>
+                        <li class="border-top pt-3 mt-3 cek-atlet-ditolak-baris">
+                            <p class="mb-1">
+                                <strong><?= esc($d['nama']) ?></strong>
+                                <span class="text-body-secondary">· NISN <?= esc($d['nisn']) ?> · <?= esc($d['jenis_kelamin_label']) ?> · lahir tahun <?= (int) $d['tahun_lahir'] ?></span>
+                            </p>
+                            <dl class="row small mb-0">
+                                <dt class="col-sm-4 fw-semibold">Didaftarkan di</dt>
+                                <dd class="col-sm-8">
+                                    <?= esc($d['kelompok_umur']) ?><?= $d['nomor_lomba'] === [] ? '' : ': ' . esc(implode(', ', array_column($d['nomor_lomba'], 'nama'))) ?>
+                                    <?php if ($d['biaya_individu'] > 0) : ?>
+                                        <span class="text-body-secondary">(biaya individu <?= esc(rupiah($d['biaya_individu'])) ?>)</span>
+                                    <?php endif ?>
+                                </dd>
+                                <dt class="col-sm-4 fw-semibold">Alasan</dt>
+                                <dd class="col-sm-8"><?= nl2br(esc($d['alasan'])) ?></dd>
+                                <?php if ($d['sesuai_beda'] && $d['kelompok_umur_sesuai'] !== null) : ?>
+                                    <dt class="col-sm-4 fw-semibold">Kelompok umur yang sesuai</dt>
+                                    <dd class="col-sm-8">
+                                        <strong><?= esc($d['kelompok_umur_sesuai']) ?></strong>
+                                        <?php if ($d['nomor_sesuai'] !== []) : ?>
+                                            <ul class="mb-0 ps-3">
+                                                <?php foreach ($d['nomor_sesuai'] as $n) : ?>
+                                                    <li>
+                                                        <?= esc($n['nama']) ?>
+                                                        <?php if ($n['biaya'] !== null) : ?>
+                                                            <span class="text-body-secondary">· <?= esc(rupiah((int) $n['biaya'])) ?> <?= $n['jenis'] === 'beregu' ? 'per regu' : 'per nomor' ?></span>
+                                                        <?php endif ?>
+                                                    </li>
+                                                <?php endforeach ?>
+                                            </ul>
+                                        <?php endif ?>
+                                    </dd>
+                                <?php endif ?>
+                                <dt class="col-sm-4 fw-semibold">Perubahan biaya</dt>
+                                <dd class="col-sm-8 mb-0">
+                                    Total pendaftaran ini berubah dari <?= esc(rupiah($d['total_sebelum'])) ?> menjadi <?= esc(rupiah($d['total_sesudah'])) ?>
+                                    saat atlet ditolak<?= $d['dibuat_pada'] === null ? '' : ' (' . esc(tanggal_id($d['dibuat_pada'], true)) . ')' ?>.
+                                    Biaya pendaftaran ulang dihitung lagi di menu Pendaftaran sesuai nomor yang dipilih.
+                                </dd>
+                            </dl>
+                        </li>
+                    <?php endforeach ?>
+                </ul>
+                <div class="alert alert-warning small mt-3 mb-0" role="note">
+                    <i class="bi bi-cash-coin" aria-hidden="true"></i>
+                    Bila biaya untuk atlet ini sudah terlanjur ditransfer, penyelesaiannya langsung dengan panitia.
+                    <?php if (($waTanya ?? null) !== null) : ?>
+                        <a class="alert-link text-nowrap" href="<?= esc($waTanya, 'attr') ?>" target="_blank" rel="noopener"><i class="bi bi-whatsapp" aria-hidden="true"></i> Hubungi panitia</a>
+                    <?php endif ?>
+                </div>
+                <a class="btn btn-primary mt-3" href="<?= site_url('pendaftaran') ?>"><i class="bi bi-pencil-square" aria-hidden="true"></i> Daftarkan ulang</a>
+            </div>
+        <?php endif ?>
 
         <?php if ($p['beregu'] !== []) : ?>
             <h4 class="cek-subjudul"><i class="bi bi-flag" aria-hidden="true"></i> Regu beregu <span class="cek-jumlah"><?= count($p['beregu']) ?></span></h4>

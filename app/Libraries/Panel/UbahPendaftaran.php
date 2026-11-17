@@ -290,10 +290,14 @@ final class UbahPendaftaran
      *
      * @param array<string, mixed> $kiriman
      * @param bool                 $setujuMenunggu Admin sudah menyetujui status kembali ke Menunggu (K32).
+     * @param callable|null        $dalamTransaksi Dipanggil di dalam transaksi simpan sebelum commit,
+     *                                             dengan `(BaseConnection $db, array $rencana)`; bila
+     *                                             melempar, seluruh perubahan dibatalkan. Dipakai
+     *                                             `TolakAtlet` untuk mencatat atlet yang ditolak (K116).
      *
      * @return array<string, mixed>|null
      */
-    public function simpan(int $id, array $kiriman, bool $setujuMenunggu = false, ?string $hariIni = null): ?array
+    public function simpan(int $id, array $kiriman, bool $setujuMenunggu = false, ?string $hariIni = null, ?callable $dalamTransaksi = null): ?array
     {
         $hariIni ??= self::hariIni();
         $lama = $this->bacaLama($id);
@@ -328,7 +332,7 @@ final class UbahPendaftaran
                 return null;
             }
 
-            return $this->simpanTerkunci($lama, $kiriman, $setujuMenunggu, $hariIni);
+            return $this->simpanTerkunci($lama, $kiriman, $setujuMenunggu, $hariIni, $dalamTransaksi);
         } finally {
             foreach ($dipegang as $nama) {
                 $this->db->query('SELECT RELEASE_LOCK(?)', [$nama]);
@@ -346,7 +350,7 @@ final class UbahPendaftaran
      *
      * @return array<string, mixed>
      */
-    private function simpanTerkunci(array $lama, array $kiriman, bool $setujuMenunggu, string $hariIni): array
+    private function simpanTerkunci(array $lama, array $kiriman, bool $setujuMenunggu, string $hariIni, ?callable $dalamTransaksi = null): array
     {
         $rencana = $this->hitung($lama, $kiriman, $hariIni);
 
@@ -554,6 +558,10 @@ final class UbahPendaftaran
 
                 // K109: NPSN baru mungkin sudah punya pendaftaran Lunas lain; gabungkan.
                 $gabung = (new GabungPendaftaran($this->db))->gabungNpsn($rencana['sekolah']['npsn']);
+            }
+
+            if ($dalamTransaksi !== null) {
+                $dalamTransaksi($this->db, $rencana);
             }
 
             if ($this->db->transStatus() === false) {

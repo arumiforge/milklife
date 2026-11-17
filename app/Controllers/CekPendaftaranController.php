@@ -46,6 +46,8 @@ class CekPendaftaranController extends BaseController
             'galat'     => null,
             'info'      => null,
             'hasil'     => [],
+            // Tombol tanya panitia untuk atlet yang ditolak (K116).
+            'waTanya'   => $isi->waTanya(),
         ];
 
         $masukan = $this->request->getGet('kode');
