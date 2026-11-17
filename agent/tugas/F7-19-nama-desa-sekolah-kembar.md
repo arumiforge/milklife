@@ -28,3 +28,4 @@ Admin bisa membedakan semua sekolah bernama sama sekaligus dengan menambahkan na
 
 - Dengan data 14 November 2026: dari 501 sekolah bernama kembar, 495 mendapat nama baru (374 dari desa, 116 dari kecamatan, 5 dari kabupaten) dan 6 perlu diubah sendiri.
 - Kecamatan dan kabupaten dipakai karena banyak nama kembar sudah memuat nama desanya, misalnya "SD NEGERI 1 TAHUNAN" di desa Tahunan (Rembang dan Jepara).
+- PR [#88](https://github.com/arumiforge/milklife/pull/88).
