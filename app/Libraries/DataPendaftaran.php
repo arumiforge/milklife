@@ -60,6 +60,7 @@ use CodeIgniter\Database\BaseConnection;
  *             'biaya_tim'   => 200000,               // null: pendaftaran susulan yang hanya menambah anggota
  *             'anggota'     => [['nama' => 'BUDI KARANGAN', 'nisn' => '9900000001', 'nomor_dada' => null, 'peran' => 'inti']],
  *         ]],
+ *         'atlet_ditolak'     => [ … ],             // AtletDitolak::untukPendaftaran(), hanya yang belum didaftarkan ulang (K116)
  *     ]
  *
  * Regu tunggal (K108): bila sekolah (NPSN sama, semua pendaftarannya; tanpa
@@ -221,7 +222,13 @@ final class DataPendaftaran
                 'atlet'             => [],
                 'individu'          => [],
                 'beregu'            => [],
+                'atlet_ditolak'     => [],
             ];
+        }
+
+        // Atlet yang ditolak panitia dan belum didaftarkan ulang (K116).
+        foreach ((new AtletDitolak($this->db))->untukPendaftaran($ids) as $pid => $baris) {
+            $hasil[$pid]['atlet_ditolak'] = $baris;
         }
 
         foreach ($lama as $baris) {

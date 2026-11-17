@@ -70,6 +70,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('pendaftaran/(:num)/lunas', 'PendaftaranController::lunas/$1');
     $routes->post('pendaftaran/(:num)/menunggu', 'PendaftaranController::menunggu/$1');
     $routes->post('pendaftaran/(:num)/hapus', 'PendaftaranController::hapus/$1');
+    // Tolak atlet dari pendaftaran Menunggu; NISN-nya bisa didaftarkan lagi (K116).
+    $routes->get('pendaftaran/(:num)/tolak-atlet', 'TolakAtletController::index/$1');
+    $routes->post('pendaftaran/(:num)/tolak-atlet', 'TolakAtletController::tolak/$1');
     $routes->get('pendaftaran/(:num)/ubah', 'PendaftaranController::ubah/$1');
     $routes->post('pendaftaran/(:num)', 'PendaftaranController::perbarui/$1');
 

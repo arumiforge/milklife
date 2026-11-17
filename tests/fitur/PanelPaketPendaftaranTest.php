@@ -124,6 +124,28 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $this->assertSame($awal['id_pendaftaran'], (new App\Libraries\DataPendaftaran())->cariId($susul['id_pendaftaran'])['id_pendaftaran']);
     }
 
+    public function testAtletDitolakIkutPindah(): void
+    {
+        $p = $this->buatPendaftaranPanel(['foto' => true, 'atlet' => [
+            $this->atletPanel(),
+            $this->atletPanel(['ku' => 'ku12', 'tanggal_lahir' => '2016-05-01', 'nomor' => ['lari60putraKu12']]),
+        ]]);
+        $hasil = (new App\Libraries\Panel\TolakAtlet())->tolak($p['id'], [$p['atlet'][1]], 'Tahun lahir tidak sesuai kelompok umur.', 'Admin Uji');
+        $this->assertTrue($hasil['tersimpan']);
+
+        $kolom   = 'pendaftaran_id, nama, nisn, tanggal_lahir, jenis_kelamin, kelompok_umur, nomor_lomba, biaya_individu, kelompok_umur_sesuai_id, kelompok_umur_sesuai, alasan, total_sebelum, total_sesudah, ditolak_oleh, dibuat_pada';
+        $catatan = $this->db->table('atlet_ditolak')->select($kolom)->get()->getResultArray();
+        $this->assertCount(1, $catatan);
+
+        (new PaketPendaftaran())->ekspor($this->zip);
+        $this->db->query('DELETE FROM pendaftaran');
+        $this->hapusBerkas();
+        (new PaketPendaftaran())->impor($this->zip);
+
+        // K116: catatan tetap ada, kelompok umur yang sesuai dicocokkan menurut nama.
+        $this->assertSame($catatan, $this->db->table('atlet_ditolak')->select($kolom)->get()->getResultArray());
+    }
+
     public function testImporDitolakBilaNomorLombaTidakAdaDanTidakAdaYangTersimpan(): void
     {
         $this->buatPendaftaranPanel(['foto' => true]);

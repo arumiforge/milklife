@@ -24,7 +24,8 @@ use ZipArchive;
  *   dan sekolah yang namanya disunting admin (K97), supaya keduanya tidak hilang
  *   di server baru. Dua kunci terakhir boleh tidak ada (paket lama). Setiap
  *   pendaftaran juga membawa `gabungan_dari`: ID dan kode bukti lama yang
- *   sudah digabung ke situ (K109), supaya kode QR bukti lama tetap berlaku.
+ *   sudah digabung ke situ (K109), supaya kode QR bukti lama tetap berlaku,
+ *   dan `atlet_ditolak`: atlet yang ditolak panitia (K116; boleh tidak ada).
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -87,6 +88,7 @@ final class PaketPendaftaran
         $tim   = $kelompok($this->db->table('pendaftaran_beregu')->orderBy('id')->get()->getResultArray());
         $bukti = $kelompok($this->db->table('bukti_bayar')->orderBy('id')->get()->getResultArray());
         $lama  = $kelompok($this->db->table('pendaftaran_gabungan')->orderBy('id')->get()->getResultArray());
+        $tolak = $kelompok($this->db->table('atlet_ditolak')->orderBy('id')->get()->getResultArray());
 
         $ikutNomor = [];
 
@@ -155,6 +157,23 @@ final class PaketPendaftaran
                 'gabungan_dari' => array_map(static fn (array $g): array => [
                     'id_pendaftaran' => $g['id_pendaftaran_lama'], 'kode_bukti' => $g['kode_bukti_lama'], 'dibuat_pada' => $g['dibuat_pada'],
                 ], $lama[$id] ?? []),
+                // Atlet yang ditolak panitia (K116); kelompok umur yang sesuai dicocokkan menurut nama.
+                'atlet_ditolak' => array_map(static fn (array $d): array => [
+                    'nama'                 => $d['nama'],
+                    'nisn'                 => $d['nisn'],
+                    'tanggal_lahir'        => $d['tanggal_lahir'],
+                    'jenis_kelamin'        => $d['jenis_kelamin'],
+                    'kelompok_umur'        => $d['kelompok_umur'],
+                    'nomor_lomba'          => json_decode((string) $d['nomor_lomba'], true) ?? [],
+                    'biaya_individu'       => (int) $d['biaya_individu'],
+                    'kelompok_umur_sesuai_nama' => $d['kelompok_umur_sesuai_id'] === null ? null : ($ku[$d['kelompok_umur_sesuai_id']] ?? null),
+                    'kelompok_umur_sesuai' => $d['kelompok_umur_sesuai'],
+                    'alasan'               => $d['alasan'],
+                    'total_sebelum'        => (int) $d['total_sebelum'],
+                    'total_sesudah'        => (int) $d['total_sesudah'],
+                    'ditolak_oleh'         => $d['ditolak_oleh'],
+                    'dibuat_pada'          => $d['dibuat_pada'],
+                ], $tolak[$id] ?? []),
             ];
         }
 
@@ -473,6 +492,30 @@ final class PaketPendaftaran
                         'dibuat_pada'         => $g['dibuat_pada'] ?? null,
                     ]);
                 }
+            }
+
+            foreach ($p['atlet_ditolak'] ?? [] as $d) {
+                if (! is_array($d) || preg_match('/^\d{10}$/D', (string) ($d['nisn'] ?? '')) !== 1 || ! in_array($d['jenis_kelamin'] ?? null, ['L', 'P'], true)) {
+                    continue;
+                }
+
+                $tabel('atlet_ditolak', [
+                    'pendaftaran_id'          => $id,
+                    'nama'                    => (string) ($d['nama'] ?? ''),
+                    'nisn'                    => (string) $d['nisn'],
+                    'tanggal_lahir'           => (string) ($d['tanggal_lahir'] ?? ''),
+                    'jenis_kelamin'           => (string) $d['jenis_kelamin'],
+                    'kelompok_umur'           => (string) ($d['kelompok_umur'] ?? ''),
+                    'nomor_lomba'             => json_encode(is_array($d['nomor_lomba'] ?? null) ? $d['nomor_lomba'] : [], JSON_UNESCAPED_UNICODE),
+                    'biaya_individu'          => (int) ($d['biaya_individu'] ?? 0),
+                    'kelompok_umur_sesuai_id' => $ku[(string) ($d['kelompok_umur_sesuai_nama'] ?? '')] ?? null,
+                    'kelompok_umur_sesuai'    => is_string($d['kelompok_umur_sesuai'] ?? null) ? $d['kelompok_umur_sesuai'] : null,
+                    'alasan'                  => (string) ($d['alasan'] ?? ''),
+                    'total_sebelum'           => (int) ($d['total_sebelum'] ?? 0),
+                    'total_sesudah'           => (int) ($d['total_sesudah'] ?? 0),
+                    'ditolak_oleh'            => is_string($d['ditolak_oleh'] ?? null) ? $d['ditolak_oleh'] : null,
+                    'dibuat_pada'             => $d['dibuat_pada'] ?? null,
+                ]);
             }
         }
 

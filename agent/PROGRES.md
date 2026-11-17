@@ -29,6 +29,7 @@ Diperbarui: 17 November 2026
 | [F7-19 Tambahkan nama desa ke sekolah bernama sama](tugas/F7-19-nama-desa-sekolah-kembar.md) | selesai | sisipan | [#88](https://github.com/arumiforge/milklife/pull/88) |
 | [F7-20 Pemeriksaan setelah git pull](tugas/F7-20-periksa-pembaruan.md) | selesai | sisipan | [#89](https://github.com/arumiforge/milklife/pull/89) |
 | [F7-21 Uji lengkap di MariaDB dan pemeriksaan peramban](tugas/F7-21-uji-mariadb-peramban.md) | menunggu tinjauan | sisipan | |
+| [F7-22 Tolak atlet per atlet](tugas/F7-22-tolak-atlet.md) | menunggu tinjauan | sisipan | |
 
 ## Berikutnya
 
