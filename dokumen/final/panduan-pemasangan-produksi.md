@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101) |
+| Revisi 4 | Perintah `php spark pembaruan:periksa` untuk memeriksa perintah yang masih perlu dijalankan setelah `git pull` (K115). Bagian yang berubah: 10 |
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
@@ -279,6 +280,14 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    ```
 
    `sekolah:impor` memasukkan data sekolah terbaru bila versi baru membawanya. Sekolah yang sudah disunting admin tidak ditimpa, dan tidak ada sekolah yang dihapus.
+
+   Untuk memastikan tidak ada yang terlewat, jalankan pemeriksaan ini setelah langkah di atas (K115):
+
+   ```
+   php spark pembaruan:periksa
+   ```
+
+   Perintah ini tidak mengubah apa pun. Ia memeriksa pustaka Composer, migrasi, data sekolah, pendaftaran Lunas ber-NPSN sama, dan CSS/JavaScript kecil, lalu menulis `[beres]` atau `[PERLU]` untuk masing-masing dan daftar perintah yang masih perlu dijalankan, berurutan. Jalankan perintah itu, lalu jalankan `pembaruan:periksa` lagi sampai tertulis "Tidak ada perintah lain yang perlu dijalankan". Bila tertulis basis data tidak bisa dihubungi, nyalakan MySQL di Laragon dulu.
 
    Pembaruan yang membawa penggabungan pendaftaran (16 November 2026, K109) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
 
