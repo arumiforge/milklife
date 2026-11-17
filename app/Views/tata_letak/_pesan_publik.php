@@ -6,7 +6,8 @@
  * Data yang dibaca (dari sesi kilat):
  * - `pesan_sukses` (string): kotak hijau.
  * - `pesan_galat` (string): kotak merah, misalnya kiriman yang melebihi batas
- *   unggah (`App\Filters\BatasUnggahFilter`).
+ *   unggah (`App\Filters\BatasUnggahFilter`) atau dari halaman yang terlalu
+ *   lama terbuka (`App\Filters\CsrfFilter`, F7-24).
  * Teks biasa; di-escape di sini.
  */
 
