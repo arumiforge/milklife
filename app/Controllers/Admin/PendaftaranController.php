@@ -87,26 +87,29 @@ class PendaftaranController extends BaseController
     }
 
     /**
-     * Unduh paket semua pendaftaran (`PaketPendaftaran::ekspor()`). Berkas
-     * sementara dihapus setelah isinya dibaca.
+     * Unduh paket semua pendaftaran (`PaketPendaftaran::ekspor()`). Zip
+     * dikirim langsung dari berkas sementara di `writable/cache/ekspor/`.
      */
     public function ekspor(): ResponseInterface
     {
-        $sementara = tempnam(sys_get_temp_dir(), 'ekspor');
+        // Tanpa dimuat utuh ke memori (F7-25, K118). Berkas sementara dihapus
+        // oleh ekspor berikutnya setelah 1 jam (`PaketPendaftaran::jalurSementara()`).
+        $sementara = null;
 
         try {
-            (new PaketPendaftaran())->ekspor((string) $sementara);
-            $isi = (string) file_get_contents((string) $sementara);
+            $sementara = PaketPendaftaran::jalurSementara();
+            (new PaketPendaftaran())->ekspor($sementara);
         } catch (\RuntimeException $e) {
+            if ($sementara !== null) {
+                @unlink($sementara);
+            }
+
             return redirect()->to(self::ALAMAT)->with('pesan_galat', $e->getMessage());
-        } finally {
-            @unlink((string) $sementara);
         }
 
-        return $this->response
-            ->setContentType('application/zip')
-            ->setHeader('Content-Disposition', 'attachment; filename="Backup_Pendaftaran_' . date('Ymd_His') . '.zip"')
-            ->setBody($isi);
+        return $this->response->download($sementara, null)
+            ->setFileName('Backup_Pendaftaran_' . date('Ymd_His') . '.zip')
+            ->setContentType('application/zip', '');
     }
 
     public function rincian(int $id): string

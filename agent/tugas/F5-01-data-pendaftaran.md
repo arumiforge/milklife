@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | selesai |
 | Tahap | 5 — Bukti dan cek |
 | Dibuat | 12 November 2026 |
 

@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | selesai |
 | Tahap | 0 — Fondasi |
 | Dibuat | 10 November 2026 |
 

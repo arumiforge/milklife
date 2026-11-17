@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | rencana |
+| Status | selesai |
 | Tahap | 7 — Penyelesaian |
 | Dibuat | 17 November 2026 |
 
@@ -12,10 +12,10 @@ Admin dan pengunjung yang mengirim formulir dari tab lama atau halaman yang terl
 
 ## Hasil
 
-- [ ] `regenerate = false` di `app/Config/Security.php`; perlindungan CSRF tetap aktif
-- [ ] Filter CSRF turunan mengalihkan kembali dengan `pesan_galat` berbahasa Indonesia (misalnya "Halaman ini sudah terlalu lama terbuka atau dibuka di tab lain. Muat ulang halaman, lalu ulangi.") dan `withInput()`; kiriman JSON (wizard) mendapat jawaban JSON dengan pesan yang sama
-- [ ] Pesan tampil di panel admin dan halaman publik
-- [ ] Uji fitur: kiriman dengan token lama di lingkungan produksi menampilkan pesan itu
+- [x] `regenerate = false` di `app/Config/Security.php`; perlindungan CSRF tetap aktif
+- [x] Filter CSRF turunan mengalihkan kembali dengan `pesan_galat` berbahasa Indonesia (misalnya "Halaman ini sudah terlalu lama terbuka atau dibuka di tab lain. Muat ulang halaman, lalu ulangi.") dan `withInput()`; kiriman JSON (wizard) mendapat jawaban JSON dengan pesan yang sama
+- [x] Pesan tampil di panel admin dan halaman publik
+- [x] Uji fitur: kiriman dengan token lama di lingkungan produksi menampilkan pesan itu
 
 ## Selesai bila
 

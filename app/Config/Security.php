@@ -70,8 +70,13 @@ class Security extends BaseConfig
      * --------------------------------------------------------------------------
      *
      * Regenerate CSRF Token on every submission.
+     *
+     * Mati (F7-24, K118): token tetap satu per sesi, jadi beberapa tab panel
+     * admin yang terbuka bersamaan tidak saling membatalkan. Perlindungan CSRF
+     * tetap berlaku; kiriman tanpa token yang cocok tetap ditolak
+     * (`App\Filters\CsrfFilter`).
      */
-    public bool $regenerate = true;
+    public bool $regenerate = false;
 
     /**
      * --------------------------------------------------------------------------
