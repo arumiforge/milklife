@@ -35,7 +35,7 @@ Paling banyak 3 sub-sesi berjalan bersamaan (K38, K65). F7-30 (pecah berkas besa
 
 ## Aturan untuk semua sub-sesi
 
-1. **`main` adalah sumber kebenaran.** Di awal tugas dan sebelum PR: `git fetch origin main`, `git rebase origin/main`, uji lagi. Satu tugas, satu PR, judul berbahasa Indonesia. Sub-sesi tidak menggabung PR; pemilik yang menggabung.
+1. **`main` adalah sumber kebenaran.** Di awal tugas dan sebelum PR: `git fetch origin main`, `git rebase origin/main`, uji lagi. Satu tugas, satu PR, judul berbahasa Indonesia. Sub-sesi tidak menggabung PR; koordinator menggabungnya setelah CI hijau (K126).
 2. **Uji**: selama bekerja `vendor/bin/phpunit --filter <NamaUji>`; sebelum PR `composer uji` lulus.
 3. **Kepemilikan berkas** mengikuti tabel "Pembagian berkas". Berkas bersama (`app/Config/Routes.php`, menu admin, `agent/PROGRES.md`) hanya ditambah di blok sendiri, seminimal mungkin.
 4. **Tanpa pustaka baru.** mPDF dan PhpSpreadsheet sudah ada. Pemindai QR di peramban memakai fitur bawaan peramban, bukan pustaka (lihat F8-03).
