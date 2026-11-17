@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
 | Tahap | 6 — Panel data |
 | Dibuat | 12 November 2026 |
 

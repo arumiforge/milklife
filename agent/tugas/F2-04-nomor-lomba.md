@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | selesai |
 | Tahap | 2 — Pengaturan |
 | Dibuat | 11 November 2026 |
 

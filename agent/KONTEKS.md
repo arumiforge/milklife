@@ -18,15 +18,9 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi terakhir 13, K111–K112).
-- Rencana implementasi Tahap 1: `dokumen/draf/rencana-implementasi-tahap-1.md`.
-- Rencana implementasi Tahap 2: `dokumen/draf/rencana-implementasi-tahap-2.md`.
-- Rencana implementasi Tahap 3: `dokumen/draf/rencana-implementasi-tahap-3.md`.
-- Rencana implementasi Tahap 4: `dokumen/draf/rencana-implementasi-tahap-4.md`.
-- Rencana implementasi Tahap 5: `dokumen/draf/rencana-implementasi-tahap-5.md`.
-- Rencana implementasi Tahap 6: `dokumen/draf/rencana-implementasi-tahap-6.md`.
-- Rencana implementasi Tahap 7: `dokumen/draf/rencana-implementasi-tahap-7.md`.
-- Rencana implementasi Tahap 8: `dokumen/draf/rencana-implementasi-tahap-8.md`.
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17 dan 18 memuat K116–K125).
+- Rencana implementasi per tahap: `dokumen/draf/rencana-implementasi-tahap-<n>.md` (Tahap 1–8).
+- Aturan yang berlaku: `agent/ATURAN.md`; letak kode: `agent/PETA-KODE.md`.
 - Arsip tahap selesai: `agent/arsip/`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
 - Bahan asli: `sumber/flyer/` dan juknis resmi `sumber/juknis/` (K112).

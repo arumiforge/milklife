@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | rencana |
 | Tahap | <nomor — nama> |
 | Dibuat | <tanggal> |
 
@@ -13,6 +12,10 @@
 ## Hasil
 
 - [ ] <Hal yang bisa diperiksa>
+
+## Berkas dan uji
+
+<Berkas yang disentuh dan uji terkait (`vendor/bin/phpunit --filter …`). Status tugas hanya ditulis di `agent/PROGRES.md`.>
 
 ## Selesai bila
 

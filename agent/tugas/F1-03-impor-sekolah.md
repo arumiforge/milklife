@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | selesai |
 | Tahap | 1 — Kerangka |
 | Dibuat | 10 November 2026 |
 
