@@ -29,3 +29,4 @@ Sekolah yang atletnya ditolak melihat keadaan yang jelas di Cek Pendaftaran dan 
 - Tanpa migrasi. Di server produksi cukup `git pull`, lalu `php spark pembaruan:periksa` (akan meminta `php spark aset:minify` bila minify dipakai, karena CSS dan JS berubah).
 - Halaman Pengaturan tetap memakai navigasi pengaturannya sendiri.
 - Rancangan final belum diubah (perlu revisi lewat draf bersama K116).
+- PR: [#92](https://github.com/arumiforge/milklife/pull/92).
