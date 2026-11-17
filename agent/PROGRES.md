@@ -34,7 +34,7 @@ Diperbarui: 17 November 2026
 | [F7-24 Galat CSRF terlihat](tugas/F7-24-csrf-pesan-galat.md) | rencana | sisipan 1a | |
 | [F7-25 Backup data tanpa memuat ke memori](tugas/F7-25-backup-data-tanpa-memori.md) | rencana | sisipan 1a | |
 | [F7-26 Kirim pendaftaran idempoten](tugas/F7-26-kirim-pendaftaran-idempoten.md) | selesai | sisipan 1b | [#98](https://github.com/arumiforge/milklife/pull/98) |
-| [F7-27 Cloudflare Turnstile](tugas/F7-27-turnstile.md) | selesai | sisipan 1b | |
+| [F7-27 Cloudflare Turnstile](tugas/F7-27-turnstile.md) | selesai | sisipan 1b | [#101](https://github.com/arumiforge/milklife/pull/101) |
 | [F7-28 Rancangan revisi K116–K124](tugas/F7-28-rancangan-revisi-k116-k124.md) | rencana | sisipan 1c | |
 | [F7-29 Susunan dokumen agen](tugas/F7-29-susunan-dokumen-agen.md) | rencana | sisipan 1c | |
 | [F7-30 Pecah berkas besar](tugas/F7-30-pecah-berkas-besar.md) | rencana | sisipan 3 | |
