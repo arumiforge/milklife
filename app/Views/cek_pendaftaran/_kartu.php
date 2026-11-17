@@ -10,15 +10,19 @@
  * @var string               $kode   isian pencarian, tujuan kembali setelah unggah bukti bayar
  * @var string|null          $waTanya alamat WA tanya admin, atau null
  *
- * Atlet yang ditolak panitia dan belum didaftarkan ulang (K116) tampil di
- * bawah tabel atlet: alasan, kelompok umur dan nomor lomba yang sesuai beserta
- * biayanya, perubahan total, dan ajakan mendaftar ulang. Tanggal lahir tetap
- * tidak ditampilkan (K52); hanya tahun lahirnya.
+ * Atlet yang ditolak panitia (K116, K117) tampil di bagian "Perlu didaftarkan
+ * ulang" (`cek_pendaftaran/_ditolak`) di atas tabel atlet. Bila semua atlet
+ * ditolak, kartu berstatus "Semua atlet ditolak": tabel atlet, regu, rincian
+ * biaya, dan kotak bukti bayar tidak ditampilkan, karena tidak ada tagihan.
  *
  * Pendaftaran yang belum Lunas punya kotak unggah bukti bayar (K83).
  */
 $idJudul = 'pendaftaran-' . $urutan;
 $lunas   = $p['status'] === 'lunas';
+// Semua atlet ditolak panitia (K117): tidak ada atlet dan tidak ada tagihan.
+$ditolakSemua = (bool) ($p['ditolak_semua'] ?? false);
+$jumlahDitolak = count($p['atlet_ditolak'] ?? []);
+$kelasKartu   = $lunas ? 'cek-kartu-lunas' : ($ditolakSemua ? 'cek-kartu-ditolak' : 'cek-kartu-menunggu');
 $jumlahBukti = (int) ($p['jumlah_bukti_bayar'] ?? 0);
 // Nomor dada tampil setelah Lunas (K88); sebelumnya tanda pisah.
 $dada = static fn (array $a): string => $lunas && ($a['nomor_dada'] ?? null) !== null
@@ -26,7 +30,7 @@ $dada = static fn (array $a): string => $lunas && ($a['nomor_dada'] ?? null) !==
     : '<span class="text-body-secondary" title="Nomor atlet (BIB) keluar setelah pembayaran Lunas">–</span>';
 $batasBukti  = App\Models\BuktiBayarModel::BATAS;
 ?>
-<article class="card cek-kartu <?= $lunas ? 'cek-kartu-lunas' : 'cek-kartu-menunggu' ?>" aria-labelledby="<?= $idJudul ?>">
+<article class="card cek-kartu <?= $kelasKartu ?>" aria-labelledby="<?= $idJudul ?>">
     <div class="card-header cek-kartu-kepala">
         <div>
             <?php if ($banyak) : ?><p class="cek-kartu-urutan">Pendaftaran <?= $urutan ?></p><?php endif ?>
@@ -35,12 +39,17 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
             <p class="mb-0 small"><i class="bi bi-clock" aria-hidden="true"></i> Didaftarkan <?= esc(tanggal_id($p['dibuat_pada'], true)) ?></p>
         </div>
         <div class="cek-kartu-tindakan">
-            <span class="badge rounded-pill cek-status <?= $lunas ? 'text-bg-success' : 'text-bg-warning' ?>">
-                <i class="bi <?= $lunas ? 'bi-check-circle-fill' : 'bi-hourglass-split' ?>" aria-hidden="true"></i>
+            <span class="badge rounded-pill cek-status <?= $lunas ? 'text-bg-success' : ($ditolakSemua ? 'text-bg-danger' : 'text-bg-warning') ?>">
+                <i class="bi <?= $lunas ? 'bi-check-circle-fill' : ($ditolakSemua ? 'bi-x-circle-fill' : 'bi-hourglass-split') ?>" aria-hidden="true"></i>
                 <?= esc($p['status_label']) ?>
             </span>
+            <?php if (! $ditolakSemua && $jumlahDitolak > 0) : ?>
+                <a class="badge rounded-pill cek-status cek-status-ditolak text-decoration-none" href="#atlet-ditolak-<?= $urutan ?>">
+                    <i class="bi bi-person-x-fill" aria-hidden="true"></i> <?= $jumlahDitolak ?> atlet ditolak
+                </a>
+            <?php endif ?>
             <a class="btn btn-primary" href="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p), 'attr') ?>" target="_blank" rel="noopener">
-                <i class="bi bi-printer" aria-hidden="true"></i> Cetak bukti
+                <i class="bi bi-printer" aria-hidden="true"></i> <?= $ditolakSemua ? 'Cetak keterangan' : 'Cetak bukti' ?>
             </a>
         </div>
     </div>
@@ -53,6 +62,9 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
             <?php endforeach ?>
         </ul>
 
+        <?= view('cek_pendaftaran/_ditolak', ['p' => $p, 'urutan' => $urutan, 'waTanya' => $waTanya ?? null, 'ditolakSemua' => $ditolakSemua], ['saveData' => false]) ?>
+
+        <?php if (! $ditolakSemua) : ?>
         <h4 class="cek-subjudul"><i class="bi bi-people" aria-hidden="true"></i> Atlet <span class="cek-jumlah"><?= count($p['atlet']) ?></span></h4>
         <?php $keteranganNomorDada = App\Libraries\Panel\UrutkanNomorDada::keterangan((string) $p['status']); ?>
         <?php if ($keteranganNomorDada !== null) : ?>
@@ -86,70 +98,6 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
                 </tbody>
             </table>
         </div>
-
-        <?php $ditolak = $p['atlet_ditolak'] ?? []; ?>
-        <?php if ($ditolak !== []) : ?>
-            <div class="border border-danger-subtle rounded p-3 mb-4 cek-atlet-ditolak" id="atlet-ditolak-<?= $urutan ?>">
-                <h4 class="cek-subjudul text-danger-emphasis mt-0"><i class="bi bi-person-x" aria-hidden="true"></i> Atlet ditolak panitia <span class="cek-jumlah"><?= count($ditolak) ?></span></h4>
-                <p class="small mb-3">
-                    Atlet di bawah ini sudah dikeluarkan dari pendaftaran ini dan tidak dihitung lagi di total biaya.
-                    NISN-nya bisa dipakai lagi: daftarkan ulang lewat menu Pendaftaran pada kelompok umur yang sesuai.
-                    Keterangan ini hilang sendiri setelah atletnya terdaftar lagi.
-                </p>
-                <ul class="list-unstyled mb-0">
-                    <?php foreach ($ditolak as $d) : ?>
-                        <li class="border-top pt-3 mt-3 cek-atlet-ditolak-baris">
-                            <p class="mb-1">
-                                <strong><?= esc($d['nama']) ?></strong>
-                                <span class="text-body-secondary">· NISN <?= esc($d['nisn']) ?> · <?= esc($d['jenis_kelamin_label']) ?> · lahir tahun <?= (int) $d['tahun_lahir'] ?></span>
-                            </p>
-                            <dl class="row small mb-0">
-                                <dt class="col-sm-4 fw-semibold">Didaftarkan di</dt>
-                                <dd class="col-sm-8">
-                                    <?= esc($d['kelompok_umur']) ?><?= $d['nomor_lomba'] === [] ? '' : ': ' . esc(implode(', ', array_column($d['nomor_lomba'], 'nama'))) ?>
-                                    <?php if ($d['biaya_individu'] > 0) : ?>
-                                        <span class="text-body-secondary">(biaya individu <?= esc(rupiah($d['biaya_individu'])) ?>)</span>
-                                    <?php endif ?>
-                                </dd>
-                                <dt class="col-sm-4 fw-semibold">Alasan</dt>
-                                <dd class="col-sm-8"><?= nl2br(esc($d['alasan'])) ?></dd>
-                                <?php if ($d['sesuai_beda'] && $d['kelompok_umur_sesuai'] !== null) : ?>
-                                    <dt class="col-sm-4 fw-semibold">Kelompok umur yang sesuai</dt>
-                                    <dd class="col-sm-8">
-                                        <strong><?= esc($d['kelompok_umur_sesuai']) ?></strong>
-                                        <?php if ($d['nomor_sesuai'] !== []) : ?>
-                                            <ul class="mb-0 ps-3">
-                                                <?php foreach ($d['nomor_sesuai'] as $n) : ?>
-                                                    <li>
-                                                        <?= esc($n['nama']) ?>
-                                                        <?php if ($n['biaya'] !== null) : ?>
-                                                            <span class="text-body-secondary">· <?= esc(rupiah((int) $n['biaya'])) ?> <?= $n['jenis'] === 'beregu' ? 'per regu' : 'per nomor' ?></span>
-                                                        <?php endif ?>
-                                                    </li>
-                                                <?php endforeach ?>
-                                            </ul>
-                                        <?php endif ?>
-                                    </dd>
-                                <?php endif ?>
-                                <dt class="col-sm-4 fw-semibold">Perubahan biaya</dt>
-                                <dd class="col-sm-8 mb-0">
-                                    Total pendaftaran ini berubah dari <?= esc(rupiah($d['total_sebelum'])) ?> menjadi <?= esc(rupiah($d['total_sesudah'])) ?>
-                                    saat atlet ditolak<?= $d['dibuat_pada'] === null ? '' : ' (' . esc(tanggal_id($d['dibuat_pada'], true)) . ')' ?>.
-                                    Biaya pendaftaran ulang dihitung lagi di menu Pendaftaran sesuai nomor yang dipilih.
-                                </dd>
-                            </dl>
-                        </li>
-                    <?php endforeach ?>
-                </ul>
-                <div class="alert alert-warning small mt-3 mb-0" role="note">
-                    <i class="bi bi-cash-coin" aria-hidden="true"></i>
-                    Bila biaya untuk atlet ini sudah terlanjur ditransfer, penyelesaiannya langsung dengan panitia.
-                    <?php if (($waTanya ?? null) !== null) : ?>
-                        <a class="alert-link text-nowrap" href="<?= esc($waTanya, 'attr') ?>" target="_blank" rel="noopener"><i class="bi bi-whatsapp" aria-hidden="true"></i> Hubungi panitia</a>
-                    <?php endif ?>
-                </div>
-                <a class="btn btn-primary mt-3" href="<?= site_url('pendaftaran') ?>"><i class="bi bi-pencil-square" aria-hidden="true"></i> Daftarkan ulang</a>
-            </div>
         <?php endif ?>
 
         <?php if ($p['beregu'] !== []) : ?>
@@ -181,13 +129,20 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
             </ul>
         <?php endif ?>
 
-        <dl class="cek-biaya">
-            <div><dt>Subtotal individu</dt><dd><?= esc(rupiah($p['subtotal_individu'])) ?></dd></div>
-            <div><dt>Subtotal beregu</dt><dd><?= esc(rupiah($p['subtotal_beregu'])) ?></dd></div>
-            <div class="cek-biaya-total"><dt>Total</dt><dd><?= esc(rupiah($p['total'])) ?></dd></div>
-        </dl>
+        <?php if ($ditolakSemua) : ?>
+            <dl class="cek-biaya">
+                <div class="cek-biaya-total"><dt>Total</dt><dd><?= esc(rupiah($p['total'])) ?></dd></div>
+                <div><dt>Keterangan</dt><dd>Tidak ada tagihan untuk pendaftaran ini</dd></div>
+            </dl>
+        <?php else : ?>
+            <dl class="cek-biaya">
+                <div><dt>Subtotal individu</dt><dd><?= esc(rupiah($p['subtotal_individu'])) ?></dd></div>
+                <div><dt>Subtotal beregu</dt><dd><?= esc(rupiah($p['subtotal_beregu'])) ?></dd></div>
+                <div class="cek-biaya-total"><dt>Total</dt><dd><?= esc(rupiah($p['total'])) ?></dd></div>
+            </dl>
+        <?php endif ?>
 
-        <?php if (! $lunas) : ?>
+        <?php if (! $lunas && ! $ditolakSemua) : ?>
             <div class="cek-unggah-bukti">
                 <h4 class="cek-subjudul"><i class="bi bi-receipt" aria-hidden="true"></i> Bukti bayar <span class="cek-jumlah"><?= $jumlahBukti ?></span></h4>
                 <?php if ($jumlahBukti >= $batasBukti) : ?>

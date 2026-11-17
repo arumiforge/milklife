@@ -95,7 +95,7 @@ final class BuktiPendaftaran
             // dengan berkas Menunggu yang sudah tersimpan di ponsel, jadi
             // penampil PDF tidak membuka berkas lama.
             self::rapat($this->pendaftaran['id_pendaftaran']),
-            $this->pendaftaran['status'] === 'lunas' ? 'Lunas' : 'Menunggu',
+            $this->pendaftaran['status'] === 'lunas' ? 'Lunas' : (($this->pendaftaran['ditolak_semua'] ?? false) ? 'Ditolak' : 'Menunggu'),
         ];
 
         return implode('_', array_filter($bagian, static fn (string $b): bool => $b !== '')) . '.pdf';
@@ -169,7 +169,7 @@ final class BuktiPendaftaran
             $mpdf->imageVars['logo'] = $this->logoPng();
         }
         $mpdf->imageVars['qr'] = KodeQr::png(self::alamat($this->pendaftaran), $this->logoPng());
-        $mpdf->SetTitle('Bukti Pendaftaran ' . $this->pendaftaran['id_pendaftaran']);
+        $mpdf->SetTitle((($this->pendaftaran['ditolak_semua'] ?? false) ? 'Keterangan Penolakan Atlet ' : 'Bukti Pendaftaran ') . $this->pendaftaran['id_pendaftaran']);
         $mpdf->WriteHTML($this->html());
 
         // Kode QR dan keterangannya di dasar halaman terakhir (K89), bukan

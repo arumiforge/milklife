@@ -86,6 +86,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('atlet', 'AtletController::index');
     $routes->get('atlet/data', 'AtletController::data');
     $routes->get('atlet/excel', 'AtletController::excel');
+    // Atlet yang ditolak panitia, semua pendaftaran (K117).
+    $routes->get('atlet-ditolak', 'AtletDitolakController::index');
+    $routes->get('atlet-ditolak/data', 'AtletDitolakController::data');
+    $routes->get('atlet-ditolak/excel', 'AtletDitolakController::excel');
     // Urutkan ulang nomor dada per sekolah (K111).
     $routes->get('atlet/nomor-dada', 'NomorDadaController::index');
     $routes->post('atlet/nomor-dada', 'NomorDadaController::urutkan');

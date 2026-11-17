@@ -73,14 +73,19 @@ $sekolah = $hasil[0] ?? null;
                         </div>
                     </div>
 
-                    <?php $jumlahDitolak = array_sum(array_map(static fn (array $h): int => count($h['atlet_ditolak'] ?? []), $hasil)); ?>
-                    <?php if ($jumlahDitolak > 0) : ?>
-                        <div class="alert alert-danger d-flex gap-2" role="alert" id="ringkasan-atlet-ditolak">
+                    <?php // Ringkasan atlet yang perlu didaftarkan ulang (K116, K117), dengan tautan ke kartunya. ?>
+                    <?php $perluUlang = array_filter(array_map(static fn (array $h): int => count($h['atlet_ditolak'] ?? []), $hasil)); ?>
+                    <?php if ($perluUlang !== []) : ?>
+                        <div class="alert alert-danger d-flex gap-2 cek-ringkasan-ditolak" role="alert" id="ringkasan-atlet-ditolak">
                             <i class="bi bi-exclamation-octagon flex-shrink-0" aria-hidden="true"></i>
                             <div>
-                                <strong><?= $jumlahDitolak ?> atlet ditolak panitia.</strong>
-                                Alasan, kelompok umur yang sesuai, dan perubahan biayanya ada di bagian "Atlet ditolak panitia" pada pendaftarannya di bawah.
-                                Daftarkan ulang atletnya lewat menu Pendaftaran.
+                                <strong><?= array_sum($perluUlang) ?> atlet ditolak panitia dan perlu didaftarkan ulang.</strong>
+                                Lihat alasannya dan kelompok umur yang disarankan di
+                                <?php $tautan = []; ?>
+                                <?php foreach (array_keys($perluUlang) as $i) : ?>
+                                    <?php $tautan[] = '<a class="alert-link" href="#atlet-ditolak-' . ($i + 1) . '">' . esc($hasil[$i]['id_pendaftaran']) . '</a>'; ?>
+                                <?php endforeach ?>
+                                pendaftaran <?= implode(', ', $tautan) ?>.
                             </div>
                         </div>
                     <?php endif ?>

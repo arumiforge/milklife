@@ -16,6 +16,8 @@
  *   menulisnya sendiri. Isi yang berasal dari data wajib di-escape (`esc()`).
  * - `judul_halaman` (pilihan): judul pendek di kepala halaman, tampil sebagai
  *   `<h1>`. Bila kosong, isi `judul` yang dipakai. Isi halaman dimulai dari `<h2>`.
+ * - `jejak` (pilihan): jejak navigasi halaman turunan dari `admin/_jejak`
+ *   (K117), tampil di atas pesan kilat dan isi.
  * - `isi`: isi halaman, di dalam `<main id="isi">`; bungkus dengan `container-fluid`.
  * - `kepala` (pilihan): tag tambahan di `<head>`, misalnya gaya khusus halaman.
  * - `skrip`: tag `<script>` tambahan, dimuat setelah Bootstrap dan `aset/js/kemajuan.js`.
@@ -122,6 +124,9 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
             </header>
 
             <main id="isi" class="admin-isi">
+                <?php /* Jejak navigasi halaman turunan (K117), sebelum pesan kilat. */ ?>
+                <?php $jejak = trim($this->renderSection('jejak')); ?>
+                <?php if ($jejak !== '') : ?><div class="container-fluid px-3 px-lg-4"><?= $jejak ?></div><?php endif ?>
                 <?= $this->include('admin/_pesan') ?>
                 <?= $this->renderSection('isi') ?>
             </main>

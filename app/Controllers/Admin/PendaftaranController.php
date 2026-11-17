@@ -10,6 +10,7 @@ use App\Models\UsulanNamaSekolahModel;
 use App\Libraries\Panel\DataPanelPendaftaran;
 use App\Libraries\Panel\EksporExcel;
 use App\Libraries\Panel\GabungPendaftaran;
+use App\Libraries\Panel\AsalRincian;
 use App\Libraries\Panel\HapusPendaftaran;
 use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Panel\StatusPembayaran;
@@ -121,6 +122,8 @@ class PendaftaranController extends BaseController
 
         return view('admin/pendaftaran/rincian', [
             'p'                => $pendaftaran,
+            // Asal halaman untuk jejak navigasi dan menu aktif (K117).
+            'asal'             => AsalRincian::catat($id, $this->request->getGet('dari')),
             // K116: kelompok umur yang tidak cocok lagi dengan pengaturan, dan atlet yang sudah ditolak.
             'kecocokan'        => $kecocokan,
             'atletDitolak'     => (new AtletDitolak())->untukPendaftaran([$id], semua: true)[$id] ?? [],

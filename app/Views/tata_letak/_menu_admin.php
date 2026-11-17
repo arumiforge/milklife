@@ -16,7 +16,11 @@
  * Alamat lain yang ikut mengaktifkan butir ditulis di `aktif_juga`
  * (halaman Akun dibuka dari daftar pengaturan, jadi ikut menandai "Pengaturan").
  * Butir baru ditambahkan bersama halamannya; ikon dari Bootstrap Icons
- * (nama tanpa awalan `bi-`). Label pendek supaya muat di menu bawah.
+ * (nama tanpa awalan `bi-`). Label pendek supaya muat di menu bawah;
+ * bila perlu, `label_pendek` dipakai di menu bawah dan `label` di menu samping.
+ *
+ * Di rincian pendaftaran dan turunannya, butir aktif mengikuti asal
+ * halamannya (`AsalRincian`, K117): dibuka dari Atlet, yang aktif Atlet.
  *
  * @var CodeIgniter\View\View $this
  * @var string|null           $tempatMenu `samping` atau kosong (menu bawah)
@@ -27,6 +31,8 @@ $menuAdmin = [
     // Panel data (Tahap 6, F6-01).
     ['label' => 'Pendaftaran', 'ikon' => 'clipboard-check', 'alamat' => 'admin/pendaftaran'],
     ['label' => 'Atlet', 'ikon' => 'people', 'alamat' => 'admin/atlet'],
+    // Atlet yang ditolak panitia, terpisah dari atlet terdaftar (K117).
+    ['label' => 'Atlet ditolak', 'label_pendek' => 'Ditolak', 'ikon' => 'person-x', 'alamat' => 'admin/atlet-ditolak'],
     ['label' => 'Rekap', 'ikon' => 'bar-chart-line', 'alamat' => 'admin/rekap'],
     // Data sekolah (K97).
     ['label' => 'Sekolah', 'ikon' => 'building', 'alamat' => 'admin/sekolah'],
@@ -38,7 +44,14 @@ $menuAkhir = [
     ['label' => 'Pengecekan', 'ikon' => 'clipboard2-pulse', 'alamat' => 'admin/pengecekan'],
 ];
 
-$butirAktif = static function (array $butir): bool {
+// Rincian pendaftaran yang dibuka dari menu lain menandai menu asalnya (K117).
+$menuAsal = App\Libraries\Panel\AsalRincian::menuAktif();
+
+$butirAktif = static function (array $butir) use ($menuAsal): bool {
+    if ($menuAsal !== null) {
+        return $butir['alamat'] === $menuAsal;
+    }
+
     foreach ([$butir['alamat'], ...($butir['aktif_juga'] ?? [])] as $alamat) {
         if (url_is($alamat) || url_is($alamat . '/*')) {
             return true;
@@ -51,9 +64,9 @@ $butirAktif = static function (array $butir): bool {
 <ul class="menu-admin">
     <?php foreach ($menuAdmin as $butir) : ?>
         <li>
-            <a class="menu-admin-tautan" href="<?= site_url($butir['alamat']) ?>"<?= $butirAktif($butir) ? ' aria-current="page"' : '' ?>>
+            <a class="menu-admin-tautan" href="<?= site_url($butir['alamat']) ?>"<?= $butirAktif($butir) ? ' aria-current="page"' : '' ?><?= isset($butir['label_pendek']) && ($tempatMenu ?? '') !== 'samping' ? ' title="' . esc($butir['label'], 'attr') . '"' : '' ?>>
                 <i class="bi bi-<?= esc($butir['ikon'], 'attr') ?>" aria-hidden="true"></i>
-                <span class="menu-admin-label"><?= esc($butir['label']) ?></span>
+                <span class="menu-admin-label"><?= esc(($tempatMenu ?? '') === 'samping' ? $butir['label'] : ($butir['label_pendek'] ?? $butir['label'])) ?></span>
             </a>
         </li>
     <?php endforeach; ?>

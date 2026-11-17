@@ -18,6 +18,12 @@
  * Kepala tabel diulang di setiap halaman; ID, waktu cetak, dan nomor halaman
  * di kaki setiap halaman.
  *
+ * Atlet yang ditolak panitia (K117) dicatat di tabel "Atlet Ditolak Panitia"
+ * di bawah nomor beregu: alasan dan kelompok umur yang disarankan, atau
+ * "Sudah didaftarkan ulang". Bila semua atlet ditolak, label kepala menjadi
+ * "Keterangan Penolakan Atlet", tabel nomor lomba tidak dicetak, stempel
+ * merah "DITOLAK", dan total Rp 0 tanpa tagihan.
+ *
  * @var array<string, mixed> $p         satu pendaftaran (App\Libraries\DataPendaftaran)
  * @var string               $namaAcara nama acara berhuruf besar
  * @var string               $seriTahun 'Seri 2 Tahun 2026'
@@ -32,17 +38,22 @@ use App\Libraries\Pendaftaran\Regu;
 $ikonWa = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="#25D366" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>');
 
 $lunas = $p['status'] === 'lunas';
+// Semua atlet ditolak panitia (K117): dokumen menjadi keterangan penolakan, tanpa tagihan.
+$ditolakSemua = (bool) ($p['ditolak_semua'] ?? false);
+$semuaDitolak = [...($p['atlet_ditolak'] ?? []), ...($p['atlet_didaftarkan_ulang'] ?? [])];
+usort($semuaDitolak, static fn (array $x, array $y): int => $x['id'] <=> $y['id']);
 
 // Stempel status (K78): bingkai ganda miring, hijau "LUNAS" atau oranye "MENUNGGU", sebagai SVG.
 // Sejak K90 pendaftaran masuk bersama bukti transfer, jadi yang belum Lunas menunggu konfirmasi panitia.
-$warnaStempel = $lunas ? '#198754' : '#C4461B';
+$warnaStempel = $lunas ? '#198754' : ($ditolakSemua ? '#B02A37' : '#C4461B');
+$teksStempel  = $lunas ? ['LUNAS', 'PEMBAYARAN DITERIMA', 34] : ($ditolakSemua ? ['DITOLAK', 'SEMUA ATLET', 32] : ['MENUNGGU', 'KONFIRMASI PANITIA', 28]);
 $stempel      = 'data:image/svg+xml;base64,' . base64_encode(
     '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">'
     . '<g transform="rotate(-7 120 60)">'
     . '<rect x="14" y="20" width="212" height="80" rx="12" fill="none" stroke="' . $warnaStempel . '" stroke-width="4.5"/>'
     . '<rect x="22" y="28" width="196" height="64" rx="7" fill="none" stroke="' . $warnaStempel . '" stroke-width="1.6"/>'
-    . '<text x="120" y="66" font-family="dejavusans" font-weight="bold" font-size="' . ($lunas ? 34 : 28) . '" fill="' . $warnaStempel . '" text-anchor="middle">' . ($lunas ? 'LUNAS' : 'MENUNGGU') . '</text>'
-    . '<text x="120" y="84" font-family="dejavusans" font-weight="bold" font-size="10.5" fill="' . $warnaStempel . '" text-anchor="middle">' . ($lunas ? 'PEMBAYARAN DITERIMA' : 'KONFIRMASI PANITIA') . '</text>'
+    . '<text x="120" y="66" font-family="dejavusans" font-weight="bold" font-size="' . $teksStempel[2] . '" fill="' . $warnaStempel . '" text-anchor="middle">' . $teksStempel[0] . '</text>'
+    . '<text x="120" y="84" font-family="dejavusans" font-weight="bold" font-size="10.5" fill="' . $warnaStempel . '" text-anchor="middle">' . $teksStempel[1] . '</text>'
     . '</g></svg>',
 );
 
@@ -90,6 +101,7 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
     table.info td.info-id { font-family: dejavusansmono; font-size: 10.5pt; font-weight: bold; color: #021F7B; letter-spacing: 0.6pt; }
     table.info td.status-lunas { font-size: 9pt; font-weight: bold; color: #198754; }
     table.info td.status-menunggu { font-size: 9pt; font-weight: bold; color: #C4461B; }
+    table.info td.status-ditolak { font-size: 9pt; font-weight: bold; color: #B02A37; }
     table.info td.info-pj { font-size: 8.5pt; color: #1b2433; line-height: 1.5; }
     .wa { color: #3A4660; }
 
@@ -110,6 +122,14 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
     .kecil { font-size: 7.5pt; color: #5B6475; }
     .kosong { color: #5B6475; font-style: italic; margin: 0; }
 
+    /* Atlet ditolak panitia (K117): kepala tabel merah tua, keterangan di kolom terakhir. */
+    h2.ditolak { border-left-color: #B02A37; }
+    table.ditolak th { background: #842029; }
+    td.sesuai { color: #0F5132; font-weight: bold; }
+    td.ulang { color: #198754; }
+    .alasan { color: #3A4660; }
+    .catatan-ditolak { font-size: 7.5pt; line-height: 1.5; color: #3A4660; margin-top: 2mm; padding: 2mm 2.5mm; background: #FFF4F4; border-left: 0.8mm solid #B02A37; }
+
     table.akhir { width: 100%; margin-top: 8mm; }
     table.akhir td { vertical-align: top; }
     td.stempel { padding-right: 8mm; }
@@ -127,7 +147,7 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
     <tr>
         <td width="26mm"><?php if ($logo) : ?><img src="var:logo" height="22mm"><?php endif ?></td>
         <td class="judul">
-            <div class="label-bukti">BUKTI PENDAFTARAN</div>
+            <div class="label-bukti"><?= $ditolakSemua ? 'KETERANGAN PENOLAKAN ATLET' : 'BUKTI PENDAFTARAN' ?></div>
             <div class="nama-acara"><?= esc($namaAcara) ?></div>
             <?php if ($seriTahun !== '') : ?><div class="seri-tahun"><?= esc($seriTahun) ?></div><?php endif ?>
         </td>
@@ -171,7 +191,7 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
         <td class="info-label">Kabupaten / Kota</td>
         <td class="info-isi"><?= esc($p['kabupaten']) ?></td>
         <td class="info-label">Status Pembayaran</td>
-        <td class="status-<?= $lunas ? 'lunas' : 'menunggu' ?>"><?= esc($p['status_label']) ?></td>
+        <td class="status-<?= $lunas ? 'lunas' : ($ditolakSemua ? 'ditolak' : 'menunggu') ?>"><?= esc($p['status_label']) ?></td>
     </tr>
     <tr>
         <td class="info-label">Ofisial</td>
@@ -179,6 +199,7 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
     </tr>
 </table>
 
+<?php if (! $ditolakSemua) : ?>
 <h2>Nomor Lomba Individu <span class="kecil">(<?= count($perAtlet) ?> atlet)</span></h2>
 <?php if ($perAtlet === []) : ?>
     <p class="kosong">Tidak ada nomor individu pada pendaftaran ini.</p>
@@ -238,17 +259,56 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
         </tbody>
     </table>
 <?php endif ?>
+<?php endif ?>
+
+<?php // Atlet ditolak panitia (K117): tetap dicatat di bukti, dengan alasan dan kelompok umur yang disarankan. ?>
+<?php if ($semuaDitolak !== []) : ?>
+    <h2 class="ditolak">Atlet Ditolak Panitia <span class="kecil">(<?= count($semuaDitolak) ?> atlet, tidak termasuk tagihan)</span></h2>
+    <table class="data ditolak">
+        <thead>
+            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="42mm">Didaftarkan di</th><th>Alasan</th><th width="34mm">Keterangan</th></tr>
+        </thead>
+        <tbody>
+            <?php foreach ($semuaDitolak as $i => $d) : ?>
+                <tr<?= $i % 2 === 1 ? ' class="genap"' : '' ?>>
+                    <td class="no"><?= $i + 1 ?></td>
+                    <td><?= esc($d['nama']) ?></td>
+                    <td><?= esc($d['nisn']) ?></td>
+                    <td><b><?= esc($d['kelompok_umur']) ?></b><?php if ($d['nomor_lomba'] !== []) : ?><br><span class="kecil"><?= esc(implode(', ', array_column($d['nomor_lomba'], 'nama'))) ?></span><?php endif ?></td>
+                    <td class="alasan"><?= nl2br(esc($d['alasan'])) ?></td>
+                    <?php if ($d['didaftarkan_ulang'] !== null) : ?>
+                        <td class="ulang">Sudah didaftarkan ulang</td>
+                    <?php elseif ($d['sesuai_beda'] && $d['kelompok_umur_sesuai'] !== null) : ?>
+                        <td class="sesuai">Daftarkan ulang di <?= esc($d['kelompok_umur_sesuai']) ?></td>
+                    <?php else : ?>
+                        <td>Perlu didaftarkan ulang</td>
+                    <?php endif ?>
+                </tr>
+            <?php endforeach ?>
+        </tbody>
+    </table>
+    <div class="catatan-ditolak">
+        <?= $ditolakSemua ? 'Semua atlet pada pendaftaran ini ditolak panitia, jadi pendaftaran ini tidak perlu dibayar.' : 'Atlet di atas tidak termasuk pendaftaran ini dan tidak ditagih.' ?>
+        Daftarkan ulang atletnya lewat menu Pendaftaran; NISN yang sama boleh dipakai.
+        Bila biaya untuk atlet ini sudah terlanjur ditransfer, hubungi panitia untuk penyelesaiannya.
+    </div>
+<?php endif ?>
 
 <table class="akhir">
     <tr>
-        <td width="55%" class="stempel stempel-<?= $lunas ? 'lunas' : 'menunggu' ?>">
+        <td width="55%" class="stempel stempel-<?= $lunas ? 'lunas' : ($ditolakSemua ? 'ditolak' : 'menunggu') ?>">
             <img src="<?= $stempel ?>" width="58mm" alt="<?= esc($p['status_label'], 'attr') ?>">
         </td>
         <td width="45%">
             <table class="total">
+                <?php if ($ditolakSemua) : ?>
+                <tr class="akhir"><td>Total Pembayaran</td><td style="text-align: right;"><?= esc(rupiah($p['total'])) ?></td></tr>
+                <tr><td colspan="2" class="kecil" style="text-align: right;">Tidak ada tagihan</td></tr>
+                <?php else : ?>
                 <tr><td>Subtotal individu</td><td style="text-align: right;"><?= esc(rupiah($p['subtotal_individu'])) ?></td></tr>
                 <tr><td>Subtotal beregu</td><td style="text-align: right;"><?= esc(rupiah($p['subtotal_beregu'])) ?></td></tr>
                 <tr class="akhir"><td>Total Pembayaran</td><td style="text-align: right;"><?= esc(rupiah($p['total'])) ?></td></tr>
+                <?php endif ?>
             </table>
         </td>
     </tr>

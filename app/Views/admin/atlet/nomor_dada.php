@@ -17,6 +17,8 @@ $kurang = array_filter($ringkasan['per_kelompok_umur'], static fn (array $ku): b
 
 <?= $this->section('judul_halaman') ?>Urutkan Nomor Atlet (BIB)<?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak', ['jejak' => [['label' => 'Atlet', 'alamat' => 'admin/atlet'], ['label' => 'Urutkan nomor atlet (BIB)']]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
     <p class="teks-info mb-4">

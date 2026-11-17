@@ -22,6 +22,7 @@
  * @var string                               $kalimatTimHapus  `TimTanpaPembayar::kalimatDitinggalkan()`, boleh kosong
  * @var array<int, array<string, mixed>>     $kecocokan        K116: per id atlet, `TolakAtlet::formulir()` (`cocok`, `sesuai_id`, `sesuai`)
  * @var list<array<string, mixed>>           $atletDitolak     K116: `AtletDitolak::untukPendaftaran(semua: true)`
+ * @var array{label: string, alamat: string} $asal             K117: menu asal halaman ini (`AsalRincian`), untuk jejak navigasi
  *
  * Tolak atlet (K116): tombol "Tolak atlet" untuk pendaftaran Menunggu yang
  * punya atlet, tanda di kolom kelompok umur bila tidak cocok lagi dengan
@@ -57,11 +58,21 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
 
 <?= $this->section('judul_halaman') ?>Rincian Pendaftaran<?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak', ['jejak' => [$asal, ['label' => $p['id_pendaftaran']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4" id="rincian-pendaftaran" data-id="<?= (int) $p['id'] ?>" data-status="<?= esc($p['status'], 'attr') ?>">
-    <a class="tautan-kembali mb-3" href="<?= site_url('admin/pendaftaran') ?>">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke daftar pendaftaran
-    </a>
+    <?php if (! $lunas && $p['atlet'] === [] && $atletDitolak !== []) : ?>
+        <?php // Semua atlet ditolak (K117): sekolah melihat "Semua atlet ditolak" tanpa tagihan. ?>
+        <div class="alert alert-danger d-flex gap-2" role="status" id="peringatan-ditolak-semua">
+            <i class="bi bi-person-x flex-shrink-0" aria-hidden="true"></i>
+            <div>
+                <strong>Semua atlet pendaftaran ini ditolak.</strong>
+                Di Cek Pendaftaran statusnya "Semua atlet ditolak" dan sekolah tidak diminta membayar.
+                Pendaftaran tetap disimpan beserta ofisial dan bukti bayarnya untuk urusan pengembalian uang.
+            </div>
+        </div>
+    <?php endif ?>
 
     <section class="card mb-4" aria-labelledby="judul-pendaftaran">
         <div class="card-body p-3 p-lg-4">
@@ -313,7 +324,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
             <div class="card-body p-0">
                 <div class="px-3 px-lg-4 pt-3 pt-lg-4 pb-2">
                     <h2 id="judul-atlet-ditolak" class="h5 mb-1">Atlet ditolak <span class="text-body-secondary fw-normal">(<?= count($atletDitolak) ?>)</span></h2>
-                    <p class="small text-body-secondary mb-0">Tampil di Cek Pendaftaran sampai NISN-nya didaftarkan lagi.</p>
+                    <p class="small text-body-secondary mb-0">Tampil di Cek Pendaftaran sampai NISN-nya didaftarkan lagi. <a href="<?= site_url('admin/atlet-ditolak') ?>">Lihat semua atlet ditolak</a></p>
                 </div>
                 <div class="tabel-gulir">
                     <table class="table align-middle mb-0" id="tabel-atlet-ditolak">

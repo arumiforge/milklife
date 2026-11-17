@@ -32,7 +32,8 @@
  *   angka   1.234
  *   rupiah  Rp 1.234.000
  *   tanggal 12 Nov 2026 dari 2026-11-12 atau 2026-11-12 08:30:00
- *   status  lencana Lunas (hijau) atau Menunggu (kuning) dari lunas/menunggu
+ *   status  lencana Lunas (hijau) atau Menunggu (kuning) dari lunas/menunggu;
+ *           merah "Semua atlet ditolak" bila baris.ditolak_semua (K117)
  *   tautan  nilai {alamat, teks} menjadi <a>; teks di-escape
  *   html    disisipkan apa adanya; hanya untuk HTML yang sudah di-escape server
  *   nomor   nomor urut baris (1, 2, …) yang berlanjut antarhalaman; tanpa
@@ -89,7 +90,11 @@
             }
             return Number(cocok[3]) + ' ' + BULAN[Number(cocok[2]) - 1] + ' ' + cocok[1];
         },
-        status: function (nilai) {
+        status: function (nilai, baris) {
+            // Pendaftaran yang semua atletnya ditolak panitia (K117).
+            if (baris && baris.ditolak_semua) {
+                return '<span class="badge text-bg-danger">Semua atlet ditolak</span>';
+            }
             if (nilai === 'lunas') {
                 return '<span class="badge text-bg-success">Lunas</span>';
             }

@@ -41,11 +41,10 @@ $teks = static function (string $kotak, string $label, int $panjang, string $ban
 
 <?= $this->section('judul_halaman') ?>Sekolah<?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak', ['jejak' => [['label' => 'Sekolah', 'alamat' => 'admin/sekolah'], ['label' => 'Ubah ' . (string) ($sekolah['npsn'] ?? 'sekolah')]]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
-    <a class="tautan-kembali mb-3" href="<?= site_url('admin/sekolah') ?>">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke daftar sekolah
-    </a>
 
     <div class="row g-4">
         <div class="col-12 col-lg-8 col-xl-7">

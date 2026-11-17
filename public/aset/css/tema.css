@@ -2193,6 +2193,204 @@ html:has(.tata-publik) {
     }
 }
 
+/* Atlet ditolak panitia (K116, K117): kartu merah bila semua ditolak,
+   bagian "Perlu didaftarkan ulang" di atas tabel atlet. */
+.cek-kartu-ditolak {
+    border-left-color: #B02A37;
+}
+
+.cek-status-ditolak {
+    background-color: #F8D7DA;
+    color: #842029;
+}
+
+.cek-status-ditolak:hover {
+    background-color: #F1AEB5;
+    color: #58151C;
+}
+
+.cek-ditolak {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #FFF8F8;
+    border: 1px solid #F1AEB5;
+    border-radius: 0.875rem;
+    scroll-margin-top: 6rem;
+}
+
+.cek-ditolak-beres {
+    background-color: #F3FAF6;
+    border-color: #A3CFBB;
+}
+
+.cek-ditolak-kepala {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.cek-ditolak-beres .cek-ditolak-kepala {
+    margin-bottom: 0;
+}
+
+.cek-ditolak-ikon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #F8D7DA;
+    color: #B02A37;
+    font-size: 1.25rem;
+}
+
+.cek-ditolak-beres .cek-ditolak-ikon {
+    background-color: #D1E7DD;
+    color: #146C43;
+}
+
+.cek-ditolak-judul {
+    margin: 0.2rem 0 0.25rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: #842029;
+}
+
+.cek-ditolak-beres .cek-ditolak-judul {
+    color: #0F5132;
+}
+
+.cek-ditolak-label {
+    margin-bottom: 0.2rem;
+    color: var(--ml-teks-redup);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cek-ditolak-daftar {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+}
+
+.cek-ditolak-atlet {
+    padding: 0.85rem 1rem;
+    background-color: var(--ml-putih);
+    border: 1px solid var(--ml-garis);
+    border-radius: 0.75rem;
+}
+
+.cek-ditolak-nama {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 0.6rem;
+    margin-bottom: 0.75rem;
+}
+
+.cek-ditolak-nama strong {
+    font-size: 1.0625rem;
+    color: var(--ml-biru-tua);
+}
+
+.cek-ditolak-nama span {
+    color: var(--ml-teks-redup);
+    font-size: 0.875rem;
+}
+
+.cek-ditolak-banding {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.cek-ditolak-lama,
+.cek-ditolak-baru {
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.6rem;
+}
+
+.cek-ditolak-lama {
+    background-color: var(--ml-latar);
+}
+
+.cek-ditolak-lama strong {
+    color: var(--ml-teks-redup);
+    text-decoration: line-through;
+}
+
+.cek-ditolak-baru {
+    background-color: #E8F5EE;
+    border: 1px solid #A3CFBB;
+}
+
+.cek-ditolak-baru strong {
+    color: #0F5132;
+}
+
+.cek-ditolak-panah {
+    display: none;
+    align-self: center;
+    color: var(--ml-teks-redup);
+    font-size: 1.25rem;
+}
+
+.cek-ditolak-alasan {
+    padding: 0.6rem 0.75rem;
+    border-left: 3px solid #DC3545;
+    background-color: #FFF8F8;
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.cek-ditolak-langkah ol {
+    padding-left: 1.25rem;
+}
+
+.cek-ditolak-langkah li + li {
+    margin-top: 0.25rem;
+}
+
+.cek-ditolak-ulang {
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px dashed rgba(var(--ml-biru-tua-rgb), 0.2);
+}
+
+.cek-ditolak-ulang ul {
+    padding: 0;
+    list-style: none;
+}
+
+.cek-ditolak-ulang .bi {
+    color: #198754;
+}
+
+.cek-ringkasan-ditolak a {
+    white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+    .cek-ditolak {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .cek-ditolak-banding {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    .cek-ditolak-panah {
+        display: block;
+    }
+}
+
 /* ---------- Akhir halaman cek ---------- */
 
 /* ---------- Bilah kemajuan (aset/js/kemajuan.js), admin dan publik ---------- */

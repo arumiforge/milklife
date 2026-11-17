@@ -2,6 +2,7 @@
 
 namespace App\Libraries\Panel;
 
+use App\Libraries\DataPendaftaran;
 use App\Libraries\Jenjang;
 use App\Libraries\NomorWa;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
@@ -56,6 +57,11 @@ final class DataPanelPendaftaran
     ];
 
     private const JUMLAH_ATLET = '(SELECT COUNT(*) FROM atlet ja WHERE ja.pendaftaran_id = p.id)';
+
+    /**
+     * Jumlah atlet yang pernah ditolak dari pendaftaran ini (K116, K117).
+     */
+    private const JUMLAH_DITOLAK = '(SELECT COUNT(*) FROM atlet_ditolak jd WHERE jd.pendaftaran_id = p.id)';
 
     private BaseConnection $db;
 
@@ -113,7 +119,8 @@ final class DataPanelPendaftaran
         return static fn (): BaseBuilder => $db->table('pendaftaran p')->select(
             'p.id, p.id_pendaftaran, p.dibuat_pada, p.nama_sekolah, p.npsn, p.jenjang, p.kabupaten, '
             . 'p.subtotal_individu, p.subtotal_beregu, p.total, p.status, p.waktu_lunas, '
-            . self::JUMLAH_ATLET . ' AS jumlah_atlet',
+            . self::JUMLAH_ATLET . ' AS jumlah_atlet, '
+            . self::JUMLAH_DITOLAK . ' AS jumlah_ditolak',
             false,
         );
     }
@@ -140,10 +147,23 @@ final class DataPanelPendaftaran
             'subtotal_beregu'   => (int) $baris['subtotal_beregu'],
             'total'             => (int) $baris['total'],
             'status'            => $status,
-            'status_label'      => PendaftaranModel::STATUS[$status] ?? $status,
+            'status_label'      => self::ditolakSemua($baris) ? DataPendaftaran::LABEL_DITOLAK_SEMUA : (PendaftaranModel::STATUS[$status] ?? $status),
+            // Semua atlet ditolak (K117): status tersimpan tetap Menunggu, tabel menulis lencana merah.
+            'ditolak_semua'     => self::ditolakSemua($baris),
+            'jumlah_ditolak'    => (int) ($baris['jumlah_ditolak'] ?? 0),
             'waktu_lunas'       => $baris['waktu_lunas'],
-            'alamat'            => site_url('admin/pendaftaran/' . (int) $baris['id']),
+            'alamat'            => site_url('admin/pendaftaran/' . (int) $baris['id'] . '?dari=pendaftaran'),
         ];
+    }
+
+    /**
+     * Pendaftaran belum Lunas yang tidak punya atlet lagi karena semua atletnya ditolak (K117).
+     *
+     * @param array<string, mixed> $baris `status`, `jumlah_atlet`, `jumlah_ditolak`
+     */
+    public static function ditolakSemua(array $baris): bool
+    {
+        return (string) $baris['status'] !== 'lunas' && (int) ($baris['jumlah_atlet'] ?? 0) === 0 && (int) ($baris['jumlah_ditolak'] ?? 0) > 0;
     }
 
     /**

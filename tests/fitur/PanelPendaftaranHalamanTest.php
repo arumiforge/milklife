@@ -126,7 +126,7 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
         $this->assertSame(1, $baris['jumlah_atlet']);
         $this->assertSame(200000, $baris['total']);
         $this->assertSame('lunas', $baris['status']);
-        $this->assertSame(site_url('admin/pendaftaran/' . $b['id']), $baris['alamat']);
+        $this->assertSame(site_url('admin/pendaftaran/' . $b['id'] . '?dari=pendaftaran'), $baris['alamat']);
         $this->assertNull($semua['data'][0]['npsn']);
         $this->assertSame(4, $semua['data'][0]['jumlah_atlet']);
 
