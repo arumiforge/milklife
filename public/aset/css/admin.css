@@ -1242,3 +1242,16 @@ div.dt-container .dt-layout-table {
     line-height: 1.1;
     color: var(--ml-biru-tua);
 }
+
+/* Tabel atlet ditolak: kolom alasan cukup lebar untuk dibaca, kolom pendek tidak terpotong (K117). */
+#tabel-atlet-ditolak td:nth-child(10) {
+    min-width: 16rem;
+}
+
+#tabel-atlet-ditolak td:nth-child(3),
+#tabel-atlet-ditolak td:nth-child(4),
+#tabel-atlet-ditolak td:nth-child(6),
+#tabel-atlet-ditolak td:nth-child(7),
+#tabel-atlet-ditolak td:nth-child(11) {
+    white-space: nowrap;
+}
