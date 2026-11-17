@@ -43,6 +43,11 @@ class TambahDiperiksaBuktiBayar extends Migration
 
     public function down(): void
     {
-        $this->forge->dropColumn('bukti_bayar', ['diperiksa_pada', 'diperiksa_oleh']);
+        // Hanya kolom yang memang ada (tabel bisa saja dibuat ulang oleh migrasi lamanya).
+        $ada = array_values(array_filter(['diperiksa_pada', 'diperiksa_oleh'], fn (string $kolom): bool => $this->db->query('SHOW COLUMNS FROM ' . $this->db->prefixTable('bukti_bayar') . ' LIKE ?', [$kolom])->getNumRows() > 0));
+
+        if ($ada !== []) {
+            $this->forge->dropColumn('bukti_bayar', $ada);
+        }
     }
 }
