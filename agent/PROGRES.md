@@ -31,8 +31,8 @@ Diperbarui: 17 November 2026
 | [F7-21 Uji lengkap di MariaDB dan pemeriksaan peramban](tugas/F7-21-uji-mariadb-peramban.md) | selesai | sisipan | [#90](https://github.com/arumiforge/milklife/pull/90) |
 | [F7-22 Tolak atlet per atlet](tugas/F7-22-tolak-atlet.md) | selesai | sisipan | [#91](https://github.com/arumiforge/milklife/pull/91) |
 | [F7-23 Tampilan penolakan atlet dan jejak navigasi admin](tugas/F7-23-tampilan-penolakan-jejak.md) | selesai | sisipan | [#92](https://github.com/arumiforge/milklife/pull/92) |
-| [F7-24 Galat CSRF terlihat](tugas/F7-24-csrf-pesan-galat.md) | menunggu tinjauan | sisipan 1a | |
-| [F7-25 Backup data tanpa memuat ke memori](tugas/F7-25-backup-data-tanpa-memori.md) | rencana | sisipan 1a | |
+| [F7-24 Galat CSRF terlihat](tugas/F7-24-csrf-pesan-galat.md) | selesai | sisipan 1a | [#97](https://github.com/arumiforge/milklife/pull/97) |
+| [F7-25 Backup data tanpa memuat ke memori](tugas/F7-25-backup-data-tanpa-memori.md) | selesai | sisipan 1a | (PR ini) |
 | [F7-26 Kirim pendaftaran idempoten](tugas/F7-26-kirim-pendaftaran-idempoten.md) | rencana | sisipan 1b | |
 | [F7-27 Cloudflare Turnstile](tugas/F7-27-turnstile.md) | rencana | sisipan 1b | |
 | [F7-28 Rancangan revisi K116–K124](tugas/F7-28-rancangan-revisi-k116-k124.md) | selesai | sisipan 1c | [#96](https://github.com/arumiforge/milklife/pull/96) |
