@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100); **revisi 7 disetujui 15 November 2026** (K101); **revisi 8, 9, 10, dan 11 15 November 2026** (K105–K108, diubah langsung sesuai K101); **revisi 12, 13, dan 14 16 November 2026** (K109–K113, diubah langsung sesuai K101); **revisi 15 dan 16 17 November 2026** (K114, K115, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100); **revisi 7 disetujui 15 November 2026** (K101); **revisi 8, 9, 10, dan 11 15 November 2026** (K105–K108, diubah langsung sesuai K101); **revisi 12, 13, dan 14 16 November 2026** (K109–K113, diubah langsung sesuai K101); **revisi 15 dan 16 17 November 2026** (K114, K115, diubah langsung sesuai K101); **revisi 17 dan 18 17 November 2026** (K116–K125, diubah langsung sesuai K101 dan K120) |
 | Tanggal | 10 November 2026, revisi 11, 12, 14, 15, 16, dan 17 November 2026 |
 | Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
 | Revisi 2 | SLB tidak ikut (K28); web lewat Cloudflare Tunnel (K31); asumsi 4–7 dikonfirmasi dan asumsi 8 diganti (K32); bukti bayar diunggah admin (K34); awalan nomor atlet (BIB) awal per kelompok umur (K33). Bagian yang berubah: 6.2, 6.9, 9, 11, 13, 15, 17, lampiran |
@@ -10,6 +10,8 @@
 | Revisi 4 | Disesuaikan dengan yang dibangun di Tahap 4–7: foto ofisial wajib (K50); batas nomor individu per atlet dan atlet per nomor (K51, K53); konfirmasi tim susulan (K57); tim tanpa pembayar (K68); ID pendaftaran tetap saat diubah (K63); cek dan bukti tanpa tanggal lahir dan nomor atlet (K49, K52); panel tanpa pendaftaran baru, nomor atlet atlet tambahan, saringan status rekap (K58–K60); sesi lain keluar saat ganti sandi dan halaman galat ramah (K67); CI GitHub (K46); cadangan harian (K66); juknis tidak ditunggu (K55). Bagian yang berubah: 5, 6.3, 6.5, 6.6, 6.8, 6.9, 8, 9, 13, 14, 15, 16, 17 |
 | Revisi 5 | Kelompok umur ditentukan jenjang dulu, baru tahun lahir; rentang tahun lahir boleh beririsan antar-jenjang, tidak dalam satu jenjang (K95). Bagian yang berubah: 6.4, 17 |
 | Revisi 6 | Data sekolah dari Sekolah Kita dan menu Sekolah di panel untuk memberi nama pembeda (K97); kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan saat admin mengubah pendaftaran (K98); usulan nama sekolah dari pendaftar (K99). Disesuaikan juga dengan keputusan yang sudah berjalan: penulisan rupiah (K80), bukti transfer diunggah ofisial dan pendaftaran baru masuk bersama bukti transfer (K83, K90), alamat dan isi bukti PDF serta halaman cek (K77, K78, K87–K89, K91). Bagian yang berubah: 5, 6.2, 6.7, 7, 8, 9, 11, 15, 17 |
+| Revisi 18 | Keputusan 17 November 2026: galat CSRF terlihat dan isian dikembalikan, kirim pendaftaran idempoten dengan `kunci_kirim`, Backup data tanpa dimuat utuh ke memori (K118); kesiapan server ditangani pemilik (K119); Cloudflare Turnstile di kirim pendaftaran, Cek Pendaftaran, dan masuk admin (K122); PHPStan (K123); cakupan bertambah dengan hari lomba, hasil lomba semua babak, dan klasemen sekolah per jenjang sebagai Tahap 8 (K124, K125). Fitur yang belum dibangun ditulis sebagai ketentuan rancangan. Bagian yang berubah: 2, 4, 5, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18 (baru) |
+| Revisi 17 | Admin menolak atlet satu per satu dari pendaftaran Menunggu; NISN-nya bisa didaftarkan lagi dan Cek Pendaftaran meminta sekolah mendaftarkan ulang (K116). Status tampilan "Semua atlet ditolak", bahasa untuk sekolah, tabel penolakan di bukti PDF, menu Atlet ditolak, dan jejak navigasi di panel (K117). Bagian yang berubah: 5, 6.4, 6.9, 8, 9, 11 |
 | Revisi 16 | Perintah `php spark pembaruan:periksa` setelah `git pull`: memeriksa Composer, migrasi, data sekolah, penggabungan pendaftaran, dan aset kecil, lalu menyebut perintah yang perlu dijalankan (K115). Bagian yang berubah: 15 |
 | Revisi 15 | Sekolah bernama sama bisa diberi nama desa sekaligus dari menu Sekolah; pendaftaran yang memakai nama lama ikut diganti, dan nama tiap sekolah tetap bisa diubah lagi (K114). Bagian yang berubah: 5, 9 |
 | Revisi 14 | Istilah mengikuti juknis: nomor atlet (BIB), ofisial, pertemuan teknik (technical meeting), dan kategori mixed; tanggal tanpa pukul pada keterangan pengurutan dan kaki bukti PDF (K113). Bagian yang berubah: semua bagian yang menyebut istilah itu |
@@ -37,16 +39,16 @@ Berhasil bila:
 
 ## 2. Cakupan
 
-**Termasuk:** halaman depan, pendaftaran, cek pendaftaran, unduhan, bukti pendaftaran PDF, panel admin (pengaturan, data pendaftaran, rekap, ekspor).
+**Termasuk:** halaman depan, pendaftaran, cek pendaftaran, unduhan, bukti pendaftaran PDF, panel admin (pengaturan, data pendaftaran, rekap, ekspor). Mulai Tahap 8 (K124): hari lomba (daftar ulang lewat kode QR bukti, tandai hadir, cetak nomor atlet massal, daftar peserta per nomor lomba), hasil lomba semua babak, dan klasemen sekolah per jenjang (18).
 
-**Tidak termasuk:** pelaksanaan lomba (hasil, seri, jadwal lomba per nomor), pembayaran otomatis, akun untuk ofisial, tema gelap, banyak acara sekaligus dalam satu pemasangan.
+**Tidak termasuk:** jadwal lomba per nomor, konversi poin Tri Lomba dengan scoring table (diisi panitia, K124), piagam, pembayaran otomatis, akun untuk ofisial, peran admin terpisah untuk hasil, tema gelap, banyak acara sekaligus dalam satu pemasangan, data per seri, dan notifikasi WA (K119). Kesiapan server (alamat pemeriksa kesehatan `/sehat`, pemantauan uptime, tembolok halaman depan, `client_max_body_size`, `memory_limit`, uji pulih cadangan) **ditangani pemilik sendiri**, bukan bagian pekerjaan web ini (K119).
 
 ## 3. Pengguna
 
 | Pengguna | Akses | Yang dilakukan |
 |---|---|---|
 | Ofisial sekolah | Tanpa akun | Mendaftar, mengirim konfirmasi pembayaran lewat WA, mengunduh bukti, memeriksa rekap |
-| Admin (satu peran) | Masuk dengan nama pengguna dan kata sandi | Mengatur semua aturan, memeriksa pembayaran, mengelola data, mengunduh rekap. Boleh ada lebih dari satu akun; tiap admin hanya mengubah akunnya sendiri dari panel, akun lain dibuat lewat perintah `admin:buat` (K26) |
+| Admin (satu peran) | Masuk dengan nama pengguna dan kata sandi | Mengatur semua aturan, memeriksa pembayaran, mengelola data, mengunduh rekap; mulai Tahap 8 juga daftar ulang, hasil lomba, dan klasemen dengan akun yang sama (K124). Boleh ada lebih dari satu akun; tiap admin hanya mengubah akunnya sendiri dari panel, akun lain dibuat lewat perintah `admin:buat` (K26) |
 
 ## 4. Pendekatan teknis
 
@@ -69,6 +71,8 @@ Dua pendekatan lain ditolak:
 | Pengaturan | `codeigniter4/settings` (pengaturan tersimpan di basis data) |
 | Minify | `matthiasmullie/minify` untuk CSS, JS, dan SVG lewat `php spark aset:minify`; berkas asli tetap ada (K72). Alamat aset diberi penanda versi `?v=<waktu ubah berkas>` supaya Cloudflare dan peramban langsung memakai berkas baru (K86) |
 | Masuk admin | Sesi bawaan CodeIgniter + `password_hash`, tanpa pustaka tambahan |
+| Penahan bot | Cloudflare Turnstile, tanpa pustaka PHP: satu panggilan HTTP lewat `CURLRequest` bawaan CodeIgniter (K122, pengecualian aturan tidak menambah pustaka) |
+| Pemeriksa kode | PHPStan sebagai pustaka pengembangan (`require-dev`, tidak terpasang di produksi), mulai dari tingkat rendah dan ikut di CI (K123) |
 
 HTML diperkecil saat dikirim ke peramban (filter keluaran, aktif di produksi), jadi berkas tampilan asli tidak berubah.
 
@@ -85,6 +89,8 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/cek-pendaftaran` | Cek lewat NPSN atau ID pendaftaran |
 | `/unduhan` | Flyer, juknis, berkas lain |
 | `/bukti/{kode-acak}/{id-pendaftaran}` | Bukti pendaftaran PDF; kode acak 24 huruf supaya alamatnya tidak bisa ditebak (K77) |
+| `/hasil` | Hasil lomba per nomor yang sudah diterbitkan admin (Tahap 8, K124) |
+| `/hasil/klasemen` | Klasemen sekolah per jenjang dari nomor yang sudah terbit (Tahap 8, K124) |
 
 **Admin** (semua di bawah `/admin`)
 
@@ -93,7 +99,14 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/admin/masuk` | Halaman masuk |
 | `/admin/dasbor` | Ringkasan angka dan daftar kelengkapan pengaturan |
 | `/admin/pendaftaran` | Daftar dan rincian pendaftaran, bukti bayar, tandai lunas, ubah, hapus. Tidak ada pendaftaran baru dari panel (K58) |
+| `/admin/pendaftaran/{id}/tolak-atlet` | Tolak atlet satu per satu dari pendaftaran Menunggu (K116) |
 | `/admin/atlet` | Daftar semua atlet |
+| `/admin/atlet-ditolak` | Semua catatan atlet yang ditolak panitia, dengan saringan sudah atau belum didaftarkan ulang dan unduh Excel (K117) |
+| `/admin/riwayat` | Cari riwayat tindakan admin lewat ID pendaftaran, juga untuk pendaftaran yang sudah dihapus (Tahap 8, K124) |
+| `/admin/daftar-ulang` | Hari lomba: pindai kode QR bukti atau ketik ID, lihat status dan atlet, tandai hadir (Tahap 8, K124) |
+| `/admin/nomor-atlet/cetak` | Cetak nomor atlet (BIB) massal per kelompok umur (Tahap 8, K124) |
+| `/admin/hasil` | Babak, prestasi, peringkat, dan Terbitkan per nomor lomba (Tahap 8, K124) |
+| `/admin/klasemen` | Klasemen sekolah per jenjang, termasuk nomor yang belum terbit (Tahap 8, K124) |
 | `/admin/rekap` | Rekap per nomor lomba, tim beregu, per sekolah, per kelompok umur, keuangan |
 | `/admin/sekolah` | Data sekolah: daftar dengan saringan nama kembar, ubah nama dan data lain (K97) |
 | `/admin/sekolah/nama-desa` | Tambahkan nama desa ke semua sekolah bernama sama sekaligus (K114) |
@@ -147,7 +160,7 @@ Nama, nomor WA, dan foto. **Foto wajib diisi** (K50); foto diperkecil di peramba
 ### 6.4 Atlet
 
 - Nama lengkap (otomatis huruf besar), NISN tepat 10 digit, tanggal lahir, jenis kelamin (laki-laki/perempuan).
-- **NISN yang sudah terdaftar ditolak**, termasuk pada pendaftaran susulan. Perubahan untuk atlet yang sudah terdaftar dilakukan admin.
+- **NISN yang sudah terdaftar ditolak**, termasuk pada pendaftaran susulan. Perubahan untuk atlet yang sudah terdaftar dilakukan admin. Atlet yang **ditolak panitia** (9, K116) dikeluarkan dari pendaftarannya, sehingga NISN-nya bisa didaftarkan lagi di kelompok umur yang sesuai.
 - **Kelompok umur ditentukan otomatis dari jenjang sekolah lalu tahun lahir** (K95, K36). Tahun lahir dibaca tanpa memperhatikan bulan dan tanggal. Tiap kelompok umur punya tahun lahir paling awal dan paling akhir; salah satunya boleh kosong, artinya tidak dibatasi di sisi itu (contoh KU 8: lahir 2019 ke atas).
 - Usia hanya ditampilkan sebagai keterangan, tidak menentukan apa pun (K37). Usia dihitung pada tanggal mulai acara; tampilan "tahun" atau "tahun dan bulan" diatur admin. Tidak ada lagi tanggal patokan usia.
 - **Jenjang dulu, baru tahun lahir** (K95). Admin mencentang jenjang yang boleh ikut pada tiap kelompok umur (K23, K24); tidak ada nilai tertulis di kode. Dari jenjang sekolah pendaftaran, hanya kelompok umur yang dicentang untuk jenjang itu yang dipertimbangkan; di antaranya dicari yang rentang tahun lahirnya cocok.
@@ -211,6 +224,7 @@ Format: `MAC` + seri + kode jenjang + nomor urut 5 digit + 2 digit tahun. Contoh
 - **Bila admin mengubah pendaftaran yang sudah Lunas dan totalnya berubah (naik atau turun), status kembali ke Menunggu Konfirmasi Pembayaran** (K32). Admin menandai Lunas lagi setelah selisihnya diurus panitia di luar sistem. Atlet yang sudah punya nomor atlet tetap memegangnya; atlet baru mendapat nomor saat ditandai Lunas lagi. Jendela konfirmasi simpan menyebut akibat ini.
 - **Bila admin menambah atlet ke pendaftaran Lunas dan totalnya tetap** (misalnya tambahan anggota tim beregu), status tetap Lunas dan atlet baru **langsung mendapat nomor atlet saat disimpan** (K59).
 - Tidak ada status "dibatalkan". Pendaftaran yang batal dihapus admin, sehingga NISN-nya bisa didaftarkan lagi.
+- **Semua atlet ditolak** (K117): pendaftaran Menunggu yang tidak punya atlet lagi karena semua atletnya ditolak panitia (9) tampil berstatus **"Semua atlet ditolak"** (merah) di Cek Pendaftaran, bukti PDF, dan daftar pendaftaran admin. Status tersimpan tetap Menunggu; totalnya Rp 0, dan pendaftaran itu tidak dihitung di kartu dasbor "Bukti bayar perlu diperiksa".
 - **Pendaftaran Lunas dengan NPSN sama digabung otomatis menjadi satu** (K109). Begitu pendaftaran kedua sebuah sekolah ditandai Lunas (satu per satu, massal, atau karena admin mengganti NPSN pendaftaran Lunas di Ubah), isinya pindah ke pendaftaran sekolah itu yang **Lunas paling dulu**, lalu pendaftaran yang pindah dihapus:
   - Atlet (dengan nomor atlet dan nomor lombanya), regu beregu, bukti bayar, dan usulan nama sekolah pindah. Regu yang sama dijumlahkan biaya regunya. Ofisial dengan nomor WA yang sama ditulis sekali.
   - Subtotal dan total dijumlahkan. ID, nama sekolah, dan waktu lunas pendaftaran tujuan tetap.
@@ -248,6 +262,10 @@ Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah ked
 
 **Langkah 5.** Menampilkan logo bank, nomor rekening, nama pemilik rekening, dan total. Ofisial mentransfer, memilih foto atau tangkapan layar bukti transfer, lalu menekan **Kirim Pendaftaran** dan mengonfirmasi. **Pendaftaran baru masuk sistem saat itu, bersama bukti transfernya** (K90): tanpa bukti tidak ada yang tersimpan, dan isian tetap di draf sehingga ofisial bisa kembali lain waktu dan tinggal mengunggah bukti. Setelah terkirim, ID pendaftaran dibuat, draf dikosongkan, dan layar selesai menampilkan tombol cetak bukti, salin ID, dan konfirmasi lewat WA ke pemilik rekening (pesan berisi nama sekolah, NPSN, ID pendaftaran, subtotal individu, subtotal beregu, dan total). Status tetap Menunggu Konfirmasi Pembayaran sampai panitia memeriksa transfernya.
 
+**Kirim ulang aman** (K118): wizard membuat `kunci_kirim` acak sekali untuk setiap pendaftaran yang akan dikirim dan menyimpannya di draf. Bila jaringan putus atau tombol ditekan lagi, kiriman dengan kunci yang sama menjawab pendaftaran yang sudah tersimpan (ID dan layar selesai yang sama) tanpa menulis apa pun lagi, sehingga tidak ada pendaftaran ganda. Kunci dijaga unik oleh basis data. Draf dikosongkan dan kunci baru dibuat setelah pendaftaran selesai.
+
+**Penahan bot** (K122): saat Turnstile aktif (13), tombol Kirim Pendaftaran baru mengirim setelah pemeriksaan Cloudflare Turnstile lulus. Token Turnstile sekali pakai, jadi wizard meminta token baru sebelum mengirim ulang, termasuk pada kirim ulang dengan `kunci_kirim` yang sama.
+
 **Draf.** Isian tersimpan di peramban (`localStorage`) pada setiap perubahan, sehingga tidak hilang saat halaman dimuat ulang. Foto ofisial diperkecil di peramban (sisi terpanjang 800 piksel, JPEG) dan ikut tersimpan di draf.
 
 **Validasi.** Setiap isian diperiksa di peramban untuk kenyamanan dan diperiksa lagi seluruhnya di server. Isian yang ditandai salah kembali normal begitu mulai diubah (K88). Penyimpanan berlangsung dalam satu transaksi: tersimpan semua atau tidak sama sekali.
@@ -263,6 +281,10 @@ Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah ked
 - Data tampil sesuai MoU: sekolah, ofisial, atlet (nama, NISN, jenis kelamin, kelompok umur, nomor lomba), regu beregu beserta anggotanya (inti dan cadangan, K105), biaya, dan status pembayaran.
 - **Tanggal lahir tidak ditampilkan** (K52); tetap tersimpan dan terlihat di panel admin. Nomor atlet tampil setelah pendaftaran Lunas (K88).
 - Pendaftaran yang belum Lunas punya kotak unggah bukti transfer tambahan (K83).
+- Saat Turnstile aktif, pencarian Cek Pendaftaran memakai pemeriksaan Turnstile yang sama (13, K122).
+- **Atlet ditolak panitia** (K116, K117): bila ada atlet yang ditolak, Cek Pendaftaran (lewat NPSN maupun ID) menampilkan ringkasan "N atlet ditolak panitia" dan, di kartu pendaftarannya, bagian **"Perlu didaftarkan ulang"** dengan bahasa untuk sekolah: nama, NISN, jenis kelamin, tahun lahir (tanggal lahir tetap tidak, K52), yang didaftarkan, alasan panitia, kelompok umur dan pilihan nomor lomba yang disarankan, lalu langkah berikutnya: daftarkan ulang (tombol "Daftarkan ulang") dan hubungi panitia bila uang sudah terlanjur ditransfer (tombol WA tanya admin bila diisi). Total sebelum dan sesudah, waktu penolakan, nama admin, dan biaya per nomor hanya ada di panel admin.
+- Begitu NISN atlet yang ditolak terdaftar lagi (wizard, pendaftaran lain, atau Ubah admin), keterangan lengkapnya hilang dan atlet itu hanya disebut namanya sebagai tanda pendaftaran ulangnya sudah masuk. ID pendaftaran barunya tidak ditulis, karena NISN itu bisa didaftarkan sekolah lain (K117).
+- Pendaftaran **Semua atlet ditolak** (6.9) tidak menampilkan tabel atlet, regu, rincian biaya, dan kotak unggah bukti bayar; yang tampil total Rp 0 dengan "Tidak ada tagihan untuk pendaftaran ini" (K117).
 - Bila nomor atlet sudah diurutkan ulang panitia (6.9, K111), kartu pendaftaran Lunas menulis keterangan di atas tabel atlet: kapan nomor diurutkan ulang, dan bahwa nomor di bukti yang dicetak sebelumnya tidak berlaku.
 - Nama nomor lomba ditulis bersama kategorinya, misalnya "Lari 60 m Putra" atau "Estafet 8 × 50 m Mixed".
 - Foto ofisial hanya tampil di panel admin.
@@ -275,6 +297,7 @@ Di bawahnya total pembayaran: subtotal individu, subtotal beregu, dan jumlah ked
 - Tanggal lahir tidak dicetak. Nomor atlet dicetak setelah pendaftaran Lunas, di tabel individu dan di belakang nama anggota tim; sebelum Lunas kolomnya kosong (K87).
 - Bila nomor atlet sudah diurutkan ulang panitia (6.9, K111), bukti pendaftaran Lunas menulis keterangannya beserta waktunya di dasar halaman terakhir, di atas keterangan keaslian.
 - Status pembayaran berupa stempel miring di bagian akhir: hijau "LUNAS / PEMBAYARAN DITERIMA" atau oranye "MENUNGGU / KONFIRMASI PANITIA" (K78, K91).
+- **Atlet ditolak** (K117): bukti memuat tabel "Atlet Ditolak Panitia" (nama, NISN, yang didaftarkan, alasan, dan keterangan "Daftarkan ulang di KU …" atau "Sudah didaftarkan ulang"). Bila semua atlet ditolak, kepala data menjadi "Keterangan Penolakan Atlet", tabel nomor lomba tidak dicetak, stempelnya merah "DITOLAK", totalnya Rp 0, dan nama berkas berakhir `_Ditolak.pdf`.
 - Kode QR berisi alamat bukti di pojok kanan bawah halaman terakhir, dengan keterangan di kirinya untuk memeriksa keaslian (K89). Kode QR bukti pendaftaran yang sudah digabung diarahkan ke bukti pendaftaran gabungannya (K109).
 - Nama berkas memakai seluruh nama acara tanpa spasi, ditambah ID pendaftaran dan status (K87): `BuktiPendaftaran_MilkLifeAthleticsChallengeSeri2_<NamaSekolah>_2026_<ID>_<Status>.pdf`.
 
@@ -287,7 +310,7 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 - **Keadaan kosong:** pesan ramah yang menjelaskan apa yang belum ada dan langkah berikutnya.
 - **Pemuatan:** bilah kemajuan di atas halaman saat data dimuat.
 - **Tindakan berisiko** (hapus, tandai lunas, kembalikan ke Menunggu): jendela konfirmasi yang menyebut apa yang akan terjadi. Daftar pendaftaran punya pilih massal untuk ketiga tindakan itu, paling banyak 100 sekaligus, dengan aturan yang sama seperti di rincian (K76).
-- **Backup data** (K76, K77): tombol di daftar pendaftaran mengunduh satu zip berisi data pendaftaran, foto ofisial, bukti bayar, usulan nama sekolah (K99), sekolah yang namanya disunting admin (K97), dan ID lama pendaftaran gabungan (K109), untuk dimasukkan ke server baru dengan `php spark pendaftaran:impor`. Cadangan harian lengkap tetap lewat `cadangan:buat` (15).
+- **Backup data** (K76, K77): tombol di daftar pendaftaran mengunduh satu zip berisi data pendaftaran, foto ofisial, bukti bayar, usulan nama sekolah (K99), sekolah yang namanya disunting admin (K97), ID lama pendaftaran gabungan (K109), dan catatan atlet ditolak (K116), untuk dimasukkan ke server baru dengan `php spark pendaftaran:impor`. Zip ditulis ke berkas sementara lalu dikirim sebagai berkas, **tanpa dimuat utuh ke memori**, supaya tetap jalan walau foto dan bukti bayar banyak (K118). Tabel baru Tahap 8 ikut dibawa (18). Cadangan harian lengkap tetap lewat `cadangan:buat` (15).
 - **Urutkan nomor atlet** (K111): tombol di halaman Atlet membuka halaman yang meringkas atlet Lunas per kelompok umur, kecukupan awalan, dan waktu serta admin terakhir yang mengurutkan (6.9). Halaman Atlet dan rincian pendaftaran Lunas menulis waktu pengurutan terakhir.
 - **Pendaftaran gabungan** (K109): rincian menulis "Gabungan dari" dengan ID lamanya, dan pencarian daftar pendaftaran menemukan pendaftaran gabungan lewat ID lama.
 - **Tanpa pendaftaran baru** (K58): panel hanya melihat, menandai Lunas, mengubah, dan menghapus pendaftaran yang sudah ada. Sekolah yang terlambat didaftarkan lewat wizard setelah admin memakai buka manual (6.1).
@@ -300,6 +323,14 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 - **Data sekolah** (K97): menu Sekolah menampilkan semua sekolah di data referensi dengan saringan kabupaten, jenjang, nama yang sama dengan sekolah lain, dan sudah disunting, serta unduh Excel. Admin bisa mengubah nama, bentuk, jenjang, status, alamat, desa, kecamatan, dan kabupaten; NPSN tidak bisa diubah. Nama baru yang sama dengan sekolah lain ditolak. Saat menyimpan, admin bisa sekalian mengganti nama di pendaftaran yang sudah masuk dengan NPSN itu. Sekolah yang disunting tidak ditimpa saat data sekolah diimpor ulang.
 - **Tambahkan nama desa** (K114): tombol di menu Sekolah membuka daftar nama baru untuk semua sekolah yang namanya sama dengan sekolah lain, misalnya "MIS MUHAMMADIYAH" di desa Jati menjadi "MIS MUHAMMADIYAH JATI". Bila desa kosong, sudah tertulis di nama, atau sama dengan sekolah lain bernama sama, dipakai kecamatan, lalu kabupaten. Admin mencentang yang akan dipakai (bawaannya semua) lalu menerapkannya: nama di data sekolah diganti dan ditandai disunting, dan pendaftaran ber-NPSN itu yang masih memakai nama lama ikut diganti; nama usulan pendaftar yang belum diputuskan tidak diubah. Sekolah yang tidak bisa dibedakan otomatis didaftar terpisah dengan tombol Ubah. Setelah diterapkan, nama tiap sekolah tetap bisa diubah lagi lewat Ubah.
 - **Usulan nama** (K99): usulan dari pendaftar (6.2) tampil di halaman Usulan nama dengan formulir Setujui (nama boleh dirapikan dulu) dan Tolak (alasan pilihan). Jumlah usulan yang menunggu tampil di dasbor dan di menu Sekolah, dan rincian pendaftaran pengusul diberi tanda. Menyetujui satu usulan menutup usulan lain yang masih menunggu untuk sekolah yang sama.
+- **Tolak atlet** (K116): tombol "Tolak atlet" di rincian pendaftaran Menunggu membuka daftar atlet dengan kotak centang dan isian alasan (10–1.000 huruf, wajib). Atlet yang kelompok umurnya tidak cocok lagi dengan pengaturan sekarang (6.4, K95) ditandai "Seharusnya KU …" dan langsung tercentang dengan alasan bawaan; tanda yang sama tampil di tabel atlet rincian.
+  - Atlet yang ditolak dikeluarkan beserta nomor lombanya, jadi NISN-nya bisa didaftarkan lagi. Biaya dan regu dihitung ulang dengan aturan Ubah (regu yang tidak punya anggota lagi di pendaftaran itu tidak ditagih); bila atlet lain yang tersisa juga tidak cocok, penolakan dibatalkan dengan pesannya. Semua atlet boleh ditolak: pendaftaran tetap ada dengan total Rp 0 supaya ofisial dan bukti bayarnya tersimpan (6.9).
+  - Salinan atlet yang ditolak disimpan (11): kelompok umur dan nomor lomba lama, biaya individunya, alasan, kelompok umur yang sesuai saat ditolak, total sebelum dan sesudah, admin, dan waktunya. Rincian pendaftaran mencatatnya dengan keadaan "Belum didaftarkan ulang" atau "Sudah didaftarkan ulang" beserta ID pendaftaran barunya.
+  - Hanya untuk pendaftaran Menunggu; pendaftaran Lunas dikembalikan ke Menunggu dulu. Hapus pendaftaran ikut menghapus catatannya, penggabungan (K109) ikut memindahkannya, dan Backup data membawanya.
+- **Atlet ditolak** (K117): menu sendiri, terpisah dari menu Atlet (label "Ditolak" di menu ponsel), berisi semua catatan penolakan dari semua pendaftaran, saringan dan kotak jumlah "Belum/Sudah didaftarkan ulang", pencarian, dan unduh Excel.
+- **Jejak navigasi** (K117): halaman turunan panel (rincian, Ubah, dan Tolak atlet pendaftaran; Urutkan nomor atlet; Ubah sekolah, Usulan nama, Tambahkan nama desa) memakai jejak navigasi, bukan tautan "Kembali ke …". Rincian pendaftaran mengikuti asal halamannya: dibuka dari Atlet, jejaknya "Atlet › ID" dan menu Atlet yang aktif; dari Atlet ditolak, "Atlet ditolak › ID"; selain itu Pendaftaran. Asal disimpan di sesi per pendaftaran, sehingga halaman Ubah, Tolak atlet, dan halaman sesudah menyimpan tetap memakai asal yang sama. Di ponsel jejak diringkas menjadi satu tombol kembali ke halaman induk.
+- **Riwayat tindakan admin** (Tahap 8, K124): setiap tindakan admin pada pendaftaran (Lunas satu per satu dan massal, kembali ke Menunggu, Ubah dengan ringkasan perubahannya, Tolak atlet, hapus pendaftaran, unggah dan hapus bukti bayar, Urutkan nomor atlet, gabung) dicatat dalam transaksi yang sama: siapa, kapan, apa, dan ringkasannya. Rincian pendaftaran menampilkan bagian "Riwayat" (terbaru di atas); riwayat pendaftaran yang sudah dihapus dicari lewat ID di halaman Riwayat.
+- **Bukti bayar baru** (Tahap 8, K124): bukti dari ofisial (wizard dan Cek Pendaftaran) ditandai belum diperiksa sampai pendaftarannya ditandai Lunas atau admin menekan "Sudah diperiksa"; membuka rincian saja tidak menandai. Bukti yang diunggah admin langsung dianggap diperiksa. Daftar pendaftaran memberi tanda "Bukti baru" dan saringan "Bukti baru belum diperiksa", dan dasbor menampilkan jumlahnya (pendaftaran Semua atlet ditolak tidak dihitung).
 - **Gambar belum ada:** kotak ikon "tanpa gambar", bukan gambar tiruan.
 
 ## 10. Halaman depan
@@ -316,6 +347,7 @@ Semua isi diatur dari panel admin.
 - **Kelompok umur, nomor lomba, dan biaya** dari data induk, paling banyak 2 kolom dengan lencana kategori Putra, Putri, atau Mixed (K76). Rincian biaya **disembunyikan** secara bawaan dan dinyalakan admin lewat sakelar di Pengaturan > Halaman Depan (K74).
 - Jadwal: sosialisasi daring, pertemuan teknik, dan jadwal lain yang ditambahkan admin.
 - Unduhan, narahubung, media sosial.
+- Tautan **Hasil** ke halaman hasil lomba dan klasemen, tampil setelah ada nomor lomba yang hasilnya diterbitkan (18, K124).
 - Tombol bagikan ke WA dan tombol tanya admin lewat WA dengan teks yang sudah diatur.
 - **Kaki halaman** dengan logo Bakti Olahraga Djarum Foundation di kanan, di semua halaman publik (K84).
 
@@ -333,18 +365,30 @@ Nama tabel dan kolom berbahasa Indonesia.
 | `kelompok_umur_jenjang` | kelompok umur, jenjang (A, B, atau C); satu baris per jenjang yang boleh ikut, unik per pasangan |
 | `awalan_nomor_dada` | kelompok umur, awalan (unik), urutan, nomor terakhir |
 | `nomor_lomba` | kelompok umur, nama, jenis, kategori, jumlah inti, batas anggota per regu, regu per sekolah paling banyak (kosong = tidak dibatasi), jumlah putra/putri (mixed), biaya beregu, urutan, aktif |
-| `pendaftaran` | ID pendaftaran (unik), kode bukti (acak), jenjang, npsn, nama sekolah, kabupaten, subtotal individu, subtotal beregu, total, status, waktu lunas |
+| `pendaftaran` | ID pendaftaran (unik), kode bukti (acak), kunci kirim dari wizard (unik, boleh kosong untuk data lama, K118), jenjang, npsn, nama sekolah, kabupaten, subtotal individu, subtotal beregu, total, status, waktu lunas |
 | `penanggung_jawab` | pendaftaran, nama, nomor WA, foto |
 | `atlet` | pendaftaran, nama, NISN (unik), tanggal lahir, jenis kelamin, kelompok umur, nomor atlet (unik) |
 | `atlet_nomor` | atlet, nomor lomba, biaya (terisi untuk individu), nama regu (paling banyak 30 huruf) dan peran inti/cadangan (terisi untuk beregu) |
 | `pendaftaran_beregu` | pendaftaran, nomor lomba, regu, biaya regu; unik per pendaftaran, nomor, dan regu |
 | `bukti_bayar` | pendaftaran, berkas, ukuran, waktu unggah (paling banyak 5 per pendaftaran, dijaga aplikasi) |
 | `pendaftaran_gabungan` | pendaftaran gabungan, ID pendaftaran lama (unik), kode bukti lama (K109); ikut terhapus bila pendaftaran gabungannya dihapus |
+| `atlet_ditolak` | pendaftaran, nama, NISN, tanggal lahir, jenis kelamin, kelompok umur dan nomor lomba lama, biaya individu, kelompok umur yang sesuai saat ditolak, alasan, total sebelum dan sesudah, admin, waktu (K116); ikut terhapus bila pendaftarannya dihapus |
 | `jadwal` | judul, keterangan, waktu, tempat atau tautan, urutan, tampil |
 | `unduhan` | judul, keterangan, berkas, urutan, tampil |
 | `tautan` | jenis (narahubung/media sosial), label, nilai, urutan |
 
-Keunikan NISN dan nomor atlet dijaga oleh basis data, bukan hanya oleh aplikasi.
+Tambahan Tahap 8 (K124, ketentuan rancangan; rincian di `dokumen/draf/rencana-implementasi-tahap-8.md`):
+
+| Tabel atau kolom | Isi utama |
+|---|---|
+| `riwayat_admin` | pendaftaran (kosong setelah dihapus), ID pendaftaran (teks, tetap ada setelah dihapus), admin dan salinan namanya, kode tindakan, ringkasan, waktu |
+| `bukti_bayar` | tambahan: waktu diperiksa dan admin yang memeriksa |
+| `atlet` | tambahan: waktu hadir dan admin yang menandai |
+| `nomor_lomba` | tambahan: jenis hasil (waktu, jarak, atau poin) dan waktu hasil diterbitkan |
+| `babak` | nomor lomba, nama (misalnya "Penyisihan seri 1", "Final"), tanda Final (satu per nomor), urutan |
+| `hasil` | babak, peserta (atlet untuk nomor individu, regu untuk nomor beregu), prestasi (bilangan bulat: perseratus detik, sentimeter, atau poin), keterangan (DNS, DNF, DQ), peringkat, tanda diubah admin |
+
+Keunikan NISN, nomor atlet, dan kunci kirim dijaga oleh basis data, bukan hanya oleh aplikasi.
 
 ## 12. Tampilan
 
@@ -355,7 +399,11 @@ Keunikan NISN dan nomor atlet dijaga oleh basis data, bukan hanya oleh aplikasi.
 
 ## 13. Keamanan dan privasi
 
-- Perlindungan CSRF pada semua formulir.
+- Perlindungan CSRF pada semua formulir. Token **tidak diganti setiap kiriman** (`regenerate = false`), supaya beberapa tab dan tombol kembali peramban tidak memicu galat (K118). Bila token kedaluwarsa atau tidak cocok, pengguna melihat pesan berbahasa Indonesia yang menyebut cara memperbaikinya (muat ulang halaman lalu kirim lagi), bukan halaman galat kosong, dan isian yang sudah diketik dikembalikan.
+- **Cloudflare Turnstile** (K122) di kirim pendaftaran (wizard), Cek Pendaftaran, dan masuk admin, masing-masing dengan `data-action` sendiri:
+  - Kunci di `.env`: `turnstile.kunciSitus`, `turnstile.kunciRahasia`, dan `turnstile.namaHost` (daftar nama host yang diizinkan; produksi tanpa `localhost`). **Bila kunci kosong, Turnstile mati**, sehingga admin tidak terkunci saat Cloudflare bermasalah. Kunci situs publik boleh ditulis di `.env.example` dan panduan produksi; **kunci rahasia tidak pernah masuk git, chat, log, atau diff** dan diisi pemilik sendiri di `.env` produksi.
+  - Server menolak token kosong, bukan teks, atau lebih dari 2048 huruf, lalu memeriksa ke siteverify dengan alamat IP pengunjung (15, K31) dan batas waktu 10 detik. Kiriman hanya diterima bila hasilnya berhasil, `action` cocok, dan `hostname` diizinkan. Gagal = kode 403 dengan pesan berbahasa Indonesia yang menyebut cara memperbaikinya.
+  - Kebijakan keamanan konten (CSP) mengizinkan `challenges.cloudflare.com` untuk script dan frame.
 - Pembatasan laju pada cek pendaftaran, bukti, pencarian NPSN, simpan pendaftaran, dan halaman masuk.
 - Semua keluaran di-escape; semua masukan divalidasi di server.
 - Foto ofisial dan bukti bayar disimpan di luar folder publik dan hanya disajikan ke admin.
@@ -370,6 +418,9 @@ Keunikan NISN dan nomor atlet dijaga oleh basis data, bukan hanya oleh aplikasi.
 
 - Uji unit untuk aturan murni: tahun lahir dan kelompok umur, biaya, ID pendaftaran, nomor atlet, kelengkapan tim.
 - Uji fitur untuk alur pendaftaran, cek, bukti, panel, dan penandaan lunas, ditambah satu uji alur lengkap dari pendaftaran sampai hapus.
+- Turnstile diuji dengan kunci uji resmi Cloudflare dan tiruan HTTP, tanpa panggilan jaringan (K122). Kirim ulang dengan `kunci_kirim` yang sama diuji tidak menulis pendaftaran kedua (K118).
+- Tahap 8: uji unit untuk urutan peringkat dan seri, klasemen dan pemecah seri, dan penguraian format prestasi; uji fitur untuk setiap halaman dan tindakan baru (K124).
+- PHPStan dijalankan di CI bersama uji (K123).
 - Semua uji dijalankan dengan satu perintah (`composer uji`) di komputer pengembang sebelum PR dibuka. **CI GitHub** (GitHub Actions) menjalankan uji yang sama di setiap PR dan setiap perubahan di `main` (K46); PR digabung setelah keduanya lulus.
 
 ## 15. Pemasangan
@@ -381,6 +432,10 @@ Daftar sekolah diisi dengan `php spark sekolah:impor` dan aman diulang setiap da
 Setelah pembaruan yang membawa penggabungan pendaftaran (K109), `php spark pendaftaran:gabung` dijalankan sekali untuk menggabungkan pendaftaran Lunas ber-NPSN sama yang sudah ada. Perintah menampilkan daftar sekolahnya dan meminta konfirmasi; menjalankannya lagi tidak mengubah apa pun.
 
 Setelah `git pull`, `php spark pembaruan:periksa` (K115) memeriksa tanpa mengubah apa pun: paket Composer yang belum sesuai `composer.lock`, migrasi yang belum dijalankan, sekolah di `data/sekolah/sekolah.json` yang belum ada atau berubah (kecuali yang disunting admin), NPSN dengan lebih dari satu pendaftaran Lunas, dan berkas CSS/JS/SVG yang versi kecilnya belum ada atau lebih tua. Hasilnya daftar perintah yang perlu dijalankan, berurutan. Pemeriksaan yang gagal, misalnya karena MySQL mati, tidak dianggap beres.
+
+**Turnstile** (K122): panduan produksi memuat langkah memasang kunci rahasia dari dasbor Cloudflare ke `.env`, mengisi daftar nama host, dan cara mematikan Turnstile sementara dengan mengosongkan kuncinya.
+
+**Kesiapan server ditangani pemilik** (K119): alamat pemeriksa kesehatan `/sehat`, pemantauan uptime, tembolok halaman depan, batas unggah Nginx (`client_max_body_size`), `memory_limit` PHP, dan uji pulih cadangan diatur pemilik sendiri di server, bukan bagian pekerjaan web dan tidak dikerjakan agen.
 
 **Cadangan** (K66): dibuat **harian** oleh Penjadwal Tugas Windows ke folder di luar proyek. Satu berkas zip berisi basis data serta foto ofisial, bukti bayar, dan unggahan admin. Cadangan yang lebih tua dari **14 hari** dihapus otomatis. Pemulihan dilakukan manual mengikuti panduan.
 
@@ -399,7 +454,8 @@ Setiap tahap punya wawancara singkat bila perlu, rencana implementasi, dan PR se
 | 4. Pendaftaran | Wizard lengkap sampai tersimpan |
 | 5. Bukti dan cek | Bukti PDF, halaman cek |
 | 6. Panel data | Daftar pendaftaran, lunas dan nomor atlet, ubah, hapus, rekap, ekspor |
-| 7. Penyelesaian | Minify dan pengecilan gambar, keamanan produksi, tim tanpa pembayar, cadangan harian, panduan pemasangan produksi, revisi rancangan ini, uji menyeluruh (K67) |
+| 7. Penyelesaian | Minify dan pengecilan gambar, keamanan produksi, tim tanpa pembayar, cadangan harian, panduan pemasangan produksi, revisi rancangan ini, uji menyeluruh (K67); galat CSRF, kirim idempoten, Backup data tanpa memori (K118), Turnstile (K122), susunan dokumen agen (K120), pecah berkas besar (K121), PHPStan (K123) |
+| 8. Hari lomba dan hasil | Riwayat tindakan admin, penanda bukti bayar baru, daftar ulang dan tandai hadir, cetak nomor atlet massal, daftar peserta per nomor, hasil lomba, klasemen sekolah (K124, K125); siap sebelum pertemuan teknik 6 Desember 2026 dan lomba 9 Desember 2026 |
 
 ## 17. Asumsi yang perlu ditinjau
 
@@ -414,7 +470,39 @@ Hal berikut saya putuskan sendiri karena tidak disebut dalam wawancara. Mohon di
 7. Foto ofisial tidak tampil di halaman cek. **Dikonfirmasi K32.**
 8. ~~Bila admin mengubah pendaftaran yang sudah lunas sehingga totalnya berubah, status tetap Lunas dan selisihnya diurus panitia di luar sistem.~~ **Diganti K32:** status kembali ke Menunggu dan admin menandai Lunas lagi (6.9).
 
-Semua asumsi sudah diputuskan pemilik. Juknis resmi tidak ditunggu (K55); juknis yang kemudian diterima 16 November 2026 disimpan di `sumber/juknis/` dan dicocokkan dengan aturan ini (K112): hanya batas tahun lahir KU 12 yang berbeda, dan sudah disesuaikan.
+Semua asumsi sudah diputuskan pemilik. Delapan asumsi Tahap 8 (riwayat pendaftaran terhapus, bukti dianggap diperiksa, pemindai QR, hadir per atlet, ukuran BIB, satuan prestasi, peringkat sama di Final, alamat halaman publik) ada di `dokumen/draf/rencana-implementasi-tahap-8.md` dan disetujui bersama rencananya (K125). Juknis resmi tidak ditunggu (K55); juknis yang kemudian diterima 16 November 2026 disimpan di `sumber/juknis/` dan dicocokkan dengan aturan ini (K112): hanya batas tahun lahir KU 12 yang berbeda, dan sudah disesuaikan.
+
+## 18. Hari lomba, hasil, dan klasemen
+
+Ketentuan Tahap 8 (K124, K125). Bagian ini menjadi aturan saat dibangun; rincian teknis dan pembagian tugas ada di `dokumen/draf/rencana-implementasi-tahap-8.md`. Semua halaman memakai akun admin yang sama, tanpa peran baru (K124 butir 9). Tidak ada pustaka baru: PDF lewat mPDF dan Excel lewat PhpSpreadsheet.
+
+**Daftar ulang.** Di hari lomba admin memindai kode QR bukti pendaftaran dengan kamera ponsel (fitur pemindai bawaan peramban, tersedia di Chrome Android) atau mengetik ID pendaftaran bila peramban tidak mendukung. Halaman menampilkan nama sekolah, status (Lunas, Menunggu, Semua atlet ditolak), dan atlet dengan nomor atlet, nomor lomba, dan regu, serta tombol **Tandai hadir** per atlet dan untuk semua atlet; batal hadir tersedia untuk salah tekan. Kode QR pendaftaran yang sudah digabung (K109) diarahkan ke pendaftaran gabungannya. Bila admin yang sedang masuk membuka alamat kode QR dengan aplikasi kamera, halaman bukti menampilkan tautan "Buka daftar ulang"; bukti PDF tetap bisa dibuka.
+
+**Cetak nomor atlet (BIB) massal.** Admin memilih kelompok umur (atau semua) dan mengunduh PDF: satu BIB per setengah A4 mendatar, dua per halaman, berisi nomor atlet besar, nama atlet, nama sekolah, dan kelompok umur, urut nomor atlet. Hanya atlet pendaftaran Lunas.
+
+**Daftar peserta per nomor lomba.** PDF dan Excel untuk pemanggilan atlet dan juri: No, nomor atlet, nama, sekolah, tanda hadir, dan kolom kosong untuk catatan juri. Nomor beregu ditulis per regu dengan anggota inti dan cadangan. Satu PDF bisa memuat semua nomor satu kelompok umur, satu nomor per halaman.
+
+**Hasil lomba** (K124 butir 2–4):
+
+- Setiap nomor lomba punya jenis hasil yang diatur admin di Pengaturan > Nomor lomba: **waktu** (makin kecil makin baik), **jarak**, atau **poin** (makin besar makin baik). Data awal mengikuti juknis: lari dan estafet waktu, lompat dan lempar jarak, Tri Lomba poin.
+- **Hasil dicatat untuk semua babak.** Admin membuat babak per nomor lomba, misalnya Penyisihan seri 1, seri 2, …, lalu Final; nomor yang langsung final (misalnya 1000 m dan Turbo Throw) cukup satu babak Final. Peserta babak dipilih dari atlet Lunas di nomor itu, dan babak berikutnya bisa disalin dari yang lolos.
+- Admin mengisi prestasi; server memeriksa formatnya (waktu `m:ss,cc` atau `ss,cc`, jarak `m,cc`) dan pesan galat menyebut contoh yang benar. Keterangan DNS (tidak start), DNF (tidak finis), dan DQ (diskualifikasi) tidak diberi peringkat.
+- Web mengurutkan peringkat dari prestasi menurut jenis hasilnya; prestasi sama = peringkat sama. Admin bisa mengoreksi peringkat Final secara manual (misalnya dari foto finis), dengan tanda "diubah admin".
+- **Juara I–III diambil dari babak Final.** Peringkat sama di Final memberi piala yang sama kepada masing-masing.
+- **Tri Lomba**: admin mengisi poin akhir yang sudah dikonversi panitia dengan scoring table IAAF/PASI; web tidak menghitung konversi.
+- **Nomor beregu**: juara per regu; satu regu juara = satu piala untuk sekolahnya.
+- **Terbitkan** (K124 butir 7): hasil satu nomor tampil di halaman publik `hasil` setelah admin menekan "Terbitkan" untuk nomor itu, dan bisa ditarik kembali.
+
+**Klasemen sekolah** (K124 butir 5–6):
+
+- **Kontingen = sekolah per NPSN** (sejalan K109); pendaftaran tanpa NPSN dihitung sebagai kontingen sendiri. Jenjang kontingen mengikuti jenjang pendaftaran.
+- **Klasemen dihitung terpisah per jenjang sekolah.** Juara umum ditentukan jumlah juara I terbanyak (juknis bagian 11); bila sama, juara II, lalu juara III; bila masih sama, peringkat bersama. Juara umum I–III per jenjang ditandai.
+- Perhitungannya kelas tersendiri tanpa ketergantungan pada permintaan HTTP, dengan uji unit.
+- Halaman admin menghitung semua nomor (yang belum terbit diberi tanda); halaman publik `hasil/klasemen` hanya menghitung nomor yang sudah terbit.
+
+**Unduhan** (K124 butir 8): hasil per nomor dan klasemen tersedia sebagai PDF dan Excel. Piagam tidak dibuat web.
+
+**Data ikut terbawa**: tabel baru (11) ikut di Backup data dan pindah server (K76) serta cadangan; penggabungan pendaftaran (K109) memindahkan baris yang menunjuk pendaftaran; hapus pendaftaran menangani baris yang menunjuknya.
 
 ## Lampiran: data awal nomor lomba
 
