@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | selesai |
 | Tahap | 3 — Halaman depan |
 | Dibuat | 12 November 2026 |
 
