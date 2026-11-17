@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | menunggu tinjauan |
+| Status | selesai |
 | Tahap | 7 — Penyelesaian |
 | Dibuat | 17 November 2026 |
 
@@ -26,3 +26,4 @@ Setelah `git pull` di server, satu perintah memberi tahu perintah lain apa yang 
 
 - Dicoba di basis data kosong (menyebut `migrate --all` dan `sekolah:impor`), setelah migrasi (hanya `sekolah:impor`), setelah impor (beres, kode keluar 0), dan dengan MySQL mati.
 - `data:awal` dan `dokumen:pdf` tidak diperiksa: yang pertama hanya untuk pemasangan baru, yang kedua untuk pengembang.
+- PR [#89](https://github.com/arumiforge/milklife/pull/89).

@@ -70,4 +70,48 @@ abstract class UjiBasisData extends CIUnitTestCase
      * @var list<string>|string|null
      */
     protected $namespace;
+
+    /**
+     * Seragamkan baris `information_schema.COLUMNS` MySQL 8 dan MariaDB,
+     * supaya uji struktur tabel lulus di keduanya:
+     *
+     * - `tipe`: lebar tampilan bilangan bulat dibuang (`int(10) unsigned` →
+     *   `int unsigned`), kecuali `tinyint(1)` tanpa `unsigned`, yang juga
+     *   ditulis MySQL 8.
+     * - `awal`: MariaDB menulis nilai awal kosong sebagai teks `NULL`, teks
+     *   bertanda kutip (`'menunggu'`), dan `current_timestamp()`; diubah
+     *   menjadi null, `menunggu`, dan `CURRENT_TIMESTAMP` seperti MySQL 8.
+     *
+     * @param list<array<string, mixed>> $baris
+     *
+     * @return list<array<string, mixed>>
+     */
+    protected static function bakukanKolom(array $baris): array
+    {
+        foreach ($baris as $i => $b) {
+            if (isset($b['tipe'])) {
+                $baris[$i]['tipe'] = preg_replace_callback(
+                    '/^(tinyint|smallint|mediumint|int|bigint)\((\d+)\)(.*)$/s',
+                    static fn (array $m): string => $m[1] === 'tinyint' && $m[2] === '1' && ! str_contains($m[3], 'unsigned') ? $m[0] : $m[1] . $m[3],
+                    (string) $b['tipe'],
+                );
+            }
+
+            if (array_key_exists('awal', $b) && is_string($b['awal'])) {
+                $awal = $b['awal'];
+
+                if ($awal === 'NULL') {
+                    $awal = null;
+                } elseif (preg_match("/^'(.*)'\$/s", $awal, $m) === 1) {
+                    $awal = str_replace("''", "'", $m[1]);
+                } elseif (strtolower($awal) === 'current_timestamp()') {
+                    $awal = 'CURRENT_TIMESTAMP';
+                }
+
+                $baris[$i]['awal'] = $awal;
+            }
+        }
+
+        return $baris;
+    }
 }

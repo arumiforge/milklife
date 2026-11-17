@@ -230,7 +230,7 @@ final class MigrasiStrukturTest extends UjiBasisData
                  ORDER BY ORDINAL_POSITION',
                 [$this->db->getDatabase(), $tabel],
             )->getResultArray();
-            $kolom = array_column($baris, null, 'kolom');
+            $kolom = array_column(self::bakukanKolom($baris), null, 'kolom');
 
             $this->assertSame(array_keys($harapan), array_keys($kolom), "Daftar kolom tabel {$tabel}.");
 

@@ -55,7 +55,7 @@ $lewati = $rencana['lewati'];
                     data-konfirmasi-jenis="utama">
                     <?= csrf_field() ?>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive position-relative">
                         <table class="table table-sm table-hover align-middle" id="tabel-nama-baru">
                             <caption class="visually-hidden">Nama baru yang akan dipakai</caption>
                             <thead>
@@ -109,7 +109,7 @@ $lewati = $rencana['lewati'];
                     sudah berbeda dan boleh dibiarkan.
                 </p>
 
-                <div class="table-responsive">
+                <div class="table-responsive position-relative">
                     <table class="table table-sm table-hover align-middle mb-0" id="tabel-lewati">
                         <caption class="visually-hidden">Sekolah yang perlu diubah sendiri</caption>
                         <thead>
