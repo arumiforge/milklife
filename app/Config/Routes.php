@@ -103,6 +103,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('sekolah', 'SekolahController::index');
     $routes->get('sekolah/data', 'SekolahController::data');
     $routes->get('sekolah/excel', 'SekolahController::excel');
+    // Beri nama desa sekaligus ke sekolah bernama kembar (K114).
+    $routes->get('sekolah/nama-desa', 'SekolahController::namaDesa');
+    $routes->post('sekolah/nama-desa', 'SekolahController::terapkanNamaDesa');
     $routes->get('sekolah/(:num)/ubah', 'SekolahController::ubah/$1');
     $routes->post('sekolah/(:num)', 'SekolahController::perbarui/$1');
     // Usulan nama sekolah dari pendaftar (K99).

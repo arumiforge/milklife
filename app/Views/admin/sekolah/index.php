@@ -3,7 +3,9 @@
  * Daftar sekolah (K97): tabel data dari `admin/sekolah/data` dengan
  * saringan kabupaten, jenjang, nama kembar, dan sudah disunting, serta
  * tombol unduh Excel yang mengikuti saringan aktif. Tiap baris punya
- * tautan Ubah ke formulir sekolah. Data dari `SekolahController::index()`.
+ * tautan Ubah ke formulir sekolah. Bila ada nama kembar, tombol "Tambahkan nama
+ * desa ke nama yang sama" membuka `admin/sekolah/nama-desa` (K114). Data dari
+ * `SekolahController::index()`.
  *
  * @var CodeIgniter\View\View  $this
  * @var list<string>           $kabupaten
@@ -37,6 +39,11 @@ use App\Controllers\Admin\SekolahController;
                 <span class="badge rounded-pill text-bg-light ms-1"><?= $jumlahUsulan ?> menunggu</span>
             <?php endif ?>
         </a>
+        <?php if ($jumlahKembar > 0) : ?>
+            <a class="btn btn-outline-primary" href="<?= site_url('admin/sekolah/nama-desa') ?>" id="tautan-nama-desa">
+                <i class="bi bi-geo-alt" aria-hidden="true"></i> Tambahkan nama desa ke nama yang sama
+            </a>
+        <?php endif ?>
     </div>
 
     <?php if ($jumlahKembar > 0) : ?>
@@ -44,8 +51,10 @@ use App\Controllers\Admin\SekolahController;
             <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
             <div>
                 <strong><?= number_format($jumlahKembar, 0, ',', '.') ?> sekolah</strong> memakai nama yang sama dengan sekolah lain,
-                misalnya beberapa MI dengan nama MUHAMMADIYAH di desa berbeda. Pilih <em>Sama dengan sekolah lain</em> di saringan Nama,
-                lalu tekan Ubah dan tambahkan pembeda seperti nama desa, contohnya MIS MUHAMMADIYAH JATI.
+                misalnya beberapa MI dengan nama MUHAMMADIYAH di desa berbeda. Tekan
+                <a href="<?= site_url('admin/sekolah/nama-desa') ?>">Tambahkan nama desa ke nama yang sama</a> untuk memberi semuanya
+                nama desa sekaligus, contohnya MIS MUHAMMADIYAH JATI. Bisa juga satu per satu: pilih <em>Sama dengan sekolah lain</em>
+                di saringan Nama, lalu tekan Ubah.
             </div>
         </div>
     <?php endif ?>

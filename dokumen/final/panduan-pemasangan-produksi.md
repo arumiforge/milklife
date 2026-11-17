@@ -2,10 +2,11 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101) |
+| Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14 dan 16 November 2026 |
+| Tanggal | 12 November 2026, revisi 14, 16, dan 17 November 2026 |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -315,7 +316,7 @@ Isi:
 - [ ] Dasbor admin tidak lagi menampilkan peringatan pengaturan yang belum lengkap.
 - [ ] Halaman depan: acara, jadwal, nomor lomba, biaya, rekening pembayaran, kontak, dan unduhan (juknis) benar.
 - [ ] Jadwal buka dan tutup pendaftaran benar.
-- [ ] Menu **Sekolah**: sekolah bernama sama dengan sekolah lain (saringan Nama → "Sama dengan sekolah lain") yang diperkirakan ikut sudah diberi nama pembeda, misalnya dengan nama desa (K97). Sisanya bisa diusulkan pendaftar sendiri saat mendaftar (K99).
+- [ ] Menu **Sekolah**: sekolah bernama sama dengan sekolah lain (saringan Nama → "Sama dengan sekolah lain") yang diperkirakan ikut sudah diberi nama pembeda, misalnya dengan nama desa (K97). Tombol **Tambahkan nama desa ke nama yang sama** memberi nama desa ke semuanya sekaligus; periksa daftarnya, lalu ubah sendiri nama yang kurang tepat (K114). Sisanya bisa diusulkan pendaftar sendiri saat mendaftar (K99).
 - [ ] Coba satu pendaftaran dengan data karangan sampai selesai, buka halaman cek dan bukti PDF-nya, lalu hapus pendaftaran itu dari panel. **Jangan** menandainya Lunas: nomor atlet (BIB) yang sudah terpakai tidak pernah dipakai ulang.
 
 Cadangan:

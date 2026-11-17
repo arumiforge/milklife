@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Libraries\Jenjang;
 use App\Libraries\Panel\EksporExcel;
+use App\Libraries\Panel\NamaDesaSekolah;
 use App\Libraries\Panel\TabelSisiServer;
 use App\Libraries\Panel\UsulanNamaSekolah;
 use App\Libraries\Pendaftaran\Kabupaten;
@@ -32,6 +33,8 @@ use CodeIgniter\HTTP\ResponseInterface;
  * - `excel`: semua baris yang lolos saringan yang sama.
  * - `usulan`, `setujuiUsulan`, `tolakUsulan`: usulan nama dari pendaftar
  *   (K99, `App\Libraries\Panel\UsulanNamaSekolah`).
+ * - `namaDesa`, `terapkanNamaDesa`: beri nama desa sekaligus ke sekolah
+ *   bernama kembar (K114, `App\Libraries\Panel\NamaDesaSekolah`).
  * - `ubah` / `perbarui`: formulir satu sekolah. NPSN tidak bisa diubah.
  *   Sekolah yang disimpan ditandai `disunting_pada`, sehingga
  *   `php spark sekolah:impor` tidak menimpanya. Pilihan "terapkan ke
@@ -122,6 +125,57 @@ class SekolahController extends BaseController
         }
 
         return redirect()->to(self::ALAMAT . '/usulan')->with('pesan_sukses', $pesan);
+    }
+
+    /**
+     * Pratinjau nama baru untuk sekolah bernama kembar (K114): nama lama
+     * ditambah nama desa, dan daftar sekolah yang perlu diubah sendiri.
+     */
+    public function namaDesa(): string
+    {
+        return view('admin/sekolah/nama_desa', [
+            'rencana' => (new NamaDesaSekolah())->pratinjau(),
+            'pembeda' => NamaDesaSekolah::PEMBEDA,
+        ]);
+    }
+
+    public function terapkanNamaDesa(): RedirectResponse
+    {
+        $id = $this->request->getPost('id');
+        $id = is_array($id) ? array_values(array_filter(array_map(
+            static fn (mixed $nilai): int => is_string($nilai) && ctype_digit($nilai) ? (int) $nilai : 0,
+            $id,
+        ))) : [];
+
+        if ($id === []) {
+            return redirect()->to(self::ALAMAT . '/nama-desa')->with(
+                'pesan_galat',
+                'Belum ada sekolah yang dicentang. Centang sekolah yang akan diberi nama baru, lalu tekan Terapkan lagi.',
+            );
+        }
+
+        $hasil = (new NamaDesaSekolah())->terapkan($id);
+
+        if ($hasil['galat'] !== null) {
+            return redirect()->to(self::ALAMAT . '/nama-desa')->with('pesan_galat', $hasil['galat']);
+        }
+
+        if ($hasil['sekolah'] === 0) {
+            return redirect()->to(self::ALAMAT . '/nama-desa')->with(
+                'pesan_galat',
+                'Tidak ada nama yang diganti karena sekolah yang dicentang sudah tidak bernama sama dengan sekolah lain. Periksa lagi daftar di bawah.',
+            );
+        }
+
+        $pesan = $hasil['sekolah'] . ' sekolah sekarang memakai nama baru dengan nama desa.';
+
+        if ($hasil['pendaftaran'] > 0) {
+            $pesan .= ' Nama sekolah di ' . $hasil['pendaftaran'] . ' pendaftaran ikut diganti.';
+        }
+
+        $pesan .= ' Bila ada nama yang kurang tepat, pilih "Sudah disunting admin" di saringan Disunting, lalu tekan Ubah pada sekolah itu.';
+
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', $pesan);
     }
 
     public function data(): ResponseInterface
