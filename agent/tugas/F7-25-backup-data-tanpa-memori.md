@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | rencana |
+| Status | selesai |
 | Tahap | 7 — Penyelesaian |
 | Dibuat | 17 November 2026 |
 
@@ -12,9 +12,9 @@ Unduhan Backup data tetap berhasil walau berisi ratusan foto dan bukti bayar (B4
 
 ## Hasil
 
-- [ ] `Admin/PendaftaranController::ekspor()` mengirim zip dengan `$this->response->download($jalur, null)->setFileName(...)`, tanpa `file_get_contents`
-- [ ] Berkas sementara di `writable/cache/ekspor/`; berkas yang lebih tua dari 1 jam dihapus setiap ekspor baru
-- [ ] Uji fitur ekspor tetap lulus, ditambah uji pembersihan berkas lama
+- [x] `Admin/PendaftaranController::ekspor()` mengirim zip dengan `$this->response->download($jalur, null)->setFileName(...)`, tanpa `file_get_contents`
+- [x] Berkas sementara di `writable/cache/ekspor/`; berkas yang lebih tua dari 1 jam dihapus setiap ekspor baru
+- [x] Uji fitur ekspor tetap lulus, ditambah uji pembersihan berkas lama
 
 ## Selesai bila
 

@@ -10,6 +10,10 @@
  * `#form-massal` (atribut `form`): Tandai Lunas, Kembalikan ke Menunggu, atau
  * Hapus untuk yang dicentang di halaman tabel ini (K76).
  *
+ * F8-02: kolom Status diberi tanda "Bukti baru" (bentuk `statusBukti`) dan
+ * saringan "Bukti baru belum diperiksa" (`bukti=baru`, juga bisa dibuka
+ * langsung dari kartu dasbor lewat `admin/pendaftaran?bukti=baru`).
+ *
  * @var CodeIgniter\View\View  $this
  * @var array<string, string>  $jenjang   kode => label
  * @var list<string>           $kabupaten
@@ -28,6 +32,7 @@
     <p class="teks-info mb-4">
         Semua pendaftaran yang masuk lewat halaman Pendaftaran. Buka rinciannya untuk melihat atlet,
         menandai Lunas setelah transfer diperiksa, atau menghapus pendaftaran yang batal.
+        Riwayat pendaftaran yang sudah dihapus bisa dicari di <a href="<?= site_url('admin/riwayat') ?>">Riwayat pendaftaran</a>.
     </p>
 
     <section class="card" aria-labelledby="judul-tabel-pendaftaran">
@@ -41,6 +46,13 @@
                         <option value="">Semua status</option>
                         <option value="lunas">Lunas</option>
                         <option value="menunggu">Menunggu</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" for="saring-bukti">Bukti bayar</label>
+                    <select class="form-select" id="saring-bukti" name="bukti">
+                        <option value="">Semua</option>
+                        <option value="baru">Bukti baru belum diperiksa</option>
                     </select>
                 </div>
                 <div>
@@ -117,7 +129,7 @@
                         <th data-kolom="kabupaten">Kabupaten/Kota</th>
                         <th data-kolom="jumlah_atlet" data-bentuk="angka" class="text-end">Atlet</th>
                         <th data-kolom="total" data-bentuk="rupiah" class="text-end">Total</th>
-                        <th data-kolom="status" data-bentuk="status">Status</th>
+                        <th data-kolom="status" data-bentuk="statusBukti">Status</th>
                         <th data-kolom="alamat" data-bentuk="rincian" data-urut="tidak" class="text-end"><span class="visually-hidden">Tindakan</span></th>
                     </tr>
                 </thead>

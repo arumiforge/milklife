@@ -11,7 +11,8 @@
  * Data yang dibaca (dari sesi kilat, bukan dari data tampilan):
  * - `pesan_sukses` (string): simpan atau hapus berhasil. Kotak hijau.
  * - `pesan_galat` (string): tindakan gagal karena keadaan data; sebut sebab
- *   dan jalan keluarnya. Kotak merah.
+ *   dan jalan keluarnya. Kotak merah. Juga dipakai `App\Filters\CsrfFilter`
+ *   untuk kiriman dari halaman yang terlalu lama terbuka (F7-24).
  * Teks biasa; di-escape di sini. Keduanya boleh muncul bersamaan.
  *
  * Isian formulir yang salah tidak memakai pesan kilat, tetapi

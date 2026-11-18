@@ -17,6 +17,7 @@ use Throwable;
  *   tetap Menunggu dan tidak ada nomor yang dibagikan.
  *   Setelah itu pendaftaran Lunas lain dengan NPSN sama digabung menjadi
  *   satu (`GabungPendaftaran`, K109).
+ *   Bukti bayar yang belum diperiksa ikut ditandai sudah diperiksa (F8-02).
  * - `kembaliMenunggu()`: status kembali ke Menunggu, `waktu_lunas` dikosongkan.
  *   Nomor dada tidak dihapus; saat ditandai Lunas lagi nomornya tetap.
  * - `beriNomorDada()`: beri nomor kepada atlet satu pendaftaran yang belum
@@ -80,7 +81,7 @@ final class StatusPembayaran
      *         `nomor`: id atlet => nomor dada yang baru dibagikan.
      *         `gabung`: hasil `GabungPendaftaran::gabungNpsn()`, atau `null` bila tidak ada yang digabung.
      */
-    public function tandaiLunas(int $pendaftaranId): array
+    public function tandaiLunas(int $pendaftaranId, bool $massal = false): array
     {
         // Kunci sekolah yang sama dengan wizard dan Ubah, supaya dua pendaftaran
         // ber-NPSN sama yang ditandai Lunas bersamaan tetap tergabung (K109).
@@ -98,7 +99,7 @@ final class StatusPembayaran
         }
 
         try {
-            $hasil = $this->tandaiLunasTerkunci($pendaftaranId);
+            $hasil = $this->tandaiLunasTerkunci($pendaftaranId, $massal);
         } finally {
             if ($kunci !== null) {
                 $this->db->query('SELECT RELEASE_LOCK(?)', [$kunci]);
@@ -115,7 +116,7 @@ final class StatusPembayaran
     /**
      * @return array{berhasil: bool, pesan: string|null, nomor: array<int, string>, gabung: array<string, mixed>|null}
      */
-    private function tandaiLunasTerkunci(int $pendaftaranId): array
+    private function tandaiLunasTerkunci(int $pendaftaranId, bool $massal): array
     {
         $this->mulai();
 
@@ -149,6 +150,16 @@ final class StatusPembayaran
                 'diubah_pada' => $sekarang,
             ]));
 
+            // F8-02: bukti bayar yang belum diperiksa dianggap sudah diperiksa saat Lunas.
+            $diperiksa = (new BuktiDiperiksa($this->db))->tandai($pendaftaranId);
+
+            // F8-01: dicatat sebelum digabung, supaya catatannya ikut pindah ke pendaftaran tujuan.
+            $nomorBaru = array_values($nomor['nomor']);
+            sort($nomorBaru);
+            (new RiwayatAdmin($this->db))->catat($pendaftaranId, (string) $baris['id_pendaftaran'], RiwayatAdmin::LUNAS, 'Ditandai Lunas' . ($massal ? ' (tindakan massal)' : '') . '. '
+                . ($nomorBaru === [] ? 'Tidak ada nomor atlet (BIB) baru.' : count($nomorBaru) . ' atlet mendapat nomor atlet (BIB) baru: ' . implode(', ', $nomorBaru) . '.')
+                . ($diperiksa > 0 ? ' ' . $diperiksa . ' bukti bayar baru ditandai sudah diperiksa.' : ''));
+
             // K109: pendaftaran Lunas lain dengan NPSN sama digabung menjadi satu.
             $gabung = (new GabungPendaftaran($this->db))->gabungNpsn($baris['npsn'] ?? null);
 
@@ -167,7 +178,7 @@ final class StatusPembayaran
      *
      * @return array{berhasil: bool, pesan: string|null}
      */
-    public function kembaliMenunggu(int $pendaftaranId): array
+    public function kembaliMenunggu(int $pendaftaranId, bool $massal = false): array
     {
         $this->mulai();
 
@@ -191,6 +202,9 @@ final class StatusPembayaran
                 'waktu_lunas' => null,
                 'diubah_pada' => self::sekarang(),
             ]));
+
+            (new RiwayatAdmin($this->db))->catat($pendaftaranId, (string) $baris['id_pendaftaran'], RiwayatAdmin::MENUNGGU, 'Status kembali dari Lunas ke Menunggu'
+                . ($massal ? ' (tindakan massal)' : '') . '. Nomor atlet (BIB) tetap.');
 
             $this->selesai();
 
@@ -336,7 +350,7 @@ final class StatusPembayaran
      */
     private function kunciPendaftaran(int $pendaftaranId): ?array
     {
-        return $this->baca('SELECT id, status, npsn FROM pendaftaran WHERE id = ? FOR UPDATE', [$pendaftaranId])[0] ?? null;
+        return $this->baca('SELECT id, id_pendaftaran, status, npsn FROM pendaftaran WHERE id = ? FOR UPDATE', [$pendaftaranId])[0] ?? null;
     }
 
     /**

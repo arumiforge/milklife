@@ -89,6 +89,9 @@ final class MigrasiStrukturTest extends UjiBasisData
             'jenis_kelamin'    => ["enum('L','P')", false, null],
             'kelompok_umur_id' => ['int unsigned', false, null],
             'nomor_dada'       => ['char(4)', true, null],
+            // F8-03: tanda hadir saat daftar ulang hari lomba.
+            'hadir_pada'       => ['datetime', true, null],
+            'hadir_oleh'       => ['varchar(100)', true, null],
             'dibuat_pada'      => ['datetime', true, null],
             'diubah_pada'      => ['datetime', true, null],
         ],
@@ -140,6 +143,9 @@ final class MigrasiStrukturTest extends UjiBasisData
             'berkas'         => ['varchar(255)', false, null],
             'ukuran'         => ['int unsigned', false, null],
             'waktu_unggah'   => ['datetime', true, null],
+            // F8-02: kosong = bukti baru yang belum diperiksa admin.
+            'diperiksa_pada' => ['datetime', true, null],
+            'diperiksa_oleh' => ['varchar(100)', true, null],
         ],
         // K99: usulan nama sekolah dari pendaftar.
         'usulan_nama_sekolah' => [
@@ -182,6 +188,17 @@ final class MigrasiStrukturTest extends UjiBasisData
             'ditolak_oleh'            => ['varchar(100)', true, null],
             'dibuat_pada'             => ['datetime', true, null],
         ],
+        // F8-01 (K124): riwayat tindakan admin per pendaftaran.
+        'riwayat_admin' => [
+            'id'             => ['int unsigned', false, null],
+            'pendaftaran_id' => ['int unsigned', true, null],
+            'id_pendaftaran' => ['varchar(20)', false, null],
+            'admin_id'       => ['int unsigned', true, null],
+            'nama_admin'     => ['varchar(100)', false, null],
+            'tindakan'       => ['varchar(30)', false, null],
+            'ringkasan'      => ['text', false, null],
+            'dibuat_pada'    => ['datetime', true, null],
+        ],
         'tautan' => [
             'id'          => ['int unsigned', false, null],
             'jenis'       => ["enum('narahubung','media_sosial')", false, null],
@@ -218,6 +235,8 @@ final class MigrasiStrukturTest extends UjiBasisData
         'pendaftaran_gabungan.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
         // K116: catatan atlet ditolak ikut terhapus bersama pendaftarannya.
         'atlet_ditolak.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
+        // F8-01: riwayat tetap ada (tanpa pendaftaran_id) setelah pendaftarannya dihapus.
+        'riwayat_admin.pendaftaran_id' => ['pendaftaran', 'SET NULL'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void
@@ -343,7 +362,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             $this->assertContains($harapan, $unik, "Kunci unik {$harapan}.");
         }
 
-        foreach (['pendaftaran:npsn', 'pendaftaran:status', 'atlet:nama', 'atlet_ditolak:nisn'] as $harapan) {
+        foreach (['pendaftaran:npsn', 'pendaftaran:status', 'atlet:nama', 'atlet_ditolak:nisn', 'riwayat_admin:id_pendaftaran'] as $harapan) {
             $this->assertContains($harapan, $tidakUnik, "Indeks {$harapan}.");
         }
     }

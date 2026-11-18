@@ -3,6 +3,7 @@
 use App\Libraries\Panel\BerkasBuktiBayar;
 use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
+use CodeIgniter\HTTP\DownloadResponse;
 use Tests\Support\KirimFormulir;
 use Tests\Support\PanelDataContoh;
 use Tests\Support\UjiBasisData;
@@ -24,12 +25,14 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
     {
         parent::setUp();
         $this->siapkanDataPanel();
+        $this->bersihkanSementara();
         $this->zip = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'milklife-paket-' . bin2hex(random_bytes(6)) . '.zip';
     }
 
     protected function tearDown(): void
     {
         @unlink($this->zip);
+        $this->bersihkanSementara();
         $this->bersihkanBerkasPanel();
         parent::tearDown();
     }
@@ -183,14 +186,67 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         (new PaketPendaftaran())->impor($this->zip);
     }
 
+    public function testEksporMenghapusBerkasSementaraLebihDariSatuJam(): void
+    {
+        $folder   = PaketPendaftaran::FOLDER_SEMENTARA;
+        $sekarang = time();
+        $lama     = PaketPendaftaran::jalurSementara();
+        $baru     = PaketPendaftaran::jalurSementara();
+        $lain     = $folder . '/bukan-backup.txt';
+
+        $this->assertStringStartsWith($folder . '/Backup_', $lama);
+        $this->assertNotSame($lama, $baru, 'Nama berkas sementara harus acak.');
+
+        foreach ([$lama, $baru, $lain] as $berkas) {
+            file_put_contents($berkas, 'isi');
+        }
+        touch($lama, $sekarang - PaketPendaftaran::UMUR_SEMENTARA - 1);
+        touch($baru, $sekarang - PaketPendaftaran::UMUR_SEMENTARA + 60);
+        touch($lain, $sekarang - 10 * PaketPendaftaran::UMUR_SEMENTARA);
+
+        $this->buatPendaftaranPanel();
+        $this->bukaSebagaiAdmin('admin/pendaftaran/ekspor')->assertStatus(200);
+
+        $this->assertFileDoesNotExist($lama, 'Zip lebih dari 1 jam harus dihapus.');
+        $this->assertFileExists($baru, 'Zip yang belum 1 jam (mungkin sedang diunduh) tidak boleh dihapus.');
+        $this->assertFileExists($lain, 'Hanya zip Backup yang dihapus.');
+        $this->assertCount(2, glob($folder . '/Backup_*.zip') ?: []);
+    }
+
+    public function testHapusSementaraLama(): void
+    {
+        $folder = PaketPendaftaran::FOLDER_SEMENTARA;
+        @mkdir($folder, 0700, true);
+        file_put_contents($folder . '/Backup_a.zip', 'a');
+        touch($folder . '/Backup_a.zip', 1_000_000);
+
+        $this->assertSame(0, PaketPendaftaran::hapusSementaraLama($folder, 1_000_000 + PaketPendaftaran::UMUR_SEMENTARA));
+        $this->assertSame(1, PaketPendaftaran::hapusSementaraLama($folder, 1_000_001 + PaketPendaftaran::UMUR_SEMENTARA));
+        $this->assertFileDoesNotExist($folder . '/Backup_a.zip');
+    }
+
     public function testTombolEksporMengunduhZipDanPerintahImpor(): void
     {
         $this->buatPendaftaranPanel();
 
         $hasil = $this->bukaSebagaiAdmin('admin/pendaftaran/ekspor');
-        $hasil->assertOK();
-        $this->assertStringContainsString('Backup_Pendaftaran_', $hasil->response()->getHeaderLine('Content-Disposition'));
-        file_put_contents($this->zip, (string) $hasil->response()->getBody());
+        $hasil->assertStatus(200);
+
+        // F7-25: dikirim dari berkas di `writable/cache/ekspor/`, tanpa dimuat ke memori.
+        $jawaban = $hasil->response();
+        $this->assertInstanceOf(DownloadResponse::class, $jawaban);
+        $this->assertSame('', (string) $jawaban->getBody(), 'Isi zip tidak boleh dimuat ke badan jawaban.');
+        $jawaban->buildHeaders(); // dipanggil `send()` sebelum isi dikirim
+        $this->assertStringStartsWith('application/zip', $jawaban->getHeaderLine('Content-Type'));
+        $this->assertMatchesRegularExpression('/attachment; filename="Backup_Pendaftaran_\d{8}_\d{6}\.zip"/', $jawaban->getHeaderLine('Content-Disposition'));
+        $sementara = glob(PaketPendaftaran::FOLDER_SEMENTARA . '/Backup_*.zip') ?: [];
+        $this->assertCount(1, $sementara);
+        $this->assertSame((string) filesize($sementara[0]), $jawaban->getHeaderLine('Content-Length'));
+
+        ob_start();
+        $jawaban->sendBody();
+        file_put_contents($this->zip, (string) ob_get_clean());
+        $this->assertSame(md5_file($sementara[0]), md5_file($this->zip));
 
         $this->db->query('DELETE FROM pendaftaran');
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('pendaftaran:impor', [$this->zip]));
@@ -237,6 +293,13 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
             foreach (glob($folder . '/*.jpg') ?: [] as $berkas) {
                 unlink($berkas);
             }
+        }
+    }
+
+    private function bersihkanSementara(): void
+    {
+        foreach (glob(PaketPendaftaran::FOLDER_SEMENTARA . '/*') ?: [] as $berkas) {
+            @unlink($berkas);
         }
     }
 }

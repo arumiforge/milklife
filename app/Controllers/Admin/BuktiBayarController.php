@@ -4,7 +4,10 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Libraries\Panel\BerkasBuktiBayar;
+use App\Libraries\Panel\BuktiDiperiksa;
+use App\Libraries\Panel\RiwayatAdmin;
 use App\Models\BuktiBayarModel;
+use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\DownloadResponse;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -33,6 +36,9 @@ use Throwable;
  * - `POST admin/pendaftaran/<id>/bukti-bayar/<bukti>/hapus`: hapus baris dan
  *   berkasnya.
  *
+ * - `POST admin/pendaftaran/<id>/bukti-bayar/diperiksa`: tombol "Sudah
+ *   diperiksa" untuk bukti baru dari ofisial (F8-02).
+ *
  * Setelah unggah atau hapus, admin dikembalikan ke rincian pendaftaran
  * dengan pesan kilat `pesan_sukses` atau `pesan_galat`.
  *
@@ -59,7 +65,7 @@ class BuktiBayarController extends BaseController
     {
         $pendaftaran = $this->cariPendaftaran($id);
         $kembali     = self::alamatRincian($id);
-        $pesan       = (new BerkasBuktiBayar())->unggahKe($id, $this->request->getFile(self::KOTAK));
+        $pesan       = (new BerkasBuktiBayar())->unggahKe($id, $this->request->getFile(self::KOTAK), olehAdmin: true);
 
         if ($pesan !== null) {
             return redirect()->to($kembali)->with('pesan_galat', $pesan === BerkasBuktiBayar::PENUH ? self::pesanPenuh() : $pesan);
@@ -113,6 +119,12 @@ class BuktiBayarController extends BaseController
 
         try {
             $terhapus = $model->delete($buktiId);
+
+            if ($terhapus) {
+                // F8-01: dicatat di transaksi yang sama.
+                (new RiwayatAdmin($db))->catatUntuk($id, RiwayatAdmin::HAPUS_BUKTI, 'Bukti bayar ke-' . $urutan . ' dihapus'
+                    . ($baris['waktu_unggah'] === null ? '' : ' (diunggah ' . tanggal_id((string) $baris['waktu_unggah'], true) . ')') . '.');
+            }
         } catch (Throwable $e) {
             $db->transRollback();
 
@@ -138,6 +150,32 @@ class BuktiBayarController extends BaseController
         $db->transCommit();
 
         return redirect()->to($kembali)->with('pesan_sukses', 'Bukti bayar ke-' . $urutan . ' sudah dihapus.');
+    }
+
+    /**
+     * Tombol "Sudah diperiksa" (F8-02): semua bukti bayar baru pendaftaran
+     * ini ditandai sudah diperiksa dan dicatat di riwayat. Membuka rincian
+     * saja tidak menandai apa pun.
+     */
+    public function diperiksa(int $id): RedirectResponse
+    {
+        $kembali = self::alamatRincian($id);
+
+        try {
+            $jumlah = (new BuktiDiperiksa())->tandaiDanCatat($id);
+        } catch (DatabaseException $e) {
+            log_message('error', 'Tandai bukti bayar diperiksa pendaftaran {id} gagal: {pesan}', ['id' => $id, 'pesan' => $e->getMessage()]);
+
+            return redirect()->to($kembali)->with('pesan_galat', 'Bukti bayar belum ditandai. Data sedang dipakai admin lain pada saat yang sama. Tunggu beberapa detik, lalu coba lagi.');
+        }
+
+        if ($jumlah === null) {
+            return redirect()->to('admin/pendaftaran')->with('pesan_galat', 'Pendaftaran ini tidak ditemukan. Mungkin sudah dihapus.');
+        }
+
+        return $jumlah === 0
+            ? redirect()->to($kembali)->with('pesan_sukses', 'Tidak ada bukti bayar baru; semuanya sudah diperiksa.')
+            : redirect()->to($kembali)->with('pesan_sukses', $jumlah . ' bukti bayar baru ditandai sudah diperiksa.');
     }
 
     /**

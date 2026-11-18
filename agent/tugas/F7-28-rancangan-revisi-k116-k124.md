@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | rencana |
 | Tahap | 7 — Penyelesaian |
 | Dibuat | 17 November 2026 |
 
@@ -12,9 +11,9 @@ Rancangan final memuat aturan yang sudah dibangun dan diputuskan: tolak atlet (K
 
 ## Hasil
 
-- [ ] `dokumen/final/rancangan-web-pendaftaran.md` diubah langsung sesuai K101 dengan baris revisi baru di kepala dokumen
-- [ ] Bagian yang berubah: tolak atlet dan menu Atlet ditolak, jejak navigasi, CSRF, kirim idempoten, Turnstile, cakupan hari lomba, hasil, dan klasemen (K124)
-- [ ] PDF dibuat ulang dengan `php spark dokumen:pdf`
+- [x] `dokumen/final/rancangan-web-pendaftaran.md` diubah langsung sesuai K101 dengan baris revisi baru di kepala dokumen
+- [x] Bagian yang berubah: tolak atlet dan menu Atlet ditolak, jejak navigasi, CSRF, kirim idempoten, Turnstile, cakupan hari lomba, hasil, dan klasemen (K124)
+- [x] PDF dibuat ulang dengan `php spark dokumen:pdf`
 
 ## Selesai bila
 

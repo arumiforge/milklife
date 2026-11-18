@@ -106,6 +106,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)/pdf', 'RekapController::pdf/$1');
     // ---------- Akhir panel data (Tahap 6) ----------
 
+    // ---------- F8-01/F8-02: riwayat tindakan admin dan bukti bayar baru ----------
+    // Cari riwayat menurut ID pendaftaran, termasuk yang sudah dihapus (F8-01).
+    $routes->get('riwayat', 'PendaftaranController::riwayat');
+    // Tombol "Sudah diperiksa" untuk bukti bayar baru dari ofisial (F8-02).
+    $routes->post('pendaftaran/(:num)/bukti-bayar/diperiksa', 'BuktiBayarController::diperiksa/$1');
+    // ---------- Akhir F8-01/F8-02 ----------
+
     // Data sekolah (K97): lihat dan sunting nama supaya sekolah bernama umum bisa dibedakan.
     $routes->get('sekolah', 'SekolahController::index');
     $routes->get('sekolah/data', 'SekolahController::data');
@@ -119,6 +126,20 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('sekolah/usulan', 'SekolahController::usulan');
     $routes->post('sekolah/usulan/(:num)/setujui', 'SekolahController::setujuiUsulan/$1');
     $routes->post('sekolah/usulan/(:num)/tolak', 'SekolahController::tolakUsulan/$1');
+
+    // ---------- Hari lomba (F8-03, K124) ----------
+    // Daftar ulang lewat kode QR bukti dan tanda hadir per atlet.
+    $routes->get('daftar-ulang', 'DaftarUlangController::index');
+    $routes->post('daftar-ulang/(:num)/hadir', 'DaftarUlangController::hadir/$1');
+    $routes->post('daftar-ulang/(:num)/batal-hadir', 'DaftarUlangController::batalHadir/$1');
+    // Cetak nomor atlet (BIB) massal: `?ku=<id kelompok umur>` atau `?ku=semua`.
+    $routes->get('nomor-atlet/cetak', 'CetakBibController::index');
+    $routes->get('nomor-atlet/cetak/pdf', 'CetakBibController::pdf');
+    // Daftar peserta per nomor lomba (PDF, Excel), juga semua nomor satu kelompok umur.
+    $routes->get('daftar-peserta', 'DaftarPesertaController::index');
+    $routes->get('daftar-peserta/(:num)/(pdf|excel)', 'DaftarPesertaController::unduh/$1/$2');
+    $routes->get('daftar-peserta/kelompok-umur/(:num)/(pdf|excel)', 'DaftarPesertaController::unduhKelompokUmur/$1/$2');
+    // ---------- Akhir hari lomba (F8-03) ----------
 
     // Pengaturan (Tahap 2). Semua rute ditulis F2-01; pengendalinya dibuat
     // tugas masing-masing (rencana Tahap 2, "Rute"). Selama pengendalinya

@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | selesai |
 | Tahap | 4 — Pendaftaran |
 | Dibuat | 12 November 2026 |
 

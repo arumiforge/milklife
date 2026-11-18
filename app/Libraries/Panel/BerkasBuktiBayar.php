@@ -219,13 +219,15 @@ final class BerkasBuktiBayar
      * Periksa, simpan, lalu catat satu bukti bayar untuk pendaftaran
      * `$pendaftaranId`. Dipakai panel admin dan official (K83).
      *
+     * `$olehAdmin`: unggahan dari panel admin, dicatat di riwayat (F8-01) dan
+     * langsung dianggap sudah diperiksa (F8-02); unggahan ofisial belum.
      * Hasil `null` bila tersimpan, `self::PENUH` bila batas sudah tercapai,
      * selain itu pesan galat ramah. Berkas disimpan di luar transaksi
      * (mengecilkan gambar butuh waktu); di dalam transaksi baris pendaftaran
      * dikunci supaya dua unggahan bersamaan tidak sama-sama lolos batas.
      * Bila baris gagal dicatat, berkas baru dihapus lagi.
      */
-    public function unggahKe(int $pendaftaranId, ?UploadedFile $unggahan): ?string
+    public function unggahKe(int $pendaftaranId, ?UploadedFile $unggahan, bool $olehAdmin = false): ?string
     {
         $model = model(BuktiBayarModel::class);
 
@@ -258,7 +260,11 @@ final class BerkasBuktiBayar
                 return self::PENUH;
             }
 
-            $baru = $model->insert(['pendaftaran_id' => $pendaftaranId] + $hasil);
+            // F8-02: bukti yang diunggah admin sendiri langsung dianggap sudah diperiksa.
+            $baru = $model->insert(['pendaftaran_id' => $pendaftaranId] + $hasil + ($olehAdmin ? [
+                'diperiksa_pada' => date('Y-m-d H:i:s'),
+                'diperiksa_oleh' => mb_substr(RiwayatAdmin::pelakuSesi()['nama'], 0, 100),
+            ] : []));
         } catch (Throwable $e) {
             $db->transRollback();
             $this->hapus($hasil['berkas']);
@@ -271,6 +277,19 @@ final class BerkasBuktiBayar
             $this->hapus($hasil['berkas']);
 
             return 'Bukti bayar belum tersimpan karena ada gangguan di server. Coba unggah sekali lagi; bila masih gagal, hubungi panitia.';
+        }
+
+        // F8-01: unggahan admin dicatat di riwayat tindakan admin, di transaksi yang sama.
+        if ($olehAdmin) {
+            try {
+                (new RiwayatAdmin($db))->catatUntuk($pendaftaranId, RiwayatAdmin::UNGGAH_BUKTI, 'Bukti bayar diunggah admin (gambar ke-'
+                    . $model->jumlahMilik($pendaftaranId) . ' dari paling banyak ' . BuktiBayarModel::BATAS . ').');
+            } catch (Throwable $e) {
+                $db->transRollback();
+                $this->hapus($hasil['berkas']);
+
+                throw $e;
+            }
         }
 
         $db->transCommit();

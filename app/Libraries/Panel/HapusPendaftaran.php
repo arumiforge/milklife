@@ -20,6 +20,9 @@ use Throwable;
  * - Baris pendaftaran dikunci (`SELECT … FOR UPDATE`) sebelum daftar berkas
  *   dibaca, supaya bukti bayar yang diunggah bersamaan menunggu dan tidak
  *   tertinggal sebagai berkas yatim.
+ * - Riwayat tindakan admin (F8-01) tetap disimpan dengan ID pendaftarannya,
+ *   ditambah satu baris "Hapus pendaftaran"; `pendaftaran_id`-nya menjadi
+ *   kosong. Dicari di `admin/riwayat`.
  * - Nomor dada tidak dipakai ulang: `awalan_nomor_dada.nomor_terakhir` tidak
  *   diturunkan.
  *
@@ -45,13 +48,13 @@ final class HapusPendaftaran
     /**
      * @return array{id_pendaftaran: string, nama_sekolah: string, jumlah_atlet: int}|null
      */
-    public function hapus(int $pendaftaranId): ?array
+    public function hapus(int $pendaftaranId, bool $massal = false): ?array
     {
         $this->db->resetTransStatus();
         $this->db->transBegin();
 
         try {
-            $baris = $this->baca('SELECT id, id_pendaftaran, nama_sekolah FROM pendaftaran WHERE id = ? FOR UPDATE', [$pendaftaranId])[0] ?? null;
+            $baris = $this->baca('SELECT id, id_pendaftaran, nama_sekolah, status, total FROM pendaftaran WHERE id = ? FOR UPDATE', [$pendaftaranId])[0] ?? null;
 
             if ($baris === null) {
                 $this->db->transRollback();
@@ -62,6 +65,11 @@ final class HapusPendaftaran
             $foto        = array_values(array_filter(array_column($this->baca('SELECT foto FROM penanggung_jawab WHERE pendaftaran_id = ?', [$pendaftaranId]), 'foto')));
             $bukti       = array_column($this->baca('SELECT berkas FROM bukti_bayar WHERE pendaftaran_id = ?', [$pendaftaranId]), 'berkas');
             $jumlahAtlet = (int) ($this->baca('SELECT COUNT(*) AS jumlah FROM atlet WHERE pendaftaran_id = ?', [$pendaftaranId])[0]['jumlah'] ?? 0);
+
+            // F8-01: riwayatnya tetap ada; `pendaftaran_id` menjadi kosong lewat kunci asing.
+            (new RiwayatAdmin($this->db))->catat($pendaftaranId, (string) $baris['id_pendaftaran'], RiwayatAdmin::HAPUS, 'Pendaftaran ' . $baris['nama_sekolah']
+                . ' dihapus' . ($massal ? ' (tindakan massal)' : '') . ' beserta ' . $jumlahAtlet . ' atlet dan ' . count($bukti) . ' bukti bayar. Status saat dihapus: '
+                . ($baris['status'] === 'lunas' ? 'Lunas' : 'Menunggu') . ', total ' . rupiah((int) $baris['total']) . '.');
 
             if ($this->db->table('pendaftaran')->where('id', $pendaftaranId)->delete() === false || $this->db->transStatus() === false) {
                 throw $this->galat('Pendaftaran gagal dihapus');

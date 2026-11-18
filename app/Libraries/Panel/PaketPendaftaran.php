@@ -28,6 +28,10 @@ use ZipArchive;
  *   sudah digabung ke situ (K109), supaya kode QR bukti lama tetap berlaku,
  *   dan `atlet_ditolak`: atlet yang ditolak panitia (K116; boleh tidak ada), serta
  *   `kunci_kirim` dari wizard (K118; boleh tidak ada).
+ *   `riwayat_admin`: riwayat tindakan admin (F8-01), juga milik pendaftaran
+ *   yang sudah dihapus (boleh tidak ada).
+ *   Atlet membawa `hadir_pada` dan `hadir_oleh` (tanda hadir hari lomba,
+ *   F8-03; boleh tidak ada di paket lama).
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -52,11 +56,68 @@ final class PaketPendaftaran
      */
     private const POLA_BERKAS = '#^(' . FotoPenanggungJawab::FOLDER . '|' . BerkasBuktiBayar::FOLDER . ')/[0-9a-f]{32}\.jpg$#D';
 
+    /**
+     * Folder zip sementara tombol Backup data di panel (F7-25, K118).
+     */
+    public const FOLDER_SEMENTARA = WRITEPATH . 'cache/ekspor';
+
+    /**
+     * Umur zip sementara (detik) sebelum dihapus saat ekspor berikutnya.
+     */
+    public const UMUR_SEMENTARA = 3600;
+
     private BaseConnection $db;
 
     public function __construct(?BaseConnection $db = null)
     {
         $this->db = $db ?? db_connect();
+    }
+
+    /**
+     * Jalur baru untuk zip sementara tombol Backup data (F7-25, K118).
+     *
+     * Zip dikirim ke peramban langsung dari berkas (tanpa dimuat ke memori),
+     * jadi tidak bisa dihapus di permintaan yang sama. Sebagai gantinya, setiap
+     * ekspor baru menghapus zip sementara yang lebih tua dari
+     * `UMUR_SEMENTARA`. Nama berkas acak supaya dua admin yang mengekspor
+     * bersamaan tidak saling menimpa.
+     *
+     * @param string|null $folder   Untuk uji; bawaan `FOLDER_SEMENTARA`.
+     * @param int|null    $sekarang Untuk uji; bawaan `time()`.
+     *
+     * @throws RuntimeException Bila folder tidak bisa dibuat.
+     */
+    public static function jalurSementara(?string $folder = null, ?int $sekarang = null): string
+    {
+        $folder = rtrim($folder ?? self::FOLDER_SEMENTARA, '/');
+
+        if (! is_dir($folder) && ! @mkdir($folder, 0700, true) && ! is_dir($folder)) {
+            throw new RuntimeException('Folder sementara untuk Backup data tidak bisa dibuat. Minta pengelola server memeriksa izin tulis folder writable/cache.');
+        }
+
+        self::hapusSementaraLama($folder, $sekarang ?? time());
+
+        return $folder . '/Backup_' . bin2hex(random_bytes(16)) . '.zip';
+    }
+
+    /**
+     * Hapus zip sementara di `$folder` yang lebih tua dari `UMUR_SEMENTARA`.
+     *
+     * @return int Jumlah berkas yang dihapus.
+     */
+    public static function hapusSementaraLama(string $folder, int $sekarang): int
+    {
+        $jumlah = 0;
+
+        foreach (glob(rtrim($folder, '/') . '/Backup_*.zip') ?: [] as $berkas) {
+            $waktu = @filemtime($berkas);
+
+            if (is_file($berkas) && $waktu !== false && $sekarang - $waktu > self::UMUR_SEMENTARA && @unlink($berkas)) {
+                $jumlah++;
+            }
+        }
+
+        return $jumlah;
     }
 
     /**
@@ -140,6 +201,8 @@ final class PaketPendaftaran
                     'jenis_kelamin' => $a['jenis_kelamin'],
                     'kelompok_umur' => $ku[$a['kelompok_umur_id']] ?? '',
                     'nomor_dada'    => $a['nomor_dada'],
+                    'hadir_pada'    => $a['hadir_pada'] ?? null,
+                    'hadir_oleh'    => $a['hadir_oleh'] ?? null,
                     'dibuat_pada'   => $a['dibuat_pada'],
                     'diubah_pada'   => $a['diubah_pada'],
                     'nomor'         => $ikutNomor[(int) $a['id']] ?? [],
@@ -154,7 +217,11 @@ final class PaketPendaftaran
 
                     $berkas[$b['berkas']] = BerkasBuktiBayar::folderDasar() . $b['berkas'];
 
-                    return ['berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah']];
+                    return [
+                        'berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah'],
+                        // F8-02: penanda bukti yang sudah diperiksa admin.
+                        'diperiksa_pada' => $b['diperiksa_pada'] ?? null, 'diperiksa_oleh' => $b['diperiksa_oleh'] ?? null,
+                    ];
                 }, $bukti[$id] ?? []))),
                 // ID dan kode bukti lama yang sudah digabung ke sini (K109).
                 'gabungan_dari' => array_map(static fn (array $g): array => [
@@ -192,6 +259,10 @@ final class PaketPendaftaran
             'pendaftaran' => $data,
             'usulan_nama' => $this->db->table('usulan_nama_sekolah')
                 ->select('npsn, pendaftaran_id, nama_lama, nama_usulan, status, nama_disetujui, alasan, diputuskan_pada, dibuat_pada, diubah_pada')
+                ->orderBy('id')->get()->getResultArray(),
+            // Riwayat tindakan admin (F8-01), termasuk milik pendaftaran yang sudah dihapus.
+            'riwayat_admin' => $this->db->table('riwayat_admin')
+                ->select('pendaftaran_id, id_pendaftaran, nama_admin, tindakan, ringkasan, dibuat_pada')
                 ->orderBy('id')->get()->getResultArray(),
             'sekolah_disunting' => $this->db->table('sekolah')
                 ->select('npsn, nama, bentuk, jenjang, status, alamat, desa_kelurahan, kecamatan, kabupaten, disunting_pada')
@@ -458,6 +529,8 @@ final class PaketPendaftaran
                     'jenis_kelamin'    => (string) $a['jenis_kelamin'],
                     'kelompok_umur_id' => $ku[$a['kelompok_umur']],
                     'nomor_dada'       => $a['nomor_dada'],
+                    'hadir_pada'       => $a['hadir_pada'] ?? null,
+                    'hadir_oleh'       => $a['hadir_oleh'] ?? null,
                     'dibuat_pada'      => $a['dibuat_pada'],
                     'diubah_pada'      => $a['diubah_pada'],
                 ]);
@@ -484,7 +557,15 @@ final class PaketPendaftaran
 
             foreach ($p['bukti_bayar'] ?? [] as $b) {
                 if ($this->berkasSah($b['berkas'] ?? null)) {
-                    $tabel('bukti_bayar', ['pendaftaran_id' => $id, 'berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah']]);
+                    // Paket dari sebelum F8-02 tidak punya penanda: bukti pendaftaran Lunas dianggap sudah diperiksa.
+                    $diperiksa = array_key_exists('diperiksa_pada', $b)
+                        ? (is_string($b['diperiksa_pada']) ? $b['diperiksa_pada'] : null)
+                        : ((string) $p['status'] === 'lunas' ? ($p['waktu_lunas'] ?? $b['waktu_unggah']) : null);
+                    $tabel('bukti_bayar', [
+                        'pendaftaran_id' => $id, 'berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah'],
+                        'diperiksa_pada' => $diperiksa,
+                        'diperiksa_oleh' => $diperiksa === null ? null : mb_substr(is_string($b['diperiksa_oleh'] ?? null) ? $b['diperiksa_oleh'] : 'Data lama', 0, 100),
+                    ]);
                 }
             }
 
@@ -543,8 +624,42 @@ final class PaketPendaftaran
             $this->db->query('UPDATE awalan_nomor_dada SET nomor_terakhir = GREATEST(nomor_terakhir, ?) WHERE awalan = ?', [$angka, (string) $awalan]);
         }
 
+        $this->simpanRiwayat(is_array($isi['riwayat_admin'] ?? null) ? $isi['riwayat_admin'] : [], $isi['pendaftaran'], $tabel);
         $this->simpanSekolahDisunting(is_array($isi['sekolah_disunting'] ?? null) ? $isi['sekolah_disunting'] : [], $tabel);
         $this->simpanUsulanNama(is_array($isi['usulan_nama'] ?? null) ? $isi['usulan_nama'] : [], $isi['pendaftaran'], $tabel);
+    }
+
+    /**
+     * Riwayat tindakan admin (F8-01). `pendaftaran_id` dipertahankan bila
+     * pendaftarannya ikut diimpor (ID-nya sama), selain itu kosong (pendaftaran
+     * yang sudah dihapus). `admin_id` dikosongkan karena akun admin server baru
+     * berbeda; nama admin saat itu tetap.
+     *
+     * @param list<mixed>                                  $daftar
+     * @param list<array<string, mixed>>                   $pendaftaran
+     * @param callable(string, array<string, mixed>): int $tabel
+     */
+    private function simpanRiwayat(array $daftar, array $pendaftaran, callable $tabel): void
+    {
+        $ada = array_flip(array_map(static fn (array $p): int => (int) $p['id'], $pendaftaran));
+
+        foreach ($daftar as $r) {
+            if (! is_array($r) || ! is_string($r['id_pendaftaran'] ?? null) || ! is_string($r['tindakan'] ?? null) || ! is_string($r['ringkasan'] ?? null)) {
+                continue;
+            }
+
+            $id = is_numeric($r['pendaftaran_id'] ?? null) ? (int) $r['pendaftaran_id'] : null;
+
+            $tabel('riwayat_admin', [
+                'pendaftaran_id' => $id !== null && isset($ada[$id]) ? $id : null,
+                'id_pendaftaran' => mb_substr($r['id_pendaftaran'], 0, 20),
+                'admin_id'       => null,
+                'nama_admin'     => mb_substr(is_string($r['nama_admin'] ?? null) ? $r['nama_admin'] : 'Admin', 0, 100),
+                'tindakan'       => mb_substr($r['tindakan'], 0, 30),
+                'ringkasan'      => $r['ringkasan'],
+                'dibuat_pada'    => is_string($r['dibuat_pada'] ?? null) ? $r['dibuat_pada'] : null,
+            ]);
+        }
     }
 
     /**
