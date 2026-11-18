@@ -13,7 +13,7 @@ Diperbarui: 18 November 2026
 | [F7-04 Rancangan revisi 4](tugas/F7-04-rancangan-revisi-4.md) | selesai | 1 | [#57](https://github.com/arumiforge/milklife/pull/57), [#59](https://github.com/arumiforge/milklife/pull/59) |
 | [F7-03 Tim tanpa pembayar](tugas/F7-03-tim-tanpa-pembayar.md) | selesai | 2 | [#62](https://github.com/arumiforge/milklife/pull/62) |
 | [F7-05 Cadangan dan panduan produksi](tugas/F7-05-cadangan-panduan-produksi.md) | selesai | 2 | [#63](https://github.com/arumiforge/milklife/pull/63) |
-| [F7-06 Uji menyeluruh](tugas/F7-06-uji-menyeluruh.md) | rencana | 3 | |
+| [F7-06 Uji menyeluruh](tugas/F7-06-uji-menyeluruh.md) | selesai | 3 | (PR ini, bersama F8-06) |
 | [F7-07 Penutupan](tugas/F7-07-penutupan-tahap-7.md) | rencana | 4 | |
 | [F7-08 Data sekolah dan menu Sekolah](tugas/F7-08-data-sekolah-panel.md) | selesai | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
 | [F7-09 Usulan nama sekolah dan dokumen final](tugas/F7-09-usulan-nama-sekolah.md) | selesai | sisipan | [#81](https://github.com/arumiforge/milklife/pull/81) |
@@ -40,21 +40,9 @@ Diperbarui: 18 November 2026
 | [F7-30 Pecah berkas besar](tugas/F7-30-pecah-berkas-besar.md) | selesai | sisipan 3 | [#108](https://github.com/arumiforge/milklife/pull/108) |
 | [F7-31 PHPStan](tugas/F7-31-phpstan.md) | selesai | sisipan 3 | [#111](https://github.com/arumiforge/milklife/pull/111) |
 | [F7-33 Kelompok umur pilihan dalam satu jenjang](tugas/F7-33-kelompok-umur-pilihan.md) | selesai | sisipan | [#109](https://github.com/arumiforge/milklife/pull/109) |
-| [F7-32 CSP menyala](tugas/F7-32-csp-menyala.md) | selesai | sisipan 3 | (PR ini) |
+| [F7-32 CSP menyala](tugas/F7-32-csp-menyala.md) | selesai | sisipan 3 | [#115](https://github.com/arumiforge/milklife/pull/115) |
 
-Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24, F7-25), 1b (F7-26 lalu F7-27), 1c (F7-28, F7-29); gelombang 3 = F7-30 setelah F7-26, F7-27, dan F8-01 masuk `main`, lalu F7-31; F7-32 (CSP, K127) setelah F7-30 dan F8-04/F8-05 masuk `main`. F7-06 dan F7-07 paling akhir, bersama F8-06.
-
-**Tahap 8 — Hari lomba dan hasil** (K124), rencana: [`dokumen/draf/rencana-implementasi-tahap-8.md`](../dokumen/draf/rencana-implementasi-tahap-8.md), disetujui pemilik beserta delapan asumsinya (K125). Pertemuan teknik 6 Desember 2026, lomba 9–12 Desember 2026.
-
-| Tugas | Status | Gelombang | PR |
-|---|---|---|---|
-| [F8-01 Riwayat tindakan admin](tugas/F8-01-riwayat-tindakan-admin.md) | selesai | 2d | [#102](https://github.com/arumiforge/milklife/pull/102) |
-| [F8-02 Penanda bukti bayar baru](tugas/F8-02-penanda-bukti-baru.md) | selesai | 2d | [#103](https://github.com/arumiforge/milklife/pull/103) |
-| [F8-03 Fitur hari lomba](tugas/F8-03-hari-lomba.md) | selesai | 2e | [#104](https://github.com/arumiforge/milklife/pull/104) |
-| [F8-04 Hasil lomba](tugas/F8-04-hasil-lomba.md) | selesai | 2f | [#113](https://github.com/arumiforge/milklife/pull/113) |
-| [F8-05 Klasemen sekolah](tugas/F8-05-klasemen-sekolah.md) | selesai | 2f | [#114](https://github.com/arumiforge/milklife/pull/114) |
-| [F8-07 Menu ponsel: sidebar dan 5 butir bawah](tugas/F8-07-menu-ponsel-sidebar.md) | selesai | 2 | [#107](https://github.com/arumiforge/milklife/pull/107) |
-| [F8-06 Penutupan Tahap 8](tugas/F8-06-penutupan-tahap-8.md) | rencana | akhir | |
+Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24, F7-25), 1b (F7-26 lalu F7-27), 1c (F7-28, F7-29); gelombang 3 = F7-30 setelah F7-26, F7-27, dan F8-01 masuk `main`, lalu F7-31; F7-32 (CSP, K127) setelah F7-30 dan F8-04/F8-05 masuk `main`. F7-06 dan F7-07 paling akhir, bersama F8-06. Tahap 8 sudah ditutup (F8-06) dan diarsipkan.
 
 ## Berikutnya
 
@@ -69,6 +57,7 @@ Setelah Tahap 7 dan 8 ditutup, pembaruan server mengikuti bagian 10 panduan prod
 - Tahap 4 — Pendaftaran: [`arsip/tahap-4.md`](arsip/tahap-4.md).
 - Tahap 5 — Bukti dan cek: [`arsip/tahap-5.md`](arsip/tahap-5.md). Selesai 12 November 2026, lebih dulu dari Tahap 4; uji gabungan wizard → cek → bukti dijalankan penutupan Tahap 4.
 - Tahap 6 — Panel data: [`arsip/tahap-6.md`](arsip/tahap-6.md). Selesai 12 November 2026; F6-01 sampai F6-07 (#47, #50, #49, #51, #52, #54, #53) dan penutupan F6-08.
+- Tahap 8 — Hari lomba dan hasil: [`arsip/tahap-8.md`](arsip/tahap-8.md). Selesai 18 November 2026; F8-01 sampai F8-05 dan F8-07 (#102, #103, #104, #113, #114, #107), penutupan F8-06 bersama F7-06.
 
 ## Menunggu pemilik
 
