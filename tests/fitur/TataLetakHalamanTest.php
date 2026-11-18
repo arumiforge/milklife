@@ -174,6 +174,8 @@ final class TataLetakHalamanTest extends UjiHalaman
             ...$bawahLima($ditolak),
             // Hari lomba (F8-03).
             [$lomba, site_url('admin/daftar-ulang'), ''],
+            // Hasil lomba (F8-04, K130), hanya di menu samping.
+            ['Hasil lomba', site_url('admin/hasil'), ''],
             ['Sekolah', site_url('admin/sekolah'), ''],
             ['Pengaturan', site_url('admin/pengaturan'), ''],
         ];
@@ -226,8 +228,8 @@ final class TataLetakHalamanTest extends UjiHalaman
         // Halaman lain tidak menandai Dasbor.
         $xpath = $this->xpath($this->renderDiAlamat('admin/lain', 'Tests\Support\Views\contoh_admin'));
         $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
-        // Lima butir di menu bawah (K133), sepuluh di menu samping (K102, K117, F8-03).
-        $this->assertSame(15, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
+        // Lima butir di menu bawah (K133), sebelas di menu samping (K102, K117, F8-03, F8-04).
+        $this->assertSame(16, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));
