@@ -4,8 +4,9 @@
  * `App\Controllers\PendaftaranController::index`.
  *
  * Halaman dirender server sebagai kerangka lima langkah; `aset/js/pendaftaran.js`
- * mengisi dan menjalankannya dari data JSON `#data-pendaftaran`. Tanpa
- * JavaScript, halaman hanya menampilkan pesan agar JavaScript dinyalakan.
+ * bersama bagian-bagiannya di `aset/js/pendaftaran/` mengisi dan menjalankannya
+ * dari data JSON `#data-pendaftaran`. Tanpa JavaScript, halaman hanya
+ * menampilkan pesan agar JavaScript dinyalakan.
  *
  * @var CodeIgniter\View\View                 $this
  * @var string                                $namaAcara
@@ -91,9 +92,18 @@ $langkah = [
 
     <?= $this->section('skrip') ?>
     <?php if (($wizard['turnstile'] ?? null) !== null) : ?>
-        <?php // Dipasang `pendaftaran.js` saat langkah 5 tampil (K122). ?>
+        <?php // Dipasang `pendaftaran/turnstile.js` saat langkah 5 tampil (K122). ?>
         <script src="<?= esc($wizard['turnstile']['skrip']) ?>?render=explicit" async defer></script>
     <?php endif ?>
+    <?php
+    // Wizard dipecah per bagian (F7-30), tanpa alat bangun. Urutan ini wajib:
+    // `pendaftaran/dasar.js` membuat `window.Pendaftaran`, setiap bagian memakai
+    // bagian sebelumnya, dan `pendaftaran.js` terakhir menjalankan wizard.
+    $bagianWizard = ['dasar', 'draf', 'langkah', 'sekolah', 'ofisial', 'atlet', 'regu', 'atlet-formulir', 'atlet-daftar', 'biaya', 'turnstile', 'pembayaran'];
+    ?>
+    <?php foreach ($bagianWizard as $bagian) : ?>
+        <script src="<?= aset('js/pendaftaran/' . $bagian . '.js') ?>"></script>
+    <?php endforeach ?>
     <script src="<?= aset('js/pendaftaran.js') ?>"></script>
     <?= $this->endSection() ?>
 <?php endif ?>

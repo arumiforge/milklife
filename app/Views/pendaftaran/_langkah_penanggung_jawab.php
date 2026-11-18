@@ -1,7 +1,7 @@
 <?php
 /**
  * Langkah 2: Penanggung Jawab (rancangan 6.3; K50 foto wajib). Kartu tiap
- * orang dibuat `pendaftaran.js` dari `#templat-penanggung-jawab`.
+ * orang dibuat `aset/js/pendaftaran/ofisial.js` dari `#templat-penanggung-jawab`.
  *
  * @var array<string, mixed> $wizard
  */

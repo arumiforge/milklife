@@ -109,4 +109,35 @@ final class PendaftaranHalamanTest extends UjiBasisData
         $this->assertArrayNotHasKey($id['turbo'], $nama);
         $this->assertSame('</script><script>alert(1)</script>', $nama[$id['frog']]);
     }
+
+    /**
+     * Wizard dipecah per bagian (F7-30): semua berkas di `aset/js/pendaftaran/`
+     * dimuat, `dasar.js` paling awal (membuat `window.Pendaftaran`) dan
+     * `pendaftaran.js` paling akhir (menjalankan wizard).
+     */
+    public function testSemuaBagianWizardDimuatBerurutan(): void
+    {
+        $this->bukaPendaftaranUji();
+
+        $hasil = $this->get('pendaftaran');
+        $hasil->assertOK();
+
+        $skrip = [];
+
+        foreach ($this->xpathDari($hasil)->query('//script[contains(@src, "aset/js/pendaftaran")]') as $node) {
+            $jalur = (string) parse_url($node->getAttribute('src'), PHP_URL_PATH);
+            $skrip[] = substr($jalur, strpos($jalur, 'aset/js/') + strlen('aset/js/'));
+        }
+
+        $berkas = array_map(
+            static fn (string $jalur): string => 'pendaftaran/' . basename($jalur),
+            glob(FCPATH . 'aset/js/pendaftaran/*.js') ?: [],
+        );
+        $berkas = array_filter($berkas, static fn (string $jalur): bool => ! str_ends_with($jalur, '.min.js'));
+
+        $this->assertSame('pendaftaran/dasar.js', $skrip[0]);
+        $this->assertSame('pendaftaran.js', end($skrip));
+        $this->assertCount(count($skrip), array_unique($skrip));
+        $this->assertEqualsCanonicalizing(array_values($berkas), array_slice($skrip, 0, -1));
+    }
 }

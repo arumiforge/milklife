@@ -2,7 +2,7 @@
 /**
  * Langkah 5: Pembayaran (rancangan 7; K90). Data rekening dari
  * `wizard.pembayaran`, total dari rincian `POST pendaftaran/periksa`; diisi
- * `pendaftaran.js`. Pendaftaran baru masuk sistem saat "Kirim Pendaftaran":
+ * `aset/js/pendaftaran/pembayaran.js`. Pendaftaran baru masuk sistem saat "Kirim Pendaftaran":
  * isian dan bukti transfer dikirim bersama ke `POST pendaftaran/simpan`.
  * Tanpa bukti transfer tidak ada yang tersimpan; isian tetap di draf peramban,
  * jadi official bisa kembali lain waktu dan tinggal mengunggah bukti.
@@ -10,7 +10,8 @@
  * `/bukti/<kode>/<ID>` (Tahap 5).
  *
  * Bila Cloudflare Turnstile aktif (K122), kotak pemeriksaan keamanan tampil
- * di atas tombol Kirim; `pendaftaran.js` memasangnya dan mengirim tokennya.
+ * di atas tombol Kirim; `aset/js/pendaftaran/turnstile.js` memasangnya dan
+ * `pembayaran.js` mengirim tokennya.
  *
  * @var array<string, mixed>|null $wizard
  */

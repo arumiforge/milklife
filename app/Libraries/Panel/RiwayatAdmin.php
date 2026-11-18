@@ -196,8 +196,8 @@ final class RiwayatAdmin
     /**
      * Ringkasan perubahan dari Ubah pendaftaran. Aturan murni.
      *
-     * @param array<string, mixed> $lama    Data tersimpan (`UbahPendaftaran::bacaLama()`).
-     * @param array<string, mixed> $rencana Rencana simpan (`UbahPendaftaran::hitung()`).
+     * @param array<string, mixed> $lama    Data tersimpan (`Ubah\DataTersimpan::baca()`).
+     * @param array<string, mixed> $rencana Rencana simpan (`Ubah\RencanaUbah::hitung()`).
      */
     public static function ringkasanUbah(array $lama, array $rencana): string
     {
