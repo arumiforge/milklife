@@ -1,7 +1,7 @@
 <?php
 /**
  * Langkah 4: Biaya (rancangan 7; K45 rincian selalu tampil). Rincian dihitung
- * server (`POST pendaftaran/periksa`) dan ditulis `pendaftaran.js` ke
+ * server (`POST pendaftaran/periksa`) dan ditulis `aset/js/pendaftaran/biaya.js` ke
  * `#rincian-biaya`. Belum ada yang disimpan di langkah ini (K90): pendaftaran
  * baru masuk sistem bersama bukti transfer di langkah 5.
  */

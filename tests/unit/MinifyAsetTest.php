@@ -159,7 +159,7 @@ final class MinifyAsetTest extends CIUnitTestCase
         // ditulis ke salinan di folder sementara.
         $salinan = $this->folder . '/salinan';
 
-        foreach (['css' => 'css', 'js' => 'js', 'gambar' => 'svg'] as $sub => $ekstensi) {
+        foreach (['css' => 'css', 'js' => 'js', 'js/pendaftaran' => 'js', 'gambar' => 'svg'] as $sub => $ekstensi) {
             foreach (glob(FCPATH . 'aset/' . $sub . '/*.' . $ekstensi) ?: [] as $berkas) {
                 if (! str_ends_with($berkas, '.min.' . $ekstensi)) {
                     $this->tulis('salinan/' . $sub . '/' . basename($berkas), (string) file_get_contents($berkas));
@@ -172,6 +172,8 @@ final class MinifyAsetTest extends CIUnitTestCase
         $this->assertNotEmpty($hasil);
         $this->assertContains('css/tema.css', array_column($hasil, 'berkas'));
         $this->assertContains('js/pendaftaran.js', array_column($hasil, 'berkas'));
+        // Bagian wizard di subfolder (F7-30) ikut diperkecil.
+        $this->assertContains('js/pendaftaran/dasar.js', array_column($hasil, 'berkas'));
         $this->assertContains('gambar/ikon.svg', array_column($hasil, 'berkas'));
 
         foreach ($hasil as $baris) {
