@@ -106,6 +106,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('rekap/(nomor-lomba|tim-beregu|sekolah|kelompok-umur|keuangan)/pdf', 'RekapController::pdf/$1');
     // ---------- Akhir panel data (Tahap 6) ----------
 
+    // ---------- F8-01/F8-02: riwayat tindakan admin dan bukti bayar baru ----------
+    // Cari riwayat menurut ID pendaftaran, termasuk yang sudah dihapus (F8-01).
+    $routes->get('riwayat', 'PendaftaranController::riwayat');
+    // ---------- Akhir F8-01/F8-02 ----------
+
     // Data sekolah (K97): lihat dan sunting nama supaya sekolah bernama umum bisa dibedakan.
     $routes->get('sekolah', 'SekolahController::index');
     $routes->get('sekolah/data', 'SekolahController::data');

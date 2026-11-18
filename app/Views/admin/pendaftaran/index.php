@@ -28,6 +28,7 @@
     <p class="teks-info mb-4">
         Semua pendaftaran yang masuk lewat halaman Pendaftaran. Buka rinciannya untuk melihat atlet,
         menandai Lunas setelah transfer diperiksa, atau menghapus pendaftaran yang batal.
+        Riwayat pendaftaran yang sudah dihapus bisa dicari di <a href="<?= site_url('admin/riwayat') ?>">Riwayat pendaftaran</a>.
     </p>
 
     <section class="card" aria-labelledby="judul-tabel-pendaftaran">

@@ -26,6 +26,8 @@ use ZipArchive;
  *   pendaftaran juga membawa `gabungan_dari`: ID dan kode bukti lama yang
  *   sudah digabung ke situ (K109), supaya kode QR bukti lama tetap berlaku,
  *   dan `atlet_ditolak`: atlet yang ditolak panitia (K116; boleh tidak ada).
+ *   `riwayat_admin`: riwayat tindakan admin (F8-01), juga milik pendaftaran
+ *   yang sudah dihapus (boleh tidak ada).
  *   Atlet membawa `hadir_pada` dan `hadir_oleh` (tanda hadir hari lomba,
  *   F8-03; boleh tidak ada di paket lama).
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
@@ -250,6 +252,10 @@ final class PaketPendaftaran
             'pendaftaran' => $data,
             'usulan_nama' => $this->db->table('usulan_nama_sekolah')
                 ->select('npsn, pendaftaran_id, nama_lama, nama_usulan, status, nama_disetujui, alasan, diputuskan_pada, dibuat_pada, diubah_pada')
+                ->orderBy('id')->get()->getResultArray(),
+            // Riwayat tindakan admin (F8-01), termasuk milik pendaftaran yang sudah dihapus.
+            'riwayat_admin' => $this->db->table('riwayat_admin')
+                ->select('pendaftaran_id, id_pendaftaran, nama_admin, tindakan, ringkasan, dibuat_pada')
                 ->orderBy('id')->get()->getResultArray(),
             'sekolah_disunting' => $this->db->table('sekolah')
                 ->select('npsn, nama, bentuk, jenjang, status, alamat, desa_kelurahan, kecamatan, kabupaten, disunting_pada')
@@ -601,8 +607,42 @@ final class PaketPendaftaran
             $this->db->query('UPDATE awalan_nomor_dada SET nomor_terakhir = GREATEST(nomor_terakhir, ?) WHERE awalan = ?', [$angka, (string) $awalan]);
         }
 
+        $this->simpanRiwayat(is_array($isi['riwayat_admin'] ?? null) ? $isi['riwayat_admin'] : [], $isi['pendaftaran'], $tabel);
         $this->simpanSekolahDisunting(is_array($isi['sekolah_disunting'] ?? null) ? $isi['sekolah_disunting'] : [], $tabel);
         $this->simpanUsulanNama(is_array($isi['usulan_nama'] ?? null) ? $isi['usulan_nama'] : [], $isi['pendaftaran'], $tabel);
+    }
+
+    /**
+     * Riwayat tindakan admin (F8-01). `pendaftaran_id` dipertahankan bila
+     * pendaftarannya ikut diimpor (ID-nya sama), selain itu kosong (pendaftaran
+     * yang sudah dihapus). `admin_id` dikosongkan karena akun admin server baru
+     * berbeda; nama admin saat itu tetap.
+     *
+     * @param list<mixed>                                  $daftar
+     * @param list<array<string, mixed>>                   $pendaftaran
+     * @param callable(string, array<string, mixed>): int $tabel
+     */
+    private function simpanRiwayat(array $daftar, array $pendaftaran, callable $tabel): void
+    {
+        $ada = array_flip(array_map(static fn (array $p): int => (int) $p['id'], $pendaftaran));
+
+        foreach ($daftar as $r) {
+            if (! is_array($r) || ! is_string($r['id_pendaftaran'] ?? null) || ! is_string($r['tindakan'] ?? null) || ! is_string($r['ringkasan'] ?? null)) {
+                continue;
+            }
+
+            $id = is_numeric($r['pendaftaran_id'] ?? null) ? (int) $r['pendaftaran_id'] : null;
+
+            $tabel('riwayat_admin', [
+                'pendaftaran_id' => $id !== null && isset($ada[$id]) ? $id : null,
+                'id_pendaftaran' => mb_substr($r['id_pendaftaran'], 0, 20),
+                'admin_id'       => null,
+                'nama_admin'     => mb_substr(is_string($r['nama_admin'] ?? null) ? $r['nama_admin'] : 'Admin', 0, 100),
+                'tindakan'       => mb_substr($r['tindakan'], 0, 30),
+                'ringkasan'      => $r['ringkasan'],
+                'dibuat_pada'    => is_string($r['dibuat_pada'] ?? null) ? $r['dibuat_pada'] : null,
+            ]);
+        }
     }
 
     /**
