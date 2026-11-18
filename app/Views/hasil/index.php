@@ -25,6 +25,9 @@ $medali = [1 => 'I', 2 => 'II', 3 => 'III'];
     </div>
 
     <div class="container halaman-unduhan-isi">
+        <?php if ($kelompokUmur !== []) : ?>
+            <a class="btn btn-primary mb-4" href="<?= site_url('hasil/klasemen') ?>"><i class="bi bi-award" aria-hidden="true"></i> Klasemen sekolah</a>
+        <?php endif ?>
         <?php if ($kelompokUmur === []) : ?>
             <div class="unduhan-kosong" id="hasil-kosong">
                 <span class="ikon-bulat mb-3"><i class="bi bi-hourglass-split" aria-hidden="true"></i></span>
