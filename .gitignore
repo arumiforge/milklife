@@ -58,6 +58,11 @@ php_errors.log
 .phpunit.result.cache
 
 #-------------------------
+# Pengaturan PHPStan pribadi (bawaan: phpstan.neon.dist)
+#-------------------------
+/phpstan.neon
+
+#-------------------------
 # Python (alat data)
 #-------------------------
 __pycache__/

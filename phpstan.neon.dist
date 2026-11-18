@@ -1,0 +1,37 @@
+# Analisis statis PHPStan (F7-31, K123). Jalankan: composer analisis
+#
+# PHPStan hanya pustaka pengembangan (require-dev); server produksi memasang
+# pustaka dengan `composer install --no-dev`, jadi PHPStan tidak ikut terpasang.
+# Untuk pengaturan pribadi, salin berkas ini menjadi `phpstan.neon` (tidak masuk git).
+
+parameters:
+    level: 5
+
+    paths:
+        - app
+        - tests
+
+    excludePaths:
+        # View berisi templat dengan variabel dari pengendali, bukan kelas.
+        - app/Views
+        - tests/_support/Views
+        - app/ThirdParty
+
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+
+    # Fungsi global framework dan helper yang dimuat dengan helper().
+    scanFiles:
+        - vendor/codeigniter4/framework/system/Common.php
+        - app/Common.php
+    scanDirectories:
+        - vendor/codeigniter4/framework/system/Helpers
+        - vendor/codeigniter4/settings/src/Helpers
+        - app/Helpers
+
+    # Nilainya berbeda antara uji dan produksi.
+    dynamicConstantNames:
+        - ENVIRONMENT
+        - CI_DEBUG
+
+    tmpDir: build/phpstan

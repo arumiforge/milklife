@@ -16,6 +16,7 @@
     "require-dev": {
         "fakerphp/faker": "^1.9",
         "mikey179/vfsstream": "^1.6",
+        "phpstan/phpstan": "^2.3",
         "phpunit/phpunit": "^10.5.16"
     },
     "autoload": {
@@ -39,9 +40,11 @@
         "sort-packages": true
     },
     "scripts": {
-        "uji": "phpunit"
+        "uji": "phpunit",
+        "analisis": "phpstan analyse --memory-limit=1G"
     },
     "scripts-descriptions": {
-        "uji": "Menjalankan semua uji (PHPUnit)"
+        "uji": "Menjalankan semua uji (PHPUnit)",
+        "analisis": "Analisis statis kode (PHPStan, phpstan.neon.dist)"
     }
 }
