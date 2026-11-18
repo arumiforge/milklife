@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin\Pengaturan;
 
 use App\Controllers\BaseController;
+use App\Libraries\Hasil\JenisHasil;
 use App\Models\NomorLombaModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -100,6 +101,7 @@ class NomorLombaController extends BaseController
             'nama'             => '',
             'jenis'            => 'individu',
             'kategori'         => 'putra',
+            'jenis_hasil'      => 'waktu',
             'jumlah_inti'      => '',
             'batas_anggota'    => '',
             'regu_maksimal'    => '',
@@ -139,6 +141,11 @@ class NomorLombaController extends BaseController
     {
         $nomor = $this->cari($id);
         $isian = NomorLombaModel::rapikanIsian($this->isianKiriman());
+
+        if ($isian['jenis_hasil'] === '') {
+            $isian['jenis_hasil'] = (string) $nomor['jenis_hasil'];
+        }
+
         $galat = $this->periksa($isian, $nomor);
 
         if ($galat !== []) {
@@ -212,7 +219,7 @@ class NomorLombaController extends BaseController
     {
         $kiriman = [];
 
-        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan', 'aktif'] as $kotak) {
+        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan', 'aktif'] as $kotak) {
             $kiriman[$kotak] = $this->request->getPost($kotak);
         }
 
@@ -244,6 +251,11 @@ class NomorLombaController extends BaseController
                     $galat[$kolom] = $sebab . sprintf($alasan, $nilaiLama);
                 }
             }
+        }
+
+        // Prestasi yang sudah dicatat memakai satuan jenis hasil lama (F8-04).
+        if ($lama !== null && ! isset($galat['jenis_hasil']) && $isian['jenis_hasil'] !== (string) $lama['jenis_hasil'] && $this->model->adaPrestasi((int) $lama['id'])) {
+            $galat['jenis_hasil'] = 'Nomor ini sudah punya prestasi di hasil lomba, jadi jenis hasilnya tetap ' . mb_strtolower(JenisHasil::LABEL[$lama['jenis_hasil']] ?? (string) $lama['jenis_hasil']) . '. Kosongkan prestasinya dulu bila memang perlu diganti.';
         }
 
         if (array_intersect_key($galat, array_flip(['kelompok_umur_id', 'nama', 'kategori'])) === []

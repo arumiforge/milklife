@@ -239,6 +239,14 @@ final class NomorLombaAturanTest extends CIUnitTestCase
         }
     }
 
+    public function testJenisHasilSalahDitolak(): void
+    {
+        $this->assertSame([], NomorLombaModel::periksaIsian(self::individu(['jenis_hasil' => 'jarak']), self::KU));
+        $galat = NomorLombaModel::periksaIsian(self::individu(['jenis_hasil' => 'detik']), self::KU);
+        $this->assertSame(['jenis_hasil'], array_keys($galat));
+        $this->assertSame('jarak', NomorLombaModel::untukDisimpan(self::individu(['nama' => 'Lompat Jauh']))['jenis_hasil']);
+    }
+
     public function testUntukDisimpan(): void
     {
         $this->assertSame([
@@ -246,6 +254,8 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             'nama'             => 'Estafet 8 × 50 m',
             'jenis'            => 'beregu',
             'kategori'         => 'mix',
+            // F8-04: kosong = ditebak dari nama.
+            'jenis_hasil'      => 'waktu',
             'jumlah_inti'      => 8,
             'batas_anggota'    => 10,
             'regu_maksimal'    => null,
@@ -274,7 +284,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
         ]);
 
         $this->assertSame([
-            'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri',
+            'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri', 'jenis_hasil' => '',
             'jumlah_inti' => '4', 'batas_anggota' => '', 'regu_maksimal' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
             'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1',
         ], $isian);

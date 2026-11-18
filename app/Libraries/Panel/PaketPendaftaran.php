@@ -2,6 +2,8 @@
 
 namespace App\Libraries\Panel;
 
+use App\Libraries\Hasil\JenisHasil;
+use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PeranAwalRegu;
 use App\Libraries\Pendaftaran\Regu;
@@ -32,6 +34,8 @@ use ZipArchive;
  *   yang sudah dihapus (boleh tidak ada).
  *   Atlet membawa `hadir_pada` dan `hadir_oleh` (tanda hadir hari lomba,
  *   F8-03; boleh tidak ada di paket lama).
+ *   `hasil_lomba`: jenis hasil, waktu terbit, babak, dan hasil per nomor
+ *   lomba (F8-04; boleh tidak ada di paket lama).
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -264,6 +268,8 @@ final class PaketPendaftaran
             'riwayat_admin' => $this->db->table('riwayat_admin')
                 ->select('pendaftaran_id, id_pendaftaran, nama_admin, tindakan, ringkasan, dibuat_pada')
                 ->orderBy('id')->get()->getResultArray(),
+            // Hasil lomba semua babak dan tanda terbit per nomor (F8-04).
+            'hasil_lomba' => $this->eksporHasilLomba($nomor),
             'sekolah_disunting' => $this->db->table('sekolah')
                 ->select('npsn, nama, bentuk, jenjang, status, alamat, desa_kelurahan, kecamatan, kabupaten, disunting_pada')
                 ->where('disunting_pada IS NOT NULL', null, false)->orderBy('npsn')->get()->getResultArray(),
@@ -625,6 +631,7 @@ final class PaketPendaftaran
         }
 
         $this->simpanRiwayat(is_array($isi['riwayat_admin'] ?? null) ? $isi['riwayat_admin'] : [], $isi['pendaftaran'], $tabel);
+        $this->simpanHasilLomba(is_array($isi['hasil_lomba'] ?? null) ? $isi['hasil_lomba'] : [], $isi['pendaftaran'], $nomor, $tabel);
         $this->simpanSekolahDisunting(is_array($isi['sekolah_disunting'] ?? null) ? $isi['sekolah_disunting'] : [], $tabel);
         $this->simpanUsulanNama(is_array($isi['usulan_nama'] ?? null) ? $isi['usulan_nama'] : [], $isi['pendaftaran'], $tabel);
     }
@@ -724,6 +731,119 @@ final class PaketPendaftaran
                 'dibuat_pada'     => $u['dibuat_pada'] ?? null,
                 'diubah_pada'     => $u['diubah_pada'] ?? null,
             ]);
+        }
+    }
+
+    /**
+     * Hasil lomba per nomor (F8-04): jenis hasil, waktu terbit, dan babak
+     * beserta hasilnya. Peserta individu dikenali dari NISN, regu dari ID
+     * pendaftaran (tetap sama saat diimpor) dan nama regunya.
+     *
+     * @param array<int, array{kelompok_umur: string, nama: string, kategori: string}> $nomor id => kunci nomor
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function eksporHasilLomba(array $nomor): array
+    {
+        $hasil = [];
+
+        foreach ($this->db->table('hasil h')->select('h.*, a.nisn')->join('atlet a', 'a.id = h.atlet_id', 'left')->orderBy('h.id')->get()->getResultArray() as $h) {
+            $hasil[(int) $h['babak_id']][] = [
+                'nisn'             => $h['nisn'],
+                'pendaftaran_id'   => $h['pendaftaran_id'] === null ? null : (int) $h['pendaftaran_id'],
+                'regu'             => $h['regu'],
+                'prestasi'         => $h['prestasi'] === null ? null : (int) $h['prestasi'],
+                'keterangan'       => $h['keterangan'],
+                'peringkat'        => $h['peringkat'] === null ? null : (int) $h['peringkat'],
+                'peringkat_manual' => (int) $h['peringkat_manual'],
+            ];
+        }
+
+        $babak = [];
+
+        foreach ($this->db->table('babak')->orderBy('id')->get()->getResultArray() as $b) {
+            $babak[(int) $b['nomor_lomba_id']][] = [
+                'nama' => $b['nama'], 'final' => (int) $b['final'], 'urutan' => (int) $b['urutan'], 'dibuat_pada' => $b['dibuat_pada'],
+                'hasil' => $hasil[(int) $b['id']] ?? [],
+            ];
+        }
+
+        $daftar = [];
+
+        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
+            $id = (int) $n['id'];
+
+            if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null)) {
+                $daftar[] = $nomor[$id] + ['jenis_hasil' => $n['jenis_hasil'], 'terbit_pada' => $n['hasil_terbit_pada'], 'babak' => $babak[$id] ?? []];
+            }
+        }
+
+        return $daftar;
+    }
+
+    /**
+     * Hasil lomba dari paket (F8-04). Nomor yang tidak ada di server ini dan
+     * peserta yang tidak ditemukan dilewati; peringkat disalin apa adanya.
+     *
+     * @param list<mixed>                                  $daftar
+     * @param list<array<string, mixed>>                   $pendaftaran
+     * @param array<string, int>                           $nomor
+     * @param callable(string, array<string, mixed>): int $tabel
+     */
+    private function simpanHasilLomba(array $daftar, array $pendaftaran, array $nomor, callable $tabel): void
+    {
+        if ($daftar === []) {
+            return;
+        }
+
+        $ada   = array_flip(array_map(static fn (array $p): int => (int) $p['id'], $pendaftaran));
+        $atlet = array_map('intval', array_column($this->db->table('atlet')->select('id, nisn')->get()->getResultArray(), 'id', 'nisn'));
+
+        foreach ($daftar as $n) {
+            $idNomor = is_array($n) ? ($nomor[self::kunciNomor((string) ($n['kelompok_umur'] ?? ''), (string) ($n['nama'] ?? ''), (string) ($n['kategori'] ?? ''))] ?? null) : null;
+
+            if ($idNomor === null) {
+                continue;
+            }
+
+            $ubah = ['hasil_terbit_pada' => is_string($n['terbit_pada'] ?? null) ? $n['terbit_pada'] : null];
+
+            if (JenisHasil::sah($n['jenis_hasil'] ?? null)) {
+                $ubah['jenis_hasil'] = $n['jenis_hasil'];
+            }
+
+            $this->db->table('nomor_lomba')->where('id', $idNomor)->update($ubah);
+
+            foreach (is_array($n['babak'] ?? null) ? $n['babak'] : [] as $b) {
+                if (! is_array($b) || ! is_string($b['nama'] ?? null)) {
+                    continue;
+                }
+
+                $idBabak = $tabel('babak', [
+                    'nomor_lomba_id' => $idNomor, 'nama' => mb_substr($b['nama'], 0, 60), 'final' => (int) ($b['final'] ?? 0) === 1 ? 1 : 0,
+                    'urutan' => (int) ($b['urutan'] ?? 0), 'dibuat_pada' => $b['dibuat_pada'] ?? null, 'diubah_pada' => $b['dibuat_pada'] ?? null,
+                ]);
+
+                foreach (is_array($b['hasil'] ?? null) ? $b['hasil'] : [] as $h) {
+                    $idAtlet = is_array($h) && is_string($h['nisn'] ?? null) ? ($atlet[$h['nisn']] ?? null) : null;
+                    $idDaftar = is_array($h) && is_numeric($h['pendaftaran_id'] ?? null) && isset($ada[(int) $h['pendaftaran_id']]) ? (int) $h['pendaftaran_id'] : null;
+
+                    if ($idAtlet === null && ($idDaftar === null || ! Regu::sah($h['regu'] ?? null))) {
+                        continue;
+                    }
+
+                    $tabel('hasil', [
+                        'babak_id'         => $idBabak,
+                        'atlet_id'         => $idAtlet,
+                        'pendaftaran_id'   => $idAtlet === null ? $idDaftar : null,
+                        'regu'             => $idAtlet === null ? $h['regu'] : null,
+                        'prestasi'         => is_numeric($h['prestasi'] ?? null) ? (int) $h['prestasi'] : null,
+                        'keterangan'       => Peringkat::keterangan($h['keterangan'] ?? null),
+                        'peringkat'        => is_numeric($h['peringkat'] ?? null) ? (int) $h['peringkat'] : null,
+                        'peringkat_manual' => (int) ($h['peringkat_manual'] ?? 0) === 1 ? 1 : 0,
+                    ]);
+                }
+            }
         }
     }
 

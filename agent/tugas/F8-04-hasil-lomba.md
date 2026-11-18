@@ -11,12 +11,12 @@ Admin mencatat hasil semua babak setiap nomor lomba dan menerbitkannya ke halama
 
 ## Hasil
 
-- [ ] Jenis hasil per nomor lomba (waktu, jarak, poin) di Pengaturan dan data awal
-- [ ] Babak per nomor (satu Final), isian prestasi dan keterangan DNS/DNF/DQ, peringkat otomatis, koreksi peringkat Final
-- [ ] Tri Lomba: poin akhir diisi admin
-- [ ] Terbitkan dan Tarik kembali per nomor; halaman publik `hasil`
-- [ ] Unduhan PDF dan Excel hasil
-- [ ] Uji unit urutan peringkat dan format prestasi; uji fitur
+- [x] Jenis hasil per nomor lomba (waktu, jarak, poin) di Pengaturan dan data awal
+- [x] Babak per nomor (satu Final), isian prestasi dan keterangan DNS/DNF/DQ, peringkat otomatis, koreksi peringkat Final
+- [x] Tri Lomba: poin akhir diisi admin
+- [x] Terbitkan dan Tarik kembali per nomor; halaman publik `hasil`
+- [x] Unduhan PDF dan Excel hasil
+- [x] Uji unit urutan peringkat dan format prestasi; uji fitur
 
 ## Selesai bila
 
