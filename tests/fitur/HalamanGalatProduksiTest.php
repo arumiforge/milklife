@@ -189,8 +189,11 @@ final class HalamanGalatProduksiTest extends CIUnitTestCase
             'header'          => "Accept: text/html\r\n",
         ]]);
 
-        $isi   = @file_get_contents(self::$alamat . $jalur, false, $konteks);
-        $kepala = $http_response_header ?? [];
+        // PHP mengisi ulang $http_response_header bila server menjawab;
+        // nilai awal kosong menjaga uji tetap jalan saat server tidak menjawab.
+        $http_response_header = [];
+        $isi                  = @file_get_contents(self::$alamat . $jalur, false, $konteks);
+        $kepala               = $http_response_header;
 
         $this->assertNotFalse($isi, 'Server uji tidak menjawab ' . $jalur);
         $this->assertMatchesRegularExpression('#^HTTP/\S+ \d{3}#', $kepala[0] ?? '');

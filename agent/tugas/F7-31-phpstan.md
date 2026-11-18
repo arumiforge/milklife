@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | rencana |
 | Tahap | 7 — Penyelesaian |
 | Dibuat | 17 November 2026 |
 
@@ -12,9 +11,9 @@ Salah tipe tertangkap sebelum uji, di komputer pengembang dan CI.
 
 ## Hasil
 
-- [ ] `phpstan/phpstan` di `require-dev`, `phpstan.neon` tingkat rendah (naikkan bila bersih)
-- [ ] `composer analisis` dan langkah di `.github/workflows/uji.yml`
-- [ ] Temuan diperbaiki atau dicatat di baseline dengan alasan
+- [x] `phpstan/phpstan` di `require-dev`, `phpstan.neon` tingkat 1 (tingkat 2 masih ratusan temuan dari tipe antarmuka CodeIgniter; alasannya di kepala `phpstan.neon`)
+- [x] `composer analisis` dan langkah di `.github/workflows/uji.yml`
+- [x] Temuan diperbaiki (`$http_response_header` di `HalamanGalatProduksiTest`) atau dikecualikan di `phpstan.neon` dengan alasan (`Factories::libraries()`, templat tampilan)
 
 ## Selesai bila
 

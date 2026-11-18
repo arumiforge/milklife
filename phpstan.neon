@@ -1,0 +1,30 @@
+# Analisis statis PHPStan (K123, F7-31). Jalankan: composer analisis
+#
+# Tingkat 1: tingkat 2 ke atas menghasilkan ratusan temuan yang hampir semuanya
+# berasal dari tipe antarmuka CodeIgniter (mis. ConnectionInterface tanpa
+# tableExists/fieldExists, kembalian model berupa array|object). Menutupnya
+# butuh ekstensi PHPStan untuk CodeIgniter, yang belum disetujui (K123 hanya
+# PHPStan). Naikkan tingkat bila temuannya sudah sedikit.
+
+parameters:
+    level: 1
+    paths:
+        - app
+        - tests
+    excludePaths:
+        # Templat tampilan memakai <?= $this->extend() ?> dan sejenisnya, yang
+        # mengembalikan void; PHPStan melaporkannya sebagai galat palsu.
+        - app/Views
+        - tests/_support/Views
+    bootstrapFiles:
+        - vendor/codeigniter4/framework/system/Test/bootstrap.php
+    scanDirectories:
+        # Fungsi pembantu (mis. delete_files) dimuat lewat helper() saat jalan.
+        - vendor/codeigniter4/framework/system/Helpers
+        - app/Helpers
+    ignoreErrors:
+        # Factories::libraries() dilayani Factories::__callStatic(); PHPDoc
+        # kerangka hanya mendaftar cells(), config(), dan models().
+        -
+            identifier: staticMethod.notFound
+            message: '#^Call to an undefined static method CodeIgniter\\Config\\Factories::libraries\(\)\.$#'

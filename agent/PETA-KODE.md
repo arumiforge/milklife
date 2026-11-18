@@ -61,6 +61,7 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 
 ## Perintah uji per area
 
+- Analisis statis: `composer analisis` (PHPStan tingkat 1, `phpstan.neon`, K123). Jalan di CI sebelum uji.
 - Semua: `composer uji` (= `phpunit`, `phpunit.dist.xml`). Suite: `vendor/bin/phpunit --testsuite unit|basisdata|fitur`.
 - Satu area: `vendor/bin/phpunit --filter '<pola>'`, pola:
   wizard `Pendaftaran(Halaman|Kirim|Simpan|Pemeriksa|Sekolah)` · cek/bukti `CekPendaftaran|BuktiPendaftaran|UnggahBuktiBayar` · panel pendaftaran `PanelPendaftaran|PanelUbahPendaftaran|BuktiBayar|PanelRiwayatAdmin|PanelBuktiBaru` · tolak/gabung `PanelTolakAtlet|PanelGabungPendaftaran` · nomor dada `NomorDada` · rekap `PanelRekap` · sekolah `Sekolah` · pengaturan `Pengaturan` · admin `MasukAdmin|AkunAdmin` · hari lomba `HariLomba` · alur Tahap 6 `PanelGabunganTest`.
