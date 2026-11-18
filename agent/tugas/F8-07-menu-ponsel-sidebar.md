@@ -12,8 +12,8 @@ Di ponsel admin bisa membuka semua menu panel dari sidebar, sementara menu bawah
 ## Hasil
 
 - [ ] Tombol Menu di ponsel membuka sidebar (laci samping, Bootstrap offcanvas) berisi semua butir menu panel, dengan butir aktif ditandai
-- [ ] Menu bawah yang menempel di ponsel hanya 5 butir: Dasbor, Pendaftaran, Hari lomba, Hasil, Menu (K131)
-- [ ] Butir Hasil menunjuk halaman hasil lomba bila sudah ada (F8-04); sebelum itu butir ini ditambahkan bersama F8-04
+- [ ] Menu bawah yang menempel di ponsel hanya 5 butir urusan pendaftaran: Dasbor, Pendaftaran, Atlet, Ditolak (Atlet ditolak), Menu (K131, K132)
+- [ ] Hari lomba, Hasil, Klasemen, dan butir lain hanya lewat sidebar di ponsel
 - [ ] Tampilan komputer tidak berubah
 - [ ] Dicoba di Chromium 390 piksel: sidebar terbuka dan tertutup, tanpa gulir mendatar
 
@@ -27,4 +27,4 @@ Tata letak panel admin (`app/Views/tata_letak/` dan CSS/JS panel). Uji: `vendor/
 
 ## Catatan
 
-K131, menggantikan K130 untuk menu bawah ponsel. Setelah #104 (F8-03) masuk `main`; urutkan dengan F8-04 karena keduanya menyentuh menu.
+K131 dan K132, menggantikan K130 untuk menu bawah ponsel. Setelah #104 (F8-03) masuk `main`; urutkan dengan F8-04 karena keduanya menyentuh menu.
