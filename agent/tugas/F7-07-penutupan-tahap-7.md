@@ -11,8 +11,8 @@ Mencatat hasil Tahap 7 dan menyerahkan web yang siap dipasang.
 
 ## Hasil
 
-- [ ] `agent/arsip/tahap-7.md` dengan bagian "Yang dibawa ke tahap berikutnya"
-- [ ] `agent/PROGRES.md`, `agent/KONTEKS.md`, baris Status `README.md`, dan "Perubahan saat pengerjaan" di rencana Tahap 7
+- [x] `agent/arsip/tahap-7.md` dengan bagian "Yang dibawa ke tahap berikutnya"
+- [x] `agent/PROGRES.md`, `agent/KONTEKS.md`, baris Status `README.md`, dan "Perubahan saat pengerjaan" di rencana Tahap 7
 
 ## Selesai bila
 

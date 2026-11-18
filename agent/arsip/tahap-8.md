@@ -12,7 +12,7 @@ Rencana: [`dokumen/draf/rencana-implementasi-tahap-8.md`](../../dokumen/draf/ren
 | [F8-07 Menu ponsel: sidebar dan 5 butir bawah](../tugas/F8-07-menu-ponsel-sidebar.md) | selesai | 2 | #107 |
 | [F8-04 Hasil lomba](../tugas/F8-04-hasil-lomba.md) | selesai | 2f | #113 |
 | [F8-05 Klasemen sekolah](../tugas/F8-05-klasemen-sekolah.md) | selesai | 2f | #114 |
-| [F8-06 Penutupan Tahap 8](../tugas/F8-06-penutupan-tahap-8.md) | selesai | akhir | PR penutupan bersama F7-06 |
+| [F8-06 Penutupan Tahap 8](../tugas/F8-06-penutupan-tahap-8.md) | selesai | akhir | #116, bersama F7-06 |
 
 ## Hasil
 
