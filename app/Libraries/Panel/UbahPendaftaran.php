@@ -2,18 +2,19 @@
 
 namespace App\Libraries\Panel;
 
-use App\Libraries\NomorWa;
-use App\Libraries\Pendaftaran\BiayaPendaftaran;
+use App\Libraries\Panel\Ubah\BiayaUbah;
+use App\Libraries\Panel\Ubah\DataTersimpan;
+use App\Libraries\Panel\Ubah\IsianUbah;
+use App\Libraries\Panel\Ubah\MasukanUbah;
+use App\Libraries\Panel\Ubah\RencanaUbah;
+use App\Libraries\Panel\Ubah\StatusUbah;
+use App\Libraries\Panel\Ubah\TulisUbah;
 use App\Libraries\Pendaftaran\DataIndukPendaftaran;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PemeriksaPendaftaran;
-use App\Libraries\Pendaftaran\Regu;
 use App\Models\NomorLombaModel;
-use App\Models\SekolahModel;
 use CodeIgniter\Database\BaseConnection;
-use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\I18n\Time;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -107,6 +108,15 @@ use Throwable;
  *         'gabung'            => null,    // hanya simpan(): `GabungPendaftaran::gabungNpsn()` bila pendaftaran
  *                                         // Lunas ini digabung dengan pendaftaran Lunas lain ber-NPSN sama (K109)
  *     ]
+ *
+ * ## Letak kode
+ *
+ * Kelas ini pintu masuk; aturannya ada di `App\Libraries\Panel\Ubah` (F7-30):
+ * `DataTersimpan` (baca data tersimpan, induk dengan data nonaktif K98),
+ * `IsianUbah` (isian formulir), `RencanaUbah` (pemeriksaan kiriman),
+ * `BiayaUbah` (biaya baris dan regu, K68), `StatusUbah` (K32 dan kalimat
+ * konfirmasi), `TulisUbah` (transaksi simpan, K59, riwayat F8-01, K109), dan
+ * `MasukanUbah` (pembaca nilai kiriman).
  */
 final class UbahPendaftaran
 {
@@ -120,22 +130,21 @@ final class UbahPendaftaran
      */
     public const KUNCI_BEBANKAN = 'bebankan_tim';
 
-    /**
-     * Isi `foto` pengganti untuk pemeriksa bila fotonya tidak dikirim ulang.
-     */
-    private const FOTO_ADA = 'ada';
-
     private BaseConnection $db;
 
-    private DataIndukPendaftaran $data;
+    private DataTersimpan $tersimpan;
 
-    private FotoPenanggungJawab $foto;
+    private RencanaUbah $rencana;
+
+    private TulisUbah $tulis;
 
     public function __construct(?BaseConnection $db = null, ?DataIndukPendaftaran $data = null, ?FotoPenanggungJawab $foto = null)
     {
-        $this->db   = $db ?? db_connect();
-        $this->data = $data ?? new DataIndukPendaftaran();
-        $this->foto = $foto ?? new FotoPenanggungJawab();
+        $this->db        = $db ?? db_connect();
+        $foto          ??= new FotoPenanggungJawab();
+        $this->tersimpan = new DataTersimpan($this->db, $data ?? new DataIndukPendaftaran(), $foto);
+        $this->rencana   = new RencanaUbah($this->tersimpan, new BiayaUbah($this->db));
+        $this->tulis     = new TulisUbah($this->db, $foto);
     }
 
     /**
@@ -163,107 +172,13 @@ final class UbahPendaftaran
      */
     public function isian(int $id, ?array $kiriman = null): ?array
     {
-        $lama = $this->bacaLama($id);
+        $lama = $this->tersimpan->baca($id);
 
         if ($lama === null) {
             return null;
         }
 
-        $p     = $lama['pendaftaran'];
-        $hasil = [
-            'pendaftaran' => [
-                'id'                => (int) $p['id'],
-                'id_pendaftaran'    => (string) $p['id_pendaftaran'],
-                'status'            => (string) $p['status'],
-                'subtotal_individu' => (int) $p['subtotal_individu'],
-                'subtotal_beregu'   => (int) $p['subtotal_beregu'],
-                'total'             => (int) $p['total'],
-            ],
-            'tim_tanpa_pembayar' => [],
-        ];
-
-        $bebankan = self::reguBebankan($kiriman ?? []);
-
-        foreach ((new TimTanpaPembayar($this->db))->untukPendaftaran($id) as $kunci => $tim) {
-            $hasil['tim_tanpa_pembayar'][$kunci] = $tim + ['dibebankan' => in_array($kunci, $bebankan, true)];
-        }
-
-        if ($kiriman === null) {
-            $hasil['sekolah'] = [
-                'jenjang'   => (string) $p['jenjang'],
-                'kabupaten' => (string) $p['kabupaten'],
-                'npsn'      => (string) ($p['npsn'] ?? ''),
-                'nama'      => (string) $p['nama_sekolah'],
-            ];
-
-            $hasil['penanggung_jawab'] = array_map(fn (array $o): array => [
-                'id'       => (int) $o['id'],
-                'nama'     => (string) $o['nama'],
-                'nomor_wa' => NomorWa::tampilan((string) $o['nomor_wa']),
-                'foto'     => '',
-                'ada_foto' => $this->adaFoto($o['foto']),
-            ], array_values($lama['penanggung_jawab']));
-
-            $hasil['atlet'] = array_map(static fn (array $a): array => [
-                'id'            => (int) $a['id'],
-                'nama'          => (string) $a['nama'],
-                'nisn'          => (string) $a['nisn'],
-                'tanggal_lahir' => (string) $a['tanggal_lahir'],
-                'jenis_kelamin' => (string) $a['jenis_kelamin'],
-                'nomor'         => array_keys($lama['nomor'][(int) $a['id']] ?? []),
-                'regu'          => $lama['regu'][(int) $a['id']] ?? [],
-                'nomor_dada'    => $a['nomor_dada'] === null || $a['nomor_dada'] === '' ? null : (string) $a['nomor_dada'],
-                'ku_lama'       => (int) $a['kelompok_umur_id'],
-            ], array_values($lama['atlet']));
-
-            return $hasil;
-        }
-
-        $sekolah          = is_array($kiriman['sekolah'] ?? null) ? $kiriman['sekolah'] : [];
-        $hasil['sekolah'] = [
-            'jenjang'   => self::teks($sekolah['jenjang'] ?? null),
-            'kabupaten' => self::teks($sekolah['kabupaten'] ?? null),
-            'npsn'      => self::teks($sekolah['npsn'] ?? null),
-            'nama'      => self::teks($sekolah['nama'] ?? null),
-        ];
-
-        $hasil['penanggung_jawab'] = [];
-
-        foreach (self::daftar($kiriman['penanggung_jawab'] ?? null) as $o) {
-            $o    = is_array($o) ? $o : [];
-            $idPj = self::id($o['id'] ?? null);
-            $baru = self::teks($o['foto'] ?? null);
-
-            $hasil['penanggung_jawab'][] = [
-                'id'       => isset($lama['penanggung_jawab'][$idPj]) ? $idPj : null,
-                'nama'     => self::teks($o['nama'] ?? null),
-                'nomor_wa' => self::teks($o['nomor_wa'] ?? null),
-                'foto'     => FotoPenanggungJawab::baca($baru) !== null ? $baru : '',
-                'ada_foto' => isset($lama['penanggung_jawab'][$idPj]) && $this->adaFoto($lama['penanggung_jawab'][$idPj]['foto']),
-            ];
-        }
-
-        $hasil['atlet'] = [];
-
-        foreach (self::daftar($kiriman['atlet'] ?? null) as $a) {
-            $a       = is_array($a) ? $a : [];
-            $idAtlet = self::id($a['id'] ?? null);
-            $simpan  = $lama['atlet'][$idAtlet] ?? null;
-
-            $hasil['atlet'][] = [
-                'id'            => $simpan !== null ? $idAtlet : null,
-                'nama'          => self::teks($a['nama'] ?? null),
-                'nisn'          => self::teks($a['nisn'] ?? null),
-                'tanggal_lahir' => self::teks($a['tanggal_lahir'] ?? null),
-                'jenis_kelamin' => self::teks($a['jenis_kelamin'] ?? null),
-                'nomor'         => array_values(array_filter(array_map(self::id(...), self::daftar($a['nomor'] ?? null)))),
-                'regu'          => self::reguIsian($a['regu'] ?? null),
-                'nomor_dada'    => $simpan !== null && $simpan['nomor_dada'] !== null && $simpan['nomor_dada'] !== '' ? (string) $simpan['nomor_dada'] : null,
-                'ku_lama'       => $simpan !== null ? (int) $simpan['kelompok_umur_id'] : null,
-            ];
-        }
-
-        return $hasil;
+        return (new IsianUbah($this->db, $this->tersimpan))->susun($id, $lama, $kiriman);
     }
 
     /**
@@ -276,13 +191,13 @@ final class UbahPendaftaran
      */
     public function periksa(int $id, array $kiriman, ?string $hariIni = null): ?array
     {
-        $lama = $this->bacaLama($id);
+        $lama = $this->tersimpan->baca($id);
 
         if ($lama === null) {
             return null;
         }
 
-        return self::ringkas($this->hitung($lama, $kiriman, $hariIni ?? self::hariIni()));
+        return self::ringkas($this->rencana->hitung($lama, $kiriman, $hariIni ?? self::hariIni()));
     }
 
     /**
@@ -303,14 +218,14 @@ final class UbahPendaftaran
     public function simpan(int $id, array $kiriman, bool $setujuMenunggu = false, ?string $hariIni = null, ?callable $dalamTransaksi = null): ?array
     {
         $hariIni ??= self::hariIni();
-        $lama = $this->bacaLama($id);
+        $lama = $this->tersimpan->baca($id);
 
         if ($lama === null) {
             return null;
         }
 
         $kunci = array_values(array_unique(array_filter([
-            self::npsn($lama['pendaftaran']['npsn']),
+            MasukanUbah::npsn($lama['pendaftaran']['npsn']),
             PemeriksaPendaftaran::npsnKiriman($kiriman),
         ])));
         sort($kunci);
@@ -329,7 +244,7 @@ final class UbahPendaftaran
             }
 
             // Baca ulang setelah kunci didapat.
-            $lama = $this->bacaLama($id);
+            $lama = $this->tersimpan->baca($id);
 
             if ($lama === null) {
                 return null;
@@ -343,488 +258,12 @@ final class UbahPendaftaran
         }
     }
 
-    // ---------------------------------------------------------------
-    // Simpan
-    // ---------------------------------------------------------------
-
-    /**
-     * @param array<string, mixed> $lama
-     * @param array<string, mixed> $kiriman
-     *
-     * @return array<string, mixed>
-     */
-    private function simpanTerkunci(array $lama, array $kiriman, bool $setujuMenunggu, string $hariIni, ?callable $dalamTransaksi = null): array
-    {
-        $rencana = $this->hitung($lama, $kiriman, $hariIni);
-
-        if ($rencana['galat'] !== []) {
-            return self::ringkas($rencana);
-        }
-
-        if ($rencana['kembali_menunggu'] && ! $setujuMenunggu) {
-            $rencana['perlu_setuju'] = true;
-            $rencana['galat']        = [['jalur' => 'setuju_menunggu', 'pesan' => self::kalimatMenunggu($rencana['total_lama'], $rencana['total'])
-                . ' Tekan Simpan perubahan lagi, lalu setujui di jendela konfirmasi.']];
-
-            return self::ringkas($rencana);
-        }
-
-        $id        = (int) $lama['pendaftaran']['id'];
-        $fotoBaru  = [];
-        $fotoLama  = [];
-        $nomorDada = [];
-        $gabung    = null;
-
-        try {
-            foreach ($rencana['penanggung_jawab'] as $i => $orang) {
-                if ($orang['foto_baru'] !== null) {
-                    $fotoBaru[$i] = $this->foto->simpan($orang['foto_baru']);
-                }
-            }
-
-            // Penanda gagal transaksi CodeIgniter melekat dari kegagalan sebelumnya.
-            $this->db->resetTransStatus();
-            $this->db->transBegin();
-
-            $kini = $this->baca('SELECT status, total, diubah_pada FROM pendaftaran WHERE id = ? FOR UPDATE', [$id])[0] ?? null;
-
-            if ($kini === null || $kini['status'] !== $lama['pendaftaran']['status'] || (int) $kini['total'] !== (int) $lama['pendaftaran']['total']
-                || (string) $kini['diubah_pada'] !== (string) $lama['pendaftaran']['diubah_pada']) {
-                $this->db->transRollback();
-                $this->hapusFoto($fotoBaru);
-
-                return self::ringkas(self::gagal($lama, 'simpan', 'Pendaftaran ini baru saja diubah di tempat lain. Muat ulang halaman ini, lalu ubah lagi.'));
-            }
-
-            $sekarang = self::sekarang();
-            $menunggu = $rencana['status'] === 'menunggu';
-
-            $this->pastikan($this->db->table('pendaftaran')->where('id', $id)->update([
-                'jenjang'           => $rencana['sekolah']['jenjang'],
-                'npsn'              => $rencana['sekolah']['npsn'],
-                'nama_sekolah'      => $rencana['sekolah']['nama_sekolah'],
-                'kabupaten'         => $rencana['sekolah']['kabupaten'],
-                'subtotal_individu' => $rencana['subtotal_individu'],
-                'subtotal_beregu'   => $rencana['subtotal_beregu'],
-                'total'             => $rencana['total'],
-                'status'            => $rencana['status'],
-                'waktu_lunas'       => $menunggu ? null : $lama['pendaftaran']['waktu_lunas'],
-                'diubah_pada'       => $sekarang,
-            ]));
-
-            // Penanggung jawab.
-            $dipakaiPj = array_filter(array_column($rencana['penanggung_jawab'], 'id'));
-
-            foreach ($lama['penanggung_jawab'] as $idPj => $orang) {
-                if (! in_array($idPj, $dipakaiPj, true)) {
-                    $this->pastikan($this->db->table('penanggung_jawab')->where('id', $idPj)->delete());
-                    $fotoLama[] = $orang['foto'];
-                }
-            }
-
-            foreach ($rencana['penanggung_jawab'] as $i => $orang) {
-                $baris = ['nama' => $orang['nama'], 'nomor_wa' => $orang['nomor_wa'], 'diubah_pada' => $sekarang];
-
-                if (isset($fotoBaru[$i])) {
-                    $baris['foto'] = $fotoBaru[$i];
-                }
-
-                if ($orang['id'] !== null) {
-                    if (isset($fotoBaru[$i])) {
-                        $fotoLama[] = $lama['penanggung_jawab'][$orang['id']]['foto'];
-                    }
-
-                    $this->pastikan($this->db->table('penanggung_jawab')->where('id', $orang['id'])->update($baris));
-                } else {
-                    $this->pastikan($this->db->table('penanggung_jawab')->insert($baris + ['pendaftaran_id' => $id, 'dibuat_pada' => $sekarang]));
-                }
-            }
-
-            // Atlet yang dihapus (nomor atletnya ikut terhapus lewat kunci asing).
-            $dipakaiAtlet = array_filter(array_column($rencana['atlet'], 'id'));
-
-            foreach (array_keys($lama['atlet']) as $idAtlet) {
-                if (! in_array($idAtlet, $dipakaiAtlet, true)) {
-                    $this->pastikan($this->db->table('atlet')->where('id', $idAtlet)->delete());
-                }
-            }
-
-            // NISN yang bertukar antar-atlet pendaftaran ini: kosongkan dulu
-            // dengan nilai sementara supaya kunci unik tidak menolak.
-            foreach ($rencana['atlet'] as $atlet) {
-                if ($atlet['id'] !== null && $lama['atlet'][$atlet['id']]['nisn'] !== $atlet['nisn']) {
-                    $this->pastikan($this->db->table('atlet')->where('id', $atlet['id'])->update(['nisn' => sprintf('X%09d', $atlet['id'])]));
-                }
-            }
-
-            foreach ($rencana['atlet'] as $atlet) {
-                $baris = [
-                    'nama'             => $atlet['nama'],
-                    'nisn'             => $atlet['nisn'],
-                    'tanggal_lahir'    => $atlet['tanggal_lahir'],
-                    'jenis_kelamin'    => $atlet['jenis_kelamin'],
-                    'kelompok_umur_id' => $atlet['kelompok_umur_id'],
-                    'diubah_pada'      => $sekarang,
-                ];
-
-                if ($atlet['id'] !== null) {
-                    // Nomor dada tidak disentuh.
-                    $idAtlet = $atlet['id'];
-                    $this->pastikan($this->db->table('atlet')->where('id', $idAtlet)->update($baris));
-
-                    $simpan = $lama['nomor'][$idAtlet] ?? [];
-                    $hapus  = array_diff(array_keys($simpan), array_column($atlet['nomor'], 'nomor_lomba_id'));
-                    $reguLama = $lama['regu'][$idAtlet] ?? [];
-
-                    if ($hapus !== []) {
-                        $this->pastikan($this->db->table('atlet_nomor')->where('atlet_id', $idAtlet)->whereIn('nomor_lomba_id', array_values($hapus))->delete());
-                    }
-                } else {
-                    $this->pastikan($this->db->table('atlet')->insert($baris + ['pendaftaran_id' => $id, 'dibuat_pada' => $sekarang]));
-                    $idAtlet  = (int) $this->db->insertID();
-                    $simpan   = [];
-                    $reguLama = [];
-                    self::pastikanId($idAtlet);
-                }
-
-                foreach ($atlet['nomor'] as $nomor) {
-                    $regu = ['regu' => $nomor['regu'] ?? null, 'peran' => $nomor['peran'] ?? null];
-
-                    if (array_key_exists($nomor['nomor_lomba_id'], $simpan)) {
-                        // Regu atau peran (inti/cadangan) yang berubah (K105).
-                        $sebelum = $reguLama[$nomor['nomor_lomba_id']] ?? ['regu' => null, 'peran' => null];
-
-                        if ($regu['regu'] !== null && $regu !== $sebelum) {
-                            $this->pastikan($this->db->table('atlet_nomor')->where('atlet_id', $idAtlet)->where('nomor_lomba_id', $nomor['nomor_lomba_id'])
-                                ->update($regu + ['diubah_pada' => $sekarang]));
-                        }
-
-                        continue;
-                    }
-
-                    $this->pastikan($this->db->table('atlet_nomor')->insert([
-                        'atlet_id'       => $idAtlet,
-                        'nomor_lomba_id' => $nomor['nomor_lomba_id'],
-                        'biaya'          => $nomor['biaya'],
-                        'regu'           => $regu['regu'],
-                        'peran'          => $regu['peran'],
-                        'dibuat_pada'    => $sekarang,
-                        'diubah_pada'    => $sekarang,
-                    ]));
-                }
-            }
-
-            // Regu beregu (K105), satu baris per nomor per regu.
-            $timBaru = [];
-
-            foreach ($rencana['beregu'] as $tim) {
-                $timBaru[Regu::kunci((int) $tim['nomor_lomba_id'], (string) $tim['regu'])] = (int) $tim['biaya_tim'];
-            }
-
-            foreach (array_diff(array_keys($lama['beregu']), array_keys($timBaru)) as $kunci) {
-                [$nomorId, $regu] = Regu::pecah($kunci) ?? [0, ''];
-                $this->pastikan($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->where('nomor_lomba_id', $nomorId)->where('regu', $regu)->delete());
-            }
-
-            foreach ($timBaru as $kunci => $biaya) {
-                [$nomorId, $regu] = Regu::pecah($kunci) ?? [0, ''];
-
-                if (! array_key_exists($kunci, $lama['beregu'])) {
-                    $this->pastikan($this->db->table('pendaftaran_beregu')->insert([
-                        'pendaftaran_id' => $id,
-                        'nomor_lomba_id' => $nomorId,
-                        'regu'           => $regu,
-                        'biaya_tim'      => $biaya,
-                        'dibuat_pada'    => $sekarang,
-                        'diubah_pada'    => $sekarang,
-                    ]));
-                } elseif (in_array($kunci, $rencana['tim_dibebankan'], true)) {
-                    $this->pastikan($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->where('nomor_lomba_id', $nomorId)->where('regu', $regu)
-                        ->update(['biaya_tim' => $biaya, 'diubah_pada' => $sekarang]));
-                }
-            }
-
-            // K59: Lunas dan total tetap → atlet tanpa nomor langsung mendapat nomor.
-            if ($rencana['status'] === 'lunas') {
-                $beri = (new StatusPembayaran($this->db))->beriNomorDada($id);
-
-                if ($beri['penuh'] !== []) {
-                    $this->db->transRollback();
-                    $this->hapusFoto($fotoBaru);
-
-                    return self::ringkas(self::gagal($lama, 'simpan', 'Perubahan belum disimpan. Pendaftaran ini sudah Lunas, jadi atlet baru langsung mendapat nomor atlet (BIB), '
-                        . 'tetapi awalan nomor atlet (BIB) ' . implode(', ', $beri['penuh']) . ' sudah penuh atau belum ada. '
-                        . 'Tambahkan awalan baru di Pengaturan, Kelompok Umur, lalu simpan lagi.'));
-                }
-
-                $nomorDada = $beri['nomor'];
-            }
-
-            // F8-01: riwayat tindakan admin, sebelum digabung supaya ikut pindah ke tujuan.
-            // Pemanggil dengan `$dalamTransaksi` (Tolak atlet) mencatat tindakannya sendiri.
-            if ($dalamTransaksi === null) {
-                $nomorBaru = array_values($nomorDada);
-                sort($nomorBaru);
-                (new RiwayatAdmin($this->db))->catat($id, (string) $lama['pendaftaran']['id_pendaftaran'], RiwayatAdmin::UBAH, RiwayatAdmin::ringkasanUbah($lama, $rencana)
-                    . ($nomorBaru === [] ? '' : ' Nomor atlet (BIB) baru: ' . implode(', ', $nomorBaru) . '.'));
-            }
-
-            if ($rencana['status'] === 'lunas') {
-                // K109: NPSN baru mungkin sudah punya pendaftaran Lunas lain; gabungkan.
-                $gabung = (new GabungPendaftaran($this->db))->gabungNpsn($rencana['sekolah']['npsn']);
-            }
-
-            if ($dalamTransaksi !== null) {
-                $dalamTransaksi($this->db, $rencana);
-            }
-
-            if ($this->db->transStatus() === false) {
-                throw new RuntimeException('Transaksi ubah pendaftaran gagal.');
-            }
-
-            $this->db->transCommit();
-        } catch (Throwable $e) {
-            while ($this->db->transDepth > 0) {
-                $this->db->transRollback();
-            }
-
-            $this->hapusFoto($fotoBaru);
-
-            // NISN yang baru saja didaftarkan kiriman lain: laporkan sebagai galat biasa.
-            $ulang = $this->bacaLama((int) $lama['pendaftaran']['id']);
-
-            if ($ulang !== null) {
-                $periksa = $this->hitung($ulang, $kiriman, $hariIni);
-
-                if ($periksa['galat'] !== []) {
-                    return self::ringkas($periksa);
-                }
-            }
-
-            throw $e;
-        }
-
-        $this->hapusFoto(array_merge($fotoLama, $gabung['foto'] ?? []));
-
-        $rencana['tersimpan']  = true;
-        $rencana['nomor_dada'] = $nomorDada;
-        $rencana['gabung']     = $gabung;
-
-        return self::ringkas($rencana);
-    }
-
-    // ---------------------------------------------------------------
-    // Pemeriksaan dan biaya
-    // ---------------------------------------------------------------
-
-    /**
-     * Periksa kiriman terhadap data tersimpan dan susun rencana simpan.
-     *
-     * @param array<string, mixed> $lama
-     * @param array<string, mixed> $kiriman
-     *
-     * @return array<string, mixed>
-     */
-    private function hitung(array $lama, array $kiriman, string $hariIni): array
-    {
-        $galat   = [];
-        $pj      = self::daftar($kiriman['penanggung_jawab'] ?? null);
-        $atlet   = self::daftar($kiriman['atlet'] ?? null);
-        $idPj    = [];
-        $idAtlet = [];
-        $fotoIsi = [];
-
-        $bebankan = self::reguBebankan($kiriman);
-        unset($kiriman[PemeriksaPendaftaran::KUNCI_KONFIRMASI], $kiriman[PemeriksaPendaftaran::KUNCI_TURUN], $kiriman[self::KUNCI_BEBANKAN]);
-
-        foreach ($pj as $i => $orang) {
-            $orang = is_array($orang) ? $orang : [];
-            $id    = self::id($orang['id'] ?? null);
-            $ke    = 'Ofisial ' . ($i + 1);
-
-            if ($id !== null && (! isset($lama['penanggung_jawab'][$id]) || in_array($id, $idPj, true))) {
-                $galat[] = ['jalur' => "penanggung_jawab.{$i}", 'pesan' => "{$ke}: data tersimpannya tidak dikenal. Muat ulang halaman ini, lalu ubah lagi."];
-                $id      = null;
-            }
-
-            $idPj[$i]    = $id;
-            $fotoIsi[$i] = null;
-            $foto        = self::teks($orang['foto'] ?? null);
-
-            if ($foto !== '') {
-                $fotoIsi[$i] = FotoPenanggungJawab::baca($foto);
-
-                if ($fotoIsi[$i] === null) {
-                    $galat[] = ['jalur' => "penanggung_jawab.{$i}.foto", 'pesan' => "{$ke}: foto belum bisa dibaca. Pilih ulang fotonya."];
-                }
-
-                $orang['foto'] = self::FOTO_ADA;
-            } else {
-                $orang['foto'] = $id !== null && $this->adaFoto($lama['penanggung_jawab'][$id]['foto']) ? self::FOTO_ADA : '';
-            }
-
-            $pj[$i] = $orang;
-        }
-
-        foreach ($atlet as $i => $isian) {
-            $isian = is_array($isian) ? $isian : [];
-            $id    = self::id($isian['id'] ?? null);
-
-            if ($id !== null && (! isset($lama['atlet'][$id]) || in_array($id, $idAtlet, true))) {
-                $galat[] = ['jalur' => "atlet.{$i}", 'pesan' => 'Atlet ' . ($i + 1) . ': data tersimpannya tidak dikenal. Muat ulang halaman ini, lalu ubah lagi.'];
-                $id      = null;
-            }
-
-            $idAtlet[$i] = $id;
-        }
-
-        $kiriman['penanggung_jawab'] = $pj;
-        $kiriman['atlet']            = $atlet;
-
-        $pendaftaranId = (int) $lama['pendaftaran']['id'];
-        $npsn          = PemeriksaPendaftaran::npsnKiriman($kiriman);
-        $ada           = [
-            'referensi'      => $npsn !== null ? model(SekolahModel::class)->cariNpsn($npsn) : null,
-            'nisn_terdaftar' => $this->nisnLain($pendaftaranId, PemeriksaPendaftaran::nisnKiriman($kiriman)),
-            // Regu milik pendaftaran ini: boleh dipertahankan walau batas regu diturunkan,
-            // dan boleh kurang inti (K105).
-            'regu_tersimpan' => array_keys($lama['beregu']),
-        ] + $this->data->dataSekolah($npsn, $pendaftaranId);
-
-        // Nama tersimpan yang berbeda dari data sekolah (usulan pendaftar yang
-        // belum diputuskan, K99, atau nama yang sengaja tidak diganti admin)
-        // dipertahankan selama NPSN-nya tidak diubah.
-        if ($npsn !== null && $npsn === ($lama['pendaftaran']['npsn'] ?? null) && is_array($ada['referensi'])) {
-            $kiriman['sekolah']                = is_array($kiriman['sekolah'] ?? null) ? $kiriman['sekolah'] : [];
-            $kiriman['sekolah']['nama_usulan'] = (string) $lama['pendaftaran']['nama_sekolah'];
-        }
-
-        // Kelompok umur dan nomor lomba yang sudah dimatikan tetap diterima
-        // untuk atlet yang sudah memakainya (K98).
-        [$induk, $simpanan] = $this->indukDenganSimpanan($lama);
-        $periksa            = (new PemeriksaPendaftaran($induk, $ada, $hariIni, $simpanan, true))->periksa($kiriman, false);
-
-        foreach ($periksa['galat'] as $g) {
-            $galat[] = ['jalur' => $g['jalur'], 'pesan' => $g['pesan']];
-        }
-
-        $statusLama = (string) $lama['pendaftaran']['status'];
-        $totalLama  = (int) $lama['pendaftaran']['total'];
-        $rencana    = [
-            'galat'             => $galat,
-            'id_pendaftaran'    => (string) $lama['pendaftaran']['id_pendaftaran'],
-            'perlu_setuju'      => false,
-            'tersimpan'         => false,
-            'status_lama'       => $statusLama,
-            'status'            => $statusLama,
-            'kembali_menunggu'  => false,
-            'total_lama'        => $totalLama,
-            'subtotal_individu' => (int) $lama['pendaftaran']['subtotal_individu'],
-            'subtotal_beregu'   => (int) $lama['pendaftaran']['subtotal_beregu'],
-            'total'             => $totalLama,
-            'atlet_baru'        => count(array_filter($idAtlet, static fn (?int $id): bool => $id === null)),
-            'nomor_dada'        => [],
-            'tim_dibebankan'    => [],
-            'tim_ditinggalkan'  => [],
-            'gabung'            => null,
-        ];
-
-        if ($galat !== []) {
-            return $rencana;
-        }
-
-        $data = $periksa['data'];
-
-        // Biaya individu: baris tersimpan dipertahankan, baris baru tarif saat ini.
-        $biayaIndividu = [];
-
-        foreach ($data['atlet'] as $i => $a) {
-            $simpan = $idAtlet[$i] !== null ? ($lama['nomor'][$idAtlet[$i]] ?? []) : [];
-
-            foreach ($a['nomor'] as $j => $nomor) {
-                if (array_key_exists($nomor['nomor_lomba_id'], $simpan)) {
-                    $nomor['biaya'] = $simpan[$nomor['nomor_lomba_id']];
-                }
-
-                $data['atlet'][$i]['nomor'][$j] = $nomor;
-
-                if ($nomor['biaya'] !== null) {
-                    $biayaIndividu[] = (int) $nomor['biaya'];
-                }
-            }
-
-            $data['atlet'][$i]['id'] = $idAtlet[$i];
-        }
-
-        // Biaya regu: regu tersimpan dipertahankan, regu baru tarif saat ini (susulan Rp 0);
-        // regu tanpa pembayar yang dicentang mendapat tarif saat ini (K68).
-        $biayaBeregu = [];
-        $timTanpa    = new TimTanpaPembayar($this->db);
-        $npsnBaru    = $data['sekolah']['npsn'] ?? null;
-
-        foreach ($data['beregu'] as $j => $tim) {
-            $nomorId = (int) $tim['nomor_lomba_id'];
-            $kunci   = Regu::kunci($nomorId, (string) $tim['regu']);
-
-            if (array_key_exists($kunci, $lama['beregu'])) {
-                $tim['biaya_tim'] = $lama['beregu'][$kunci];
-            }
-
-            if (in_array($kunci, $bebankan, true) && (int) $tim['biaya_tim'] === 0) {
-                $tarif = $timTanpa->tarifBebankan($pendaftaranId, $npsnBaru, $nomorId, (string) $tim['regu']);
-
-                if ($tarif === null) {
-                    $galat[] = ['jalur' => self::KUNCI_BEBANKAN . '.' . $kunci, 'pesan' => $timTanpa->namaNomor($nomorId, (string) $tim['regu'])
-                        . ': regu ini sudah punya pembayar biaya regu atau tarifnya Rp 0, jadi tidak perlu dibebankan. Hapus centang "Bebankan biaya regu", lalu simpan lagi.'];
-                } else {
-                    $tim['biaya_tim']            = $tarif;
-                    $rencana['tim_dibebankan'][] = $kunci;
-                }
-            }
-
-            $data['beregu'][$j] = $tim;
-            $biayaBeregu[]      = (int) $tim['biaya_tim'];
-        }
-
-        if ($galat !== []) {
-            return ['galat' => $galat] + $rencana;
-        }
-
-        $rencana['tim_ditinggalkan'] = $timTanpa->ditinggalkan($pendaftaranId, $npsnBaru, array_map(
-            static fn (array $t): string => Regu::kunci((int) $t['nomor_lomba_id'], (string) $t['regu']),
-            $data['beregu'],
-        ));
-
-        foreach ($data['penanggung_jawab'] as $i => $orang) {
-            $data['penanggung_jawab'][$i] = [
-                'id'        => $idPj[$i],
-                'nama'      => $orang['nama'],
-                'nomor_wa'  => $orang['nomor_wa'],
-                'foto_baru' => $fotoIsi[$i],
-            ];
-        }
-
-        $total   = BiayaPendaftaran::hitung($biayaIndividu, $biayaBeregu);
-        $kembali = $statusLama === 'lunas' && $total['total'] !== $totalLama;
-
-        return [
-            'status'           => $kembali ? 'menunggu' : $statusLama,
-            'kembali_menunggu' => $kembali,
-            'sekolah'          => $data['sekolah'],
-            'penanggung_jawab' => $data['penanggung_jawab'],
-            'atlet'            => $data['atlet'],
-            'beregu'           => $data['beregu'],
-        ] + $total + $rencana;
-    }
-
     /**
      * Kalimat akibat K32 untuk jendela konfirmasi dan pesan galat.
      */
     public static function kalimatMenunggu(int $totalLama, int $totalBaru): string
     {
-        return 'Pendaftaran ini sudah Lunas, dan perubahan ini mengubah total dari ' . rupiah($totalLama) . ' menjadi ' . rupiah($totalBaru) . '. '
-            . 'Setelah disimpan, status kembali menjadi Menunggu Konfirmasi Pembayaran dan perlu ditandai Lunas lagi setelah selisihnya diurus. '
-            . 'Nomor atlet (BIB) yang sudah dibagikan tetap dipegang atletnya.';
+        return StatusUbah::kalimatMenunggu($totalLama, $totalBaru);
     }
 
     /**
@@ -836,134 +275,7 @@ final class UbahPendaftaran
      */
     public static function kalimatKonfirmasi(array $hasil): string
     {
-        $tim = TimTanpaPembayar::kalimatDitinggalkan($hasil['tim_ditinggalkan'] ?? []);
-        $tim = $tim === '' ? '' : ' ' . $tim;
-
-        if ($hasil['kembali_menunggu']) {
-            return self::kalimatMenunggu((int) $hasil['total_lama'], (int) $hasil['total']) . $tim;
-        }
-
-        $kalimat = 'Perubahan pendaftaran ' . $hasil['id_pendaftaran'] . ' akan disimpan. '
-            . ((int) $hasil['total'] === (int) $hasil['total_lama']
-                ? 'Total tetap ' . rupiah((int) $hasil['total']) . '.'
-                : 'Total berubah dari ' . rupiah((int) $hasil['total_lama']) . ' menjadi ' . rupiah((int) $hasil['total']) . '.');
-
-        if ($hasil['status'] === 'lunas' && $hasil['atlet_baru'] > 0) {
-            $kalimat .= ' Pendaftaran ini sudah Lunas, jadi ' . $hasil['atlet_baru'] . ' atlet baru langsung mendapat nomor atlet (BIB), dan nomor itu tidak bisa ditarik kembali.';
-        }
-
-        return $kalimat . $tim;
-    }
-
-    /**
-     * NISN kiriman yang sudah dipakai pendaftaran lain.
-     *
-     * @param list<string> $nisn
-     *
-     * @return list<string>
-     */
-    private function nisnLain(int $pendaftaranId, array $nisn): array
-    {
-        if ($nisn === []) {
-            return [];
-        }
-
-        $baris = $this->db->table('atlet')->select('nisn')
-            ->whereIn('nisn', $nisn)
-            ->where('pendaftaran_id !=', $pendaftaranId)
-            ->get()->getResultArray();
-
-        return array_map(static fn (array $b): string => (string) $b['nisn'], $baris);
-    }
-
-    // ---------------------------------------------------------------
-    // Data tersimpan
-    // ---------------------------------------------------------------
-
-    /**
-     * Data tersimpan satu pendaftaran, atau `null`.
-     *
-     * `regu`: atlet => nomor beregu => ['regu' => 'A', 'peran' => 'inti']; `beregu`: "nomor:regu" => biaya regu.
-     *
-     * @return array{pendaftaran: array<string, mixed>, penanggung_jawab: array<int, array<string, mixed>>, atlet: array<int, array<string, mixed>>, nomor: array<int, array<int, int|null>>, regu: array<int, array<int, array{regu: string|null, peran: string|null}>>, beregu: array<string, int>}|null
-     */
-    private function bacaLama(int $id): ?array
-    {
-        $p = $this->db->table('pendaftaran')->where('id', $id)->get()->getRowArray();
-
-        if (! is_array($p)) {
-            return null;
-        }
-
-        $pj = [];
-
-        foreach ($this->db->table('penanggung_jawab')->where('pendaftaran_id', $id)->orderBy('id')->get()->getResultArray() as $b) {
-            $pj[(int) $b['id']] = $b;
-        }
-
-        $atlet = [];
-
-        foreach ($this->db->table('atlet')->where('pendaftaran_id', $id)->orderBy('id')->get()->getResultArray() as $b) {
-            $atlet[(int) $b['id']] = $b;
-        }
-
-        $nomor = [];
-        $baris = $this->db->table('atlet_nomor an')
-            ->select('an.atlet_id, an.nomor_lomba_id, an.biaya, an.regu, an.peran, nl.jenis')
-            ->join('atlet a', 'a.id = an.atlet_id')
-            ->join('nomor_lomba nl', 'nl.id = an.nomor_lomba_id')
-            ->where('a.pendaftaran_id', $id)
-            ->orderBy('an.atlet_id')->orderBy('nl.urutan')->orderBy('nl.id')
-            ->get()->getResultArray();
-
-        $regu  = [];
-
-        foreach ($baris as $b) {
-            $nomor[(int) $b['atlet_id']][(int) $b['nomor_lomba_id']] = $b['biaya'] === null ? null : (int) $b['biaya'];
-
-            if ($b['jenis'] === 'beregu') {
-                $regu[(int) $b['atlet_id']][(int) $b['nomor_lomba_id']] = ['regu' => $b['regu'], 'peran' => $b['peran']];
-            }
-        }
-
-        $beregu = [];
-
-        foreach ($this->db->table('pendaftaran_beregu')->where('pendaftaran_id', $id)->orderBy('nomor_lomba_id')->orderBy('regu')->get()->getResultArray() as $b) {
-            $beregu[Regu::kunci((int) $b['nomor_lomba_id'], (string) $b['regu'])] = (int) $b['biaya_tim'];
-        }
-
-        return ['pendaftaran' => $p, 'penanggung_jawab' => $pj, 'atlet' => $atlet, 'nomor' => $nomor, 'regu' => $regu, 'beregu' => $beregu];
-    }
-
-    /**
-     * Induk aktif ditambah kelompok umur dan nomor lomba nonaktif yang masih
-     * dipakai pendaftaran ini, serta peta atlet tersimpan untuk
-     * `PemeriksaPendaftaran` (K98).
-     *
-     * @param array<string, mixed> $lama
-     *
-     * @return array{0: array<string, mixed>, 1: array<int, array{kelompok_umur_id: int, nomor: list<int>}>}
-     */
-    private function indukDenganSimpanan(array $lama): array
-    {
-        $simpanan = [];
-
-        foreach ($lama['atlet'] as $id => $atlet) {
-            $simpanan[(int) $id] = [
-                'kelompok_umur_id' => (int) $atlet['kelompok_umur_id'],
-                'nomor'            => array_map('intval', array_keys($lama['nomor'][(int) $id] ?? [])),
-            ];
-        }
-
-        $nonaktif = $this->data->nonaktif(
-            array_values(array_unique(array_column($simpanan, 'kelompok_umur_id'))),
-            array_values(array_unique(array_merge([], ...array_column($simpanan, 'nomor')))),
-        );
-
-        return [$this->data->induk() + [
-            'kelompok_umur_nonaktif' => $nonaktif['kelompok_umur'],
-            'nomor_lomba_nonaktif'   => $nonaktif['nomor_lomba'],
-        ], $simpanan];
+        return StatusUbah::kalimatKonfirmasi($hasil);
     }
 
     /**
@@ -974,13 +286,13 @@ final class UbahPendaftaran
      */
     public function nonaktifTerpakai(int $id): array
     {
-        $lama = $this->bacaLama($id);
+        $lama = $this->tersimpan->baca($id);
 
         if ($lama === null) {
             return ['nomor_lomba' => [], 'kelompok_umur' => []];
         }
 
-        [$induk] = $this->indukDenganSimpanan($lama);
+        [$induk] = $this->tersimpan->indukDenganSimpanan($lama);
         $ku      = array_column($induk['kelompok_umur_nonaktif'], 'nama', 'id');
         $semuaKu = $ku + array_column($induk['kelompok_umur'], 'nama', 'id');
         $nomor   = [];
@@ -992,26 +304,57 @@ final class UbahPendaftaran
         return ['nomor_lomba' => $nomor, 'kelompok_umur' => $ku];
     }
 
-    private function adaFoto(mixed $jalur): bool
-    {
-        $penuh = $this->foto->jalurPenuh(is_string($jalur) ? $jalur : null);
-
-        return $penuh !== null && is_file($penuh);
-    }
-
     /**
-     * @param array<int|string, string|null> $jalur
+     * Periksa ulang, K32, lalu tulis (`TulisUbah`). Dipanggil saat kunci NPSN dipegang.
+     *
+     * @param array<string, mixed> $lama
+     * @param array<string, mixed> $kiriman
+     *
+     * @return array<string, mixed>
      */
-    private function hapusFoto(array $jalur): void
+    private function simpanTerkunci(array $lama, array $kiriman, bool $setujuMenunggu, string $hariIni, ?callable $dalamTransaksi = null): array
     {
-        foreach ($jalur as $satu) {
-            $this->foto->hapus($satu);
-        }
-    }
+        $rencana = $this->rencana->hitung($lama, $kiriman, $hariIni);
 
-    // ---------------------------------------------------------------
-    // Bantu
-    // ---------------------------------------------------------------
+        if ($rencana['galat'] !== []) {
+            return self::ringkas($rencana);
+        }
+
+        if ($rencana['kembali_menunggu'] && ! $setujuMenunggu) {
+            $rencana['perlu_setuju'] = true;
+            $rencana['galat']        = [['jalur' => 'setuju_menunggu', 'pesan' => StatusUbah::kalimatMenunggu($rencana['total_lama'], $rencana['total'])
+                . ' Tekan Simpan perubahan lagi, lalu setujui di jendela konfirmasi.']];
+
+            return self::ringkas($rencana);
+        }
+
+        try {
+            $tulis = $this->tulis->tulis($lama, $rencana, $dalamTransaksi);
+        } catch (Throwable $e) {
+            // NISN yang baru saja didaftarkan kiriman lain: laporkan sebagai galat biasa.
+            $ulang = $this->tersimpan->baca((int) $lama['pendaftaran']['id']);
+
+            if ($ulang !== null) {
+                $periksa = $this->rencana->hitung($ulang, $kiriman, $hariIni);
+
+                if ($periksa['galat'] !== []) {
+                    return self::ringkas($periksa);
+                }
+            }
+
+            throw $e;
+        }
+
+        if ($tulis['pesan'] !== null) {
+            return self::ringkas(self::gagal($lama, 'simpan', $tulis['pesan']));
+        }
+
+        $rencana['tersimpan']  = true;
+        $rencana['nomor_dada'] = $tulis['nomor_dada'];
+        $rencana['gabung']     = $tulis['gabung'];
+
+        return self::ringkas($rencana);
+    }
 
     /**
      * Hanya kunci yang dipakai pengendali dan uji; data rencana simpan dibuang.
@@ -1064,100 +407,8 @@ final class UbahPendaftaran
         return (int) ($baris['dapat'] ?? 0) === 1;
     }
 
-    /**
-     * @param list<int|string> $ikat
-     *
-     * @return list<array<string, mixed>>
-     */
-    private function baca(string $sql, array $ikat): array
-    {
-        $hasil = $this->db->query($sql, $ikat);
-
-        if (! is_object($hasil)) {
-            $galat = $this->db->error();
-
-            throw new DatabaseException('Data pendaftaran gagal dibaca: ' . (string) ($galat['message'] ?? 'tanpa keterangan') . '.');
-        }
-
-        return $hasil->getResultArray();
-    }
-
-    private function pastikan(mixed $hasil): void
-    {
-        if ($hasil === false) {
-            $galat = $this->db->error();
-
-            throw new DatabaseException('Data pendaftaran gagal ditulis: ' . (string) ($galat['message'] ?? 'tanpa keterangan') . '.', (int) ($galat['code'] ?? 0));
-        }
-    }
-
-    private static function pastikanId(int $id): void
-    {
-        if ($id < 1) {
-            throw new RuntimeException('Atlet baru gagal ditulis.');
-        }
-    }
-
-    /**
-     * Regu ("nomor:regu") yang dicentang "Bebankan biaya regu" di kiriman.
-     *
-     * @param array<string, mixed> $kiriman
-     *
-     * @return list<string>
-     */
-    private static function reguBebankan(array $kiriman): array
-    {
-        return array_values(array_filter(self::daftar($kiriman[self::KUNCI_BEBANKAN] ?? null), static fn (mixed $k): bool => Regu::pecah($k) !== null));
-    }
-
-    /**
-     * Pilihan regu atlet dari kiriman, dirapikan untuk ditampilkan ulang.
-     *
-     * @return array<int, array{regu: string, peran: string}>
-     */
-    private static function reguIsian(mixed $nilai): array
-    {
-        $hasil = [];
-
-        foreach (is_array($nilai) ? $nilai : [] as $nomorId => $pilih) {
-            if (self::id($nomorId) !== null && is_array($pilih)) {
-                $hasil[(int) $nomorId] = ['regu' => self::teks($pilih['regu'] ?? null), 'peran' => self::teks($pilih['peran'] ?? null)];
-            }
-        }
-
-        return $hasil;
-    }
-
-    private static function npsn(mixed $nilai): ?string
-    {
-        return is_string($nilai) && preg_match('/^\d{8}$/D', $nilai) === 1 ? $nilai : null;
-    }
-
-    private static function id(mixed $nilai): ?int
-    {
-        return (is_int($nilai) || (is_string($nilai) && ctype_digit($nilai))) && (int) $nilai > 0 ? (int) $nilai : null;
-    }
-
-    private static function teks(mixed $nilai): string
-    {
-        return is_string($nilai) || is_int($nilai) ? (string) $nilai : '';
-    }
-
-    /**
-     * @return list<mixed>
-     */
-    private static function daftar(mixed $nilai): array
-    {
-        return is_array($nilai) ? array_values($nilai) : [];
-    }
-
     private static function hariIni(): string
     {
         return Time::now(config('App')->appTimezone)->format('Y-m-d');
-    }
-
-    private static function sekarang(): string
-    {
-        return Time::now(config('App')->appTimezone)->format('Y-m-d H:i:s');
     }
 }
