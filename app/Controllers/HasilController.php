@@ -3,7 +3,9 @@
 namespace App\Controllers;
 
 use App\Libraries\Hasil\HasilLomba;
+use App\Libraries\Hasil\Klasemen;
 use App\Libraries\Hasil\UnduhanHasil;
+use App\Libraries\Hasil\UnduhanKlasemen;
 use App\Libraries\IsiHalamanDepan;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -11,7 +13,8 @@ use CodeIgniter\HTTP\ResponseInterface;
 /**
  * Halaman publik hasil lomba (F8-04, K124 butir 7, asumsi 8 K125): `hasil`
  * (nomor yang sudah terbit per kelompok umur), `hasil/<id>` (semua babak satu
- * nomor), dan unduhan PDF/Excel. Nomor yang belum terbit tidak ditemukan.
+ * nomor), unduhan PDF/Excel, dan klasemen sekolah `hasil/klasemen` (F8-05,
+ * hanya nomor terbit). Nomor yang belum terbit tidak ditemukan.
  * Unduhan dibatasi per alamat IP supaya pembuatan PDF tidak dibanjiri.
  */
 class HasilController extends BaseController
@@ -49,15 +52,42 @@ class HasilController extends BaseController
         ]);
     }
 
+    public function klasemen(): string
+    {
+        return view('hasil/klasemen', [
+            'namaAcara' => (new IsiHalamanDepan())->acara()['nama'],
+            'klasemen'  => Klasemen::hitung((new HasilLomba())->juara(true)),
+        ]);
+    }
+
+    public function unduhKlasemen(string $jenis): ResponseInterface
+    {
+        $batas = $this->batasUnduhan();
+
+        if ($batas !== null) {
+            return $batas;
+        }
+
+        $unduhan = new UnduhanKlasemen(Klasemen::hitung((new HasilLomba())->juara(true)), true);
+
+        if ($jenis === 'excel') {
+            return $unduhan->excel()->unduh(UnduhanKlasemen::namaBerkas('xlsx'));
+        }
+
+        return $this->response
+            ->setContentType('application/pdf')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . UnduhanKlasemen::namaBerkas('pdf') . '"')
+            ->setBody($unduhan->pdf());
+    }
+
     public function unduh(int $id, string $jenis): ResponseInterface
     {
         $hasil = new HasilLomba();
         $nomor = $this->cariTerbit($hasil, $id);
+        $batas = $this->batasUnduhan();
 
-        $pembatas = service('throttler');
-        if (! $pembatas->check('hasil-' . hash('sha256', $this->request->getIPAddress()), self::BATAS_UNDUHAN, MINUTE)) {
-            return $this->response->setStatusCode(429)->setHeader('Retry-After', (string) max(1, $pembatas->getTokenTime()))
-                ->setBody('Terlalu banyak unduhan dalam satu menit. Tunggu sebentar, lalu coba lagi.');
+        if ($batas !== null) {
+            return $batas;
         }
 
         $unduhan = new UnduhanHasil($nomor, $hasil->semuaBabak($nomor));
@@ -70,6 +100,21 @@ class HasilController extends BaseController
             ->setContentType('application/pdf')
             ->setHeader('Content-Disposition', 'attachment; filename="' . UnduhanHasil::namaBerkas($nomor, 'pdf') . '"')
             ->setBody($unduhan->pdf());
+    }
+
+    /**
+     * Jawaban 429 bila alamat IP ini terlalu sering mengunduh, selain itu `null`.
+     */
+    private function batasUnduhan(): ?ResponseInterface
+    {
+        $pembatas = service('throttler');
+
+        if ($pembatas->check('hasil-' . hash('sha256', $this->request->getIPAddress()), self::BATAS_UNDUHAN, MINUTE)) {
+            return null;
+        }
+
+        return $this->response->setStatusCode(429)->setHeader('Retry-After', (string) max(1, $pembatas->getTokenTime()))
+            ->setBody('Terlalu banyak unduhan dalam satu menit. Tunggu sebentar, lalu coba lagi.');
     }
 
     /**

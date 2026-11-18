@@ -11,9 +11,9 @@ Juara umum per jenjang terlihat di panel dan halaman depan, dihitung sesuai jukn
 
 ## Hasil
 
-- [ ] Pustaka murni `Klasemen` dengan uji unit: juara I, lalu II, lalu III, lalu peringkat bersama; regu = satu piala; kontingen per NPSN
-- [ ] Klasemen terpisah per jenjang; halaman `admin/klasemen` dan publik `hasil/klasemen` (hanya nomor terbit)
-- [ ] Unduhan PDF dan Excel klasemen
+- [x] Pustaka murni `Klasemen` dengan uji unit: juara I, lalu II, lalu III, lalu peringkat bersama; regu = satu piala; kontingen per NPSN
+- [x] Klasemen terpisah per jenjang; halaman `admin/klasemen` dan publik `hasil/klasemen` (hanya nomor terbit)
+- [x] Unduhan PDF dan Excel klasemen
 
 ## Selesai bila
 
