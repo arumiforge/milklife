@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | rencana |
 | Tahap | 8 — Hari lomba dan hasil |
 | Dibuat | 17 November 2026 |
 

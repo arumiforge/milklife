@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | selesai |
 | Tahap | 7 — Penyelesaian |
 | Dibuat | 17 November 2026 |
 
