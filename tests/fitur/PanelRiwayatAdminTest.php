@@ -234,7 +234,7 @@ final class PanelRiwayatAdminTest extends UjiBasisData
 
         $riwayat = $this->riwayat($p['id']);
         $this->assertSame([RiwayatAdmin::UNGGAH_BUKTI, RiwayatAdmin::HAPUS_BUKTI], array_column($riwayat, 'tindakan'));
-        $this->assertSame('Bukti bayar diunggah admin (gambar ke-1 dari paling banyak 5).', $riwayat[0]['ringkasan']);
+        $this->assertSame('Bukti bayar diunggah admin (gambar ke-1 dari paling banyak 100).', $riwayat[0]['ringkasan']);
         $this->assertStringStartsWith('Bukti bayar ke-1 dihapus (diunggah ', $riwayat[1]['ringkasan']);
     }
 
