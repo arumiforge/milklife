@@ -3,11 +3,13 @@
  * Tata letak panel admin: lebar penuh, tanpa teks footer.
  *
  * - Layar ≥ lg: menu samping tetap di kiri, kepala halaman menempel di atas.
- * - Ponsel dan tablet: menu samping hilang, diganti menu menempel di bawah
- *   (ikon + label). Tombol Keluar tetap di kepala halaman.
+ * - Ponsel dan tablet: menu samping menjadi sidebar (Bootstrap
+ *   `offcanvas-lg`) yang dibuka tombol menu di kepala halaman, berisi semua
+ *   butir (K131, K133). Menu yang menempel di bawah hanya 5 butir urusan
+ *   pendaftaran (K132, K133). Tombol Keluar tetap di kepala halaman.
  * Kedua menu memakai daftar yang sama: `tata_letak/_menu_admin.php`.
  * Pengecekan dan Halaman depan (K102) menempel di bagian bawah menu samping;
- * di ponsel dan tablet keduanya ikon di kepala halaman.
+ * di ponsel dan tablet keduanya juga ikon di kepala halaman.
  *
  * Bagian yang diisi tampilan:
  * - `judul`: judul halaman, cukup nama halamannya (misalnya `Dasbor`). Tab
@@ -83,7 +85,11 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
     <a class="lompat-ke-isi visually-hidden-focusable" href="#isi">Lompat ke isi</a>
 
     <div class="admin-bingkai">
-        <aside class="menu-samping d-none d-lg-flex">
+        <?php /* Satu elemen untuk dua bentuk: menu samping di layar lebar, sidebar di ponsel (K131). */ ?>
+        <aside id="menu-laci" class="menu-samping offcanvas-lg offcanvas-start d-lg-flex" tabindex="-1" aria-label="Menu panel admin">
+            <div class="offcanvas-header menu-laci-kepala">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#menu-laci" aria-label="Tutup menu"></button>
+            </div>
             <a class="menu-samping-merek merek" href="<?= site_url('admin/dasbor') ?>">
                 <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
                 <span class="menu-samping-peran">Panel admin</span>
@@ -95,6 +101,10 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
 
         <div class="admin-utama">
             <header class="kepala-admin">
+                <button type="button" class="btn btn-outline-primary tombol-menu d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#menu-laci" aria-controls="menu-laci" title="Buka menu">
+                    <i class="bi bi-list" aria-hidden="true"></i>
+                    <span class="visually-hidden">Buka menu</span>
+                </button>
                 <h1 class="kepala-admin-judul"><?= $judulHalaman ?></h1>
                 <div class="kepala-admin-pengguna">
                     <?php /* Di layar lebar Pengecekan dan Halaman depan ada di bagian bawah menu samping (K102). */ ?>
@@ -133,7 +143,7 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
         </div>
     </div>
 
-    <nav class="menu-bawah d-lg-none" aria-label="Menu admin">
+    <nav class="menu-bawah d-lg-none" aria-label="Menu pendaftaran">
         <?= $this->include('tata_letak/_menu_admin') ?>
     </nav>
 

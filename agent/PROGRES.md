@@ -52,7 +52,7 @@ Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24,
 | [F8-03 Fitur hari lomba](tugas/F8-03-hari-lomba.md) | selesai | 2e | [#104](https://github.com/arumiforge/milklife/pull/104) |
 | [F8-04 Hasil lomba](tugas/F8-04-hasil-lomba.md) | selesai | 2f | (PR ini) |
 | [F8-05 Klasemen sekolah](tugas/F8-05-klasemen-sekolah.md) | rencana | 2f | |
-| [F8-07 Menu ponsel: sidebar dan 5 butir bawah](tugas/F8-07-menu-ponsel-sidebar.md) | rencana | 2 | |
+| [F8-07 Menu ponsel: sidebar dan 5 butir bawah](tugas/F8-07-menu-ponsel-sidebar.md) | selesai | 2 | [#107](https://github.com/arumiforge/milklife/pull/107) |
 | [F8-06 Penutupan Tahap 8](tugas/F8-06-penutupan-tahap-8.md) | rencana | akhir | |
 
 ## Berikutnya

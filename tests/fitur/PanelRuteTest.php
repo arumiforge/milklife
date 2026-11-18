@@ -141,8 +141,9 @@ final class PanelRuteTest extends UjiHalaman
                 $aktif[] = trim($tautan->textContent);
             }
 
-            // Menu samping dan menu bawah.
-            $this->assertSame([$label, $label], $aktif, $alamat);
+            // Menu samping, lalu menu bawah bila butirnya termasuk 5 butir pendaftaran (K133).
+            $diBawah = in_array($label, ['Dasbor', 'Pendaftaran', 'Atlet', 'Ditolak', 'Rekap'], true);
+            $this->assertSame($diBawah ? [$label, $label] : [$label], $aktif, $alamat);
         }
     }
 
