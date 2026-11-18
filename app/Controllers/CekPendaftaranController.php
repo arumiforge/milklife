@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\DataPendaftaran;
 use App\Libraries\IsiHalamanDepan;
+use App\Libraries\Turnstile;
 use App\Models\BuktiBayarModel;
 
 /**
@@ -18,6 +19,12 @@ use App\Models\BuktiBayarModel;
  * keterangan (K109). Hanya bisa dipakai bila pengaturan lengkap (rancangan
  * 6.1). Setiap pencarian dihitung oleh pembatas laju per alamat IP
  * (rancangan 13).
+ *
+ * Bila Cloudflare Turnstile aktif (K122), formulir memuat pemeriksaan
+ * keamanan dan pencarian tanpa token yang sah ditolak dengan 403. Setelah
+ * lolos sekali, pengunjung tidak diperiksa lagi selama `LAMA_LOLOS` detik
+ * (disimpan di sesi), supaya alamat `?kode=` setelah unggah bukti bayar dan
+ * muat ulang halaman hasil tetap bisa dibuka; token Turnstile sekali pakai.
  */
 class CekPendaftaranController extends BaseController
 {
@@ -30,6 +37,18 @@ class CekPendaftaranController extends BaseController
      * Lama jendela pembatasan pencarian, dalam detik.
      */
     public const JENDELA_DETIK = 60;
+
+    /**
+     * Lama pengunjung tidak diperiksa Turnstile lagi setelah lolos, dalam detik.
+     */
+    public const LAMA_LOLOS = 1800;
+
+    /**
+     * Kunci sesi: waktu (Unix) sampai kapan pengunjung dianggap sudah lolos.
+     */
+    public const KUNCI_LOLOS = 'cek_turnstile_sampai';
+
+    public const PESAN_BELUM = 'Pemeriksaan keamanan belum selesai. Tunggu sampai kotak pemeriksaan keamanan di bawah isian bertanda centang hijau, lalu tekan Cari.';
 
     public function index(): string
     {
@@ -48,7 +67,15 @@ class CekPendaftaranController extends BaseController
             'hasil'     => [],
             // Tombol tanya panitia untuk atlet yang ditolak (K116).
             'waTanya'   => $isi->waTanya(),
+            'turnstile' => null,
         ];
+
+        $turnstile = new Turnstile();
+        $lolos     = ! $turnstile->aktif() || (int) session()->get(self::KUNCI_LOLOS) > time();
+
+        if (! $lolos) {
+            $data['turnstile'] = $turnstile->untukHalaman(Turnstile::AKSI_CEK);
+        }
 
         $masukan = $this->request->getGet('kode');
 
@@ -74,6 +101,21 @@ class CekPendaftaranController extends BaseController
             $data['galat'] = 'Terlalu banyak pencarian dalam waktu singkat. Tunggu ' . $detik . ' detik lagi, lalu coba cari kembali.';
 
             return view('cek_pendaftaran', $data);
+        }
+
+        if (! $lolos) {
+            $token = $this->request->getGet(Turnstile::NAMA_ISIAN);
+            $galat = $token === null || $token === '' ? self::PESAN_BELUM : $turnstile->periksa($token, Turnstile::AKSI_CEK, $this->request->getIPAddress());
+
+            if ($galat !== null) {
+                $this->response->setStatusCode(403);
+                $data['galat'] = $galat;
+
+                return view('cek_pendaftaran', $data);
+            }
+
+            session()->set(self::KUNCI_LOLOS, time() + self::LAMA_LOLOS);
+            $data['turnstile'] = null;
         }
 
         $baca = new DataPendaftaran();
