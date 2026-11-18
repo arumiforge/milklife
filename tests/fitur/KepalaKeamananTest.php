@@ -2,6 +2,10 @@
 
 use CodeIgniter\HTTP\DownloadResponse;
 use CodeIgniter\Test\TestResponse;
+use CodeIgniter\HTTP\ContentSecurityPolicy as CspBawaan;
+use CodeIgniter\HTTP\Response;
+use Config\App;
+use Config\ContentSecurityPolicy;
 use Config\Filters;
 use Tests\Support\KirimFormulir;
 use Tests\Support\PanelDataContoh;
@@ -58,6 +62,34 @@ final class KepalaKeamananTest extends UjiBasisData
             $hasil->assertOK();
             $this->assertKepalaKeamanan($hasil, $alamat);
         }
+    }
+
+    /**
+     * CSP mengizinkan Cloudflare Turnstile (K122): skrip dan iframe dari
+     * challenges.cloudflare.com. CSP aplikasi belum dinyalakan
+     * (`App::$CSPEnabled`); bila dinyalakan, kepalanya memuat sumber ini.
+     */
+    public function testCspMengizinkanTurnstile(): void
+    {
+        $csp = config(ContentSecurityPolicy::class);
+
+        foreach (['scriptSrc', 'scriptSrcElem', 'frameSrc'] as $arahan) {
+            $this->assertContains('https://challenges.cloudflare.com', (array) $csp->{$arahan}, $arahan);
+            $this->assertContains('self', (array) $csp->{$arahan}, $arahan);
+        }
+
+        $jawaban = new Response(config(App::class));
+        $aktif   = new class ($csp) extends CspBawaan {
+            public function enabled(): bool
+            {
+                return true;
+            }
+        };
+        $aktif->finalize($jawaban);
+        $kepala = $jawaban->getHeaderLine('Content-Security-Policy');
+
+        $this->assertMatchesRegularExpression("#script-src 'self' https://challenges\.cloudflare\.com#", $kepala);
+        $this->assertMatchesRegularExpression("#frame-src 'self' https://challenges\.cloudflare\.com#", $kepala);
     }
 
     public function testHalamanAdmin(): void

@@ -2423,12 +2423,55 @@
         $('#tombol-mulai-ulang').closest('.mulai-ulang').hidden = true;
     }
 
+    // ------------------------------------------------------------------
+    // Pemeriksaan keamanan Cloudflare Turnstile (K122)
+    // ------------------------------------------------------------------
+    //
+    // Hanya bila `DATA.turnstile` terisi (kunci di .env server). Widget dipasang
+    // saat langkah 5 pertama kali tampil. Token sekali pakai: setelah setiap
+    // kiriman yang tidak berhasil, widget di-reset supaya kirim ulang (juga
+    // kirim ulang B2) memakai token baru.
+
+    var turnstileId = null;
+    var turnstileToken = '';
+    var turnstileCoba = 0;
+
+    function pasangTurnstile() {
+        var wadah = $('#turnstile-kirim');
+        if (!DATA.turnstile || !wadah || turnstileId !== null) {
+            return;
+        }
+        if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+            // Skrip Cloudflare dimuat async; coba lagi sebentar (paling lama sekitar 30 detik).
+            if (turnstileCoba++ < 150) {
+                window.setTimeout(pasangTurnstile, 200);
+            }
+            return;
+        }
+        turnstileId = window.turnstile.render(wadah, {
+            sitekey: DATA.turnstile.kunci_situs,
+            action: DATA.turnstile.aksi,
+            language: 'id',
+            callback: function (token) { turnstileToken = String(token || ''); },
+            'expired-callback': function () { turnstileToken = ''; },
+            'error-callback': function () { turnstileToken = ''; }
+        });
+    }
+
+    function resetTurnstile() {
+        turnstileToken = '';
+        if (turnstileId !== null && window.turnstile) {
+            window.turnstile.reset(turnstileId);
+        }
+    }
+
     penyiapLangkah[5] = function () {
         if (sudahSelesai) {
             tampilkanSelesai();
             return;
         }
         tampilkanBayar();
+        pasangTurnstile();
         if (!rincian) {
             // Draf yang dibuka lagi lain waktu: hitung ulang total dari server.
             periksaServer().then(function (galat) {
@@ -2479,6 +2522,11 @@
             tampilkanGalat(5, [{ jalur: 'bukti_bayar', pesan: 'Gambar terlalu besar. Paling besar 10 MB; perkecil dulu atau pakai tangkapan layar.' }]);
             return;
         }
+        if (DATA.turnstile && turnstileToken === '') {
+            pasangTurnstile();
+            tampilkanGalat(5, [{ jalur: 'turnstile', pesan: 'Pemeriksaan keamanan belum selesai. Tunggu sampai kotak pemeriksaan keamanan di atas tombol bertanda centang hijau, lalu tekan Kirim Pendaftaran lagi.' }]);
+            return;
+        }
 
         yakin('Kirim pendaftaran?', 'Pendaftaran ' + rincian.sekolah.nama + ' dengan ' + draf.atlet.length + ' atlet dan total ' + rupiah(rincian.total)
             + ' dikirim bersama bukti transfer "' + dipilih.name + '". Setelah terkirim, data tidak bisa diubah lewat halaman ini; bila ada yang perlu diubah, hubungi panitia.',
@@ -2507,7 +2555,11 @@
         simpanDraf();
 
         kecilkanFoto(dipilih, SISI_BUKTI, BATAS_BUKTI).then(function (dataUrl) {
-            return kirim(DATA.alamat.simpan, { bukti_bayar: dataUrl, kunci_kirim: draf.kunciKirim });
+            var tambahan = { bukti_bayar: dataUrl, kunci_kirim: draf.kunciKirim };
+            if (DATA.turnstile) {
+                tambahan['cf-turnstile-response'] = turnstileToken;
+            }
+            return kirim(DATA.alamat.simpan, tambahan);
         }, function () {
             return { kode: -1 };
         }).then(function (hasil) {
@@ -2534,6 +2586,9 @@
                 $('#cetak-bukti').focus();
                 return;
             }
+
+            // Token sudah terpakai (atau ditolak): siapkan token baru untuk kirim ulang.
+            resetTurnstile();
 
             if (hasil.kode === 422 && hasil.isi && Array.isArray(hasil.isi.galat)) {
                 rincian = null;

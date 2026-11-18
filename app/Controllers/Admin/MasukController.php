@@ -5,11 +5,17 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Filters\AdminFilter;
 use App\Libraries\SesiAdmin;
+use App\Libraries\Turnstile;
 use App\Models\AdminModel;
 use CodeIgniter\HTTP\RedirectResponse;
 
 /**
  * Masuk dan keluar panel admin.
+ *
+ * Bila Cloudflare Turnstile aktif (K122), formulir masuk memuat pemeriksaan
+ * keamanan dan tokennya diperiksa sebelum kata sandi; gagal = 403. Bila
+ * Cloudflare bermasalah, mengosongkan `turnstile.kunciRahasia` di `.env`
+ * mematikannya supaya admin tetap bisa masuk.
  */
 class MasukController extends BaseController
 {
@@ -65,6 +71,14 @@ class MasukController extends BaseController
                 galat: 'Terlalu banyak percobaan masuk. Tunggu ' . $detik . ' detik lagi, lalu coba masuk kembali.',
                 namaPengguna: $namaPengguna,
             );
+        }
+
+        $galatKeamanan = (new Turnstile())->periksa($this->request->getPost(Turnstile::NAMA_ISIAN), Turnstile::AKSI_MASUK, $this->request->getIPAddress());
+
+        if ($galatKeamanan !== null) {
+            $this->response->setStatusCode(403);
+
+            return $this->tampilkan(galat: $galatKeamanan, namaPengguna: $namaPengguna);
         }
 
         $validasi = service('validation');
@@ -131,6 +145,7 @@ class MasukController extends BaseController
             'galat'        => $galat,
             'info'         => $info,
             'namaPengguna' => $namaPengguna,
+            'turnstile'    => (new Turnstile())->untukHalaman(Turnstile::AKSI_MASUK),
         ]);
     }
 

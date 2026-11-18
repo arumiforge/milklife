@@ -8,7 +8,13 @@
  * jadi official bisa kembali lain waktu dan tinggal mengunggah bukti.
  * Setelah terkirim, draf dikosongkan dan tampil tombol cetak bukti
  * `/bukti/<kode>/<ID>` (Tahap 5).
+ *
+ * Bila Cloudflare Turnstile aktif (K122), kotak pemeriksaan keamanan tampil
+ * di atas tombol Kirim; `pendaftaran.js` memasangnya dan mengirim tokennya.
+ *
+ * @var array<string, mixed>|null $wizard
  */
+$turnstile = $wizard['turnstile'] ?? null;
 ?>
 <section class="langkah" id="langkah-5" data-langkah="5" aria-labelledby="judul-langkah-5" hidden>
     <h2 id="judul-langkah-5" tabindex="-1">5. Pembayaran</h2>
@@ -50,6 +56,15 @@
             <div class="invalid-feedback"></div>
             <div class="form-text" id="bayar-berkas-keterangan">JPG, PNG, atau WEBP, paling besar 10 MB.</div>
         </div>
+
+        <?php if ($turnstile !== null) : ?>
+            <div class="kartu-isian pemeriksaan-keamanan">
+                <p class="form-label fw-semibold mb-2">Pemeriksaan keamanan</p>
+                <div id="turnstile-kirim" class="cf-turnstile" data-jalur="turnstile" data-sitekey="<?= esc($turnstile['kunci_situs'], 'attr') ?>" data-action="<?= esc($turnstile['aksi'], 'attr') ?>"></div>
+                <div class="invalid-feedback d-block"></div>
+                <div class="form-text">Tunggu sampai kotak ini bertanda centang hijau sebelum menekan Kirim Pendaftaran.</div>
+            </div>
+        <?php endif ?>
 
         <div class="langkah-tombol">
             <button type="button" class="btn btn-outline-secondary" data-kembali><i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali</button>

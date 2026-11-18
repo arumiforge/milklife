@@ -6,6 +6,8 @@ use CodeIgniter\I18n\Time;
 use CodeIgniter\Test\StreamFilterTrait;
 use Tests\Support\CekDataPendaftaran;
 use Tests\Support\KirimFormulir;
+use Tests\Support\TiruanSiteverify;
+use Tests\Support\TurnstileUji;
 use Tests\Support\UjiBasisData;
 use Tests\Support\UnggahanSementara;
 
@@ -18,6 +20,7 @@ final class CekPendaftaranTest extends UjiBasisData
 {
     use CekDataPendaftaran;
     use KirimFormulir;
+    use TurnstileUji;
     use StreamFilterTrait;
     use UnggahanSementara;
 
@@ -32,6 +35,7 @@ final class CekPendaftaranTest extends UjiBasisData
 
     protected function tearDown(): void
     {
+        $this->matikanTurnstile();
         Time::setTestNow();
 
         parent::tearDown();
@@ -153,5 +157,56 @@ final class CekPendaftaranTest extends UjiBasisData
         $hasil->assertStatus(429);
         $hasil->assertSee('Terlalu banyak pencarian dalam waktu singkat. Tunggu 6 detik lagi');
         $hasil->assertHeader('Retry-After', '6');
+    }
+
+    public function testTurnstileWajibSebelumMencari(): void
+    {
+        $this->lengkapiPengaturanCek();
+        $this->isiDataCek();
+        $tiruan = $this->nyalakanTurnstile(TiruanSiteverify::RAHASIA_LOLOS, 'cek_pendaftaran');
+
+        $halaman = $this->get('cek-pendaftaran');
+        $halaman->assertOK();
+        $halaman->assertSee('class="cf-turnstile mt-3" data-sitekey="' . TiruanSiteverify::SITUS_LOLOS . '" data-action="cek_pendaftaran"');
+        $halaman->assertSee('<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>');
+
+        // Tanpa token: 403 dan tanpa data.
+        $tanpa = $this->get('cek-pendaftaran?kode=20300001');
+        $tanpa->assertStatus(403);
+        $tanpa->assertSee('Pemeriksaan keamanan belum selesai');
+        $tanpa->assertDontSee('SD NEGERI CONTOH 1');
+        $this->assertSame([], $tiruan->kiriman);
+
+        // Dengan token: hasil tampil, widget tidak tampil lagi.
+        $dengan = $this->get('cek-pendaftaran?kode=20300001&cf-turnstile-response=' . rawurlencode(TiruanSiteverify::TOKEN));
+        $dengan->assertOK();
+        $dengan->assertSee('SD NEGERI CONTOH 1');
+        $dengan->assertDontSee('cf-turnstile');
+        $this->assertCount(1, $tiruan->kiriman);
+        $sampai = $_SESSION[CekPendaftaranController::KUNCI_LOLOS];
+        $this->assertGreaterThan(time() + CekPendaftaranController::LAMA_LOLOS - 5, $sampai);
+
+        // Sudah lolos: alamat ?kode= (misalnya setelah unggah bukti bayar) terbuka tanpa token baru.
+        $lagi = $this->withSession([CekPendaftaranController::KUNCI_LOLOS => $sampai])->get('cek-pendaftaran?kode=20300001');
+        $lagi->assertOK();
+        $lagi->assertSee('SD NEGERI CONTOH 1');
+        $this->assertCount(1, $tiruan->kiriman);
+
+        // Masa lolos habis: diperiksa lagi.
+        $this->withSession([CekPendaftaranController::KUNCI_LOLOS => time() - 1])->get('cek-pendaftaran?kode=20300001')->assertStatus(403);
+    }
+
+    public function testTurnstileGagalDiCekPendaftaran(): void
+    {
+        $this->lengkapiPengaturanCek();
+        $this->isiDataCek();
+        $this->nyalakanTurnstile(TiruanSiteverify::RAHASIA_GAGAL, 'cek_pendaftaran');
+
+        $hasil = $this->get('cek-pendaftaran?kode=20300001&cf-turnstile-response=' . rawurlencode(TiruanSiteverify::TOKEN));
+
+        $hasil->assertStatus(403);
+        $hasil->assertSee('Pemeriksaan keamanan gagal');
+        $hasil->assertDontSee('SD NEGERI CONTOH 1');
+        $this->assertArrayNotHasKey(CekPendaftaranController::KUNCI_LOLOS, $_SESSION ?? []);
     }
 }

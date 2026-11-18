@@ -7,7 +7,9 @@
  * @var string|null           $galat        pesan galat di atas formulir
  * @var string|null           $info         pesan pemberitahuan (misalnya setelah keluar)
  * @var string                $namaPengguna nama pengguna yang tadi diketik
+ * @var array{kunci_situs: string, aksi: string, skrip: string}|null $turnstile pemeriksaan keamanan (K122); null bila mati
  */
+$turnstile ??= null;
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
 ?>
@@ -49,9 +51,19 @@ use App\Controllers\Admin\Pengaturan\AcaraController;
             <?= $namaPengguna !== '' ? 'autofocus' : '' ?>>
     </div>
 
+    <?php if ($turnstile !== null) : ?>
+        <div class="cf-turnstile mb-3" data-sitekey="<?= esc($turnstile['kunci_situs'], 'attr') ?>" data-action="<?= esc($turnstile['aksi'], 'attr') ?>" data-language="id"></div>
+    <?php endif ?>
+
     <button type="submit" class="btn btn-primary w-100">
         <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
         Masuk
     </button>
 </form>
 <?= $this->endSection() ?>
+
+<?php if ($turnstile !== null) : ?>
+    <?= $this->section('skrip') ?>
+    <script src="<?= esc($turnstile['skrip']) ?>" async defer></script>
+    <?= $this->endSection() ?>
+<?php endif ?>

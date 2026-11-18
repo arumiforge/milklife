@@ -90,6 +90,10 @@ $langkah = [
     <?= $this->endSection() ?>
 
     <?= $this->section('skrip') ?>
+    <?php if (($wizard['turnstile'] ?? null) !== null) : ?>
+        <?php // Dipasang `pendaftaran.js` saat langkah 5 tampil (K122). ?>
+        <script src="<?= esc($wizard['turnstile']['skrip']) ?>?render=explicit" async defer></script>
+    <?php endif ?>
     <script src="<?= aset('js/pendaftaran.js') ?>"></script>
     <?= $this->endSection() ?>
 <?php endif ?>
