@@ -47,7 +47,7 @@ Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24,
 | Tugas | Status | Gelombang | PR |
 |---|---|---|---|
 | [F8-01 Riwayat tindakan admin](tugas/F8-01-riwayat-tindakan-admin.md) | selesai | 2d | [#102](https://github.com/arumiforge/milklife/pull/102) |
-| [F8-02 Penanda bukti bayar baru](tugas/F8-02-penanda-bukti-baru.md) | rencana | 2d | |
+| [F8-02 Penanda bukti bayar baru](tugas/F8-02-penanda-bukti-baru.md) | selesai | 2d | [#103](https://github.com/arumiforge/milklife/pull/103) |
 | [F8-03 Fitur hari lomba](tugas/F8-03-hari-lomba.md) | rencana | 2e | |
 | [F8-04 Hasil lomba](tugas/F8-04-hasil-lomba.md) | rencana | 2f | |
 | [F8-05 Klasemen sekolah](tugas/F8-05-klasemen-sekolah.md) | rencana | 2f | |

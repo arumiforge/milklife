@@ -210,7 +210,11 @@ final class PaketPendaftaran
 
                     $berkas[$b['berkas']] = BerkasBuktiBayar::folderDasar() . $b['berkas'];
 
-                    return ['berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah']];
+                    return [
+                        'berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah'],
+                        // F8-02: penanda bukti yang sudah diperiksa admin.
+                        'diperiksa_pada' => $b['diperiksa_pada'] ?? null, 'diperiksa_oleh' => $b['diperiksa_oleh'] ?? null,
+                    ];
                 }, $bukti[$id] ?? []))),
                 // ID dan kode bukti lama yang sudah digabung ke sini (K109).
                 'gabungan_dari' => array_map(static fn (array $g): array => [
@@ -542,7 +546,15 @@ final class PaketPendaftaran
 
             foreach ($p['bukti_bayar'] ?? [] as $b) {
                 if ($this->berkasSah($b['berkas'] ?? null)) {
-                    $tabel('bukti_bayar', ['pendaftaran_id' => $id, 'berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah']]);
+                    // Paket dari sebelum F8-02 tidak punya penanda: bukti pendaftaran Lunas dianggap sudah diperiksa.
+                    $diperiksa = array_key_exists('diperiksa_pada', $b)
+                        ? (is_string($b['diperiksa_pada']) ? $b['diperiksa_pada'] : null)
+                        : ((string) $p['status'] === 'lunas' ? ($p['waktu_lunas'] ?? $b['waktu_unggah']) : null);
+                    $tabel('bukti_bayar', [
+                        'pendaftaran_id' => $id, 'berkas' => $b['berkas'], 'ukuran' => (int) $b['ukuran'], 'waktu_unggah' => $b['waktu_unggah'],
+                        'diperiksa_pada' => $diperiksa,
+                        'diperiksa_oleh' => $diperiksa === null ? null : mb_substr(is_string($b['diperiksa_oleh'] ?? null) ? $b['diperiksa_oleh'] : 'Data lama', 0, 100),
+                    ]);
                 }
             }
 

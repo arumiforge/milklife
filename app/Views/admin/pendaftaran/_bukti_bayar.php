@@ -6,6 +6,8 @@
  * Isinya: gambar kecil setiap bukti bayar (klik untuk melihat gambar besar),
  * tombol unduh dan hapus (dengan jendela konfirmasi) per gambar, dan
  * formulir unggah selama bukti belum `BuktiBayarModel::BATAS` gambar.
+ * Bukti baru dari ofisial yang belum diperiksa diberi tanda "Baru" dan
+ * tombol "Sudah diperiksa" (F8-02).
  * Di layar lebar galeri di kiri dan panel unggah di kanan (K76); di ponsel
  * bertumpuk.
  * Pengendalinya `App\Controllers\Admin\BuktiBayarController`; setelah unggah
@@ -52,6 +54,8 @@ $batasBukti   = BuktiBayarModel::BATAS;
 $bolehTambah  = $jumlahBukti < $batasBukti;
 $dasarBukti   = 'admin/pendaftaran/' . $idBukti . '/bukti-bayar';
 $untukPembaca = $kodeBukti === '' ? '' : ' pendaftaran ' . $kodeBukti;
+// F8-02: bukti dari ofisial yang belum diperiksa admin.
+$jumlahBaru   = count(array_filter($daftarBukti, static fn (array $b): bool => ($b['diperiksa_pada'] ?? null) === null));
 ?>
 <section class="card mb-4" id="bukti-bayar" aria-labelledby="judul-bukti-bayar" data-jumlah-bukti="<?= $jumlahBukti ?>">
     <div class="card-body">
@@ -63,6 +67,21 @@ $untukPembaca = $kodeBukti === '' ? '' : ' pendaftaran ' . $kodeBukti;
                 <?= $jumlahBukti ?> dari <?= $batasBukti ?> gambar
             </span>
         </div>
+
+        <?php if ($jumlahBaru > 0) : ?>
+            <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 px-3" id="bukti-baru" role="status">
+                <span>
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <?= $jumlahBaru ?> bukti bayar baru dari ofisial belum diperiksa. Bukti ikut ditandai sudah diperiksa saat pendaftaran ditandai Lunas.
+                </span>
+                <form action="<?= site_url($dasarBukti . '/diperiksa') ?>" method="post" id="form-bukti-diperiksa">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="btn btn-sm btn-primary text-nowrap">
+                        <i class="bi bi-check2" aria-hidden="true"></i> Sudah diperiksa
+                    </button>
+                </form>
+            </div>
+        <?php endif ?>
 
         <div class="row g-4">
             <div class="col-12 col-lg-8">
@@ -95,7 +114,12 @@ $untukPembaca = $kodeBukti === '' ? '' : ' pendaftaran ' . $kodeBukti;
                                         <span class="visually-hidden">Perbesar <?= esc(lcfirst($keterangan)) ?></span>
                                     </button>
                                     <figcaption class="card-body py-2 px-3">
-                                        <span class="fw-semibold d-block">Bukti ke-<?= $nomorBukti ?></span>
+                                        <span class="fw-semibold d-block">
+                                            Bukti ke-<?= $nomorBukti ?>
+                                            <?php if (($bukti['diperiksa_pada'] ?? null) === null) : ?>
+                                                <span class="badge rounded-pill text-bg-info bukti-baru-tanda">Baru</span>
+                                            <?php endif ?>
+                                        </span>
                                         <span class="small text-body-secondary d-block">
                                             <?= esc($waktu === '' ? 'Waktu unggah tidak tercatat' : 'Diunggah ' . $waktu) ?>
                                             · <?= esc(Unggahan::ukuranTeks((int) $bukti['ukuran'])) ?>
