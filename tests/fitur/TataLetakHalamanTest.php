@@ -143,7 +143,11 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertStringContainsString('d-lg-flex', $samping->parentNode->getAttribute('class'));
 
         // Kedua menu berasal dari daftar yang sama; menu bawah memakai label pendek (K117).
-        $utama = static fn (string $ditolak, string $lomba): array => [
+        // Butir hanya-samping (F8-04/F8-05, K130–K133) tidak ada di menu bawah ponsel.
+        $hanyaSamping = [
+            ['Hasil lomba', site_url('admin/hasil'), ''],
+        ];
+        $utama = static fn (string $ditolak, string $lomba, array $samping = []): array => [
             ['Dasbor', site_url('admin/dasbor'), 'page'],
             // Panel data (Tahap 6, F6-01).
             ['Pendaftaran', site_url('admin/pendaftaran'), ''],
@@ -153,13 +157,14 @@ final class TataLetakHalamanTest extends UjiHalaman
             // Hari lomba (F8-03).
             [$lomba, site_url('admin/daftar-ulang'), ''],
             ['Sekolah', site_url('admin/sekolah'), ''],
+            ...$samping,
             ['Pengaturan', site_url('admin/pengaturan'), ''],
         ];
         $this->assertSame($utama('Ditolak', 'Lomba'), $this->daftarMenu($xpath, $bawah));
 
         // Menu samping: daftar yang sama, lalu Pengecekan dan Halaman depan di bagian bawah (K102).
         $this->assertSame([
-            ...$utama('Atlet ditolak', 'Hari lomba'),
+            ...$utama('Atlet ditolak', 'Hari lomba', $hanyaSamping),
             ['Pengecekan', site_url('admin/pengecekan'), ''],
             ['Halaman depan (tab baru)', site_url('/'), ''],
         ], $this->daftarMenu($xpath, $samping));
@@ -205,8 +210,8 @@ final class TataLetakHalamanTest extends UjiHalaman
         // Halaman lain tidak menandai Dasbor.
         $xpath = $this->xpath($this->renderDiAlamat('admin/lain', 'Tests\Support\Views\contoh_admin'));
         $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
-        // Delapan butir di menu bawah, sepuluh di menu samping (K102, K117, F8-03).
-        $this->assertSame(18, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
+        // Delapan butir di menu bawah, sebelas di menu samping (K102, K117, F8-03, F8-04).
+        $this->assertSame(19, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));
