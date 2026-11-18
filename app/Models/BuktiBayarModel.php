@@ -15,11 +15,11 @@ use Config\Pembayaran;
 class BuktiBayarModel extends Model
 {
     /**
-     * Rentang yang boleh diisi admin untuk `Pembayaran.batas_bukti_bayar` (K135).
+     * Rentang yang boleh diisi admin untuk `Pembayaran.batas_bukti_bayar` (K135, K136).
      */
     public const BATAS_TERKECIL = 1;
 
-    public const BATAS_TERBESAR = 20;
+    public const BATAS_TERBESAR = 200;
 
     protected $table            = 'bukti_bayar';
     protected $primaryKey       = 'id';
@@ -57,7 +57,7 @@ class BuktiBayarModel extends Model
 
     /**
      * Bukti bayar paling banyak per pendaftaran, diatur admin di Pengaturan >
-     * Pembayaran (`Pembayaran.batas_bukti_bayar`, bawaan 5, K135). Nilai di
+     * Pembayaran (`Pembayaran.batas_bukti_bayar`, bawaan 100, K135, K136). Nilai di
      * luar rentang `BATAS_TERKECIL`–`BATAS_TERBESAR` dipepetkan ke ujungnya.
      *
      * Menurunkan batas tidak menghapus bukti yang sudah ada; pendaftaran yang

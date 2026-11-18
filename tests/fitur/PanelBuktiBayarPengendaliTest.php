@@ -31,6 +31,9 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
         parent::setUp();
         $this->siapkanDataPanel();
         $this->pakaiFolderBuktiBayarSementara();
+        // Bawaan 100 (K136); uji di kelas ini memakai batas 5 supaya mengisi
+        // sampai penuh tetap cepat. Bawaan diuji di `PanelBuktiBayarTest`.
+        setting('Pembayaran.batas_bukti_bayar', 5);
     }
 
     protected function tearDown(): void

@@ -256,7 +256,7 @@ final class PanelGabunganTest extends UjiBasisData
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['pid'] . '/bukti-bayar'),
             'admin/pendaftaran/' . $a['pid'],
             // Bukti pertama sudah ikut terkirim bersama pendaftaran (K90).
-            'Bukti bayar tersimpan untuk pendaftaran ' . $a['id_pendaftaran'] . ' (2 dari 5 gambar).',
+            'Bukti bayar tersimpan untuk pendaftaran ' . $a['id_pendaftaran'] . ' (2 dari 100 gambar).',
         );
         $buktiId = (int) $this->db->table('bukti_bayar')->where('pendaftaran_id', $a['pid'])->get()->getRow()->id;
         $this->bukaSebagaiAdmin('admin/pendaftaran/' . $a['pid'] . '/bukti-bayar/' . $buktiId)->assertOK();
