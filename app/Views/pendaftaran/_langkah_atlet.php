@@ -1,7 +1,7 @@
 <?php
 /**
  * Langkah 3: Atlet (rancangan 6.4–6.6, 7). Formulir atlet dan daftar
- * sementara diisi `pendaftaran.js`.
+ * sementara diisi `aset/js/pendaftaran/atlet-*.js`.
  *
  * @var array<string, mixed> $wizard
  */

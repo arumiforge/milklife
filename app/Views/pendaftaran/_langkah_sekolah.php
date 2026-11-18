@@ -1,6 +1,6 @@
 <?php
 /**
- * Langkah 1: Data Sekolah (rancangan 6.2, 7). Diisi `pendaftaran.js`.
+ * Langkah 1: Data Sekolah (rancangan 6.2, 7). Diisi `aset/js/pendaftaran/sekolah.js`.
  *
  * @var array<string, mixed> $wizard
  */
@@ -53,7 +53,7 @@
 
         <div id="sekolah-hasil" aria-live="polite"></div>
 
-        <?php // Usulan nama sekolah yang lebih lengkap (K99); ditampilkan pendaftaran.js. ?>
+        <?php // Usulan nama sekolah yang lebih lengkap (K99); ditampilkan `pendaftaran/sekolah.js`. ?>
         <div class="mb-3" id="sekolah-usulan-kotak" hidden>
             <label class="form-label" for="sekolah-nama-usulan">Nama sekolah lengkap yang diusulkan</label>
             <input type="text" class="form-control" id="sekolah-nama-usulan" maxlength="150" autocomplete="off" data-jalur="sekolah.nama_usulan"
