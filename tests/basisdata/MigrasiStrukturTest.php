@@ -140,6 +140,9 @@ final class MigrasiStrukturTest extends UjiBasisData
             'berkas'         => ['varchar(255)', false, null],
             'ukuran'         => ['int unsigned', false, null],
             'waktu_unggah'   => ['datetime', true, null],
+            // F8-02: kosong = bukti baru yang belum diperiksa admin.
+            'diperiksa_pada' => ['datetime', true, null],
+            'diperiksa_oleh' => ['varchar(100)', true, null],
         ],
         // K99: usulan nama sekolah dari pendaftar.
         'usulan_nama_sekolah' => [

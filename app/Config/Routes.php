@@ -109,6 +109,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     // ---------- F8-01/F8-02: riwayat tindakan admin dan bukti bayar baru ----------
     // Cari riwayat menurut ID pendaftaran, termasuk yang sudah dihapus (F8-01).
     $routes->get('riwayat', 'PendaftaranController::riwayat');
+    // Tombol "Sudah diperiksa" untuk bukti bayar baru dari ofisial (F8-02).
+    $routes->post('pendaftaran/(:num)/bukti-bayar/diperiksa', 'BuktiBayarController::diperiksa/$1');
     // ---------- Akhir F8-01/F8-02 ----------
 
     // Data sekolah (K97): lihat dan sunting nama supaya sekolah bernama umum bisa dibedakan.

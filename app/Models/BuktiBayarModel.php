@@ -22,7 +22,7 @@ class BuktiBayarModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $allowedFields    = ['pendaftaran_id', 'berkas', 'ukuran'];
+    protected $allowedFields    = ['pendaftaran_id', 'berkas', 'ukuran', 'diperiksa_pada', 'diperiksa_oleh'];
 
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';

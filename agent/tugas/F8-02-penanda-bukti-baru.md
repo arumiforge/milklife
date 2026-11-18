@@ -2,7 +2,6 @@
 
 | | |
 |---|---|
-| Status | rencana |
 | Tahap | 8 — Hari lomba dan hasil |
 | Dibuat | 17 November 2026 |
 
@@ -12,10 +11,10 @@ Admin langsung tahu pendaftaran mana yang punya bukti bayar baru dari ofisial (S
 
 ## Hasil
 
-- [ ] Kolom `bukti_bayar.diperiksa_pada` dan `diperiksa_oleh`
-- [ ] Tanda dan saringan di daftar pendaftaran; tombol "Sudah diperiksa" di rincian; Lunas menandai diperiksa
-- [ ] Kartu jumlah di dasbor (tanpa pendaftaran "Semua atlet ditolak", K117)
-- [ ] Uji fitur
+- [x] Kolom `bukti_bayar.diperiksa_pada` dan `diperiksa_oleh`
+- [x] Tanda dan saringan di daftar pendaftaran; tombol "Sudah diperiksa" di rincian; Lunas menandai diperiksa
+- [x] Kartu jumlah di dasbor (tanpa pendaftaran "Semua atlet ditolak", K117)
+- [x] Uji fitur
 
 ## Selesai bila
 

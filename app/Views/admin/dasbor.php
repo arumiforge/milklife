@@ -129,6 +129,8 @@ $persenLunas = $angka['tagihan'] > 0 ? (int) round($angka['lunas'] / $angka['tag
         <div class="row row-cols-2 row-cols-md-3 row-cols-xxl-6 g-3">
             <?php foreach ([
                 'perlu_diperiksa'      => ['Bukti bayar perlu diperiksa', 'patch-question', 'admin/pendaftaran'],
+                // F8-02: pendaftaran dengan bukti bayar baru dari ofisial yang belum diperiksa.
+                'bukti_baru'           => ['Bukti bayar baru belum diperiksa', 'bell', 'admin/pendaftaran?bukti=baru'],
                 'pendaftaran_menunggu' => ['Pendaftaran menunggu', 'clock-history', ''],
                 'pendaftaran_lunas'    => ['Pendaftaran lunas', 'patch-check', ''],
                 'nomor_dada'           => ['Nomor atlet (BIB) terbit', '123', ''],
@@ -142,7 +144,7 @@ $persenLunas = $angka['tagihan'] > 0 ? (int) round($angka['lunas'] / $angka['tag
                 'kunjungan_hari_ini'   => ['Halaman dibuka hari ini', 'window-stack', ''],
             ] as $kunci => [$label, $ikon, $alamat]) : ?>
                 <div class="col">
-                    <div class="kartu-dasbor kartu-kecil h-100<?= $kunci === 'perlu_diperiksa' && $tambahan[$kunci] > 0 ? ' kartu-sorot' : '' ?>" data-tambahan="<?= $kunci ?>">
+                    <div class="kartu-dasbor kartu-kecil h-100<?= in_array($kunci, ['perlu_diperiksa', 'bukti_baru'], true) && $tambahan[$kunci] > 0 ? ' kartu-sorot' : '' ?>" data-tambahan="<?= $kunci ?>">
                         <i class="bi bi-<?= $ikon ?>" aria-hidden="true"></i>
                         <div class="nilai-kecil"><?= $angkaBiasa($tambahan[$kunci]) ?></div>
                         <div class="label-angka">

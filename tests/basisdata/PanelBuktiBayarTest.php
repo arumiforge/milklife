@@ -42,6 +42,9 @@ final class PanelBuktiBayarTest extends UjiBasisData
             ['kolom' => 'berkas', 'tipe' => 'varchar(255)', 'kosong' => 'NO'],
             ['kolom' => 'ukuran', 'tipe' => 'int unsigned', 'kosong' => 'NO'],
             ['kolom' => 'waktu_unggah', 'tipe' => 'datetime', 'kosong' => 'YES'],
+            // F8-02: penanda bukti bayar yang sudah diperiksa admin.
+            ['kolom' => 'diperiksa_pada', 'tipe' => 'datetime', 'kosong' => 'YES'],
+            ['kolom' => 'diperiksa_oleh', 'tipe' => 'varchar(100)', 'kosong' => 'YES'],
         ], $kolom);
 
         $tabel = $this->db->query(
