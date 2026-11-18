@@ -33,7 +33,24 @@ SQL
 # 2. Pustaka PHP dan .env
 cd milklife
 [ -f .env ] || cp .env.example .env
+
+# phpstan/phpstan hanya punya dist di api.github.com, yang ditolak proxy sesi.
+# Isi cache Composer dari git commit yang sama (lihat catatan di bawah).
+REF=$(php -r '$l=json_decode(file_get_contents("composer.lock"),true); foreach($l["packages-dev"] as $p) if($p["name"]==="phpstan/phpstan") echo $p["dist"]["reference"];')
+CACHE=$(COMPOSER_ALLOW_SUPERUSER=1 composer config -g cache-files-dir)/phpstan/phpstan
+KUNCI=$(php -r 'echo sha1("https://api.github.com/repos/phpstan/phpstan/zipball/".$argv[1]);' "$REF")
+if [ -n "$REF" ] && [ ! -f "$CACHE/$KUNCI.zip" ]; then
+  SEMENTARA=$(mktemp -d)
+  git -C "$SEMENTARA" init -q
+  git -C "$SEMENTARA" fetch -q --depth 1 https://github.com/phpstan/phpstan.git "$REF"
+  mkdir -p "$CACHE"
+  git -C "$SEMENTARA" archive --format=zip --prefix=phpstan/ -o "$CACHE/$KUNCI.zip" FETCH_HEAD
+  rm -rf "$SEMENTARA"
+fi
+
 COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --no-progress --prefer-dist
 ```
 
 Basis data dan sandi di atas hanya untuk uji sekali pakai di kontainer, bukan rahasia.
+
+Paket `phpstan/phpstan` (F7-31) di Packagist hanya punya dist `api.github.com/.../zipball/<ref>`, tanpa source git, dan proxy sesi menolak `api.github.com` (403). Langkah di atas mengambil commit yang sama dari `github.com` dengan git, lalu menaruhnya di cache Composer dengan nama yang dicari Composer (sha1 URL dist). Bila `composer.lock` menaikkan versi PHPStan, langkah itu otomatis mengikuti `reference` baru. Di CI GitHub langkah ini tidak perlu.

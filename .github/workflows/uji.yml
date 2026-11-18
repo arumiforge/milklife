@@ -63,6 +63,9 @@ jobs:
       - name: Pasang pustaka
         run: composer install --no-interaction --no-progress --prefer-dist
 
+      - name: Analisis statis (PHPStan)
+        run: composer analisis
+
       - name: Buat basis data uji
         run: >-
           mysql -h 127.0.0.1 -u root -psandi-uji -e

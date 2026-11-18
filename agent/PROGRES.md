@@ -38,7 +38,7 @@ Diperbarui: 18 November 2026
 | [F7-28 Rancangan revisi K116–K124](tugas/F7-28-rancangan-revisi-k116-k124.md) | selesai | sisipan 1c | [#96](https://github.com/arumiforge/milklife/pull/96) |
 | [F7-29 Susunan dokumen agen](tugas/F7-29-susunan-dokumen-agen.md) | selesai | sisipan 1c | [#99](https://github.com/arumiforge/milklife/pull/99) |
 | [F7-30 Pecah berkas besar](tugas/F7-30-pecah-berkas-besar.md) | selesai | sisipan 3 | [#108](https://github.com/arumiforge/milklife/pull/108) |
-| [F7-31 PHPStan](tugas/F7-31-phpstan.md) | rencana | sisipan 3 | |
+| [F7-31 PHPStan](tugas/F7-31-phpstan.md) | selesai | sisipan 3 | [#111](https://github.com/arumiforge/milklife/pull/111) |
 | [F7-33 Kelompok umur pilihan dalam satu jenjang](tugas/F7-33-kelompok-umur-pilihan.md) | selesai | sisipan | [#109](https://github.com/arumiforge/milklife/pull/109) |
 | [F7-32 CSP menyala](tugas/F7-32-csp-menyala.md) | rencana | sisipan 3 | |
 
