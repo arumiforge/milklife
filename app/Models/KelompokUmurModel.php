@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Libraries\Jenjang;
+use App\Libraries\Pendaftaran\KelompokUmurAtlet;
 use CodeIgniter\Model;
 use RuntimeException;
 use Throwable;
@@ -17,9 +18,11 @@ use Throwable;
  *   tahun lahir paling awal (atlet tertua), `tahun_lahir_akhir` paling akhir
  *   (atlet termuda). Keduanya boleh kosong; kosong berarti tidak dibatasi di
  *   sisi itu (KU 8: lahir 2019 ke atas).
- * - Rentang tahun lahir kelompok umur aktif boleh beririsan antar-jenjang,
- *   tetapi tidak dalam satu jenjang (K95): dua kelompok umur aktif yang sama-sama
- *   dibuka untuk satu jenjang tidak boleh punya tahun lahir yang sama.
+ * - Rentang tahun lahir kelompok umur aktif boleh beririsan antar-jenjang.
+ *   Dalam satu jenjang hanya boleh bila "Pendaftar memilih kelompok umur"
+ *   menyala (`Pendaftaran.pilih_kelompok_umur`, K134); bila mati, dua kelompok
+ *   umur aktif yang sama-sama dibuka untuk satu jenjang tidak boleh punya tahun
+ *   lahir yang sama (K95).
  *   Kelompok umur yang kedua batasnya masih kosong belum punya rentang, dan yang
  *   belum dicentang jenjangnya tidak menerima atlet, jadi keduanya tidak
  *   dibandingkan (pengaturannya dianggap belum lengkap oleh F2-09).
@@ -177,6 +180,29 @@ class KelompokUmurModel extends Model
                 'jumlah_atlet'       => $atlet[$id] ?? 0,
             ];
         }, $this->orderBy('urutan')->orderBy('id')->findAll());
+    }
+
+    /**
+     * Apakah pendaftar boleh memilih kelompok umur bila tahun lahir atletnya
+     * masuk lebih dari satu kelompok umur dalam satu jenjang (K134).
+     */
+    public static function bolehPilih(): bool
+    {
+        return (bool) setting('Pendaftaran.pilih_kelompok_umur');
+    }
+
+    /**
+     * Tahun lahir yang masuk lebih dari satu kelompok umur aktif dalam satu
+     * jenjang (K134), dari `KelompokUmurAtlet::irisan()`.
+     *
+     * @return list<array{jenjang: string, tahun: list<int>, kelompok_umur: list<string>}>
+     */
+    public function irisanAktif(): array
+    {
+        return KelompokUmurAtlet::irisan(array_values(array_filter(
+            $this->daftarLengkap(),
+            static fn (array $ku): bool => (int) $ku['aktif'] === 1,
+        )), self::tahunLahirTerbesar());
     }
 
     /**
@@ -344,15 +370,17 @@ class KelompokUmurModel extends Model
             $galat['awalan'] = $galatAwalan;
         }
 
-        // Dalam satu jenjang, rentang tahun lahir kelompok umur aktif tidak boleh beririsan (K95).
-        if ($data['aktif'] === 1 && ! isset($galat['tahun_lahir_awal']) && ! isset($galat['tahun_lahir_akhir']) && ! isset($galat['jenjang'])) {
+        // Dalam satu jenjang, rentang tahun lahir kelompok umur aktif tidak boleh beririsan (K95),
+        // kecuali pendaftar boleh memilih kelompok umur (K134).
+        if ($data['aktif'] === 1 && ! self::bolehPilih() && ! isset($galat['tahun_lahir_awal']) && ! isset($galat['tahun_lahir_akhir']) && ! isset($galat['jenjang'])) {
             [$tabrakan, $jenjangSama] = $this->cariTabrakan($data, $id) ?? [null, []];
 
             if ($tabrakan !== null) {
                 $galat['tahun_lahir_awal'] = 'Tahun lahir ini bertabrakan dengan ' . $tabrakan['nama'] . ' ('
                     . mb_strtolower(self::teksTahunLahir($tabrakan['tahun_lahir_awal'], $tabrakan['tahun_lahir_akhir']))
                     . ') untuk jenjang ' . Jenjang::gabungLabel($jenjangSama) . '. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif.'
-                    . ' Ubah tahunnya, hapus centang jenjang yang sama, atau matikan salah satu kelompok umur.';
+                    . ' Ubah tahunnya, hapus centang jenjang yang sama, matikan salah satu kelompok umur,'
+                    . ' atau nyalakan "Pendaftar memilih kelompok umur" di halaman Kelompok Umur.';
             }
         }
 

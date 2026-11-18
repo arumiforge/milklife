@@ -40,7 +40,7 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 | Rekap | `rekap[/<jenis>[/data\|/excel\|/pdf]]`, `rekap/gabungan/excel` | `Admin/RekapController` | `Panel/Rekap`, `Panel/RekapPdf`, `Panel/EksporExcel` | `admin/rekap/` | `tabel-admin` | f `PanelRekapTest`, u `PanelEksporExcelTest` |
 | Hari lomba (F8-03): daftar ulang QR + hadir, BIB massal, daftar peserta | `daftar-ulang[/(:num)/hadir\|batal-hadir]`, `nomor-atlet/cetak[/pdf]`, `daftar-peserta[/(:num)/pdf\|excel]`, `daftar-peserta/kelompok-umur/(:num)/pdf\|excel` | `Admin/DaftarUlangController`, `…/CetakBibController`, `…/DaftarPesertaController`; tautan admin di `BuktiController` | `HariLomba/KodeDaftarUlang`, `DaftarUlang`, `CetakBib`, `DaftarPeserta`, `DaftarPesertaPdf`, `PdfHariLomba` | `admin/hari_lomba/` | `daftar-ulang`, `konfirmasi` | f `HariLombaDaftarUlangTest`, `HariLombaCetakTest`, u `HariLombaKodeDaftarUlangTest` |
 | Sekolah, usulan nama (K99), nama desa (K114) | `sekolah[/data\|/excel\|/(:num)/ubah]`, `sekolah/usulan…`, `sekolah/nama-desa` | `Admin/SekolahController` | `Panel/UsulanNamaSekolah`, `Panel/NamaDesaSekolah` | `admin/sekolah/` | `centang-semua` | f `PanelSekolahTest`, `PanelUsulanNamaSekolahTest`, `PanelNamaDesaSekolah*Test` |
-| Pengaturan | `pengaturan/{acara,pendaftaran,pembayaran,halaman-depan}` + CRUD `{kelompok-umur,nomor-lomba,jadwal,kontak,unduhan}` | `Admin/Pengaturan/*Controller` | `KelengkapanPengaturan`, `MarkdownSederhana` | `admin/pengaturan/` | `konfirmasi`, `pilih-tanggal` | f `Pengaturan*Test`, b `*ModelTest` |
+| Pengaturan | `pengaturan/{acara,pendaftaran,pembayaran,halaman-depan}` + CRUD `{kelompok-umur,nomor-lomba,jadwal,kontak,unduhan}`, sakelar `kelompok-umur/pilihan` (K134) | `Admin/Pengaturan/*Controller` | `KelengkapanPengaturan`, `MarkdownSederhana` | `admin/pengaturan/` | `konfirmasi`, `pilih-tanggal` | f `Pengaturan*Test`, b `*ModelTest` |
 
 ## Perintah spark (`app/Commands/`)
 
@@ -56,6 +56,7 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 - `CF-Connecting-IP` hanya dipercaya dari 127.0.0.1/::1 (tunnel) (`Config/App.php` `$proxyIPs`).
 - Buka/tutup dari pengaturan, kelas murni (`BukaTutupPendaftaran`), dicek pengendali sebelum simpan.
 - Bukti PDF hanya lewat kode acak 24 heksa + ID (K77), dibatasi `throttler`.
+- Kelompok umur atlet: `Pendaftaran/KelompokUmurAtlet::tentukan()` (jenjang → tahun lahir → pilihan bila lebih dari satu cocok, K95, K134), kembarannya di JS `pendaftaran/atlet.js` dan `admin-ubah-pendaftaran.js`; irisan per jenjang `KelompokUmurAtlet::irisan()`.
 - Perutean otomatis mati (`Config/Routing.php`); admin dijaga `Filters/AdminFilter`.
 
 ## Perintah uji per area

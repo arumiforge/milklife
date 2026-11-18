@@ -1,6 +1,6 @@
 # Progres
 
-Diperbarui: 17 November 2026
+Diperbarui: 18 November 2026
 
 ## Sedang berjalan
 
@@ -39,6 +39,7 @@ Diperbarui: 17 November 2026
 | [F7-29 Susunan dokumen agen](tugas/F7-29-susunan-dokumen-agen.md) | selesai | sisipan 1c | [#99](https://github.com/arumiforge/milklife/pull/99) |
 | [F7-30 Pecah berkas besar](tugas/F7-30-pecah-berkas-besar.md) | selesai | sisipan 3 | [#108](https://github.com/arumiforge/milklife/pull/108) |
 | [F7-31 PHPStan](tugas/F7-31-phpstan.md) | rencana | sisipan 3 | |
+| [F7-33 Kelompok umur pilihan dalam satu jenjang](tugas/F7-33-kelompok-umur-pilihan.md) | menunggu tinjauan | sisipan | [#109](https://github.com/arumiforge/milklife/pull/109) |
 | [F7-32 CSP menyala](tugas/F7-32-csp-menyala.md) | rencana | sisipan 3 | |
 
 Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24, F7-25), 1b (F7-26 lalu F7-27), 1c (F7-28, F7-29); gelombang 3 = F7-30 setelah F7-26, F7-27, dan F8-01 masuk `main`, lalu F7-31; F7-32 (CSP, K127) setelah F7-30 dan F8-04/F8-05 masuk `main`. F7-06 dan F7-07 paling akhir, bersama F8-06.

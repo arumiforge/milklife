@@ -89,7 +89,7 @@
         }
 
         if (kartu.classList.contains('kartu-atlet')) {
-            $$('[data-isian="tanggal_lahir"], [data-isian="jenis_kelamin"]', kartu).forEach(function (el) {
+            $$('[data-isian="tanggal_lahir"], [data-isian="jenis_kelamin"], [data-isian="kelompok_umur_id"]', kartu).forEach(function (el) {
                 el.addEventListener('change', function () { saringNomor(kartu); });
             });
             $$('input[data-isian="nomor"]', kartu).forEach(function (el) {
@@ -184,10 +184,11 @@
     /**
      * Kelompok umur dari jenjang dan tahun lahir (K95, sama dengan `KelompokUmurAtlet`):
      * bila jenjang terisi, hanya kelompok umur yang dibuka untuk jenjang itu yang dicari.
+     * Bila tahun lahir masuk lebih dari satu kelompok umur, yang dipakai pilihan
+     * admin (`pilihan`, K134); `pilihan` di hasil berisi semua yang cocok.
      */
-    function tentukanKu(tahun, jenjang) {
-        var cocok = null;
-        DATA.kelompok_umur.some(function (ku) {
+    function tentukanKu(tahun, jenjang, pilihan) {
+        var cocok = DATA.kelompok_umur.filter(function (ku) {
             var awal = ku.tahun_lahir_awal;
             var akhir = ku.tahun_lahir_akhir;
             if (awal === null && akhir === null) {
@@ -196,22 +197,61 @@
             if (jenjang && ku.jenjang.indexOf(jenjang) === -1) {
                 return false;
             }
-            if ((awal === null || tahun >= awal) && (akhir === null || tahun <= akhir)) {
-                cocok = ku;
-                return true;
-            }
-            return false;
+            return (awal === null || tahun >= awal) && (akhir === null || tahun <= akhir);
         });
 
-        if (!cocok) {
+        if (!cocok.length) {
             return {
                 ku: null,
+                pilihan: [],
                 pesan: jenjang
                     ? 'Tidak ada kelompok umur untuk ' + (DATA.jenjang[jenjang] || jenjang) + ' yang menerima lahir tahun ' + tahun + '.'
                     : 'Tahun lahir ' + tahun + ' tidak masuk kelompok umur mana pun.'
             };
         }
-        return { ku: cocok, pesan: cocok.nama };
+        if (cocok.length === 1) {
+            return { ku: cocok[0], pilihan: cocok, pesan: cocok[0].nama };
+        }
+        var dipilih = cocok.filter(function (ku) { return ku.id === Number(pilihan); })[0] || null;
+        return {
+            ku: dipilih,
+            pilihan: cocok,
+            pesan: dipilih
+                ? dipilih.nama + ' (dipilih; lahir tahun ' + tahun + ' juga boleh ikut ' + cocok.filter(function (ku) { return ku !== dipilih; }).map(function (ku) { return ku.nama; }).join(', ') + ')'
+                : 'Lahir tahun ' + tahun + ' boleh ikut ' + cocok.map(function (ku) { return ku.nama; }).join(' atau ') + '. Pilih kelompok umurnya dulu.'
+        };
+    }
+
+    /**
+     * Kotak pilihan kelompok umur atlet (K134): tampil dan terkirim hanya bila
+     * tahun lahirnya masuk lebih dari satu kelompok umur.
+     */
+    function isiPilihanKu(kartu, hasil) {
+        var wadah = kartu.querySelector('.pilih-ku-admin');
+        var pilih = wadah ? wadah.querySelector('select') : null;
+        if (!pilih) {
+            return null;
+        }
+        if (!hasil || hasil.pilihan.length < 2) {
+            wadah.hidden = true;
+            pilih.disabled = true;
+            return null;
+        }
+
+        var sekarang = pilih.value || pilih.getAttribute('data-awal') || '';
+        var kunci = hasil.pilihan.map(function (ku) { return ku.id; }).join(',');
+        if (pilih.getAttribute('data-ku') !== kunci) {
+            pilih.textContent = '';
+            pilih.appendChild(new Option('Pilih kelompok umur', ''));
+            hasil.pilihan.forEach(function (ku) {
+                var teks = ku.nama + (ku.teks_tahun_lahir ? ' (' + ku.teks_tahun_lahir.toLowerCase() + ')' : '');
+                pilih.appendChild(new Option(teks, String(ku.id), false, String(ku.id) === String(sekarang)));
+            });
+            pilih.setAttribute('data-ku', kunci);
+        }
+        wadah.hidden = false;
+        pilih.disabled = false;
+        return pilih.value ? Number(pilih.value) : null;
     }
 
     function cocokJenisKelamin(kategori, jk) {
@@ -231,13 +271,20 @@
         var lahir = (kartu.querySelector('[data-isian="tanggal_lahir"]') || {}).value || '';
         var jk = (kartu.querySelector('[data-isian="jenis_kelamin"]') || {}).value || '';
         var keterangan = kartu.querySelector('.keterangan-ku');
-        var hasil = /^\d{4}-\d{2}-\d{2}$/.test(lahir) ? tentukanKu(Number(lahir.slice(0, 4)), jenjangSekolah.value) : null;
+        var tahun = /^\d{4}-\d{2}-\d{2}$/.test(lahir) ? Number(lahir.slice(0, 4)) : null;
+        var hasil = tahun ? tentukanKu(tahun, jenjangSekolah.value, null) : null;
+        if (hasil && hasil.pilihan.length > 1) {
+            hasil = tentukanKu(tahun, jenjangSekolah.value, isiPilihanKu(kartu, hasil));
+        } else {
+            isiPilihanKu(kartu, hasil);
+        }
         var kuId = hasil && hasil.ku ? hasil.ku.id : null;
         // Kelompok umur tersimpan yang sudah dimatikan tetap dipakai atlet ini (K98);
         // server memeriksa ulang tahun lahir dan jenjangnya.
         var kuLama = kartu.getAttribute('data-ku-lama');
         var namaKuLama = kuLama && DATA.kelompok_umur_nonaktif ? DATA.kelompok_umur_nonaktif[kuLama] : null;
-        if (hasil && namaKuLama) {
+        var kuLamaDipakai = !hasil || hasil.pilihan.length < 2 || !hasil.ku || hasil.ku.id === Number(kuLama);
+        if (hasil && namaKuLama && kuLamaDipakai) {
             hasil = { ku: { id: Number(kuLama) }, pesan: namaKuLama + ' (sudah ditutup, tetap dipakai atlet ini)' };
             kuId = Number(kuLama);
         }
@@ -245,7 +292,7 @@
         if (!hasil) {
             keterangan.textContent = 'Isi tanggal lahir dan jenis kelamin supaya pilihan nomor lomba yang cocok tampil.';
         } else if (!kuId) {
-            keterangan.textContent = hasil.pesan + ' Periksa lagi tanggal lahirnya.';
+            keterangan.textContent = hasil.pilihan.length > 1 ? hasil.pesan : hasil.pesan + ' Periksa lagi tanggal lahirnya.';
         } else {
             keterangan.textContent = 'Kelompok umur: ' + hasil.pesan + (jk ? '' : '. Pilih jenis kelamin.');
         }

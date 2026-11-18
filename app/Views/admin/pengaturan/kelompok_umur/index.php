@@ -9,11 +9,18 @@
  * lewat pesan kilat, supaya admin tidak diminta mengonfirmasi hal yang pasti
  * ditolak.
  *
- * @var CodeIgniter\View\View             $this
- * @var list<array<string, mixed>>        $daftar
+ * Di atas tabel: sakelar "Pendaftar memilih kelompok umur" (K134) dan
+ * ringkasan tahun lahir yang masuk lebih dari satu kelompok umur aktif dalam
+ * satu jenjang (`KelompokUmurModel::irisanAktif()`).
+ *
+ * @var CodeIgniter\View\View                                                          $this
+ * @var list<array<string, mixed>>                                                     $daftar
+ * @var bool                                                                           $bolehPilih
+ * @var list<array{jenjang: string, tahun: list<int>, kelompok_umur: list<string>}>   $irisan
  */
 
 use App\Libraries\Jenjang;
+use App\Libraries\Pendaftaran\KelompokUmurAtlet;
 use App\Models\KelompokUmurModel;
 
 $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="text-warning-emphasis text-nowrap"><i class="bi bi-exclamation-circle" aria-hidden="true"></i> ' . esc($teks) . '</span>';
@@ -30,14 +37,73 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
 
     <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3 mb-4">
         <p class="teks-info mb-0 flex-grow-1">
-            Kelompok umur atlet ditentukan dari tahun lahirnya. Tiap kelompok umur aktif perlu batas tahun lahir,
+            Kelompok umur atlet ditentukan dari jenjang sekolah lalu tahun lahirnya. Tiap kelompok umur aktif perlu batas tahun lahir,
             jenjang sekolah yang boleh ikut, biaya per nomor individu, dan awalan nomor atlet (BIB).
+            Atlet tidak bisa pindah ke kelompok umur jenjang lain: atlet SMP/MTs tidak bisa ikut kelompok umur yang hanya untuk SD/MI.
         </p>
         <a class="btn btn-primary flex-shrink-0" href="<?= site_url('admin/pengaturan/kelompok-umur/tambah') ?>">
             <i class="bi bi-plus-lg" aria-hidden="true"></i>
             Tambah kelompok umur
         </a>
     </div>
+
+    <section class="card mb-4" aria-labelledby="judul-pilih-ku">
+        <div class="card-body">
+            <h2 id="judul-pilih-ku" class="h5 mb-1">Tahun lahir di dua kelompok umur</h2>
+            <p class="text-body-secondary small mb-3">
+                Panitia bisa membuat rentang tahun lahir dua kelompok umur dalam satu jenjang beririsan, misalnya KU 10 lahir 2016–2018
+                dan KU 12 lahir 2014–2016 untuk SD/MI. Atlet lahir 2016 lalu boleh ikut KU 10 atau KU 12: saat mendaftar, ofisial memilih
+                salah satunya untuk setiap atlet itu, dan nomor lomba yang tampil mengikuti pilihan itu. Satu atlet tetap hanya ikut
+                satu kelompok umur, dan biaya individu mengikuti kelompok umur yang dipilih.
+            </p>
+            <form action="<?= site_url('admin/pengaturan/kelompok-umur/pilihan') ?>" method="post" class="m-0">
+                <?= csrf_field() ?>
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" role="switch" id="pilih_kelompok_umur" name="pilih_kelompok_umur" value="1"
+                        aria-describedby="pilih_kelompok_umur-keterangan"<?= $bolehPilih ? ' checked' : '' ?>>
+                    <label class="form-check-label fw-semibold" for="pilih_kelompok_umur">Pendaftar memilih kelompok umur</label>
+                    <div id="pilih_kelompok_umur-keterangan" class="form-text">
+                        Menyala: rentang tahun lahir dalam satu jenjang boleh beririsan. Mati: satu tahun lahir hanya boleh masuk satu
+                        kelompok umur per jenjang, dan penyimpanan kelompok umur yang beririsan ditolak.
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-check2" aria-hidden="true"></i> Simpan pilihan
+                </button>
+            </form>
+
+            <?php if ($irisan !== []) : ?>
+                <div class="alert alert-warning mt-3 mb-0" role="status">
+                    <p class="fw-semibold mb-1">
+                        <i class="bi bi-signpost-split" aria-hidden="true"></i>
+                        Tahun lahir yang dipilihkan kelompok umurnya oleh pendaftar:
+                    </p>
+                    <ul class="mb-1 ps-3">
+                        <?php foreach ($irisan as $baris) : ?>
+                            <?php
+                            $awal  = $baris['tahun'][0];
+                            $akhir = $baris['tahun'][count($baris['tahun']) - 1];
+                            ?>
+                            <li>
+                                <?= esc(Jenjang::label($baris['jenjang']) ?? $baris['jenjang']) ?>, lahir
+                                <?= $awal === $akhir ? $awal : $awal . '–' . $akhir ?>:
+                                <?= esc(KelompokUmurAtlet::gabungNama(array_map(static fn (string $n): array => ['nama' => $n], $baris['kelompok_umur']))) ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <p class="small mb-0">
+                        Periksa bahwa irisan ini memang dari panitia, bukan salah ketik. Atlet lain tetap masuk kelompok umurnya
+                        dengan sendirinya.
+                    </p>
+                </div>
+            <?php elseif ($bolehPilih) : ?>
+                <p class="small text-body-secondary mt-3 mb-0">
+                    <i class="bi bi-check-circle" aria-hidden="true"></i>
+                    Saat ini tidak ada tahun lahir yang masuk dua kelompok umur dalam satu jenjang, jadi pendaftar belum pernah diminta memilih.
+                </p>
+            <?php endif ?>
+        </div>
+    </section>
 
     <?php if ($daftar === []) : ?>
         <section class="card kartu-kosong" aria-labelledby="judul-kosong">

@@ -11,7 +11,8 @@ $maksimalIndividu = (int) $wizard['aturan']['nomor_individu_maksimal'];
 <section class="langkah" id="langkah-3" data-langkah="3" aria-labelledby="judul-langkah-3" hidden>
     <h2 id="judul-langkah-3" tabindex="-1">3. Atlet</h2>
     <p class="langkah-keterangan">
-        Kelompok umur ditentukan dari tahun lahir. Setiap atlet ikut minimal satu nomor, dan paling banyak
+        Kelompok umur ditentukan dari jenjang sekolah dan tahun lahir. Bila tahun lahir atlet masuk dua kelompok umur,
+        Anda memilih salah satunya. Setiap atlet ikut satu kelompok umur, minimal satu nomor, dan paling banyak
         <?= $maksimalIndividu ?> nomor individu.
     </p>
 
@@ -48,6 +49,13 @@ $maksimalIndividu = (int) $wizard['aturan']['nomor_individu_maksimal'];
                 </fieldset>
             </div>
         </div>
+
+        <fieldset id="atlet-pilih-ku" class="pilih-ku" hidden>
+            <legend class="form-label">Pilih kelompok umur</legend>
+            <p class="pilih-ku-keterangan" id="atlet-pilih-ku-keterangan"></p>
+            <div class="pilihan-tombol" id="atlet-pilih-ku-daftar"></div>
+            <div class="invalid-feedback"></div>
+        </fieldset>
 
         <div id="atlet-ku" class="info-ku" aria-live="polite" hidden></div>
 

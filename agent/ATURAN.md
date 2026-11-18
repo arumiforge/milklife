@@ -32,8 +32,9 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 
 ## Kelompok umur
 
-- Ditentukan jenjang dulu, lalu tahun lahir; rentang boleh beririsan antar-jenjang, tidak dalam satu jenjang (K95, K23, K24).
-- Batas tahun lahir data awal: KU 8 2019+, KU 10 2016–2018, KU 12 2014–2015, KU 15 2011–2014, KU 18 2008–2010 (K36, K112).
+- Ditentukan jenjang dulu, lalu tahun lahir; rentang boleh beririsan antar-jenjang (K95, K23, K24). Atlet tidak bisa masuk kelompok umur jenjang lain.
+- Dalam satu jenjang rentang boleh beririsan bila sakelar "Pendaftar memilih kelompok umur" menyala (bawaan); atlet di tahun irisan wajib memilih satu kelompok umur di wizard, admin boleh memindahnya di Ubah; mati = irisan ditolak (K134).
+- Batas tahun lahir data awal: KU 8 2019+, KU 10 2016–2018, KU 12 2014–2015, KU 15 2011–2014, KU 18 2008–2010 (K36, K112); perubahan dari panitia diisi admin di panel (K134).
 - Usia hanya keterangan, dihitung pada tanggal mulai acara (K37). Juknis resmi sudah dicocokkan (K112).
 
 ## Nomor lomba, regu, dan biaya

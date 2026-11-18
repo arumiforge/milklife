@@ -7,7 +7,7 @@ use App\Libraries\Pendaftaran\PemeriksaPendaftaran;
 /**
  * Langkah 3: daftar atlet (bagian dari `PemeriksaPendaftaran`, F7-30). Per
  * atlet, berurutan: nama, NISN (`PeriksaNisn`), jenis kelamin, tanggal lahir
- * dan kelompok umur (`PeriksaKelompokUmur`), nomor lomba (`PeriksaNomor`),
+ * dan kelompok umur (`PeriksaKelompokUmur`, termasuk pilihan KU K134), nomor lomba (`PeriksaNomor`),
  * lalu regu dan peran di setiap nomor beregu (`PeriksaRegu`).
  */
 final class PeriksaAtlet
@@ -73,7 +73,8 @@ final class PeriksaAtlet
                 $jk = null;
             }
 
-            $ku          = $periksaKu->periksa($lahir, $jenjang, $simpan, $jalur, $ke);
+            $pilihanKu   = MasukanPeriksa::teks($isian['kelompok_umur_id'] ?? null);
+            $ku          = $periksaKu->periksa($lahir, $jenjang, $simpan, $jalur, $ke, ctype_digit($pilihanKu) ? (int) $pilihanKu : null);
             $nomor       = $periksaNomor->periksa($isian['nomor'] ?? null, $jalur, $ke, $ku, $jk, $maksimalIndividu, $simpan['nomor'] ?? []);
             $pilihanRegu = is_array($isian['regu'] ?? null) ? $isian['regu'] : [];
 

@@ -173,6 +173,27 @@ final class IsiHalamanDepanTest extends UjiBasisData
 
     // ---------- Kelompok umur dan nomor lomba ----------
 
+    public function testTahunLahirPilihanDitulisDiKeduaKelompokUmur(): void
+    {
+        // K134: KU 10 lahir 2016–2018 dan KU 12 lahir 2014–2016, keduanya SD/MI.
+        $ku10 = $this->buatKelompokUmur('KU 10', ['tahun_lahir_awal' => 2016, 'tahun_lahir_akhir' => 2018, 'urutan' => 1]);
+        $ku12 = $this->buatKelompokUmur('KU 12', ['tahun_lahir_awal' => 2014, 'tahun_lahir_akhir' => 2016, 'urutan' => 2]);
+        $ku15 = $this->buatKelompokUmur('KU 15', ['tahun_lahir_awal' => 2011, 'tahun_lahir_akhir' => 2014, 'urutan' => 3]);
+
+        $this->db->table('kelompok_umur_jenjang')->insertBatch([
+            ['kelompok_umur_id' => $ku10, 'jenjang' => 'A'],
+            ['kelompok_umur_id' => $ku12, 'jenjang' => 'A'],
+            ['kelompok_umur_id' => $ku15, 'jenjang' => 'B'],
+        ]);
+
+        $pilihan = array_column((new IsiHalamanDepan())->kelompokUmur(), 'pilihan', 'nama');
+
+        $this->assertSame(['SD/MI lahir 2016 boleh memilih KU 10 atau KU 12'], $pilihan['KU 10']);
+        $this->assertSame(['SD/MI lahir 2016 boleh memilih KU 10 atau KU 12'], $pilihan['KU 12']);
+        // Irisan 2014 antar-jenjang (KU 12 SD, KU 15 SMP) bukan pilihan.
+        $this->assertSame([], $pilihan['KU 15']);
+    }
+
     public function testHanyaKelompokUmurDanNomorAktif(): void
     {
         $ku10 = $this->buatKelompokUmur('KU 10', ['tahun_lahir_awal' => 2016, 'tahun_lahir_akhir' => 2018, 'biaya_individu' => 150000, 'urutan' => 2]);
@@ -208,6 +229,7 @@ final class IsiHalamanDepanTest extends UjiBasisData
                 'nama'           => 'KU 8',
                 'tahun_lahir'    => 'Lahir 2019 ke atas',
                 'jenjang'        => 'SD/MI, SMP/MTs',
+                'pilihan'        => [],
                 'biaya_individu' => 0,
                 'nomor_individu' => [],
                 'nomor_beregu'   => [],
@@ -217,6 +239,7 @@ final class IsiHalamanDepanTest extends UjiBasisData
                 'nama'           => 'KU 10',
                 'tahun_lahir'    => 'Lahir 2016–2018',
                 'jenjang'        => 'SD/MI',
+                'pilihan'        => [],
                 'biaya_individu' => 150000,
                 'nomor_individu' => [
                     ['id' => $lompat, 'nama' => 'Frog Jump', 'kategori' => 'putra', 'kategori_label' => 'Putra'],
@@ -238,6 +261,7 @@ final class IsiHalamanDepanTest extends UjiBasisData
                 'nama'           => 'KU 18',
                 'tahun_lahir'    => '',
                 'jenjang'        => '',
+                'pilihan'        => [],
                 'biaya_individu' => null,
                 'nomor_individu' => [],
                 'nomor_beregu'   => [],

@@ -68,6 +68,12 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                             <p id="tahun-lahir-bantuan" class="form-text mt-0 mb-2">
                                 Atlet masuk kelompok umur ini bila tahun lahirnya ada di antara kedua tahun, termasuk kedua tahun itu.
                                 Kosongkan salah satu bila tidak dibatasi, misalnya KU 8 "lahir 2019 ke atas": isi 2019 lalu kosongkan kotak kedua.
+                                <?php if (KelompokUmurModel::bolehPilih()) : ?>
+                                    Rentang boleh beririsan dengan kelompok umur lain di jenjang yang sama; atlet yang lahir di tahun irisan
+                                    dipilihkan kelompok umurnya oleh pendaftar.
+                                <?php else : ?>
+                                    Dalam satu jenjang, rentang tidak boleh beririsan dengan kelompok umur aktif lain.
+                                <?php endif ?>
                             </p>
                             <div class="row g-2 align-items-start">
                                 <div class="col-12 col-sm-5">

@@ -15,6 +15,10 @@ use CodeIgniter\HTTP\ResponseInterface;
  * (K36), jenjang sekolah yang boleh ikut (K23, K24), biaya individu, dan awalan
  * nomor dada (K05). Aturan periksa, simpan, dan hapus ada di
  * `App\Models\KelompokUmurModel`.
+ *
+ * Halaman daftar juga memuat sakelar "Pendaftar memilih kelompok umur" (K134)
+ * dan ringkasan tahun lahir yang masuk lebih dari satu kelompok umur dalam satu
+ * jenjang. Sakelar tidak bisa dimatikan selama irisan itu masih ada.
  */
 class KelompokUmurController extends BaseController
 {
@@ -29,7 +33,33 @@ class KelompokUmurController extends BaseController
         }
         unset($ku);
 
-        return view('admin/pengaturan/kelompok_umur/index', ['daftar' => $daftar]);
+        return view('admin/pengaturan/kelompok_umur/index', [
+            'daftar'     => $daftar,
+            'bolehPilih' => KelompokUmurModel::bolehPilih(),
+            'irisan'     => model(KelompokUmurModel::class)->irisanAktif(),
+        ]);
+    }
+
+    /**
+     * Simpan sakelar "Pendaftar memilih kelompok umur" (K134).
+     */
+    public function pilihan(): ResponseInterface
+    {
+        $nyala = $this->request->getPost('pilih_kelompok_umur') === '1';
+
+        if (! $nyala && model(KelompokUmurModel::class)->irisanAktif() !== []) {
+            return redirect()->to(self::ALAMAT)->with(
+                'pesan_galat',
+                'Pilihan kelompok umur belum bisa dimatikan karena masih ada tahun lahir yang masuk dua kelompok umur dalam satu jenjang '
+                . '(lihat daftar di bawah sakelar). Ubah batas tahun lahirnya dulu supaya tidak beririsan, lalu matikan lagi.',
+            );
+        }
+
+        setting('Pendaftaran.pilih_kelompok_umur', $nyala);
+
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', $nyala
+            ? 'Pendaftar sekarang memilih kelompok umur bila tahun lahir atletnya masuk dua kelompok umur.'
+            : 'Pilihan kelompok umur dimatikan. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur.');
     }
 
     public function tambah(): string

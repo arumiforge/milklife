@@ -49,9 +49,9 @@
      * (misalnya jenjang diganti setelah atlet ditambahkan).
      */
     function masalahAtlet(atlet) {
-        var hasil = tentukanKu(Number(String(atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah());
+        var hasil = tentukanKu(Number(String(atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah(), atlet.kelompok_umur_id);
         if (!hasil.ku) {
-            return hasil.galat;
+            return hasil.pilihan.length > 1 ? hasil.galat + ' Tekan Ubah, lalu pilih kelompok umurnya.' : hasil.galat;
         }
         var individu = 0;
         for (var i = 0; i < atlet.nomor.length; i++) {
@@ -235,7 +235,7 @@
         var isi = buat('div', 'baris-atlet-isi');
         var nama = buat('strong', 'baris-atlet-nama', atlet.nama);
         isi.appendChild(nama);
-        var ku = tentukanKu(Number(String(atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah()).ku;
+        var ku = tentukanKu(Number(String(atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah(), atlet.kelompok_umur_id).ku;
         isi.appendChild(buat('span', 'baris-atlet-keterangan', ['NISN ' + atlet.nisn, ku ? ku.nama : null, atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
         if (keterangan) {
             isi.appendChild(buat('span', 'baris-atlet-nomor', keterangan));
@@ -320,7 +320,7 @@
         li.appendChild(buat('span', 'anggota-regu-urut', String(urut)));
         var isi = buat('div', 'anggota-regu-isi');
         isi.appendChild(buat('strong', 'anggota-regu-nama', a.atlet.nama));
-        var ku = tentukanKu(Number(String(a.atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah()).ku;
+        var ku = tentukanKu(Number(String(a.atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah(), a.atlet.kelompok_umur_id).ku;
         isi.appendChild(buat('span', 'anggota-regu-keterangan', ['NISN ' + a.atlet.nisn, ku ? ku.nama : null, a.atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
         var masalah = masalahAtlet(a.atlet);
         if (masalah) {

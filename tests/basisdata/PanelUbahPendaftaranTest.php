@@ -526,6 +526,47 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $this->assertSame($this->idInduk['ku15'], (int) $this->db->table('atlet')->where('id', $p['atlet'][0])->get()->getRow()->kelompok_umur_id);
     }
 
+    public function testAdminMemindahKelompokUmurPilihan(): void
+    {
+        // K134: KU 12 diperlebar ke 2014–2016 untuk SD/MI saja, beririsan dengan KU 10 (2016–2018).
+        $this->db->table('kelompok_umur')->where('id', $this->idInduk['ku12'])->update(['tahun_lahir_awal' => 2014, 'tahun_lahir_akhir' => 2016]);
+        $this->db->table('kelompok_umur_jenjang')->where('kelompok_umur_id', $this->idInduk['ku12'])->where('jenjang', 'B')->delete();
+
+        $p = $this->buatPendaftaranPanel(['foto' => true, 'status' => 'lunas', 'atlet' => [
+            $this->atletPanel(['tanggal_lahir' => '2016-05-01', 'nomor_dada' => '2001']),
+        ]]);
+
+        // Tanpa perubahan, atlet tetap di kelompok umur tersimpannya (KU 10).
+        $kiriman = $this->kirimanDari($p['id']);
+        $this->assertSame($this->idInduk['ku10'], $kiriman['atlet'][0]['kelompok_umur_id']);
+        unset($kiriman['atlet'][0]['kelompok_umur_id']);
+        $this->assertSame([], (new UbahPendaftaran())->periksa($p['id'], $kiriman)['galat']);
+
+        // Pindah ke KU 12 dengan nomor KU 10: nomor ditolak.
+        $kiriman                                 = $this->kirimanDari($p['id']);
+        $kiriman['atlet'][0]['kelompok_umur_id'] = (string) $this->idInduk['ku12'];
+        $galat                                   = implode(' ', array_column((new UbahPendaftaran())->periksa($p['id'], $kiriman)['galat'], 'pesan'));
+        $this->assertStringContainsString('untuk KU 10, sedangkan atlet ini KU 12', $galat);
+
+        // Dengan nomor KU 12: tersimpan di KU 12, biaya KU 12, nomor atlet (BIB) tetap.
+        $kiriman['atlet'][0]['nomor'] = [$this->idInduk['lari60putraKu12']];
+        $hasil                        = (new UbahPendaftaran())->simpan($p['id'], $kiriman, setujuMenunggu: true);
+
+        $this->assertTrue($hasil['tersimpan']);
+        $atlet = $this->db->table('atlet')->where('id', $p['atlet'][0])->get()->getRowArray();
+        $this->assertSame($this->idInduk['ku12'], (int) $atlet['kelompok_umur_id']);
+        $this->assertSame('2001', $atlet['nomor_dada']);
+        $this->assertSame(175000, $this->pendaftaran($p['id'])['total']);
+
+        // Atlet baru lahir 2016 tanpa pilihan: diminta memilih.
+        $kiriman               = $this->kirimanDari($p['id']);
+        $baru                  = $this->atletBaru(['lari60putra']);
+        $baru['tanggal_lahir'] = '2016-08-01';
+        $kiriman['atlet'][]    = $baru;
+        $galat                 = (new UbahPendaftaran())->periksa($p['id'], $kiriman)['galat'];
+        $this->assertContains('atlet.1.kelompok_umur_id', array_column($galat, 'jalur'));
+    }
+
     public function testK109NpsnDiubahKeSekolahYangSudahLunasLangsungDigabung(): void
     {
         $lama = $this->buatPendaftaranPanel(['status' => 'lunas', 'dibuat_pada' => '2026-11-10 08:00:00', 'atlet' => [$this->atletPanel(['nomor_dada' => '2001'])]]);
