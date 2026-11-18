@@ -59,7 +59,7 @@ Catatan: tugas sisipan F7-08 sampai F7-33 menambah cakupan atas keputusan pemili
 
 - F7-06 (#116, bersama F8-06): pemasangan bersih mode produksi dengan minify dan CSP menyala, Chromium 390 dan 1280 piksel untuk semua halaman publik dan admin serta fitur Tahap 8, skenario B1 dan B2, Turnstile dengan kunci uji, dan `tests/fitur/AlurMenyeluruhTest.php`. Tanpa galat konsol dan tanpa pelanggaran CSP. Rincian di [`F7-06-uji-menyeluruh.md`](../tugas/F7-06-uji-menyeluruh.md).
 - F7-07: `DokumenAgenTest` kini memeriksa tautan tugas di `PROGRES.md` dan `agent/arsip/` sekaligus, dan tidak lagi gagal saat tidak ada tahap yang berjalan.
-- `composer uji` setelah F7-06 digabung: 1589 uji, 11.211 asersi, lulus; `composer analisis` tanpa galat.
+- `composer uji` pada cabang penutupan di atas `main` setelah F7-06 digabung (285d0dc): 1589 uji, 11.314 asersi, lulus; `composer analisis` tanpa galat.
 
 ## Yang dibawa ke tahap berikutnya
 
