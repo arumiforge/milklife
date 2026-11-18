@@ -89,6 +89,9 @@ final class MigrasiStrukturTest extends UjiBasisData
             'jenis_kelamin'    => ["enum('L','P')", false, null],
             'kelompok_umur_id' => ['int unsigned', false, null],
             'nomor_dada'       => ['char(4)', true, null],
+            // F8-03: tanda hadir saat daftar ulang hari lomba.
+            'hadir_pada'       => ['datetime', true, null],
+            'hadir_oleh'       => ['varchar(100)', true, null],
             'dibuat_pada'      => ['datetime', true, null],
             'diubah_pada'      => ['datetime', true, null],
         ],
