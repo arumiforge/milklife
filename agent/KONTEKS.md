@@ -18,7 +18,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17 dan 18 memuat K116–K125).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17–20 memuat K116–K134).
 - Rencana implementasi per tahap: `dokumen/draf/rencana-implementasi-tahap-<n>.md` (Tahap 1–8).
 - Aturan yang berlaku: `agent/ATURAN.md`; letak kode: `agent/PETA-KODE.md`.
 - Arsip tahap selesai: `agent/arsip/`.
@@ -48,3 +48,5 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 - Pendaftaran Lunas dengan NPSN sama **digabung otomatis** ke pendaftaran yang Lunas paling dulu (K109); pendaftaran yang pindah dihapus, tetapi ID dan kode bukti lamanya dicatat di `pendaftaran_gabungan` sehingga cek dan kode QR lama tetap sampai. Jadi satu NPSN paling banyak punya satu pendaftaran Lunas; yang Menunggu dan yang tanpa NPSN tidak digabung.
 - **Cloudflare Turnstile** (K122) menjaga kirim pendaftaran, Cek Pendaftaran, dan masuk admin; mati bila kunci di `.env` kosong. Kunci rahasia tidak pernah masuk git.
 - **Juara umum** dihitung per jenjang dari jumlah juara I, lalu II, lalu III, hanya dari babak Final; kontingen = sekolah per NPSN; regu juara = satu piala (K124).
+- Hasil dan klasemen **publik hanya memuat nomor yang diterbitkan** admin; halaman admin menghitung semua nomor. Prestasi disimpan bilangan bulat (perseratus detik, sentimeter, atau poin) menurut jenis hasil nomornya, jadi jenis hasil terkunci setelah ada prestasi.
+- **CSP menyala** (K127): tampilan tidak boleh memakai `style="…"`, atribut `on…`, atau `<script>`/`<style>` sebaris tanpa nonce; `KepalaKeamananTest` menolaknya.
