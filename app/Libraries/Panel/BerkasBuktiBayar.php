@@ -22,7 +22,7 @@ use Throwable;
  *   `WRITEPATH . 'unggahan/bukti-bayar/<32 heksa>.jpg'`. Yang disimpan di
  *   `bukti_bayar.berkas` jalur relatifnya, contoh `bukti-bayar/3f9c….jpg`,
  *   dan berkasnya hanya disajikan lewat rute admin.
- * - Batas bukti per pendaftaran (diatur admin, bawaan 5, K135) dijaga aplikasi:
+ * - Batas bukti per pendaftaran (diatur admin, bawaan 100, K135, K136) dijaga aplikasi:
  *   `BuktiBayarModel::batas()`.
  *
  * Pemakaian di pengendali (F6-03):

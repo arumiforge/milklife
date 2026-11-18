@@ -104,26 +104,26 @@ final class PengaturanPembayaranTest extends UjiBasisData
 
     public function testBatasBuktiBayarTampilDanDiperiksa(): void
     {
-        // K135: bawaan 5, tersimpan ditampilkan, di luar 1–20 atau bukan angka bulat ditolak.
+        // K135, K136: bawaan 100, tersimpan ditampilkan, di luar 1–200 atau bukan angka bulat ditolak.
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
         $kotak = $xpath->query('//input[@name="batas_bukti_bayar"]')->item(0);
-        $this->assertSame('5', $kotak?->getAttribute('value'));
+        $this->assertSame('100', $kotak?->getAttribute('value'));
         $this->assertSame('1', $kotak?->getAttribute('min'));
-        $this->assertSame('20', $kotak?->getAttribute('max'));
+        $this->assertSame('200', $kotak?->getAttribute('max'));
 
         setting('Pembayaran.batas_bukti_bayar', 3);
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
         $this->assertSame('3', $xpath->query('//input[@name="batas_bukti_bayar"]')->item(0)?->getAttribute('value'));
 
-        foreach (['0', '21', '2,5', '', 'lima', '-1'] as $salah) {
+        foreach (['0', '201', '2,5', '', 'lima', '-1'] as $salah) {
             $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['batas_bukti_bayar' => $salah]));
             $this->assertIsianSalahDitampilkanUlang($hasil, ['batas_bukti_bayar']);
-            $hasil->assertSee('Batas bukti bayar harus angka bulat dari 1 sampai 20');
+            $hasil->assertSee('Batas bukti bayar harus angka bulat dari 1 sampai 200');
             $this->assertSame(3, setting('Pembayaran.batas_bukti_bayar'), "Isian {$salah} tidak boleh tersimpan.");
         }
 
-        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['batas_bukti_bayar' => '20'])), self::ALAMAT);
-        $this->assertSame(20, setting('Pembayaran.batas_bukti_bayar'));
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['batas_bukti_bayar' => '200'])), self::ALAMAT);
+        $this->assertSame(200, setting('Pembayaran.batas_bukti_bayar'));
     }
 
     public function testRekeningBolehKosong(): void

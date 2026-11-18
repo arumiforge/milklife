@@ -96,7 +96,7 @@ final class UnggahBuktiBayarOfficialTest extends UjiBasisData
         $hasil->assertStatus(201);
         $isi = json_decode($hasil->getJSON(), true);
         $this->assertSame('tersimpan', $isi['status']);
-        $this->assertStringStartsWith('Bukti bayar terkirim (1 dari 5 gambar).', $isi['pesan']);
+        $this->assertStringStartsWith('Bukti bayar terkirim (1 dari 100 gambar).', $isi['pesan']);
         $this->assertNotEmpty($isi['csrf']);
         $this->assertSame(1, $this->jumlah('MAC2A0000126'));
     }

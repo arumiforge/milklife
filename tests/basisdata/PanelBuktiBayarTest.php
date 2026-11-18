@@ -95,18 +95,18 @@ final class PanelBuktiBayarTest extends UjiBasisData
 
     public function testBatasDiaturAdminDanDijagaRentangnya(): void
     {
-        // K135: `Pembayaran.batas_bukti_bayar`, dipepetkan ke 1–20.
+        // K135, K136: `Pembayaran.batas_bukti_bayar`, dipepetkan ke 1–200.
         setting('Pembayaran.batas_bukti_bayar', 3);
         $this->assertSame(3, BuktiBayarModel::batas());
 
         setting('Pembayaran.batas_bukti_bayar', 0);
         $this->assertSame(BuktiBayarModel::BATAS_TERKECIL, BuktiBayarModel::batas());
 
-        setting('Pembayaran.batas_bukti_bayar', 99);
+        setting('Pembayaran.batas_bukti_bayar', 999);
         $this->assertSame(BuktiBayarModel::BATAS_TERBESAR, BuktiBayarModel::batas());
 
         setting('Pembayaran.batas_bukti_bayar', 'rusak');
-        $this->assertSame(5, BuktiBayarModel::batas(), 'Nilai rusak kembali ke bawaan.');
+        $this->assertSame(100, BuktiBayarModel::batas(), 'Nilai rusak kembali ke bawaan.');
 
         setting('Pembayaran.batas_bukti_bayar', 1);
         $p     = $this->buatPendaftaranPanel();
@@ -122,7 +122,8 @@ final class PanelBuktiBayarTest extends UjiBasisData
         $b     = $this->buatPendaftaranPanel(['atlet' => [$this->atletPanel()]]);
         $model = model(BuktiBayarModel::class);
 
-        $this->assertSame(5, BuktiBayarModel::batas(), 'Bawaan 5 gambar (K34, K135).');
+        $this->assertSame(100, BuktiBayarModel::batas(), 'Bawaan 100 gambar (K136).');
+        $this->assertSame(200, BuktiBayarModel::BATAS_TERBESAR);
         $this->assertTrue($model->masihBolehTambah($a['id']));
 
         $id = $model->insert(['pendaftaran_id' => $a['id'], 'berkas' => 'bukti-bayar/' . str_repeat('ab', 16) . '.jpg', 'ukuran' => 1234], true);
@@ -134,6 +135,8 @@ final class PanelBuktiBayarTest extends UjiBasisData
         $this->buatBuktiBayarPanel($a['id'], 4);
 
         $this->assertSame(5, $model->jumlahMilik($a['id']));
+        $this->assertTrue($model->masihBolehTambah($a['id']), 'Bawaan 100: lima gambar masih boleh ditambah.');
+        setting('Pembayaran.batas_bukti_bayar', 5);
         $this->assertFalse($model->masihBolehTambah($a['id']));
         $this->assertTrue($model->masihBolehTambah($b['id']));
         $this->assertCount(5, $model->milikPendaftaran($a['id']));
