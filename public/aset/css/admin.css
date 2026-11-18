@@ -1291,3 +1291,13 @@ div.dt-container .dt-layout-table {
 #tabel-atlet-ditolak td:nth-child(11) {
     white-space: nowrap;
 }
+
+/* Isian hasil lomba (F8-04, admin/hasil/babak.php): kotak prestasi cukup
+   untuk "12:34,56", kotak koreksi peringkat untuk tiga angka. */
+.kotak-prestasi {
+    min-width: 6.5rem;
+}
+
+.kotak-peringkat {
+    width: 4.5rem;
+}

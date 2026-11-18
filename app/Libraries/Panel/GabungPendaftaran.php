@@ -28,6 +28,7 @@ use Throwable;
  *   kode bukti, dan `waktu_lunas` tujuan tetap.
  * - Riwayat tindakan admin (F8-01) pindah ke tujuan, dan tujuan mencatat
  *   "Digabung dari MAC…".
+ * - Hasil lomba regu (F8-04) pindah ke tujuan; hasil atlet ikut atletnya.
  * - ID dan kode bukti lama dicatat di `pendaftaran_gabungan`, termasuk catatan
  *   lama milik pendaftaran yang ikut digabung, supaya kode QR bukti lama dan
  *   Cek Pendaftaran dengan ID lama tetap sampai ke pendaftaran gabungan.
@@ -168,6 +169,14 @@ final class GabungPendaftaran
 
         $foto = $this->pindahkanPenanggungJawab($dari, $ke, $sekarang);
         $this->pindahkanRegu($dari, $ke, $sekarang);
+
+        // Hasil lomba regu (F8-04) ikut pindah. Regu yang di babak yang sama
+        // sudah punya hasil atas nama tujuan memakai hasil tujuan.
+        $this->pastikan($this->db->query(
+            'DELETE s FROM hasil s JOIN hasil t ON t.babak_id = s.babak_id AND t.pendaftaran_id = ? AND t.regu = s.regu WHERE s.pendaftaran_id = ?',
+            [$ke, $dari],
+        ));
+        $this->pastikan($this->db->table('hasil')->where('pendaftaran_id', $dari)->update(['pendaftaran_id' => $ke]));
 
         // Riwayat tindakan admin (F8-01) ikut pindah; tujuan mencatat asal gabungannya.
         $riwayat = new RiwayatAdmin($this->db);

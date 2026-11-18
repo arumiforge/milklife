@@ -42,6 +42,8 @@ $menuAdmin = [
     ['label' => 'Rekap', 'ikon' => 'bar-chart-line', 'alamat' => 'admin/rekap', 'bawah' => true],
     // Hari lomba (F8-03): daftar ulang, cetak BIB, daftar peserta.
     ['label' => 'Hari lomba', 'label_pendek' => 'Lomba', 'ikon' => 'flag', 'alamat' => 'admin/daftar-ulang', 'aktif_juga' => ['admin/nomor-atlet', 'admin/daftar-peserta']],
+    // Hasil lomba (F8-04), butir sendiri (K130), hanya di sidebar (K132).
+    ['label' => 'Hasil lomba', 'label_pendek' => 'Hasil', 'ikon' => 'trophy', 'alamat' => 'admin/hasil'],
     // Data sekolah (K97).
     ['label' => 'Sekolah', 'ikon' => 'building', 'alamat' => 'admin/sekolah'],
     ['label' => 'Pengaturan', 'ikon' => 'gear', 'alamat' => 'admin/pengaturan', 'aktif_juga' => ['admin/akun']],

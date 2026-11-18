@@ -12,7 +12,8 @@
  *
  * Menu publik ditulis di `$menuPublik` di bawah (K81): Tentang, Kategori,
  * dan Jadwal melompat ke bagian halaman depan, Unduhan ke halaman unduhan,
- * lalu tombol Panitia ke halaman masuk admin. Pendaftaran dan Cek
+ * Hasil (setelah ada hasil lomba yang terbit, F8-04), lalu tombol Panitia ke
+ * halaman masuk admin. Pendaftaran dan Cek
  * Pendaftaran dibuka dari dua tombol besar di bagian pembuka halaman depan.
  *
  * Di halaman depan kepala memakai gaya terang (`kepala-beranda`) dengan logo
@@ -41,6 +42,20 @@ $menuPublik = [
     ['label' => 'Jadwal', 'alamat' => site_url('/') . '#jadwal'],
     ['label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan')],
 ];
+
+// Tautan Hasil setelah ada nomor yang hasilnya diterbitkan (F8-04, K124, asumsi 8 K125).
+// Halaman galat tetap tampil walau basis data tidak bisa dibaca.
+$diHasil = url_is('hasil') || url_is('hasil/*');
+
+try {
+    $adaHasil = $diHasil || (new App\Libraries\Hasil\HasilLomba())->adaTerbit();
+} catch (Throwable) {
+    $adaHasil = false;
+}
+
+if ($adaHasil) {
+    $menuPublik[] = ['label' => 'Hasil', 'alamat' => site_url('hasil'), 'aktif' => $diHasil];
+}
 
 // Logo dan label seri hanya di kepala halaman depan.
 $logoKepala = null;

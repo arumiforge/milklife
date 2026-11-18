@@ -115,4 +115,4 @@ Paling banyak 3 sub-sesi berjalan bersamaan (K38, K65). F7-30 (pecah berkas besa
 
 ## Perubahan saat pengerjaan
 
-Belum ada.
+- F8-04: peserta regu di tabel `hasil` ditunjuk `pendaftaran_id` + `regu` (nama regu sampai 30 huruf, K106), bukan id baris `pendaftaran_beregu`, supaya tetap utuh saat regu digabung (K109). Regu tunggal ditulis dengan nama sekolah saja (K108). Isi babak baru: semua peserta, kosong, atau peringkat 1 sampai N dari babak lain. Jenis hasil terkunci di Pengaturan setelah ada prestasi. Tautan Hasil ada di menu publik (kepala halaman) setelah ada nomor terbit.

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Pendaftaran\Regu;
 use CodeIgniter\Model;
 
@@ -77,7 +78,7 @@ class NomorLombaModel extends Model
     protected $returnType       = 'array';
     protected $useAutoIncrement = true;
     protected $allowedFields    = [
-        'kelompok_umur_id', 'nama', 'jenis', 'kategori',
+        'kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil',
         'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu',
         'urutan', 'aktif',
     ];
@@ -98,7 +99,7 @@ class NomorLombaModel extends Model
      *
      * @param array<string, mixed> $mentah
      *
-     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string}
+     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string}
      */
     public static function rapikanIsian(array $mentah): array
     {
@@ -109,6 +110,7 @@ class NomorLombaModel extends Model
             'nama'             => (string) preg_replace('/\s+/u', ' ', $teks('nama')),
             'jenis'            => $teks('jenis'),
             'kategori'         => $teks('kategori'),
+            'jenis_hasil'      => $teks('jenis_hasil'),
             'jumlah_inti'      => $teks('jumlah_inti'),
             'batas_anggota'    => $teks('batas_anggota'),
             'regu_maksimal'    => $teks('regu_maksimal'),
@@ -167,6 +169,11 @@ class NomorLombaModel extends Model
             $galat['kategori'] = 'Nomor individu tidak bisa berkategori mixed. Pilih putra atau putri, atau ubah jenisnya menjadi beregu.';
         }
 
+        // Jenis hasil untuk hasil lomba (F8-04); kosong = ditebak dari nama saat disimpan.
+        if (($isian['jenis_hasil'] ?? '') !== '' && ! JenisHasil::sah($isian['jenis_hasil'])) {
+            $galat['jenis_hasil'] = 'Jenis hasil belum dipilih. Pilih waktu (lari, jalan, estafet), jarak (lompat, lempar, tolak), atau poin (Tri Lomba).';
+        }
+
         if ($isian['jenis'] === 'beregu') {
             $galat += self::periksaTim($isian);
         }
@@ -195,6 +202,7 @@ class NomorLombaModel extends Model
             'nama'             => $isian['nama'],
             'jenis'            => $isian['jenis'],
             'kategori'         => $isian['kategori'],
+            'jenis_hasil'      => JenisHasil::sah($isian['jenis_hasil'] ?? null) ? $isian['jenis_hasil'] : JenisHasil::tebak($isian['nama']),
             'jumlah_inti'      => $angka($isian['jumlah_inti']),
             'batas_anggota'    => $angka($isian['batas_anggota']),
             'regu_maksimal'    => $angka($isian['regu_maksimal'] ?? ''),
@@ -217,7 +225,7 @@ class NomorLombaModel extends Model
     {
         $isian = [];
 
-        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan'] as $kolom) {
+        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan'] as $kolom) {
             $isian[$kolom] = (string) ($baris[$kolom] ?? '');
         }
 
@@ -291,6 +299,20 @@ class NomorLombaModel extends Model
             ->orderBy('nomor_lomba.urutan', 'ASC')
             ->orderBy('nomor_lomba.id', 'ASC')
             ->findAll();
+    }
+
+    /**
+     * Sudah ada prestasi tercatat di hasil lomba nomor ini (F8-04)? Jenis
+     * hasilnya lalu tidak bisa diubah, supaya angka yang tersimpan tidak
+     * berganti arti.
+     */
+    public function adaPrestasi(int $id): bool
+    {
+        return $this->db->table('hasil h')
+            ->join('babak b', 'b.id = h.babak_id')
+            ->where('b.nomor_lomba_id', $id)
+            ->where('h.prestasi IS NOT NULL', null, false)
+            ->countAllResults() > 0;
     }
 
     /**

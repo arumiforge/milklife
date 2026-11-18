@@ -24,6 +24,13 @@ $routes->get('bukti/([0-9a-f]{24})/(:segment)', 'BuktiController::index/$1/$2');
 $routes->post('bukti/([0-9a-f]{24})/(:segment)/bukti-bayar', 'BuktiController::unggahBayar/$1/$2');
 // Akhir blok Tahap 5
 
+// ---------- Hasil lomba publik (F8-04, K124) ----------
+// Hanya nomor yang hasilnya sudah diterbitkan admin.
+$routes->get('hasil', 'HasilController::index');
+$routes->get('hasil/(:num)', 'HasilController::nomor/$1');
+$routes->get('hasil/(:num)/(pdf|excel)', 'HasilController::unduh/$1/$2');
+// ---------- Akhir hasil lomba publik (F8-04) ----------
+
 // ---------- Pendaftaran (Tahap 4) ----------
 // Wizard pendaftaran dan titik akhir JSON-nya (rencana Tahap 4, "Rute dan
 // pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.
@@ -140,6 +147,21 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('daftar-peserta/(:num)/(pdf|excel)', 'DaftarPesertaController::unduh/$1/$2');
     $routes->get('daftar-peserta/kelompok-umur/(:num)/(pdf|excel)', 'DaftarPesertaController::unduhKelompokUmur/$1/$2');
     // ---------- Akhir hari lomba (F8-03) ----------
+
+    // ---------- Hasil lomba (F8-04, K124) ----------
+    // Nomor lomba per kelompok umur, babak per nomor, isian prestasi per babak.
+    $routes->get('hasil', 'HasilController::index');
+    $routes->get('hasil/nomor/(:num)', 'HasilController::nomor/$1');
+    $routes->get('hasil/nomor/(:num)/(pdf|excel)', 'HasilController::unduh/$1/$2');
+    $routes->post('hasil/nomor/(:num)/babak', 'HasilController::tambahBabak/$1');
+    $routes->post('hasil/nomor/(:num)/terbitkan', 'HasilController::terbitkan/$1');
+    $routes->post('hasil/nomor/(:num)/tarik', 'HasilController::tarik/$1');
+    $routes->get('hasil/babak/(:num)', 'HasilController::babak/$1');
+    $routes->post('hasil/babak/(:num)', 'HasilController::simpanHasil/$1');
+    $routes->post('hasil/babak/(:num)/peserta', 'HasilController::peserta/$1');
+    $routes->post('hasil/babak/(:num)/ubah', 'HasilController::ubahBabak/$1');
+    $routes->post('hasil/babak/(:num)/hapus', 'HasilController::hapusBabak/$1');
+    // ---------- Akhir hasil lomba (F8-04) ----------
 
     // Pengaturan (Tahap 2). Semua rute ditulis F2-01; pengendalinya dibuat
     // tugas masing-masing (rencana Tahap 2, "Rute"). Selama pengendalinya

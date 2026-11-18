@@ -1,0 +1,724 @@
+<?php
+
+namespace App\Libraries\Hasil;
+
+use App\Libraries\Pendaftaran\Regu;
+use App\Models\NomorLombaModel;
+use CodeIgniter\Database\BaseConnection;
+
+/**
+ * Hasil lomba per nomor dan babak (F8-04, K124, asumsi 6–8 K125).
+ *
+ * - Babak diatur admin per nomor lomba; satu Final per nomor. Juara I–III
+ *   diambil dari Final (dipakai klasemen).
+ * - Peserta babak dipilih dari atlet pendaftaran Lunas di nomor itu (nomor
+ *   individu) atau regu pendaftaran Lunas (nomor beregu). Babak baru bisa
+ *   diisi semua peserta, kosong, atau peringkat teratas babak lain (yang lolos).
+ * - Prestasi diurai `Prestasi`, peringkat dihitung `Peringkat`. Di Final admin
+ *   boleh mengoreksi peringkat; baris itu bertanda `peringkat_manual`.
+ * - Terbitkan dan Tarik kembali per nomor (`nomor_lomba.hasil_terbit_pada`);
+ *   halaman publik hanya memuat nomor yang terbit.
+ *
+ * Kunci peserta: `a:<id atlet>` untuk nomor individu, `r:<id pendaftaran>:<regu>`
+ * untuk nomor beregu.
+ *
+ *     $hasil = new HasilLomba();
+ *     $hasil->daftarNomor();                       // per kelompok umur, semua nomor
+ *     $nomor = $hasil->nomor(10);                  // ['id' => 10, 'nama' => 'Lari 60 m putra', 'jenis_hasil' => 'waktu', …]
+ *     $babak = $hasil->tambahBabak(10, 'Final', true, 'semua');   // ['id' => 3] atau ['galat' => […]]
+ *     $hasil->simpanHasil(3, [55 => ['prestasi' => '9,87', 'keterangan' => '', 'peringkat' => '']]);
+ *     $hasil->terbitkan(10, true);
+ */
+final class HasilLomba
+{
+    public const NAMA_BABAK_MAKSIMAL = 60;
+
+    /**
+     * Isi peserta babak baru.
+     *
+     * @var array<string, string>
+     */
+    public const ISI_BABAK = [
+        'semua'  => 'Semua peserta nomor ini',
+        'lolos'  => 'Peringkat teratas dari babak lain',
+        'kosong' => 'Kosong, pilih peserta nanti',
+    ];
+
+    private BaseConnection $db;
+
+    public function __construct(?BaseConnection $db = null)
+    {
+        $this->db = $db ?? db_connect();
+    }
+
+    /**
+     * Kelompok umur berurutan beserta nomor lombanya. Kelompok umur tanpa nomor dilewati.
+     *
+     * @return list<array{id: int, nama: string, nomor: list<array{id: int, nama: string, jenis: string, jenis_hasil: string, terbit_pada: string|null, babak: int, final: bool, peserta: int}>}>
+     */
+    public function daftarNomor(bool $hanyaTerbit = false): array
+    {
+        $babak = [];
+
+        foreach ($this->db->table('babak')->select('nomor_lomba_id, COUNT(*) AS jumlah, MAX(final) AS final')->groupBy('nomor_lomba_id')->get()->getResultArray() as $b) {
+            $babak[(int) $b['nomor_lomba_id']] = ['jumlah' => (int) $b['jumlah'], 'final' => (int) $b['final'] === 1];
+        }
+
+        $peserta = array_column($this->db->table('babak b')
+            ->select('b.nomor_lomba_id, COUNT(h.id) AS jumlah')
+            ->join('hasil h', 'h.babak_id = b.id')
+            ->where('b.final', 1)
+            ->groupBy('b.nomor_lomba_id')
+            ->get()->getResultArray(), 'jumlah', 'nomor_lomba_id');
+
+        $kueri = $this->db->table('nomor_lomba')->select('id, kelompok_umur_id, nama, kategori, jenis, jenis_hasil, hasil_terbit_pada');
+
+        if ($hanyaTerbit) {
+            $kueri->where('hasil_terbit_pada IS NOT NULL', null, false);
+        }
+
+        $nomor = [];
+
+        foreach ($kueri->orderBy('urutan')->orderBy('id')->get()->getResultArray() as $n) {
+            $id = (int) $n['id'];
+
+            $nomor[(int) $n['kelompok_umur_id']][] = [
+                'id'          => $id,
+                'nama'        => NomorLombaModel::namaLengkap($n),
+                'jenis'       => (string) $n['jenis'],
+                'jenis_hasil' => (string) $n['jenis_hasil'],
+                'terbit_pada' => $n['hasil_terbit_pada'],
+                'babak'       => $babak[$id]['jumlah'] ?? 0,
+                'final'       => $babak[$id]['final'] ?? false,
+                'peserta'     => (int) ($peserta[$id] ?? 0),
+            ];
+        }
+
+        $hasil = [];
+
+        foreach ($this->db->table('kelompok_umur')->select('id, nama')->orderBy('urutan')->orderBy('id')->get()->getResultArray() as $ku) {
+            if (isset($nomor[(int) $ku['id']])) {
+                $hasil[] = ['id' => (int) $ku['id'], 'nama' => (string) $ku['nama'], 'nomor' => $nomor[(int) $ku['id']]];
+            }
+        }
+
+        return $hasil;
+    }
+
+    /**
+     * Ada nomor yang hasilnya sudah terbit? (tautan Hasil di halaman publik)
+     */
+    public function adaTerbit(): bool
+    {
+        return $this->db->table('nomor_lomba')->where('hasil_terbit_pada IS NOT NULL', null, false)->countAllResults() > 0;
+    }
+
+    /**
+     * Satu nomor lomba, atau `null` bila tidak ada.
+     *
+     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string}|null
+     */
+    public function nomor(int $id): ?array
+    {
+        $n = $this->db->table('nomor_lomba nl')
+            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.hasil_terbit_pada, nl.kelompok_umur_id, ku.nama AS kelompok_umur')
+            ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
+            ->where('nl.id', $id)
+            ->get()->getRowArray();
+
+        if (! is_array($n)) {
+            return null;
+        }
+
+        return [
+            'id'               => (int) $n['id'],
+            'nama'             => NomorLombaModel::namaLengkap($n),
+            'jenis'            => (string) $n['jenis'],
+            'kategori'         => (string) $n['kategori'],
+            'jenis_hasil'      => JenisHasil::sah($n['jenis_hasil']) ? (string) $n['jenis_hasil'] : JenisHasil::WAKTU,
+            'terbit_pada'      => $n['hasil_terbit_pada'],
+            'kelompok_umur_id' => (int) $n['kelompok_umur_id'],
+            'kelompok_umur'    => (string) $n['kelompok_umur'],
+        ];
+    }
+
+    /**
+     * Satu babak beserta nomornya, atau `null`.
+     *
+     * @return array{id: int, nama: string, final: bool, urutan: int, nomor: array<string, mixed>}|null
+     */
+    public function babak(int $id): ?array
+    {
+        $b = $this->db->table('babak')->where('id', $id)->get()->getRowArray();
+
+        if (! is_array($b)) {
+            return null;
+        }
+
+        $nomor = $this->nomor((int) $b['nomor_lomba_id']);
+
+        return $nomor === null ? null : ['id' => (int) $b['id'], 'nama' => (string) $b['nama'], 'final' => (int) $b['final'] === 1, 'urutan' => (int) $b['urutan'], 'nomor' => $nomor];
+    }
+
+    /**
+     * Semua babak satu nomor (urutan, Final paling akhir) beserta hasilnya.
+     *
+     * @param array<string, mixed> $nomor hasil `nomor()`
+     *
+     * @return list<array{id: int, nama: string, final: bool, urutan: int, hasil: list<array<string, mixed>>}>
+     */
+    public function semuaBabak(array $nomor): array
+    {
+        $daftar = [];
+
+        foreach ($this->db->table('babak')->where('nomor_lomba_id', $nomor['id'])->orderBy('final')->orderBy('urutan')->orderBy('id')->get()->getResultArray() as $b) {
+            $daftar[] = ['id' => (int) $b['id'], 'nama' => (string) $b['nama'], 'final' => (int) $b['final'] === 1, 'urutan' => (int) $b['urutan'], 'hasil' => $this->hasilBabak((int) $b['id'], $nomor)];
+        }
+
+        return $daftar;
+    }
+
+    /**
+     * Hasil satu babak, urut peringkat (tanpa peringkat di akhir, lalu nomor atlet).
+     *
+     * @param array<string, mixed> $nomor hasil `nomor()`
+     *
+     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, keterangan: string|null, peringkat: int|null, manual: bool}>
+     */
+    public function hasilBabak(int $babakId, array $nomor): array
+    {
+        $baris = $nomor['jenis'] === 'beregu'
+            ? $this->db->table('hasil h')
+                ->select('h.*, p.nama_sekolah, p.npsn, p.jenjang, NULL AS nomor_dada, NULL AS nama_atlet', false)
+                ->join('pendaftaran p', 'p.id = h.pendaftaran_id')
+                ->where('h.babak_id', $babakId)
+                ->get()->getResultArray()
+            : $this->db->table('hasil h')
+                ->select('h.*, a.nama AS nama_atlet, a.nomor_dada, a.pendaftaran_id AS pendaftaran_atlet, p.nama_sekolah, p.npsn, p.jenjang')
+                ->join('atlet a', 'a.id = h.atlet_id')
+                ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+                ->where('h.babak_id', $babakId)
+                ->get()->getResultArray();
+
+        $reguSekolah = $nomor['jenis'] === 'beregu' ? $this->jumlahReguSekolah((int) $nomor['id']) : [];
+        $anggota     = $nomor['jenis'] === 'beregu' ? $this->anggotaRegu((int) $nomor['id']) : [];
+        $hasil       = [];
+
+        foreach ($baris as $b) {
+            $prestasi = $b['prestasi'] === null ? null : (int) $b['prestasi'];
+
+            if ($nomor['jenis'] === 'beregu') {
+                $pid   = (int) $b['pendaftaran_id'];
+                $regu  = (string) $b['regu'];
+                $kunci = 'r:' . $pid . ':' . $regu;
+                $nama  = self::namaRegu((string) $b['nama_sekolah'], $regu, ($reguSekolah[self::kunciSekolah($b['npsn'], $pid)] ?? 1) <= 1);
+            } else {
+                $pid   = (int) $b['pendaftaran_atlet'];
+                $kunci = 'a:' . (int) $b['atlet_id'];
+                $nama  = (string) $b['nama_atlet'];
+            }
+
+            $hasil[] = [
+                'id'             => (int) $b['id'],
+                'kunci'          => $kunci,
+                'nama'           => $nama,
+                'sekolah'        => (string) $b['nama_sekolah'],
+                'npsn'           => $b['npsn'] === null || $b['npsn'] === '' ? null : (string) $b['npsn'],
+                'jenjang'        => (string) $b['jenjang'],
+                'pendaftaran_id' => $pid,
+                'nomor_dada'     => $b['nomor_dada'],
+                'anggota'        => $anggota[$kunci] ?? [],
+                'prestasi'       => $prestasi,
+                'prestasi_teks'  => Prestasi::tulis($prestasi, (string) $nomor['jenis_hasil']),
+                'keterangan'     => Peringkat::keterangan($b['keterangan']),
+                'peringkat'      => $b['peringkat'] === null ? null : (int) $b['peringkat'],
+                'manual'         => (int) $b['peringkat_manual'] === 1,
+            ];
+        }
+
+        usort($hasil, static fn (array $x, array $y): int => [$x['peringkat'] ?? PHP_INT_MAX, $x['keterangan'] ?? '', (string) $x['nomor_dada'], $x['nama']]
+            <=> [$y['peringkat'] ?? PHP_INT_MAX, $y['keterangan'] ?? '', (string) $y['nomor_dada'], $y['nama']]);
+
+        return $hasil;
+    }
+
+    /**
+     * Calon peserta satu nomor: atlet Lunas (individu) atau regu Lunas (beregu),
+     * urut nomor atlet atau nama sekolah.
+     *
+     * @param array<string, mixed> $nomor hasil `nomor()`
+     *
+     * @return array<string, array{kunci: string, nama: string, sekolah: string, nomor_dada: string|null}> kunci => calon
+     */
+    public function calon(array $nomor): array
+    {
+        $calon = [];
+
+        if ($nomor['jenis'] !== 'beregu') {
+            $baris = $this->db->table('atlet_nomor an')
+                ->select('a.id, a.nama, a.nomor_dada, p.nama_sekolah')
+                ->join('atlet a', 'a.id = an.atlet_id')
+                ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+                ->where('an.nomor_lomba_id', $nomor['id'])
+                ->where('p.status', 'lunas')
+                ->orderBy('a.nomor_dada IS NULL', '', false)->orderBy('a.nomor_dada')->orderBy('a.nama')
+                ->get()->getResultArray();
+
+            foreach ($baris as $b) {
+                $calon['a:' . $b['id']] = ['kunci' => 'a:' . $b['id'], 'nama' => (string) $b['nama'], 'sekolah' => (string) $b['nama_sekolah'], 'nomor_dada' => $b['nomor_dada']];
+            }
+
+            return $calon;
+        }
+
+        $reguSekolah = $this->jumlahReguSekolah((int) $nomor['id']);
+
+        foreach ($this->reguLunas((int) $nomor['id']) as $r) {
+            $kunci         = 'r:' . $r['pendaftaran_id'] . ':' . $r['regu'];
+            $calon[$kunci] = [
+                'kunci'      => $kunci,
+                'nama'       => self::namaRegu((string) $r['nama_sekolah'], (string) $r['regu'], ($reguSekolah[self::kunciSekolah($r['npsn'], (int) $r['pendaftaran_id'])] ?? 1) <= 1),
+                'sekolah'    => (string) $r['nama_sekolah'],
+                'nomor_dada' => null,
+            ];
+        }
+
+        return $calon;
+    }
+
+    /**
+     * Tambah babak. `$isi`: `semua`, `kosong`, atau `lolos` (peringkat 1 sampai
+     * `$jumlahLolos` dari `$dariBabak`, termasuk peringkat sama).
+     *
+     * @return array{id?: int, galat?: array<string, string>}
+     */
+    public function tambahBabak(int $nomorId, string $nama, bool $final, string $isi, ?int $dariBabak = null, ?int $jumlahLolos = null): array
+    {
+        $nomor = $this->nomor($nomorId);
+
+        if ($nomor === null) {
+            return ['galat' => ['nama' => 'Nomor lomba tidak ditemukan. Muat ulang halaman.']];
+        }
+
+        $nama  = self::rapikanNama($nama);
+        $galat = $this->periksaBabak($nomorId, $nama, $final, null);
+
+        if (! isset(self::ISI_BABAK[$isi])) {
+            $galat['isi'] = 'Pilih cara mengisi peserta babak.';
+        }
+
+        $lolos = [];
+
+        if ($isi === 'lolos') {
+            $sumber = $dariBabak === null ? null : $this->babak($dariBabak);
+
+            if ($sumber === null || $sumber['nomor']['id'] !== $nomorId) {
+                $galat['dari_babak'] = 'Pilih babak asal peserta yang lolos.';
+            } elseif ($jumlahLolos === null || $jumlahLolos < 1 || $jumlahLolos > 999) {
+                $galat['jumlah_lolos'] = 'Tulis berapa peringkat teratas yang lolos, misalnya 8.';
+            } else {
+                foreach ($this->hasilBabak($sumber['id'], $nomor) as $h) {
+                    if ($h['peringkat'] !== null && $h['peringkat'] <= $jumlahLolos) {
+                        $lolos[] = $h['kunci'];
+                    }
+                }
+
+                if ($lolos === []) {
+                    $galat['jumlah_lolos'] = 'Babak ' . $sumber['nama'] . ' belum punya peringkat. Isi prestasinya dulu, atau pilih isi peserta yang lain.';
+                }
+            }
+        }
+
+        if ($galat !== []) {
+            return ['galat' => $galat];
+        }
+
+        $sekarang = date('Y-m-d H:i:s');
+        $urutan   = (int) ($this->db->table('babak')->selectMax('urutan', 'terbesar')->where('nomor_lomba_id', $nomorId)->get()->getRow()->terbesar ?? 0) + 1;
+
+        $this->db->transStart();
+        $this->db->table('babak')->insert(['nomor_lomba_id' => $nomorId, 'nama' => $nama, 'final' => $final ? 1 : 0, 'urutan' => $urutan, 'dibuat_pada' => $sekarang, 'diubah_pada' => $sekarang]);
+        $id = (int) $this->db->insertID();
+        $this->tulisPeserta($id, $nomor, $isi === 'semua' ? array_keys($this->calon($nomor)) : $lolos, $sekarang);
+        $this->db->transComplete();
+
+        return ['id' => $id];
+    }
+
+    /**
+     * Ganti nama atau tanda Final satu babak.
+     *
+     * @return array<string, string> galat; kosong bila tersimpan
+     */
+    public function ubahBabak(int $babakId, string $nama, bool $final): array
+    {
+        $babak = $this->babak($babakId);
+
+        if ($babak === null) {
+            return ['nama' => 'Babak tidak ditemukan. Muat ulang halaman.'];
+        }
+
+        $nama  = self::rapikanNama($nama);
+        $galat = $this->periksaBabak($babak['nomor']['id'], $nama, $final, $babakId);
+
+        if ($galat !== []) {
+            return $galat;
+        }
+
+        $this->db->transStart();
+        $this->db->table('babak')->where('id', $babakId)->update(['nama' => $nama, 'final' => $final ? 1 : 0, 'diubah_pada' => date('Y-m-d H:i:s')]);
+
+        // Koreksi peringkat hanya untuk Final: babak yang bukan Final lagi dihitung ulang.
+        if (! $final && $babak['final']) {
+            $this->db->table('hasil')->where('babak_id', $babakId)->update(['peringkat_manual' => 0]);
+            $this->hitungUlang($babakId, $babak['nomor']['jenis_hasil']);
+        }
+
+        $this->db->transComplete();
+
+        return [];
+    }
+
+    public function hapusBabak(int $babakId): bool
+    {
+        return $this->db->table('babak')->where('id', $babakId)->delete() !== false && $this->db->affectedRows() > 0;
+    }
+
+    /**
+     * Samakan peserta babak dengan daftar kunci yang dicentang: yang baru
+     * ditambah, yang tidak dicentang dihapus beserta prestasinya. Kunci yang
+     * bukan calon nomor itu diabaikan.
+     *
+     * @param list<string> $kunci
+     *
+     * @return array{tambah: int, hapus: int}
+     */
+    public function aturPeserta(int $babakId, array $kunci): array
+    {
+        $babak = $this->babak($babakId);
+
+        if ($babak === null) {
+            return ['tambah' => 0, 'hapus' => 0];
+        }
+
+        $calon = $this->calon($babak['nomor']);
+        $ada   = [];
+
+        foreach ($this->hasilBabak($babakId, $babak['nomor']) as $h) {
+            $ada[$h['kunci']] = $h['id'];
+        }
+
+        $dipilih = array_values(array_filter(array_unique($kunci), static fn (string $k): bool => isset($calon[$k]) || isset($ada[$k])));
+        $baru    = array_values(array_diff($dipilih, array_keys($ada)));
+        $buang   = array_values(array_diff_key($ada, array_flip($dipilih)));
+
+        $this->db->transStart();
+
+        if ($buang !== []) {
+            $this->db->table('hasil')->whereIn('id', $buang)->delete();
+        }
+
+        $this->tulisPeserta($babakId, $babak['nomor'], $baru, date('Y-m-d H:i:s'));
+        $this->hitungUlang($babakId, $babak['nomor']['jenis_hasil']);
+        $this->db->transComplete();
+
+        return ['tambah' => count($baru), 'hapus' => count($buang)];
+    }
+
+    /**
+     * Simpan prestasi, keterangan, dan (khusus Final) koreksi peringkat, lalu
+     * hitung ulang peringkat. Bila ada isian salah tidak ada yang tersimpan.
+     *
+     * @param array<int|string, mixed> $isian id hasil => ['prestasi' => teks, 'keterangan' => 'DNS'|…, 'peringkat' => teks]
+     *
+     * @return array<int, string> id hasil => pesan galat; kosong bila tersimpan
+     */
+    public function simpanHasil(int $babakId, array $isian): array
+    {
+        $babak = $this->babak($babakId);
+
+        if ($babak === null) {
+            return [0 => 'Babak tidak ditemukan. Muat ulang halaman.'];
+        }
+
+        $jenis = $babak['nomor']['jenis_hasil'];
+        $ada   = array_column($this->db->table('hasil')->select('id')->where('babak_id', $babakId)->get()->getResultArray(), 'id', 'id');
+        $galat = [];
+        $ubah  = [];
+
+        foreach ($isian as $id => $baris) {
+            $id = (int) $id;
+
+            if (! isset($ada[$id]) || ! is_array($baris)) {
+                continue;
+            }
+
+            $teks       = is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '';
+            $prestasi   = Prestasi::urai($teks, $jenis);
+            $keterangan = Peringkat::keterangan($baris['keterangan'] ?? null);
+            $peringkat  = is_string($baris['peringkat'] ?? null) ? trim($baris['peringkat']) : '';
+
+            if ($prestasi['galat'] !== null) {
+                $galat[$id] = $prestasi['galat'];
+
+                continue;
+            }
+
+            $manual = $babak['final'] && $peringkat !== '' && $keterangan === null;
+
+            if ($manual && preg_match('/^[1-9]\d{0,2}$/D', $peringkat) !== 1) {
+                $galat[$id] = 'Peringkat "' . $peringkat . '" belum benar. Tulis angka 1 atau lebih, atau kosongkan supaya dihitung otomatis dari prestasi.';
+
+                continue;
+            }
+
+            $ubah[$id] = [
+                'prestasi'         => $prestasi['nilai'],
+                'keterangan'       => $keterangan,
+                'peringkat'        => $manual ? (int) $peringkat : null,
+                'peringkat_manual' => $manual ? 1 : 0,
+            ];
+        }
+
+        if ($galat !== []) {
+            return $galat;
+        }
+
+        $sekarang = date('Y-m-d H:i:s');
+
+        $this->db->transStart();
+
+        foreach ($ubah as $id => $data) {
+            $this->db->table('hasil')->where('id', $id)->update($data + ['diubah_pada' => $sekarang]);
+        }
+
+        $this->hitungUlang($babakId, $jenis);
+        $this->db->transComplete();
+
+        return [];
+    }
+
+    /**
+     * Terbitkan (`true`) atau tarik kembali (`false`) hasil satu nomor.
+     */
+    public function terbitkan(int $nomorId, bool $terbit): void
+    {
+        $this->db->table('nomor_lomba')->where('id', $nomorId)->update(['hasil_terbit_pada' => $terbit ? date('Y-m-d H:i:s') : null]);
+    }
+
+    /**
+     * Hitung ulang peringkat otomatis satu babak; koreksi admin tetap.
+     */
+    public function hitungUlang(int $babakId, string $jenis): void
+    {
+        $peserta = [];
+
+        foreach ($this->db->table('hasil')->select('id, prestasi, keterangan, peringkat, peringkat_manual')->where('babak_id', $babakId)->get()->getResultArray() as $h) {
+            $peserta[(int) $h['id']] = [
+                'prestasi'   => $h['prestasi'] === null ? null : (int) $h['prestasi'],
+                'keterangan' => $h['keterangan'],
+                'peringkat'  => $h['peringkat'] === null ? null : (int) $h['peringkat'],
+                'manual'     => (int) $h['peringkat_manual'] === 1,
+            ];
+        }
+
+        foreach (Peringkat::hitung($peserta, $jenis) as $id => $peringkat) {
+            if (! $peserta[$id]['manual'] && $peserta[$id]['peringkat'] !== $peringkat) {
+                $this->db->table('hasil')->where('id', $id)->update(['peringkat' => $peringkat]);
+            }
+        }
+    }
+
+    /**
+     * Juara I–III dari babak Final semua nomor (atau yang terbit saja), untuk
+     * klasemen (F8-05).
+     *
+     * @return list<array{nomor_id: int, nomor: string, kelompok_umur: string, terbit: bool, peringkat: int, nama: string, sekolah: string, npsn: string|null, pendaftaran_id: int, jenjang: string}>
+     */
+    public function juara(bool $hanyaTerbit = false): array
+    {
+        $juara = [];
+
+        foreach ($this->daftarNomor($hanyaTerbit) as $ku) {
+            foreach ($ku['nomor'] as $n) {
+                if (! $n['final']) {
+                    continue;
+                }
+
+                $nomor = $this->nomor($n['id']);
+                $final = $this->db->table('babak')->select('id')->where('nomor_lomba_id', $n['id'])->where('final', 1)->get()->getRow();
+
+                if ($nomor === null || $final === null) {
+                    continue;
+                }
+
+                foreach ($this->hasilBabak((int) $final->id, $nomor) as $h) {
+                    if ($h['peringkat'] !== null && $h['peringkat'] <= 3) {
+                        $juara[] = [
+                            'nomor_id'       => $n['id'],
+                            'nomor'          => $n['nama'],
+                            'kelompok_umur'  => $ku['nama'],
+                            'terbit'         => $n['terbit_pada'] !== null,
+                            'peringkat'      => $h['peringkat'],
+                            'nama'           => $h['nama'],
+                            'sekolah'        => $h['sekolah'],
+                            'npsn'           => $h['npsn'],
+                            'pendaftaran_id' => $h['pendaftaran_id'],
+                            'jenjang'        => $h['jenjang'],
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $juara;
+    }
+
+    /**
+     * Nama peserta regu: nama sekolah, ditambah nama regu bila sekolah itu
+     * punya lebih dari satu regu di nomor tersebut (K108).
+     */
+    public static function namaRegu(string $sekolah, string $regu, bool $tunggal): string
+    {
+        return $tunggal ? $sekolah : $sekolah . ' – ' . Regu::label($regu);
+    }
+
+    public static function rapikanNama(string $nama): string
+    {
+        return trim((string) preg_replace('/\s+/u', ' ', $nama));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function periksaBabak(int $nomorId, string $nama, bool $final, ?int $kecuali): array
+    {
+        $galat = [];
+
+        if ($nama === '') {
+            $galat['nama'] = 'Nama babak belum diisi. Contoh: Penyisihan seri 1, Semifinal, atau Final.';
+        } elseif (mb_strlen($nama) > self::NAMA_BABAK_MAKSIMAL) {
+            $galat['nama'] = 'Nama babak terlalu panjang. Persingkat menjadi paling banyak ' . self::NAMA_BABAK_MAKSIMAL . ' huruf.';
+        } else {
+            $kembar = $this->db->table('babak')->where('nomor_lomba_id', $nomorId)->where('LOWER(nama)', mb_strtolower($nama));
+
+            if ($kecuali !== null) {
+                $kembar->where('id !=', $kecuali);
+            }
+
+            if ($kembar->countAllResults() > 0) {
+                $galat['nama'] = 'Babak ' . $nama . ' sudah ada di nomor ini. Pakai nama lain, misalnya tambahkan nomor serinya.';
+            }
+        }
+
+        if ($final) {
+            $ada = $this->db->table('babak')->where('nomor_lomba_id', $nomorId)->where('final', 1);
+
+            if ($kecuali !== null) {
+                $ada->where('id !=', $kecuali);
+            }
+
+            if ($ada->countAllResults() > 0) {
+                $galat['final'] = 'Nomor ini sudah punya babak Final. Satu nomor hanya satu Final; hapus tanda Final di babak lain dulu.';
+            }
+        }
+
+        return $galat;
+    }
+
+    /**
+     * @param array<string, mixed> $nomor
+     * @param list<string>         $kunci
+     */
+    private function tulisPeserta(int $babakId, array $nomor, array $kunci, string $sekarang): void
+    {
+        $baris = [];
+
+        foreach ($kunci as $k) {
+            if ($nomor['jenis'] === 'beregu' && preg_match('/^r:(\d+):(.+)$/uD', $k, $m) === 1) {
+                $baris[] = ['babak_id' => $babakId, 'atlet_id' => null, 'pendaftaran_id' => (int) $m[1], 'regu' => $m[2], 'dibuat_pada' => $sekarang, 'diubah_pada' => $sekarang];
+            } elseif ($nomor['jenis'] !== 'beregu' && preg_match('/^a:(\d+)$/D', $k, $m) === 1) {
+                $baris[] = ['babak_id' => $babakId, 'atlet_id' => (int) $m[1], 'pendaftaran_id' => null, 'regu' => null, 'dibuat_pada' => $sekarang, 'diubah_pada' => $sekarang];
+            }
+        }
+
+        if ($baris !== []) {
+            $this->db->table('hasil')->insertBatch($baris);
+        }
+    }
+
+    /**
+     * Regu pendaftaran Lunas di satu nomor (unik per pendaftaran dan regu).
+     *
+     * @return list<array{pendaftaran_id: int, regu: string, nama_sekolah: string, npsn: string|null}>
+     */
+    private function reguLunas(int $nomorId): array
+    {
+        return array_map(static fn (array $r): array => [
+            'pendaftaran_id' => (int) $r['pendaftaran_id'],
+            'regu'           => (string) $r['regu'],
+            'nama_sekolah'   => (string) $r['nama_sekolah'],
+            'npsn'           => $r['npsn'],
+        ], $this->db->table('atlet_nomor an')
+            ->select('a.pendaftaran_id, an.regu, p.nama_sekolah, p.npsn')
+            ->join('atlet a', 'a.id = an.atlet_id')
+            ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+            ->where('an.nomor_lomba_id', $nomorId)
+            ->where('p.status', 'lunas')
+            ->where('an.regu IS NOT NULL', null, false)
+            ->groupBy('a.pendaftaran_id, an.regu, p.nama_sekolah, p.npsn')
+            ->orderBy('p.nama_sekolah')->orderBy('an.regu')
+            ->get()->getResultArray());
+    }
+
+    /**
+     * Banyak regu per sekolah (NPSN, atau pendaftaran bila tanpa NPSN) di satu nomor.
+     *
+     * @return array<string, int>
+     */
+    private function jumlahReguSekolah(int $nomorId): array
+    {
+        $jumlah = [];
+
+        foreach ($this->db->table('atlet_nomor an')
+            ->select('a.pendaftaran_id, an.regu, p.npsn')
+            ->join('atlet a', 'a.id = an.atlet_id')
+            ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+            ->where('an.nomor_lomba_id', $nomorId)
+            ->where('an.regu IS NOT NULL', null, false)
+            ->groupBy('a.pendaftaran_id, an.regu, p.npsn')
+            ->get()->getResultArray() as $r) {
+            $kunci          = self::kunciSekolah($r['npsn'], (int) $r['pendaftaran_id']);
+            $jumlah[$kunci] = ($jumlah[$kunci] ?? 0) + 1;
+        }
+
+        return $jumlah;
+    }
+
+    /**
+     * Nama anggota inti tiap regu satu nomor, urut nomor atlet.
+     *
+     * @return array<string, list<string>> kunci peserta => nama
+     */
+    private function anggotaRegu(int $nomorId): array
+    {
+        $anggota = [];
+
+        foreach ($this->db->table('atlet_nomor an')
+            ->select('a.pendaftaran_id, a.nama, an.regu')
+            ->join('atlet a', 'a.id = an.atlet_id')
+            ->where('an.nomor_lomba_id', $nomorId)
+            ->where('an.peran', Regu::INTI)
+            ->orderBy('a.nomor_dada IS NULL', '', false)->orderBy('a.nomor_dada')->orderBy('a.nama')
+            ->get()->getResultArray() as $a) {
+            $anggota['r:' . $a['pendaftaran_id'] . ':' . $a['regu']][] = (string) $a['nama'];
+        }
+
+        return $anggota;
+    }
+
+    private static function kunciSekolah(mixed $npsn, int $pendaftaranId): string
+    {
+        return is_string($npsn) && $npsn !== '' ? 'n' . $npsn : 'p' . $pendaftaranId;
+    }
+}

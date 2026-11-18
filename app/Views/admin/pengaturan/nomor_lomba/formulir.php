@@ -21,6 +21,7 @@
  * @var array<string, string>                                 $galat
  */
 
+use App\Libraries\Hasil\JenisHasil;
 use App\Models\NomorLombaModel;
 
 $alamat  = 'admin/pengaturan/nomor-lomba';
@@ -141,6 +142,19 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                             <?php endif ?>
                             <div id="kategori-bantuan" class="form-text">Mixed hanya untuk nomor beregu: satu tim berisi putra dan putri.</div>
                             <?= $pesan('kategori') ?>
+                        </fieldset>
+
+                        <fieldset class="mb-3" id="jenis_hasil" tabindex="-1" aria-describedby="<?= $jelas('jenis_hasil', 'jenis_hasil-bantuan') ?>">
+                            <legend class="form-label fs-6 mb-2">Jenis hasil</legend>
+                            <?php foreach (JenisHasil::LABEL as $kode => $label) : ?>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input<?= $salah('jenis_hasil') ?>" type="radio" name="jenis_hasil" id="jenis_hasil-<?= $kode ?>" value="<?= $kode ?>"
+                                        <?= ($isian['jenis_hasil'] ?? '') === $kode ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="jenis_hasil-<?= $kode ?>"><?= $label ?></label>
+                                </div>
+                            <?php endforeach; ?>
+                            <div id="jenis_hasil-bantuan" class="form-text">Untuk hasil lomba: waktu (lari, jalan cepat, estafet; makin kecil makin baik), jarak (lompat, lempar, tolak), atau poin (poin akhir Tri Lomba dari panitia).</div>
+                            <?= $pesan('jenis_hasil') ?>
                         </fieldset>
 
                         <fieldset class="border rounded-3 p-3 mb-3" id="bagian-tim"<?= $beregu ? '' : ' hidden' ?>>
