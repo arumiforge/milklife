@@ -32,15 +32,16 @@ Diperbarui: 17 November 2026
 | [F7-22 Tolak atlet per atlet](tugas/F7-22-tolak-atlet.md) | selesai | sisipan | [#91](https://github.com/arumiforge/milklife/pull/91) |
 | [F7-23 Tampilan penolakan atlet dan jejak navigasi admin](tugas/F7-23-tampilan-penolakan-jejak.md) | selesai | sisipan | [#92](https://github.com/arumiforge/milklife/pull/92) |
 | [F7-24 Galat CSRF terlihat](tugas/F7-24-csrf-pesan-galat.md) | selesai | sisipan 1a | [#97](https://github.com/arumiforge/milklife/pull/97) |
-| [F7-25 Backup data tanpa memuat ke memori](tugas/F7-25-backup-data-tanpa-memori.md) | selesai | sisipan 1a | (PR ini) |
+| [F7-25 Backup data tanpa memuat ke memori](tugas/F7-25-backup-data-tanpa-memori.md) | selesai | sisipan 1a | [#100](https://github.com/arumiforge/milklife/pull/100) |
 | [F7-26 Kirim pendaftaran idempoten](tugas/F7-26-kirim-pendaftaran-idempoten.md) | rencana | sisipan 1b | |
 | [F7-27 Cloudflare Turnstile](tugas/F7-27-turnstile.md) | rencana | sisipan 1b | |
 | [F7-28 Rancangan revisi K116–K124](tugas/F7-28-rancangan-revisi-k116-k124.md) | selesai | sisipan 1c | [#96](https://github.com/arumiforge/milklife/pull/96) |
 | [F7-29 Susunan dokumen agen](tugas/F7-29-susunan-dokumen-agen.md) | selesai | sisipan 1c | [#99](https://github.com/arumiforge/milklife/pull/99) |
 | [F7-30 Pecah berkas besar](tugas/F7-30-pecah-berkas-besar.md) | rencana | sisipan 3 | |
 | [F7-31 PHPStan](tugas/F7-31-phpstan.md) | rencana | sisipan 3 | |
+| [F7-32 CSP menyala](tugas/F7-32-csp-menyala.md) | rencana | sisipan 3 | |
 
-Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24, F7-25), 1b (F7-26 lalu F7-27), 1c (F7-28, F7-29); gelombang 3 = F7-30 setelah F7-26, F7-27, dan F8-01 masuk `main`, lalu F7-31. F7-06 dan F7-07 paling akhir, bersama F8-06.
+Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24, F7-25), 1b (F7-26 lalu F7-27), 1c (F7-28, F7-29); gelombang 3 = F7-30 setelah F7-26, F7-27, dan F8-01 masuk `main`, lalu F7-31; F7-32 (CSP, K127) setelah F7-30 dan F8-04/F8-05 masuk `main`. F7-06 dan F7-07 paling akhir, bersama F8-06.
 
 **Tahap 8 — Hari lomba dan hasil** (K124), rencana: [`dokumen/draf/rencana-implementasi-tahap-8.md`](../dokumen/draf/rencana-implementasi-tahap-8.md), disetujui pemilik beserta delapan asumsinya (K125). Pertemuan teknik 6 Desember 2026, lomba 9–12 Desember 2026.
 
@@ -51,6 +52,7 @@ Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24,
 | [F8-03 Fitur hari lomba](tugas/F8-03-hari-lomba.md) | rencana | 2e | |
 | [F8-04 Hasil lomba](tugas/F8-04-hasil-lomba.md) | rencana | 2f | |
 | [F8-05 Klasemen sekolah](tugas/F8-05-klasemen-sekolah.md) | rencana | 2f | |
+| [F8-07 Menu ponsel: sidebar dan 5 butir bawah](tugas/F8-07-menu-ponsel-sidebar.md) | rencana | 2 | |
 | [F8-06 Penutupan Tahap 8](tugas/F8-06-penutupan-tahap-8.md) | rencana | akhir | |
 
 ## Berikutnya
