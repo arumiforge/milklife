@@ -36,7 +36,7 @@ $galatGaya = trim((string) preg_replace('#/\*.*?\*/#s', '', $galatGaya));
     <meta name="robots" content="noindex">
     <meta name="color-scheme" content="light">
     <title><?= $galatTeks($galat['judul']) ?> – MilkLife Athletics Challenge</title>
-    <style>
+    <style <?= csp_style_nonce() ?>>
 <?= $galatGaya ?>
     </style>
 </head>

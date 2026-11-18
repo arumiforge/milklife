@@ -1161,7 +1161,17 @@ div.dt-container .dt-layout-table {
 }
 
 .wadah-grafik {
+    min-height: 300px;
     margin-inline: -0.5rem;
+}
+
+/* Tinggi awal sebelum grafik digambar (dulu atribut style, F7-32). */
+#grafik-tren {
+    min-height: 320px;
+}
+
+#grafik-nomor-lomba {
+    min-height: 340px;
 }
 
 .wadah-grafik .apexcharts-tooltip {

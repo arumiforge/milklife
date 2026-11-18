@@ -40,7 +40,7 @@ Diperbarui: 18 November 2026
 | [F7-30 Pecah berkas besar](tugas/F7-30-pecah-berkas-besar.md) | selesai | sisipan 3 | [#108](https://github.com/arumiforge/milklife/pull/108) |
 | [F7-31 PHPStan](tugas/F7-31-phpstan.md) | selesai | sisipan 3 | [#111](https://github.com/arumiforge/milklife/pull/111) |
 | [F7-33 Kelompok umur pilihan dalam satu jenjang](tugas/F7-33-kelompok-umur-pilihan.md) | selesai | sisipan | [#109](https://github.com/arumiforge/milklife/pull/109) |
-| [F7-32 CSP menyala](tugas/F7-32-csp-menyala.md) | rencana | sisipan 3 | |
+| [F7-32 CSP menyala](tugas/F7-32-csp-menyala.md) | selesai | sisipan 3 | (PR ini) |
 
 Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24, F7-25), 1b (F7-26 lalu F7-27), 1c (F7-28, F7-29); gelombang 3 = F7-30 setelah F7-26, F7-27, dan F8-01 masuk `main`, lalu F7-31; F7-32 (CSP, K127) setelah F7-30 dan F8-04/F8-05 masuk `main`. F7-06 dan F7-07 paling akhir, bersama F8-06.
 
@@ -52,7 +52,7 @@ Urutan sisipan 17 November 2026 (K118–K123): gelombang 1 = sub-sesi 1a (F7-24,
 | [F8-02 Penanda bukti bayar baru](tugas/F8-02-penanda-bukti-baru.md) | selesai | 2d | [#103](https://github.com/arumiforge/milklife/pull/103) |
 | [F8-03 Fitur hari lomba](tugas/F8-03-hari-lomba.md) | selesai | 2e | [#104](https://github.com/arumiforge/milklife/pull/104) |
 | [F8-04 Hasil lomba](tugas/F8-04-hasil-lomba.md) | selesai | 2f | [#113](https://github.com/arumiforge/milklife/pull/113) |
-| [F8-05 Klasemen sekolah](tugas/F8-05-klasemen-sekolah.md) | selesai | 2f | (PR ini) |
+| [F8-05 Klasemen sekolah](tugas/F8-05-klasemen-sekolah.md) | selesai | 2f | [#114](https://github.com/arumiforge/milklife/pull/114) |
 | [F8-07 Menu ponsel: sidebar dan 5 butir bawah](tugas/F8-07-menu-ponsel-sidebar.md) | selesai | 2 | [#107](https://github.com/arumiforge/milklife/pull/107) |
 | [F8-06 Penutupan Tahap 8](tugas/F8-06-penutupan-tahap-8.md) | rencana | akhir | |
 

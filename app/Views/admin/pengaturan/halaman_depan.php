@@ -76,11 +76,11 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
                             <fieldset class="h-100 border rounded p-3" data-kotak-gambar="<?= esc($nama, 'attr') ?>">
                                 <legend class="float-none w-auto fs-6 fw-semibold px-1 mb-2"><?= esc($butir['label']) ?></legend>
 
-                                <div class="mb-3" style="max-width: <?= $nama === 'gambar_kepala' ? '40rem' : ($butir['rasio'] === '1x1' ? '12rem' : '20rem') ?>;" data-pratinjau="<?= esc($nama, 'attr') ?>" data-rasio="<?= esc($butir['rasio'], 'attr') ?>">
+                                <div class="mb-3 <?= $nama === 'gambar_kepala' ? 'maks-w-40r' : ($butir['rasio'] === '1x1' ? 'maks-w-12r' : 'maks-w-20r') ?>" data-pratinjau="<?= esc($nama, 'attr') ?>" data-rasio="<?= esc($butir['rasio'], 'attr') ?>">
                                     <?php if ($butir['jalur'] !== '') : ?>
                                         <div class="ratio ratio-<?= esc($butir['rasio'], 'attr') ?> border rounded bg-white">
                                             <img src="<?= esc(base_url($butir['jalur']), 'attr') ?>" alt="<?= esc($butir['label'] . ' saat ini', 'attr') ?>"
-                                                class="<?= $nama === 'gambar_kepala' ? 'rounded' : 'p-2' ?>" style="object-fit: <?= $nama === 'gambar_kepala' ? 'cover' : 'contain' ?>;">
+                                                class="<?= $nama === 'gambar_kepala' ? 'rounded objek-cover' : 'p-2 objek-contain' ?>">
                                         </div>
                                     <?php else : ?>
                                         <?= view('tata_letak/_tanpa_gambar', ['rasio' => $butir['rasio'], 'label' => $butir['label']], ['saveData' => false]) ?>
@@ -158,29 +158,5 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
 
 <?= $this->section('skrip') ?>
 <script src="<?= aset('js/konfirmasi.js') ?>"></script>
-<script>
-(function () {
-    'use strict';
-
-    // Pratinjau gambar yang baru dipilih, sebelum disimpan.
-    document.querySelectorAll('[data-pratinjau]').forEach(function (wadah) {
-        var nama = wadah.getAttribute('data-pratinjau');
-        var berkas = document.getElementById(nama);
-        berkas.addEventListener('change', function () {
-            if (!berkas.files || !berkas.files[0] || !/^image\//.test(berkas.files[0].type)) {
-                return;
-            }
-            var bingkai = document.createElement('div');
-            bingkai.className = 'ratio ratio-' + wadah.getAttribute('data-rasio') + ' border rounded bg-white';
-            var gambar = document.createElement('img');
-            gambar.src = URL.createObjectURL(berkas.files[0]);
-            gambar.alt = 'Gambar yang baru dipilih (belum disimpan)';
-            gambar.style.objectFit = nama === 'gambar_kepala' ? 'cover' : 'contain';
-            gambar.className = nama === 'gambar_kepala' ? 'rounded' : 'p-2';
-            bingkai.appendChild(gambar);
-            wadah.replaceChildren(bingkai);
-        });
-    });
-}());
-</script>
+<script src="<?= aset('js/admin-pengaturan-halaman-depan.js') ?>"></script>
 <?= $this->endSection() ?>

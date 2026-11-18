@@ -38,7 +38,7 @@
                 <ul class="list-group">
                     <?php foreach ($ku['nomor'] as $n) : ?>
                         <li class="list-group-item d-flex gap-2 align-items-center py-2">
-                            <div class="flex-grow-1" style="min-width: 0">
+                            <div class="flex-grow-1 min-w-0">
                                 <div class="fw-semibold"><?= esc($n['nama']) ?></div>
                                 <div class="small text-body-secondary"><?= $n['jenis'] === 'beregu' ? 'Beregu · ' : '' ?><?= $n['peserta'] ?> atlet</div>
                             </div>

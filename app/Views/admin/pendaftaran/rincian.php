@@ -191,7 +191,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                         <ul class="list-unstyled row g-3 mb-0">
                             <?php foreach ($p['penanggung_jawab'] as $orang) : ?>
                                 <li class="col-12 col-sm-6 d-flex gap-3 align-items-start penanggung-jawab" data-id="<?= (int) $orang['id'] ?>">
-                                    <div class="flex-shrink-0" style="width: 6rem;">
+                                    <div class="flex-shrink-0 w-6r">
                                         <?php if ($orang['ada_foto']) : ?>
                                             <?php $alamatFoto = site_url($alamat . '/foto/' . (int) $orang['id']); $idFoto = 'foto-pj-' . (int) $orang['id']; ?>
                                             <button type="button" class="btn p-0 border-0 foto-pj" data-bs-toggle="modal" data-bs-target="#<?= $idFoto ?>" title="Perbesar foto">
@@ -336,7 +336,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                 <th scope="col">Tanggal lahir</th>
                                 <th scope="col">Kelompok umur</th>
                                 <th scope="col">Nomor lomba</th>
-                                <th scope="col" style="min-width: 16rem;">Alasan</th>
+                                <th scope="col" class="min-w-16r">Alasan</th>
                                 <th scope="col">Ditolak</th>
                                 <th scope="col" class="pe-3 pe-lg-4">Keadaan</th>
                             </tr>
@@ -353,7 +353,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                             <div class="small text-body-secondary">Sesuai: <?= esc($d['kelompok_umur_sesuai']) ?></div>
                                         <?php endif ?>
                                     </td>
-                                    <td style="min-width: 9rem;"><?= esc(implode(', ', array_column($d['nomor_lomba'], 'nama'))) ?: $strip ?></td>
+                                    <td class="min-w-9r"><?= esc(implode(', ', array_column($d['nomor_lomba'], 'nama'))) ?: $strip ?></td>
                                     <td class="small"><?= nl2br(esc($d['alasan'])) ?></td>
                                     <td class="small text-nowrap"><?= esc(tanggal_id($d['dibuat_pada'], true)) ?><br><span class="text-body-secondary"><?= esc($d['ditolak_oleh'] ?? '') ?></span></td>
                                     <td class="pe-3 pe-lg-4 small">

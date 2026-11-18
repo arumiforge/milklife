@@ -11,15 +11,25 @@ $errorId = uniqid('error', true);
     <meta name="robots" content="noindex">
 
     <title><?= esc($title) ?></title>
-    <style>
+    <style <?= csp_style_nonce() ?>>
         <?= preg_replace('#[\r\n\t ]+#', ' ', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'debug.css')) ?>
     </style>
 
-    <script>
+    <script <?= csp_script_nonce() ?>>
         <?= file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'debug.js') ?>
+        // CSP (F7-32, K127): tanpa atribut onload/onclick sebaris.
+        document.addEventListener('DOMContentLoaded', function () {
+            init();
+            document.querySelectorAll('[data-toggle-args]').forEach(function (tautan) {
+                tautan.addEventListener('click', function (peristiwa) {
+                    peristiwa.preventDefault();
+                    toggle(tautan.getAttribute('data-toggle-args'));
+                });
+            });
+        });
     </script>
 </head>
-<body onload="init()">
+<body>
 
     <!-- Header -->
     <div class="header">
@@ -113,7 +123,7 @@ $errorId = uniqid('error', true);
                                 &nbsp;&nbsp;&mdash;&nbsp;&nbsp;<?= esc($row['class'] . $row['type'] . $row['function']) ?>
                                 <?php if (! empty($row['args'])) : ?>
                                     <?php $argsId = $errorId . 'args' . $index ?>
-                                    ( <a href="#" onclick="return toggle('<?= esc($argsId, 'attr') ?>');">arguments</a> )
+                                    ( <a href="#" data-toggle-args="<?= esc($argsId, 'attr') ?>">arguments</a> )
                                     <div class="args" id="<?= esc($argsId, 'attr') ?>">
                                         <table cellspacing="0">
 
@@ -229,7 +239,7 @@ $errorId = uniqid('error', true);
                 <table>
                     <tbody>
                         <tr>
-                            <td style="width: 10em">Path</td>
+                            <td>Path</td>
                             <td><?= esc($request->getUri()) ?></td>
                         </tr>
                         <tr>
@@ -241,7 +251,7 @@ $errorId = uniqid('error', true);
                             <td><?= esc($request->getIPAddress()) ?></td>
                         </tr>
                         <tr>
-                            <td style="width: 10em">Is AJAX Request?</td>
+                            <td>Is AJAX Request?</td>
                             <td><?= $request->isAJAX() ? 'yes' : 'no' ?></td>
                         </tr>
                         <tr>
@@ -272,7 +282,7 @@ $errorId = uniqid('error', true);
 
                     <h3>$<?= esc($var) ?></h3>
 
-                    <table style="width: 100%">
+                    <table>
                         <thead>
                             <tr>
                                 <th>Key</th>
@@ -348,7 +358,7 @@ $errorId = uniqid('error', true);
             <div class="content" id="response">
                 <table>
                     <tr>
-                        <td style="width: 15em">Response Status</td>
+                        <td>Response Status</td>
                         <td><?= esc($response->getStatusCode() . ' - ' . $response->getReasonPhrase()) ?></td>
                     </tr>
                 </table>
@@ -408,7 +418,7 @@ $errorId = uniqid('error', true);
                             <td><?= esc(static::describeMemory(memory_get_usage(true))) ?></td>
                         </tr>
                         <tr>
-                            <td style="width: 12em">Peak Memory Usage:</td>
+                            <td>Peak Memory Usage:</td>
                             <td><?= esc(static::describeMemory(memory_get_peak_usage(true))) ?></td>
                         </tr>
                         <tr>

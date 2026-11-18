@@ -88,8 +88,8 @@ $persenLunas = $angka['tagihan'] > 0 ? (int) round($angka['lunas'] / $angka['tag
                             <div class="catatan-angka"><?= esc($catatan) ?></div>
                         <?php endif ?>
                         <?php if ($kunci === 'lunas') : ?>
-                            <div class="progress mt-2" role="progressbar" aria-label="Bagian tagihan yang sudah lunas" aria-valuenow="<?= $persenLunas ?>" aria-valuemin="0" aria-valuemax="100" style="height: .375rem">
-                                <div class="progress-bar bg-success" style="width: <?= $persenLunas ?>%"></div>
+                            <div class="progress mt-2 bilah-tipis" role="progressbar" aria-label="Bagian tagihan yang sudah lunas" aria-valuenow="<?= $persenLunas ?>" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar bg-success <?= lebar_bilah($persenLunas) ?>"></div>
                             </div>
                         <?php endif ?>
                     </div>
@@ -191,63 +191,63 @@ $persenLunas = $angka['tagihan'] > 0 ? (int) round($angka['lunas'] / $angka['tag
                             <button type="button" class="btn btn-outline-primary" data-tren="tagihan" aria-pressed="false">Tagihan</button>
                         </div>
                     </div>
-                    <div class="wadah-grafik" id="grafik-tren" style="min-height: 320px"></div>
+                    <div class="wadah-grafik" id="grafik-tren"></div>
                 </div>
             </div>
             <div class="col-12 col-md-6 col-xxl-4">
                 <div class="kartu-dasbor h-100">
                     <h3 class="judul-grafik">Status pembayaran</h3>
                     <p class="keterangan-grafik">Jumlah pendaftaran; arahkan ke potongan untuk melihat rupiahnya</p>
-                    <div class="wadah-grafik" id="grafik-status" style="min-height: 300px"></div>
+                    <div class="wadah-grafik" id="grafik-status"></div>
                 </div>
             </div>
             <div class="col-12 col-md-6 col-xxl-6">
                 <div class="kartu-dasbor h-100">
                     <h3 class="judul-grafik">Atlet per kabupaten</h3>
                     <p class="keterangan-grafik">Putra dan putri</p>
-                    <div class="wadah-grafik" id="grafik-kabupaten" style="min-height: 300px"></div>
+                    <div class="wadah-grafik" id="grafik-kabupaten"></div>
                 </div>
             </div>
             <div class="col-12 col-md-6 col-xxl-6">
                 <div class="kartu-dasbor h-100">
                     <h3 class="judul-grafik">Atlet per kelompok umur</h3>
                     <p class="keterangan-grafik">Putra dan putri</p>
-                    <div class="wadah-grafik" id="grafik-kelompok-umur" style="min-height: 300px"></div>
+                    <div class="wadah-grafik" id="grafik-kelompok-umur"></div>
                 </div>
             </div>
             <div class="col-12 col-md-6 col-xxl-4">
                 <div class="kartu-dasbor h-100">
                     <h3 class="judul-grafik">Jenjang sekolah</h3>
                     <p class="keterangan-grafik">Atlet per jenjang</p>
-                    <div class="wadah-grafik" id="grafik-jenjang" style="min-height: 300px"></div>
+                    <div class="wadah-grafik" id="grafik-jenjang"></div>
                 </div>
             </div>
             <div class="col-12 col-xxl-8">
                 <div class="kartu-dasbor h-100">
                     <h3 class="judul-grafik">Nomor lomba terpopuler</h3>
                     <p class="keterangan-grafik">Sepuluh nomor dengan peserta terbanyak</p>
-                    <div class="wadah-grafik" id="grafik-nomor-lomba" style="min-height: 340px"></div>
+                    <div class="wadah-grafik" id="grafik-nomor-lomba"></div>
                 </div>
             </div>
             <div class="col-12 col-xxl-7">
                 <div class="kartu-dasbor h-100">
                     <h3 class="judul-grafik">Pengunjung halaman publik</h3>
                     <p class="keterangan-grafik">Pengunjung dan halaman dibuka per hari, <?= \App\Libraries\Panel\RingkasanDasbor::HARI_TREN ?> hari terakhir</p>
-                    <div class="wadah-grafik" id="grafik-pengunjung" style="min-height: 300px"></div>
+                    <div class="wadah-grafik" id="grafik-pengunjung"></div>
                 </div>
             </div>
             <div class="col-12 col-xxl-5">
                 <div class="kartu-dasbor h-100">
                     <h3 class="judul-grafik">Jam mendaftar</h3>
                     <p class="keterangan-grafik">Jam berapa sekolah biasanya mengirim pendaftaran</p>
-                    <div class="wadah-grafik" id="grafik-jam" style="min-height: 300px"></div>
+                    <div class="wadah-grafik" id="grafik-jam"></div>
                 </div>
             </div>
         </div>
     </section>
 </div>
 
-<script type="application/json" id="data-grafik-dasbor"><?= json_encode($grafik, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?></script>
+<script type="application/json" id="data-grafik-dasbor" data-nonce-gaya="<?= service('csp')->enabled() ? esc(service('csp')->getStyleNonce(), 'attr') : '' ?>"><?= json_encode($grafik, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?></script>
 <?= $this->endSection() ?>
 
 <?= $this->section('skrip') ?>

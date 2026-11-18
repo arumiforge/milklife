@@ -206,3 +206,18 @@ if (! function_exists('_aplikasi_nama_bulan')) {
         ][$bulan] ?? '';
     }
 }
+
+if (! function_exists('lebar_bilah')) {
+    /**
+     * Kelas lebar bilah kemajuan dalam kelipatan 5 persen (`lebar-0` sampai
+     * `lebar-100`, `aset/css/tema.css`), pengganti `style="width: …%"` yang
+     * ditolak CSP (K127).
+     *
+     *     lebar_bilah(42);   // 'lebar-40'
+     *     lebar_bilah(98);   // 'lebar-100'
+     */
+    function lebar_bilah(int|float $persen): string
+    {
+        return 'lebar-' . (int) (round(max(0, min(100, $persen)) / 5) * 5);
+    }
+}

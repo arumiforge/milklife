@@ -112,8 +112,8 @@ $jumlahHadir = count(array_filter($atlet, static fn (array $a): bool => $a['hadi
                     <?php foreach ($atlet as $a) : ?>
                         <?php $hadir = $a['hadir_pada'] !== null; ?>
                         <li class="list-group-item d-flex flex-wrap gap-2 align-items-center<?= $hadir ? ' list-group-item-success' : '' ?>" data-atlet="<?= $a['id'] ?>">
-                            <div class="fs-3 fw-bold font-monospace me-1" style="min-width: 4.5ch"><?= $a['nomor_dada'] !== null ? esc($a['nomor_dada']) : '<span class="text-body-secondary fs-6 fw-normal">Belum ada</span>' ?></div>
-                            <div class="flex-grow-1" style="min-width: 12rem">
+                            <div class="fs-3 fw-bold font-monospace me-1 min-w-bib"><?= $a['nomor_dada'] !== null ? esc($a['nomor_dada']) : '<span class="text-body-secondary fs-6 fw-normal">Belum ada</span>' ?></div>
+                            <div class="flex-grow-1 min-w-12r">
                                 <div class="fw-semibold"><?= esc($a['nama']) ?></div>
                                 <div class="small text-body-secondary"><?= esc($a['kelompok_umur']) ?> · <?= esc(implode(', ', $a['nomor_lomba'])) ?></div>
                                 <?php if ($hadir) : ?>

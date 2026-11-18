@@ -85,7 +85,7 @@ $bagian = [
                                             <tr data-id="<?= (int) $kontak['id'] ?>">
                                                 <td class="text-end text-body-secondary"><?= ++$no ?></td>
                                                 <td class="text-center"><?= (int) $kontak['urutan'] ?></td>
-                                                <td style="min-width: 12rem">
+                                                <td class="min-w-12r">
                                                     <?php if ($kontak['jenis'] === TautanModel::NARAHUBUNG) : ?>
                                                         <span class="fw-semibold d-block"><?= esc($kontak['label']) ?></span>
                                                         <a class="small text-nowrap" href="https://wa.me/<?= esc($kontak['nilai'], 'url') ?>" target="_blank" rel="noopener noreferrer">

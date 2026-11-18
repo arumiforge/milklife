@@ -53,7 +53,8 @@ final class TataLetakGalatTest extends UjiHalaman
         $html = $this->renderGalat($berkas);
 
         // CSS disisipkan langsung, jadi tetap tampil walau berkas statis atau fungsi bantu bermasalah.
-        $this->assertMatchesRegularExpression('#<style>.*--ml-biru-tua: \#021F7B;.*</style>#s', $html);
+        // Dengan nonce CSP (K127) bila CSP menyala.
+        $this->assertMatchesRegularExpression('#<style(?: nonce="[^"]+")?>.*--ml-biru-tua: \#021F7B;.*</style>#s', $html);
         $this->assertStringNotContainsString('<link', $html);
         $this->assertStringNotContainsString('<script', $html);
         $this->assertStringNotContainsString('extend(', (string) file_get_contents(APPPATH . 'Views/errors/html/' . $berkas));

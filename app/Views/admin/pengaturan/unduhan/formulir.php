@@ -45,7 +45,7 @@ $uraian     = static function (string $kotak, string $bantuan = '') use ($galat)
 <div class="container-fluid px-3 px-lg-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <div class="card" style="max-width: 48rem">
+    <div class="card maks-w-48r">
         <div class="card-body p-3 p-md-4">
             <?= view('admin/_galat_isian', ['galat' => $galat], ['saveData' => false]) ?>
 
@@ -115,7 +115,7 @@ $uraian     = static function (string $kotak, string $bantuan = '') use ($galat)
 
                 <div class="mb-3">
                     <label for="urutan" class="form-label">Urutan</label>
-                    <input type="number" class="form-control<?= $kelasKotak('urutan') ?>" id="urutan" name="urutan" style="max-width: 10rem"
+                    <input type="number" class="form-control maks-w-10r<?= $kelasKotak('urutan') ?>" id="urutan" name="urutan"
                         value="<?= esc($isian['urutan'], 'attr') ?>" min="0" max="<?= UnduhanModel::URUTAN_TERBESAR ?>" step="1" inputmode="numeric" required
                         <?= $uraian('urutan', 'urutan-bantuan') ?>>
                     <div id="urutan-bantuan" class="form-text">Angka kecil tampil lebih dulu.</div>

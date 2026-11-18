@@ -18,6 +18,8 @@
     }
 
     var data = JSON.parse(sumber.textContent || '{}');
+    // ApexCharts menyisipkan <style>; nonce CSP supaya tidak ditolak (F7-32, K127).
+    var nonceGaya = sumber.getAttribute('data-nonce-gaya') || undefined;
 
     var WARNA = {
         biru: '#234987',
@@ -62,6 +64,7 @@
     // Pengaturan bersama, setara `getMainChartOptions()` template Flowbite.
     var dasar = {
         chart: {
+            nonce: nonceGaya,
             fontFamily: 'inherit',
             foreColor: WARNA.label,
             toolbar: { show: false },

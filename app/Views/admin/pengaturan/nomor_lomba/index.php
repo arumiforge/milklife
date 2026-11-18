@@ -252,16 +252,5 @@ $ringkasTim = static function (array $nomor): string {
 
 <?= $this->section('skrip') ?>
 <script src="<?= aset('js/konfirmasi.js') ?>"></script>
-<script>
-    // Saringan langsung diterapkan saat diganti; tombol Tampilkan tetap ada bila skrip mati.
-    (function () {
-        var saringan = document.getElementById('saringan');
-        if (!saringan) {
-            return;
-        }
-        saringan.addEventListener('change', function () {
-            saringan.requestSubmit ? saringan.requestSubmit() : saringan.submit();
-        });
-    })();
-</script>
+<script src="<?= aset('js/admin-nomor-lomba-saringan.js') ?>"></script>
 <?= $this->endSection() ?>
