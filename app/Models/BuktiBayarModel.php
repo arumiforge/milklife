@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use Config\Pembayaran;
 
 /**
  * Bukti bayar pendaftaran (tabel `bukti_bayar`, K34).
@@ -14,9 +15,11 @@ use CodeIgniter\Model;
 class BuktiBayarModel extends Model
 {
     /**
-     * Bukti bayar paling banyak per pendaftaran.
+     * Rentang yang boleh diisi admin untuk `Pembayaran.batas_bukti_bayar` (K135).
      */
-    public const BATAS = 5;
+    public const BATAS_TERKECIL = 1;
+
+    public const BATAS_TERBESAR = 20;
 
     protected $table            = 'bukti_bayar';
     protected $primaryKey       = 'id';
@@ -49,7 +52,26 @@ class BuktiBayarModel extends Model
      */
     public function masihBolehTambah(int $pendaftaranId): bool
     {
-        return $this->jumlahMilik($pendaftaranId) < self::BATAS;
+        return $this->jumlahMilik($pendaftaranId) < self::batas();
+    }
+
+    /**
+     * Bukti bayar paling banyak per pendaftaran, diatur admin di Pengaturan >
+     * Pembayaran (`Pembayaran.batas_bukti_bayar`, bawaan 5, K135). Nilai di
+     * luar rentang `BATAS_TERKECIL`–`BATAS_TERBESAR` dipepetkan ke ujungnya.
+     *
+     * Menurunkan batas tidak menghapus bukti yang sudah ada; pendaftaran yang
+     * buktinya sudah sebanyak batas atau lebih hanya tidak bisa menambah lagi.
+     */
+    public static function batas(): int
+    {
+        $nilai = setting('Pembayaran.batas_bukti_bayar');
+
+        if (! is_numeric($nilai)) {
+            $nilai = (new Pembayaran())->batas_bukti_bayar;
+        }
+
+        return max(self::BATAS_TERKECIL, min(self::BATAS_TERBESAR, (int) $nilai));
     }
 
     /**

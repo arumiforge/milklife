@@ -101,6 +101,22 @@ final class UnggahBuktiBayarOfficialTest extends UjiBasisData
         $this->assertSame(1, $this->jumlah('MAC2A0000126'));
     }
 
+    public function testBatasMengikutiPengaturanAdmin(): void
+    {
+        // K135: batas yang diatur admin juga berlaku untuk unggahan ofisial.
+        setting('Pembayaran.batas_bukti_bayar', 1);
+        $this->siapkanBerkas('bukti', 'transfer.png', self::gambar());
+        $hasil = $this->kirim($this->alamatUnggah('MAC2A0000126'), ['Accept' => 'application/json']);
+        $hasil->assertStatus(201);
+        $this->assertStringStartsWith('Bukti bayar terkirim (1 dari 1 gambar).', json_decode($hasil->getJSON(), true)['pesan']);
+
+        $this->siapkanBerkas('bukti', 'transfer.png', self::gambar());
+        $hasil = $this->kirim($this->alamatUnggah('MAC2A0000126'), ['Accept' => 'application/json']);
+        $hasil->assertStatus(409);
+        $this->assertStringStartsWith('Bukti bayar pendaftaran ini sudah mencapai batas, paling banyak 1 gambar.', json_decode($hasil->getJSON(), true)['pesan']);
+        $this->assertSame(1, $this->jumlah('MAC2A0000126'));
+    }
+
     public function testDariCekKembaliKeHasilPencarian(): void
     {
         $this->siapkanBerkas('bukti', 'transfer.png', self::gambar());

@@ -93,13 +93,36 @@ final class PanelBuktiBayarTest extends UjiBasisData
         $this->assertSame(0, $this->db->table('bukti_bayar')->countAllResults());
     }
 
+    public function testBatasDiaturAdminDanDijagaRentangnya(): void
+    {
+        // K135: `Pembayaran.batas_bukti_bayar`, dipepetkan ke 1–20.
+        setting('Pembayaran.batas_bukti_bayar', 3);
+        $this->assertSame(3, BuktiBayarModel::batas());
+
+        setting('Pembayaran.batas_bukti_bayar', 0);
+        $this->assertSame(BuktiBayarModel::BATAS_TERKECIL, BuktiBayarModel::batas());
+
+        setting('Pembayaran.batas_bukti_bayar', 99);
+        $this->assertSame(BuktiBayarModel::BATAS_TERBESAR, BuktiBayarModel::batas());
+
+        setting('Pembayaran.batas_bukti_bayar', 'rusak');
+        $this->assertSame(5, BuktiBayarModel::batas(), 'Nilai rusak kembali ke bawaan.');
+
+        setting('Pembayaran.batas_bukti_bayar', 1);
+        $p     = $this->buatPendaftaranPanel();
+        $model = model(BuktiBayarModel::class);
+        $this->assertTrue($model->masihBolehTambah($p['id']));
+        $this->buatBuktiBayarPanel($p['id']);
+        $this->assertFalse($model->masihBolehTambah($p['id']));
+    }
+
     public function testModel(): void
     {
         $a     = $this->buatPendaftaranPanel();
         $b     = $this->buatPendaftaranPanel(['atlet' => [$this->atletPanel()]]);
         $model = model(BuktiBayarModel::class);
 
-        $this->assertSame(5, BuktiBayarModel::BATAS);
+        $this->assertSame(5, BuktiBayarModel::batas(), 'Bawaan 5 gambar (K34, K135).');
         $this->assertTrue($model->masihBolehTambah($a['id']));
 
         $id = $model->insert(['pendaftaran_id' => $a['id'], 'berkas' => 'bukti-bayar/' . str_repeat('ab', 16) . '.jpg', 'ukuran' => 1234], true);

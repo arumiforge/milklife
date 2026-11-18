@@ -27,11 +27,12 @@ final class PengaturanPembayaranTest extends UjiBasisData
     private static function isianSah(array $ganti = []): array
     {
         return $ganti + [
-            'bank'             => 'Bank Karangan',
-            'nomor_rekening'   => '0123 4567-89.01',
-            'pemilik_rekening' => 'Panitia Lomba Karangan',
-            'nomor_wa'         => '0812-3456-7890',
-            'templat_pesan'    => "Halo, konfirmasi {nama_sekolah} ({npsn}).\r\nTotal {total}.",
+            'bank'              => 'Bank Karangan',
+            'nomor_rekening'    => '0123 4567-89.01',
+            'pemilik_rekening'  => 'Panitia Lomba Karangan',
+            'nomor_wa'          => '0812-3456-7890',
+            'templat_pesan'     => "Halo, konfirmasi {nama_sekolah} ({npsn}).\r\nTotal {total}.",
+            'batas_bukti_bayar' => '7',
         ];
     }
 
@@ -97,6 +98,32 @@ final class PengaturanPembayaranTest extends UjiBasisData
         $this->assertSame('6281234567890', setting('Pembayaran.nomor_wa'));
         $this->assertSame("Halo, konfirmasi {nama_sekolah} ({npsn}).\nTotal {total}.", setting('Pembayaran.templat_pesan'));
         $this->assertSame('', setting('Pembayaran.logo_bank'));
+        $this->assertSame(7, setting('Pembayaran.batas_bukti_bayar'));
+        $this->assertSame(7, \App\Models\BuktiBayarModel::batas());
+    }
+
+    public function testBatasBuktiBayarTampilDanDiperiksa(): void
+    {
+        // K135: bawaan 5, tersimpan ditampilkan, di luar 1–20 atau bukan angka bulat ditolak.
+        $xpath = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
+        $kotak = $xpath->query('//input[@name="batas_bukti_bayar"]')->item(0);
+        $this->assertSame('5', $kotak?->getAttribute('value'));
+        $this->assertSame('1', $kotak?->getAttribute('min'));
+        $this->assertSame('20', $kotak?->getAttribute('max'));
+
+        setting('Pembayaran.batas_bukti_bayar', 3);
+        $xpath = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
+        $this->assertSame('3', $xpath->query('//input[@name="batas_bukti_bayar"]')->item(0)?->getAttribute('value'));
+
+        foreach (['0', '21', '2,5', '', 'lima', '-1'] as $salah) {
+            $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['batas_bukti_bayar' => $salah]));
+            $this->assertIsianSalahDitampilkanUlang($hasil, ['batas_bukti_bayar']);
+            $hasil->assertSee('Batas bukti bayar harus angka bulat dari 1 sampai 20');
+            $this->assertSame(3, setting('Pembayaran.batas_bukti_bayar'), "Isian {$salah} tidak boleh tersimpan.");
+        }
+
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['batas_bukti_bayar' => '20'])), self::ALAMAT);
+        $this->assertSame(20, setting('Pembayaran.batas_bukti_bayar'));
     }
 
     public function testRekeningBolehKosong(): void

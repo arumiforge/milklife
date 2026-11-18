@@ -27,7 +27,7 @@ use Throwable;
  *
  * - `POST admin/pendaftaran/<id>/bukti-bayar`: unggah satu gambar (kotak
  *   `bukti`). Gambar diperiksa dan dikecilkan `BerkasBuktiBayar` (sisi
- *   terpanjang 1600 piksel, JPEG). Paling banyak `BuktiBayarModel::BATAS`
+ *   terpanjang 1600 piksel, JPEG). Paling banyak `BuktiBayarModel::batas()`
  *   gambar per pendaftaran.
  * - `GET admin/pendaftaran/<id>/bukti-bayar/<bukti>`: gambar untuk
  *   ditampilkan di halaman (gambar kecil dan gambar besar).
@@ -75,7 +75,7 @@ class BuktiBayarController extends BaseController
 
         return redirect()->to($kembali)->with(
             'pesan_sukses',
-            'Bukti bayar tersimpan untuk pendaftaran ' . $pendaftaran['id_pendaftaran'] . ' (' . $jumlah . ' dari ' . BuktiBayarModel::BATAS . ' gambar).',
+            'Bukti bayar tersimpan untuk pendaftaran ' . $pendaftaran['id_pendaftaran'] . ' (' . $jumlah . ' dari ' . BuktiBayarModel::batas() . ' gambar).',
         );
     }
 
@@ -188,7 +188,7 @@ class BuktiBayarController extends BaseController
 
     private static function pesanPenuh(): string
     {
-        return 'Bukti bayar pendaftaran ini sudah ' . BuktiBayarModel::BATAS . ' gambar, batas paling banyak. Hapus gambar yang tidak dipakai lebih dulu, lalu unggah lagi.';
+        return 'Bukti bayar pendaftaran ini sudah mencapai batas, paling banyak ' . BuktiBayarModel::batas() . ' gambar. Hapus gambar yang tidak dipakai lebih dulu, lalu unggah lagi.';
     }
 
     /**

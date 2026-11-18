@@ -22,7 +22,8 @@ use Throwable;
  *   `WRITEPATH . 'unggahan/bukti-bayar/<32 heksa>.jpg'`. Yang disimpan di
  *   `bukti_bayar.berkas` jalur relatifnya, contoh `bukti-bayar/3f9c….jpg`,
  *   dan berkasnya hanya disajikan lewat rute admin.
- * - Batas 5 bukti per pendaftaran dijaga aplikasi: `BuktiBayarModel::BATAS`.
+ * - Batas bukti per pendaftaran (diatur admin, bawaan 5, K135) dijaga aplikasi:
+ *   `BuktiBayarModel::batas()`.
  *
  * Pemakaian di pengendali (F6-03):
  *
@@ -253,7 +254,7 @@ final class BerkasBuktiBayar
         try {
             $db->query('SELECT id FROM ' . $db->prefixTable('pendaftaran') . ' WHERE id = ? FOR UPDATE', [$pendaftaranId]);
 
-            if ($model->jumlahMilik($pendaftaranId) >= BuktiBayarModel::BATAS) {
+            if ($model->jumlahMilik($pendaftaranId) >= BuktiBayarModel::batas()) {
                 $db->transRollback();
                 $this->hapus($hasil['berkas']);
 
@@ -283,7 +284,7 @@ final class BerkasBuktiBayar
         if ($olehAdmin) {
             try {
                 (new RiwayatAdmin($db))->catatUntuk($pendaftaranId, RiwayatAdmin::UNGGAH_BUKTI, 'Bukti bayar diunggah admin (gambar ke-'
-                    . $model->jumlahMilik($pendaftaranId) . ' dari paling banyak ' . BuktiBayarModel::BATAS . ').');
+                    . $model->jumlahMilik($pendaftaranId) . ' dari paling banyak ' . BuktiBayarModel::batas() . ').');
             } catch (Throwable $e) {
                 $db->transRollback();
                 $this->hapus($hasil['berkas']);
