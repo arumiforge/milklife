@@ -152,3 +152,10 @@ Setelah Tahap 7 digabung, di terminal Laragon pada folder proyek:
 
 | Bagian | Rencana | Yang berlaku | Alasan |
 |---|---|---|---|
+| Cakupan | Tujuh tugas F7-01 sampai F7-07 | Ditambah tugas sisipan F7-08 sampai F7-33 dan PR langsung atas permintaan pemilik (K72–K96, misalnya #71, #72, #79) | Keputusan pemilik selama Tahap 7 (K97–K123, K127, K134); Tahap 8 (K124) berjalan bersamaan |
+| Minify (F7-01) | `.min.css` dan `.min.js` | Juga `.min.svg`, dan alamat aset diberi penanda versi `?v=<waktu ubah>` | K72, K86 |
+| Rancangan (F7-04) | Revisi 4 lewat draf lalu final | Revisi 4 lewat draf (#57) lalu final (#59); revisi 5–20 diubah langsung di `dokumen/final/` | K71, K100, K101 |
+| Keamanan (F7-02) | Kepala keamanan `secureheaders`, CSP tidak disebut | Ditambah galat CSRF terlihat (F7-24), Turnstile (F7-27), dan CSP menyala tanpa skrip dan gaya sebaris tanpa nonce (F7-32) | K118, K122, K127 |
+| Penggabungan PR | Koordinator menggabung setelah uji lokal dan CI lulus (K70) | Koordinator menggabung setelah CI hijau dan langsung lanjut ke gelombang berikutnya | K126 |
+| Uji menyeluruh (F7-06) | Gelombang 3, setelah F7-01 sampai F7-05; alur sampai hapus | Dijalankan paling akhir bersama F8-06 (#116); ditambah B1, B2, Turnstile dengan kunci uji, CSP, dan fitur Tahap 8; server uji `php -S`, bukan Nginx | K119 |
+| Penutupan (F7-07) | Arsip, `PROGRES.md`, `KONTEKS.md`, `README.md` | Ditambah `tests/unit/DokumenAgenTest.php`: tautan tugas diperiksa di `PROGRES.md` dan `agent/arsip/`, dan `PROGRES.md` boleh tanpa tabel tugas saat tidak ada tahap berjalan | Uji penjaga F7-29 mewajibkan tabel tugas di `PROGRES.md` |

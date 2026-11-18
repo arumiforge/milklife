@@ -18,21 +18,36 @@ final class DokumenAgenTest extends CIUnitTestCase
         return $isi;
     }
 
-    public function testSetiapTugasDiProgresPunyaBerkasTugas(): void
+    public function testSetiapTugasDiProgresDanArsipPunyaBerkasTugas(): void
     {
-        $progres = $this->baca('agent/PROGRES.md');
+        // PROGRES.md boleh tanpa tabel tugas saat tidak ada tahap berjalan (F7-07);
+        // tabel tahap yang selesai pindah ke agent/arsip/ dan tetap diperiksa.
+        $berkas = ['agent/PROGRES.md' => 'tugas/'];
 
-        preg_match_all('/^\|\s*\[(F\d+-\d{2})\b[^\]]*\]\(([^)]+)\)/m', $progres, $cocok, PREG_SET_ORDER);
-        $this->assertNotEmpty($cocok, 'Tabel tugas di agent/PROGRES.md tidak ditemukan.');
-
-        foreach ($cocok as [, $id, $tautan]) {
-            $this->assertMatchesRegularExpression(
-                '#^tugas/' . preg_quote($id, '#') . '-[a-z0-9-]+\.md$#',
-                $tautan,
-                "Tautan tugas {$id} di PROGRES.md harus menunjuk ke tugas/{$id}-<slug>.md.",
-            );
-            $this->assertFileExists(ROOTPATH . 'agent/' . $tautan, "Tugas {$id} di PROGRES.md tidak punya berkas agent/{$tautan}.");
+        foreach (glob(ROOTPATH . 'agent/arsip/*.md') ?: [] as $arsip) {
+            $berkas['agent/arsip/' . basename($arsip)] = '../tugas/';
         }
+
+        $jumlah = 0;
+
+        foreach ($berkas as $jalur => $awalan) {
+            preg_match_all('/^\|\s*\[(F\d+-\d{2})\b[^\]]*\]\(([^)]+)\)/m', $this->baca($jalur), $cocok, PREG_SET_ORDER);
+
+            foreach ($cocok as [, $id, $tautan]) {
+                $jumlah++;
+                $this->assertMatchesRegularExpression(
+                    '#^' . preg_quote($awalan . $id, '#') . '-[a-z0-9-]+\.md$#',
+                    $tautan,
+                    "Tautan tugas {$id} di {$jalur} harus menunjuk ke {$awalan}{$id}-<slug>.md.",
+                );
+                $this->assertFileExists(
+                    ROOTPATH . dirname($jalur) . '/' . $tautan,
+                    "Tugas {$id} di {$jalur} tidak punya berkas tugas {$tautan}.",
+                );
+            }
+        }
+
+        $this->assertGreaterThan(0, $jumlah, 'Tabel tugas tidak ditemukan di agent/PROGRES.md maupun agent/arsip/.');
     }
 
     public function testSetiapNomorKDiAturanAdaDiKeputusan(): void
