@@ -294,6 +294,9 @@ final class UbahPendaftaran
      *                                             dengan `(BaseConnection $db, array $rencana)`; bila
      *                                             melempar, seluruh perubahan dibatalkan. Dipakai
      *                                             `TolakAtlet` untuk mencatat atlet yang ditolak (K116).
+     *                                             Tanpa itu, perubahan dicatat di riwayat tindakan
+     *                                             admin sebagai "Ubah" (F8-01); dengan itu, pemanggil
+     *                                             yang mencatat riwayatnya sendiri.
      *
      * @return array<string, mixed>|null
      */
@@ -555,7 +558,18 @@ final class UbahPendaftaran
                 }
 
                 $nomorDada = $beri['nomor'];
+            }
 
+            // F8-01: riwayat tindakan admin, sebelum digabung supaya ikut pindah ke tujuan.
+            // Pemanggil dengan `$dalamTransaksi` (Tolak atlet) mencatat tindakannya sendiri.
+            if ($dalamTransaksi === null) {
+                $nomorBaru = array_values($nomorDada);
+                sort($nomorBaru);
+                (new RiwayatAdmin($this->db))->catat($id, (string) $lama['pendaftaran']['id_pendaftaran'], RiwayatAdmin::UBAH, RiwayatAdmin::ringkasanUbah($lama, $rencana)
+                    . ($nomorBaru === [] ? '' : ' Nomor atlet (BIB) baru: ' . implode(', ', $nomorBaru) . '.'));
+            }
+
+            if ($rencana['status'] === 'lunas') {
                 // K109: NPSN baru mungkin sudah punya pendaftaran Lunas lain; gabungkan.
                 $gabung = (new GabungPendaftaran($this->db))->gabungNpsn($rencana['sekolah']['npsn']);
             }

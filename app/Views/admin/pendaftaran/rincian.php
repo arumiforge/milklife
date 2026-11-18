@@ -23,6 +23,7 @@
  * @var array<int, array<string, mixed>>     $kecocokan        K116: per id atlet, `TolakAtlet::formulir()` (`cocok`, `sesuai_id`, `sesuai`)
  * @var list<array<string, mixed>>           $atletDitolak     K116: `AtletDitolak::untukPendaftaran(semua: true)`
  * @var array{label: string, alamat: string} $asal             K117: menu asal halaman ini (`AsalRincian`), untuk jejak navigasi
+ * @var list<array<string, mixed>>           $riwayat          F8-01: `RiwayatAdmin::untukPendaftaran()`, terbaru di atas
  *
  * Tolak atlet (K116): tombol "Tolak atlet" untuk pendaftaran Menunggu yang
  * punya atlet, tanda di kolom kelompok umur bila tidak cocok lagi dengan
@@ -441,6 +442,14 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
     </section>
 
     <?= view('admin/pendaftaran/_bukti_bayar', ['pendaftaran' => $p], ['saveData' => false]) ?>
+
+    <section class="card mb-4" aria-labelledby="judul-riwayat" id="riwayat">
+        <div class="card-body p-3 p-lg-4">
+            <h2 id="judul-riwayat" class="h5 mb-1">Riwayat</h2>
+            <p class="small text-body-secondary mb-2">Tindakan admin pada pendaftaran ini, terbaru di atas.</p>
+            <?= view('admin/pendaftaran/_riwayat', ['riwayat' => $riwayat, 'idSekarang' => (string) $p['id_pendaftaran']], ['saveData' => false]) ?>
+        </div>
+    </section>
 </div>
 <?= $this->endSection() ?>
 
