@@ -104,7 +104,7 @@ final class UrutkanNomorDada
 
         try {
             $awalan = $this->awalan(true);
-            $this->baca('SELECT id FROM atlet WHERE nomor_dada IS NOT NULL ORDER BY id FOR UPDATE', []);
+            $sebelum = $this->baca('SELECT id, pendaftaran_id, nomor_dada FROM atlet WHERE nomor_dada IS NOT NULL ORDER BY id FOR UPDATE', []);
             $atlet = $this->atletLunas();
 
             // Kelompokkan per kelompok umur, sekolah berurutan menurut atlet pertamanya.
@@ -169,6 +169,8 @@ final class UrutkanNomorDada
                 $this->pastikan($this->db->table('awalan_nomor_dada')->where('awalan', (string) $kode)->update(['nomor_terakhir' => $urut]));
             }
 
+            $this->catatRiwayat($sebelum, $nomor, $atlet);
+
             if ($this->db->transStatus() === false) {
                 throw $this->galat('Nomor atlet (BIB) gagal diurutkan');
             }
@@ -192,6 +194,64 @@ final class UrutkanNomorDada
             'sekolah'     => count($urutSekolah),
             'dikosongkan' => $dikosongkan,
         ];
+    }
+
+    /**
+     * Riwayat tindakan admin (F8-01): satu baris per pendaftaran yang nomor
+     * atletnya berubah atau dikosongkan.
+     *
+     * @param list<array<string, mixed>> $sebelum Atlet bernomor sebelum diurutkan.
+     * @param array<int, string>         $nomor   id atlet => nomor baru.
+     * @param list<array<string, mixed>> $atlet   Atlet pendaftaran Lunas.
+     */
+    private function catatRiwayat(array $sebelum, array $nomor, array $atlet): void
+    {
+        $lama  = array_column($sebelum, 'nomor_dada', 'id');
+        $milik = [];
+
+        foreach ($atlet as $a) {
+            $idAtlet = (int) $a['id'];
+            $dulu    = $lama[$idAtlet] ?? null;
+
+            if ($dulu !== ($nomor[$idAtlet] ?? null)) {
+                $milik[(int) $a['pendaftaran_id']]['berubah'][] = ($dulu ?? 'tanpa nomor') . ' → ' . ($nomor[$idAtlet] ?? 'tanpa nomor');
+            }
+        }
+
+        $lunas = array_flip(array_map(static fn (array $a): int => (int) $a['id'], $atlet));
+
+        foreach ($sebelum as $b) {
+            if (! isset($lunas[(int) $b['id']])) {
+                $milik[(int) $b['pendaftaran_id']]['dikosongkan'][] = (string) $b['nomor_dada'];
+            }
+        }
+
+        if ($milik === []) {
+            return;
+        }
+
+        $kode = [];
+
+        foreach ($this->baca('SELECT id, id_pendaftaran FROM pendaftaran WHERE id IN (' . implode(', ', array_fill(0, count($milik), '?')) . ')', array_keys($milik)) as $p) {
+            $kode[(int) $p['id']] = (string) $p['id_pendaftaran'];
+        }
+
+        $riwayat = new RiwayatAdmin($this->db);
+        ksort($milik);
+
+        foreach ($milik as $pendaftaranId => $ubah) {
+            $kalimat = 'Nomor atlet (BIB) diurutkan ulang per sekolah.';
+
+            if (($ubah['berubah'] ?? []) !== []) {
+                $kalimat .= ' ' . count($ubah['berubah']) . ' atlet berganti nomor: ' . implode(', ', $ubah['berubah']) . '.';
+            }
+
+            if (($ubah['dikosongkan'] ?? []) !== []) {
+                $kalimat .= ' Nomor ' . implode(', ', $ubah['dikosongkan']) . ' dikosongkan karena pendaftaran belum Lunas.';
+            }
+
+            $riwayat->catat($pendaftaranId, (string) ($kode[$pendaftaranId] ?? ''), RiwayatAdmin::URUTKAN, $kalimat);
+        }
     }
 
     /**

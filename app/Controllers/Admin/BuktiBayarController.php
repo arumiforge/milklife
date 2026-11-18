@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Libraries\Panel\BerkasBuktiBayar;
+use App\Libraries\Panel\RiwayatAdmin;
 use App\Models\BuktiBayarModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\DownloadResponse;
@@ -59,7 +60,7 @@ class BuktiBayarController extends BaseController
     {
         $pendaftaran = $this->cariPendaftaran($id);
         $kembali     = self::alamatRincian($id);
-        $pesan       = (new BerkasBuktiBayar())->unggahKe($id, $this->request->getFile(self::KOTAK));
+        $pesan       = (new BerkasBuktiBayar())->unggahKe($id, $this->request->getFile(self::KOTAK), olehAdmin: true);
 
         if ($pesan !== null) {
             return redirect()->to($kembali)->with('pesan_galat', $pesan === BerkasBuktiBayar::PENUH ? self::pesanPenuh() : $pesan);
@@ -113,6 +114,12 @@ class BuktiBayarController extends BaseController
 
         try {
             $terhapus = $model->delete($buktiId);
+
+            if ($terhapus) {
+                // F8-01: dicatat di transaksi yang sama.
+                (new RiwayatAdmin($db))->catatUntuk($id, RiwayatAdmin::HAPUS_BUKTI, 'Bukti bayar ke-' . $urutan . ' dihapus'
+                    . ($baris['waktu_unggah'] === null ? '' : ' (diunggah ' . tanggal_id((string) $baris['waktu_unggah'], true) . ')') . '.');
+            }
         } catch (Throwable $e) {
             $db->transRollback();
 
