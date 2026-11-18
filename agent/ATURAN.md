@@ -25,7 +25,8 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - NISN yang sudah terdaftar ditolak; perubahan atlet terdaftar lewat admin (K06).
 - Pendaftaran baru masuk hanya bersama bukti transfer, di langkah 5 (K90). Ofisial bisa menambah bukti lewat Cek (K83).
 - Kirim pendaftaran idempoten dengan `kunci_kirim` unik (K118 B2). Galat CSRF terlihat, `regenerate = false` (K118 B1).
-- Turnstile di wizard, Cek Pendaftaran, dan masuk admin; kunci kosong = mati; kunci rahasia tidak pernah di git (K122).
+- Turnstile di wizard, Cek Pendaftaran, dan masuk admin; kunci kosong = mati; kunci rahasia tidak pernah di git (K122). Cek Pendaftaran tidak diperiksa lagi 30 menit setelah lolos (K128).
+- CSP menyala, termasuk izin `challenges.cloudflare.com`; tanpa skrip dan gaya sebaris tanpa nonce (K127).
 - Wizard: isian salah kembali normal saat diubah (K88); jendela konfirmasi, bilah muat, pemilih tanggal (K89).
 - Admin tidak membuat pendaftaran baru dari panel (K58). Ofisial tidak mengubah pendaftaran tersimpan (K32).
 
@@ -84,5 +85,6 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Cakupan: riwayat tindakan admin, penanda bukti baru, daftar ulang QR dan hadir, BIB massal, daftar peserta, hasil semua babak, klasemen per jenjang (K124). Rencana dan 8 asumsinya disetujui (K125).
 - Juara I–III dari babak Final; Tri Lomba poin akhir diisi admin; regu juara = satu piala (K124).
 - Juara umum: juara I, lalu II, lalu III, lalu peringkat bersama; kontingen = NPSN (K124).
-- Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124).
+- Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri, juga di ponsel (K130).
+- Tandai hadir di daftar ulang hanya untuk pendaftaran Lunas (K129).
 - Pecah berkas besar tanpa ubah perilaku setelah F7-26, F7-27, F8-01 (K121).
