@@ -66,7 +66,7 @@
                             <tr data-id="<?= (int) $baris['id'] ?>">
                                 <td class="text-end text-body-secondary"><?= ++$no ?></td>
                                 <td class="text-center"><?= (int) $baris['urutan'] ?></td>
-                                <td style="min-width: 12rem">
+                                <td class="min-w-12r">
                                     <span class="fw-semibold"><?= esc($baris['judul']) ?></span>
                                     <?php if ($keterangan !== '') : ?>
                                         <span class="d-block small text-body-secondary"><?= esc(mb_strimwidth($keterangan, 0, 120, '…')) ?></span>

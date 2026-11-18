@@ -2481,3 +2481,168 @@ html:has(.tata-publik) {
     color: var(--ml-teks-redup);
     font-weight: 600;
 }
+
+/* ---------- Kelas pengganti atribut style sebaris (F7-32, CSP K127) ----------
+   CSP menolak `style="…"` di markup, jadi ukuran kecil yang dulu ditulis
+   sebaris memakai kelas ini. Lebar bilah kemajuan: `lebar_bilah()` di
+   `aplikasi_helper.php` (kelipatan 5 persen). */
+.min-w-0 {
+    min-width: 0;
+}
+
+.min-w-bib {
+    min-width: 4.5ch;
+}
+
+.min-w-9r {
+    min-width: 9rem;
+}
+
+.min-w-12r {
+    min-width: 12rem;
+}
+
+.min-w-13r {
+    min-width: 13rem;
+}
+
+.min-w-16r {
+    min-width: 16rem;
+}
+
+.maks-w-10r {
+    max-width: 10rem;
+}
+
+.maks-w-12r {
+    max-width: 12rem;
+}
+
+.maks-w-16r {
+    max-width: 16rem;
+}
+
+.maks-w-20r {
+    max-width: 20rem;
+}
+
+.maks-w-32r {
+    max-width: 32rem;
+}
+
+.maks-w-40r {
+    max-width: 40rem;
+}
+
+.maks-w-48r {
+    max-width: 48rem;
+}
+
+.w-6r {
+    width: 6rem;
+}
+
+.objek-contain {
+    object-fit: contain;
+}
+
+.objek-cover {
+    object-fit: cover;
+}
+
+.teks-pratinjau-pesan {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.bilah-tipis {
+    height: 0.375rem;
+}
+
+.bilah-sedang {
+    height: 0.5rem;
+}
+
+.lebar-0 {
+    width: 0%;
+}
+
+.lebar-5 {
+    width: 5%;
+}
+
+.lebar-10 {
+    width: 10%;
+}
+
+.lebar-15 {
+    width: 15%;
+}
+
+.lebar-20 {
+    width: 20%;
+}
+
+.lebar-25 {
+    width: 25%;
+}
+
+.lebar-30 {
+    width: 30%;
+}
+
+.lebar-35 {
+    width: 35%;
+}
+
+.lebar-40 {
+    width: 40%;
+}
+
+.lebar-45 {
+    width: 45%;
+}
+
+.lebar-50 {
+    width: 50%;
+}
+
+.lebar-55 {
+    width: 55%;
+}
+
+.lebar-60 {
+    width: 60%;
+}
+
+.lebar-65 {
+    width: 65%;
+}
+
+.lebar-70 {
+    width: 70%;
+}
+
+.lebar-75 {
+    width: 75%;
+}
+
+.lebar-80 {
+    width: 80%;
+}
+
+.lebar-85 {
+    width: 85%;
+}
+
+.lebar-90 {
+    width: 90%;
+}
+
+.lebar-95 {
+    width: 95%;
+}
+
+.lebar-100 {
+    width: 100%;
+}

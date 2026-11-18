@@ -208,6 +208,10 @@ class App extends BaseConfig
      *
      * @see http://www.html5rocks.com/en/tutorials/security/content-security-policy/
      * @see http://www.w3.org/TR/CSP/
+     *
+     * Menyala sejak F7-32 (K127): aturan di `ContentSecurityPolicy.php`, tanpa
+     * skrip dan gaya sebaris kecuali yang memakai nonce (`{csp-script-nonce}`,
+     * `{csp-style-nonce}`).
      */
-    public bool $CSPEnabled = false;
+    public bool $CSPEnabled = true;
 }

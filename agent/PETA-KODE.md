@@ -62,6 +62,7 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 - Bukti PDF hanya lewat kode acak 24 heksa + ID (K77), dibatasi `throttler`.
 - Kelompok umur atlet: `Pendaftaran/KelompokUmurAtlet::tentukan()` (jenjang → tahun lahir → pilihan bila lebih dari satu cocok, K95, K134), kembarannya di JS `pendaftaran/atlet.js` dan `admin-ubah-pendaftaran.js`; irisan per jenjang `KelompokUmurAtlet::irisan()`.
 - Perutean otomatis mati (`Config/Routing.php`); admin dijaga `Filters/AdminFilter`.
+- CSP menyala (`Config/App.php`, `Config/ContentSecurityPolicy.php`, K127): view tanpa `style="…"`, atribut `on…`, atau `<script>`/`<style>` sebaris tanpa nonce (dijaga `KepalaKeamananTest`). Ukuran kecil memakai kelas di `tema.css` (`min-w-*`, `maks-w-*`, `lebar-*` lewat `lebar_bilah()`); skrip halaman di `public/aset/js/`; halaman galat memakai `csp_style_nonce()`; ApexCharts menerima nonce dari `data-nonce-gaya`.
 
 ## Perintah uji per area
 

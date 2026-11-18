@@ -72,10 +72,10 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
 
                         <div class="mb-0">
                             <span class="form-label d-block" id="logo_bank-label">Logo bank</span>
-                            <div class="mb-2" style="max-width: 16rem;" data-pratinjau="logo_bank">
+                            <div class="mb-2 maks-w-16r" data-pratinjau="logo_bank">
                                 <?php if ($logo !== '') : ?>
                                     <div class="ratio ratio-16x9 border rounded bg-white">
-                                        <img src="<?= esc(base_url($logo), 'attr') ?>" alt="Logo bank saat ini" class="p-2" style="object-fit: contain;">
+                                        <img src="<?= esc(base_url($logo), 'attr') ?>" alt="Logo bank saat ini" class="p-2 objek-contain">
                                     </div>
                                 <?php else : ?>
                                     <?= view('tata_letak/_tanpa_gambar', ['rasio' => '16x9', 'label' => 'Logo bank'], ['saveData' => false]) ?>
@@ -141,7 +141,7 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
 
                         <h3 class="h6 mb-1">Contoh hasil pesan</h3>
                         <p class="small text-body-secondary mb-2">Dengan data karangan, supaya terlihat apa yang diterima pemilik rekening.</p>
-                        <div class="border rounded bg-body-tertiary p-3 small" id="contoh-pesan" style="white-space: pre-wrap; overflow-wrap: anywhere;"
+                        <div class="border rounded bg-body-tertiary p-3 small teks-pratinjau-pesan" id="contoh-pesan"
                             data-contoh="<?= esc(json_encode($dataContoh, JSON_UNESCAPED_UNICODE), 'attr') ?>" aria-live="polite"><?= esc($contohPesan) ?></div>
 
                         <?php if ($nomorWaTersimpan !== '' && $galat === []) : ?>
@@ -168,64 +168,5 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
 
 <?= $this->section('skrip') ?>
 <script src="<?= aset('js/konfirmasi.js') ?>"></script>
-<script>
-(function () {
-    'use strict';
-
-    var kotak = document.getElementById('templat_pesan');
-    var contoh = document.getElementById('contoh-pesan');
-    var data = JSON.parse(contoh.getAttribute('data-contoh') || '{}');
-
-    function perbaruiContoh() {
-        var hasil = kotak.value;
-        Object.keys(data).forEach(function (penanda) {
-            hasil = hasil.split(penanda).join(data[penanda]);
-        });
-        contoh.textContent = hasil.trim();
-    }
-
-    kotak.addEventListener('input', perbaruiContoh);
-
-    document.getElementById('pakai-pesan-awal').addEventListener('click', function () {
-        kotak.value = this.getAttribute('data-pesan-awal');
-        perbaruiContoh();
-        kotak.focus();
-    });
-
-    // Penanda disisipkan di posisi kursor terakhir; bila kotak pesan belum
-    // pernah disentuh, di akhir pesan.
-    var disentuh = false;
-    kotak.addEventListener('focus', function () { disentuh = true; });
-
-    document.querySelectorAll('[data-penanda]').forEach(function (tombol) {
-        tombol.addEventListener('click', function () {
-            var penanda = tombol.getAttribute('data-penanda');
-            var awal = disentuh ? kotak.selectionStart : kotak.value.length;
-            var akhir = disentuh ? kotak.selectionEnd : kotak.value.length;
-            kotak.value = kotak.value.slice(0, awal) + penanda + kotak.value.slice(akhir);
-            kotak.focus();
-            kotak.selectionStart = kotak.selectionEnd = awal + penanda.length;
-            perbaruiContoh();
-        });
-    });
-
-    // Pratinjau logo yang baru dipilih, sebelum disimpan.
-    var berkas = document.getElementById('logo_bank');
-    var wadah = document.querySelector('[data-pratinjau="logo_bank"]');
-    berkas.addEventListener('change', function () {
-        if (!berkas.files || !berkas.files[0] || !/^image\//.test(berkas.files[0].type)) {
-            return;
-        }
-        var bingkai = document.createElement('div');
-        bingkai.className = 'ratio ratio-16x9 border rounded bg-white';
-        var gambar = document.createElement('img');
-        gambar.src = URL.createObjectURL(berkas.files[0]);
-        gambar.alt = 'Logo bank yang baru dipilih (belum disimpan)';
-        gambar.className = 'p-2';
-        gambar.style.objectFit = 'contain';
-        bingkai.appendChild(gambar);
-        wadah.replaceChildren(bingkai);
-    });
-}());
-</script>
+<script src="<?= aset('js/admin-pengaturan-pembayaran.js') ?>"></script>
 <?= $this->endSection() ?>

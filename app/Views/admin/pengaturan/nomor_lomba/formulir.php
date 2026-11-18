@@ -85,7 +85,7 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
 
                     <?= view('admin/_galat_isian', ['galat' => $galat], ['saveData' => false]) ?>
 
-                    <form action="<?= $aksi ?>" method="post" novalidate id="formulir-nomor-lomba">
+                    <form action="<?= $aksi ?>" method="post" novalidate id="formulir-nomor-lomba" data-terkunci="<?= $dipakai ? '1' : '0' ?>">
                         <?= csrf_field() ?>
 
                         <div class="mb-3">
@@ -281,44 +281,5 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
 
 <?= $this->section('skrip') ?>
 <script src="<?= aset('js/konfirmasi.js') ?>"></script>
-<script>
-    // Tampilkan isian tim hanya untuk nomor beregu, dan isian mix hanya untuk
-    // nomor beregu mix. Pilihan mix dimatikan untuk nomor individu.
-    (function () {
-        var formulir = document.getElementById('formulir-nomor-lomba');
-        if (!formulir) {
-            return;
-        }
-        var bagianTim = document.getElementById('bagian-tim');
-        var bagianMix = document.getElementById('bagian-mix');
-        var pilihanMix = document.getElementById('kategori-mix');
-        var terkunci = <?= $dipakai ? 'true' : 'false' ?>;
-
-        function nilai(nama) {
-            var dipilih = formulir.querySelector('input[name="' + nama + '"]:checked')
-                || formulir.querySelector('input[type="hidden"][name="' + nama + '"]');
-            return dipilih ? dipilih.value : '';
-        }
-
-        function perbarui() {
-            var beregu = nilai('jenis') === 'beregu';
-            if (!terkunci) {
-                pilihanMix.disabled = !beregu;
-                if (!beregu && pilihanMix.checked) {
-                    pilihanMix.checked = false;
-                    document.getElementById('kategori-putra').checked = true;
-                }
-            }
-            bagianTim.hidden = !beregu;
-            bagianMix.hidden = !(beregu && nilai('kategori') === 'mix');
-        }
-
-        formulir.addEventListener('change', function (peristiwa) {
-            if (peristiwa.target.name === 'jenis' || peristiwa.target.name === 'kategori') {
-                perbarui();
-            }
-        });
-        perbarui();
-    })();
-</script>
+<script src="<?= aset('js/admin-nomor-lomba-formulir.js') ?>"></script>
 <?= $this->endSection() ?>

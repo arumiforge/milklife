@@ -65,12 +65,14 @@ final class KepalaKeamananTest extends UjiBasisData
     }
 
     /**
-     * CSP mengizinkan Cloudflare Turnstile (K122): skrip dan iframe dari
-     * challenges.cloudflare.com. CSP aplikasi belum dinyalakan
-     * (`App::$CSPEnabled`); bila dinyalakan, kepalanya memuat sumber ini.
+     * CSP menyala (K127, F7-32) dan mengizinkan Cloudflare Turnstile (K122):
+     * skrip dan iframe dari challenges.cloudflare.com. Tanpa `unsafe-inline`;
+     * gambar boleh `data:` dan `blob:` (pratinjau foto dan ikon Bootstrap).
      */
-    public function testCspMengizinkanTurnstile(): void
+    public function testCspMenyalaDanMengizinkanTurnstile(): void
     {
+        $this->assertTrue(config(App::class)->CSPEnabled);
+
         $csp = config(ContentSecurityPolicy::class);
 
         foreach (['scriptSrc', 'scriptSrcElem', 'frameSrc'] as $arahan) {
@@ -79,17 +81,52 @@ final class KepalaKeamananTest extends UjiBasisData
         }
 
         $jawaban = new Response(config(App::class));
-        $aktif   = new class ($csp) extends CspBawaan {
-            public function enabled(): bool
-            {
-                return true;
-            }
-        };
-        $aktif->finalize($jawaban);
+        $jawaban->setBody('<script {csp-script-nonce}></script><style {csp-style-nonce}></style>');
+        (new CspBawaan($csp))->finalize($jawaban);
         $kepala = $jawaban->getHeaderLine('Content-Security-Policy');
 
-        $this->assertMatchesRegularExpression("#script-src 'self' https://challenges\.cloudflare\.com#", $kepala);
-        $this->assertMatchesRegularExpression("#frame-src 'self' https://challenges\.cloudflare\.com#", $kepala);
+        $this->assertMatchesRegularExpression("#script-src 'self' https://challenges\\.cloudflare\\.com 'nonce-[^']+'#", $kepala);
+        $this->assertMatchesRegularExpression("#frame-src 'self' https://challenges\\.cloudflare\\.com#", $kepala);
+        $this->assertMatchesRegularExpression("#img-src 'self' data: blob:#", $kepala);
+        $this->assertStringContainsString("object-src 'none'", $kepala);
+        $this->assertStringNotContainsString('unsafe-inline', $kepala);
+        $this->assertStringNotContainsString('unsafe-eval', $kepala);
+        $this->assertMatchesRegularExpression('#^<script nonce="[^"]+"></script><style nonce="[^"]+"></style>$#', (string) $jawaban->getBody());
+    }
+
+    /**
+     * Tampilan untuk peramban tanpa gaya sebaris, atribut `on…`, atau skrip
+     * sebaris tanpa nonce, yang ditolak CSP (F7-32). Templat PDF (mPDF) dan
+     * blok data JSON (`type="application/json"`) dikecualikan.
+     */
+    public function testTampilanTanpaSkripDanGayaSebaris(): void
+    {
+        $salah = [];
+        $berkas = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(APPPATH . 'Views', FilesystemIterator::SKIP_DOTS));
+
+        foreach ($berkas as $b) {
+            $jalur = str_replace('\\', '/', substr($b->getPathname(), strlen(APPPATH . 'Views') + 1));
+
+            if ($b->getExtension() !== 'php' || str_contains($jalur, 'pdf')) {
+                continue;
+            }
+
+            // Komentar dokumentasi (`/** … */`) boleh menyebut `<script>`.
+            $isi = (string) preg_replace('#/\*.*?\*/#s', '', (string) file_get_contents($b->getPathname()));
+
+            foreach ([
+                'style="'           => '/\sstyle="/',
+                'atribut on…'       => '/\son[a-z]+="/',
+                'skrip tanpa nonce' => '/<script(?![^>]*(\ssrc=|nonce|type="application\/json"))[^>]*>/',
+                'gaya tanpa nonce'  => '/<style(?![^>]*(nonce|csp_style_nonce))[^>]*>/',
+            ] as $jenis => $pola) {
+                if (preg_match($pola, $isi) === 1) {
+                    $salah[] = $jalur . ' (' . $jenis . ')';
+                }
+            }
+        }
+
+        $this->assertSame([], $salah);
     }
 
     public function testHalamanAdmin(): void

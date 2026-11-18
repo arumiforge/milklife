@@ -91,8 +91,8 @@ $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 10
                             <strong>Langkah berikutnya:</strong> buka butir yang belum bercentang dan lengkapi isinya supaya pendaftaran bisa dibuka.
                         </p>
                     <?php endif ?>
-                    <div class="progress mb-3" role="progressbar" aria-label="Kelengkapan pengaturan" aria-valuenow="<?= $persen ?>" aria-valuemin="0" aria-valuemax="100" style="height: .5rem">
-                        <div class="progress-bar <?= $semuaLengkap ? 'bg-success' : '' ?>" style="width: <?= $persen ?>%"></div>
+                    <div class="progress mb-3 bilah-sedang" role="progressbar" aria-label="Kelengkapan pengaturan" aria-valuenow="<?= $persen ?>" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar <?= $semuaLengkap ? 'bg-success' : '' ?> <?= lebar_bilah($persen) ?>"></div>
                     </div>
 
                     <ul class="list-unstyled mb-0 daftar-kelengkapan">

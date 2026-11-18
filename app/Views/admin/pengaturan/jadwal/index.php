@@ -65,7 +65,7 @@ use App\Models\TautanModel;
                                 <tr data-id="<?= (int) $jadwal['id'] ?>">
                                     <td class="text-end text-body-secondary"><?= ++$no ?></td>
                                     <td class="text-center"><?= (int) $jadwal['urutan'] ?></td>
-                                    <td style="min-width: 13rem">
+                                    <td class="min-w-13r">
                                         <span class="fw-semibold d-block"><?= esc($jadwal['judul']) ?></span>
                                         <ul class="list-unstyled small text-body-secondary mb-0 mt-1">
                                             <li>

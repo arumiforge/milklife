@@ -172,6 +172,10 @@ final class HalamanGalatProduksiTest extends CIUnitTestCase
         foreach (self::JEJAK_TEKNIS as $jejak) {
             $this->assertStringNotContainsStringIgnoringCase($jejak, $html, 'Jejak teknis terlihat: ' . $jejak);
         }
+
+        // CSP menyala (K127): gaya halaman galat memakai nonce, tanpa penanda tersisa.
+        $this->assertMatchesRegularExpression('/<style nonce="[A-Za-z0-9+\/=]+">/', $html);
+        $this->assertStringNotContainsString('{csp-', $html);
     }
 
     /**

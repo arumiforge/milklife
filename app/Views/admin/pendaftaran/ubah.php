@@ -106,7 +106,7 @@ $kartuPj = static function (string $k, ?int $urut, array $orang) use ($tandai, $
             </div>
             <input type="hidden" name="<?= $nameDasar ?>[id]" value="<?= $orang['id'] === null ? '' : (int) $orang['id'] ?>">
             <div class="d-flex gap-3 align-items-start">
-                <div class="flex-shrink-0 pratinjau-foto" style="width: 6rem;">
+                <div class="flex-shrink-0 pratinjau-foto w-6r">
                     <?php if ($orang['foto'] !== '') : ?>
                         <img class="img-fluid rounded border" src="<?= esc($orang['foto'], 'attr') ?>" alt="Foto baru">
                     <?php elseif ($orang['ada_foto']) : ?>

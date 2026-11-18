@@ -92,25 +92,5 @@ use App\Controllers\Admin\AtletDitolakController;
 <?= $this->endSection() ?>
 
 <?= $this->section('skrip') ?>
-<script>
-    // Kotak jumlah sebagai saringan cepat: mengisi pilihan Keadaan lalu memicu saringan tabel.
-    document.addEventListener('DOMContentLoaded', function () {
-        var pilih = document.getElementById('saring-keadaan');
-        var kotak = document.querySelectorAll('[data-saring-keadaan]');
-        function tandai() {
-            kotak.forEach(function (k) {
-                k.setAttribute('aria-pressed', k.getAttribute('data-saring-keadaan') === pilih.value ? 'true' : 'false');
-            });
-        }
-        kotak.forEach(function (k) {
-            k.addEventListener('click', function () {
-                pilih.value = k.getAttribute('data-saring-keadaan');
-                pilih.dispatchEvent(new Event('change', { bubbles: true }));
-                tandai();
-            });
-        });
-        pilih.addEventListener('change', tandai);
-        pilih.form.addEventListener('reset', function () { setTimeout(tandai, 0); });
-    });
-</script>
+<script src="<?= aset('js/admin-atlet-ditolak.js') ?>"></script>
 <?= $this->endSection() ?>

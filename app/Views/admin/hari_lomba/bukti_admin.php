@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="<?= aset('css/tema.css') ?>">
 </head>
 <body class="bg-body-tertiary">
-<main class="container py-5" style="max-width: 32rem">
+<main class="container py-5 maks-w-32r">
     <h1 class="h4 mb-1"><?= esc($namaSekolah) ?></h1>
     <p class="text-body-secondary mb-4"><?= esc($idPendaftaran) ?></p>
     <p>Anda sedang masuk sebagai admin. Pilih yang ingin dibuka:</p>
