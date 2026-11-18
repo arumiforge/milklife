@@ -68,7 +68,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 ## Panel admin
 
 - Satu peran admin; halaman Akun hanya untuk akun sendiri; akun lain lewat `admin:buat` (K26).
-- Bukti bayar paling banyak 5 gambar, dikecilkan otomatis (K34, K83).
+- Bukti bayar paling banyak sesuai Pengaturan > Pembayaran (1–20, bawaan 5), dikecilkan otomatis (K34, K83, K135).
 - Rekap memuat semua pendaftaran dengan saringan status; keuangan selalu keduanya (K60); Rekap Gabungan (K85).
 - Kolom No, pilih massal (100), Backup data dan `pendaftaran:impor` (K76, K77); Backup data tanpa dimuat ke memori (K118 B4).
 - Antarmuka tanpa teks teknis (K79). Ubah boleh mempertahankan KU dan nomor yang sudah ditutup (K98).

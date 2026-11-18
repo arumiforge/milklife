@@ -12,6 +12,8 @@
  * @var string                 $contohPesan          hasil templat dengan data karangan
  * @var string                 $templatAwal          templat pesan bawaan
  * @var string                 $nomorWaTersimpan     nomor WA tersimpan (bentuk baku) untuk tautan uji coba
+ * @var int                    $batasTerkecil        batas bukti bayar per pendaftaran terkecil yang boleh diisi
+ * @var int                    $batasTerbesar        batas bukti bayar per pendaftaran terbesar yang boleh diisi
  */
 
 use App\Libraries\Unggahan;
@@ -152,6 +154,33 @@ $kotakTeks = static function (string $nama, string $label, string $bantuan, arra
                                 <span class="text-body-secondary">(memakai nomor dan pesan yang sudah tersimpan)</span>
                             </p>
                         <?php endif ?>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-12">
+                <section class="card" aria-labelledby="judul-bukti-transfer">
+                    <div class="card-body p-3 p-md-4">
+                        <h2 id="judul-bukti-transfer" class="h5 mb-3">Bukti transfer</h2>
+
+                        <?php $salahBatas = isset($galat['batas_bukti_bayar']); ?>
+                        <div class="mb-0 maks-w-20r">
+                            <label for="batas_bukti_bayar" class="form-label">Bukti bayar paling banyak per pendaftaran</label>
+                            <div class="input-group<?= $salahBatas ? ' has-validation' : '' ?>">
+                                <input type="number" class="form-control<?= $salahBatas ? ' is-invalid' : '' ?>" id="batas_bukti_bayar" name="batas_bukti_bayar"
+                                    value="<?= esc($isian['batas_bukti_bayar'], 'attr') ?>" min="<?= $batasTerkecil ?>" max="<?= $batasTerbesar ?>" step="1" inputmode="numeric" required
+                                    aria-describedby="batas_bukti_bayar-bantuan<?= $salahBatas ? ' batas_bukti_bayar-galat' : '' ?>">
+                                <span class="input-group-text">gambar</span>
+                                <?php if ($salahBatas) : ?>
+                                    <div id="batas_bukti_bayar-galat" class="invalid-feedback"><?= esc($galat['batas_bukti_bayar']) ?></div>
+                                <?php endif ?>
+                            </div>
+                        </div>
+                        <div id="batas_bukti_bayar-bantuan" class="form-text">
+                            Berlaku untuk foto bukti transfer yang diunggah ofisial lewat Cek Pendaftaran maupun yang diunggah admin di rincian pendaftaran.
+                            Isi <?= $batasTerkecil ?> sampai <?= $batasTerbesar ?>. Bila batas diturunkan, gambar yang sudah terunggah tetap tersimpan;
+                            pendaftaran itu hanya tidak bisa menambah gambar lagi.
+                        </div>
                     </div>
                 </section>
             </div>

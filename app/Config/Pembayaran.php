@@ -51,6 +51,13 @@ class Pembayaran extends BaseConfig
     public string $logo_bank = '';
 
     /**
+     * Bukti bayar paling banyak per pendaftaran (K135). Dibaca lewat
+     * `App\Models\BuktiBayarModel::batas()`, yang menjaganya tetap di antara
+     * `BATAS_TERKECIL` dan `BATAS_TERBESAR` model itu.
+     */
+    public int $batas_bukti_bayar = 5;
+
+    /**
      * Isi pesan konfirmasi pembayaran yang dikirim official lewat WA.
      * Penanda di `PENANDA` diganti dengan data pendaftaran.
      */

@@ -8,7 +8,7 @@ use CodeIgniter\Database\Migration;
  * Tabel `bukti_bayar` (rancangan 11; K34; Tahap 6, F6-01).
  *
  * Gambar bukti bayar yang diunggah admin, paling banyak 5 per pendaftaran
- * (dijaga aplikasi, `BuktiBayarModel::BATAS`). `berkas` jalur relatif di
+ * (dijaga aplikasi, `BuktiBayarModel::batas()`). `berkas` jalur relatif di
  * folder unggahan di luar `public/` (`App\Libraries\Panel\BerkasBuktiBayar`),
  * `ukuran` dalam bita. Baris ikut terhapus bersama pendaftarannya; berkasnya
  * dihapus aplikasi.

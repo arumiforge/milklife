@@ -28,7 +28,7 @@ $jumlahBukti = (int) ($p['jumlah_bukti_bayar'] ?? 0);
 $dada = static fn (array $a): string => $lunas && ($a['nomor_dada'] ?? null) !== null
     ? '<strong>' . esc((string) $a['nomor_dada']) . '</strong>'
     : '<span class="text-body-secondary" title="Nomor atlet (BIB) keluar setelah pembayaran Lunas">–</span>';
-$batasBukti  = App\Models\BuktiBayarModel::BATAS;
+$batasBukti  = App\Models\BuktiBayarModel::batas();
 ?>
 <article class="card cek-kartu <?= $kelasKartu ?>" aria-labelledby="<?= $idJudul ?>">
     <div class="card-header cek-kartu-kepala">
@@ -146,7 +146,7 @@ $batasBukti  = App\Models\BuktiBayarModel::BATAS;
             <div class="cek-unggah-bukti">
                 <h4 class="cek-subjudul"><i class="bi bi-receipt" aria-hidden="true"></i> Bukti bayar <span class="cek-jumlah"><?= $jumlahBukti ?></span></h4>
                 <?php if ($jumlahBukti >= $batasBukti) : ?>
-                    <p class="mb-0">Sudah <?= $batasBukti ?> gambar terkirim, batas paling banyak. Panitia akan memeriksanya.</p>
+                    <p class="mb-0">Sudah <?= $jumlahBukti ?> gambar terkirim, batas paling banyak <?= $batasBukti ?> gambar. Panitia akan memeriksanya.</p>
                 <?php else : ?>
                     <p class="small text-body-secondary"><?= $jumlahBukti === 0 ? 'Belum ada bukti bayar.' : 'Sudah ' . $jumlahBukti . ' gambar terkirim.' ?> Unggah foto atau tangkapan layar bukti transfer di sini, tidak perlu dikirim lewat WA.</p>
                     <form method="post" action="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p) . '/bukti-bayar', 'attr') ?>" enctype="multipart/form-data"

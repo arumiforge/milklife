@@ -5,7 +5,7 @@
  *
  * Isinya: gambar kecil setiap bukti bayar (klik untuk melihat gambar besar),
  * tombol unduh dan hapus (dengan jendela konfirmasi) per gambar, dan
- * formulir unggah selama bukti belum `BuktiBayarModel::BATAS` gambar.
+ * formulir unggah selama bukti belum `BuktiBayarModel::batas()` gambar.
  * Bukti baru dari ofisial yang belum diperiksa diberi tanda "Baru" dan
  * tombol "Sudah diperiksa" (F8-02).
  * Di layar lebar galeri di kiri dan panel unggah di kanan (K76); di ponsel
@@ -50,7 +50,7 @@ if ($idBukti < 1) {
 
 $daftarBukti  = model(BuktiBayarModel::class)->milikPendaftaran($idBukti);
 $jumlahBukti  = count($daftarBukti);
-$batasBukti   = BuktiBayarModel::BATAS;
+$batasBukti   = BuktiBayarModel::batas();
 $bolehTambah  = $jumlahBukti < $batasBukti;
 $dasarBukti   = 'admin/pendaftaran/' . $idBukti . '/bukti-bayar';
 $untukPembaca = $kodeBukti === '' ? '' : ' pendaftaran ' . $kodeBukti;
@@ -189,7 +189,7 @@ $jumlahBaru   = count(array_filter($daftarBukti, static fn (array $b): bool => (
                     <?php else : ?>
                         <p class="text-body-secondary mb-0" id="bukti-bayar-penuh">
                             <i class="bi bi-info-circle" aria-hidden="true"></i>
-                            Sudah <?= $batasBukti ?> gambar, batas paling banyak. Hapus gambar yang tidak dipakai bila ingin mengunggah yang lain.
+                            Sudah <?= $jumlahBukti ?> gambar, batas paling banyak <?= $batasBukti ?> gambar. Hapus gambar yang tidak dipakai bila ingin mengunggah yang lain.
                         </p>
                     <?php endif; ?>
                 </div>

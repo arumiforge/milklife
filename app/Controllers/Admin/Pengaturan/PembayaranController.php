@@ -5,6 +5,7 @@ namespace App\Controllers\Admin\Pengaturan;
 use App\Controllers\BaseController;
 use App\Libraries\NomorWa;
 use App\Libraries\Unggahan;
+use App\Models\BuktiBayarModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use Config\Pembayaran;
 use RuntimeException;
@@ -28,6 +29,10 @@ use RuntimeException;
  * - Logo bank diunggah lewat `App\Libraries\Unggahan` (folder `pembayaran`);
  *   berkas lama dihapus setelah yang baru tersimpan, atau saat admin
  *   mencentang "Hapus logo".
+ * - Batas bukti bayar per pendaftaran (`Pembayaran.batas_bukti_bayar`, K135)
+ *   wajib bilangan bulat `BuktiBayarModel::BATAS_TERKECIL` sampai
+ *   `BATAS_TERBESAR`. Berlaku untuk unggahan ofisial (Cek Pendaftaran) dan
+ *   admin (rincian); bukti yang sudah ada tidak dihapus bila batas diturunkan.
  */
 class PembayaranController extends BaseController
 {
@@ -59,22 +64,24 @@ class PembayaranController extends BaseController
         $nomorWa = (string) setting('Pembayaran.nomor_wa');
 
         return $this->tampilkan([
-            'bank'             => (string) setting('Pembayaran.bank'),
-            'nomor_rekening'   => (string) setting('Pembayaran.nomor_rekening'),
-            'pemilik_rekening' => (string) setting('Pembayaran.pemilik_rekening'),
-            'nomor_wa'         => $nomorWa === '' ? '' : NomorWa::tampilan($nomorWa),
-            'templat_pesan'    => (string) setting('Pembayaran.templat_pesan'),
+            'bank'              => (string) setting('Pembayaran.bank'),
+            'nomor_rekening'    => (string) setting('Pembayaran.nomor_rekening'),
+            'pemilik_rekening'  => (string) setting('Pembayaran.pemilik_rekening'),
+            'nomor_wa'          => $nomorWa === '' ? '' : NomorWa::tampilan($nomorWa),
+            'templat_pesan'     => (string) setting('Pembayaran.templat_pesan'),
+            'batas_bukti_bayar' => (string) BuktiBayarModel::batas(),
         ]);
     }
 
     public function simpan(): ResponseInterface|string
     {
         $isian = [
-            'bank'             => trim((string) $this->request->getPost('bank')),
-            'nomor_rekening'   => trim((string) $this->request->getPost('nomor_rekening')),
-            'pemilik_rekening' => trim((string) $this->request->getPost('pemilik_rekening')),
-            'nomor_wa'         => trim((string) $this->request->getPost('nomor_wa')),
-            'templat_pesan'    => self::rapikanTeks((string) $this->request->getPost('templat_pesan')),
+            'bank'              => trim((string) $this->request->getPost('bank')),
+            'nomor_rekening'    => trim((string) $this->request->getPost('nomor_rekening')),
+            'pemilik_rekening'  => trim((string) $this->request->getPost('pemilik_rekening')),
+            'nomor_wa'          => trim((string) $this->request->getPost('nomor_wa')),
+            'templat_pesan'     => self::rapikanTeks((string) $this->request->getPost('templat_pesan')),
+            'batas_bukti_bayar' => trim((string) $this->request->getPost('batas_bukti_bayar')),
         ];
 
         $aturan = [
@@ -96,6 +103,13 @@ class PembayaranController extends BaseController
         ];
 
         $galat = $this->validateData($isian, $aturan) ? [] : $this->validator->getErrors();
+
+        if (! ctype_digit($isian['batas_bukti_bayar'])
+            || (int) $isian['batas_bukti_bayar'] < BuktiBayarModel::BATAS_TERKECIL
+            || (int) $isian['batas_bukti_bayar'] > BuktiBayarModel::BATAS_TERBESAR) {
+            $galat['batas_bukti_bayar'] = 'Batas bukti bayar harus angka bulat dari ' . BuktiBayarModel::BATAS_TERKECIL
+                . ' sampai ' . BuktiBayarModel::BATAS_TERBESAR . ', misalnya 5.';
+        }
 
         $nomorRekening = '';
         if ($isian['nomor_rekening'] !== '') {
@@ -157,6 +171,7 @@ class PembayaranController extends BaseController
         setting('Pembayaran.pemilik_rekening', $isian['pemilik_rekening']);
         setting('Pembayaran.nomor_wa', $nomorWa);
         setting('Pembayaran.templat_pesan', $isian['templat_pesan']);
+        setting('Pembayaran.batas_bukti_bayar', (int) $isian['batas_bukti_bayar']);
 
         // Berkas lama dibuang setelah yang baru tersimpan. Bila logo baru
         // dipilih, centang "Hapus logo" diabaikan karena logo diganti.
@@ -237,6 +252,8 @@ class PembayaranController extends BaseController
             'contohPesan'          => self::contohPesan($isian['templat_pesan']),
             'templatAwal'          => (new Pembayaran())->templat_pesan,
             'nomorWaTersimpan'     => $nomorWa,
+            'batasTerkecil'        => BuktiBayarModel::BATAS_TERKECIL,
+            'batasTerbesar'        => BuktiBayarModel::BATAS_TERBESAR,
         ]);
     }
 }

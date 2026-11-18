@@ -99,7 +99,7 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
     public function testGambarKeenamDitolakDenganPesanRamah(): void
     {
         $p = $this->buatPendaftaranPanel();
-        $this->buatBuktiBayarPanel($p['id'], BuktiBayarModel::BATAS);
+        $this->buatBuktiBayarPanel($p['id'], BuktiBayarModel::batas());
         $sebelum = $this->berkasBuktiBayarTersimpan();
 
         $hasil = $this->unggah($p['id'], self::gambarPanel(200, 100));
@@ -107,17 +107,44 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
         $this->assertGagalDialihkan(
             $hasil,
             'admin/pendaftaran/' . $p['id'],
-            'Bukti bayar pendaftaran ini sudah 5 gambar, batas paling banyak. Hapus gambar yang tidak dipakai lebih dulu, lalu unggah lagi.',
+            'Bukti bayar pendaftaran ini sudah mencapai batas, paling banyak 5 gambar. Hapus gambar yang tidak dipakai lebih dulu, lalu unggah lagi.',
         );
         $this->assertSame(5, $this->jumlahBukti($p['id']));
         $this->assertSame($sebelum, $this->berkasBuktiBayarTersimpan(), 'Gambar keenam tidak boleh tertinggal di disk.');
+    }
+
+    public function testBatasMengikutiPengaturanAdmin(): void
+    {
+        // K135: batas diatur di Pengaturan > Pembayaran.
+        setting('Pembayaran.batas_bukti_bayar', 2);
+        $p = $this->buatPendaftaranPanel();
+
+        $this->assertBerhasilDialihkan($this->unggah($p['id'], self::gambarPanel(200, 100)), 'admin/pendaftaran/' . $p['id'], 'Bukti bayar tersimpan untuk pendaftaran ' . $p['id_pendaftaran'] . ' (1 dari 2 gambar).');
+        $this->assertBerhasilDialihkan($this->unggah($p['id'], self::gambarPanel(200, 100)), 'admin/pendaftaran/' . $p['id']);
+        $this->assertGagalDialihkan(
+            $this->unggah($p['id'], self::gambarPanel(200, 100)),
+            'admin/pendaftaran/' . $p['id'],
+            'Bukti bayar pendaftaran ini sudah mencapai batas, paling banyak 2 gambar. Hapus gambar yang tidak dipakai lebih dulu, lalu unggah lagi.',
+        );
+        $this->assertSame(2, $this->jumlahBukti($p['id']));
+
+        // Batas diturunkan di bawah jumlah yang sudah ada: gambar lama tetap, tidak bisa menambah.
+        setting('Pembayaran.batas_bukti_bayar', 1);
+        $xpath = $this->xpathPotongan(['pendaftaranId' => $p['id']]);
+        $this->assertSame(2, $xpath->query('//li[@data-bukti-id]')->length);
+        $this->assertSame(0, $xpath->query('//form[@id="unggah-bukti-bayar"]')->length);
+        $this->assertStringContainsString('Sudah 2 gambar, batas paling banyak 1 gambar.', $xpath->query('//*[@id="bukti-bayar-penuh"]')->item(0)->textContent);
+
+        // Batas dinaikkan: bisa menambah lagi.
+        setting('Pembayaran.batas_bukti_bayar', 8);
+        $this->assertBerhasilDialihkan($this->unggah($p['id'], self::gambarPanel(200, 100)), 'admin/pendaftaran/' . $p['id'], 'Bukti bayar tersimpan untuk pendaftaran ' . $p['id_pendaftaran'] . ' (3 dari 8 gambar).');
     }
 
     public function testBatasDihitungPerPendaftaran(): void
     {
         $a = $this->buatPendaftaranPanel();
         $b = $this->buatPendaftaranPanel(['sekolah' => ['nama' => 'SMP KARANGAN JAYA', 'npsn' => '99999913', 'jenjang' => 'B', 'kabupaten' => 'Jepara']]);
-        $this->buatBuktiBayarPanel($a['id'], BuktiBayarModel::BATAS);
+        $this->buatBuktiBayarPanel($a['id'], BuktiBayarModel::batas());
 
         $this->assertBerhasilDialihkan($this->unggah($b['id'], self::gambarPanel(200, 100)), 'admin/pendaftaran/' . $b['id']);
         $this->assertSame(1, $this->jumlahBukti($b['id']));
@@ -272,7 +299,7 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
     public function testSetelahHapusBolehUnggahLagi(): void
     {
         $p  = $this->buatPendaftaranPanel();
-        $id = $this->buatBuktiBayarPanel($p['id'], BuktiBayarModel::BATAS);
+        $id = $this->buatBuktiBayarPanel($p['id'], BuktiBayarModel::batas());
 
         $this->kirimSebagaiAdmin('admin/pendaftaran/' . $p['id'] . '/bukti-bayar/' . $id[0] . '/hapus');
         $hasil = $this->unggah($p['id'], self::gambarPanel(200, 100));
@@ -425,14 +452,14 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
     public function testPotonganMenyembunyikanFormulirUnggahSetelahLimaGambar(): void
     {
         $p = $this->buatPendaftaranPanel();
-        $this->buatBuktiBayarPanel($p['id'], BuktiBayarModel::BATAS);
+        $this->buatBuktiBayarPanel($p['id'], BuktiBayarModel::batas());
 
         // Bisa juga dipanggil dengan `pendaftaranId` saja.
         $xpath = $this->xpathPotongan(['pendaftaranId' => $p['id']]);
 
         $this->assertSame(5, $xpath->query('//li[@data-bukti-id]')->length);
         $this->assertSame(0, $xpath->query('//form[@id="unggah-bukti-bayar"]')->length);
-        $this->assertStringContainsString('Sudah 5 gambar, batas paling banyak.', $xpath->query('//*[@id="bukti-bayar-penuh"]')->item(0)->textContent);
+        $this->assertStringContainsString('Sudah 5 gambar, batas paling banyak 5 gambar.', $xpath->query('//*[@id="bukti-bayar-penuh"]')->item(0)->textContent);
         $this->assertStringContainsString('5 dari 5 gambar', $xpath->query('//*[@id="jumlah-bukti-bayar"]')->item(0)->textContent);
     }
 
