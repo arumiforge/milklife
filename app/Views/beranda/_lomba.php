@@ -10,6 +10,7 @@
  *     nama: string,
  *     tahun_lahir: string,
  *     jenjang: string,
+ *     pilihan: list<string>,
  *     biaya_individu: int|null,
  *     nomor_individu: list<array{id: int, nama: string, kategori: string, kategori_label: string}>,
  *     nomor_beregu: list<array{id: int, nama: string, kategori: string, kategori_label: string, jumlah_inti: int|null, batas_anggota: int|null, jumlah_putra: int|null, jumlah_putri: int|null, biaya_beregu: int|null}>
@@ -154,6 +155,13 @@ $keteranganTim = static function (array $nomor): array {
                                 </div>
                             <?php endif ?>
                         </dl>
+
+                        <?php foreach ($ku['pilihan'] as $teksPilihan) : ?>
+                            <p class="lomba-pilih-ku">
+                                <i class="bi bi-signpost-split" aria-hidden="true"></i>
+                                <span><?= esc($teksPilihan) ?>, dipilih saat mendaftar.</span>
+                            </p>
+                        <?php endforeach; ?>
 
                         <?php if ($jumlahIndividu + $jumlahBeregu === 0) : ?>
                             <p class="lomba-kosong"><i class="bi bi-hourglass-split" aria-hidden="true"></i> Nomor lomba segera diumumkan.</p>

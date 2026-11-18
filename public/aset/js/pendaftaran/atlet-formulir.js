@@ -31,16 +31,78 @@
     var nomorDipilih = W.nomorDipilih;
     var tanggalSah = W.tanggalSah;
     var tentukanKu = W.tentukanKu;
+    var namaKu = W.namaKu;
     var usia = W.usia;
     var kotakRegu = W.kotakRegu;
     var reguFormulir = W.reguFormulir;
     var tampilkanKotakRegu = W.tampilkanKotakRegu;
+
+    var pilihKu = {
+        kotak: $('#atlet-pilih-ku'),
+        keterangan: $('#atlet-pilih-ku-keterangan'),
+        daftar: $('#atlet-pilih-ku-daftar')
+    };
+
+    /**
+     * Kelompok umur yang dipilih di formulir (K134), atau kelompok umur atlet
+     * yang sedang dimuat untuk diubah.
+     */
+    function kuDipilih() {
+        var r = $('input[name="atlet-ku"]:checked', L3.formulir);
+        if (r) {
+            return Number(r.value);
+        }
+        return W.atletDiubah && L3.formulir.getAttribute('data-muat') === '1' ? (W.atletDiubah.kelompok_umur_id || null) : null;
+    }
+
+    /**
+     * Tombol pilihan kelompok umur bila tahun lahir masuk lebih dari satu
+     * kelompok umur jenjang ini (K134). Tombol hanya dibuat ulang bila
+     * daftarnya berubah, supaya pilihan dan fokus tidak hilang.
+     */
+    function tampilkanPilihanKu(tahun, hasil, pilihan) {
+        if (hasil.pilihan.length < 2) {
+            pilihKu.kotak.hidden = true;
+            pilihKu.daftar.textContent = '';
+            pilihKu.daftar.setAttribute('data-ku', '');
+            return;
+        }
+
+        var kunci = hasil.pilihan.map(function (ku) { return ku.id; }).join(',');
+        pilihKu.kotak.hidden = false;
+        pilihKu.keterangan.textContent = 'Atlet lahir tahun ' + tahun + ' boleh ikut ' + hasil.pilihan.length + ' kelompok umur. '
+            + 'Pilih satu: nomor lomba yang tampil mengikuti kelompok umur yang dipilih, dan atlet hanya ikut nomor di kelompok umur itu.';
+
+        if (pilihKu.daftar.getAttribute('data-ku') === kunci) {
+            return;
+        }
+
+        pilihKu.daftar.textContent = '';
+        pilihKu.daftar.setAttribute('data-ku', kunci);
+        hasil.pilihan.forEach(function (ku) {
+            var id = 'atlet-ku-' + ku.id;
+            var radio = buat('input', 'btn-check');
+            radio.type = 'radio';
+            radio.name = 'atlet-ku';
+            radio.id = id;
+            radio.value = String(ku.id);
+            radio.checked = pilihan !== null && Number(pilihan) === ku.id;
+            var label = buat('label', 'btn btn-outline-primary', ku.nama);
+            label.htmlFor = id;
+            if (ku.teks_tahun_lahir) {
+                label.appendChild(buat('span', 'pilih-ku-rentang', ku.teks_tahun_lahir));
+            }
+            pilihKu.daftar.appendChild(radio);
+            pilihKu.daftar.appendChild(label);
+        });
+    }
 
     function isiPilihanNomor() {
         var lahir = L3.lahir.value;
         var jk = jkFormulir();
         var dipilih = nomorDipilih();
         var reguSebelum = reguFormulir();
+        var pilihan = kuDipilih();
 
         if (W.atletDiubah && dipilih.length === 0 && L3.formulir.getAttribute('data-muat') === '1') {
             dipilih = W.atletDiubah.nomor.slice();
@@ -56,11 +118,21 @@
         L3.beregu.textContent = '';
 
         if (!tanggalSah(lahir)) {
+            tampilkanPilihanKu(0, { pilihan: [] }, null);
             return;
         }
 
-        var hasil = tentukanKu(Number(lahir.slice(0, 4)), jenjangSekolah());
+        var tahun = Number(lahir.slice(0, 4));
+        var hasil = tentukanKu(tahun, jenjangSekolah(), pilihan);
+        tampilkanPilihanKu(tahun, hasil, pilihan);
         L3.ku.hidden = false;
+
+        if (!hasil.ku && hasil.pilihan.length > 1) {
+            // Belum memilih: bukan galat, cukup arahan.
+            L3.ku.appendChild(ikon('arrow-up-circle'));
+            L3.ku.appendChild(document.createTextNode(' Pilih kelompok umur di atas supaya nomor lombanya tampil.'));
+            return;
+        }
 
         if (!hasil.ku) {
             L3.ku.classList.add('info-ku-galat');
@@ -70,7 +142,7 @@
         }
 
         L3.ku.appendChild(ikon('person-badge'));
-        L3.ku.appendChild(document.createTextNode(' ' + hasil.ku.nama + (usia(lahir) ? ' · usia ' + usia(lahir) + ' saat lomba' : '')));
+        L3.ku.appendChild(document.createTextNode(' ' + (hasil.pilihan.length > 1 ? 'Dipilih ' + namaKu(hasil.ku) : hasil.ku.nama) + (usia(lahir) ? ' · usia ' + usia(lahir) + ' saat lomba' : '')));
 
         if (!jk) {
             L3.ku.appendChild(buat('span', 'd-block small', 'Pilih jenis kelamin untuk melihat nomor lomba.'));
@@ -153,6 +225,8 @@
         $('span', L3.simpan).textContent = 'Tambahkan ke daftar';
         L3.batal.hidden = true;
         bersihkanGalatFormulir();
+        pilihKu.daftar.textContent = '';
+        pilihKu.daftar.setAttribute('data-ku', '');
         isiPilihanNomor();
     }
 
@@ -181,6 +255,8 @@
         L3.batal.hidden = false;
         bersihkanGalatFormulir();
         L3.formulir.setAttribute('data-muat', '1');
+        pilihKu.daftar.textContent = '';
+        pilihKu.daftar.setAttribute('data-ku', '');
         isiPilihanNomor();
         L3.formulir.scrollIntoView({ behavior: 'smooth', block: 'start' });
         L3.nama.focus({ preventScroll: true });
@@ -199,6 +275,10 @@
     L3.lahir.addEventListener('input', isiPilihanNomor);
     $$('input[name="atlet-jk"]').forEach(function (r) { r.addEventListener('change', isiPilihanNomor); });
     L3.formulir.addEventListener('change', function (e) {
+        if (e.target.name === 'atlet-ku') {
+            pilihKu.kotak.classList.remove('is-invalid');
+            isiPilihanNomor();
+        }
         if (e.target.name === 'atlet-nomor') {
             batasiIndividu();
             tampilkanKotakRegu(e.target);
@@ -216,6 +296,7 @@
         var jk = jkFormulir();
         var nomor = nomorDipilih();
         var salah = false;
+        var hasilKu = tanggalSah(lahir) ? tentukanKu(Number(lahir.slice(0, 4)), jenjangSekolah(), kuDipilih()) : null;
 
         if (nama === '') {
             galatFormulir(L3.nama, 'Nama atlet belum diisi.');
@@ -234,8 +315,11 @@
         if (!tanggalSah(lahir)) {
             galatFormulir(L3.lahir, 'Tanggal lahir belum benar. Pilih tanggal lahir dari kalender.');
             salah = true;
-        } else if (!tentukanKu(Number(lahir.slice(0, 4)), jenjangSekolah()).ku) {
-            galatFormulir(L3.lahir, tentukanKu(Number(lahir.slice(0, 4)), jenjangSekolah()).galat);
+        } else if (!hasilKu.ku && hasilKu.pilihan.length > 1) {
+            galatFormulir(pilihKu.kotak, 'Kelompok umur belum dipilih. Pilih salah satu: ' + hasilKu.pilihan.map(function (ku) { return ku.nama; }).join(' atau ') + '.');
+            salah = true;
+        } else if (!hasilKu.ku) {
+            galatFormulir(L3.lahir, hasilKu.galat);
             salah = true;
         }
         if (!jk) {
@@ -264,7 +348,9 @@
                 regu[id] = reguDipilih[id];
             }
         });
-        var data = { nama: nama, nisn: nisn, tanggal_lahir: lahir, jenis_kelamin: jk, nomor: nomor, regu: regu };
+        // Kelompok umur pilihan hanya dicatat bila memang ada pilihan (K134).
+        var kuPilihan = hasilKu.pilihan.length > 1 ? hasilKu.ku.id : null;
+        var data = { nama: nama, nisn: nisn, tanggal_lahir: lahir, jenis_kelamin: jk, kelompok_umur_id: kuPilihan, nomor: nomor, regu: regu };
 
         if (W.atletDiubah) {
             Object.keys(data).forEach(function (k) { W.atletDiubah[k] = data[k]; });

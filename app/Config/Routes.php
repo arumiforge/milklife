@@ -158,6 +158,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
             $routes->post($dasar, $pengendali . '::simpan');
         }
 
+        // Sakelar "Pendaftar memilih kelompok umur" di halaman Kelompok Umur (K134).
+        $routes->post('kelompok-umur/pilihan', 'KelompokUmurController::pilihan');
+
         // Halaman daftar data: pola yang sama untuk semuanya.
         foreach ([
             'kelompok-umur' => 'KelompokUmurController',  // F2-03

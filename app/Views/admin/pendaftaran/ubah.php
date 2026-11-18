@@ -45,7 +45,7 @@ $lunas  = $p['status'] === 'lunas';
 // Galat per isian (jalur → pesan) dan ringkasan untuk admin/_galat_isian.
 $galatIsian = [];
 $ringkasan  = [];
-$polaIsian  = '/^(sekolah\.(jenjang|kabupaten|npsn|nama)|penanggung_jawab\.\d+\.(nama|nomor_wa|foto)|atlet\.\d+\.(nama|nisn|tanggal_lahir|jenis_kelamin|nomor|regu))$/D';
+$polaIsian  = '/^(sekolah\.(jenjang|kabupaten|npsn|nama)|penanggung_jawab\.\d+\.(nama|nomor_wa|foto)|atlet\.\d+\.(nama|nisn|tanggal_lahir|jenis_kelamin|kelompok_umur_id|nomor|regu))$/D';
 
 foreach ($galat as $i => $g) {
     $jalur = (string) $g['jalur'];
@@ -202,6 +202,8 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
     $nisn      = $tandai($galatIsian, $jalur . '.nisn', $idDasar . '-nisn');
     $lahir     = $tandai($galatIsian, $jalur . '.tanggal_lahir', $idDasar . '-tanggal-lahir');
     $jk        = $tandai($galatIsian, $jalur . '.jenis_kelamin', $idDasar . '-jenis-kelamin');
+    $pilihKu   = $tandai($galatIsian, $jalur . '.kelompok_umur_id', $idDasar . '-kelompok-umur');
+    $kuPilihan = $atlet['kelompok_umur_id'] ?? $atlet['ku_lama'] ?? null;
     $nomor     = $tandai($galatIsian, $jalur . '.nomor', $idDasar . '-nomor');
     $reguSalah = $tandai($galatIsian, $jalur . '.regu', $idDasar . '-nomor');
     $dipilih   = array_map('intval', $atlet['nomor']);
@@ -252,6 +254,18 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
                 </select>
                 <?= $jk['pesan'] ?>
             </div>
+        </div>
+
+        <div class="pilih-ku-admin mt-3" hidden>
+            <label class="form-label" for="<?= $idDasar ?>-kelompok-umur">Kelompok umur</label>
+            <select class="form-select<?= $pilihKu['kelas'] ?>" id="<?= $idDasar ?>-kelompok-umur" name="<?= $nameDasar ?>[kelompok_umur_id]"
+                data-isian="kelompok_umur_id" data-awal="<?= $kuPilihan === null ? '' : (int) $kuPilihan ?>" disabled<?= $pilihKu['aria'] ?>></select>
+            <div class="form-text">
+                Tahun lahir atlet ini masuk lebih dari satu kelompok umur untuk jenjang sekolahnya, jadi kelompok umurnya dipilih.
+                Bila diganti, nomor lomba dipilih ulang dari kelompok umur baru. Nomor atlet (BIB) yang sudah ada tidak berubah;
+                awalannya ikut kelompok umur baru setelah <strong>Urutkan nomor atlet</strong> di halaman Atlet.
+            </div>
+            <?= $pilihKu['pesan'] ?>
         </div>
 
         <fieldset class="mt-3" id="<?= $idDasar ?>-nomor">
@@ -306,7 +320,7 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
 };
 
 $pjKosong    = ['id' => null, 'nama' => '', 'nomor_wa' => '', 'foto' => '', 'ada_foto' => false];
-$atletKosong = ['id' => null, 'nama' => '', 'nisn' => '', 'tanggal_lahir' => '', 'jenis_kelamin' => '', 'nomor' => [], 'regu' => [], 'nomor_dada' => null];
+$atletKosong = ['id' => null, 'nama' => '', 'nisn' => '', 'tanggal_lahir' => '', 'jenis_kelamin' => '', 'kelompok_umur_id' => null, 'nomor' => [], 'regu' => [], 'nomor_dada' => null];
 
 $dataSkrip = [
     'jenjang'                => $induk['jenjang'],

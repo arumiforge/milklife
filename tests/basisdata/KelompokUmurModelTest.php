@@ -167,6 +167,8 @@ final class KelompokUmurModelTest extends UjiBasisData
     public function testRentangBertabrakanDenganKelompokUmurAktifDitolak(): void
     {
         DataAwal::isi($this->db);
+        // Pendaftar tidak memilih kelompok umur (K134 mati): irisan dalam satu jenjang ditolak (K95).
+        setting('Pendaftaran.pilih_kelompok_umur', false);
 
         [, $galat] = $this->model->periksa($this->isian([
             'nama'              => 'KU 11',
@@ -176,7 +178,7 @@ final class KelompokUmurModelTest extends UjiBasisData
         ]));
 
         $this->assertSame(
-            'Tahun lahir ini bertabrakan dengan KU 10 (lahir 2016–2018) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, hapus centang jenjang yang sama, atau matikan salah satu kelompok umur.',
+            'Tahun lahir ini bertabrakan dengan KU 10 (lahir 2016–2018) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, hapus centang jenjang yang sama, matikan salah satu kelompok umur, atau nyalakan "Pendaftar memilih kelompok umur" di halaman Kelompok Umur.',
             $galat['tahun_lahir_awal'],
         );
 
@@ -189,6 +191,8 @@ final class KelompokUmurModelTest extends UjiBasisData
     {
         // K95: KU 12 (SD) diperlebar sampai 2012, beririsan dengan KU 15 (SMP, 2011–2014).
         DataAwal::isi($this->db);
+        // Pendaftar tidak memilih kelompok umur (K134 mati): irisan dalam satu jenjang ditolak (K95).
+        setting('Pendaftaran.pilih_kelompok_umur', false);
         $id = (int) $this->model->where('nama', 'KU 12')->first()['id'];
 
         [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2012', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A']]), $id);
@@ -197,6 +201,23 @@ final class KelompokUmurModelTest extends UjiBasisData
         // Mencentang SMP juga membuat keduanya menerima SMP 2012–2014: ditolak.
         [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2012', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A', 'B']]), $id);
         $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 15 (lahir 2011–2014) untuk jenjang SMP/MTs.', $galat['tahun_lahir_awal']);
+    }
+
+    public function testRentangBeririsanDalamSatuJenjangBolehBilaPendaftarMemilih(): void
+    {
+        // K134 (bawaan menyala): KU 12 SD/MI diperlebar sampai 2016, beririsan dengan KU 10 (2016–2018).
+        DataAwal::isi($this->db);
+        $this->assertTrue(KelompokUmurModel::bolehPilih());
+        $id = (int) $this->model->where('nama', 'KU 12')->first()['id'];
+
+        [$data, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2016', 'jenjang' => ['A']]), $id);
+        $this->assertSame([], $galat);
+        $this->model->simpanLengkap($data, $id);
+
+        $this->assertSame(
+            [['jenjang' => 'A', 'tahun' => [2016], 'kelompok_umur' => ['KU 10', 'KU 12']]],
+            $this->model->irisanAktif(),
+        );
     }
 
     public function testKelompokUmurTanpaJenjangTidakDibandingkan(): void

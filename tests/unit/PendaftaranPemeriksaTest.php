@@ -316,6 +316,40 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $this->assertStringContainsString('Lari 60 m putra untuk KU 12, sedangkan atlet ini KU 15', $galat['atlet.0.nomor'] ?? '');
     }
 
+    public function testPendaftarMemilihKelompokUmurSaatRentangBeririsanDalamSatuJenjang(): void
+    {
+        // K134: KU 10 lahir 2016–2018 dan KU 12 lahir 2014–2016, keduanya SD/MI.
+        $induk                     = self::indukContoh();
+        $induk['kelompok_umur'][1] = ['id' => 3, 'nama' => 'KU 12', 'tahun_lahir_awal' => 2014, 'tahun_lahir_akhir' => 2016, 'biaya_individu' => 175000, 'jenjang' => ['A']];
+        $periksa                   = static fn (array $kiriman): array => (new PemeriksaPendaftaran($induk, self::ADA_KOSONG, self::HARI_INI))->periksa($kiriman, true);
+
+        // Tanpa pilihan: galat di kotak pilihan kelompok umur.
+        $kiriman          = self::kirimanContoh();
+        $kiriman['atlet'] = [self::atletContoh('9900000003', [30], 'L', '2016-05-01')];
+        $galat            = self::galat($periksa($kiriman));
+        $this->assertStringContainsString('boleh ikut KU 10 atau KU 12. Pilih salah satu', $galat['atlet.0.kelompok_umur_id'] ?? '');
+
+        // Memilih KU 12: nomor KU 12 diterima, biaya KU 12.
+        $kiriman['atlet'][0]['kelompok_umur_id'] = 3;
+        $hasil                                   = $periksa($kiriman);
+        $this->assertSame([], $hasil['galat']);
+        $this->assertSame(3, $hasil['data']['atlet'][0]['kelompok_umur_id']);
+        $this->assertSame('KU 12', $hasil['rincian']['individu'][0]['kelompok_umur']);
+        $this->assertSame(175000, $hasil['rincian']['individu'][0]['biaya']);
+
+        // Memilih KU 10 (pilihan dari formulir berupa teks): nomor KU 12 ditolak.
+        $kiriman['atlet'][0]['kelompok_umur_id'] = '2';
+        $galat                                   = self::galat($periksa($kiriman));
+        $this->assertStringContainsString('untuk KU 12, sedangkan atlet ini KU 10', $galat['atlet.0.nomor'] ?? '');
+
+        $kiriman['atlet'][0]['nomor'] = [10];
+        $this->assertSame([], $periksa($kiriman)['galat']);
+
+        // Di luar irisan, pilihan diabaikan.
+        $kiriman['atlet'] = [self::atletContoh('9900000004', [10], 'L', '2017-05-01') + ['kelompok_umur_id' => 3]];
+        $this->assertSame(2, $periksa($kiriman)['data']['atlet'][0]['kelompok_umur_id']);
+    }
+
     public function testNomorHarusMilikKelompokUmurAtlet(): void
     {
         $kiriman          = self::kirimanContoh();

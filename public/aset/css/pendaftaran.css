@@ -360,6 +360,38 @@ fieldset.is-invalid > .invalid-feedback,
     font-weight: 600;
 }
 
+.pilih-ku {
+    margin-top: 1rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--bs-warning-border-subtle);
+    border-radius: 0.5rem;
+    background-color: var(--bs-warning-bg-subtle);
+}
+
+.langkah .pilih-ku > legend.form-label {
+    float: left;
+    width: 100%;
+    margin-bottom: 0.25rem;
+    padding: 0;
+    font-weight: 700;
+}
+
+.pilih-ku-keterangan {
+    clear: left;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.pilih-ku .pilihan-tombol .btn {
+    text-align: left;
+}
+
+.pilih-ku-rentang {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
 .info-ku-galat {
     background-color: var(--bs-danger-bg-subtle);
     color: var(--bs-danger-text-emphasis);

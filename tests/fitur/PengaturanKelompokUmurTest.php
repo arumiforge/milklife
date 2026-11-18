@@ -215,6 +215,8 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
     public function testRentangBertabrakanDitolak(): void
     {
         DataAwal::isi($this->db);
+        // Pendaftar tidak memilih kelompok umur (K134 mati): irisan dalam satu jenjang ditolak (K95).
+        setting('Pendaftaran.pilih_kelompok_umur', false);
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, $this->isian(['nama' => 'KU 13', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A'], 'aktif' => '1']));
 
@@ -237,6 +239,50 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
 
         $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
         $this->seeInDatabase('kelompok_umur', ['id' => $id, 'tahun_lahir_awal' => 2012, 'tahun_lahir_akhir' => 2015]);
+    }
+
+    public function testRentangBeririsanDalamSatuJenjangDisimpanDanDiringkas(): void
+    {
+        // K134: panitia membuat KU 12 lahir 2014–2016, beririsan dengan KU 10 (2016–2018) untuk SD/MI.
+        DataAwal::isi($this->db);
+        $id = (int) $this->db->table('kelompok_umur')->where('nama', 'KU 12')->get()->getRow()->id;
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2016', 'jenjang' => ['A'], 'awalan' => '3']));
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+
+        $hasil = $this->bukaSebagaiAdmin(self::ALAMAT);
+        $hasil->assertOK();
+        $hasil->assertSee('Pendaftar memilih kelompok umur');
+        $hasil->assertSee('Tahun lahir yang dipilihkan kelompok umurnya oleh pendaftar');
+        $this->assertMatchesRegularExpression('/id="pilih_kelompok_umur"[^>]*checked/', (string) $hasil->getBody());
+        $this->assertMatchesRegularExpression('/SD\/MI, lahir\s+2016:\s+KU 10 atau KU 12/', $hasil->getBody());
+
+        // Selama irisan masih ada, sakelar tidak bisa dimatikan.
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . '/pilihan', []);
+        $hasil->assertRedirectTo(site_url(self::ALAMAT));
+        $hasil->assertSessionHas('pesan_galat');
+        $this->assertStringContainsString('belum bisa dimatikan', (string) $_SESSION['pesan_galat']);
+        $this->assertTrue((bool) setting('Pendaftaran.pilih_kelompok_umur'));
+    }
+
+    public function testSakelarPilihanKelompokUmur(): void
+    {
+        DataAwal::isi($this->db);
+
+        // Tanpa irisan, sakelar bisa dimatikan; irisan baru lalu ditolak.
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . '/pilihan', []);
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+        $this->assertFalse((bool) setting('Pendaftaran.pilih_kelompok_umur'));
+
+        $id    = (int) $this->db->table('kelompok_umur')->where('nama', 'KU 12')->get()->getRow()->id;
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2016', 'jenjang' => ['A'], 'awalan' => '3']));
+        $hasil->assertSee('bertabrakan dengan KU 10');
+        $hasil->assertSee('atau nyalakan');
+
+        // Dinyalakan lagi.
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . '/pilihan', ['pilih_kelompok_umur' => '1']);
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+        $this->assertTrue((bool) setting('Pendaftaran.pilih_kelompok_umur'));
     }
 
     // ---------------------------------------------------------------
@@ -344,6 +390,8 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
     public function testMengaktifkanYangBertabrakanDitolak(): void
     {
         DataAwal::isi($this->db);
+        // Pendaftar tidak memilih kelompok umur (K134 mati): irisan dalam satu jenjang ditolak (K95).
+        setting('Pendaftaran.pilih_kelompok_umur', false);
         $id = $this->buatKu(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2019', 'jenjang' => ['A'], 'aktif' => '']);
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2019', 'jenjang' => ['A'], 'aktif' => '1']));

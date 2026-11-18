@@ -66,6 +66,14 @@ class Pendaftaran extends BaseConfig
     public ?int $atlet_per_nomor_maksimal = null;
 
     /**
+     * Pendaftar memilih kelompok umur (K134): rentang tahun lahir kelompok umur
+     * aktif boleh beririsan dalam satu jenjang, dan atlet yang tahun lahirnya
+     * masuk lebih dari satu kelompok umur dipilihkan salah satunya oleh
+     * pendaftar. Mati = irisan dalam satu jenjang ditolak (K95).
+     */
+    public bool $pilih_kelompok_umur = true;
+
+    /**
      * Nama regu beregu (K106): `ketentuan` = official memilih dari
      * `label_regu`; `bebas` = official mengetik nama regu sendiri.
      */

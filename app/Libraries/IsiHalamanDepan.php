@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
+use App\Libraries\Pendaftaran\KelompokUmurAtlet;
 use App\Models\JadwalModel;
 use App\Models\KelompokUmurModel;
 use App\Models\NomorLombaModel;
@@ -86,6 +87,7 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  *             'nama'           => 'KU 10',
  *             'tahun_lahir'    => 'Lahir 2016–2018',     // KelompokUmurModel::teksTahunLahir(), '' bila belum diisi
  *             'jenjang'        => 'SD/MI',               // Jenjang::gabungLabel(), '' bila belum ada
+ *             'pilihan'        => ['SD/MI lahir 2016 boleh memilih KU 10 atau KU 12'], // K134, [] bila tidak ada
  *             'biaya_individu' => 150000,                // int (0 = gratis) atau null (belum diisi)
  *             'nomor_individu' => [                      // nomor aktif, berurutan
  *                 ['id' => 7, 'nama' => 'Lari 60 m', 'kategori' => 'putra', 'kategori_label' => 'Putra'],
@@ -357,12 +359,23 @@ final class IsiHalamanDepan
         }
 
         $hasil = [];
+        $aktif = array_values(array_filter($daftarKu, static fn (array $ku): bool => (int) $ku['aktif'] === 1));
 
-        foreach ($daftarKu as $ku) {
-            if ((int) $ku['aktif'] !== 1) {
-                continue;
+        // Tahun lahir yang masuk dua kelompok umur dalam satu jenjang (K134).
+        $pilihan = [];
+
+        foreach (KelompokUmurAtlet::irisan($aktif, KelompokUmurModel::tahunLahirTerbesar()) as $baris) {
+            $awal  = $baris['tahun'][0];
+            $akhir = $baris['tahun'][count($baris['tahun']) - 1];
+            $teks  = (Jenjang::label($baris['jenjang']) ?? $baris['jenjang']) . ' lahir ' . ($awal === $akhir ? $awal : "{$awal}–{$akhir}")
+                . ' boleh memilih ' . KelompokUmurAtlet::gabungNama(array_map(static fn (string $n): array => ['nama' => $n], $baris['kelompok_umur']));
+
+            foreach ($baris['kelompok_umur'] as $nama) {
+                $pilihan[$nama][] = $teks;
             }
+        }
 
+        foreach ($aktif as $ku) {
             $id = (int) $ku['id'];
 
             $hasil[] = [
@@ -370,6 +383,7 @@ final class IsiHalamanDepan
                 'nama'           => self::teks($ku['nama']),
                 'tahun_lahir'    => KelompokUmurModel::teksTahunLahir($ku['tahun_lahir_awal'] ?? null, $ku['tahun_lahir_akhir'] ?? null),
                 'jenjang'        => Jenjang::gabungLabel($ku['jenjang'] ?? []),
+                'pilihan'        => $pilihan[(string) $ku['nama']] ?? [],
                 'biaya_individu' => self::angka($ku['biaya_individu']),
                 'nomor_individu' => $nomor[$id]['individu'] ?? [],
                 'nomor_beregu'   => $nomor[$id]['beregu'] ?? [],

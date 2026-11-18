@@ -50,6 +50,8 @@
     /**
      * Kelompok umur dari jenjang dan tahun lahir (sama dengan `KelompokUmurAtlet`, K95):
      * jenjang menyaring kelompok umur dulu, lalu tahun lahir memilih di antaranya.
+     * Bila tahun lahir cocok dengan lebih dari satu kelompok umur, pendaftar memilih
+     * (`pilihan`, K134); tanpa pilihan yang sah hasilnya `ku: null` dengan `pilihan` terisi.
      */
     function masukKu(tahun, ku) {
         var awal = ku.tahun_lahir_awal;
@@ -60,25 +62,29 @@
         return (awal === null || tahun >= awal) && (akhir === null || tahun <= akhir);
     }
 
-    function tentukanKu(tahun, jenjang) {
-        var untukJenjang = DATA.kelompok_umur.filter(function (ku) { return ku.jenjang.indexOf(jenjang) !== -1; });
-        var cocok = null;
-        untukJenjang.some(function (ku) {
-            if (masukKu(tahun, ku)) {
-                cocok = ku;
-                return true;
-            }
-            return false;
-        });
+    function gabungNamaKu(daftar) {
+        var nama = daftar.map(function (ku) { return ku.nama; });
+        return nama.length <= 2 ? nama.join(' atau ') : nama.slice(0, -1).join(', ') + ', atau ' + nama[nama.length - 1];
+    }
 
-        if (cocok) {
-            return { ku: cocok, galat: null };
+    function tentukanKu(tahun, jenjang, pilihan) {
+        var untukJenjang = DATA.kelompok_umur.filter(function (ku) { return ku.jenjang.indexOf(jenjang) !== -1; });
+        var cocok = untukJenjang.filter(function (ku) { return masukKu(tahun, ku); });
+
+        if (cocok.length === 1) {
+            return { ku: cocok[0], galat: null, pilihan: cocok };
+        }
+        if (cocok.length > 1) {
+            var dipilih = cocok.filter(function (ku) { return pilihan !== undefined && pilihan !== null && ku.id === Number(pilihan); })[0];
+            return dipilih
+                ? { ku: dipilih, galat: null, pilihan: cocok }
+                : { ku: null, galat: 'Atlet lahir tahun ' + tahun + ' boleh ikut ' + gabungNamaKu(cocok) + '. Pilih salah satu kelompok umur untuk atlet ini.', pilihan: cocok };
         }
 
         var labelJenjang = DATA.jenjang[jenjang] || jenjang || '-';
 
         if (!untukJenjang.length) {
-            return { ku: null, galat: 'Belum ada kelompok umur yang dibuka untuk ' + labelJenjang + ', jadi atlet ini tidak bisa didaftarkan.' };
+            return { ku: null, galat: 'Belum ada kelompok umur yang dibuka untuk ' + labelJenjang + ', jadi atlet ini tidak bisa didaftarkan.', pilihan: [] };
         }
 
         var bagian = untukJenjang.filter(function (ku) { return !!ku.teks_tahun_lahir; }).map(namaKu);
@@ -97,13 +103,15 @@
             return {
                 ku: null,
                 galat: 'Atlet lahir tahun ' + tahun + ' masuk ' + lain.nama + ', yang hanya untuk ' + boleh
-                    + '. Sekolah ini ' + labelJenjang + ', jadi atlet ini tidak bisa didaftarkan' + rentang + '.'
+                    + '. Sekolah ini ' + labelJenjang + ', jadi atlet ini tidak bisa didaftarkan' + rentang + '.',
+                pilihan: []
             };
         }
 
         return {
             ku: null,
-            galat: 'Atlet lahir tahun ' + tahun + ' tidak masuk kelompok umur mana pun untuk ' + labelJenjang + rentang + '. Periksa lagi tanggal lahirnya.'
+            galat: 'Atlet lahir tahun ' + tahun + ' tidak masuk kelompok umur mana pun untuk ' + labelJenjang + rentang + '. Periksa lagi tanggal lahirnya.',
+            pilihan: []
         };
     }
 
@@ -153,5 +161,6 @@
     W.nomorDipilih = nomorDipilih;
     W.tanggalSah = tanggalSah;
     W.tentukanKu = tentukanKu;
+    W.namaKu = namaKu;
     W.usia = usia;
 }(window.Pendaftaran));

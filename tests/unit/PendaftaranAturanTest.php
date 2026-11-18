@@ -145,6 +145,80 @@ final class PendaftaranAturanTest extends CIUnitTestCase
         $this->assertSame('Atlet lahir tahun 2014 tidak masuk kelompok umur mana pun untuk SMP/MTs. Periksa lagi tanggal lahirnya.', KelompokUmurAtlet::tentukan(2014, 'B', $daftar)['galat']);
     }
 
+    /**
+     * Contoh K134: KU 10 lahir 2016–2018 dan KU 12 lahir 2014–2016, keduanya SD/MI.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function kelompokUmurPilihan(): array
+    {
+        return [
+            ['id' => 2, 'nama' => 'KU 10', 'tahun_lahir_awal' => 2016, 'tahun_lahir_akhir' => 2018, 'jenjang' => ['A']],
+            ['id' => 3, 'nama' => 'KU 12', 'tahun_lahir_awal' => 2014, 'tahun_lahir_akhir' => 2016, 'jenjang' => ['A']],
+            ['id' => 4, 'nama' => 'KU 15', 'tahun_lahir_awal' => 2011, 'tahun_lahir_akhir' => 2014, 'jenjang' => ['B']],
+        ];
+    }
+
+    public function testTahunLahirDiDuaKelompokUmurWajibDipilih(): void
+    {
+        $daftar = self::kelompokUmurPilihan();
+
+        // Tanpa pilihan: galat yang meminta memilih, beserta daftar pilihannya.
+        $hasil = KelompokUmurAtlet::tentukan(2016, 'A', $daftar);
+        $this->assertNull($hasil['kelompok_umur']);
+        $this->assertSame('Atlet lahir tahun 2016 boleh ikut KU 10 atau KU 12. Pilih salah satu kelompok umur untuk atlet ini.', $hasil['galat']);
+        $this->assertSame(['KU 10', 'KU 12'], array_column($hasil['pilihan'], 'nama'));
+
+        // Dengan pilihan yang sah: kelompok umur itu.
+        $this->assertSame('KU 10', KelompokUmurAtlet::tentukan(2016, 'A', $daftar, 2)['kelompok_umur']['nama']);
+        $this->assertSame('KU 12', KelompokUmurAtlet::tentukan(2016, 'A', $daftar, 3)['kelompok_umur']['nama']);
+
+        // Pilihan di luar daftar pilihan diabaikan: tetap diminta memilih.
+        $this->assertNull(KelompokUmurAtlet::tentukan(2016, 'A', $daftar, 4)['kelompok_umur']);
+
+        // Di luar irisan, pilihan tidak berpengaruh: tahun lahir menentukan.
+        $this->assertSame('KU 10', KelompokUmurAtlet::tentukan(2017, 'A', $daftar, 3)['kelompok_umur']['nama']);
+        $this->assertSame('KU 12', KelompokUmurAtlet::tentukan(2015, 'A', $daftar)['kelompok_umur']['nama']);
+        $this->assertCount(1, KelompokUmurAtlet::tentukan(2015, 'A', $daftar)['pilihan']);
+    }
+
+    public function testPilihanTidakMenembusJenjang(): void
+    {
+        // Atlet SMP lahir 2014 hanya KU 15, walau memilih KU 12 (SD/MI).
+        $hasil = KelompokUmurAtlet::tentukan(2014, 'B', self::kelompokUmurPilihan(), 3);
+
+        $this->assertSame('KU 15', $hasil['kelompok_umur']['nama']);
+        $this->assertNull($hasil['galat']);
+
+        // Atlet SMP lahir 2016 tidak bisa turun ke KU 10 atau KU 12.
+        $this->assertNull(KelompokUmurAtlet::tentukan(2016, 'B', self::kelompokUmurPilihan(), 2)['kelompok_umur']);
+    }
+
+    public function testIrisanTahunLahirPerJenjang(): void
+    {
+        $this->assertSame(
+            [['jenjang' => 'A', 'tahun' => [2016], 'kelompok_umur' => ['KU 10', 'KU 12']]],
+            KelompokUmurAtlet::irisan(self::kelompokUmurPilihan(), 2026),
+        );
+
+        // Irisan antar-jenjang (K95) bukan pilihan pendaftar.
+        $this->assertSame([], KelompokUmurAtlet::irisan(self::kelompokUmurBeririsan(), 2026));
+
+        // Tahun berurutan digabung; batas terbuka dibatasi tahun terbesar.
+        $daftar = [
+            ['id' => 1, 'nama' => 'KU 8', 'tahun_lahir_awal' => 2018, 'tahun_lahir_akhir' => null, 'jenjang' => ['A']],
+            ['id' => 2, 'nama' => 'KU 10', 'tahun_lahir_awal' => 2016, 'tahun_lahir_akhir' => 2019, 'jenjang' => ['A', 'B']],
+        ];
+        $this->assertSame([['jenjang' => 'A', 'tahun' => [2018, 2019], 'kelompok_umur' => ['KU 8', 'KU 10']]], KelompokUmurAtlet::irisan($daftar, 2026));
+    }
+
+    public function testGabungNamaKelompokUmur(): void
+    {
+        $this->assertSame('KU 10', KelompokUmurAtlet::gabungNama([['nama' => 'KU 10']]));
+        $this->assertSame('KU 10 atau KU 12', KelompokUmurAtlet::gabungNama([['nama' => 'KU 10'], ['nama' => 'KU 12']]));
+        $this->assertSame('KU 8, KU 10, atau KU 12', KelompokUmurAtlet::gabungNama([['nama' => 'KU 8'], ['nama' => 'KU 10'], ['nama' => 'KU 12']]));
+    }
+
     public function testKelompokUmurTanpaJenjang(): void
     {
         $daftar = [['id' => 1, 'nama' => 'KU 8', 'tahun_lahir_awal' => 2019, 'tahun_lahir_akhir' => null, 'jenjang' => []]];

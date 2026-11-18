@@ -61,7 +61,7 @@
                         regu[id] = a.regu[id];
                     }
                 });
-                return { nama: a.nama, nisn: a.nisn, tanggal_lahir: a.tanggal_lahir, jenis_kelamin: a.jenis_kelamin, nomor: a.nomor, regu: regu };
+                return { nama: a.nama, nisn: a.nisn, tanggal_lahir: a.tanggal_lahir, jenis_kelamin: a.jenis_kelamin, kelompok_umur_id: a.kelompok_umur_id || null, nomor: a.nomor, regu: regu };
             }),
             konfirmasi_susulan: konfirmasiTerkirim(),
             turun_cadangan: turunTerkirim()

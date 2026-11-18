@@ -1229,6 +1229,23 @@ html:has(.tata-publik) {
     font-weight: 700;
 }
 
+.lomba-pilih-ku {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: -0.25rem 0 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--ml-biru-muda-pucat);
+    color: var(--ml-biru-tua);
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.lomba-pilih-ku .bi {
+    color: var(--ml-biru);
+}
+
 .lomba-kosong {
     display: flex;
     align-items: center;

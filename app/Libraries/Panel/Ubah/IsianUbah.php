@@ -65,15 +65,16 @@ final class IsianUbah
             ], array_values($lama['penanggung_jawab']));
 
             $hasil['atlet'] = array_map(static fn (array $a): array => [
-                'id'            => (int) $a['id'],
-                'nama'          => (string) $a['nama'],
-                'nisn'          => (string) $a['nisn'],
-                'tanggal_lahir' => (string) $a['tanggal_lahir'],
-                'jenis_kelamin' => (string) $a['jenis_kelamin'],
-                'nomor'         => array_keys($lama['nomor'][(int) $a['id']] ?? []),
-                'regu'          => $lama['regu'][(int) $a['id']] ?? [],
-                'nomor_dada'    => $a['nomor_dada'] === null || $a['nomor_dada'] === '' ? null : (string) $a['nomor_dada'],
-                'ku_lama'       => (int) $a['kelompok_umur_id'],
+                'id'               => (int) $a['id'],
+                'nama'             => (string) $a['nama'],
+                'nisn'             => (string) $a['nisn'],
+                'tanggal_lahir'    => (string) $a['tanggal_lahir'],
+                'jenis_kelamin'    => (string) $a['jenis_kelamin'],
+                'kelompok_umur_id' => (int) $a['kelompok_umur_id'],
+                'nomor'            => array_keys($lama['nomor'][(int) $a['id']] ?? []),
+                'regu'             => $lama['regu'][(int) $a['id']] ?? [],
+                'nomor_dada'       => $a['nomor_dada'] === null || $a['nomor_dada'] === '' ? null : (string) $a['nomor_dada'],
+                'ku_lama'          => (int) $a['kelompok_umur_id'],
             ], array_values($lama['atlet']));
 
             return $hasil;
@@ -111,15 +112,16 @@ final class IsianUbah
             $simpan  = $lama['atlet'][$idAtlet] ?? null;
 
             $hasil['atlet'][] = [
-                'id'            => $simpan !== null ? $idAtlet : null,
-                'nama'          => MasukanUbah::teks($a['nama'] ?? null),
-                'nisn'          => MasukanUbah::teks($a['nisn'] ?? null),
-                'tanggal_lahir' => MasukanUbah::teks($a['tanggal_lahir'] ?? null),
-                'jenis_kelamin' => MasukanUbah::teks($a['jenis_kelamin'] ?? null),
-                'nomor'         => array_values(array_filter(array_map(MasukanUbah::id(...), MasukanUbah::daftar($a['nomor'] ?? null)))),
-                'regu'          => MasukanUbah::reguIsian($a['regu'] ?? null),
-                'nomor_dada'    => $simpan !== null && $simpan['nomor_dada'] !== null && $simpan['nomor_dada'] !== '' ? (string) $simpan['nomor_dada'] : null,
-                'ku_lama'       => $simpan !== null ? (int) $simpan['kelompok_umur_id'] : null,
+                'id'               => $simpan !== null ? $idAtlet : null,
+                'nama'             => MasukanUbah::teks($a['nama'] ?? null),
+                'nisn'             => MasukanUbah::teks($a['nisn'] ?? null),
+                'tanggal_lahir'    => MasukanUbah::teks($a['tanggal_lahir'] ?? null),
+                'jenis_kelamin'    => MasukanUbah::teks($a['jenis_kelamin'] ?? null),
+                'kelompok_umur_id' => MasukanUbah::id($a['kelompok_umur_id'] ?? null),
+                'nomor'            => array_values(array_filter(array_map(MasukanUbah::id(...), MasukanUbah::daftar($a['nomor'] ?? null)))),
+                'regu'             => MasukanUbah::reguIsian($a['regu'] ?? null),
+                'nomor_dada'       => $simpan !== null && $simpan['nomor_dada'] !== null && $simpan['nomor_dada'] !== '' ? (string) $simpan['nomor_dada'] : null,
+                'ku_lama'          => $simpan !== null ? (int) $simpan['kelompok_umur_id'] : null,
             ];
         }
 

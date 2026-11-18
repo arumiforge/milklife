@@ -181,19 +181,32 @@ final class TolakAtlet
      */
     public static function kecocokan(string $jenjang, string $tanggalLahir, int $kelompokUmurId, array $kelompokUmur): array
     {
-        $tentu = KelompokUmurAtlet::tentukan((int) substr($tanggalLahir, 0, 4), $jenjang, $kelompokUmur);
+        // Kelompok umur tersimpan dianggap pilihan pendaftar (K134): cocok bila
+        // masih salah satu kelompok umur yang boleh dipilih.
+        $tentu = KelompokUmurAtlet::tentukan((int) substr($tanggalLahir, 0, 4), $jenjang, $kelompokUmur, $kelompokUmurId);
         $ku    = $tentu['kelompok_umur'];
+        $teks  = static function (array $ku): string {
+            $rentang = KelompokUmurModel::teksTahunLahir($ku['tahun_lahir_awal'] ?? null, $ku['tahun_lahir_akhir'] ?? null);
+
+            return $ku['nama'] . ($rentang === '' ? '' : ' (' . lcfirst($rentang) . ')');
+        };
+
+        if ($ku === null && $tentu['pilihan'] !== []) {
+            return [
+                'cocok'     => false,
+                'sesuai_id' => (int) $tentu['pilihan'][0]['id'],
+                'sesuai'    => implode(' atau ', array_map($teks, $tentu['pilihan'])),
+            ];
+        }
 
         if ($ku === null) {
             return ['cocok' => false, 'sesuai_id' => null, 'sesuai' => (string) $tentu['galat']];
         }
 
-        $rentang = KelompokUmurModel::teksTahunLahir($ku['tahun_lahir_awal'] ?? null, $ku['tahun_lahir_akhir'] ?? null);
-
         return [
             'cocok'     => (int) $ku['id'] === $kelompokUmurId,
             'sesuai_id' => (int) $ku['id'],
-            'sesuai'    => $ku['nama'] . ($rentang === '' ? '' : ' (' . lcfirst($rentang) . ')'),
+            'sesuai'    => $teks($ku),
         ];
     }
 

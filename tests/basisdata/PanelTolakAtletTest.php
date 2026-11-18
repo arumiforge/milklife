@@ -76,6 +76,26 @@ final class PanelTolakAtletTest extends UjiBasisData
         $this->assertStringContainsString('tidak masuk kelompok umur mana pun', $hasil['sesuai']);
     }
 
+    public function testKecocokanKelompokUmurPilihan(): void
+    {
+        // K134: lahir 2016 boleh KU 10 atau KU 12 (SD/MI).
+        $ku = [
+            ['id' => 2, 'nama' => 'KU 10', 'tahun_lahir_awal' => 2016, 'tahun_lahir_akhir' => 2018, 'jenjang' => ['A']],
+            ['id' => 3, 'nama' => 'KU 12', 'tahun_lahir_awal' => 2014, 'tahun_lahir_akhir' => 2016, 'jenjang' => ['A']],
+            ['id' => 4, 'nama' => 'KU 15', 'tahun_lahir_awal' => 2011, 'tahun_lahir_akhir' => 2014, 'jenjang' => ['B']],
+        ];
+
+        // Pilihan mana pun di antara keduanya cocok.
+        $this->assertTrue(TolakAtlet::kecocokan('A', '2016-03-01', 2, $ku)['cocok']);
+        $this->assertTrue(TolakAtlet::kecocokan('A', '2016-03-01', 3, $ku)['cocok']);
+
+        // Tersimpan di kelompok umur lain: seharusnya salah satu pilihan.
+        $hasil = TolakAtlet::kecocokan('A', '2016-03-01', 4, $ku);
+        $this->assertFalse($hasil['cocok']);
+        $this->assertSame(2, $hasil['sesuai_id']);
+        $this->assertSame('KU 10 (lahir 2016–2018) atau KU 12 (lahir 2014–2016)', $hasil['sesuai']);
+    }
+
     // ---------------------------------------------------------------
     // Tolak sebagian
     // ---------------------------------------------------------------
