@@ -3,6 +3,8 @@
 namespace App\Libraries\Pendaftaran;
 
 use App\Libraries\BuktiPendaftaran;
+use App\Libraries\DataPendaftaran;
+use App\Libraries\Jenjang;
 use App\Libraries\Panel\BerkasBuktiBayar;
 use App\Libraries\Panel\UsulanNamaSekolah;
 use App\Models\BuktiBayarModel;
@@ -35,6 +37,14 @@ use Throwable;
  *    terdaftar pada saat yang sama ditolak kunci unik basis data dan
  *    dilaporkan sebagai galat NISN biasa.
  *
+ * Kirim ulang (K118, B2): wizard mengirim `kunci_kirim` acak yang sama untuk
+ * satu isian sampai tersimpan. Bila kunci itu sudah dipakai pendaftaran yang
+ * tersimpan, tidak ada yang ditulis; hasilnya pendaftaran yang sudah ada
+ * (`ulang` bernilai `true`) dengan rincian yang dibaca dari basis data.
+ * Kunci diperiksa sebelum kunci NPSN, lagi di dalamnya, dan sekali lagi bila
+ * penulisan gagal (dua kiriman bersamaan tanpa NPSN ditahan kunci unik
+ * `pendaftaran.kunci_kirim`).
+ *
  * Pemeriksaan buka-tutup pendaftaran (6.1) dilakukan pengendali sebelum
  * memanggil kelas ini.
  *
@@ -43,6 +53,7 @@ use Throwable;
  *     $hasil['galat'];        // list galat seperti PemeriksaPendaftaran, [] bila tersimpan
  *     $hasil['pendaftaran'];  // ['id' => 1, 'id_pendaftaran' => 'MAC2A0000126'] atau null
  *     $hasil['rincian'];      // rincian biaya (PemeriksaPendaftaran) atau null
+ *     $hasil['ulang'];        // true bila kunci_kirim sudah pernah tersimpan
  */
 final class SimpanPendaftaran
 {
@@ -50,6 +61,12 @@ final class SimpanPendaftaran
      * Lama menunggu kunci per NPSN, dalam detik.
      */
     public const TUNGGU_KUNCI = 10;
+
+    /**
+     * Bentuk `kunci_kirim` yang diterima; selain itu kiriman diperlakukan
+     * tanpa kunci (halaman wizard lama).
+     */
+    public const POLA_KUNCI_KIRIM = '/^[A-Za-z0-9_-]{16,64}$/D';
 
     public const PESAN_TANPA_BUKTI = 'Bukti transfer belum dipilih. Transfer dulu sebesar total, lalu pilih foto atau tangkapan layar bukti transfer (JPG, PNG, atau WEBP).';
 
@@ -70,11 +87,17 @@ final class SimpanPendaftaran
      * @param array<string, mixed> $kiriman Lihat `PemeriksaPendaftaran`.
      * @param string|null          $hariIni `Y-m-d`; bawaan hari ini (zona waktu aplikasi).
      *
-     * @return array{galat: list<array{langkah: int, jalur: string, pesan: string}>, pendaftaran: array{id: int, id_pendaftaran: string}|null, rincian: array<string, mixed>|null}
+     * @return array{galat: list<array{langkah: int, jalur: string, pesan: string}>, pendaftaran: array{id: int, id_pendaftaran: string}|null, rincian: array<string, mixed>|null, ulang: bool}
      */
     public function simpan(array $kiriman, ?string $hariIni = null): array
     {
         $hariIni ??= Time::now(config('App')->appTimezone)->format('Y-m-d');
+        $ulang = $this->tersimpan(self::kunciKirim($kiriman));
+
+        if ($ulang !== null) {
+            return $ulang;
+        }
+
         $npsn  = PemeriksaPendaftaran::npsnKiriman($kiriman);
         $kunci = $npsn !== null ? 'milklife-pendaftaran-' . $npsn : null;
 
@@ -98,10 +121,17 @@ final class SimpanPendaftaran
     /**
      * @param array<string, mixed> $kiriman
      *
-     * @return array{galat: list<array{langkah: int, jalur: string, pesan: string}>, pendaftaran: array{id: int, id_pendaftaran: string}|null, rincian: array<string, mixed>|null}
+     * @return array{galat: list<array{langkah: int, jalur: string, pesan: string}>, pendaftaran: array{id: int, id_pendaftaran: string}|null, rincian: array<string, mixed>|null, ulang: bool}
      */
     private function simpanTerkunci(array $kiriman, string $hariIni): array
     {
+        $kunciKirim = self::kunciKirim($kiriman);
+        $ulang      = $this->tersimpan($kunciKirim);
+
+        if ($ulang !== null) {
+            return $ulang;
+        }
+
         $hasil = $this->periksa($kiriman, $hariIni);
 
         if ($hasil['galat'] !== []) {
@@ -153,6 +183,7 @@ final class SimpanPendaftaran
                 'total'             => $data['total'],
                 'status'            => 'menunggu',
                 'kode_bukti'        => BuktiPendaftaran::kodeBaru(),
+                'kunci_kirim'       => $kunciKirim,
             ], true);
             self::pastikan($id);
 
@@ -229,6 +260,13 @@ final class SimpanPendaftaran
 
             $berkasBukti->hapus($bukti['berkas']);
 
+            // Kiriman yang sama (kunci kirim sama) baru saja tersimpan lebih dulu.
+            $ulang = $this->tersimpan($kunciKirim);
+
+            if ($ulang !== null) {
+                return $ulang;
+            }
+
             // Kiriman lain mungkin baru saja mendaftarkan NISN yang sama:
             // laporkan sebagai galat biasa bila pemeriksaan ulang menemukannya.
             $ulang = $this->periksa($kiriman, $hariIni);
@@ -244,6 +282,97 @@ final class SimpanPendaftaran
             'galat'       => [],
             'pendaftaran' => ['id' => (int) $id, 'id_pendaftaran' => $idPendaftaran],
             'rincian'     => $hasil['rincian'],
+            'ulang'       => false,
+        ];
+    }
+
+    /**
+     * Hasil `simpan()` untuk kiriman yang `kunci_kirim`-nya sudah tersimpan,
+     * atau `null`. Hanya membaca; dipakai pengendali supaya kirim ulang tetap
+     * dijawab walaupun pendaftaran baru saja ditutup.
+     *
+     * @param array<string, mixed> $kiriman
+     *
+     * @return array{galat: list<never>, pendaftaran: array{id: int, id_pendaftaran: string}, rincian: array<string, mixed>, ulang: true}|null
+     */
+    public function sudahTersimpan(array $kiriman): ?array
+    {
+        return $this->tersimpan(self::kunciKirim($kiriman));
+    }
+
+    /**
+     * `kunci_kirim` dari kiriman, atau `null` bila tidak ada atau bentuknya salah.
+     *
+     * @param array<string, mixed> $kiriman
+     */
+    public static function kunciKirim(array $kiriman): ?string
+    {
+        $kunci = $kiriman['kunci_kirim'] ?? null;
+
+        return is_string($kunci) && preg_match(self::POLA_KUNCI_KIRIM, $kunci) === 1 ? $kunci : null;
+    }
+
+    /**
+     * Pendaftaran yang sudah tersimpan dengan kunci kirim ini, dalam bentuk
+     * hasil `simpan()`, atau `null`. Hanya membaca.
+     *
+     * Rinciannya dibaca dari basis data (nilai tersimpan, rancangan 6.7) dalam
+     * bentuk rincian `PemeriksaPendaftaran` yang dipakai wizard: `sekolah`,
+     * `individu` (nama, nisn, kelompok_umur, nomor, biaya), `beregu` (nomor,
+     * regu, regu_tunggal, biaya, anggota), dan subtotal serta total.
+     *
+     * @return array{galat: list<never>, pendaftaran: array{id: int, id_pendaftaran: string}, rincian: array<string, mixed>, ulang: true}|null
+     */
+    private function tersimpan(?string $kunciKirim): ?array
+    {
+        if ($kunciKirim === null) {
+            return null;
+        }
+
+        $baris = $this->db->table('pendaftaran')->select('id, id_pendaftaran')->where('kunci_kirim', $kunciKirim)->get()->getRowArray();
+
+        if (! is_array($baris) || (string) ($baris['id_pendaftaran'] ?? '') === '') {
+            return null;
+        }
+
+        $p = (new DataPendaftaran($this->db))->cariId((string) $baris['id_pendaftaran']);
+
+        if ($p === null) {
+            return null;
+        }
+
+        return [
+            'galat'       => [],
+            'pendaftaran' => ['id' => (int) $baris['id'], 'id_pendaftaran' => (string) $baris['id_pendaftaran']],
+            'rincian'     => [
+                'sekolah' => [
+                    'nama'          => (string) $p['nama_sekolah'],
+                    'nama_resmi'    => (string) $p['nama_sekolah'],
+                    'npsn'          => $p['npsn'],
+                    'kabupaten'     => (string) $p['kabupaten'],
+                    'jenjang'       => (string) $p['jenjang'],
+                    'jenjang_label' => (string) Jenjang::label((string) $p['jenjang']),
+                ],
+                'individu' => array_map(static fn (array $b): array => [
+                    'nama'          => (string) $b['nama'],
+                    'nisn'          => (string) $b['nisn'],
+                    'kelompok_umur' => (string) $b['kelompok_umur'],
+                    'nomor'         => (string) $b['nomor_lomba'],
+                    'biaya'         => (int) $b['biaya'],
+                ], $p['individu']),
+                'beregu' => array_map(static fn (array $t): array => [
+                    'nomor'        => (string) $t['nama_nomor'],
+                    'regu'         => (string) $t['regu'],
+                    'regu_tunggal' => (bool) $t['regu_tunggal'],
+                    'biaya'        => (int) ($t['biaya_tim'] ?? 0),
+                    'susulan'      => $t['biaya_tim'] === null,
+                    'anggota'      => array_map(static fn (array $a): array => ['nama' => (string) $a['nama'], 'peran' => $a['peran'] ?? null], $t['anggota']),
+                ], $p['beregu']),
+                'subtotal_individu' => (int) $p['subtotal_individu'],
+                'subtotal_beregu'   => (int) $p['subtotal_beregu'],
+                'total'             => (int) $p['total'],
+            ],
+            'ulang' => true,
         ];
     }
 
@@ -307,10 +436,10 @@ final class SimpanPendaftaran
     /**
      * @param list<array{langkah: int, jalur: string, pesan: string}> $galat
      *
-     * @return array{galat: list<array{langkah: int, jalur: string, pesan: string}>, pendaftaran: null, rincian: null}
+     * @return array{galat: list<array{langkah: int, jalur: string, pesan: string}>, pendaftaran: null, rincian: null, ulang: false}
      */
     private static function gagal(array $galat): array
     {
-        return ['galat' => $galat, 'pendaftaran' => null, 'rincian' => null];
+        return ['galat' => $galat, 'pendaftaran' => null, 'rincian' => null, 'ulang' => false];
     }
 }

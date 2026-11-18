@@ -5,6 +5,7 @@ namespace App\Libraries\Panel;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PeranAwalRegu;
 use App\Libraries\Pendaftaran\Regu;
+use App\Libraries\Pendaftaran\SimpanPendaftaran;
 use App\Models\SekolahModel;
 use App\Models\UsulanNamaSekolahModel;
 use CodeIgniter\Database\BaseConnection;
@@ -25,7 +26,8 @@ use ZipArchive;
  *   di server baru. Dua kunci terakhir boleh tidak ada (paket lama). Setiap
  *   pendaftaran juga membawa `gabungan_dari`: ID dan kode bukti lama yang
  *   sudah digabung ke situ (K109), supaya kode QR bukti lama tetap berlaku,
- *   dan `atlet_ditolak`: atlet yang ditolak panitia (K116; boleh tidak ada).
+ *   dan `atlet_ditolak`: atlet yang ditolak panitia (K116; boleh tidak ada), serta
+ *   `kunci_kirim` dari wizard (K118; boleh tidak ada).
  *   `riwayat_admin`: riwayat tindakan admin (F8-01), juga milik pendaftaran
  *   yang sudah dihapus (boleh tidak ada).
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
@@ -169,6 +171,7 @@ final class PaketPendaftaran
                 'id'                => $id,
                 'id_pendaftaran'    => $p['id_pendaftaran'],
                 'kode_bukti'        => $p['kode_bukti'] ?? null,
+                'kunci_kirim'       => $p['kunci_kirim'] ?? null,
                 'jenjang'           => $p['jenjang'],
                 'npsn'              => $p['npsn'],
                 'nama_sekolah'      => $p['nama_sekolah'],
@@ -490,6 +493,8 @@ final class PaketPendaftaran
                 'id_pendaftaran'    => (string) $p['id_pendaftaran'],
                 // Kode bukti tetap supaya kode QR di bukti yang sudah dicetak tetap berlaku (K77).
                 'kode_bukti'        => is_string($p['kode_bukti'] ?? null) && preg_match('/^[0-9a-f]{24}$/D', $p['kode_bukti']) === 1 ? $p['kode_bukti'] : null,
+                // Kunci kirim wizard (K118); paket lama tidak punya, dan bentuk yang salah dikosongkan.
+                'kunci_kirim'       => SimpanPendaftaran::kunciKirim($p),
                 'jenjang'           => (string) $p['jenjang'],
                 'npsn'              => $p['npsn'],
                 'nama_sekolah'      => (string) $p['nama_sekolah'],

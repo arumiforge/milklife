@@ -156,8 +156,26 @@
             atlet: [],
             konfirmasiSusulan: [],
             turunCadangan: [],
+            // Kunci acak satu kiriman (K118, B2): dibuat saat Kirim Pendaftaran pertama
+            // ditekan dan dipakai lagi untuk kirim ulang, sampai pendaftaran tersimpan.
+            kunciKirim: '',
             tersimpan: null
         };
+    }
+
+    /**
+     * 32 huruf heksadesimal acak untuk `kunci_kirim`.
+     */
+    function buatKunciKirim() {
+        var angka = new Uint8Array(16);
+        if (window.crypto && window.crypto.getRandomValues) {
+            window.crypto.getRandomValues(angka);
+        } else {
+            for (var i = 0; i < angka.length; i++) {
+                angka[i] = Math.floor(Math.random() * 256);
+            }
+        }
+        return Array.prototype.map.call(angka, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
     }
 
     function bacaDraf() {
@@ -2481,8 +2499,15 @@
             label.textContent = 'Kirim Pendaftaran';
         };
 
+        // Kunci yang sama untuk kirim ulang: bila kiriman sebelumnya sudah tersimpan
+        // tetapi jawabannya tidak sampai, server menjawab dengan pendaftaran itu.
+        if (!/^[0-9a-f]{32}$/.test(String(draf.kunciKirim || ''))) {
+            draf.kunciKirim = buatKunciKirim();
+        }
+        simpanDraf();
+
         kecilkanFoto(dipilih, SISI_BUKTI, BATAS_BUKTI).then(function (dataUrl) {
-            return kirim(DATA.alamat.simpan, { bukti_bayar: dataUrl });
+            return kirim(DATA.alamat.simpan, { bukti_bayar: dataUrl, kunci_kirim: draf.kunciKirim });
         }, function () {
             return { kode: -1 };
         }).then(function (hasil) {

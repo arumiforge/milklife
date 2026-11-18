@@ -58,6 +58,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             'id'                => ['int unsigned', false, null],
             'id_pendaftaran'    => ['varchar(20)', true, null],
             'kode_bukti'        => ['char(24)', true, null],
+            'kunci_kirim'       => ['varchar(64)', true, null],
             'jenjang'           => ["enum('A','B','C')", false, null],
             'npsn'              => ['char(8)', true, null],
             'nama_sekolah'      => ['varchar(150)', false, null],
@@ -348,6 +349,7 @@ final class MigrasiStrukturTest extends UjiBasisData
         foreach ([
             'awalan_nomor_dada:awalan',
             'pendaftaran:id_pendaftaran',
+            'pendaftaran:kunci_kirim',
             'atlet:nisn',
             'atlet:nomor_dada',
             'atlet_nomor:atlet_id,nomor_lomba_id',

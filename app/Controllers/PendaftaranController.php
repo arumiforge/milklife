@@ -208,24 +208,41 @@ class PendaftaranController extends BaseController
      * POST pendaftaran/simpan
      *
      *     201 ['status' => 'tersimpan', 'pesan' => '…', 'id_pendaftaran' => 'MAC2A0000126',
-     *          'rincian' => [...], 'wa' => 'https://wa.me/…' atau null, 'bukti' => 'http://…/bukti/<kode acak>/MAC2A0000126']
+     *          'rincian' => [...], 'wa' => 'https://wa.me/…' atau null, 'bukti' => 'http://…/bukti/<kode acak>/MAC2A0000126',
+     *          'ulang' => false]
      *     422, 400, 409, 429 seperti `periksa()`.
+     *
+     * Kiriman ulang dengan `kunci_kirim` yang sudah tersimpan (K118, B2)
+     * mendapat jawaban 201 yang sama untuk pendaftaran itu (`ulang` = true)
+     * tanpa menulis apa pun, misalnya setelah jawaban pertama tidak sampai ke
+     * ponsel karena sinyal putus.
      */
     public function simpan(): ResponseInterface
     {
-        $tolak = $this->batasiLaju('simpan', self::BATAS_SIMPAN, self::JENDELA_SIMPAN) ?? $this->tolakBilaTertutup();
+        $batas = $this->batasiLaju('simpan', self::BATAS_SIMPAN, self::JENDELA_SIMPAN);
 
-        if ($tolak !== null) {
-            return $tolak;
+        if ($batas !== null) {
+            return $batas;
         }
 
         $kiriman = $this->kiriman();
+        $simpan  = new SimpanPendaftaran();
+        // Kirim ulang yang sudah tersimpan dijawab walaupun pendaftaran baru saja ditutup.
+        $hasil = $kiriman !== null ? $simpan->sudahTersimpan($kiriman) : null;
 
-        if ($kiriman === null) {
-            return $this->kirimanTidakSah();
+        if ($hasil === null) {
+            $tolak = $this->tolakBilaTertutup();
+
+            if ($tolak !== null) {
+                return $tolak;
+            }
+
+            if ($kiriman === null) {
+                return $this->kirimanTidakSah();
+            }
+
+            $hasil = $simpan->simpan($kiriman);
         }
-
-        $hasil = (new SimpanPendaftaran())->simpan($kiriman);
 
         if ($hasil['galat'] !== []) {
             return $this->galat($hasil['galat']);
@@ -244,11 +261,14 @@ class PendaftaranController extends BaseController
 
         return $this->json(201, [
             'status'         => 'tersimpan',
-            'pesan'          => 'Pendaftaran tersimpan dengan ID ' . $id . '.',
+            'pesan'          => $hasil['ulang']
+                ? 'Pendaftaran ini sudah tersimpan sebelumnya dengan ID ' . $id . '. Tidak ada data yang dikirim dua kali.'
+                : 'Pendaftaran tersimpan dengan ID ' . $id . '.',
             'id_pendaftaran' => $id,
             'rincian'        => $rincian,
             'wa'             => PesanKonfirmasi::alamat((string) setting('Pembayaran.nomor_wa'), $teks),
             'bukti'          => BuktiPendaftaran::alamat(['id' => (int) $hasil['pendaftaran']['id'], 'id_pendaftaran' => $id]),
+            'ulang'          => $hasil['ulang'],
         ]);
     }
 
