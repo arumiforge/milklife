@@ -21,6 +21,7 @@
  * @var array<string, string>                                 $galat
  */
 
+use App\Libraries\Hasil\JenisHasil;
 use App\Models\NomorLombaModel;
 
 $alamat  = 'admin/pengaturan/nomor-lomba';
@@ -141,6 +142,19 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                             <?php endif ?>
                             <div id="kategori-bantuan" class="form-text">Mixed hanya untuk nomor beregu: satu tim berisi putra dan putri.</div>
                             <?= $pesan('kategori') ?>
+                        </fieldset>
+
+                        <fieldset class="mb-3" id="jenis_hasil" tabindex="-1" aria-describedby="<?= $jelas('jenis_hasil', 'jenis-hasil-bantuan') ?>">
+                            <legend class="form-label fs-6 mb-2">Jenis hasil</legend>
+                            <?php foreach (JenisHasil::LABEL as $kode => $label) : ?>
+                                <div class="form-check">
+                                    <input class="form-check-input<?= $salah('jenis_hasil') ?>" type="radio" name="jenis_hasil" id="jenis-hasil-<?= $kode ?>" value="<?= $kode ?>"
+                                        <?= ($isian['jenis_hasil'] ?? '') === $kode ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="jenis-hasil-<?= $kode ?>"><?= $label ?> <span class="text-body-secondary">(<?= esc(JenisHasil::KETERANGAN[$kode]) ?>)</span></label>
+                                </div>
+                            <?php endforeach; ?>
+                            <div id="jenis-hasil-bantuan" class="form-text">Dipakai di Hasil lomba untuk menulis prestasi dan mengurutkan peringkat. Bila tidak dipilih, ditebak dari nama nomor.</div>
+                            <?= $pesan('jenis_hasil') ?>
                         </fieldset>
 
                         <fieldset class="border rounded-3 p-3 mb-3" id="bagian-tim"<?= $beregu ? '' : ' hidden' ?>>

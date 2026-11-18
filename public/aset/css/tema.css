@@ -2464,3 +2464,20 @@ html:has(.tata-publik) {
     color: var(--ml-teks-redup);
     font-weight: 600;
 }
+
+/* Hasil lomba dan klasemen (F8-04, F8-05): medali juara I–III. */
+.hasil-medali-emas {
+    color: #c9a227;
+}
+
+.hasil-medali-perak {
+    color: #8a96a8;
+}
+
+.hasil-medali-perunggu {
+    color: #b06a37;
+}
+
+.hasil-juara td {
+    background-color: rgba(232, 95, 49, 0.06);
+}

@@ -239,6 +239,17 @@ final class NomorLombaAturanTest extends CIUnitTestCase
         }
     }
 
+    public function testJenisHasilDitebakDariNamaAtauDiperiksa(): void
+    {
+        $this->assertSame('jarak', self::individu(['nama' => 'Lompat Jauh'])['jenis_hasil']);
+        $this->assertSame('poin', self::individu(['nama' => 'Trilomba', 'jenis_hasil' => 'poin'])['jenis_hasil']);
+        $this->assertSame('waktu', self::individu(['nama' => 'Lompat Jauh', 'jenis_hasil' => 'waktu'])['jenis_hasil'], 'Pilihan admin tidak ditimpa.');
+
+        $galat = NomorLombaModel::periksaIsian(self::individu(['jenis_hasil' => 'detik']), self::KU);
+        $this->assertSame(['jenis_hasil'], array_keys($galat));
+        $this->assertStringContainsString('Tri Lomba', $galat['jenis_hasil']);
+    }
+
     public function testUntukDisimpan(): void
     {
         $this->assertSame([
@@ -246,6 +257,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             'nama'             => 'Estafet 8 × 50 m',
             'jenis'            => 'beregu',
             'kategori'         => 'mix',
+            'jenis_hasil'      => 'waktu',
             'jumlah_inti'      => 8,
             'batas_anggota'    => 10,
             'regu_maksimal'    => null,
@@ -268,13 +280,13 @@ final class NomorLombaAturanTest extends CIUnitTestCase
     public function testIsianDariBaris(): void
     {
         $isian = NomorLombaModel::isianDariBaris([
-            'id' => '5', 'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri',
+            'id' => '5', 'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri', 'jenis_hasil' => 'waktu',
             'jumlah_inti' => '4', 'batas_anggota' => null, 'jumlah_putra' => null, 'jumlah_putri' => null,
             'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1',
         ]);
 
         $this->assertSame([
-            'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri',
+            'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri', 'jenis_hasil' => 'waktu',
             'jumlah_inti' => '4', 'batas_anggota' => '', 'regu_maksimal' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
             'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1',
         ], $isian);

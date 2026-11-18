@@ -43,6 +43,8 @@ final class MigrasiStrukturTest extends UjiBasisData
             'nama'             => ['varchar(100)', false, null],
             'jenis'            => ["enum('individu','beregu')", false, null],
             'kategori'         => ["enum('putra','putri','mix')", false, null],
+            // F8-04 (K124): jenis hasil dan waktu terbit hasil.
+            'jenis_hasil'      => ["enum('waktu','jarak','poin')", false, 'waktu'],
             'jumlah_inti'      => ['tinyint unsigned', true, null],
             'batas_anggota'    => ['tinyint unsigned', true, null],
             'regu_maksimal'    => ['tinyint unsigned', true, null],
@@ -51,6 +53,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             'biaya_beregu'     => ['int unsigned', true, null],
             'urutan'           => ['smallint unsigned', false, '0'],
             'aktif'            => ['tinyint unsigned', false, '1'],
+            'hasil_terbit_pada' => ['datetime', true, null],
             'dibuat_pada'      => ['datetime', true, null],
             'diubah_pada'      => ['datetime', true, null],
         ],
@@ -199,6 +202,29 @@ final class MigrasiStrukturTest extends UjiBasisData
             'ringkasan'      => ['text', false, null],
             'dibuat_pada'    => ['datetime', true, null],
         ],
+        // F8-04 (K124): babak per nomor lomba dan hasil per peserta.
+        'babak' => [
+            'id'             => ['int unsigned', false, null],
+            'nomor_lomba_id' => ['int unsigned', false, null],
+            'nama'           => ['varchar(60)', false, null],
+            'final'          => ['tinyint unsigned', false, '0'],
+            'urutan'         => ['smallint unsigned', false, '0'],
+            'dibuat_pada'    => ['datetime', true, null],
+            'diubah_pada'    => ['datetime', true, null],
+        ],
+        'hasil' => [
+            'id'               => ['int unsigned', false, null],
+            'babak_id'         => ['int unsigned', false, null],
+            'atlet_id'         => ['int unsigned', true, null],
+            'kontingen'        => ['varchar(20)', true, null],
+            'regu'             => ['char(1)', true, null],
+            'prestasi'         => ['int unsigned', true, null],
+            'keterangan'       => ['varchar(3)', true, null],
+            'peringkat'        => ['smallint unsigned', true, null],
+            'peringkat_manual' => ['tinyint unsigned', false, '0'],
+            'dibuat_pada'      => ['datetime', true, null],
+            'diubah_pada'      => ['datetime', true, null],
+        ],
         'tautan' => [
             'id'          => ['int unsigned', false, null],
             'jenis'       => ["enum('narahubung','media_sosial')", false, null],
@@ -237,6 +263,10 @@ final class MigrasiStrukturTest extends UjiBasisData
         'atlet_ditolak.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
         // F8-01: riwayat tetap ada (tanpa pendaftaran_id) setelah pendaftarannya dihapus.
         'riwayat_admin.pendaftaran_id' => ['pendaftaran', 'SET NULL'],
+        // F8-04: babak ikut terhapus bersama nomornya, hasil bersama babak atau atletnya.
+        'babak.nomor_lomba_id' => ['nomor_lomba', 'CASCADE'],
+        'hasil.babak_id'       => ['babak', 'CASCADE'],
+        'hasil.atlet_id'       => ['atlet', 'CASCADE'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void
@@ -358,6 +388,8 @@ final class MigrasiStrukturTest extends UjiBasisData
             'atlet_nomor:atlet_id,nomor_lomba_id',
             'pendaftaran_beregu:pendaftaran_id,nomor_lomba_id,regu',
             'pendaftaran_gabungan:id_pendaftaran_lama',
+            'hasil:babak_id,atlet_id',
+            'hasil:babak_id,kontingen,regu',
         ] as $harapan) {
             $this->assertContains($harapan, $unik, "Kunci unik {$harapan}.");
         }

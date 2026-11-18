@@ -28,6 +28,7 @@
  * @var list<array<string, string>>                 $mediaSosial
  * @var string|null                                 $waTanya
  * @var string                                      $waBagikan
+ * @var bool                                        $adaHasil  ada hasil lomba yang terbit (F8-04)
  */
 ?>
 <?= $this->extend('tata_letak/publik') ?>
@@ -35,7 +36,7 @@
 <?= $this->section('judul') ?><?= esc(trim($acara['nama'] . ' ' . $acara['seri_tahun'])) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<?= view('beranda/_kepala', ['acara' => $acara, 'tampilan' => $tampilan, 'bukaTutup' => $bukaTutup, 'tombol' => $tombol, 'kelompokUmur' => $kelompokUmur], ['saveData' => false]) ?>
+<?= view('beranda/_kepala', ['acara' => $acara, 'tampilan' => $tampilan, 'bukaTutup' => $bukaTutup, 'tombol' => $tombol, 'kelompokUmur' => $kelompokUmur, 'adaHasil' => $adaHasil ?? false], ['saveData' => false]) ?>
 <?= view('beranda/_lomba', ['kelompokUmur' => $kelompokUmur, 'tampilkanBiaya' => $tampilkanBiaya], ['saveData' => false]) ?>
 <?= view('beranda/_jadwal', ['jadwal' => $jadwal], ['saveData' => false]) ?>
 <?= view('beranda/_unduhan', ['unduhan' => $unduhan], ['saveData' => false]) ?>

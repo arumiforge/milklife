@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\IsiHalamanDepan;
 
 /**
@@ -30,6 +31,8 @@ class BerandaController extends BaseController
             'mediaSosial'    => $isi->mediaSosial(),
             'waTanya'        => $isi->waTanya(),
             'waBagikan'      => $isi->waBagikan(),
+            // Tautan Hasil lomba setelah ada nomor yang terbit (F8-04).
+            'adaHasil'       => (new HasilLomba())->adaTerbit(),
         ]);
     }
 }

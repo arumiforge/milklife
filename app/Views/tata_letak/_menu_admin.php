@@ -38,6 +38,9 @@ $menuAdmin = [
     ['label' => 'Hari lomba', 'label_pendek' => 'Lomba', 'ikon' => 'flag', 'alamat' => 'admin/daftar-ulang', 'aktif_juga' => ['admin/nomor-atlet', 'admin/daftar-peserta']],
     // Data sekolah (K97).
     ['label' => 'Sekolah', 'ikon' => 'building', 'alamat' => 'admin/sekolah'],
+    // Hasil lomba (F8-04, K130): butir sendiri di menu samping; tidak di
+    // menu bawah ponsel (`hanya_samping`, K132–K133).
+    ['label' => 'Hasil lomba', 'ikon' => 'trophy', 'alamat' => 'admin/hasil', 'hanya_samping' => true],
     ['label' => 'Pengaturan', 'ikon' => 'gear', 'alamat' => 'admin/pengaturan', 'aktif_juga' => ['admin/akun']],
 ];
 
@@ -65,6 +68,9 @@ $butirAktif = static function (array $butir) use ($menuAsal): bool {
 ?>
 <ul class="menu-admin">
     <?php foreach ($menuAdmin as $butir) : ?>
+        <?php if (($butir['hanya_samping'] ?? false) && ($tempatMenu ?? '') !== 'samping') {
+            continue;
+        } ?>
         <li>
             <a class="menu-admin-tautan" href="<?= site_url($butir['alamat']) ?>"<?= $butirAktif($butir) ? ' aria-current="page"' : '' ?><?= isset($butir['label_pendek']) && ($tempatMenu ?? '') !== 'samping' ? ' title="' . esc($butir['label'], 'attr') . '"' : '' ?>>
                 <i class="bi bi-<?= esc($butir['ikon'], 'attr') ?>" aria-hidden="true"></i>

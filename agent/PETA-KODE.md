@@ -13,6 +13,7 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 | Cek pendaftaran | `cek-pendaftaran` | `CekPendaftaranController` | `DataPendaftaran` | `cek_pendaftaran.php`, `cek_pendaftaran/` | - | f `CekPendaftaranTest` |
 | Bukti PDF + unggah bayar | `bukti/<24 heksa>/<id>`, `…/bukti-bayar` | `BuktiController` | `BuktiPendaftaran`, `Panel/BerkasBuktiBayar` | `bukti/` | - | f `BuktiPendaftaranTest`, `UnggahBuktiBayarOfficialTest` |
 | Unduhan | `unduhan` | `UnduhanController` | `IsiHalamanDepan` | `unduhan.php`, `beranda/_daftar_unduhan.php` | - | f `HalamanUnduhanTest` |
+| Hasil lomba publik (F8-04) | `hasil`, `hasil/(:num)` (hanya nomor terbit) | `HasilController` | `Hasil/HasilLomba` | `hasil/`, tombol di `beranda/_kepala.php` | - | f `HasilLombaTest` |
 
 ## Admin (`admin/…`, filter `admin`)
 
@@ -34,6 +35,7 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 | Rekap | `rekap[/<jenis>[/data\|/excel\|/pdf]]`, `rekap/gabungan/excel` | `Admin/RekapController` | `Panel/Rekap`, `Panel/RekapPdf`, `Panel/EksporExcel` | `admin/rekap/` | `tabel-admin` | f `PanelRekapTest`, u `PanelEksporExcelTest` |
 | Hari lomba (F8-03): daftar ulang QR + hadir, BIB massal, daftar peserta | `daftar-ulang[/(:num)/hadir\|batal-hadir]`, `nomor-atlet/cetak[/pdf]`, `daftar-peserta[/(:num)/pdf\|excel]`, `daftar-peserta/kelompok-umur/(:num)/pdf\|excel` | `Admin/DaftarUlangController`, `…/CetakBibController`, `…/DaftarPesertaController`; tautan admin di `BuktiController` | `HariLomba/KodeDaftarUlang`, `DaftarUlang`, `CetakBib`, `DaftarPeserta`, `DaftarPesertaPdf`, `PdfHariLomba` | `admin/hari_lomba/` | `daftar-ulang`, `konfirmasi` | f `HariLombaDaftarUlangTest`, `HariLombaCetakTest`, u `HariLombaKodeDaftarUlangTest` |
 | Sekolah, usulan nama (K99), nama desa (K114) | `sekolah[/data\|/excel\|/(:num)/ubah]`, `sekolah/usulan…`, `sekolah/nama-desa` | `Admin/SekolahController` | `Panel/UsulanNamaSekolah`, `Panel/NamaDesaSekolah` | `admin/sekolah/` | `centang-semua` | f `PanelSekolahTest`, `PanelUsulanNamaSekolahTest`, `PanelNamaDesaSekolah*Test` |
+| Hasil lomba (F8-04, K124) | `hasil[/(:num)[/babak\|/terbitkan\|/tarik\|/pdf\|/excel]]`, `hasil/babak/(:num)[/peserta\|/ubah\|/hapus]` | `Admin/HasilController` | `Hasil/HasilLomba`, `Hasil/PesertaNomor`, `Hasil/Prestasi`, `Hasil/Peringkat`, `Hasil/JenisHasil`, `Hasil/BerkasHasil`, `Hasil/DokumenPdf` | `admin/hasil/`, `hasil/_tabel_babak.php` | `konfirmasi`, `centang-semua` | f `HasilLombaTest`, u `HasilPrestasiPeringkatTest` |
 | Pengaturan | `pengaturan/{acara,pendaftaran,pembayaran,halaman-depan}` + CRUD `{kelompok-umur,nomor-lomba,jadwal,kontak,unduhan}` | `Admin/Pengaturan/*Controller` | `KelengkapanPengaturan`, `MarkdownSederhana` | `admin/pengaturan/` | `konfirmasi`, `pilih-tanggal` | f `Pengaturan*Test`, b `*ModelTest` |
 
 ## Perintah spark (`app/Commands/`)
@@ -56,4 +58,4 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 
 - Semua: `composer uji` (= `phpunit`, `phpunit.dist.xml`). Suite: `vendor/bin/phpunit --testsuite unit|basisdata|fitur`.
 - Satu area: `vendor/bin/phpunit --filter '<pola>'`, pola:
-  wizard `Pendaftaran(Halaman|Kirim|Simpan|Pemeriksa|Sekolah)` · cek/bukti `CekPendaftaran|BuktiPendaftaran|UnggahBuktiBayar` · panel pendaftaran `PanelPendaftaran|PanelUbahPendaftaran|BuktiBayar|PanelRiwayatAdmin|PanelBuktiBaru` · tolak/gabung `PanelTolakAtlet|PanelGabungPendaftaran` · nomor dada `NomorDada` · rekap `PanelRekap` · sekolah `Sekolah` · pengaturan `Pengaturan` · admin `MasukAdmin|AkunAdmin` · hari lomba `HariLomba` · alur Tahap 6 `PanelGabunganTest`.
+  wizard `Pendaftaran(Halaman|Kirim|Simpan|Pemeriksa|Sekolah)` · cek/bukti `CekPendaftaran|BuktiPendaftaran|UnggahBuktiBayar` · panel pendaftaran `PanelPendaftaran|PanelUbahPendaftaran|BuktiBayar|PanelRiwayatAdmin|PanelBuktiBaru` · tolak/gabung `PanelTolakAtlet|PanelGabungPendaftaran` · nomor dada `NomorDada` · rekap `PanelRekap` · hasil lomba `HasilLomba|HasilPrestasi` · sekolah `Sekolah` · pengaturan `Pengaturan` · admin `MasukAdmin|AkunAdmin` · hari lomba `HariLomba` · alur Tahap 6 `PanelGabunganTest`.

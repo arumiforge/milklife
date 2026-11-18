@@ -19,6 +19,7 @@
  * @var bool                                                         $saringBelumLengkap
  */
 
+use App\Libraries\Hasil\JenisHasil;
 use App\Models\NomorLombaModel;
 
 $alamat = 'admin/pengaturan/nomor-lomba';
@@ -199,7 +200,7 @@ $ringkasTim = static function (array $nomor): string {
                                             <span class="fw-semibold"><?= esc($nomor['nama']) ?></span>
                                             <span class="d-md-none text-body-secondary"><?= esc($nomor['kategori']) ?></span>
                                             <span class="d-block d-md-none small text-body-secondary">
-                                                <?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?><?= $tim !== '' ? ' · ' . esc($tim) : '' ?><?= $biaya !== '' ? ' · ' . $biaya . ' per regu' : '' ?>
+                                                <?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?><?= $tim !== '' ? ' · ' . esc($tim) : '' ?><?= $biaya !== '' ? ' · ' . $biaya . ' per regu' : '' ?><?= ' · hasil ' . esc(mb_strtolower(JenisHasil::LABEL[$nomor['jenis_hasil'] ?? ''] ?? '–')) ?>
                                             </span>
                                             <?php if ($belum) : ?>
                                                 <span class="d-block small text-warning-emphasis mt-1">
@@ -208,7 +209,7 @@ $ringkasTim = static function (array $nomor): string {
                                                 </span>
                                             <?php endif ?>
                                         </td>
-                                        <td class="d-none d-md-table-cell"><?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?></td>
+                                        <td class="d-none d-md-table-cell"><?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?><span class="d-block small text-body-secondary">Hasil: <?= esc(mb_strtolower(JenisHasil::LABEL[$nomor['jenis_hasil'] ?? ''] ?? '–')) ?></span></td>
                                         <td class="d-none d-md-table-cell"><?= esc(NomorLombaModel::KATEGORI[$nomor['kategori']] ?? $nomor['kategori']) ?></td>
                                         <td class="d-none d-md-table-cell"><?= $tim !== '' ? esc($tim) : '<span class="text-body-secondary">–</span>' ?></td>
                                         <td class="d-none d-md-table-cell text-end text-nowrap"><?= $biaya !== '' ? $biaya : '<span class="text-body-secondary">–</span>' ?></td>

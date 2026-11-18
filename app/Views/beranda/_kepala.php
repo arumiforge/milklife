@@ -21,6 +21,7 @@
  * @var App\Libraries\BukaTutupPendaftaran                                                                     $bukaTutup
  * @var list<array{kunci: string, label: string, alamat: string|null, utama: bool, keterangan?: string|null}> $tombol
  * @var list<array{id: int, nama: string, nomor_individu: list<mixed>, nomor_beregu: list<mixed>}>             $kelompokUmur
+ * @var bool                                                                                                   $adaHasil     tombol Hasil lomba (F8-04)
  */
 
 use App\Libraries\BukaTutupPendaftaran;
@@ -125,6 +126,9 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                             <a class="<?= $kelas ?>" href="<?= site_url($butir['alamat']) ?>"><?= esc($butir['label']) ?> <i class="bi bi-<?= $ikonTombol[$butir['kunci']] ?? 'arrow-right' ?>" aria-hidden="true"></i></a>
                         <?php endif ?>
                     <?php endforeach ?>
+                    <?php if ($adaHasil ?? false) : ?>
+                        <a class="btn btn-lg btn-garis-biru tombol-hasil" href="<?= site_url('hasil') ?>">Hasil lomba <i class="bi bi-trophy" aria-hidden="true"></i></a>
+                    <?php endif ?>
                 </nav>
             </div>
         </div>

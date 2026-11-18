@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Unggahan;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
@@ -560,7 +561,7 @@ class DataAwal extends BaseCommand
 
         foreach ($ku['individu'] as $nama) {
             foreach (['putra', 'putri'] as $kategori) {
-                $baris[] = ['nama' => $nama, 'jenis' => 'individu', 'kategori' => $kategori, 'urutan' => ++$urutan] + $dasar;
+                $baris[] = ['nama' => $nama, 'jenis' => 'individu', 'kategori' => $kategori, 'jenis_hasil' => JenisHasil::dariNama($nama), 'urutan' => ++$urutan] + $dasar;
             }
         }
 
@@ -570,6 +571,7 @@ class DataAwal extends BaseCommand
                     'nama'         => $nama,
                     'jenis'        => 'beregu',
                     'kategori'     => $k,
+                    'jenis_hasil'  => JenisHasil::dariNama($nama),
                     'urutan'       => ++$urutan,
                     'jumlah_inti'   => $inti,
                     'batas_anggota' => $inti * self::KALI_BATAS_ANGGOTA,
