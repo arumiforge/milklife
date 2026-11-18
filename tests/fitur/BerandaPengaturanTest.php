@@ -169,8 +169,8 @@ final class BerandaPengaturanTest extends UjiHalaman
                 $aktif[] = $this->teks($tautan);
             }
 
-            // Menu samping dan menu bawah.
-            $this->assertSame(['Pengaturan', 'Pengaturan'], $aktif, $alamat);
+            // Hanya menu samping (sidebar di ponsel); Pengaturan tidak di menu bawah (K133).
+            $this->assertSame(['Pengaturan'], $aktif, $alamat);
         }
 
         $xpath = $this->xpathHtml($this->renderDiAlamat('admin/pengaturanlain', 'Tests\Support\Views\contoh_admin'));
