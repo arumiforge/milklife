@@ -17,6 +17,7 @@ use Throwable;
  *   tetap Menunggu dan tidak ada nomor yang dibagikan.
  *   Setelah itu pendaftaran Lunas lain dengan NPSN sama digabung menjadi
  *   satu (`GabungPendaftaran`, K109).
+ *   Bukti bayar yang belum diperiksa ikut ditandai sudah diperiksa (F8-02).
  * - `kembaliMenunggu()`: status kembali ke Menunggu, `waktu_lunas` dikosongkan.
  *   Nomor dada tidak dihapus; saat ditandai Lunas lagi nomornya tetap.
  * - `beriNomorDada()`: beri nomor kepada atlet satu pendaftaran yang belum
@@ -149,11 +150,15 @@ final class StatusPembayaran
                 'diubah_pada' => $sekarang,
             ]));
 
+            // F8-02: bukti bayar yang belum diperiksa dianggap sudah diperiksa saat Lunas.
+            $diperiksa = (new BuktiDiperiksa($this->db))->tandai($pendaftaranId);
+
             // F8-01: dicatat sebelum digabung, supaya catatannya ikut pindah ke pendaftaran tujuan.
             $nomorBaru = array_values($nomor['nomor']);
             sort($nomorBaru);
             (new RiwayatAdmin($this->db))->catat($pendaftaranId, (string) $baris['id_pendaftaran'], RiwayatAdmin::LUNAS, 'Ditandai Lunas' . ($massal ? ' (tindakan massal)' : '') . '. '
-                . ($nomorBaru === [] ? 'Tidak ada nomor atlet (BIB) baru.' : count($nomorBaru) . ' atlet mendapat nomor atlet (BIB) baru: ' . implode(', ', $nomorBaru) . '.'));
+                . ($nomorBaru === [] ? 'Tidak ada nomor atlet (BIB) baru.' : count($nomorBaru) . ' atlet mendapat nomor atlet (BIB) baru: ' . implode(', ', $nomorBaru) . '.')
+                . ($diperiksa > 0 ? ' ' . $diperiksa . ' bukti bayar baru ditandai sudah diperiksa.' : ''));
 
             // K109: pendaftaran Lunas lain dengan NPSN sama digabung menjadi satu.
             $gabung = (new GabungPendaftaran($this->db))->gabungNpsn($baris['npsn'] ?? null);
