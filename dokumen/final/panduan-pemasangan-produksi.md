@@ -2,12 +2,13 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101) |
+| Revisi 5 | Pemeriksaan keamanan Cloudflare Turnstile di kirim pendaftaran, Cek Pendaftaran, dan masuk admin: memasang kunci rahasia dari dasbor Cloudflare, daftar nama host, dan cara mematikan sementara (K122). Bagian yang berubah: 5, 7, 10, 11 |
 | Revisi 4 | Perintah `php spark pembaruan:periksa` untuk memeriksa perintah yang masih perlu dijalankan setelah `git pull` (K115). Bagian yang berubah: 10 |
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, dan 17 November 2026 |
+| Tanggal | 12 November 2026, revisi 14, 16, dan 17 November 2026 (revisi 3, 4, dan 5) |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -106,7 +107,7 @@ Panduan ini ditulis untuk Windows dengan Laragon. Semua perintah diketik di **te
    ```
 
    `app.baseURL` diawali `https://` dan diakhiri garis miring, misalnya `'https://daftar.contoh.sch.id/'`. Setiap kunci cukup ditulis sekali: ubah barisnya, jangan menambah baris kembar.
-3. Pengaturan cadangan (bagian **CADANGAN** di `.env`) diisi di bagian 8 panduan ini.
+3. Pengaturan cadangan (bagian **CADANGAN** di `.env`) diisi di bagian 8 panduan ini. Kunci rahasia Cloudflare Turnstile (bagian **CLOUDFLARE TURNSTILE** di `.env`) diisi di akhir bagian 7, setelah alamat `https://` berjalan.
 4. Simpan salinan `.env` di flashdisk atau tempat aman lain. Tanpa berkas ini, pemulihan di komputer baru harus mengisi ulang semua pengaturan.
 
 ## 6. Mengisi aplikasi
@@ -167,6 +168,36 @@ Langkah di dasbor Cloudflare. Nama menu di dasbor bisa sedikit berbeda dari yang
 8. Di dasbor Cloudflare untuk domain itu → **SSL/TLS** → **Edge Certificates**, nyalakan **Always Use HTTPS**. Aplikasi tidak memasang HSTS sendiri; bila diinginkan, nyalakan **HSTS** di halaman yang sama setelah semuanya berjalan baik.
 
 Mengapa `127.0.0.1` dan bukan alamat jaringan server (misalnya `192.168.1.10`): aplikasi hanya memercayai keterangan "pengunjung memakai HTTPS" dan alamat asli pengunjung bila datang dari komputer itu sendiri. Bila `cloudflared` diarahkan ke alamat jaringan, halaman terus memuat ulang dan pembatasan percobaan masuk menganggap semua pengunjung satu orang. Jangan memasang `cloudflared` di komputer lain.
+
+### Pemeriksaan keamanan Cloudflare Turnstile
+
+Turnstile adalah kotak pemeriksaan "bukan robot" dari Cloudflare (K122). Kotak ini tampil di tiga tempat: sebelum **Kirim Pendaftaran** di langkah 5 pendaftaran, di formulir **Cek Pendaftaran**, dan di halaman **Masuk Admin**. Biasanya kotak ini mencentang sendiri dalam beberapa detik tanpa perlu diklik. Tujuannya menahan program otomatis yang mengirim pendaftaran palsu, menebak NPSN di Cek Pendaftaran, atau menebak kata sandi admin.
+
+Turnstile hanya menyala bila **kunci situs dan kunci rahasia sama-sama terisi** di `.env`. Kunci situs sudah terisi dari `.env.example` (`0x4AAAAAAGFuKUT0k64YcOX5`, publik). Kunci rahasia tidak pernah ditulis di git, di pesan obrolan, atau dikirim ke siapa pun; Anda sendiri yang menyalinnya dari dasbor Cloudflare ke `.env` server. Selama kunci rahasia kosong, web berjalan seperti biasa tanpa pemeriksaan ini.
+
+1. Masuk ke dasbor Cloudflare → menu **Turnstile** (di beberapa tampilan berada di bawah **Application security**). Pilih widget yang kunci situsnya `0x4AAAAAAGFuKUT0k64YcOX5`.
+2. Buka **Settings** (atau **Manage widget**) widget itu:
+   - **Hostname Management**: pastikan alamat pendaftaran, misalnya `daftar.contoh.sch.id`, ada di daftar. Untuk server produksi cukup alamat itu; `localhost` tidak perlu.
+   - **Widget Mode**: biarkan **Managed**.
+3. Salin **Secret Key**. Buka `C:\laragon\www\milklife\.env` dengan Notepad, cari bagian **CLOUDFLARE TURNSTILE**, lalu ubah dua baris ini (tanpa tanda `<` dan `>`):
+
+   ```
+   turnstile.kunciRahasia = <kunci-rahasia-dari-dasbor>
+   turnstile.namaHost = '<alamat-pendaftaran>'
+   ```
+
+   `turnstile.namaHost` berisi nama alamat tanpa `https://` dan tanpa garis miring, misalnya `'daftar.contoh.sch.id'`. Bila lebih dari satu alamat, pisahkan dengan koma. Di server produksi **jangan** tulis `localhost` atau `127.0.0.1`. Bila baris ini dikosongkan, aplikasi memakai nama alamat dari `app.baseURL`.
+4. Simpan `.env`. Tidak perlu memulai ulang apa pun. Buka `https://<alamat-pendaftaran>/admin/masuk` dari ponsel: kotak pemeriksaan keamanan tampil di atas tombol **Masuk** dan tercentang. Masuk dengan akun admin untuk memastikan kunci rahasianya benar. Bila muncul "Pemeriksaan keamanan gagal", periksa lagi kunci rahasia (tanpa spasi tambahan) dan `turnstile.namaHost`.
+
+**Mematikan sementara** (misalnya Cloudflare sedang bermasalah dan kotak pemeriksaan tidak muncul, sehingga pendaftaran atau masuk admin tertahan): buka `.env`, kosongkan nilai kunci rahasia menjadi
+
+```
+turnstile.kunciRahasia =
+```
+
+lalu simpan. Sejak permintaan berikutnya, kotak pemeriksaan hilang dan web berjalan tanpa Turnstile. Simpan kunci rahasia di tempat aman (misalnya bersama salinan `.env` dari bagian 5), lalu isi lagi setelah Cloudflare normal. Kunci rahasia juga bisa disalin ulang kapan saja dari dasbor Cloudflare (langkah 1–3).
+
+Kunci rahasia yang bocor (misalnya tidak sengaja terkirim) diganti dari dasbor yang sama dengan **Rotate Secret Key**, lalu nilai baru diisi di `.env`.
 
 ## 8. Cadangan harian otomatis
 
@@ -301,6 +332,8 @@ Bila ada perbaikan baru di cabang `main` GitHub:
 
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 
+Pembaruan yang membawa Cloudflare Turnstile (17 November 2026, K122) tidak mengubah `.env` yang sudah ada, jadi Turnstile masih mati sampai kuncinya ditambahkan. Salin bagian **CLOUDFLARE TURNSTILE** dari `.env.example` ke `.env` server (tiga baris `turnstile.…`), lalu ikuti "Pemeriksaan keamanan Cloudflare Turnstile" di akhir bagian 7.
+
 Catatan:
 
 - `git pull` tidak menyentuh `.env`, folder unggahan, dan berkas `.min`; ketiganya tidak ada di git.
@@ -314,11 +347,12 @@ Server dan keamanan:
 - [ ] Laragon menyala sendiri setelah komputer dinyalakan ulang dan Anda masuk Windows; Nginx dan MySQL berjalan.
 - [ ] Komputer tidak tidur (Sleep: Never), dan jam aktif Windows Update diatur supaya tidak memulai ulang komputer di jam sibuk.
 - [ ] Sandi `root` MySQL sudah dibuat, dan aplikasi memakai pengguna `milklife`.
-- [ ] `.env`: `CI_ENVIRONMENT = production`, `app.baseURL` berawalan `https://`, `cookie.secure = true`, `aplikasi.minify = true`, dan salinannya tersimpan aman.
+- [ ] `.env`: `CI_ENVIRONMENT = production`, `app.baseURL` berawalan `https://`, `cookie.secure = true`, `aplikasi.minify = true`, `turnstile.kunciRahasia` terisi, dan salinannya tersimpan aman.
 - [ ] `https://<alamat-pendaftaran>` terbuka dengan ikon gembok dari ponsel memakai data seluler (bukan Wi-Fi sekolah).
 - [ ] `http://<alamat-pendaftaran>` (tanpa s) dialihkan ke `https://`.
 - [ ] `https://<alamat-pendaftaran>/halaman-tidak-ada` menampilkan halaman "tidak ditemukan" yang ramah, tanpa tulisan teknis.
 - [ ] Hanya akun admin yang diperlukan yang ada, masing-masing dengan kata sandi kuat.
+- [ ] Turnstile menyala: kotak pemeriksaan keamanan tampil dan tercentang di Masuk Admin, Cek Pendaftaran, dan langkah 5 pendaftaran; `turnstile.namaHost` hanya berisi alamat pendaftaran (tanpa `localhost`); kunci rahasia tersimpan aman di luar komputer server.
 
 Isi:
 

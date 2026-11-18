@@ -57,16 +57,18 @@ class ContentSecurityPolicy extends BaseConfig
     /**
      * Lists allowed scripts' URLs.
      *
+     * Cloudflare Turnstile (K122) memuat skripnya dari challenges.cloudflare.com.
+     *
      * @var list<string>|string
      */
-    public $scriptSrc = 'self';
+    public $scriptSrc = ['self', 'https://challenges.cloudflare.com'];
 
     /**
      * Specifies valid sources for JavaScript <script> elements.
      *
      * @var list<string>|string
      */
-    public array|string $scriptSrcElem = 'self';
+    public array|string $scriptSrcElem = ['self', 'https://challenges.cloudflare.com'];
 
     /**
      * Specifies valid sources for JavaScript inline event
@@ -157,9 +159,11 @@ class ContentSecurityPolicy extends BaseConfig
      * The frame-src directive restricts the URLs which may
      * be loaded into nested browsing contexts.
      *
+     * Kotak pemeriksaan Cloudflare Turnstile (K122) berupa iframe dari challenges.cloudflare.com.
+     *
      * @var list<string>|string|null
      */
-    public $frameSrc;
+    public $frameSrc = ['self', 'https://challenges.cloudflare.com'];
 
     /**
      * Restricts the origins allowed to deliver video and audio.

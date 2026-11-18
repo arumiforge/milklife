@@ -7,6 +7,8 @@ use CodeIgniter\Config\Services;
 use CodeIgniter\Security\Exceptions\SecurityException;
 use CodeIgniter\Test\FeatureTestTrait;
 use CodeIgniter\Test\TestResponse;
+use Tests\Support\TiruanSiteverify;
+use Tests\Support\TurnstileUji;
 use Tests\Support\UjiBasisData;
 use Tests\Support\UjiHalaman;
 
@@ -22,6 +24,7 @@ use Tests\Support\UjiHalaman;
 final class MasukAdminTest extends UjiBasisData
 {
     use FeatureTestTrait;
+    use TurnstileUji;
 
     private const NAMA_PENGGUNA = 'admin.uji';
     private const SANDI_UJI     = 'kata-sandi-uji-1';
@@ -299,5 +302,48 @@ final class MasukAdminTest extends UjiBasisData
         }
 
         $this->fail('Formulir masuk dengan token CSRF tidak ditemukan.');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->matikanTurnstile();
+        parent::tearDown();
+    }
+
+    public function testTurnstileMatiTanpaKunci(): void
+    {
+        $this->get('admin/masuk')->assertDontSee('cf-turnstile');
+    }
+
+    public function testTurnstileWajibSaatMasuk(): void
+    {
+        $tiruan = $this->nyalakanTurnstile(TiruanSiteverify::RAHASIA_LOLOS, 'masuk_admin');
+
+        $halaman = $this->get('admin/masuk');
+        $halaman->assertSee('class="cf-turnstile mb-3" data-sitekey="' . TiruanSiteverify::SITUS_LOLOS . '" data-action="masuk_admin"');
+        $halaman->assertSee('<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>');
+
+        // Tanpa token: 403, sandi tidak diperiksa, tidak masuk.
+        $tanpa = $this->kirimMasuk(['nama_pengguna' => self::NAMA_PENGGUNA, 'sandi' => self::SANDI_UJI]);
+        $tanpa->assertStatus(403);
+        $tanpa->assertSee('Pemeriksaan keamanan belum selesai');
+        $tanpa->assertSessionMissing('admin_id');
+        $this->assertSame([], $tiruan->kiriman);
+
+        $dengan = $this->kirimMasuk(['nama_pengguna' => self::NAMA_PENGGUNA, 'sandi' => self::SANDI_UJI, 'cf-turnstile-response' => TiruanSiteverify::TOKEN]);
+        $dengan->assertRedirectTo(site_url('admin/dasbor'));
+        $dengan->assertSessionHas('admin_id', $this->idAdmin);
+        $this->assertSame(TiruanSiteverify::TOKEN, $tiruan->kiriman[0]['response']);
+    }
+
+    public function testTurnstileGagalSaatMasuk(): void
+    {
+        $this->nyalakanTurnstile(TiruanSiteverify::RAHASIA_GAGAL, 'masuk_admin');
+
+        $hasil = $this->kirimMasuk(['nama_pengguna' => self::NAMA_PENGGUNA, 'sandi' => self::SANDI_UJI, 'cf-turnstile-response' => TiruanSiteverify::TOKEN]);
+
+        $hasil->assertStatus(403);
+        $hasil->assertSee('Pemeriksaan keamanan gagal');
+        $hasil->assertSessionMissing('admin_id');
     }
 }

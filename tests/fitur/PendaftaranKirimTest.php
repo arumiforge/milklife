@@ -6,6 +6,8 @@ use CodeIgniter\Security\Exceptions\SecurityException;
 use CodeIgniter\Test\FeatureTestTrait;
 use CodeIgniter\Test\TestResponse;
 use Tests\Support\PendaftaranContoh;
+use Tests\Support\TiruanSiteverify;
+use Tests\Support\TurnstileUji;
 use Tests\Support\UjiBasisData;
 
 /**
@@ -19,6 +21,7 @@ final class PendaftaranKirimTest extends UjiBasisData
 {
     use FeatureTestTrait;
     use PendaftaranContoh;
+    use TurnstileUji;
 
     /**
      * @var array<string, int>
@@ -36,6 +39,7 @@ final class PendaftaranKirimTest extends UjiBasisData
 
     protected function tearDown(): void
     {
+        $this->matikanTurnstile();
         $this->hapusFolderFotoSementara();
         parent::tearDown();
     }
@@ -379,5 +383,72 @@ final class PendaftaranKirimTest extends UjiBasisData
         $this->assertSame(site_url('pendaftaran/periksa'), $data['alamat']['periksa']);
         $this->assertSame(site_url('pendaftaran/simpan'), $data['alamat']['simpan']);
         $this->assertSame(['bank' => 'Bank Karangan', 'nomor_rekening' => '1234567890', 'pemilik_rekening' => 'Panitia Karangan', 'logo_bank' => null], $data['pembayaran']);
+    }
+
+    public function testTurnstileMatiTanpaKunci(): void
+    {
+        // .env uji tanpa kunci rahasia: tidak ada widget dan kiriman tanpa token tersimpan.
+        $this->assertNull(self::dataWizard($this->get('pendaftaran')->getBody())['turnstile']);
+        $this->kirimJson('pendaftaran/simpan', $this->kirimanSah())->assertStatus(201);
+    }
+
+    public function testTurnstileWajibSaatKirimPendaftaran(): void
+    {
+        $tiruan = $this->nyalakanTurnstile(TiruanSiteverify::RAHASIA_LOLOS, 'kirim_pendaftaran');
+
+        $halaman = $this->get('pendaftaran')->getBody();
+        $this->assertSame(['kunci_situs' => TiruanSiteverify::SITUS_LOLOS, 'aksi' => 'kirim_pendaftaran', 'skrip' => 'https://challenges.cloudflare.com/turnstile/v0/api.js'], self::dataWizard($halaman)['turnstile']);
+        $this->assertStringContainsString('<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>', $halaman);
+        $this->assertStringContainsString('id="turnstile-kirim" class="cf-turnstile" data-jalur="turnstile" data-sitekey="' . TiruanSiteverify::SITUS_LOLOS . '" data-action="kirim_pendaftaran"', $halaman);
+
+        // Tanpa token: 403, tidak ada yang tersimpan, Cloudflare tidak dihubungi.
+        $tanpa = $this->kirimJson('pendaftaran/simpan', $this->kirimanSah());
+        $tanpa->assertStatus(403);
+        $this->assertSame('pemeriksaan_keamanan', self::json($tanpa)['status']);
+        $this->assertStringContainsString('Pemeriksaan keamanan belum selesai', self::json($tanpa)['pesan']);
+        $this->assertSame([], $tiruan->kiriman);
+
+        // Periksa (langkah 4) tidak meminta token.
+        $this->kirimJson('pendaftaran/periksa', $this->kirimanSah())->assertStatus(200);
+        $this->assertSame(0, $this->db->table('pendaftaran')->countAllResults());
+
+        // Dengan token di badan JSON: tersimpan.
+        $kiriman = ['cf-turnstile-response' => TiruanSiteverify::TOKEN, 'kunci_kirim' => str_repeat('7a', 16)] + $this->kirimanSah();
+        $this->kirimJson('pendaftaran/simpan', $kiriman)->assertStatus(201);
+        $this->assertSame(TiruanSiteverify::TOKEN, $tiruan->kiriman[0]['response']);
+        $this->assertSame('0.0.0.0', $tiruan->kiriman[0]['remoteip']);
+
+        // Kirim ulang B2 dengan token baru setelah reset widget: pendaftaran yang sama.
+        $ulang = $this->kirimJson('pendaftaran/simpan', $kiriman);
+        $ulang->assertStatus(201);
+        $this->assertTrue(self::json($ulang)['ulang']);
+        $this->assertSame(1, $this->db->table('pendaftaran')->countAllResults());
+    }
+
+    public function testTurnstileGagalMenolakKiriman(): void
+    {
+        $this->nyalakanTurnstile(TiruanSiteverify::RAHASIA_GAGAL, 'kirim_pendaftaran');
+
+        $hasil = $this->kirimJson('pendaftaran/simpan', ['cf-turnstile-response' => TiruanSiteverify::TOKEN] + $this->kirimanSah());
+
+        $hasil->assertStatus(403);
+        $this->assertStringContainsString('lalu coba lagi', self::json($hasil)['pesan']);
+        $this->assertSame(0, $this->db->table('pendaftaran')->countAllResults());
+
+        // Token dari tempat lain (aksi berbeda) juga ditolak.
+        $this->matikanTurnstile();
+        $this->nyalakanTurnstile(TiruanSiteverify::RAHASIA_LOLOS, 'masuk_admin');
+        $this->kirimJson('pendaftaran/simpan', ['cf-turnstile-response' => TiruanSiteverify::TOKEN] + $this->kirimanSah())->assertStatus(403);
+        $this->assertSame(0, $this->db->table('pendaftaran')->countAllResults());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function dataWizard(string $html): array
+    {
+        preg_match('#<script type="application/json" id="data-pendaftaran">(.*?)</script>#s', $html, $cocok);
+
+        return json_decode($cocok[1] ?? 'null', true, 512, JSON_THROW_ON_ERROR);
     }
 }

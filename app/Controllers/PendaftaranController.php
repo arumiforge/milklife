@@ -10,6 +10,7 @@ use App\Libraries\Pendaftaran\Kabupaten;
 use App\Libraries\Pendaftaran\PemeriksaPendaftaran;
 use App\Libraries\Pendaftaran\PesanKonfirmasi;
 use App\Libraries\Pendaftaran\SimpanPendaftaran;
+use App\Libraries\Turnstile;
 use App\Libraries\Unggahan;
 use App\Models\SekolahModel;
 use CodeIgniter\I18n\Time;
@@ -30,6 +31,9 @@ use CodeIgniter\HTTP\ResponseInterface;
  * Kiriman `periksa` dan `simpan` berupa JSON (bentuknya di komentar
  * `PemeriksaPendaftaran`) dengan token CSRF di kepala `X-CSRF-TOKEN`. Keduanya
  * ditolak bila pendaftaran tidak sedang terbuka (6.1).
+ *
+ * `simpan` juga meminta token Cloudflare Turnstile (K122) di badan JSON
+ * (`cf-turnstile-response`) bila Turnstile aktif; gagal = 403.
  *
  * Setiap titik akhir dibatasi lajunya per alamat IP pengunjung
  * (`$this->request->getIPAddress()`, sudah membaca `CF-Connecting-IP`, K31)
@@ -82,6 +86,8 @@ class PendaftaranController extends BaseController
                     'cek'     => site_url('cek-pendaftaran'),
                 ],
                 'pembayaran' => self::rekening(),
+                // Pemeriksaan keamanan sebelum Kirim Pendaftaran (K122); null bila mati.
+                'turnstile'  => (new Turnstile())->untukHalaman(Turnstile::AKSI_PENDAFTARAN),
             ];
         }
 
@@ -211,6 +217,7 @@ class PendaftaranController extends BaseController
      *          'rincian' => [...], 'wa' => 'https://wa.me/…' atau null, 'bukti' => 'http://…/bukti/<kode acak>/MAC2A0000126',
      *          'ulang' => false]
      *     422, 400, 409, 429 seperti `periksa()`.
+     *     403 ['status' => 'pemeriksaan_keamanan', 'pesan' => '…']  // token Turnstile (K122)
      *
      * Kiriman ulang dengan `kunci_kirim` yang sudah tersimpan (K118, B2)
      * mendapat jawaban 201 yang sama untuk pendaftaran itu (`ulang` = true)
@@ -226,6 +233,17 @@ class PendaftaranController extends BaseController
         }
 
         $kiriman = $this->kiriman();
+
+        if ($kiriman !== null) {
+            $galat = (new Turnstile())->periksa($kiriman[Turnstile::NAMA_ISIAN] ?? null, Turnstile::AKSI_PENDAFTARAN, $this->request->getIPAddress());
+
+            if ($galat !== null) {
+                return $this->json(403, ['status' => 'pemeriksaan_keamanan', 'pesan' => $galat]);
+            }
+
+            unset($kiriman[Turnstile::NAMA_ISIAN]);
+        }
+
         $simpan  = new SimpanPendaftaran();
         // Kirim ulang yang sudah tersimpan dijawab walaupun pendaftaran baru saja ditutup.
         $hasil = $kiriman !== null ? $simpan->sudahTersimpan($kiriman) : null;

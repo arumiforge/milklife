@@ -15,7 +15,9 @@
  * @var string|null              $info  keterangan ID lama yang sudah digabung (K109)
  * @var string|null              $waTanya alamat WA tanya admin, untuk atlet yang ditolak (K116)
  * @var list<array<string, mixed>> $hasil lihat App\Libraries\DataPendaftaran
+ * @var array{kunci_situs: string, aksi: string, skrip: string}|null $turnstile pemeriksaan keamanan (K122); null bila mati atau sudah lolos
  */
+$turnstile ??= null;
 $sekolah = $hasil[0] ?? null;
 ?>
 <?= $this->extend('tata_letak/publik') ?>
@@ -49,6 +51,9 @@ $sekolah = $hasil[0] ?? null;
                     <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Cari</button>
                 </div>
                 <div class="form-text" id="kode-keterangan">NPSN menampilkan semua pendaftaran sekolah itu. ID pendaftaran (contoh MAC2A0000126) menampilkan satu pendaftaran.</div>
+                <?php if ($turnstile !== null) : ?>
+                    <div class="cf-turnstile mt-3" data-sitekey="<?= esc($turnstile['kunci_situs'], 'attr') ?>" data-action="<?= esc($turnstile['aksi'], 'attr') ?>" data-language="id"></div>
+                <?php endif ?>
                 <?php if ($galat !== null) : ?>
                     <div class="alert alert-warning mt-3 mb-0" id="kode-galat" role="alert"><?= esc($galat) ?></div>
                 <?php endif ?>
@@ -106,3 +111,9 @@ $sekolah = $hasil[0] ?? null;
     </div>
 </div>
 <?= $this->endSection() ?>
+
+<?php if ($turnstile !== null) : ?>
+    <?= $this->section('skrip') ?>
+    <script src="<?= esc($turnstile['skrip']) ?>" async defer></script>
+    <?= $this->endSection() ?>
+<?php endif ?>

@@ -82,7 +82,38 @@ final class PerkecilHtmlHalamanTest extends UjiBasisData
 
         $excelKecil = $this->isiUnduhan($this->bukaSebagaiAdmin('admin/rekap/sekolah/excel'));
         $this->assertStringStartsWith('PK', $excelKecil);
-        $this->assertSame(strlen($excel), strlen($excelKecil));
+        $this->assertSame(self::isiXlsx($excel), self::isiXlsx($excelKecil));
+    }
+
+    /**
+     * Isi berkas di dalam xlsx, tanpa `docProps/core.xml` yang memuat waktu
+     * pembuatan sampai detik (dua unduhan yang melewati batas detik bisa
+     * berbeda ukuran walau isinya sama).
+     *
+     * @return array<string, string>
+     */
+    private static function isiXlsx(string $xlsx): array
+    {
+        $jalur = (string) tempnam(sys_get_temp_dir(), 'xlsx');
+        file_put_contents($jalur, $xlsx);
+        $zip = new \ZipArchive();
+        self::assertTrue($zip->open($jalur) === true);
+
+        $isi = [];
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $nama = (string) $zip->getNameIndex($i);
+
+            if ($nama !== 'docProps/core.xml') {
+                $isi[$nama] = (string) $zip->getFromIndex($i);
+            }
+        }
+
+        $zip->close();
+        unlink($jalur);
+        ksort($isi);
+
+        return $isi;
     }
 
     private function buka(string $alamat): TestResponse
