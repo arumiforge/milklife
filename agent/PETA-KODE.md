@@ -8,11 +8,17 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 | Fitur | Rute | Pengendali | Pustaka | View | JS | Uji |
 |---|---|---|---|---|---|---|
 | Halaman depan | `/` | `BerandaController` | `IsiHalamanDepan`, `BukaTutupPendaftaran` | `beranda.php`, `beranda/` | `kemajuan`, `konfirmasi` | f `HalamanDepan*`, u `BukaTutupPendaftaranTest` |
-| Wizard pendaftaran | `pendaftaran`, `pendaftaran/periksa`, `…/simpan` | `PendaftaranController` | `Pendaftaran/PemeriksaPendaftaran`, `…/SimpanPendaftaran` | `pendaftaran.php`, `pendaftaran/` | `pendaftaran` | `Pendaftaran*Test` (u/b/f) |
-| Cari NPSN/sekolah | `pendaftaran/sekolah` | `PendaftaranController::sekolah` | `Pendaftaran/Kabupaten`, `Jenjang` | `pendaftaran/_langkah_sekolah.php` | `pendaftaran` | f `PendaftaranSekolahTest` |
+| Wizard pendaftaran | `pendaftaran`, `pendaftaran/periksa`, `…/simpan` | `PendaftaranController` | `Pendaftaran/PemeriksaPendaftaran` (aturan di `Pendaftaran/Pemeriksa/*`), `…/SimpanPendaftaran` | `pendaftaran.php`, `pendaftaran/` | `pendaftaran`, `pendaftaran/*` | `Pendaftaran*Test` (u/b/f) |
+| Cari NPSN/sekolah | `pendaftaran/sekolah` | `PendaftaranController::sekolah` | `Pendaftaran/Kabupaten`, `Jenjang` | `pendaftaran/_langkah_sekolah.php` | `pendaftaran/sekolah` | f `PendaftaranSekolahTest` |
 | Cek pendaftaran | `cek-pendaftaran` | `CekPendaftaranController` | `DataPendaftaran` | `cek_pendaftaran.php`, `cek_pendaftaran/` | - | f `CekPendaftaranTest` |
 | Bukti PDF + unggah bayar | `bukti/<24 heksa>/<id>`, `…/bukti-bayar` | `BuktiController` | `BuktiPendaftaran`, `Panel/BerkasBuktiBayar` | `bukti/` | - | f `BuktiPendaftaranTest`, `UnggahBuktiBayarOfficialTest` |
 | Unduhan | `unduhan` | `UnduhanController` | `IsiHalamanDepan` | `unduhan.php`, `beranda/_daftar_unduhan.php` | - | f `HalamanUnduhanTest` |
+
+Pecahan berkas besar (F7-30), pintu masuk tetap sama:
+
+- Wizard JS: bagian di `public/aset/js/pendaftaran/` (`dasar`, `draf`, `langkah`, `sekolah`, `ofisial`, `atlet`, `regu`, `atlet-formulir`, `atlet-daftar`, `biaya`, `turnstile`, `pembayaran`), lalu `pendaftaran.js` yang menjalankan wizard. Urutan muat di `app/Views/pendaftaran.php`; keadaan dan fungsi antarbagian di `window.Pendaftaran` (`dasar.js`). Tanpa alat bangun; `aset:minify` memperkecil subfolder juga.
+- `Pendaftaran/Pemeriksa/`: `PeriksaSekolah`, `PeriksaPenanggungJawab`, `PeriksaAtlet` (+ `PeriksaNisn`, `PeriksaKelompokUmur`, `PeriksaNomor`, `PeriksaRegu`), `PeriksaTim`, `PeriksaKuota`, `SusunHasil`; bersama `IndukPeriksa`, `DaftarGalat`, `MasukanPeriksa`.
+- `Panel/Ubah/`: `DataTersimpan`, `IsianUbah`, `RencanaUbah`, `BiayaUbah` (K68), `StatusUbah` (K32), `TulisUbah` (transaksi, K59, riwayat F8-01, K109), `MasukanUbah`.
 
 ## Admin (`admin/…`, filter `admin`)
 
@@ -22,7 +28,7 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 | Dasbor/pengecekan | `dasbor`, `pengecekan` | `Admin/DasborController`, `…/PengecekanController` | `Panel/RingkasanDasbor`, `DataKelengkapan` | `admin/dasbor.php`, `admin/pengecekan.php` | `dasbor` | b `RingkasanDasborTest`, f `DasborKelengkapanTest` |
 | Pendaftaran: daftar, rincian, ekspor, massal | `pendaftaran[/data\|/excel\|/ekspor\|/massal\|/(:num)]` | `Admin/PendaftaranController` | `Panel/DataPanelPendaftaran`, `Panel/TabelSisiServer`, `Panel/PaketPendaftaran`, `Panel/AsalRincian` | `admin/pendaftaran/index.php`, `rincian.php` | `admin-pendaftaran`, `tabel-admin` | f `PanelPendaftaranHalamanTest`, `PanelPaketPendaftaranTest` |
 | Lunas/menunggu, hapus | `…/(:num)/lunas\|menunggu\|hapus` | idem | `Panel/StatusPembayaran`, `Panel/HapusPendaftaran` | - | - | b `PanelPendaftaranStatusTest`, `PanelPendaftaranHapusTest` |
-| Ubah | `…/(:num)/ubah`, POST `…/(:num)` | idem `ubah`, `perbarui` | `Panel/UbahPendaftaran` | `admin/pendaftaran/ubah.php` | `admin-ubah-pendaftaran`, `pendaftaran` | b/f `PanelUbahPendaftaran*Test` |
+| Ubah | `…/(:num)/ubah`, POST `…/(:num)` | idem `ubah`, `perbarui` | `Panel/UbahPendaftaran` (aturan di `Panel/Ubah/*`) | `admin/pendaftaran/ubah.php` | `admin-ubah-pendaftaran`, `pendaftaran` | b/f `PanelUbahPendaftaran*Test` |
 | Bukti bayar | `…/(:num)/bukti-bayar[/(:num)[/unduh\|/hapus]]` | `Admin/BuktiBayarController` | `Panel/BerkasBuktiBayar` | `admin/pendaftaran/_bukti_bayar.php` | - | `PanelBuktiBayar*Test` |
 | Bukti bayar baru (F8-02) | POST `…/(:num)/bukti-bayar/diperiksa`, saringan `pendaftaran?bukti=baru` | `Admin/BuktiBayarController::diperiksa` | `Panel/BuktiDiperiksa` (dipanggil `StatusPembayaran`), `Panel/DataPanelPendaftaran`, `Panel/RingkasanDasbor` | `admin/pendaftaran/_bukti_bayar.php`, `index.php`, `admin/dasbor.php` | `admin-pendaftaran` | f `PanelBuktiBaruTest` |
 | Tolak atlet (K116) | `…/(:num)/tolak-atlet` | `Admin/TolakAtletController` | `Panel/TolakAtlet` | `admin/pendaftaran/tolak_atlet.php` | - | b/f `PanelTolakAtlet*Test` |
@@ -43,9 +49,9 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 ## Invarian kritis
 
 - NISN, `nomor_dada` unik di DB (`Migrations/…BuatTabelAtlet.php`); `sekolah.npsn` dan `pendaftaran.kode_bukti` juga unik. Bentrok NISN → galat NISN biasa.
-- Simpan: `GET_LOCK('milklife-pendaftaran-<npsn>')`, periksa ulang, satu transaksi; gagal → rollback + hapus berkas (`Pendaftaran/SimpanPendaftaran`). Ubah/tolak/lunas: `GET_LOCK` + `SELECT … FOR UPDATE` (`Panel/UbahPendaftaran`, `TolakAtlet`, `StatusPembayaran`).
+- Simpan: `GET_LOCK('milklife-pendaftaran-<npsn>')`, periksa ulang, satu transaksi; gagal → rollback + hapus berkas (`Pendaftaran/SimpanPendaftaran`). Ubah/tolak/lunas: `GET_LOCK` + `SELECT … FOR UPDATE` (`Panel/UbahPendaftaran` dan `Panel/Ubah/TulisUbah`, `TolakAtlet`, `StatusPembayaran`).
 - Nomor dada dibagi saat Lunas, dalam transaksi; `awalan_nomor_dada` dikunci `FOR UPDATE`; `nomor_terakhir` hanya naik; awalan penuh → penandaan batal (`Panel/StatusPembayaran`).
-- Uang = bilangan bulat rupiah; tim susulan biaya 0 (`Pendaftaran/BiayaPendaftaran`). Biaya dihitung ulang di server dari data DB (`PemeriksaPendaftaran::susun`).
+- Uang = bilangan bulat rupiah; tim susulan biaya 0 (`Pendaftaran/BiayaPendaftaran`). Biaya dihitung ulang di server dari data DB (`Pendaftaran/Pemeriksa/SusunHasil`).
 - Bukti transfer wajib (K90). Foto penanggung jawab dan bukti bayar di `WRITEPATH/unggahan/…`, di luar `public/` (`Pendaftaran/FotoPenanggungJawab`, `Panel/BerkasBuktiBayar`).
 - `CF-Connecting-IP` hanya dipercaya dari 127.0.0.1/::1 (tunnel) (`Config/App.php` `$proxyIPs`).
 - Buka/tutup dari pengaturan, kelas murni (`BukaTutupPendaftaran`), dicek pengendali sebelum simpan.
