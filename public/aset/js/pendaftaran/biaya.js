@@ -210,37 +210,39 @@
     };
 
     function tabel(judul, kolom, baris, subtotalLabel, subtotal) {
-        var wadah = buat('div', 'kartu-isian tabel-biaya');
-        wadah.appendChild(buat('h3', 'h6', judul));
-        var gulir = buat('div', 'table-responsive');
-        var t = buat('table', 'table table-sm align-middle mb-0 tabel-tumpuk');
-        var kepala = buat('thead');
+        var wadah = buat('div', W.KELAS.kartu + ' tabel-biaya');
+        wadah.appendChild(buat('h3', 'mb-2 font-bold text-primary-900', judul));
+        var gulir = buat('div', 'overflow-x-auto');
+        // Di ponsel tiap baris menjadi kartu kecil berlabel kolom (`data-label`).
+        var t = buat('table', 'tabel-tumpuk w-full text-left text-sm text-gray-800 [&_td]:px-2 [&_td]:py-1.5 [&_th]:px-2 [&_th]:py-1.5 max-sm:[&_td]:px-0 max-sm:[&_th]:px-0');
+        var kepala = buat('thead', 'border-b border-gray-200 text-xs uppercase text-gray-500 max-sm:sr-only');
         var tr = buat('tr');
         kolom.forEach(function (k, i) {
-            var th = buat('th', i === kolom.length - 1 ? 'text-end' : null, k);
+            var th = buat('th', 'font-semibold' + (i === kolom.length - 1 ? ' text-end' : ''), k);
             th.scope = 'col';
             tr.appendChild(th);
         });
         kepala.appendChild(tr);
         t.appendChild(kepala);
-        var badan = buat('tbody');
+        var badan = buat('tbody', 'divide-y divide-gray-100');
         baris.forEach(function (sel) {
-            var r = buat('tr');
+            var r = buat('tr', 'max-sm:block max-sm:py-2');
             sel.forEach(function (isi, i) {
-                var td = buat('td', i === sel.length - 1 ? 'text-end text-nowrap' : null, isi);
+                var td = buat('td', 'max-sm:flex max-sm:justify-between max-sm:gap-4 max-sm:py-0.5! max-sm:text-end max-sm:before:flex-none max-sm:before:text-start max-sm:before:text-gray-500 max-sm:before:content-[attr(data-label)]'
+                    + (i === sel.length - 1 ? ' text-end sm:whitespace-nowrap' : ''), isi);
                 td.setAttribute('data-label', kolom[i]);
                 r.appendChild(td);
             });
             badan.appendChild(r);
         });
         t.appendChild(badan);
-        var kaki = buat('tfoot');
-        var rk = buat('tr');
-        var label = buat('th', null, subtotalLabel);
+        var kaki = buat('tfoot', 'border-t border-gray-200');
+        var rk = buat('tr', 'max-sm:flex max-sm:justify-between max-sm:gap-4');
+        var label = buat('th', 'font-semibold', subtotalLabel);
         label.colSpan = kolom.length - 1;
         label.scope = 'row';
         rk.appendChild(label);
-        rk.appendChild(buat('td', 'text-end text-nowrap fw-bold', rupiah(subtotal)));
+        rk.appendChild(buat('td', 'whitespace-nowrap text-end font-bold', rupiah(subtotal)));
         kaki.appendChild(rk);
         t.appendChild(kaki);
         gulir.appendChild(t);
@@ -253,17 +255,17 @@
         wadah.textContent = '';
 
         if (!W.rincian) {
-            wadah.appendChild(buat('p', 'text-body-secondary', 'Menghitung biaya…'));
+            wadah.appendChild(buat('p', 'text-gray-500', 'Menghitung biaya…'));
             return;
         }
 
         var s = W.rincian.sekolah;
-        var sekolah = buat('div', 'kartu-isian ringkasan-sekolah');
-        sekolah.appendChild(buat('strong', 'd-block', s.nama));
+        var sekolah = buat('div', W.KELAS.kartu + ' ringkasan-sekolah');
+        sekolah.appendChild(buat('strong', 'block text-lg text-primary-900', s.nama));
         if (s.nama_resmi) {
-            sekolah.appendChild(buat('span', 'd-block small text-body-secondary', 'Nama usulan, menunggu persetujuan panitia. Nama di data sekolah: ' + s.nama_resmi + '.'));
+            sekolah.appendChild(buat('span', 'block text-sm text-gray-500', 'Nama usulan, menunggu persetujuan panitia. Nama di data sekolah: ' + s.nama_resmi + '.'));
         }
-        sekolah.appendChild(buat('span', 'small text-body-secondary', [s.npsn ? 'NPSN ' + s.npsn : 'Tanpa NPSN', s.jenjang_label, s.kabupaten].filter(Boolean).join(' · ')
+        sekolah.appendChild(buat('span', 'block text-sm text-gray-500', [s.npsn ? 'NPSN ' + s.npsn : 'Tanpa NPSN', s.jenjang_label, s.kabupaten].filter(Boolean).join(' · ')
             + ' · ' + W.draf.penanggungJawab.length + ' ofisial · ' + W.draf.atlet.length + ' atlet'));
         wadah.appendChild(sekolah);
 
@@ -283,10 +285,11 @@
                 'Subtotal beregu', W.rincian.subtotal_beregu));
         }
 
-        var total = buat('div', 'kartu-isian total-biaya');
-        var dl = buat('dl', 'mb-0');
+        var total = buat('div', 'kartu-isian total-biaya mb-4 rounded-2xl border border-langit-300 bg-primary-100 p-4 sm:p-7');
+        var dl = buat('dl');
         [['Subtotal individu', W.rincian.subtotal_individu], ['Subtotal beregu', W.rincian.subtotal_beregu], ['Total pembayaran', W.rincian.total]].forEach(function (b, i) {
-            var baris = buat('div', i === 2 ? 'total-baris total-akhir' : 'total-baris');
+            var baris = buat('div', 'total-baris flex justify-between gap-4 py-1 [&_dd]:whitespace-nowrap [&_dd]:font-semibold'
+                + (i === 2 ? ' total-akhir mt-1.5 border-t border-langit-300 pt-2.5 text-lg text-primary-900 [&_dd]:font-extrabold! [&_dt]:font-extrabold' : ''));
             baris.appendChild(buat('dt', null, b[0]));
             baris.appendChild(buat('dd', null, rupiah(b[1])));
             dl.appendChild(baris);

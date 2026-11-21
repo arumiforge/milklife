@@ -27,7 +27,9 @@
  *   `utama` (tombol oranye, untuk tindakan yang tidak menghapus).
  *
  * Tanpa JavaScript formulir tetap terkirim tanpa konfirmasi; server tetap
- * memeriksa semua aturan. Bila Bootstrap tidak termuat, `window.confirm` dipakai.
+ * memeriksa semua aturan. Di halaman bertampilan baru (tanpa Bootstrap, F9-05)
+ * jendelanya memakai modal Flowbite (`window.Modal`); bila keduanya tidak
+ * termuat, `window.confirm` dipakai.
  *
  * Skrip yang sama memeriksa ukuran berkas sebelum formulir dikirim. Kotak
  * unggah dengan `data-ukuran-maksimal="<bita>"` menolak berkas yang lebih
@@ -94,12 +96,95 @@
         return new window.bootstrap.Modal(elemen);
     }
 
+    // ---------- Modal Flowbite (halaman Tailwind, F9-05) ----------
+
+    var jendelaTw = null;
+
+    function buatJendelaTw() {
+        var elemen = document.createElement('div');
+        elemen.id = 'jendela-konfirmasi';
+        elemen.tabIndex = -1;
+        elemen.className = 'fixed inset-x-0 top-0 z-50 hidden h-full max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden p-4';
+        elemen.setAttribute('role', 'dialog');
+        elemen.setAttribute('aria-modal', 'true');
+        elemen.setAttribute('aria-labelledby', 'jendela-konfirmasi-judul');
+        elemen.setAttribute('aria-describedby', 'jendela-konfirmasi-isi');
+        elemen.setAttribute('aria-hidden', 'true');
+        elemen.innerHTML =
+            '<div class="relative max-h-full w-full max-w-md">' +
+            '<div class="relative rounded-2xl bg-white shadow-angkat">' +
+            '<div class="border-b border-gray-200 p-4 sm:px-6"><h2 class="text-lg font-bold text-gray-900" id="jendela-konfirmasi-judul"></h2></div>' +
+            '<div class="p-4 text-gray-700 sm:p-6"><p id="jendela-konfirmasi-isi"></p></div>' +
+            '<div class="flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 p-4 sm:px-6">' +
+            '<button type="button" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100" data-konfirmasi-batal>Batal</button>' +
+            '<button type="button" data-konfirmasi-setuju></button>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        document.body.appendChild(elemen);
+
+        var modal = new window.Modal(elemen, {
+            backdrop: 'dynamic',
+            closable: true,
+            onHide: function () {
+                var tindakan = tindakanMenunggu;
+
+                tindakanMenunggu = null;
+
+                if (tindakan) {
+                    tindakan(false);
+                }
+            }
+        }, { id: 'jendela-konfirmasi', override: true });
+
+        elemen.querySelector('[data-konfirmasi-setuju]').addEventListener('click', function () {
+            var tindakan = tindakanMenunggu;
+
+            tindakanMenunggu = null;
+            modal.hide();
+
+            if (tindakan) {
+                tindakan(true);
+            }
+        });
+
+        elemen.querySelector('[data-konfirmasi-batal]').addEventListener('click', function () {
+            modal.hide();
+        });
+
+        return modal;
+    }
+
+    function tanyaTw(judul, kalimat, labelTombol, jenis, tindakan) {
+        if (!jendelaTw) {
+            jendelaTw = buatJendelaTw();
+        }
+
+        var elemen = document.getElementById('jendela-konfirmasi');
+        var setuju = elemen.querySelector('[data-konfirmasi-setuju]');
+
+        elemen.querySelector('#jendela-konfirmasi-judul').textContent = judul || 'Yakin?';
+        elemen.querySelector('#jendela-konfirmasi-isi').textContent = kalimat;
+        setuju.textContent = labelTombol || 'Ya, lanjutkan';
+        setuju.className = 'inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white focus:outline-none focus:ring-4 '
+            + (jenis === 'utama' ? 'bg-oranye-600 hover:bg-oranye-700 focus:ring-oranye-300' : 'bg-red-700 hover:bg-red-800 focus:ring-red-300');
+
+        tindakanMenunggu = tindakan;
+        jendelaTw.show();
+        setuju.focus();
+    }
+
     /**
      * Tampilkan jendela; `tindakan(setuju)` dipanggil sekali setelah dijawab.
      * `jenis`: 'utama' (tombol oranye) atau lainnya (tombol merah).
      */
     function tanya(judul, kalimat, labelTombol, jenis, tindakan) {
         if (!window.bootstrap || !window.bootstrap.Modal) {
+            if (typeof window.Modal === 'function') {
+                tanyaTw(judul, kalimat, labelTombol, jenis, tindakan);
+                return;
+            }
+
             tindakan(window.confirm(kalimat));
             return;
         }

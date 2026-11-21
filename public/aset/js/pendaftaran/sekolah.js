@@ -95,28 +95,28 @@
 
         L1.hasil.textContent = '';
         if (!s.tanpaNpsn && ref) {
-            var kotak = buat('div', 'alert alert-success sekolah-ditemukan');
-            kotak.appendChild(ikon('building-check'));
+            var kotak = buat('div', 'sekolah-ditemukan mb-3 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-green-900');
+            kotak.appendChild(ikon('school', 'size-6 shrink-0'));
             var isi = buat('div');
-            isi.appendChild(buat('strong', 'd-block', usulan || ref.nama));
+            isi.appendChild(buat('strong', 'block', usulan || ref.nama));
             if (usulan) {
-                isi.appendChild(buat('span', 'd-block small', 'Nama usulan Anda, menunggu persetujuan panitia. Nama di data sekolah: ' + ref.nama + '.'));
+                isi.appendChild(buat('span', 'block text-sm', 'Nama usulan Anda, menunggu persetujuan panitia. Nama di data sekolah: ' + ref.nama + '.'));
             }
             // Letak sekolah membedakan sekolah yang namanya sama (K97).
             if (ref.lokasi) {
-                isi.appendChild(buat('span', 'd-block small', ref.lokasi));
+                isi.appendChild(buat('span', 'block text-sm', ref.lokasi));
             }
-            isi.appendChild(buat('span', 'small', [ref.jenjang_label, ref.kabupaten].filter(Boolean).join(' · ') + '. Jenjang dan kabupaten mengikuti data sekolah.'));
+            isi.appendChild(buat('span', 'block text-sm', [ref.jenjang_label, ref.kabupaten].filter(Boolean).join(' · ') + '. Jenjang dan kabupaten mengikuti data sekolah.'));
             kotak.appendChild(isi);
             L1.hasil.appendChild(kotak);
 
             // Nama umum yang dipakai sekolah lain juga (K99): tawarkan usulan nama lengkap.
             if (kembar && !usulan) {
-                L1.hasil.appendChild(buat('div', 'alert alert-warning small',
+                L1.hasil.appendChild(buat('div', W.KELAS.kotakPeringatan,
                     'Nama ' + ref.nama + ' juga dipakai ' + ref.nama_kembar + ' sekolah lain di data kami. Supaya tidak tertukar di rekap dan bukti pendaftaran, '
                     + 'usulkan nama lengkap sekolah Anda di bawah, misalnya dengan menambahkan nama desa.'));
             } else if (!kembar && L1.usulanKotak.hidden) {
-                var tautan = buat('button', 'btn btn-link btn-sm p-0 mb-3', 'Nama sekolah kurang lengkap? Usulkan nama yang benar');
+                var tautan = buat('button', W.KELAS.tautan + ' mb-3', 'Nama sekolah kurang lengkap? Usulkan nama yang benar');
                 tautan.type = 'button';
                 tautan.addEventListener('click', function () {
                     setelSekolah({ usulanTerbuka: true });
@@ -129,13 +129,13 @@
             var jumlahRegu = 0;
             Object.keys(timSekolah).forEach(function (id) { jumlahRegu += Object.keys(timSekolah[id] || {}).length; });
             if (jumlahRegu > 0) {
-                L1.hasil.appendChild(buat('div', 'alert alert-info small',
+                L1.hasil.appendChild(buat('div', W.KELAS.kotakInfo,
                     'Sekolah ini sudah pernah mendaftar dan sudah punya ' + jumlahRegu + ' regu di ' + Object.keys(timSekolah).length + ' nomor beregu. '
                     + 'Di langkah 3 (Atlet), atlet bisa dimasukkan ke regu yang sudah ada (tanpa biaya regu lagi, centang konfirmasinya) '
                     + 'atau ke regu baru (dengan biaya regu).'));
             }
         } else if (!s.tanpaNpsn && s.status === 'tidak_ditemukan') {
-            L1.hasil.appendChild(buat('div', 'alert alert-info small', 'NPSN ' + s.dicari + ' tidak ada di data sekolah kami. Tulis nama sekolah secara lengkap di bawah.'));
+            L1.hasil.appendChild(buat('div', W.KELAS.kotakInfo, 'NPSN ' + s.dicari + ' tidak ada di data sekolah kami. Tulis nama sekolah secara lengkap di bawah.'));
         }
     }
 
