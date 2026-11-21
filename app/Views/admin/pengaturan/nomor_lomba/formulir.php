@@ -18,6 +18,7 @@
  * @var bool                                                  $dipakai
  * @var list<string>                                          $kekurangan   isian tim yang belum diisi (nomor yang diubah)
  * @var array<int, array{id: int, nama: string, aktif: bool}> $kelompokUmur
+ * @var array<int, array{nama: string, komponen: list<array{kode: string, nama: string, jenis: string}>}> $tabelSkor pilihan tabel skor (F9-10)
  * @var array<string, string>                                 $galat
  */
 
@@ -153,8 +154,43 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                                     <label class="form-check-label" for="jenis_hasil-<?= $kode ?>"><?= $label ?></label>
                                 </div>
                             <?php endforeach; ?>
-                            <div id="jenis_hasil-bantuan" class="form-text">Untuk hasil lomba: waktu (lari, jalan cepat, estafet; makin kecil makin baik), jarak (lompat, lempar, tolak), atau poin (poin akhir Tri Lomba dari panitia).</div>
+                            <div id="jenis_hasil-bantuan" class="form-text">Untuk hasil lomba: waktu (lari, jalan cepat, estafet; makin kecil makin baik), jarak (lompat, lempar, tolak), poin (poin akhir ditulis langsung), atau poin multi-lomba (Trilomba: prestasi tiap komponen diisi, poinnya dihitung dari tabel skor).</div>
                             <?= $pesan('jenis_hasil') ?>
+                        </fieldset>
+
+                        <?php $multi = ($isian['jenis_hasil'] ?? '') === JenisHasil::MULTI; ?>
+                        <fieldset class="border rounded-3 p-3 mb-3" id="bagian-multi"<?= $multi ? '' : ' hidden' ?>>
+                            <legend class="float-none w-auto px-2 mb-0 fs-6 fw-semibold">Tabel skor poin multi-lomba</legend>
+                            <?php if ($tabelSkor === []) : ?>
+                                <p class="form-text mt-0 mb-0" id="tabel-skor-kosong">Belum ada tabel skor. Pasang tabel bawaan panitia di <a href="<?= site_url('admin/pengaturan/tabel-skor') ?>">Pengaturan &gt; Tabel Skor</a>, lalu kembali ke sini.</p>
+                            <?php else : ?>
+                                <div class="mb-3">
+                                    <label for="tabel_skor_id" class="form-label">Tabel skor</label>
+                                    <select class="form-select<?= $salah('tabel_skor_id') ?>" id="tabel_skor_id" name="tabel_skor_id" aria-describedby="<?= $jelas('tabel_skor_id') ?>">
+                                        <option value="">Pilih tabel skor</option>
+                                        <?php foreach ($tabelSkor as $idTabel => $t) : ?>
+                                            <option value="<?= $idTabel ?>"<?= (string) $idTabel === ($isian['tabel_skor_id'] ?? '') ? ' selected' : '' ?>><?= esc($t['nama']) ?></option>
+                                        <?php endforeach ?>
+                                    </select>
+                                    <?= $pesan('tabel_skor_id') ?>
+                                </div>
+                                <?php $dicentang = array_filter(explode(',', (string) ($isian['komponen_skor'] ?? ''))); ?>
+                                <?php foreach ($tabelSkor as $idTabel => $t) : ?>
+                                    <fieldset class="komponen-skor mb-2" id="komponen-skor-<?= $idTabel ?>" data-tabel="<?= $idTabel ?>"<?= (string) $idTabel === ($isian['tabel_skor_id'] ?? '') ? '' : ' hidden' ?>>
+                                        <legend class="form-label fs-6 mb-1">Komponen <?= esc($t['nama']) ?></legend>
+                                        <?php foreach ($t['komponen'] as $k) : ?>
+                                            <?php $idKotak = 'komponen-' . $idTabel . '-' . $k['kode']; ?>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input<?= $salah('komponen_skor') ?>" type="checkbox" name="komponen_skor[<?= $idTabel ?>][]" id="<?= esc($idKotak, 'attr') ?>" value="<?= esc($k['kode'], 'attr') ?>"
+                                                    <?= (string) $idTabel === ($isian['tabel_skor_id'] ?? '') && in_array($k['kode'], $dicentang, true) ? 'checked' : '' ?>>
+                                                <label class="form-check-label" for="<?= esc($idKotak, 'attr') ?>"><?= esc($k['nama']) ?></label>
+                                            </div>
+                                        <?php endforeach ?>
+                                    </fieldset>
+                                <?php endforeach ?>
+                                <div class="form-text">Tidak dicentang sama sekali = semua komponen tabel dipakai. Poin dicari di baris <?= esc($isian['kategori'] === 'putri' ? 'putri' : 'putra') ?> sesuai kategori nomor ini.</div>
+                                <?= $pesan('komponen_skor') ?>
+                            <?php endif ?>
                         </fieldset>
 
                         <fieldset class="border rounded-3 p-3 mb-3" id="bagian-tim"<?= $beregu ? '' : ' hidden' ?>>

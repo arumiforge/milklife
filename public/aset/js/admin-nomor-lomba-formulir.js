@@ -39,3 +39,30 @@
     });
     perbarui();
 })();
+
+// Poin multi-lomba (F9-10): bagian tabel skor hanya untuk jenis hasil multi,
+// dan hanya komponen tabel yang dipilih yang tampil.
+(function () {
+    var formulir = document.getElementById('formulir-nomor-lomba');
+    var bagian = document.getElementById('bagian-multi');
+    if (!formulir || !bagian) {
+        return;
+    }
+    var pilihTabel = document.getElementById('tabel_skor_id');
+
+    function perbarui() {
+        var jenis = formulir.querySelector('input[name="jenis_hasil"]:checked');
+        bagian.hidden = !(jenis && jenis.value === 'multi');
+        var tabel = pilihTabel ? pilihTabel.value : '';
+        bagian.querySelectorAll('.komponen-skor').forEach(function (kotak) {
+            kotak.hidden = kotak.getAttribute('data-tabel') !== tabel;
+        });
+    }
+
+    formulir.addEventListener('change', function (peristiwa) {
+        if (peristiwa.target.name === 'jenis_hasil' || peristiwa.target.name === 'tabel_skor_id') {
+            perbarui();
+        }
+    });
+    perbarui();
+})();

@@ -69,7 +69,7 @@ final class Prestasi
             return '';
         }
 
-        if ($jenis === JenisHasil::POIN) {
+        if ($jenis === JenisHasil::POIN || $jenis === JenisHasil::MULTI) {
             return (string) $nilai;
         }
 

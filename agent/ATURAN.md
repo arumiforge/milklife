@@ -87,7 +87,8 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 ## Tahap 8: hari lomba dan hasil
 
 - Cakupan: riwayat tindakan admin, penanda bukti baru, daftar ulang QR dan hadir, BIB massal, daftar peserta, hasil semua babak, klasemen per jenjang (K124). Rencana dan 8 asumsinya disetujui (K125).
-- Juara I–III dari babak Final; Tri Lomba poin akhir diisi admin; regu juara = satu piala (K124).
+- Juara I–III dari babak Final; regu juara = satu piala (K124).
+- Poin multi-lomba (Trilomba): admin mengisi prestasi mentah tiap komponen, web menghitung poin dari tabel skor yang bisa diubah admin (bawaan tabel panitia Trilomba O2SN SMP dan Pancalomba SMA/SMK); di antara dua baris memakai baris yang lebih buruk, di luar tabel 0 poin dengan peringatan; total = jumlah poin komponen (K140 butir 7b, menggantikan K124 butir 3).
 - Juara umum: juara I, lalu II, lalu III, lalu peringkat bersama; kontingen = NPSN (K124).
 - Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri (K130). Di ponsel semua butir ada di sidebar yang dibuka tombol menu di kepala halaman; menu bawah 5 butir urusan pendaftaran: Dasbor, Pendaftaran, Atlet, Ditolak, Rekap; butir aktif cukup ikon oranye tanpa garis bawah (K131–K133).
 - Tandai hadir di daftar ulang hanya untuk pendaftaran Lunas (K129).

@@ -60,6 +60,26 @@ Contoh berkas unduhan (K73), **berkas kosong** yang dipasang `php spark data:awa
 | `daftar-atlet.xlsx` | Daftar atlet sekolah |
 | `denah-lokasi.png` | Denah lokasi |
 
+## `tabel-skor/`
+
+Tabel skor multi-lomba bawaan (F9-10, K140 butir 7b), dipasang `php spark data:awal`, `php spark tabel-skor:impor`, atau tombol **Pasang tabel bawaan** di Pengaturan > Tabel Skor. Admin bisa mengubah barisnya di panel.
+
+| Berkas | Sumber | Komponen (putra dan putri) |
+|---|---|---|
+| `trilomba-o2sn-smp.json` | `sumber/tabel-skor/tabel-penilaian-trilomba-o2sn-smp.pdf` (Scoring Table IAAF & PASI) | Lari 60 m, Lompat Jauh, Tolak Peluru |
+| `pancalomba-sma-smk.json` | `sumber/tabel-skor/tabel-penilaian-pancalomba-sma-smk.pdf` (World Athletics) | Lari 100 m, Lari 800 m, Lompat Jauh, Tolak Peluru, Lempar Lembing |
+
+Kunci: `kode`, `nama`, `keterangan`, `sumber`, `komponen` (`kode`, `nama`, `jenis` `waktu` atau `jarak`, `baris` per kategori). Satu baris = `[prestasi, poin]`, urut dari prestasi terbaik; prestasi dalam perseratus detik (7,00 → 700; 2:05,10 → 12510) atau sentimeter (4,25 m → 425), sama dengan `hasil.prestasi`.
+
+Dibuat ulang dari PDF (butuh `pdftotext` dari poppler-utils):
+
+```bash
+python3 -I data/alat/tabel_skor_pdf.py            # tulis kedua berkas
+python3 -I data/alat/tabel_skor_pdf.py --periksa  # hanya periksa
+```
+
+Alat berhenti tanpa menulis bila baris sampel (misalnya 60 m putra 7,00 = 882) tidak cocok, prestasi kembar, atau poin tidak urut. Satu cacat PDF Pancalomba diperbaiki dan dilaporkan: nomor halaman 137 menempel ke tiga angka poin 800 m putri ("137155" dibaca 155).
+
 ## Memperbarui
 
 ### Dari Sekolah Kita (cara 14 November 2026)

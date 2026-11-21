@@ -128,6 +128,7 @@ class BerandaPengaturanController extends BaseController
             ['jadwal', 'Jadwal', 'clock', 'admin/pengaturan/jadwal', 'Sosialisasi, pertemuan teknik (technical meeting), dan jadwal lain.', $depan],
             ['unduhan', 'Unduhan', 'download', 'admin/pengaturan/unduhan', 'Flyer, juknis, dan berkas lain untuk diunduh sekolah.', $depan],
             ['kontak', 'Kontak', 'telephone', 'admin/pengaturan/kontak', 'Narahubung dan media sosial.', $depan],
+            ['tabel-skor', 'Tabel Skor', 'table', 'admin/pengaturan/tabel-skor', 'Tabel prestasi ke poin untuk Trilomba dan nomor multi-lomba lain.', 'Hasil lomba'],
             ['akun', 'Akun', 'person-gear', 'admin/akun', 'Ganti nama, nama pengguna, dan kata sandi Anda.', $sendiri],
         ];
 

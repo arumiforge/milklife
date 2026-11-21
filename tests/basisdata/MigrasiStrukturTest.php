@@ -45,6 +45,9 @@ final class MigrasiStrukturTest extends UjiBasisData
             'kategori'         => ["enum('putra','putri','mix')", false, null],
             // F8-04: jenis hasil dan waktu terbit.
             'jenis_hasil'      => ['varchar(5)', false, 'waktu'],
+            // F9-10: tabel skor untuk jenis hasil poin multi-lomba.
+            'tabel_skor_id'    => ['int unsigned', true, null],
+            'komponen_skor'    => ['varchar(255)', true, null],
             'jumlah_inti'      => ['tinyint unsigned', true, null],
             'batas_anggota'    => ['tinyint unsigned', true, null],
             'regu_maksimal'    => ['tinyint unsigned', true, null],
@@ -219,11 +222,31 @@ final class MigrasiStrukturTest extends UjiBasisData
             'pendaftaran_id'   => ['int unsigned', true, null],
             'regu'             => ['varchar(30)', true, null],
             'prestasi'         => ['int unsigned', true, null],
+            // F9-10: prestasi dan poin per komponen (poin multi-lomba).
+            'rincian'          => ['text', true, null],
             'keterangan'       => ['varchar(3)', true, null],
             'peringkat'        => ['smallint unsigned', true, null],
             'peringkat_manual' => ['tinyint unsigned', false, '0'],
             'dibuat_pada'      => ['datetime', true, null],
             'diubah_pada'      => ['datetime', true, null],
+        ],
+        // F9-10: tabel skor multi-lomba.
+        'tabel_skor' => [
+            'id'          => ['int unsigned', false, null],
+            'kode'        => ['varchar(60)', false, null],
+            'nama'        => ['varchar(100)', false, null],
+            'keterangan'  => ['varchar(255)', true, null],
+            'komponen'    => ['text', false, null],
+            'dibuat_pada' => ['datetime', true, null],
+            'diubah_pada' => ['datetime', true, null],
+        ],
+        'tabel_skor_baris' => [
+            'id'            => ['int unsigned', false, null],
+            'tabel_skor_id' => ['int unsigned', false, null],
+            'komponen'      => ['varchar(30)', false, null],
+            'kategori'      => ['varchar(5)', false, null],
+            'prestasi'      => ['int unsigned', false, null],
+            'poin'          => ['smallint unsigned', false, null],
         ],
         'tautan' => [
             'id'          => ['int unsigned', false, null],
@@ -268,6 +291,9 @@ final class MigrasiStrukturTest extends UjiBasisData
         'hasil.babak_id'         => ['babak', 'CASCADE'],
         'hasil.atlet_id'         => ['atlet', 'CASCADE'],
         'hasil.pendaftaran_id'   => ['pendaftaran', 'CASCADE'],
+        // F9-10: baris ikut tabelnya; tabel yang dipakai nomor tidak bisa dihapus.
+        'tabel_skor_baris.tabel_skor_id' => ['tabel_skor', 'CASCADE'],
+        'nomor_lomba.tabel_skor_id'      => ['tabel_skor', 'RESTRICT'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void
@@ -391,6 +417,8 @@ final class MigrasiStrukturTest extends UjiBasisData
             'pendaftaran_gabungan:id_pendaftaran_lama',
             'hasil:babak_id,atlet_id',
             'hasil:babak_id,pendaftaran_id,regu',
+            'tabel_skor:kode',
+            'tabel_skor_baris:tabel_skor_id,komponen,kategori,prestasi',
         ] as $harapan) {
             $this->assertContains($harapan, $unik, "Kunci unik {$harapan}.");
         }

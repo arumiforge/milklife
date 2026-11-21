@@ -2,8 +2,10 @@
 
 namespace App\Libraries\Panel;
 
+use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\Peringkat;
+use App\Libraries\Hasil\TabelSkor;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PeranAwalRegu;
 use App\Libraries\Pendaftaran\Regu;
@@ -35,7 +37,11 @@ use ZipArchive;
  *   Atlet membawa `hadir_pada` dan `hadir_oleh` (tanda hadir hari lomba,
  *   F8-03; boleh tidak ada di paket lama).
  *   `hasil_lomba`: jenis hasil, waktu terbit, babak, dan hasil per nomor
- *   lomba (F8-04; boleh tidak ada di paket lama).
+ *   lomba (F8-04; boleh tidak ada di paket lama). Nomor poin multi-lomba
+ *   membawa kode tabel skor dan komponennya, hasilnya membawa `rincian`
+ *   per komponen (F9-10).
+ *   `tabel_skor`: semua tabel skor beserta barisnya, termasuk ubahan admin
+ *   (F9-10; boleh tidak ada). Tabel berkode sama di server baru diganti.
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -270,6 +276,8 @@ final class PaketPendaftaran
                 ->orderBy('id')->get()->getResultArray(),
             // Hasil lomba semua babak dan tanda terbit per nomor (F8-04).
             'hasil_lomba' => $this->eksporHasilLomba($nomor),
+            // Tabel skor multi-lomba beserta baris yang diubah admin (F9-10).
+            'tabel_skor' => (new DataTabelSkor($this->db))->eksporSemua(),
             'sekolah_disunting' => $this->db->table('sekolah')
                 ->select('npsn, nama, bentuk, jenjang, status, alamat, desa_kelurahan, kecamatan, kabupaten, disunting_pada')
                 ->where('disunting_pada IS NOT NULL', null, false)->orderBy('npsn')->get()->getResultArray(),
@@ -631,6 +639,7 @@ final class PaketPendaftaran
         }
 
         $this->simpanRiwayat(is_array($isi['riwayat_admin'] ?? null) ? $isi['riwayat_admin'] : [], $isi['pendaftaran'], $tabel);
+        $this->simpanTabelSkor(is_array($isi['tabel_skor'] ?? null) ? $isi['tabel_skor'] : []);
         $this->simpanHasilLomba(is_array($isi['hasil_lomba'] ?? null) ? $isi['hasil_lomba'] : [], $isi['pendaftaran'], $nomor, $tabel);
         $this->simpanSekolahDisunting(is_array($isi['sekolah_disunting'] ?? null) ? $isi['sekolah_disunting'] : [], $tabel);
         $this->simpanUsulanNama(is_array($isi['usulan_nama'] ?? null) ? $isi['usulan_nama'] : [], $isi['pendaftaran'], $tabel);
@@ -753,6 +762,7 @@ final class PaketPendaftaran
                 'pendaftaran_id'   => $h['pendaftaran_id'] === null ? null : (int) $h['pendaftaran_id'],
                 'regu'             => $h['regu'],
                 'prestasi'         => $h['prestasi'] === null ? null : (int) $h['prestasi'],
+                'rincian'          => $h['rincian'],
                 'keterangan'       => $h['keterangan'],
                 'peringkat'        => $h['peringkat'] === null ? null : (int) $h['peringkat'],
                 'peringkat_manual' => (int) $h['peringkat_manual'],
@@ -770,11 +780,19 @@ final class PaketPendaftaran
 
         $daftar = [];
 
-        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
+        $kodeTabel = array_column($this->db->table('tabel_skor')->select('id, kode')->get()->getResultArray(), 'kode', 'id');
+
+        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
             $id = (int) $n['id'];
 
-            if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null)) {
-                $daftar[] = $nomor[$id] + ['jenis_hasil' => $n['jenis_hasil'], 'terbit_pada' => $n['hasil_terbit_pada'], 'babak' => $babak[$id] ?? []];
+            if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null || $n['tabel_skor_id'] !== null)) {
+                $daftar[] = $nomor[$id] + [
+                    'jenis_hasil'   => $n['jenis_hasil'],
+                    'tabel_skor'    => $kodeTabel[$n['tabel_skor_id']] ?? null,
+                    'komponen_skor' => $n['komponen_skor'],
+                    'terbit_pada'   => $n['hasil_terbit_pada'],
+                    'babak'         => $babak[$id] ?? [],
+                ];
             }
         }
 
@@ -796,8 +814,9 @@ final class PaketPendaftaran
             return;
         }
 
-        $ada   = array_flip(array_map(static fn (array $p): int => (int) $p['id'], $pendaftaran));
-        $atlet = array_map('intval', array_column($this->db->table('atlet')->select('id, nisn')->get()->getResultArray(), 'id', 'nisn'));
+        $ada       = array_flip(array_map(static fn (array $p): int => (int) $p['id'], $pendaftaran));
+        $atlet     = array_map('intval', array_column($this->db->table('atlet')->select('id, nisn')->get()->getResultArray(), 'id', 'nisn'));
+        $kodeTabel = array_map('intval', array_column($this->db->table('tabel_skor')->select('id, kode')->get()->getResultArray(), 'id', 'kode'));
 
         foreach ($daftar as $n) {
             $idNomor = is_array($n) ? ($nomor[self::kunciNomor((string) ($n['kelompok_umur'] ?? ''), (string) ($n['nama'] ?? ''), (string) ($n['kategori'] ?? ''))] ?? null) : null;
@@ -810,6 +829,16 @@ final class PaketPendaftaran
 
             if (JenisHasil::sah($n['jenis_hasil'] ?? null)) {
                 $ubah['jenis_hasil'] = $n['jenis_hasil'];
+            }
+
+            // Poin multi-lomba (F9-10): tabel dicocokkan menurut kodenya.
+            $idTabel = is_string($n['tabel_skor'] ?? null) ? ($kodeTabel[$n['tabel_skor']] ?? null) : null;
+
+            if (($n['jenis_hasil'] ?? null) === JenisHasil::MULTI && $idTabel === null) {
+                unset($ubah['jenis_hasil']);
+            } elseif ($idTabel !== null) {
+                $ubah['tabel_skor_id'] = $idTabel;
+                $ubah['komponen_skor'] = is_string($n['komponen_skor'] ?? null) && $n['komponen_skor'] !== '' ? mb_substr($n['komponen_skor'], 0, 255) : null;
             }
 
             $this->db->table('nomor_lomba')->where('id', $idNomor)->update($ubah);
@@ -838,11 +867,29 @@ final class PaketPendaftaran
                         'pendaftaran_id'   => $idAtlet === null ? $idDaftar : null,
                         'regu'             => $idAtlet === null ? $h['regu'] : null,
                         'prestasi'         => is_numeric($h['prestasi'] ?? null) ? (int) $h['prestasi'] : null,
+                        'rincian'          => is_string($h['rincian'] ?? null) && TabelSkor::bacaRincian($h['rincian']) !== [] ? TabelSkor::tulisRincian(TabelSkor::bacaRincian($h['rincian'])) : null,
                         'keterangan'       => Peringkat::keterangan($h['keterangan'] ?? null),
                         'peringkat'        => is_numeric($h['peringkat'] ?? null) ? (int) $h['peringkat'] : null,
                         'peringkat_manual' => (int) ($h['peringkat_manual'] ?? 0) === 1 ? 1 : 0,
                     ]);
                 }
+            }
+        }
+    }
+
+    /**
+     * Tabel skor dari paket (F9-10): dibuat, atau barisnya diganti bila kodenya
+     * sudah ada di server ini. Tabel yang rusak dilewati.
+     *
+     * @param list<mixed> $daftar
+     */
+    private function simpanTabelSkor(array $daftar): void
+    {
+        $data = new DataTabelSkor($this->db);
+
+        foreach ($daftar as $t) {
+            if (is_array($t) && TabelSkor::periksaData($t) === []) {
+                $data->simpanData($t);
             }
         }
     }

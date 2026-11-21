@@ -13,7 +13,7 @@ Diperbarui: 21 November 2026
 | [F9-03 Tata letak publik dan halaman depan](tugas/F9-03-tata-letak-publik-beranda.md) | rencana | P1 | A |
 | [F9-04 Bantuan dan FAQ](tugas/F9-04-bantuan-faq.md) | rencana | P1 | A |
 | [F9-07 Jadwal pertandingan](tugas/F9-07-jadwal-pertandingan.md) | rencana | P1 | A |
-| [F9-10 Kalkulator poin multi-lomba](tugas/F9-10-kalkulator-poin-multilomba.md) | rencana | P1 | A |
+| [F9-10 Kalkulator poin multi-lomba](tugas/F9-10-kalkulator-poin-multilomba.md) | menunggu tinjauan | P1 | A |
 | [F9-08 Seri, lintasan, dan alur babak](tugas/F9-08-seri-lintasan-bagan.md) | rencana | P1 | B |
 | [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | rencana | P1 | B |
 | [F9-12 Peserta publik](tugas/F9-12-peserta-publik.md) | rencana | P1 | B |
