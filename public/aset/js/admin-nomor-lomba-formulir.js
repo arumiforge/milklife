@@ -66,3 +66,24 @@
     });
     perbarui();
 })();
+
+// Aturan nomor lompat/lempar (F9-09): bagian percobaan hanya untuk jenis hasil jarak.
+(function () {
+    var formulir = document.getElementById('formulir-nomor-lomba');
+    var bagian = document.getElementById('bagian-percobaan');
+    if (!formulir || !bagian) {
+        return;
+    }
+
+    function perbarui() {
+        var jenis = formulir.querySelector('input[name="jenis_hasil"]:checked');
+        bagian.hidden = !(jenis && jenis.value === 'jarak');
+    }
+
+    formulir.addEventListener('change', function (peristiwa) {
+        if (peristiwa.target.name === 'jenis_hasil') {
+            perbarui();
+        }
+    });
+    perbarui();
+})();

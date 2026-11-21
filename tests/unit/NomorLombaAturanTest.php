@@ -269,6 +269,24 @@ final class NomorLombaAturanTest extends CIUnitTestCase
         $this->assertSame([null, null], [$data['tabel_skor_id'], $data['komponen_skor']]);
     }
 
+    public function testPercobaanLompatLempar(): void
+    {
+        $jarak = ['nama' => 'Lompat Jauh', 'jenis_hasil' => 'jarak'];
+
+        $this->assertSame([], NomorLombaModel::periksaIsian(self::individu($jarak + ['jumlah_percobaan' => '6']), self::KU));
+        $this->assertSame(['jumlah_percobaan'], array_keys(NomorLombaModel::periksaIsian(self::individu($jarak + ['jumlah_percobaan' => '7']), self::KU)));
+        $this->assertSame(['jumlah_percobaan'], array_keys(NomorLombaModel::periksaIsian(self::individu($jarak + ['jumlah_percobaan' => '0']), self::KU)));
+
+        // Jenis hasil lain: isian percobaan diabaikan.
+        $this->assertSame([], NomorLombaModel::periksaIsian(self::individu(['jumlah_percobaan' => '9']), self::KU));
+
+        $data = NomorLombaModel::untukDisimpan(self::individu($jarak + ['jumlah_percobaan' => '4', 'pemecah_seri' => '0']));
+        $this->assertSame([4, 0], [$data['jumlah_percobaan'], $data['pemecah_seri']]);
+
+        $data = NomorLombaModel::untukDisimpan(self::individu(['jumlah_percobaan' => '4', 'pemecah_seri' => '0']));
+        $this->assertSame([null, 1], [$data['jumlah_percobaan'], $data['pemecah_seri']]);
+    }
+
     public function testUntukDisimpan(): void
     {
         $this->assertSame([
@@ -288,6 +306,9 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             'biaya_beregu'     => 150000,
             'urutan'           => 11,
             'aktif'            => 1,
+            // F9-09: percobaan hanya untuk jenis hasil jarak; pemecah seri bawaan menyala.
+            'jumlah_percobaan' => null,
+            'pemecah_seri'     => 1,
         ], NomorLombaModel::untukDisimpan(self::beregu(['biaya_beregu' => 'Rp 150.000'])));
 
         $data = NomorLombaModel::untukDisimpan(self::individu(['aktif' => '0']));
@@ -310,7 +331,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
         $this->assertSame([
             'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri', 'jenis_hasil' => '',
             'tabel_skor_id' => '', 'komponen_skor' => '', 'jumlah_inti' => '4', 'batas_anggota' => '', 'regu_maksimal' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
-            'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1',
+            'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1', 'jumlah_percobaan' => '', 'pemecah_seri' => '1',
         ], $isian);
 
         $this->assertSame('0', NomorLombaModel::isianDariBaris(['aktif' => '0'])['aktif']);

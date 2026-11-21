@@ -88,6 +88,57 @@ final class Prestasi
         return intdiv($detik, 60) . ':' . sprintf('%02d', $detik % 60) . ',' . $sisa;
     }
 
+    /**
+     * Urai waktu lari yang boleh memuat seperseribu detik (F9-09), misalnya
+     * dari foto finis: `12,345` → `nilai` 1235 (dibulatkan ke atas ke
+     * perseratus, seperti aturan World Athletics) dan `seperseribu` 12345.
+     * Tanpa angka ketiga sama dengan `urai()` dan `seperseribu` null.
+     *
+     *     Prestasi::uraiWaktuRinci('12,341');   // ['nilai' => 1235, 'seperseribu' => 12341, 'galat' => null]
+     *     Prestasi::uraiWaktuRinci('2:05,1');   // ['nilai' => 12510, 'seperseribu' => null, 'galat' => null]
+     *
+     * @return array{nilai: int|null, seperseribu: int|null, galat: string|null}
+     */
+    public static function uraiWaktuRinci(string $teks): array
+    {
+        $rapi = trim(str_replace(' ', '', $teks));
+
+        if (preg_match('/^(?:(\d{1,2}):([0-5]\d)|(\d{1,4}))[,.](\d{3})$/D', $rapi, $m) === 1) {
+            $detik = $m[3] !== '' ? (int) $m[3] : (int) $m[1] * 60 + (int) $m[2];
+            $ribu  = $detik * 1000 + (int) $m[4];
+            $nilai = intdiv($ribu + 9, 10);
+
+            if ($ribu < 1 || $nilai >= self::BATAS[JenisHasil::WAKTU]) {
+                return ['nilai' => null, 'seperseribu' => null, 'galat' => self::pesanGalat($rapi, JenisHasil::WAKTU)];
+            }
+
+            return ['nilai' => $nilai, 'seperseribu' => $ribu, 'galat' => null];
+        }
+
+        $hasil = self::urai($teks, JenisHasil::WAKTU);
+
+        return [
+            'nilai'       => $hasil['nilai'],
+            'seperseribu' => null,
+            'galat'       => $hasil['galat'] === null ? null : $hasil['galat'] . ' Seperseribu detik dari foto finis boleh ditulis tiga angka, misalnya 12,345.',
+        ];
+    }
+
+    /**
+     * Teks waktu dengan seperseribu detik: `12345` → `12,345`, `125123` → `2:05,123`.
+     */
+    public static function tulisSeperseribu(int $nilai): string
+    {
+        $detik = intdiv($nilai, 1000);
+        $sisa  = sprintf('%03d', $nilai % 1000);
+
+        if ($detik < 60) {
+            return $detik . ',' . $sisa;
+        }
+
+        return intdiv($detik, 60) . ':' . sprintf('%02d', $detik % 60) . ',' . $sisa;
+    }
+
     public static function pesanGalat(string $teks, string $jenis): string
     {
         $contoh = match ($jenis) {

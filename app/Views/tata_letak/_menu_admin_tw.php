@@ -34,6 +34,8 @@ $kelompok = [
         ['label' => 'Jadwal pertandingan', 'ikon' => 'calendar-clock', 'alamat' => 'admin/jadwal-pertandingan'],
         // Seri dan lintasan (F9-08).
         ['label' => 'Seri dan lintasan', 'ikon' => 'list-ordered', 'alamat' => 'admin/seri'],
+        // Lembar juri (F9-09).
+        ['label' => 'Lembar juri', 'ikon' => 'clipboard-pen', 'alamat' => 'admin/juri'],
     ],
     'Hasil' => [
         ['label' => 'Hasil lomba', 'ikon' => 'trophy', 'alamat' => 'admin/hasil'],

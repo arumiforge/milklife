@@ -1,13 +1,15 @@
 <?php
 
 use App\Libraries\Hasil\JenisHasil;
+use App\Libraries\Hasil\Percobaan;
 use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Hasil\Prestasi;
 use CodeIgniter\Test\CIUnitTestCase;
 
 /**
  * Penguraian dan penulisan prestasi, urutan peringkat, dan tebakan jenis
- * hasil (F8-04, K124).
+ * hasil (F8-04, K124); percobaan lompat/lempar, seperseribu detik, dan
+ * pemecah seri (F9-09, K140 butir 7c).
  *
  * @internal
  */
@@ -131,6 +133,111 @@ final class HasilPrestasiPeringkatTest extends CIUnitTestCase
         $this->assertSame('DQ', Peringkat::keterangan('DQ'));
         $this->assertNull(Peringkat::keterangan('X'));
         $this->assertNull(Peringkat::keterangan(null));
+    }
+
+    // ---------- Aturan nomor (F9-09) ----------
+
+    public function testWaktuSeperseribuDibulatkanKeAtas(): void
+    {
+        $this->assertSame(['nilai' => 1235, 'seperseribu' => 12341, 'galat' => null], Prestasi::uraiWaktuRinci('12,341'));
+        $this->assertSame(['nilai' => 1234, 'seperseribu' => 12340, 'galat' => null], Prestasi::uraiWaktuRinci('12.340'));
+        $this->assertSame(['nilai' => 12513, 'seperseribu' => 125123, 'galat' => null], Prestasi::uraiWaktuRinci('2:05,123'));
+        $this->assertSame(['nilai' => 12510, 'seperseribu' => null, 'galat' => null], Prestasi::uraiWaktuRinci('2:05,1'));
+        $this->assertSame(['nilai' => null, 'seperseribu' => null, 'galat' => null], Prestasi::uraiWaktuRinci(''));
+        $this->assertStringContainsString('12,345', (string) Prestasi::uraiWaktuRinci('12,3456')['galat']);
+        $this->assertNotNull(Prestasi::uraiWaktuRinci('0,000')['galat']);
+        $this->assertSame('12,341', Prestasi::tulisSeperseribu(12341));
+        $this->assertSame('2:05,003', Prestasi::tulisSeperseribu(125003));
+
+        // Urai biasa (tabel skor, isian lain) tetap menolak tiga angka.
+        $this->assertNull(Prestasi::urai('12,341', 'waktu')['nilai']);
+    }
+
+    public function testPercobaanDiuraiDanTerbaikDipakai(): void
+    {
+        $this->assertSame(['percobaan' => [345, 'X', 350], 'galat' => null], Percobaan::urai(['3,45', 'x', '3.5'], 3));
+        $this->assertSame(['percobaan' => ['-', null, 410], 'galat' => null], Percobaan::urai(['–', '', '4,10', '9,99'], 3));
+        $this->assertSame(['percobaan' => null, 'galat' => null], Percobaan::urai(['', ' '], 3));
+        $this->assertStringContainsString('Percobaan 2', (string) Percobaan::urai(['3,45', '3 m'], 3)['galat']);
+
+        $this->assertSame(350, Percobaan::terbaik([345, 'X', 350]));
+        $this->assertNull(Percobaan::terbaik(['X', 'X', '-']));
+        $this->assertSame([350, 345, 300], Percobaan::sah([300, 'X', 350, 345]));
+        $this->assertSame(['3,45', 'X', '', ''], Percobaan::teks([345, 'X', null], 4));
+
+        $json = Percobaan::tulis([345, 'X', null]);
+        $this->assertSame('[345,"X",null]', $json);
+        $this->assertSame([345, 'X', null], Percobaan::baca($json));
+        $this->assertNull(Percobaan::tulis([null, null, null]));
+        $this->assertNull(Percobaan::baca('[345,"Y"]'));
+        $this->assertNull(Percobaan::baca('rusak'));
+
+        $this->assertSame(3, Percobaan::jumlah(null));
+        $this->assertSame(6, Percobaan::jumlah('6'));
+        $this->assertSame(3, Percobaan::jumlah(7));
+    }
+
+    public function testPemecahSeriJarakMemakaiPrestasiTerbaikKedua(): void
+    {
+        $pemecah = static fn (array $p, bool $aktif = true): ?array => Peringkat::pemecah(JenisHasil::JARAK, $p, null, $aktif);
+
+        $peserta = [
+            'a' => ['prestasi' => 500, 'keterangan' => null, 'pemecah' => $pemecah([500, 480, 'X'])],
+            'b' => ['prestasi' => 500, 'keterangan' => null, 'pemecah' => $pemecah([490, 500, 'X'])],
+            'c' => ['prestasi' => 500, 'keterangan' => null, 'pemecah' => $pemecah(['X', 500, 'X'])],
+            'd' => ['prestasi' => 520, 'keterangan' => null, 'pemecah' => $pemecah([520, 'X', 'X'])],
+            'e' => ['prestasi' => 500, 'keterangan' => null, 'pemecah' => $pemecah([480, 500, 'X'])],
+        ];
+
+        // b (kedua 4,90) di atas a dan e (kedua 4,80, sama), c (tanpa jarak sah kedua) terakhir.
+        $this->assertSame(['d' => 1, 'b' => 2, 'a' => 3, 'e' => 3, 'c' => 5], Peringkat::hitung($peserta, JenisHasil::JARAK));
+
+        // Ketiga ikut memisah bila kedua juga sama.
+        $this->assertSame(['y' => 1, 'x' => 2], Peringkat::hitung([
+            'x' => ['prestasi' => 500, 'keterangan' => null, 'pemecah' => $pemecah([500, 480, 400])],
+            'y' => ['prestasi' => 500, 'keterangan' => null, 'pemecah' => $pemecah([500, 480, 450])],
+        ], JenisHasil::JARAK));
+
+        // Dimatikan: prestasi sama tetap berperingkat sama.
+        $mati = array_map(static fn (array $p): array => ['pemecah' => null] + $p, $peserta);
+        $this->assertSame(['d' => 1, 'a' => 2, 'b' => 2, 'c' => 2, 'e' => 2], Peringkat::hitung($mati, JenisHasil::JARAK));
+        $this->assertNull($pemecah([500, 480], false));
+    }
+
+    public function testPemecahSeriDataLamaTetapSama(): void
+    {
+        // Satu saja tanpa percobaan (data lama) = semua yang sama tetap sama.
+        $hasil = Peringkat::hitung([
+            'a' => ['prestasi' => 500, 'keterangan' => null, 'pemecah' => Peringkat::pemecah(JenisHasil::JARAK, [500, 490], null)],
+            'b' => ['prestasi' => 500, 'keterangan' => null, 'pemecah' => Peringkat::pemecah(JenisHasil::JARAK, null, null)],
+            'c' => ['prestasi' => 400, 'keterangan' => null],
+        ], JenisHasil::JARAK);
+
+        $this->assertSame(['a' => 1, 'b' => 1, 'c' => 3], $hasil);
+        $this->assertNull(Peringkat::pemecah(JenisHasil::POIN, [500], 123));
+        $this->assertNull(Peringkat::pemecah(JenisHasil::MULTI, null, null));
+    }
+
+    public function testPemecahSeriLariMemakaiSeperseribuBilaDiisi(): void
+    {
+        $waktu = static fn (?int $ribu): ?array => Peringkat::pemecah(JenisHasil::WAKTU, null, $ribu);
+
+        $this->assertSame(['b' => 1, 'a' => 2, 'c' => 3, 'd' => 4], Peringkat::hitung([
+            'a' => ['prestasi' => 1235, 'keterangan' => null, 'pemecah' => $waktu(12343)],
+            'b' => ['prestasi' => 1235, 'keterangan' => null, 'pemecah' => $waktu(12341)],
+            'c' => ['prestasi' => 1235, 'keterangan' => null, 'pemecah' => $waktu(12350)],
+            'd' => ['prestasi' => 1300, 'keterangan' => null, 'pemecah' => null],
+        ], JenisHasil::WAKTU));
+
+        // Seperseribu sama, atau ada yang tidak diisi: bersama.
+        $this->assertSame(['a' => 1, 'b' => 1], Peringkat::hitung([
+            'a' => ['prestasi' => 1235, 'keterangan' => null, 'pemecah' => $waktu(12341)],
+            'b' => ['prestasi' => 1235, 'keterangan' => null, 'pemecah' => $waktu(12341)],
+        ], JenisHasil::WAKTU));
+        $this->assertSame(['a' => 1, 'b' => 1], Peringkat::hitung([
+            'a' => ['prestasi' => 1235, 'keterangan' => null, 'pemecah' => $waktu(12341)],
+            'b' => ['prestasi' => 1235, 'keterangan' => null, 'pemecah' => null],
+        ], JenisHasil::WAKTU));
     }
 
     public function testJenisHasilDitebakDariNama(): void

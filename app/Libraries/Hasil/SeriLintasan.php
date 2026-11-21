@@ -366,6 +366,8 @@ final class SeriLintasan
             'seri'       => $h['seri'],
             'prestasi'   => $h['prestasi'],
             'keterangan' => $h['keterangan'],
+            // Pemecah seri (F9-09).
+            'pemecah'    => $h['pemecah'],
         ], $this->hasil->hasilBabak((int) $babak['id'], $babak['nomor']));
 
         return PembagiSeri::lolos($baris, $aturan['q'], $aturan['q_kecil'], (string) $babak['nomor']['jenis_hasil']);

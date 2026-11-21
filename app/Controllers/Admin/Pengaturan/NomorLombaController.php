@@ -113,6 +113,8 @@ class NomorLombaController extends BaseController
             'biaya_beregu'     => '',
             'urutan'           => '',
             'aktif'            => '1',
+            'jumlah_percobaan' => '',
+            'pemecah_seri'     => '1',
         ]);
     }
 
@@ -222,7 +224,7 @@ class NomorLombaController extends BaseController
     {
         $kiriman = [];
 
-        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan', 'aktif'] as $kotak) {
+        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan', 'aktif', 'jumlah_percobaan', 'pemecah_seri'] as $kotak) {
             $kiriman[$kotak] = $this->request->getPost($kotak);
         }
 

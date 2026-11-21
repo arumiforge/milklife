@@ -73,7 +73,7 @@ foreach ($calon as $kunci => $c) {
     <p class="teks-info mb-4">
         Prestasi <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>: <?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>.
         <?php if ($multi) : ?>Tulis waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poin tiap komponen dicari di tabel skor; prestasi di antara dua baris memakai baris yang lebih buruk. Komponen kosong bernilai 0.<?php endif ?>
-        Peringkat dihitung otomatis setelah disimpan; prestasi sama mendapat peringkat sama.
+        Peringkat dihitung otomatis setelah disimpan; prestasi sama mendapat peringkat sama<?php if ($nomor['jenis_hasil'] === JenisHasil::JARAK && $nomor['pemecah_seri']) : ?>, kecuali bila percobaannya diisi di Lembar juri: yang prestasi terbaik keduanya lebih jauh di atas<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU) : ?>, kecuali bila waktunya ditulis sampai seperseribu detik (misalnya 12,345 dari foto finis)<?php endif ?>.
         Pilih DNS (tidak start), DNF (tidak finis), atau DQ (diskualifikasi) untuk peserta tanpa peringkat.
         <?php if ($final) : ?>Di Final peringkat boleh dikoreksi (misalnya dari foto finis); kosongkan supaya dihitung otomatis.<?php endif ?>
     </p>
@@ -81,6 +81,10 @@ foreach ($calon as $kunci => $c) {
     <p class="mb-4">
         <a class="btn btn-outline-primary" href="<?= site_url('admin/seri/babak/' . $babak['id']) ?>" id="tautan-seri-babak">
             <i class="bi bi-list-ol" aria-hidden="true"></i> Seri dan lintasan babak ini
+        </a>
+        <?php // Lembar juri (F9-09). ?>
+        <a class="btn btn-outline-primary" href="<?= site_url('admin/juri/babak/' . $babak['id']) ?>" id="tautan-lembar-juri">
+            <i class="bi bi-phone" aria-hidden="true"></i> Lembar juri babak ini
         </a>
     </p>
 
@@ -118,6 +122,8 @@ foreach ($calon as $kunci => $c) {
                                             <?= esc($h['nama']) ?>
                                             <?php if (! $beregu) : ?><div class="small text-body-secondary"><?= esc($h['sekolah']) ?></div><?php endif ?>
                                             <?php if ($h['manual']) : ?><span class="badge rounded-pill text-bg-info">diubah admin</span><?php endif ?>
+                                            <?php // Versi baris (F9-09): simpanan ditolak bila baris ini sudah diubah di Lembar juri sejak halaman dibuka. ?>
+                                            <input type="hidden" name="hasil[<?= $h['id'] ?>][versi]" value="<?= $h['versi'] ?>">
                                         </td>
                                         <?php if ($multi) : ?>
                                             <?php foreach ($komponen as $i => $k) : ?>
@@ -142,8 +148,11 @@ foreach ($calon as $kunci => $c) {
                                         <td>
                                             <label class="visually-hidden" for="<?= $id ?>-prestasi">Prestasi <?= esc($h['nama']) ?></label>
                                             <input type="text" inputmode="decimal" class="form-control form-control-sm kotak-prestasi<?= isset($galat[$h['id']]) ? ' is-invalid' : '' ?>" id="<?= $id ?>-prestasi"
-                                                name="hasil[<?= $h['id'] ?>][prestasi]" placeholder="<?= esc($contoh, 'attr') ?>" value="<?= esc($nilai($h, 'prestasi', $h['prestasi_teks']), 'attr') ?>"
+                                                name="hasil[<?= $h['id'] ?>][prestasi]" placeholder="<?= esc($contoh, 'attr') ?>" value="<?= esc($nilai($h, 'prestasi', $h['prestasi_isian']), 'attr') ?>"
                                                 <?= isset($galat[$h['id']]) ? 'aria-describedby="' . $id . '-galat"' : '' ?>>
+                                            <?php if ($h['percobaan'] !== null) : ?>
+                                                <div class="small text-body-secondary" data-percobaan>Percobaan: <?= esc(implode(' / ', array_map(static fn (string $p): string => $p === '' ? '–' : $p, $h['percobaan_teks']))) ?></div>
+                                            <?php endif ?>
                                             <?php if (isset($galat[$h['id']])) : ?><div id="<?= $id ?>-galat" class="invalid-feedback d-block"><?= esc($galat[$h['id']]) ?></div><?php endif ?>
                                         </td>
                                         <?php endif ?>

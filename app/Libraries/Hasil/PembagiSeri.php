@@ -358,9 +358,10 @@ final class PembagiSeri
     /**
      * Yang lolos ke babak berikutnya: Q = `$q` terbaik tiap seri, lalu q =
      * `$qKecil` prestasi terbaik berikutnya dari semua seri. Peserta tanpa
-     * prestasi atau ber-DNS/DNF/DQ tidak lolos. Peringkat sama di batas ikut lolos.
+     * prestasi atau ber-DNS/DNF/DQ tidak lolos. Peringkat sama di batas ikut lolos;
+     * prestasi sama dipisah dulu dengan `pemecah` bila ada (F9-09).
      *
-     * @param list<array{kunci: string, seri: int|null, prestasi: int|null, keterangan: string|null}> $baris
+     * @param list<array{kunci: string, seri: int|null, prestasi: int|null, keterangan: string|null, pemecah?: list<int>|null}> $baris
      *
      * @return array<string, 'Q'|'q'> kunci => tanda, urut prestasi terbaik
      */
@@ -368,12 +369,14 @@ final class PembagiSeri
     {
         $perSeri  = [];
         $prestasi = [];
+        $pemecah  = [];
 
         foreach ($baris as $b) {
-            $perSeri[(int) $b['seri']][$b['kunci']] = ['prestasi' => $b['prestasi'], 'keterangan' => $b['keterangan']];
+            $perSeri[(int) $b['seri']][$b['kunci']] = ['prestasi' => $b['prestasi'], 'keterangan' => $b['keterangan'], 'pemecah' => $b['pemecah'] ?? null];
 
             if ($b['prestasi'] !== null && Peringkat::keterangan($b['keterangan']) === null) {
                 $prestasi[$b['kunci']] = $b['prestasi'];
+                $pemecah[$b['kunci']]  = $b['pemecah'] ?? null;
             }
         }
 
@@ -391,7 +394,7 @@ final class PembagiSeri
 
         foreach ($prestasi as $kunci => $nilai) {
             if (! isset($tanda[$kunci])) {
-                $sisa[$kunci] = ['prestasi' => $nilai, 'keterangan' => null];
+                $sisa[$kunci] = ['prestasi' => $nilai, 'keterangan' => null, 'pemecah' => $pemecah[$kunci]];
             }
         }
 

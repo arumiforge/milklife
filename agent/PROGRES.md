@@ -15,7 +15,7 @@ Diperbarui: 21 November 2026
 | [F9-07 Jadwal pertandingan](tugas/F9-07-jadwal-pertandingan.md) | selesai (#131) | P1 | A |
 | [F9-10 Kalkulator poin multi-lomba](tugas/F9-10-kalkulator-poin-multilomba.md) | selesai (#124) | P1 | A |
 | [F9-08 Seri, lintasan, dan alur babak](tugas/F9-08-seri-lintasan-bagan.md) | menunggu tinjauan | P1 | B |
-| [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | rencana | P1 | B |
+| [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | menunggu tinjauan | P1 | B |
 | [F9-12 Peserta publik](tugas/F9-12-peserta-publik.md) | selesai (#127) | P1 | B |
 | [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | menunggu tinjauan (#132) | P1 | B |
 | [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | menunggu tinjauan | P2 | B |
