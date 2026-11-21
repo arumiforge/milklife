@@ -38,6 +38,11 @@ final class CarouselHalamanDepan
     public const BATAS = 20;
 
     /**
+     * Sisi terpanjang foto carousel dalam piksel, untuk foto bawaan dan unggahan admin (K143).
+     */
+    public const SISI = 1600;
+
+    /**
      * Panjang keterangan paling banyak.
      */
     public const BATAS_KETERANGAN = 150;

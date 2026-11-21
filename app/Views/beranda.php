@@ -15,6 +15,9 @@
  * | `_unduhan.php` | Unduhan                                                    | `unduhan`    |
  * | `_kontak.php`  | Narahubung, media sosial, tombol WA                        | `kontak`     |
  *
+ * Saat sakelar "Tampilkan hasil di atas (hari lomba)" menyala, `_hasil.php`
+ * pindah tepat di bawah pembuka (K143).
+ *
  * Footer ada di tata letak publik (`IsiHalamanDepan::kaki()`). Semua data
  * dari `BerandaController` (lihat `IsiHalamanDepan` untuk bentuk lariknya).
  *
@@ -35,6 +38,7 @@
  * @var array<string, mixed>|null                   $angka
  * @var array<string, mixed>|null                   $hasilTerbaru
  * @var list<array<string, mixed>>                  $faq
+ * @var bool                                        $hasilDiAtas  sakelar hari lomba: hasil tepat di bawah pembuka (K143)
  */
 ?>
 <?= $this->extend('tata_letak/publik_tw') ?>
@@ -43,10 +47,15 @@
 
 <?= $this->section('isi') ?>
 <?= view('beranda/_kepala', ['acara' => $acara, 'tampilan' => $tampilan, 'bukaTutup' => $bukaTutup, 'tombol' => $tombol, 'kelompokUmur' => $kelompokUmur, 'carousel' => $carousel], ['saveData' => false]) ?>
+<?php if ($hasilDiAtas) : ?>
+    <?= view('beranda/_hasil', ['hasilTerbaru' => $hasilTerbaru], ['saveData' => false]) ?>
+<?php endif ?>
 <?= view('beranda/_lomba', ['kelompokUmur' => $kelompokUmur, 'tampilkanBiaya' => $tampilkanBiaya], ['saveData' => false]) ?>
 <?= view('beranda/_jadwal', ['jadwal' => $jadwal], ['saveData' => false]) ?>
 <?= view('beranda/_angka', ['angka' => $angka, 'acara' => $acara], ['saveData' => false]) ?>
-<?= view('beranda/_hasil', ['hasilTerbaru' => $hasilTerbaru], ['saveData' => false]) ?>
+<?php if (! $hasilDiAtas) : ?>
+    <?= view('beranda/_hasil', ['hasilTerbaru' => $hasilTerbaru], ['saveData' => false]) ?>
+<?php endif ?>
 <?= view('beranda/_faq', ['faq' => $faq], ['saveData' => false]) ?>
 <?= view('beranda/_unduhan', ['unduhan' => $unduhan], ['saveData' => false]) ?>
 <?= view('beranda/_kontak', ['narahubung' => $narahubung, 'mediaSosial' => $mediaSosial, 'waTanya' => $waTanya, 'waBagikan' => $waBagikan], ['saveData' => false]) ?>

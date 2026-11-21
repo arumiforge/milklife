@@ -82,7 +82,7 @@ class HalamanDepanController extends BaseController
         $nomorWa                 = (string) setting('HalamanDepan.nomor_wa_tanya');
         $isian['nomor_wa_tanya'] = $nomorWa === '' ? '' : NomorWa::tampilan($nomorWa);
 
-        return $this->tampilkan($isian, [], [], (bool) setting('HalamanDepan.tampilkan_biaya'));
+        return $this->tampilkan($isian, [], [], (bool) setting('HalamanDepan.tampilkan_biaya'), (bool) setting('HalamanDepan.hasil_di_atas'));
     }
 
     public function simpan(): ResponseInterface|string
@@ -98,6 +98,7 @@ class HalamanDepanController extends BaseController
 
         // Kotak centang: tidak terkirim sama sekali bila tidak dicentang.
         $tampilkanBiaya = $this->request->getPost('tampilkan_biaya') === '1';
+        $hasilDiAtas    = $this->request->getPost('hasil_di_atas') === '1';
 
         $sebutan = [
             'judul'         => 'Judul',
@@ -148,7 +149,7 @@ class HalamanDepanController extends BaseController
         }
 
         if ($galat !== []) {
-            return $this->tampilkan($isian, $galat, $dipilihSah, $tampilkanBiaya);
+            return $this->tampilkan($isian, $galat, $dipilihSah, $tampilkanBiaya, $hasilDiAtas);
         }
 
         // Simpan semua gambar baru dulu. Bila satu gagal, yang sudah tersimpan
@@ -163,7 +164,7 @@ class HalamanDepanController extends BaseController
                     $unggahan->hapus($jalur);
                 }
 
-                return $this->tampilkan($isian, [$kunci => self::GAMBAR[$kunci]['label'] . ': ' . $e->getMessage()], [], $tampilkanBiaya);
+                return $this->tampilkan($isian, [$kunci => self::GAMBAR[$kunci]['label'] . ': ' . $e->getMessage()], [], $tampilkanBiaya, $hasilDiAtas);
             }
         }
 
@@ -173,6 +174,7 @@ class HalamanDepanController extends BaseController
 
         setting('HalamanDepan.nomor_wa_tanya', $nomorWa);
         setting('HalamanDepan.tampilkan_biaya', $tampilkanBiaya);
+        setting('HalamanDepan.hasil_di_atas', $hasilDiAtas);
 
         // Berkas lama dibuang setelah yang baru tersimpan. Gambar baru
         // mengalahkan centang "Hapus gambar" pada kotak yang sama.
@@ -204,8 +206,9 @@ class HalamanDepanController extends BaseController
      * @param array<string, string> $galat
      * @param list<string>          $gambarPerluDipilihLagi label gambar sah yang belum tersimpan karena isian lain salah
      * @param bool                  $tampilkanBiaya         keadaan sakelar biaya di bagian lomba
+     * @param bool                  $hasilDiAtas            keadaan sakelar hasil di atas (hari lomba, K143)
      */
-    private function tampilkan(array $isian, array $galat = [], array $gambarPerluDipilihLagi = [], bool $tampilkanBiaya = true): string
+    private function tampilkan(array $isian, array $galat = [], array $gambarPerluDipilihLagi = [], bool $tampilkanBiaya = true, bool $hasilDiAtas = false): string
     {
         $unggahan = new Unggahan();
         $gambar   = [];
@@ -228,6 +231,7 @@ class HalamanDepanController extends BaseController
             'gambar'                 => $gambar,
             'gambarPerluDipilihLagi' => $gambarPerluDipilihLagi,
             'tampilkanBiaya'         => $tampilkanBiaya,
+            'hasilDiAtas'            => $hasilDiAtas,
         ]);
     }
 }

@@ -7,7 +7,7 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 
 | Fitur | Rute | Pengendali | Pustaka | View | JS | Uji |
 |---|---|---|---|---|---|---|
-| Halaman depan (tata letak baru, F9-03) | `/` | `BerandaController` | `IsiHalamanDepan` (+ `carousel()`, `angkaAcara()`, `hasilTerbaru()`), `CarouselHalamanDepan`, `IlustrasiBeranda`, `BukaTutupPendaftaran` | `beranda.php`, `beranda/` (`_angka`, `_hasil` baru) | `carousel-beranda`, `adegan-merek` | f `HalamanDepan*`, u `BukaTutupPendaftaranTest`, `IlustrasiBerandaTest` |
+| Halaman depan (tata letak baru, F9-03) | `/` | `BerandaController` | `IsiHalamanDepan` (+ `carousel()`, `angkaAcara()`, `hasilTerbaru()`, `hasilDiAtas()`, `faqTeratas()`), `CarouselHalamanDepan`, `IlustrasiBeranda`, `BukaTutupPendaftaran` | `beranda.php`, `beranda/` (`_angka`, `_hasil`, `_faq` baru) | `carousel-beranda`, `adegan-merek` | f `HalamanDepan*`, u `BukaTutupPendaftaranTest`, `IlustrasiBerandaTest` |
 | Wizard pendaftaran | `pendaftaran`, `pendaftaran/periksa`, `…/simpan` | `PendaftaranController` | `Pendaftaran/PemeriksaPendaftaran` (aturan di `Pendaftaran/Pemeriksa/*`), `…/SimpanPendaftaran` | `pendaftaran.php`, `pendaftaran/` | `pendaftaran`, `pendaftaran/*` | `Pendaftaran*Test` (u/b/f) |
 | Cari NPSN/sekolah | `pendaftaran/sekolah` | `PendaftaranController::sekolah` | `Pendaftaran/Kabupaten`, `Jenjang` | `pendaftaran/_langkah_sekolah.php` | `pendaftaran/sekolah` | f `PendaftaranSekolahTest` |
 | Cek pendaftaran | `cek-pendaftaran` | `CekPendaftaranController` | `DataPendaftaran` | `cek_pendaftaran.php`, `cek_pendaftaran/` | - | f `CekPendaftaranTest` |

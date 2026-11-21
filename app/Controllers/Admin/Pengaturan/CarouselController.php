@@ -55,6 +55,9 @@ class CarouselController extends BaseController
             return $this->galat('Foto carousel: ' . $e->getMessage());
         }
 
+        // Foto carousel lebih kecil dari gambar lain (1600 piksel, sama dengan foto bawaan, K143).
+        Unggahan::kecilkanGambar((string) $unggahan->jalurPenuh($jalur), CarouselHalamanDepan::SISI);
+
         $daftar[] = ['berkas' => $jalur, 'keterangan' => $keterangan];
         CarouselHalamanDepan::simpan($daftar);
 

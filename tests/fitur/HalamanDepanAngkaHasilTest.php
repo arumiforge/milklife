@@ -110,6 +110,46 @@ final class HalamanDepanAngkaHasilTest extends UjiBasisData
         $this->assertStringStartsWith('2. SD KARANGAN DUA 0', $umum[1]);
     }
 
+    public function testSakelarHasilDiAtasSaatHariLomba(): void
+    {
+        $sd = $this->buatPendaftaran('SD KARANGAN SATU', '99990001', 'Kudus', 'lunas', ['KU 10' => 2]);
+        $urutan = fn (): array => array_map(static fn (DOMElement $s): string => $s->getAttribute('id'), iterator_to_array($this->xpathDari($this->get('/'))->query('//main/section')));
+
+        // Belum ada yang terbit: sakelar menyala pun tidak memunculkan bagian hasil.
+        setting('HalamanDepan.hasil_di_atas', true);
+        $this->assertNotContains('hasil', $urutan());
+
+        // Bawaan mati: hasil sesudah jadwal dan angka acara.
+        setting('HalamanDepan.hasil_di_atas', false);
+        $this->buatFinal(true, $sd);
+        $biasa = $urutan();
+        $this->assertSame(['pembuka', 'lomba', 'jadwal', 'angka', 'hasil'], array_slice($biasa, 0, 5));
+
+        // Menyala: hasil tepat di bawah pembuka, sekali saja.
+        setting('HalamanDepan.hasil_di_atas', true);
+        $atas = $urutan();
+        $this->assertSame(['pembuka', 'hasil', 'lomba'], array_slice($atas, 0, 3));
+        $this->assertCount(1, array_keys($atas, 'hasil', true));
+        $this->assertSame(count($biasa), count($atas));
+    }
+
+    public function testSakelarHasilDiAtasDiPengaturan(): void
+    {
+        $alamat = 'admin/pengaturan/halaman-depan';
+        $sakelar = '//input[@type="checkbox"][@name="hasil_di_atas"]';
+
+        $this->assertFalse((bool) setting('HalamanDepan.hasil_di_atas'), 'Bawaan mati.');
+        $this->assertFalse($this->xpathDari($this->bukaSebagaiAdmin($alamat))->query($sakelar)->item(0)->hasAttribute('checked'));
+
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin($alamat, ['hasil_di_atas' => '1']), $alamat);
+        $this->assertTrue((bool) setting('HalamanDepan.hasil_di_atas'));
+        $this->assertTrue($this->xpathDari($this->bukaSebagaiAdmin($alamat))->query($sakelar)->item(0)->hasAttribute('checked'));
+
+        // Kotak centang yang tidak dicentang tidak terkirim: sakelar mati lagi.
+        $this->kirimSebagaiAdmin($alamat, []);
+        $this->assertFalse((bool) setting('HalamanDepan.hasil_di_atas'));
+    }
+
     public function testFaqTeratasDariBantuan(): void
     {
         // Data awal memasang tanya-jawab bawaan (F9-04): satu per kategori, paling banyak enam.

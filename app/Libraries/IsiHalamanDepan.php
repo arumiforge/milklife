@@ -689,6 +689,15 @@ final class IsiHalamanDepan
     }
 
     /**
+     * Apakah bagian hasil dipindah tepat di bawah pembuka (hari lomba,
+     * `HalamanDepan.hasil_di_atas`, bawaan mati, K143).
+     */
+    public function hasilDiAtas(): bool
+    {
+        return (bool) setting('HalamanDepan.hasil_di_atas');
+    }
+
+    /**
      * Tanya-jawab teratas untuk halaman depan: butir pertama tiap kategori
      * Bantuan (F9-04), paling banyak `JUMLAH_FAQ_TERATAS`. `jawaban` sudah
      * HTML aman dari `JawabanFaq`. `[]` bila belum ada.

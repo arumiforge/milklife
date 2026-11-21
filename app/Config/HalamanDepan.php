@@ -74,6 +74,12 @@ class HalamanDepan extends BaseConfig
     public bool $tampilkan_biaya = false;
 
     /**
+     * Hari lomba: bagian hasil dan juara umum dipindah tepat di bawah pembuka
+     * halaman depan (bila sudah ada nomor yang terbit). Bawaan mati (K143, F9-03).
+     */
+    public bool $hasil_di_atas = false;
+
+    /**
      * Foto carousel pembuka (F9-03): daftar berurutan
      * `[['berkas' => 'unggahan/halaman-depan/….webp', 'keterangan' => '…'], …]`.
      * `null` = belum pernah diatur (foto bawaan boleh dipasang); `[]` = admin

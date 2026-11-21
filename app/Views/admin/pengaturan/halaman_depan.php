@@ -8,6 +8,7 @@
  * @var array<string, array{label: string, rasio: string, saran: string, jalur: string}> $gambar kunci => keterangan dan jalur tersimpan ('' bila belum ada)
  * @var list<string>                                                               $gambarPerluDipilihLagi
  * @var bool                                                                       $tampilkanBiaya sakelar `HalamanDepan.tampilkan_biaya`
+ * @var bool                                                                       $hasilDiAtas sakelar `HalamanDepan.hasil_di_atas` (K143)
  * @var list<array{berkas: string, keterangan: string, ada: bool}>                  $carousel foto carousel pembuka berurutan (F9-03)
  */
 
@@ -145,6 +146,15 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
                 </div>
                 <div id="tampilkan_biaya-bantuan" class="form-text">
                     Biaya individu tiap kelompok umur dan biaya tiap tim beregu. Bila dimatikan, biaya tidak tampil di halaman depan; rinciannya tetap muncul di bagian pembayaran saat sekolah mendaftar.
+                </div>
+
+                <div class="form-check form-switch mt-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="hasil_di_atas" name="hasil_di_atas" value="1"
+                        aria-describedby="hasil_di_atas-bantuan"<?= $hasilDiAtas ? ' checked' : '' ?>>
+                    <label class="form-check-label fw-semibold" for="hasil_di_atas">Tampilkan hasil di atas (hari lomba)</label>
+                </div>
+                <div id="hasil_di_atas-bantuan" class="form-text">
+                    Bila dinyalakan, bagian hasil dan juara umum pindah tepat di bawah bagian pembuka halaman depan, supaya mudah dilihat selama lomba. Hanya berlaku setelah ada nomor yang hasilnya diterbitkan.
                 </div>
             </div>
         </section>

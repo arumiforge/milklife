@@ -35,6 +35,7 @@ class BerandaController extends BaseController
             'angka'          => $isi->angkaAcara(),
             'hasilTerbaru'   => $isi->hasilTerbaru(),
             'faq'            => $isi->faqTeratas(),
+            'hasilDiAtas'    => $isi->hasilDiAtas(),
         ]);
     }
 }

@@ -166,6 +166,26 @@ final class HalamanDepanCarouselTest extends UjiBasisData
         $this->assertTrue((new Unggahan())->ada($daftar[1]['berkas']));
     }
 
+    public function testFotoUnggahanDikecilkanKe1600Piksel(): void
+    {
+        // Foto mendatar 2400 × 1200 piksel (karangan, dibuat GD).
+        $gambar = imagecreatetruecolor(2400, 1200);
+        imagefill($gambar, 0, 0, imagecolorallocate($gambar, 35, 73, 135));
+        ob_start();
+        imagejpeg($gambar, null, 80);
+        $isi = (string) ob_get_clean();
+
+        $this->siapkanBerkas('foto', 'besar.jpg', $isi);
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/carousel', ['keterangan' => 'Foto besar']), self::ALAMAT . '#carousel');
+        service('superglobals')->setFilesArray([]);
+
+        $jalur  = CarouselHalamanDepan::tersimpan()[0]['berkas'];
+        $ukuran = getimagesize((string) (new Unggahan())->jalurPenuh($jalur));
+        $this->assertNotFalse($ukuran);
+        $this->assertSame([CarouselHalamanDepan::SISI, 800], [$ukuran[0], $ukuran[1]], 'Sama dengan foto bawaan (K143).');
+        $this->assertSame(1920, Unggahan::SISI_GAMBAR, 'Aturan gambar lain tidak berubah.');
+    }
+
     public function testTambahFotoDitolakDenganPesanRamah(): void
     {
         $alamat = self::ALAMAT . '/carousel';
