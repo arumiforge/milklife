@@ -12,7 +12,9 @@ use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PeranAwalRegu;
 use App\Libraries\Pendaftaran\Regu;
 use App\Libraries\Pendaftaran\SimpanPendaftaran;
+use App\Libraries\Unggahan;
 use App\Models\FaqModel;
+use App\Models\GaleriModel;
 use App\Models\SekolahModel;
 use App\Models\UsulanNamaSekolahModel;
 use CodeIgniter\Database\BaseConnection;
@@ -49,6 +51,10 @@ use ZipArchive;
  *   `faq`: tanya-jawab halaman Bantuan (F9-04). Bila ada dan berisi, isinya
  *   menggantikan tanya-jawab di server ini (biasanya bawaan `data:awal`);
  *   bila tidak ada (paket lama) atau kosong, tanya-jawab server ini tetap.
+ *   `galeri`: album Galeri (F9-06), sampulnya di `galeri/<acak>.<ekstensi>`
+ *   dalam zip. Sama seperti `faq`: bila ada dan berisi, menggantikan album
+ *   server ini (sampul lama dihapus setelah impor berhasil); bila tidak ada
+ *   atau kosong, album server ini tetap.
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -83,7 +89,19 @@ final class PaketPendaftaran
      */
     public const UMUR_SEMENTARA = 3600;
 
+    /**
+     * Jalur sampul album Galeri yang sah (F9-06).
+     */
+    private const POLA_SAMPUL_GALERI = '#^unggahan/' . GaleriModel::FOLDER . '/[0-9a-f]{32}\.(webp|jpg|png)$#D';
+
     private BaseConnection $db;
+
+    /**
+     * Sampul album Galeri server ini yang diganti impor; dihapus setelah impor berhasil.
+     *
+     * @var list<string>
+     */
+    private array $sampulGaleriLama = [];
 
     public function __construct(?BaseConnection $db = null)
     {
@@ -264,6 +282,20 @@ final class PaketPendaftaran
             ];
         }
 
+        $galeri       = $this->db->table('galeri')
+            ->select('judul, keterangan, tautan, sampul, urutan, aktif, dibuat_pada, diubah_pada')
+            ->orderBy('urutan')->orderBy('id')->get()->getResultArray();
+        $unggahan     = new Unggahan();
+        $sampulGaleri = [];
+
+        foreach ($galeri as $i => $album) {
+            if (is_string($album['sampul']) && preg_match(self::POLA_SAMPUL_GALERI, $album['sampul']) === 1 && $unggahan->ada($album['sampul'])) {
+                $sampulGaleri[$album['sampul']] = (string) $unggahan->jalurPenuh($album['sampul']);
+            } else {
+                $galeri[$i]['sampul'] = null;
+            }
+        }
+
         $isi = [
             'versi'           => self::VERSI,
             'dibuat'          => date('Y-m-d H:i:s'),
@@ -289,6 +321,8 @@ final class PaketPendaftaran
                 ->orderBy('id')->get()->getResultArray(),
             // Tabel skor multi-lomba beserta baris yang diubah admin (F9-10).
             'tabel_skor' => (new DataTabelSkor($this->db))->eksporSemua(),
+            // Album Galeri (F9-06); sampulnya ikut di folder `galeri/` zip.
+            'galeri' => $galeri,
             'sekolah_disunting' => $this->db->table('sekolah')
                 ->select('npsn, nama, bentuk, jenjang, status, alamat, desa_kelurahan, kecamatan, kabupaten, disunting_pada')
                 ->where('disunting_pada IS NOT NULL', null, false)->orderBy('npsn')->get()->getResultArray(),
@@ -310,6 +344,10 @@ final class PaketPendaftaran
             }
         }
 
+        foreach ($sampulGaleri as $jalur => $penuh) {
+            $zip->addFile($penuh, 'galeri/' . basename($jalur));
+        }
+
         if (! $zip->close()) {
             throw new RuntimeException('Berkas ekspor gagal ditulis. Periksa sisa ruang diska, lalu coba lagi.');
         }
@@ -326,6 +364,7 @@ final class PaketPendaftaran
      */
     public function impor(string $sumber): array
     {
+        $this->sampulGaleriLama = [];
         $zip = new ZipArchive();
 
         if (! is_file($sumber) || $zip->open($sumber) !== true) {
@@ -347,6 +386,18 @@ final class PaketPendaftaran
 
             [$petaKu, $petaNomor] = $this->peta($isi['pendaftaran']);
             $berkas               = $this->salinBerkas($zip, $isi['pendaftaran']);
+
+            try {
+                [$isi['galeri'], $sampulBaru] = $this->salinSampulGaleri($zip, is_array($isi['galeri'] ?? null) ? $isi['galeri'] : []);
+            } catch (RuntimeException $e) {
+                foreach ($berkas as $penuh) {
+                    @unlink($penuh);
+                }
+
+                throw $e;
+            }
+
+            $berkas = array_merge($berkas, $sampulBaru);
         } finally {
             $zip->close();
         }
@@ -361,7 +412,64 @@ final class PaketPendaftaran
             throw new RuntimeException('Data gagal disimpan, dan tidak ada yang tersimpan: ' . $e->getMessage(), 0, $e);
         }
 
-        return $jumlah + ['berkas' => count($berkas)];
+        // Sampul album Galeri lama yang sudah diganti album dari paket (F9-06).
+        $unggahan = new Unggahan();
+
+        foreach ($this->sampulGaleriLama as $jalur) {
+            $unggahan->hapus($jalur);
+        }
+
+        return $jumlah + ['berkas' => count($berkas) - count($sampulBaru)];
+    }
+
+    /**
+     * Salin sampul album Galeri (F9-06) dari zip ke `unggahan/galeri/` dengan
+     * nama acak baru, lalu ganti jalur `sampul` di daftar album dengan jalur
+     * barunya. Sampul yang tidak ada di zip dikosongkan.
+     *
+     * @param list<mixed> $galeri
+     *
+     * @return array{0: list<mixed>, 1: list<string>} daftar album, jalur lengkap berkas yang disalin
+     *
+     * @throws RuntimeException Bila sebuah sampul gagal disalin; yang sudah disalin dihapus lagi.
+     */
+    private function salinSampulGaleri(ZipArchive $zip, array $galeri): array
+    {
+        $unggahan = new Unggahan();
+        $folder   = Unggahan::folderDasar() . GaleriModel::FOLDER;
+        $tersalin = [];
+
+        foreach ($galeri as $i => $album) {
+            if (! is_array($album)) {
+                continue;
+            }
+
+            $jalur = $album['sampul'] ?? null;
+            $isi   = is_string($jalur) && preg_match(self::POLA_SAMPUL_GALERI, $jalur) === 1 ? $zip->getFromName('galeri/' . basename($jalur)) : false;
+
+            if ($isi === false) {
+                $galeri[$i]['sampul'] = null;
+
+                continue;
+            }
+
+            $baru   = 'unggahan/' . GaleriModel::FOLDER . '/' . bin2hex(random_bytes(16)) . '.' . pathinfo((string) $jalur, PATHINFO_EXTENSION);
+            $tujuan = (string) $unggahan->jalurPenuh($baru);
+
+            if ((! is_dir($folder) && ! @mkdir($folder, 0755, true) && ! is_dir($folder)) || @file_put_contents($tujuan, $isi) === false) {
+                foreach ($tersalin as $penuh) {
+                    @unlink($penuh);
+                }
+
+                throw new RuntimeException('Sampul album galeri gagal disalin ke ' . $folder . '. Pastikan folder public/unggahan boleh ditulisi, lalu impor lagi.');
+            }
+
+            @chmod($tujuan, 0644);
+            $tersalin[]           = $tujuan;
+            $galeri[$i]['sampul'] = $baru;
+        }
+
+        return [$galeri, $tersalin];
     }
 
     /**
@@ -655,6 +763,54 @@ final class PaketPendaftaran
         $this->simpanSekolahDisunting(is_array($isi['sekolah_disunting'] ?? null) ? $isi['sekolah_disunting'] : [], $tabel);
         $this->simpanUsulanNama(is_array($isi['usulan_nama'] ?? null) ? $isi['usulan_nama'] : [], $isi['pendaftaran'], $tabel);
         $this->simpanFaq(is_array($isi['faq'] ?? null) ? $isi['faq'] : [], $tabel);
+        $this->simpanGaleri(is_array($isi['galeri'] ?? null) ? $isi['galeri'] : [], $tabel);
+    }
+
+    /**
+     * Album Galeri (F9-06) dari paket menggantikan album server ini. Paket
+     * tanpa album yang sah tidak mengubah apa pun. Sampul album lama dicatat
+     * untuk dihapus setelah impor berhasil.
+     *
+     * @param list<mixed>                                  $daftar sampul sudah diganti `salinSampulGaleri()`
+     * @param callable(string, array<string, mixed>): int $tabel
+     */
+    private function simpanGaleri(array $daftar, callable $tabel): void
+    {
+        $baris = [];
+
+        foreach ($daftar as $g) {
+            if (! is_array($g) || ! is_string($g['judul'] ?? null) || trim($g['judul']) === '') {
+                continue;
+            }
+
+            $baris[] = [
+                'judul'       => mb_substr(trim($g['judul']), 0, GaleriModel::PANJANG['judul']),
+                'keterangan'  => mb_substr(is_string($g['keterangan'] ?? null) ? $g['keterangan'] : '', 0, GaleriModel::PANJANG['keterangan']),
+                'tautan'      => GaleriModel::tautanSah($g['tautan'] ?? null) ? $g['tautan'] : null,
+                'sampul'      => is_string($g['sampul'] ?? null) && preg_match(self::POLA_SAMPUL_GALERI, $g['sampul']) === 1 ? $g['sampul'] : null,
+                'urutan'      => min(GaleriModel::URUTAN_MAKSIMAL, max(0, (int) ($g['urutan'] ?? 0))),
+                'aktif'       => (int) ($g['aktif'] ?? 1) === 1 ? 1 : 0,
+                'dibuat_pada' => is_string($g['dibuat_pada'] ?? null) ? $g['dibuat_pada'] : null,
+                'diubah_pada' => is_string($g['diubah_pada'] ?? null) ? $g['diubah_pada'] : null,
+            ];
+        }
+
+        if ($baris === []) {
+            return;
+        }
+
+        $this->sampulGaleriLama = array_values(array_filter(array_column(
+            $this->db->table('galeri')->select('sampul')->get()->getResultArray(),
+            'sampul',
+        ), 'is_string'));
+
+        if (! $this->db->table('galeri')->where('id >', 0)->delete()) {
+            throw new RuntimeException('Album galeri lama gagal dihapus.');
+        }
+
+        foreach ($baris as $b) {
+            $tabel('galeri', $b);
+        }
     }
 
     /**

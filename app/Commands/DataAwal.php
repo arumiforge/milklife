@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use App\Libraries\Bantuan\FaqBawaan;
 use App\Libraries\CarouselHalamanDepan;
+use App\Libraries\Galeri\AlbumBawaan;
 use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Unggahan;
@@ -290,6 +291,14 @@ class DataAwal extends BaseCommand
         // ---------- Foto carousel pembuka (F9-03) ----------
         PasangCarousel::tulisHasil(CarouselHalamanDepan::pasangBawaan());
         // ---------- Akhir foto carousel pembuka ----------
+
+        // ---------- Album galeri bawaan (F9-06) ----------
+        try {
+            PasangGaleri::tulisHasil(AlbumBawaan::pasang($db));
+        } catch (Throwable $e) {
+            CLI::error('Album galeri bawaan gagal dipasang: ' . $e->getMessage() . ' Jalankan "php spark galeri:awal" lagi.');
+        }
+        // ---------- Akhir album galeri bawaan ----------
 
         return EXIT_SUCCESS;
     }

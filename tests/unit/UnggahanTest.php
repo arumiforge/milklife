@@ -269,7 +269,7 @@ final class UnggahanTest extends CIUnitTestCase
 
     public function testFolderDanBatasSesuaiRencana(): void
     {
-        $this->assertSame(['halaman-depan', 'pembayaran', 'unduhan', 'bib'], Unggahan::FOLDER);
+        $this->assertSame(['halaman-depan', 'pembayaran', 'unduhan', 'bib', 'galeri'], Unggahan::FOLDER);
         $this->assertSame(['jpg', 'png', 'webp'], array_keys(Unggahan::JENIS_GAMBAR));
         $this->assertSame(['pdf', 'jpg', 'png', 'doc', 'docx', 'xls', 'xlsx'], array_keys(Unggahan::JENIS_BERKAS));
         $this->assertSame(2 * 1024 * 1024, Unggahan::BATAS_GAMBAR);

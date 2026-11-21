@@ -133,6 +133,29 @@ final class PanelUsulanNamaSekolahTest extends UjiBasisData
         $this->bukaSebagaiAdmin('admin/sekolah/usulan')->assertSee('Nama desanya keliru.');
     }
 
+
+    public function testSetujuiDanTolakTetapTersimpanWalauKoneksiPernahMenggagalkanTransaksi(): void
+    {
+        ['pendaftaran' => $p, 'usulan' => $id] = $this->pendaftaranDenganUsulan();
+        $this->tinggalkanStatusTransaksiGagal();
+
+        $hasil = $this->kirimSebagaiAdmin('admin/sekolah/usulan/' . $id . '/setujui', ['nama' => 'MIS KARANGAN REKAAN']);
+
+        $this->assertBerhasilDialihkan($hasil, 'admin/sekolah/usulan');
+        $this->seeInDatabase('sekolah', ['npsn' => '99100001', 'nama' => 'MIS KARANGAN REKAAN']);
+        $this->seeInDatabase('pendaftaran', ['id' => $p['id'], 'nama_sekolah' => 'MIS KARANGAN REKAAN']);
+        $this->seeInDatabase('usulan_nama_sekolah', ['id' => $id, 'status' => 'disetujui']);
+
+        ['pendaftaran' => $lain, 'usulan' => $idLain] = $this->pendaftaranDenganUsulan('MIS KARANGAN REKAAN ANGGITAN');
+        $this->tinggalkanStatusTransaksiGagal();
+
+        $hasil = $this->kirimSebagaiAdmin('admin/sekolah/usulan/' . $idLain . '/tolak', ['alasan' => 'Nama desanya keliru.']);
+
+        $this->assertBerhasilDialihkan($hasil, 'admin/sekolah/usulan', 'Usulan ditolak. Pendaftaran pengusul kembali memakai nama MIS KARANGAN REKAAN.');
+        $this->seeInDatabase('pendaftaran', ['id' => $lain['id'], 'nama_sekolah' => 'MIS KARANGAN REKAAN']);
+        $this->seeInDatabase('usulan_nama_sekolah', ['id' => $idLain, 'status' => 'ditolak', 'alasan' => 'Nama desanya keliru.']);
+    }
+
     public function testUsulanTetapAdaSaatPendaftaranDihapus(): void
     {
         ['pendaftaran' => $p, 'usulan' => $id] = $this->pendaftaranDenganUsulan();

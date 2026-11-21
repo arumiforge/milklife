@@ -13,7 +13,7 @@ use RuntimeException;
  * Yang disimpan di pengaturan atau tabel adalah jalur relatifnya,
  * `unggahan/<folder>/<nama acak>.<ekstensi>`, dan alamatnya `base_url($jalur)`.
  *
- * - Folder yang boleh dipakai: `FOLDER` (`halaman-depan`, `pembayaran`, `unduhan`, `bib`).
+ * - Folder yang boleh dipakai: `FOLDER` (`halaman-depan`, `pembayaran`, `unduhan`, `bib`, `galeri`).
  * - Gambar: JPG, PNG, atau WEBP, paling besar 2 MB. Gambar yang sisi
  *   terpanjangnya lebih dari `SISI_GAMBAR` piksel dikecilkan saat disimpan,
  *   dengan format yang sama (PNG dan WEBP tetap transparan).
@@ -52,7 +52,7 @@ class Unggahan
     /**
      * Folder di bawah `unggahan/` yang boleh dipakai.
      */
-    public const FOLDER = ['halaman-depan', 'pembayaran', 'unduhan', 'bib'];
+    public const FOLDER = ['halaman-depan', 'pembayaran', 'unduhan', 'bib', 'galeri'];
 
     /**
      * Gambar: ekstensi tersimpan => jenis isi (MIME) yang diterima.
@@ -198,6 +198,89 @@ class Unggahan
         self::kecilkanGambar((string) $this->jalurPenuh($jalur));
 
         return $jalur;
+    }
+
+    /**
+     * Simpan gambar ke `unggahan/<folder>/` sebagai WebP dengan sisi terpanjang
+     * paling banyak `$sisi` piksel (sampul galeri, F9-06), lalu kembalikan
+     * jalur relatifnya. Bila gambar tidak bisa diolah GD, berkas aslinya
+     * dipakai apa adanya (sudah lolos pemeriksaan jenis dan ukuran).
+     *
+     * @throws RuntimeException Bila gambar tidak sah atau gagal disimpan; pesannya ramah.
+     */
+    public function simpanGambarWebp(?UploadedFile $berkas, string $folder, int $sisi = self::SISI_GAMBAR): string
+    {
+        $jalur = $this->simpan($berkas, $folder, self::JENIS_GAMBAR, self::BATAS_GAMBAR, 'gambar');
+        $baru  = self::jadikanWebp((string) $this->jalurPenuh($jalur), $sisi);
+
+        return $baru === null ? $jalur : 'unggahan/' . $folder . '/' . basename($baru);
+    }
+
+    /**
+     * Ubah gambar di `$penuh` menjadi WebP (mutu `MUTU_GAMBAR`) dengan sisi
+     * terpanjang paling banyak `$sisi` piksel. Gambar kecil tidak diperbesar;
+     * WebP yang sudah cukup kecil dibiarkan. Arah foto JPG dari kamera (EXIF)
+     * diterapkan. Berkas asli diganti berkas `.webp` bernama sama.
+     *
+     * @return string|null Jalur lengkap berkas WebP, atau `null` bila gagal (berkas asli dibiarkan).
+     */
+    public static function jadikanWebp(string $penuh, int $sisi = self::SISI_GAMBAR): ?string
+    {
+        $info = @getimagesize($penuh);
+        $buka = [IMAGETYPE_JPEG => 'imagecreatefromjpeg', IMAGETYPE_PNG => 'imagecreatefrompng', IMAGETYPE_WEBP => 'imagecreatefromwebp'];
+
+        if ($info === false || ! isset($buka[$info[2]]) || ! function_exists($buka[$info[2]]) || ! function_exists('imagewebp')) {
+            return null;
+        }
+
+        [$lebar, $tinggi, $jenis] = $info;
+
+        if ($jenis === IMAGETYPE_WEBP && max($lebar, $tinggi) <= $sisi) {
+            return $penuh;
+        }
+
+        $skala      = min(1, $sisi / max($lebar, $tinggi));
+        $lebarBaru  = max(1, (int) round($lebar * $skala));
+        $tinggiBaru = max(1, (int) round($tinggi * $skala));
+
+        self::cukupkanMemori(($lebar * $tinggi + $lebarBaru * $tinggiBaru) * 5);
+
+        $asli = @$buka[$jenis]($penuh);
+
+        if ($asli === false) {
+            return null;
+        }
+
+        $baru = imagecreatetruecolor($lebarBaru, $tinggiBaru);
+        imagealphablending($baru, false);
+        imagesavealpha($baru, true);
+        imagefill($baru, 0, 0, imagecolorallocatealpha($baru, 0, 0, 0, 127));
+        imagecopyresampled($baru, $asli, 0, 0, 0, 0, $lebarBaru, $tinggiBaru, $lebar, $tinggi);
+        imagedestroy($asli);
+
+        if ($jenis === IMAGETYPE_JPEG) {
+            $baru = self::putarSesuaiExif($baru, $penuh);
+        }
+
+        $tujuan    = (string) preg_replace('/\.[a-z0-9]+$/i', '', $penuh) . '.webp';
+        $sementara = $tujuan . '.sementara';
+        $tersimpan = imagewebp($baru, $sementara, self::MUTU_GAMBAR);
+        imagedestroy($baru);
+
+        if (! $tersimpan || ! @rename($sementara, $tujuan)) {
+            @unlink($sementara);
+
+            return null;
+        }
+
+        if ($tujuan !== $penuh) {
+            @unlink($penuh);
+        }
+
+        @chmod($tujuan, 0644);
+        clearstatcache(true, $tujuan);
+
+        return $tujuan;
     }
 
     /**

@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101) |
+| Revisi 8 | Pembaruan yang membawa Galeri (F9-06): perintah sekali jalan `php spark galeri:awal` memasang album bawaan "Seri sebelumnya" tanpa menimpa album admin; halaman Galeri tetap tersembunyi sampai dinyalakan di Pengaturan > Galeri (K140 butir 11). Bagian yang berubah: 10 |
 | Revisi 7 | Pembaruan yang membawa kalkulator poin multi-lomba (F9-10): perintah sekali jalan `php spark tabel-skor:impor --trilomba` memasang tabel skor bawaan dan memindah nomor Trilomba yang belum punya prestasi ke poin multi-lomba; `pembaruan:periksa` ikut memeriksanya (K140 butir 7b, K143). Bagian yang berubah: 10 |
 | Revisi 6 | Repo menjadi privat (K138): komputer server memakai deploy key (kunci SSH baca saja) untuk `git clone` dan `git pull`, termasuk server yang sudah terpasang. Bagian yang berubah: 3, 10, asumsi 5 |
 | Revisi 5 | Pemeriksaan keamanan Cloudflare Turnstile di kirim pendaftaran, Cek Pendaftaran, dan masuk admin: memasang kunci rahasia dari dasbor Cloudflare, daftar nama host, dan cara mematikan sementara (K122). Bagian yang berubah: 5, 7, 10, 11 |
@@ -10,7 +11,7 @@
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, 17, dan 21 November 2026 (revisi 3, 4, 5, 6, dan 7) |
+| Tanggal | 12 November 2026, revisi 14, 16, 17, dan 21 November 2026 (revisi 3, 4, 5, 6, 7, dan 8) |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -347,7 +348,7 @@ Bila ada perbaikan baru di cabang `main` GitHub:
 
    Perintah ini menampilkan sekolah yang punya lebih dari satu pendaftaran Lunas, lalu meminta Anda mengetik `GABUNG`. Setiap sekolah digabung ke pendaftaran yang Lunas paling dulu; ID dan kode QR bukti lama tetap mengarah ke pendaftaran gabungan. Bila muncul "Tidak ada yang perlu digabung", tidak ada yang berubah.
 
-   Pembaruan yang sama mengubah KU 12 menjadi kelahiran 2014–2015 sesuai juknis (K112), otomatis saat `migrate`, asalkan KU 12 di panel masih kelahiran 2015 saja. Periksa di **Pengaturan → Kelompok Umur**. Ganti juga berkas contoh "Petunjuk teknis lomba" di **Pengaturan → Unduhan** dengan PDF juknis, dan samakan jadwal pertemuan teknik (Minggu, 6 Desember 2026 pukul 10.00, Super Cafe SSA Kudus) di **Pengaturan → Jadwal**.
+   Pembaruan yang sama mengubah KU 12 menjadi kelahiran 2014–2015 sesuai juknis (K112), otomatis saat `migrate`, asalkan KU 12 di panel masih kelahiran 2015 saja. Periksa di **Pengaturan → Kelompok Umur**. Ganti juga berkas contoh "Petunjuk teknis lomba" di **Pengaturan → Unduhan** dengan PDF juknis, dan samakan jadwal pertemuan teknik (Minggu, 6 Desember 2026 pukul 10.00, Super Cafe SSA Kudus) di **Pengaturan → Agenda**.
 
    Pembaruan yang membawa kalkulator poin multi-lomba (21 November 2026, F9-10, K143) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
 
@@ -356,6 +357,14 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    ```
 
    Perintah ini memasang tabel skor panitia (Trilomba O2SN SMP dan Pancalomba SMA/SMK) dan memindah nomor Trilomba yang belum punya prestasi ke jenis hasil **Poin multi-lomba**, sehingga juri cukup mengisi prestasi tiap komponen dan web menghitung poinnya. Nomor yang sudah punya prestasi tidak diubah. Menjalankannya lagi tidak mengubah apa pun. Periksa hasilnya di **Pengaturan → Tabel Skor** dan **Pengaturan → Nomor Lomba** (Trilomba putra dan putri).
+
+   Pembaruan yang membawa Galeri (F9-06, K140 butir 11) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
+
+   ```
+   php spark galeri:awal
+   ```
+
+   Perintah ini memasang album bawaan **Seri sebelumnya** dengan sampul foto acara sebelumnya. Album yang sudah dibuat admin tidak ditimpa, dan album bawaan yang sudah dihapus admin tidak dipasang lagi; menjalankannya lagi tidak mengubah apa pun. Halaman Galeri tetap tersembunyi sampai dinyalakan. Setelah panitia menyiapkan album di Instagram atau Google Drive, buka **Pengaturan → Galeri**, isi tautan album (diawali `https://`; folder Google Drive dibagikan ke "Siapa saja yang memiliki link"), lalu nyalakan **Tampilkan halaman Galeri**. Album tanpa tautan tidak tampil untuk umum.
 
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 
