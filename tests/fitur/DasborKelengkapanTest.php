@@ -189,6 +189,7 @@ final class DasborKelengkapanTest extends UjiBasisData
             'kontak'        => null,
             'bantuan'       => null,
             'tabel-skor'    => null,
+            'hasil'         => null,
             'akun'          => null,
         ], $tanda);
 
