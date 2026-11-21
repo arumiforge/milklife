@@ -93,3 +93,9 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Tandai hadir di daftar ulang hanya untuk pendaftaran Lunas (K129).
 - Cetak BIB per kelompok umur (PDF) dan per sekolah (PDF, ZIP gambar JPG 300 dpi + PDF); ZIP semua sekolah satu folder per sekolah; satu latar penuh untuk semua BIB, kepala dan warna tulisan (gelap/terang) dipilih admin (K137).
 - Pecah berkas besar tanpa ubah perilaku setelah F7-26, F7-27, F8-01 (K121).
+
+## Tahap 9 (rombak tampilan dan hari lomba)
+
+- Biaya di FAQ dirinci hanya bila "Tampilkan biaya di halaman depan" menyala; bila mati, FAQ menunjuk langkah Biaya (K74, K143).
+- Poin multi-lomba: prestasi di luar tabel = 0 poin dengan peringatan; komponen kosong = 0 poin, atlet tetap masuk peringkat; server lama memindah Trilomba lewat `tabel-skor:impor --trilomba` (K143).
+- Halaman depan: sakelar Hasil di atas untuk hari lomba (bawaan mati); foto carousel unggahan 1600 px; menu Kategori dipertahankan (K143).
