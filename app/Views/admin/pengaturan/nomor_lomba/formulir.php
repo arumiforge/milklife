@@ -193,6 +193,28 @@ $tetap = static fn (string $kotak): string => $dipakai && (string) ($nomor[$kota
                             <?php endif ?>
                         </fieldset>
 
+                        <?php // Aturan nomor lompat/lempar (F9-09): percobaan dan pemecah seri. ?>
+                        <fieldset class="border rounded-3 p-3 mb-3" id="bagian-percobaan"<?= ($isian['jenis_hasil'] ?? '') === JenisHasil::JARAK ? '' : ' hidden' ?>>
+                            <legend class="float-none w-auto px-2 mb-0 fs-6 fw-semibold">Percobaan lompat/lempar</legend>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-4">
+                                    <label for="jumlah_percobaan" class="form-label">Banyak percobaan</label>
+                                    <input type="number" class="form-control<?= $salah('jumlah_percobaan') ?>" id="jumlah_percobaan" name="jumlah_percobaan" min="1" max="<?= App\Libraries\Hasil\Percobaan::MAKSIMAL ?>" inputmode="numeric" placeholder="3"
+                                        value="<?= esc($isian['jumlah_percobaan'] ?? '', 'attr') ?>" aria-describedby="<?= $jelas('jumlah_percobaan', 'jumlah_percobaan-bantuan') ?>">
+                                    <div id="jumlah_percobaan-bantuan" class="form-text">Kosong = 3. Juri mengisi jarak tiap percobaan di Lembar juri; prestasi = jarak sah terjauh.</div>
+                                    <?= $pesan('jumlah_percobaan') ?>
+                                </div>
+                                <div class="col-12 col-md-8">
+                                    <input type="hidden" name="pemecah_seri" value="0">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="pemecah_seri" name="pemecah_seri" value="1"<?= ($isian['pemecah_seri'] ?? '1') === '0' ? '' : ' checked' ?> aria-describedby="pemecah_seri-bantuan">
+                                        <label class="form-check-label" for="pemecah_seri">Prestasi sama dipisah prestasi terbaik kedua</label>
+                                    </div>
+                                    <div id="pemecah_seri-bantuan" class="form-text">Bila jarak terbaik sama, yang jarak terbaik keduanya lebih jauh di atas (lalu ketiga, dan seterusnya). Hanya berlaku bila percobaannya diisi; matikan supaya prestasi sama tetap berperingkat sama.</div>
+                                </div>
+                            </div>
+                        </fieldset>
+
                         <fieldset class="border rounded-3 p-3 mb-3" id="bagian-tim"<?= $beregu ? '' : ' hidden' ?>>
                             <legend class="float-none w-auto px-2 mb-0 fs-6 fw-semibold">Tim beregu</legend>
                             <p class="form-text mt-0">Wajib diisi untuk nomor beregu. Satu sekolah boleh mendaftarkan beberapa regu (Regu A, B, C, …); setiap regu berisi tepat sejumlah anggota inti, ditambah cadangan sampai batas anggota.</p>

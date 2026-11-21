@@ -6,7 +6,9 @@ use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\PembagiSeri;
+use App\Libraries\Hasil\Percobaan;
 use App\Libraries\Hasil\Peringkat;
+use App\Libraries\Hasil\Prestasi;
 use App\Libraries\Hasil\TabelSkor;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PeranAwalRegu;
@@ -46,6 +48,8 @@ use ZipArchive;
  *   membawa kode tabel skor dan komponennya, hasilnya membawa `rincian`
  *   per komponen (F9-10). Babak membawa jadwal (F9-07) dan keadaan seri,
  *   hasil membawa seri dan lintasan, nomor membawa aturan seri (F9-08).
+ *   Nomor membawa aturan percobaan dan pemecah seri, hasil membawa
+ *   percobaan dan seperseribu detik (F9-09).
  *   `tabel_skor`: semua tabel skor beserta barisnya, termasuk ubahan admin
  *   (F9-10; boleh tidak ada). Tabel berkode sama di server baru diganti.
  *   `faq`: tanya-jawab halaman Bantuan (F9-04). Bila ada dan berisi, isinya
@@ -1045,6 +1049,9 @@ final class PaketPendaftaran
                 // Seri dan lintasan (F9-08).
                 'seri'     => $h['seri'] === null ? null : (int) $h['seri'],
                 'lintasan' => $h['lintasan'] === null ? null : (int) $h['lintasan'],
+                // Aturan nomor dan lembar juri (F9-09).
+                'percobaan'   => $h['percobaan'],
+                'seperseribu' => $h['seperseribu'] === null ? null : (int) $h['seperseribu'],
             ];
         }
 
@@ -1066,10 +1073,11 @@ final class PaketPendaftaran
 
         $kodeTabel = array_column($this->db->table('tabel_skor')->select('id, kode')->get()->getResultArray(), 'kode', 'id');
 
-        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
+        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, jumlah_percobaan, pemecah_seri, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
             $id = (int) $n['id'];
 
-            if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null || $n['tabel_skor_id'] !== null || $n['tempat_per_seri'] !== null || $n['urutan_lintasan'] !== null)) {
+            if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null || $n['tabel_skor_id'] !== null || $n['tempat_per_seri'] !== null || $n['urutan_lintasan'] !== null
+                || $n['jumlah_percobaan'] !== null || (int) $n['pemecah_seri'] === 0)) {
                 $daftar[] = $nomor[$id] + [
                     'jenis_hasil'   => $n['jenis_hasil'],
                     'tabel_skor'    => $kodeTabel[$n['tabel_skor_id']] ?? null,
@@ -1078,6 +1086,9 @@ final class PaketPendaftaran
                     // Aturan seri (F9-08).
                     'tempat_per_seri' => $n['tempat_per_seri'] === null ? null : (int) $n['tempat_per_seri'],
                     'urutan_lintasan' => $n['urutan_lintasan'],
+                    // Aturan nomor (F9-09).
+                    'jumlah_percobaan' => $n['jumlah_percobaan'] === null ? null : (int) $n['jumlah_percobaan'],
+                    'pemecah_seri'     => (int) $n['pemecah_seri'],
                     'babak'         => $babak[$id] ?? [],
                 ];
             }
@@ -1131,6 +1142,10 @@ final class PaketPendaftaran
             // Aturan seri (F9-08); paket lama tanpa aturan = bawaan.
             $ubah += self::aturanSeriNomor($n);
 
+            // Aturan nomor (F9-09); paket lama = bawaan (3 percobaan, pemecah seri menyala).
+            $ubah['jumlah_percobaan'] = is_numeric($n['jumlah_percobaan'] ?? null) && (int) $n['jumlah_percobaan'] >= 1 && (int) $n['jumlah_percobaan'] <= Percobaan::MAKSIMAL ? (int) $n['jumlah_percobaan'] : null;
+            $ubah['pemecah_seri']     = ($n['pemecah_seri'] ?? 1) === 0 ? 0 : 1;
+
             $this->db->table('nomor_lomba')->where('id', $idNomor)->update($ubah);
 
             foreach (is_array($n['babak'] ?? null) ? $n['babak'] : [] as $b) {
@@ -1165,6 +1180,9 @@ final class PaketPendaftaran
                         // Seri dan lintasan (F9-08).
                         'seri'     => self::angkaKecil($h['seri'] ?? null),
                         'lintasan' => self::angkaKecil($h['lintasan'] ?? null),
+                        // Aturan nomor dan lembar juri (F9-09).
+                        'percobaan'   => Percobaan::tulis(Percobaan::baca($h['percobaan'] ?? null)),
+                        'seperseribu' => is_int($h['seperseribu'] ?? null) && $h['seperseribu'] > 0 && $h['seperseribu'] < 10 * Prestasi::BATAS[JenisHasil::WAKTU] ? $h['seperseribu'] : null,
                     ]);
                 }
             }

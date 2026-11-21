@@ -40,8 +40,8 @@ $menuAdmin = [
     // Atlet yang ditolak panitia, terpisah dari atlet terdaftar (K117).
     ['label' => 'Atlet ditolak', 'label_pendek' => 'Ditolak', 'ikon' => 'person-x', 'alamat' => 'admin/atlet-ditolak', 'bawah' => true],
     ['label' => 'Rekap', 'ikon' => 'bar-chart-line', 'alamat' => 'admin/rekap', 'bawah' => true],
-    // Hari lomba (F8-03): daftar ulang, cetak BIB, daftar peserta; jadwal pertandingan (F9-07); seri dan lintasan (F9-08).
-    ['label' => 'Hari lomba', 'label_pendek' => 'Lomba', 'ikon' => 'flag', 'alamat' => 'admin/daftar-ulang', 'aktif_juga' => ['admin/nomor-atlet', 'admin/daftar-peserta', 'admin/jadwal-pertandingan', 'admin/seri']],
+    // Hari lomba (F8-03): daftar ulang, cetak BIB, daftar peserta; jadwal pertandingan (F9-07); seri dan lintasan (F9-08); lembar juri (F9-09).
+    ['label' => 'Hari lomba', 'label_pendek' => 'Lomba', 'ikon' => 'flag', 'alamat' => 'admin/daftar-ulang', 'aktif_juga' => ['admin/nomor-atlet', 'admin/daftar-peserta', 'admin/jadwal-pertandingan', 'admin/seri', 'admin/juri']],
     // Hasil lomba (F8-04), butir sendiri (K130), hanya di sidebar (K132).
     ['label' => 'Hasil lomba', 'label_pendek' => 'Hasil', 'ikon' => 'trophy', 'alamat' => 'admin/hasil'],
     // Klasemen sekolah (F8-05), butir sendiri (K130), hanya di sidebar (K132).
