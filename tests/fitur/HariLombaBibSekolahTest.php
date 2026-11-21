@@ -2,9 +2,10 @@
 
 use App\Libraries\HariLomba\CetakBib;
 use App\Libraries\HariLomba\TampilanBib;
+use App\Libraries\HariLomba\UnduhanZipAlir;
+use App\Libraries\HariLomba\ZipAlir;
 use App\Libraries\Panel\StatusPembayaran;
 use CodeIgniter\Exceptions\PageNotFoundException;
-use CodeIgniter\HTTP\DownloadResponse;
 use CodeIgniter\Test\TestResponse;
 use Tests\Support\KirimFormulir;
 use Tests\Support\PanelDataContoh;
@@ -96,7 +97,9 @@ final class HariLombaBibSekolahTest extends UjiBasisData
     {
         $tanpaNpsn = $this->siapkanTigaSekolah();
 
-        $isi    = $this->bacaZip($this->bukaSebagaiAdmin(self::ALAMAT . '/zip'));
+        $hasil = $this->bukaSebagaiAdmin(self::ALAMAT . '/zip');
+        $this->assertStringContainsString('BIB_SemuaSekolah', $hasil->response()->getHeaderLine('Content-Disposition'));
+        $isi    = $this->bacaZip($hasil);
         $folder = array_values(array_unique(array_map(static fn (string $n): string => dirname($n), array_keys($isi))));
 
         $this->assertSame(['SD KARANGAN LAIN - 99999913', 'SD KARANGAN MAJU - 99999911', 'SD KARANGAN TANPA NPSN'], $folder);
@@ -107,14 +110,13 @@ final class HariLombaBibSekolahTest extends UjiBasisData
 
     public function testZipKosongDanNamaBerkasAman(): void
     {
-        $tujuan = CetakBib::jalurSementara();
-        $this->assertSame(['sekolah' => 0, 'atlet' => 0], (new CetakBib())->zip($tujuan));
-        $zip = new ZipArchive();
-        $zip->open($tujuan);
-        $this->assertSame('BACA.txt', $zip->getNameIndex(0));
-        $zip->close();
-        @unlink($tujuan);
-        $this->assertDirectoryDoesNotExist($tujuan . '.isi');
+        $data = '';
+        $zip  = new ZipAlir(static function (string $bita) use (&$data): void {
+            $data .= $bita;
+        });
+        $this->assertSame(['sekolah' => 0, 'atlet' => 0], (new CetakBib())->isiZip($zip));
+        $zip->selesai();
+        $this->assertSame(['BACA.txt'], array_keys($this->bukaZip($data)));
 
         $this->assertSame('MI MAARIF NU 01 (KUDUS)', CetakBib::namaFolder("MI MA'ARIF NU 01 / (KUDUS)"));
         $this->assertSame('Tanpa nama', CetakBib::namaFolder('../..'));
@@ -222,17 +224,27 @@ final class HariLombaBibSekolahTest extends UjiBasisData
     private function bacaZip(TestResponse $hasil): array
     {
         $tanggapan = $hasil->response();
-        $this->assertInstanceOf(DownloadResponse::class, $tanggapan);
+        $this->assertInstanceOf(UnduhanZipAlir::class, $tanggapan);
         $this->assertStringContainsString('application/zip', $tanggapan->getHeaderLine('Content-Type'));
+        $this->assertStringStartsWith('attachment; filename="BIB_', $tanggapan->getHeaderLine('Content-Disposition'));
 
         ob_start();
         $tanggapan->sendBody();
-        $data = (string) ob_get_clean();
 
+        return $this->bukaZip((string) ob_get_clean());
+    }
+
+    /**
+     * Isi ZIP dibaca ZipArchive (memastikan ZipAlir menulis ZIP yang sah).
+     *
+     * @return array<string, string>
+     */
+    private function bukaZip(string $data): array
+    {
         $berkas = tempnam(sys_get_temp_dir(), 'milklife-bib-');
         file_put_contents($berkas, $data);
         $zip = new ZipArchive();
-        $this->assertTrue($zip->open($berkas));
+        $this->assertTrue($zip->open($berkas, ZipArchive::CHECKCONS));
         $isi = [];
 
         for ($i = 0; $i < $zip->numFiles; $i++) {

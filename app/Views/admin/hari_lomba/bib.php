@@ -5,8 +5,8 @@
  * @var CodeIgniter\View\View $this
  * @var list<array{id: int, nama: string, atlet: int}> $kelompokUmur
  * @var int $jumlahSemua
- * @var list<array{kunci: string, nama: string, npsn: string, atlet: int}> $sekolah
- * @var App\Libraries\HariLomba\TampilanBib $tampilan
+ * @var list<array{kunci: string, nama: string, npsn: string, atlet: int}> $sekolahBib
+ * @var App\Libraries\HariLomba\TampilanBib $tampilanBib
  * @var bool $kepalaDipilih
  * @var string $warnaDipilih
  */
@@ -36,14 +36,14 @@ use App\Libraries\Unggahan;
             <div class="row g-4">
                 <div class="col-12 col-lg-6">
                     <p class="small text-body-secondary mb-2">Contoh hasil cetak<?= $jumlahSemua > 0 ? ' (atlet pertama)' : '' ?>:</p>
-                    <img src="<?= site_url('admin/nomor-atlet/cetak/contoh') ?>?v=<?= esc(md5((string) $tampilan->latar . (int) $tampilan->kepala . $tampilan->namaWarna), 'attr') ?>"
+                    <img src="<?= site_url('admin/nomor-atlet/cetak/contoh') ?>?v=<?= esc(md5((string) $tampilanBib->latar . (int) $tampilanBib->kepala . $tampilanBib->namaWarna), 'attr') ?>"
                         class="img-fluid border rounded bg-white" id="contoh-bib" alt="Contoh nomor atlet (BIB) dengan tampilan yang berlaku" width="2480" height="1754" loading="lazy">
                 </div>
                 <div class="col-12 col-lg-6">
                     <form action="<?= site_url('admin/nomor-atlet/cetak/tampilan') ?>" method="post" enctype="multipart/form-data" id="form-tampilan-bib">
                         <?= csrf_field() ?>
                         <div class="mb-3">
-                            <label for="latar" class="form-label fw-semibold"><?= $tampilan->latar === null ? 'Unggah latar' : 'Ganti latar' ?></label>
+                            <label for="latar" class="form-label fw-semibold"><?= $tampilanBib->latar === null ? 'Unggah latar' : 'Ganti latar' ?></label>
                             <input type="file" class="form-control" id="latar" name="latar" accept="image/jpeg,image/png,image/webp"
                                 data-ukuran-maksimal="<?= TampilanBib::BATAS_LATAR ?>" aria-describedby="latar-bantuan">
                             <div id="latar-bantuan" class="form-text">
@@ -51,7 +51,7 @@ use App\Libraries\Unggahan;
                                 Ukuran terbaik 2480 × 1754 piksel (mendatar); ukuran lain dipotong di tengah supaya pas.
                                 Sisakan bagian tengah yang polos untuk nomor dan nama atlet.
                             </div>
-                            <?php if ($tampilan->latar !== null) : ?>
+                            <?php if ($tampilanBib->latar !== null) : ?>
                                 <div class="form-check mt-2">
                                     <input class="form-check-input" type="checkbox" value="1" id="hapus_latar" name="hapus_latar">
                                     <label class="form-check-label" for="hapus_latar">Hapus latar (kembali ke BIB putih)</label>
@@ -84,18 +84,18 @@ use App\Libraries\Unggahan;
         <div class="card-body">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                 <h2 class="h5 mb-0" id="judul-sekolah-bib">Per sekolah</h2>
-                <?php if ($sekolah !== []) : ?>
+                <?php if ($sekolahBib !== []) : ?>
                     <a class="btn btn-primary" id="unduh-zip-semua" href="<?= site_url('admin/nomor-atlet/cetak/zip') ?>">
                         <i class="bi bi-file-earmark-zip" aria-hidden="true"></i> Unduh semua sekolah (ZIP)
                     </a>
                 <?php endif ?>
             </div>
-            <?php if ($sekolah === []) : ?>
+            <?php if ($sekolahBib === []) : ?>
                 <p class="text-body-secondary mb-0" id="bib-sekolah-kosong">Belum ada sekolah dengan atlet ber-nomor atlet (BIB).</p>
             <?php else : ?>
                 <p class="small text-body-secondary">
                     ZIP sekolah berisi gambar JPG per atlet dan PDF sekolah itu. ZIP semua sekolah berisi satu folder per sekolah
-                    (<?= count($sekolah) ?> sekolah, <?= $jumlahSemua ?> atlet) dan bisa butuh beberapa menit sampai terunduh.
+                    (<?= count($sekolahBib) ?> sekolah, <?= $jumlahSemua ?> atlet) dan bisa butuh beberapa menit sampai terunduh.
                 </p>
                 <div class="table-responsive">
                     <table class="table table-sm align-middle mb-0" id="daftar-bib-sekolah">
@@ -103,7 +103,7 @@ use App\Libraries\Unggahan;
                             <tr><th scope="col">Sekolah</th><th scope="col" class="text-end">Atlet</th><th scope="col" class="text-end">Unduh</th></tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($sekolah as $s) : ?>
+                            <?php foreach ($sekolahBib as $s) : ?>
                                 <tr>
                                     <td>
                                         <?= esc($s['nama']) ?>

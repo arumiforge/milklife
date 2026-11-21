@@ -7,6 +7,8 @@ use App\Libraries\HariLomba\CetakBib;
 use App\Libraries\HariLomba\GambarBib;
 use App\Libraries\HariLomba\PdfHariLomba;
 use App\Libraries\HariLomba\TampilanBib;
+use App\Libraries\HariLomba\UnduhanZipAlir;
+use App\Libraries\HariLomba\ZipAlir;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
 use RuntimeException;
@@ -35,8 +37,8 @@ class CetakBibController extends BaseController
         return view('admin/hari_lomba/bib', [
             'kelompokUmur' => $kelompok,
             'jumlahSemua'  => array_sum(array_column($kelompok, 'atlet')),
-            'sekolah'      => $bib->sekolah(),
-            'tampilan'     => TampilanBib::dariPengaturan(),
+            'sekolahBib'   => $bib->sekolah(),
+            'tampilanBib'  => TampilanBib::dariPengaturan(),
             'kepalaDipilih' => (bool) setting('Bib.tampilkan_kepala'),
             'warnaDipilih' => (string) setting('Bib.warna_teks'),
         ]);
@@ -94,9 +96,9 @@ class CetakBibController extends BaseController
             throw PageNotFoundException::forPageNotFound('Sekolah tidak ditemukan atau belum punya atlet dengan nomor atlet (BIB).');
         }
 
-        @set_time_limit(300);
-
         if ($jenis === 'pdf') {
+            @set_time_limit(300);
+
             return $this->unduhPdf($bib->pdfSekolah($kunci), CetakBib::namaBerkasSekolah($sekolah['nama'], 'pdf'));
         }
 
@@ -105,9 +107,6 @@ class CetakBibController extends BaseController
 
     public function zip(): ResponseInterface
     {
-        // Ribuan gambar bisa butuh beberapa menit.
-        @set_time_limit(0);
-
         return $this->unduhZip(new CetakBib(), null, CetakBib::namaBerkasSemua());
     }
 
@@ -121,26 +120,21 @@ class CetakBibController extends BaseController
     }
 
     /**
-     * ZIP ditulis ke berkas sementara lalu dikirim dari disk, tanpa dimuat utuh
-     * ke memori; berkas sementara dihapus unduhan berikutnya setelah satu jam.
+     * ZIP dibuat sambil dikirim (`UnduhanZipAlir`): unduhan mulai sejak berkas
+     * pertama, jadi tidak diputus Cloudflare walau butuh beberapa menit.
+     * Kunci sesi dilepas lebih dulu supaya admin tetap bisa membuka halaman
+     * lain selama ZIP dibuat.
      */
     private function unduhZip(CetakBib $bib, ?string $kunci, string $namaBerkas): ResponseInterface
     {
-        $sementara = null;
-
-        try {
-            $sementara = CetakBib::jalurSementara();
-            $bib->zip($sementara, $kunci);
-        } catch (RuntimeException $e) {
-            if ($sementara !== null) {
-                @unlink($sementara);
-            }
-
-            return redirect()->to(self::ALAMAT)->with('pesan_galat', $e->getMessage());
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
         }
 
-        return $this->response->download($sementara, null)
-            ->setFileName($namaBerkas)
-            ->setContentType('application/zip', '');
+        return new UnduhanZipAlir($namaBerkas, static function (ZipAlir $zip) use ($bib, $kunci): void {
+            // Ribuan gambar bisa butuh beberapa menit.
+            @set_time_limit(0);
+            $bib->isiZip($zip, $kunci);
+        });
     }
 }

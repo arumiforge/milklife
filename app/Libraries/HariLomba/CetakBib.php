@@ -4,8 +4,6 @@ namespace App\Libraries\HariLomba;
 
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\BaseConnection;
-use RuntimeException;
-use ZipArchive;
 
 /**
  * Cetak nomor atlet (BIB) massal (F8-03, K124, asumsi 5 K125).
@@ -29,17 +27,10 @@ use ZipArchive;
  *     $bib->sekolah();           // [['kunci' => '20318001', 'nama' => 'SD …', 'npsn' => '20318001', 'atlet' => 12], ...]
  *     $bib->atletSekolah('20318001');
  *     $bib->pdfSekolah('20318001');
- *     $bib->zip($tujuan, '20318001');   // null = semua sekolah, satu folder per sekolah
+ *     $bib->isiZip($zip, '20318001');   // ZipAlir; null = semua sekolah, satu folder per sekolah
  */
 final class CetakBib
 {
-    /**
-     * Folder ZIP sementara; dihapus setelah `UMUR_SEMENTARA` detik oleh unduhan berikutnya.
-     */
-    public const FOLDER_SEMENTARA = WRITEPATH . 'cache/bib';
-
-    private const UMUR_SEMENTARA = 3600;
-
     /**
      * Kunci sekolah: NPSN, atau `p<id pendaftaran>` bila tanpa NPSN.
      */
@@ -162,33 +153,16 @@ final class CetakBib
     }
 
     /**
-     * Tulis ZIP ke `$tujuan`: gambar JPG per atlet dan PDF sekolah. Satu
-     * sekolah: berkas langsung di akar ZIP; `null` = semua sekolah, satu
-     * folder per sekolah (`<nama sekolah> - <NPSN>/`).
-     *
-     * Gambar ditulis ke folder sementara dulu (ZipArchive membaca berkas saat
-     * ditutup), jadi memori tidak membengkak untuk ribuan atlet.
+     * Isi ZIP: gambar JPG per atlet dan PDF sekolah. Satu sekolah: berkas
+     * langsung di akar ZIP; `null` = semua sekolah, satu folder per sekolah
+     * (`<nama sekolah> - <NPSN>/`). Tiap berkas langsung dikirim lewat
+     * `ZipAlir`, jadi memori tidak membengkak untuk ribuan atlet.
      *
      * @return array{sekolah: int, atlet: int}
-     *
-     * @throws RuntimeException Dengan pesan ramah bila berkas gagal ditulis.
      */
-    public function zip(string $tujuan, ?string $kunci = null): array
+    public function isiZip(ZipAlir $zip, ?string $kunci = null): array
     {
         $daftar = $kunci === null ? $this->sekolah() : array_values(array_filter($this->sekolah(), static fn (array $s): bool => $s['kunci'] === $kunci));
-        $folder = $tujuan . '.isi';
-
-        if (! @mkdir($folder, 0700, true) && ! is_dir($folder)) {
-            throw new RuntimeException('Folder sementara BIB tidak bisa dibuat. Minta pengelola server memeriksa izin tulis folder writable/cache.');
-        }
-
-        $zip = new ZipArchive();
-
-        if ($zip->open($tujuan, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-            self::hapusFolder($folder);
-
-            throw new RuntimeException('Berkas ZIP gagal dibuat. Periksa sisa ruang penyimpanan server, lalu coba lagi.');
-        }
 
         $tampilan = $this->tampilan();
         $logo     = PdfHariLomba::logoPng();
@@ -196,63 +170,23 @@ final class CetakBib
         $gambar   = new GambarBib($tampilan, PdfHariLomba::namaAcara(), PdfHariLomba::seriTahun(), $logo, $latar);
         $jumlah   = 0;
 
-        try {
-            foreach ($daftar as $urut => $s) {
-                $atlet = $this->atletSekolah($s['kunci']);
-                $awal  = $kunci === null ? self::namaFolder($s['nama'] . ($s['npsn'] !== '' ? ' - ' . $s['npsn'] : '')) . '/' : '';
-                $pdf   = $folder . '/' . $urut . '.pdf';
+        foreach ($daftar as $s) {
+            $atlet = $this->atletSekolah($s['kunci']);
+            $awal  = $kunci === null ? self::namaFolder($s['nama'] . ($s['npsn'] !== '' ? ' - ' . $s['npsn'] : '')) . '/' : '';
 
-                self::tulisBerkas($pdf, $this->pdfDari($atlet, $logo, $latar));
-                $zip->addFile($pdf, $awal . self::namaBerkasSekolah($s['nama'], 'pdf'));
-
-                foreach ($atlet as $i => $a) {
-                    $jalur = $folder . '/' . $urut . '-' . $i . '.jpg';
-                    $nama  = $awal . self::namaFolder($a['nomor_dada'] . ' - ' . mb_strtoupper($a['nama'])) . '.jpg';
-                    self::tulisBerkas($jalur, $gambar->jpg($a));
-                    $zip->addFile($jalur, $nama);
-                    // JPG sudah dimampatkan; disimpan tanpa dimampatkan lagi supaya cepat.
-                    $zip->setCompressionName($nama, ZipArchive::CM_STORE);
-                    $jumlah++;
-                }
+            foreach ($atlet as $a) {
+                $zip->tambah($awal . self::namaFolder($a['nomor_dada'] . ' - ' . mb_strtoupper($a['nama'])) . '.jpg', $gambar->jpg($a));
+                $jumlah++;
             }
 
-            if ($daftar === []) {
-                $zip->addFromString('BACA.txt', 'Belum ada atlet dengan nomor atlet (BIB) dari pendaftaran Lunas.');
-            }
+            $zip->tambah($awal . self::namaBerkasSekolah($s['nama'], 'pdf'), $this->pdfDari($atlet, $logo, $latar));
+        }
 
-            if (! $zip->close()) {
-                throw new RuntimeException('Berkas ZIP gagal ditulis. Periksa sisa ruang penyimpanan server, lalu coba lagi.');
-            }
-        } finally {
-            self::hapusFolder($folder);
+        if ($daftar === []) {
+            $zip->tambah('BACA.txt', 'Belum ada atlet dengan nomor atlet (BIB) dari pendaftaran Lunas.');
         }
 
         return ['sekolah' => count($daftar), 'atlet' => $jumlah];
-    }
-
-    /**
-     * Jalur ZIP sementara baru di `FOLDER_SEMENTARA`; ZIP dan folder isinya
-     * yang lebih tua dari satu jam dihapus lebih dulu.
-     *
-     * @throws RuntimeException Bila folder tidak bisa dibuat.
-     */
-    public static function jalurSementara(string $folder = self::FOLDER_SEMENTARA, ?int $sekarang = null): string
-    {
-        if (! is_dir($folder) && ! @mkdir($folder, 0700, true) && ! is_dir($folder)) {
-            throw new RuntimeException('Folder sementara BIB tidak bisa dibuat. Minta pengelola server memeriksa izin tulis folder writable/cache.');
-        }
-
-        $sekarang ??= time();
-
-        foreach (glob($folder . '/BIB_*') ?: [] as $lama) {
-            $waktu = @filemtime($lama);
-
-            if ($waktu !== false && $sekarang - $waktu > self::UMUR_SEMENTARA) {
-                is_dir($lama) ? self::hapusFolder($lama) : @unlink($lama);
-            }
-        }
-
-        return $folder . '/BIB_' . bin2hex(random_bytes(16)) . '.zip';
     }
 
     /**
@@ -341,22 +275,6 @@ final class CetakBib
             'sekolah'       => (string) $a['nama_sekolah'],
             'kelompok_umur' => (string) $a['kelompok_umur'],
         ], $baris);
-    }
-
-    private static function tulisBerkas(string $jalur, string $isi): void
-    {
-        if (@file_put_contents($jalur, $isi) !== strlen($isi)) {
-            throw new RuntimeException('Berkas BIB gagal ditulis. Periksa sisa ruang penyimpanan server, lalu coba lagi.');
-        }
-    }
-
-    private static function hapusFolder(string $folder): void
-    {
-        foreach (glob($folder . '/*') ?: [] as $berkas) {
-            @unlink($berkas);
-        }
-
-        @rmdir($folder);
     }
 
     /**
