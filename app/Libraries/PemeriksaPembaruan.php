@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use App\Commands\MinifyAset;
+use App\Libraries\Hasil\DataTabelSkor;
 use App\Models\SekolahModel;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Exceptions\DatabaseException;
@@ -29,7 +30,10 @@ use Throwable;
  *    admin (tidak akan ditimpa) → `php spark sekolah:impor`.
  * 4. `gabung`: NPSN dengan lebih dari satu pendaftaran Lunas (K109) →
  *    `php spark pendaftaran:gabung`.
- * 5. `aset`: berkas CSS/JS/SVG yang versi `.min`-nya belum ada atau lebih tua
+ * 5. `tabel_skor`: tabel skor bawaan di `data/tabel-skor/` yang belum
+ *    terpasang, atau nomor Trilomba yang masih berjenis hasil poin dan belum
+ *    punya prestasi (F9-10, K143) → `php spark tabel-skor:impor --trilomba`.
+ * 6. `aset`: berkas CSS/JS/SVG yang versi `.min`-nya belum ada atau lebih tua
  *    dari aslinya → `php spark aset:minify`. Dilewati bila `aplikasi.minify`
  *    mati dan belum ada berkas `.min` sama sekali.
  *
@@ -69,6 +73,7 @@ final class PemeriksaPembaruan
             $this->jalankan('migrasi', 'Struktur basis data (migrasi)', 'php spark migrate --all', fn (): array => $this->periksaMigrasi()),
             $this->jalankan('sekolah', 'Data sekolah', 'php spark sekolah:impor', fn (): array => $this->periksaSekolah()),
             $this->jalankan('gabung', 'Pendaftaran Lunas ber-NPSN sama', 'php spark pendaftaran:gabung', fn (): array => $this->periksaGabung()),
+            $this->jalankan('tabel_skor', 'Tabel skor multi-lomba (Trilomba)', 'php spark tabel-skor:impor --trilomba', fn (): array => $this->periksaTabelSkor()),
             $this->jalankan('aset', 'CSS dan JavaScript kecil', 'php spark aset:minify', fn (): array => $this->periksaAset()),
         ];
     }
@@ -331,6 +336,42 @@ final class PemeriksaPembaruan
         }
 
         return [true, $jumlah . ' sekolah punya lebih dari satu pendaftaran Lunas. Perintahnya meminta konfirmasi GABUNG.'];
+    }
+
+    /**
+     * @return array{0: bool, 1: string}
+     */
+    private function periksaTabelSkor(): array
+    {
+        $bawaan = DataTabelSkor::berkasBawaan($this->akar . 'data/tabel-skor');
+
+        if ($bawaan === []) {
+            return [false, 'Tidak ada tabel skor bawaan di data/tabel-skor, jadi tidak ada yang perlu dipasang.'];
+        }
+
+        if (! $this->db->tableExists('tabel_skor')) {
+            return [true, 'Tabel skor belum ada. Jalankan setelah migrasi.'];
+        }
+
+        $ada   = array_column($this->db->table('tabel_skor')->select('kode')->get()->getResultArray(), 'kode');
+        $belum = array_values(array_filter(array_map(static fn (array $t): ?string => in_array($t['kode'], $ada, true) ? null : (string) $t['nama'], $bawaan)));
+        $poin  = count((new DataTabelSkor($this->db))->trilombaMasihPoin());
+
+        if ($belum === [] && $poin === 0) {
+            return [false, 'Semua tabel skor bawaan terpasang dan nomor Trilomba memakai poin multi-lomba.'];
+        }
+
+        $bagian = [];
+
+        if ($belum !== []) {
+            $bagian[] = 'tabel bawaan belum terpasang: ' . implode(', ', $belum);
+        }
+
+        if ($poin > 0) {
+            $bagian[] = $poin . ' nomor Trilomba masih berjenis hasil poin dan belum punya prestasi';
+        }
+
+        return [true, ucfirst(implode('; ', $bagian)) . '. Nomor yang sudah punya prestasi tidak diubah.'];
     }
 
     /**

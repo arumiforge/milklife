@@ -12,12 +12,12 @@ Poin Trilomba dihitung web dari prestasi mentah dengan tabel resmi panitia, tida
 
 ## Hasil
 
-- [ ] Alat `data/alat/` mengubah `sumber/tabel-skor/*.pdf` menjadi `data/tabel-skor/*.json` (Trilomba O2SN SMP: 60 m, lompat jauh, tolak peluru; Pancalomba SMA/SMK: 100 m, 800 m, lompat jauh, tolak peluru, lempar lembing; putra dan putri) dengan uji sampel baris
-- [ ] Tabel `tabel_skor`, `tabel_skor_baris`; perintah `tabel-skor:impor`; `data:awal` mengisinya
-- [ ] Jenis hasil **Poin multi-lomba** di Pengaturan > Nomor lomba: pilih tabel dan komponen; Trilomba data awal memakai tabel Trilomba
-- [ ] Isian prestasi per komponen di hasil dan lembar juri; poin per komponen dan total otomatis; prestasi di antara baris memakai baris yang lebih buruk; di luar tabel = 0 dengan peringatan
-- [ ] Admin bisa mengubah baris tabel dan mengimpor tabel dari Excel
-- [ ] `agent/ATURAN.md` (K124 butir 3) dan rancangan final diperbarui
+- [x] Alat `data/alat/` mengubah `sumber/tabel-skor/*.pdf` menjadi `data/tabel-skor/*.json` (Trilomba O2SN SMP: 60 m, lompat jauh, tolak peluru; Pancalomba SMA/SMK: 100 m, 800 m, lompat jauh, tolak peluru, lempar lembing; putra dan putri) dengan uji sampel baris
+- [x] Tabel `tabel_skor`, `tabel_skor_baris`; perintah `tabel-skor:impor`; `data:awal` mengisinya
+- [x] Jenis hasil **Poin multi-lomba** di Pengaturan > Nomor lomba: pilih tabel dan komponen; Trilomba data awal memakai tabel Trilomba
+- [x] Isian prestasi per komponen di hasil (lembar juri F9-09 memakai `TabelSkor::hitung()` yang sama); poin per komponen dan total otomatis; prestasi di antara baris memakai baris yang lebih buruk; di luar tabel = 0 dengan peringatan
+- [x] Admin bisa mengubah baris tabel dan mengimpor tabel dari Excel
+- [x] `agent/ATURAN.md` (K124 butir 3) dan rancangan final diperbarui
 
 ## Berkas dan uji
 

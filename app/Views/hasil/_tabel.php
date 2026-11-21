@@ -32,7 +32,17 @@ $beregu = $nomor['jenis'] === 'beregu';
                         <?php if ($admin && $h['manual']) : ?><span class="badge rounded-pill text-bg-info">diubah admin</span><?php endif ?>
                     </td>
                     <?php if (! $beregu) : ?><td class="d-none d-md-table-cell"><?= esc($h['sekolah']) ?></td><?php endif ?>
-                    <td class="text-nowrap"><?= esc($h['prestasi_teks']) ?><?= $h['keterangan'] !== null ? ' <span class="badge text-bg-secondary">' . esc($h['keterangan']) . '</span>' : '' ?></td>
+                    <td class="text-nowrap">
+                        <?= esc($h['prestasi_teks']) ?><?= $h['prestasi_teks'] !== '' && ($h['rincian'] ?? []) !== [] ? ' poin' : '' ?><?= $h['keterangan'] !== null ? ' <span class="badge text-bg-secondary">' . esc($h['keterangan']) . '</span>' : '' ?>
+                        <?php if (($h['rincian'] ?? []) !== []) : ?>
+                            <?php // Poin multi-lomba (F9-10): prestasi dan poin tiap komponen. ?>
+                            <ul class="list-unstyled small text-body-secondary mb-0 text-wrap" data-rincian-poin>
+                                <?php foreach ($h['rincian'] as $r) : ?>
+                                    <li><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '– (0)' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></li>
+                                <?php endforeach ?>
+                            </ul>
+                        <?php endif ?>
+                    </td>
                 </tr>
             <?php endforeach ?>
             <?php if ($babak['hasil'] === []) : ?>

@@ -244,5 +244,18 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         // ---------- Sakelar halaman Peserta publik (F9-12) ----------
         $routes->post('halaman-depan/peserta', 'HalamanPesertaController::simpan');
         // ---------- Akhir sakelar halaman Peserta ----------
+
+        // ---------- Tabel skor multi-lomba (F9-10) ----------
+        // Daftar tabel, pasang tabel bawaan, tambah/hapus tabel; baris per komponen dan kategori.
+        $routes->get('tabel-skor', 'TabelSkorController::index');
+        $routes->post('tabel-skor', 'TabelSkorController::buat');
+        $routes->post('tabel-skor/pasang', 'TabelSkorController::pasang');
+        $routes->post('tabel-skor/(:num)/hapus', 'TabelSkorController::hapus/$1');
+        $routes->get('tabel-skor/(:num)/([a-z0-9-]+)/(putra|putri)', 'TabelSkorController::baris/$1/$2/$3');
+        $routes->post('tabel-skor/(:num)/([a-z0-9-]+)/(putra|putri)', 'TabelSkorController::simpanBaris/$1/$2/$3');
+        $routes->post('tabel-skor/(:num)/([a-z0-9-]+)/(putra|putri)/hapus', 'TabelSkorController::hapusBaris/$1/$2/$3');
+        $routes->post('tabel-skor/(:num)/([a-z0-9-]+)/(putra|putri)/impor', 'TabelSkorController::impor/$1/$2/$3');
+        $routes->get('tabel-skor/(:num)/([a-z0-9-]+)/(putra|putri)/excel', 'TabelSkorController::excel/$1/$2/$3');
+        // ---------- Akhir tabel skor (F9-10) ----------
     });
 });

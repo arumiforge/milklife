@@ -23,6 +23,17 @@ $final  = $babak['final'];
 $contoh = ['waktu' => '12,34', 'jarak' => '3,45', 'poin' => '1250'][$nomor['jenis_hasil']] ?? '';
 $nilai  = static fn (array $h, string $kotak, string $asal): string => (string) ($isian[$h['id']][$kotak] ?? $asal);
 
+// Poin multi-lomba (F9-10): satu kotak prestasi per komponen, poin dihitung saat disimpan.
+$komponen    = $nomor['jenis_hasil'] === JenisHasil::MULTI ? $nomor['komponen'] : [];
+$multi       = $nomor['jenis_hasil'] === JenisHasil::MULTI;
+$nilaiK      = static fn (array $h, string $kode): string => (string) ($isian[$h['id']]['komponen'][$kode] ?? $h['rincian_isian'][$kode] ?? '');
+$luarTabel   = 0;
+foreach ($hasil as $h) {
+    foreach ($h['rincian'] as $r) {
+        $luarTabel += $r['luar'] !== null ? 1 : 0;
+    }
+}
+
 // Peserta sekarang ditambah calon yang belum ikut.
 $pilihan = [];
 foreach ($hasil as $h) {
@@ -44,8 +55,20 @@ foreach ($calon as $kunci => $c) {
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
+    <?php if ($multi && $komponen === []) : ?>
+        <div class="alert alert-warning" role="alert" id="tabel-skor-belum">
+            Nomor ini berjenis hasil poin multi-lomba tetapi belum punya tabel skor. Pilih tabel skor dan komponennya di
+            <a href="<?= site_url('admin/pengaturan/nomor-lomba/' . $nomor['id'] . '/ubah') ?>">Pengaturan &gt; Nomor Lomba</a>.
+        </div>
+    <?php endif ?>
+    <?php if ($luarTabel > 0) : ?>
+        <div class="alert alert-warning" role="alert" id="peringatan-luar-tabel">
+            <?= $luarTabel ?> prestasi di luar tabel skor sehingga poinnya 0 (ditandai kuning di bawah). Periksa lagi apakah ada salah ketik, misalnya 0,70 untuk 7,00.
+        </div>
+    <?php endif ?>
     <p class="teks-info mb-4">
         Prestasi <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>: <?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>.
+        <?php if ($multi) : ?>Tulis waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poin tiap komponen dicari di tabel skor; prestasi di antara dua baris memakai baris yang lebih buruk. Komponen kosong bernilai 0.<?php endif ?>
         Peringkat dihitung otomatis setelah disimpan; prestasi sama mendapat peringkat sama.
         Pilih DNS (tidak start), DNF (tidak finis), atau DQ (diskualifikasi) untuk peserta tanpa peringkat.
         <?php if ($final) : ?>Di Final peringkat boleh dikoreksi (misalnya dari foto finis); kosongkan supaya dihitung otomatis.<?php endif ?>
@@ -65,7 +88,12 @@ foreach ($calon as $kunci => $c) {
                                 <tr>
                                     <th scope="col" class="text-center">Per.</th>
                                     <th scope="col"><?= $beregu ? 'Regu' : 'Atlet' ?></th>
-                                    <th scope="col">Prestasi</th>
+                                    <?php if ($multi) : ?>
+                                        <?php foreach ($komponen as $k) : ?><th scope="col"><?= esc($k['nama']) ?></th><?php endforeach ?>
+                                        <th scope="col" class="text-end">Total poin</th>
+                                    <?php else : ?>
+                                        <th scope="col">Prestasi</th>
+                                    <?php endif ?>
                                     <th scope="col">Ket.</th>
                                     <?php if ($final) : ?><th scope="col">Koreksi per.</th><?php endif ?>
                                 </tr>
@@ -81,6 +109,26 @@ foreach ($calon as $kunci => $c) {
                                             <?php if (! $beregu) : ?><div class="small text-body-secondary"><?= esc($h['sekolah']) ?></div><?php endif ?>
                                             <?php if ($h['manual']) : ?><span class="badge rounded-pill text-bg-info">diubah admin</span><?php endif ?>
                                         </td>
+                                        <?php if ($multi) : ?>
+                                            <?php foreach ($komponen as $i => $k) : ?>
+                                                <?php $r = $h['rincian'][$i] ?? null; $idK = $id . '-' . $k['kode']; ?>
+                                                <td>
+                                                    <label class="visually-hidden" for="<?= esc($idK, 'attr') ?>"><?= esc($k['nama']) ?> <?= esc($h['nama']) ?></label>
+                                                    <input type="text" inputmode="decimal" class="form-control form-control-sm kotak-prestasi<?= isset($galat[$h['id']]) ? ' is-invalid' : '' ?><?= $r !== null && $r['luar'] !== null ? ' border-warning' : '' ?>" id="<?= esc($idK, 'attr') ?>"
+                                                        name="hasil[<?= $h['id'] ?>][komponen][<?= esc($k['kode'], 'attr') ?>]" placeholder="<?= $k['jenis'] === JenisHasil::WAKTU ? '7,00' : '4,25' ?>" value="<?= esc($nilaiK($h, $k['kode']), 'attr') ?>">
+                                                    <?php if ($r !== null && $r['prestasi'] === '') : ?>
+                                                        <div class="small text-body-secondary" data-poin-komponen>kosong, 0 poin</div>
+                                                    <?php endif ?>
+                                                    <?php if ($r !== null && $r['prestasi'] !== '') : ?>
+                                                        <div class="small<?= $r['luar'] !== null ? ' text-warning-emphasis fw-semibold' : ' text-body-secondary' ?>" data-poin-komponen><?= $r['poin'] ?> poin<?= $r['luar'] !== null ? ', di luar tabel' : '' ?></div>
+                                                    <?php endif ?>
+                                                </td>
+                                            <?php endforeach ?>
+                                            <td class="text-end fw-semibold" data-total-poin>
+                                                <?= esc($h['prestasi_teks']) ?>
+                                                <?php if (isset($galat[$h['id']])) : ?><div id="<?= $id ?>-galat" class="invalid-feedback d-block text-start fw-normal"><?= esc($galat[$h['id']]) ?></div><?php endif ?>
+                                            </td>
+                                        <?php else : ?>
                                         <td>
                                             <label class="visually-hidden" for="<?= $id ?>-prestasi">Prestasi <?= esc($h['nama']) ?></label>
                                             <input type="text" inputmode="decimal" class="form-control form-control-sm kotak-prestasi<?= isset($galat[$h['id']]) ? ' is-invalid' : '' ?>" id="<?= $id ?>-prestasi"
@@ -88,6 +136,7 @@ foreach ($calon as $kunci => $c) {
                                                 <?= isset($galat[$h['id']]) ? 'aria-describedby="' . $id . '-galat"' : '' ?>>
                                             <?php if (isset($galat[$h['id']])) : ?><div id="<?= $id ?>-galat" class="invalid-feedback d-block"><?= esc($galat[$h['id']]) ?></div><?php endif ?>
                                         </td>
+                                        <?php endif ?>
                                         <td>
                                             <label class="visually-hidden" for="<?= $id ?>-keterangan">Keterangan <?= esc($h['nama']) ?></label>
                                             <select class="form-select form-select-sm" id="<?= $id ?>-keterangan" name="hasil[<?= $h['id'] ?>][keterangan]">
