@@ -18,14 +18,16 @@ class KlasemenController extends BaseController
 {
     public function index(): string
     {
-        $hasil = new HasilLomba();
-        $juara = $hasil->juara();
+        // Sekali baca peringkat 1–8 Final (sama dengan `HasilLomba::klasemen()`).
+        $juara  = (new HasilLomba())->juara(false, Klasemen::PERINGKAT_POIN);
+        $metode = MetodeKlasemen::metode();
+        $poin   = MetodeKlasemen::poin();
 
         return view('admin/hasil/klasemen', [
-            'klasemen'    => $hasil->klasemen(),
-            'metode'      => MetodeKlasemen::metode(),
-            'keterangan'  => Klasemen::keterangan(MetodeKlasemen::metode(), MetodeKlasemen::poin()),
-            'belumTerbit' => count(array_unique(array_column(array_filter($juara, static fn (array $j): bool => ! $j['terbit']), 'nomor_id'))),
+            'klasemen'    => Klasemen::hitung($juara, $metode, $poin),
+            'metode'      => $metode,
+            'keterangan'  => Klasemen::keterangan($metode, $poin),
+            'belumTerbit' => count(array_unique(array_column(array_filter($juara, static fn (array $j): bool => ! $j['terbit'] && ($metode === Klasemen::POIN || $j['peringkat'] <= 3)), 'nomor_id'))),
         ]);
     }
 
