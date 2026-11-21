@@ -63,7 +63,7 @@ $ikonKategori = [
 
     <?php foreach ($perKategori as $kunci => $daftar) : ?>
         <?php
-        $kategori = FaqModel::KATEGORI[$kunci] ?? ['label' => $kunci . ' (kategori tidak dikenal)', 'ikon' => 'question-circle', 'keterangan' => 'Ubah tanya-jawab di bawah dan pilih kategori yang ada.'];
+        $kategori = FaqModel::KATEGORI[$kunci] ?? ['label' => $kunci . ' (kategori tidak dikenal)', 'keterangan' => 'Ubah tanya-jawab di bawah dan pilih kategori yang ada.'];
         $idBagian = 'kategori-' . str_replace('_', '-', (string) $kunci);
         $terakhir = count($daftar) - 1;
         ?>

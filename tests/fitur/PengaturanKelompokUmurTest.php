@@ -144,7 +144,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $this->assertSame('checked', $xpath->query('//input[@name="aktif"]')->item(0)?->getAttribute('checked'));
         $this->assertSame(['A', 'B', 'C'], $this->nilaiSemua($xpath, '//input[@name="jenjang[]"]/@value'));
         $this->assertSame(0, $xpath->query('//input[@name="jenjang[]" and @checked]')->length);
-        $this->assertSame(['SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], $this->nilaiSemua($xpath, '//input[@name="jenjang[]"]/following-sibling::label'));
+        $this->assertSame(['SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], $this->nilaiSemua($xpath, '//label[input[@name="jenjang[]"]]'));
         $this->assertTeksTampil($hasil, 'Sudah dipakai kelompok umur lain: 1 untuk KU 8 (Seneng Playon); 2 untuk KU 10; 3 untuk KU 12; 4 untuk KU 15; 5 untuk KU 18.');
     }
 
