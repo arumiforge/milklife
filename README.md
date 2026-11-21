@@ -2,7 +2,7 @@
 
 Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Karesidenan Pati: pendaftaran, cek pendaftaran, rekap panitia, hari lomba, hasil lomba, dan klasemen sekolah.
 
-**Status:** Tahap 0–8 selesai. Halaman depan, pendaftaran, cek pendaftaran, bukti PDF, panel data, rekap, data sekolah, cadangan, panduan produksi, hari lomba, hasil lomba, dan klasemen sekolah sudah dibangun dan diuji menyeluruh dalam mode produksi, dan web sudah dipakai di produksi. Rinciannya di [`agent/PROGRES.md`](agent/PROGRES.md).
+**Status:** Tahap 0–9 selesai. Halaman depan, pendaftaran, cek pendaftaran, bukti PDF, panel data, rekap, data sekolah, cadangan, panduan produksi, hari lomba, hasil lomba, dan klasemen sekolah sudah dibangun dan diuji menyeluruh dalam mode produksi, dan web sudah dipakai di produksi. Tahap 9 mengganti tampilan dengan Flowbite Pro (Tailwind 4) dan menambah Bantuan, jadwal pertandingan, seri dan lintasan, lembar juri, kalkulator poin multi-lomba, peserta publik, galeri, dan papan videotron; fitur publik barunya tersembunyi sampai dinyalakan admin. Rinciannya di [`agent/PROGRES.md`](agent/PROGRES.md).
 
 ## Mulai dari sini
 
@@ -131,10 +131,14 @@ Semua dijalankan dari folder proyek dengan `php spark <perintah>`.
 
 | Perintah | Kegunaan |
 |---|---|
-| `pembaruan:periksa` | Setelah `git pull`: memeriksa perintah apa yang masih perlu dijalankan (Composer, migrasi, `sekolah:impor`, `pendaftaran:gabung`, `aset:minify`). Tidak mengubah apa pun |
+| `pembaruan:periksa` | Setelah `git pull`: memeriksa perintah apa yang masih perlu dijalankan (Composer, migrasi, `sekolah:impor`, `pendaftaran:gabung`, `tabel-skor:impor --trilomba`, `aset:minify`). Tidak mengubah apa pun |
 | `sekolah:impor [berkas]` | Mengisi atau memperbarui daftar sekolah. Aman diulang |
 | `data:awal` | Mengisi data awal Seri 2. Sekali saat pemasangan |
 | `admin:buat` | Membuat akun admin atau mengganti kata sandinya |
+| `faq:awal` | Memasang tanya-jawab bawaan halaman Bantuan tanpa menimpa isian admin. Sekali di server yang dipasang sebelum Tahap 9 |
+| `halaman-depan:carousel` | Memasang foto bawaan carousel halaman depan bila admin belum pernah mengaturnya. Sekali di server yang dipasang sebelum Tahap 9 |
+| `galeri:awal` | Memasang album bawaan "Seri sebelumnya" di Galeri, sekali saja |
+| `tabel-skor:impor [--trilomba] [--timpa]` | Memasang tabel skor multi-lomba bawaan; `--trilomba` memindah nomor Trilomba yang belum berprestasi ke poin multi-lomba |
 | `aset:minify` | Membuat versi kecil CSS, JavaScript, dan SVG. Wajib di produksi setiap memperbarui versi |
 | `cadangan:buat` | Mencadangkan basis data dan unggahan ke satu berkas zip |
 | `pendaftaran:impor <berkas.zip>` | Memasukkan zip dari tombol **Backup data** di panel ke server baru yang belum punya pendaftaran, beserta usulan nama sekolah dan nama sekolah yang disunting admin. Jalankan `sekolah:impor` lebih dulu |
@@ -158,16 +162,18 @@ composer uji
 |---|---|
 | `agent/` | Konteks, progres, keputusan, alur kerja, dan berkas tugas |
 | `dokumen/` | Draf, dokumen final, PDF, dan templat |
-| `sumber/` | Bahan asli dari pemilik (flyer, juknis) |
+| `sumber/` | Bahan asli dari pemilik (flyer, juknis, tabel skor, foto acara sebelumnya di `sumber/foto-acara/`) |
 | `data/` | Data siap impor: daftar sekolah (beserta cara memperbaruinya) dan berkas bawaan `data:awal` |
 | `app/` | Kode aplikasi: pengendali, tampilan, konfigurasi, migrasi |
-| `app/Views/tata_letak/` | Tata letak halaman: `publik.php`, `admin.php`, `polos.php` |
+| `app/Views/tata_letak/` | Tata letak halaman: `publik_tw.php`, `admin_tw.php`, `polos_tw.php` |
+| `app/Views/komponen/` | Komponen tampilan Flowbite Pro (`komponen('tombol', […])`) |
+| `desain/` | Brief dan catatan gambar untuk Codex (`AGENTS.md`) |
 | `public/` | Folder yang dibuka peramban: `index.php` dan aset |
 | `public/unggahan/` | Gambar dan berkas unggahan admin; tidak masuk git |
 | `writable/unggahan/` | Foto ofisial dan bukti bayar, di luar folder publik dan hanya disajikan ke admin; tidak masuk git |
-| `public/aset/` | CSS, JavaScript, dan pustaka tampilan (Flowbite, Lucide, Three.js, DataTables, ApexCharts, dan `css/tw.css`) |
+| `public/aset/` | CSS, JavaScript, gambar, dan pustaka tampilan (Flowbite, Lucide, Three.js, DataTables, ApexCharts, dan `css/tw.css`) |
 | `public/aset/tailwind/` | Sumber CSS tampilan baru (`npm run css`) |
-| `alat/` | Skrip Node pembangun tampilan (`npm run vendor`, `npm run ikon`) |
+| `alat/` | Skrip Node pembangun tampilan (`npm run vendor`, `npm run ikon`) dan uji tampilan videotron (`npm run uji:layar`) |
 | `tests/` | Uji: `unit/` (aturan murni), `basisdata/` (migrasi dan model), `fitur/` (halaman dan rute) |
 | `writable/` | Sesi, log, dan berkas sementara buatan aplikasi; isinya tidak masuk git |
 | `vendor/` | Pustaka dari Composer; dibuat oleh `composer install`, tidak masuk git |
