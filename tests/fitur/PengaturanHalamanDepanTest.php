@@ -154,7 +154,7 @@ final class PengaturanHalamanDepanTest extends UjiBasisData
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
         foreach ($jalur as $kunci => $j) {
             $this->assertSame(1, $xpath->query('//*[@data-pratinjau="' . $kunci . '"]//img[@src="' . base_url($j) . '"]')->length, "Pratinjau {$kunci}.");
-            $this->assertSame(1, $xpath->query('//input[@name="hapus_' . $kunci . '"]')->length);
+            $this->assertSame(1, $xpath->query('//input[@name="hapus_' . $kunci . '"][@data-konfirmasi-centang]')->length);
         }
         $this->assertSame(0, $xpath->query('//*' . self::KELAS_TANPA_GAMBAR)->length);
     }

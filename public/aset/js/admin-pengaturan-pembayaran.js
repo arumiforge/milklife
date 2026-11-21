@@ -18,10 +18,34 @@
 
     kotak.addEventListener('input', perbaruiContoh);
 
+    // Pesan yang sudah diubah admin tidak langsung ditimpa: tanya dulu lewat
+    // jendela konfirmasi.js (modal Flowbite). Belum disimpan sampai tombol Simpan.
     document.getElementById('pakai-pesan-awal').addEventListener('click', function () {
-        kotak.value = this.getAttribute('data-pesan-awal');
-        perbaruiContoh();
-        kotak.focus();
+        var awal = this.getAttribute('data-pesan-awal');
+
+        function pakai() {
+            kotak.value = awal;
+            perbaruiContoh();
+            kotak.focus();
+        }
+
+        if (kotak.value.trim() === '' || kotak.value === awal || !window.Konfirmasi) {
+            pakai();
+            return;
+        }
+
+        window.Konfirmasi.tanya(
+            'Pakai pesan awal?',
+            'Isi pesan sekarang diganti pesan awal. Perubahan baru tersimpan setelah menekan Simpan.',
+            'Ganti dengan pesan awal',
+            'utama'
+        ).then(function (ya) {
+            if (ya) {
+                pakai();
+            } else {
+                kotak.focus();
+            }
+        });
     });
 
     // Penanda disisipkan di posisi kursor terakhir; bila kotak pesan belum

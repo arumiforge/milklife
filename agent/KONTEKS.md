@@ -4,27 +4,27 @@
 
 Web pendaftaran **MilkLife Athletics Challenge Seri 2 – 2026** untuk sekolah se-Karesidenan Pati (Blora, Rembang, Pati, Kudus, Jepara). Acara berada di bawah Bakti Olahraga Djarum Foundation, berlangsung 9–12 Desember 2026 di Supersoccer Arena, Kudus.
 
-Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 juga hari lomba (daftar ulang lewat kode QR, cetak nomor atlet (BIB), daftar peserta per nomor), hasil lomba semua babak, dan klasemen juara umum sekolah per jenjang. Sejak K140 butir 8 urutan pelari juga dalam cakupan: web membagi atlet ke seri dan lintasan, aturan lolos Q/q, dan bagan alur babak (F9-08). Penjurian di lapangan tetap oleh juri.
+Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 juga hari lomba (daftar ulang lewat kode QR, cetak nomor atlet (BIB), daftar peserta per nomor), hasil lomba semua babak, dan klasemen juara umum sekolah per jenjang. Tahap 9 (K140, K141) menambah jadwal pertandingan per babak, seri dan lintasan dengan aturan lolos Q/q dan bagan alur babak, aturan nomor (percobaan, pemecah seri) dan lembar juri ponsel, kalkulator poin multi-lomba dari tabel skor panitia, metode klasemen Medali atau Poin, serta halaman publik Bantuan/FAQ, Jadwal, Peserta, Galeri, dan papan videotron `/layar`. Fitur publik baru bersakelar bawaan mati kecuali Bantuan. Penjurian di lapangan tetap oleh juri.
 
 ## Pengguna
 
 - **Ofisial sekolah**: tanpa akun, mendaftar lewat wizard, memeriksa rekap lewat NPSN atau ID pendaftaran.
 - **Admin**: satu peran, mengatur seluruh aturan, memeriksa pembayaran, dan (Tahap 8) mencatat hasil lomba.
-- **Pengunjung umum**: melihat hasil dan klasemen yang sudah diterbitkan (K124).
+- **Pengunjung umum**: melihat hasil dan klasemen yang sudah diterbitkan (K124), Bantuan, dan (bila dinyalakan admin) jadwal, seri, peserta Lunas, galeri, dan videotron.
 
 ## Teknologi
 
-CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon pemilik: PHP 8.3), MySQL 8, Nginx dari Laragon (pengembangan dan produksi), Bootstrap 5.3, DataTables, mPDF, PhpSpreadsheet.
+CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon pemilik: PHP 8.3), MySQL 8, Nginx dari Laragon (pengembangan dan produksi), mPDF, PhpSpreadsheet. Tampilan sejak Tahap 9: **Flowbite Pro di atas Tailwind CSS 4** (K138, K141), ikon Lucide, Three.js, DataTables bergaya Tailwind; CSS dibangun `npm run bangun` (Node hanya di komputer pengembang dan CI) dan hasilnya di-commit, server tanpa Node. Bootstrap 5 sudah dilepas (F9-17). Gambar ilustrasi dibuat Codex dari `desain/tugas/` (`AGENTS.md`, K150); kodenya ditulis Claude.
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17–20 memuat K116–K134).
-- Rencana implementasi per tahap: `dokumen/draf/rencana-implementasi-tahap-<n>.md` (Tahap 1–8).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17–20 memuat K116–K134, revisi 23–29 memuat Tahap 9 K137–K151).
+- Rencana implementasi per tahap: `dokumen/draf/rencana-implementasi-tahap-<n>.md` (Tahap 1–9).
 - Panduan pemasangan dan pembaruan server: `dokumen/final/panduan-pemasangan-produksi.md`.
 - Aturan yang berlaku: `agent/ATURAN.md`; letak kode: `agent/PETA-KODE.md`.
 - Arsip tahap selesai: `agent/arsip/`.
 - Keputusan pemilik: `agent/KEPUTUSAN.md`.
-- Bahan asli: `sumber/flyer/` dan juknis resmi `sumber/juknis/` (K112).
+- Bahan asli: `sumber/flyer/`, juknis resmi `sumber/juknis/` (K112), tabel skor `sumber/tabel-skor/`, dan foto acara sebelumnya `sumber/foto-acara/` (K140).
 - Data sekolah: `data/sekolah/sekolah.json` (sumber dan cara memperbarui di `data/README.md`).
 
 ## Hal yang mudah keliru

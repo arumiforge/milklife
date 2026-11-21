@@ -31,8 +31,8 @@ beserta kode sumber, dokumen, tampilan, dan berkas lain di repo ini (disebut
       boleh dipakai di luar proyek ini dan tidak boleh dibagikan kepada pihak
       yang tidak tercakup lisensi tersebut.
    c. Nama, logo, merek, flyer, petunjuk teknis, foto acara, dan materi lain
-      dari penyelenggara di `sumber/`, `data/halaman-depan/`, dan
-      `bahan-rombak/`, milik pemiliknya masing-masing.
+      dari penyelenggara di `sumber/` (termasuk `sumber/foto-acara/`) dan
+      `data/halaman-depan/`, milik pemiliknya masing-masing.
    d. Data sekolah di `data/sekolah/`, bersumber dari data terbuka
       Kementerian Pendidikan Dasar dan Menengah.
 

@@ -88,7 +88,8 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
                     <p class="<?= $label ?>">Sampul sekarang</p>
                     <img src="<?= base_url($sampul) ?>" alt="" width="240" height="160" class="mb-2 block h-40 w-60 max-w-full rounded-lg border border-gray-200 object-cover">
                     <label class="mb-3 inline-flex min-h-11 items-center gap-2 text-sm text-gray-900" for="hapus_sampul">
-                        <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" id="hapus_sampul" name="hapus_sampul" value="1">
+                        <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" id="hapus_sampul" name="hapus_sampul" value="1"
+                            data-konfirmasi-centang="Sampul album dihapus dari server saat album disimpan, dan tidak bisa dikembalikan." data-konfirmasi-tombol="Hapus sampul">
                         Hapus sampul (kartu memakai latar warna)
                     </label>
                 <?php endif ?>

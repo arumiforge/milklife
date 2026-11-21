@@ -98,7 +98,8 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
                         </p>
                         <?php if ($logo !== '') : ?>
                             <label class="mt-2 inline-flex min-h-11 items-center gap-2" for="hapus_logo_bank">
-                                <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" value="1" id="hapus_logo_bank" name="hapus_logo_bank">
+                                <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" value="1" id="hapus_logo_bank" name="hapus_logo_bank"
+                                    data-konfirmasi-centang="Logo bank dihapus dari server saat pengaturan disimpan, dan tidak bisa dikembalikan." data-konfirmasi-tombol="Hapus logo">
                                 <span class="text-sm text-gray-900">Hapus logo ini</span>
                             </label>
                         <?php endif ?>

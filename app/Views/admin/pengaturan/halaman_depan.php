@@ -111,7 +111,8 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 
                             <?php if ($butir['jalur'] !== '') : ?>
                                 <label class="mt-2 inline-flex min-h-11 items-center gap-2" for="hapus_<?= esc($nama, 'attr') ?>">
-                                    <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" value="1" id="hapus_<?= esc($nama, 'attr') ?>" name="hapus_<?= esc($nama, 'attr') ?>">
+                                    <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" value="1" id="hapus_<?= esc($nama, 'attr') ?>" name="hapus_<?= esc($nama, 'attr') ?>"
+                                        data-konfirmasi-centang="Gambar ini dihapus dari server saat pengaturan disimpan, dan tidak bisa dikembalikan." data-konfirmasi-tombol="Hapus gambar">
                                     <span class="text-sm text-gray-900">Hapus gambar ini</span>
                                 </label>
                             <?php endif ?>

@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101) |
+| Revisi 9 | Penutupan Tahap 9 (F9-18): daftar lengkap perintah sekali jalan pembaruan Tahap 9 (`migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `aset:minify`), sakelar fitur publik baru yang bawaan mati, dan server tetap tanpa Node. Bagian yang berubah: 10 |
 | Revisi 8 | Pembaruan yang membawa Galeri (F9-06): perintah sekali jalan `php spark galeri:awal` memasang album bawaan "Seri sebelumnya" tanpa menimpa album admin; halaman Galeri tetap tersembunyi sampai dinyalakan di Pengaturan > Galeri (K140 butir 11). Bagian yang berubah: 10 |
 | Revisi 7 | Pembaruan yang membawa kalkulator poin multi-lomba (F9-10): perintah sekali jalan `php spark tabel-skor:impor --trilomba` memasang tabel skor bawaan dan memindah nomor Trilomba yang belum punya prestasi ke poin multi-lomba; `pembaruan:periksa` ikut memeriksanya (K140 butir 7b, K143). Bagian yang berubah: 10 |
 | Revisi 6 | Repo menjadi privat (K138): komputer server memakai deploy key (kunci SSH baca saja) untuk `git clone` dan `git pull`, termasuk server yang sudah terpasang. Bagian yang berubah: 3, 10, asumsi 5 |
@@ -11,7 +12,7 @@
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, 17, dan 21 November 2026 (revisi 3, 4, 5, 6, 7, dan 8) |
+| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, dan 22 November 2026 (revisi 3, 4, 5, 6, 7, 8, dan 9) |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -365,6 +366,19 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    ```
 
    Perintah ini memasang album bawaan **Seri sebelumnya** dengan sampul foto acara sebelumnya. Album yang sudah dibuat admin tidak ditimpa, dan album bawaan yang sudah dihapus admin tidak dipasang lagi; menjalankannya lagi tidak mengubah apa pun. Halaman Galeri tetap tersembunyi sampai dinyalakan. Setelah panitia menyiapkan album di Instagram atau Google Drive, buka **Pengaturan → Galeri**, isi tautan album (diawali `https://`; folder Google Drive dibagikan ke "Siapa saja yang memiliki link"), lalu nyalakan **Tampilkan halaman Galeri**. Album tanpa tautan tidak tampil untuk umum.
+
+   **Ringkasan pembaruan Tahap 9** (rombak tampilan dan fitur publik hari lomba, F9-01 sampai F9-19). Server yang dipasang sebelum Tahap 9 menjalankan sekali, berurutan, setelah `git pull`:
+
+   ```
+   php spark migrate --all
+   php spark faq:awal
+   php spark tabel-skor:impor --trilomba
+   php spark halaman-depan:carousel
+   php spark galeri:awal
+   php spark aset:minify
+   ```
+
+   `faq:awal` memasang tanya-jawab bawaan halaman Bantuan dan `halaman-depan:carousel` memasang foto bawaan carousel halaman depan; keduanya tidak menimpa isian admin, dan semua perintah di atas aman dijalankan lagi. Server **tidak perlu Node**: CSS dan pustaka tampilan baru sudah ada di git. Halaman publik baru **Jadwal, Seri dan lintasan, Peserta, Galeri, dan Videotron tetap tersembunyi** sampai admin menyalakan sakelarnya (Pengaturan → Halaman Depan, Pengaturan → Galeri, Pengaturan → Videotron, atau halaman Jadwal pertandingan); halaman Bantuan langsung tampil. Setelah itu jalankan `php spark pembaruan:periksa` sampai tidak ada perintah lain.
 
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 

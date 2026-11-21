@@ -89,7 +89,8 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
                     </p>
                     <?php if ($tampilanBib->latar !== null) : ?>
                         <label class="mt-2 inline-flex min-h-11 items-center gap-2 text-sm text-gray-900">
-                            <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" value="1" id="hapus_latar" name="hapus_latar">
+                            <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" value="1" id="hapus_latar" name="hapus_latar"
+                                data-konfirmasi-centang="Latar BIB unggahan dihapus dari server saat tampilan disimpan, dan tidak bisa dikembalikan." data-konfirmasi-tombol="Hapus latar">
                             Hapus latar (kembali ke BIB putih)
                         </label>
                     <?php endif ?>

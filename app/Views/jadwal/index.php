@@ -1,7 +1,7 @@
 <?php
 /**
  * Halaman publik Jadwal pertandingan (`/jadwal`, F9-07), tata letak Tailwind
- * `publik_tw`. Kolom seperti `contohjadwal1.jpg`: waktu, nomor, putra/putri,
+ * `publik_tw`. Kolom seperti `sumber/foto-acara/contohjadwal1.jpg`: waktu, nomor, putra/putri,
  * kelompok umur, babak; ditambah status otomatis dan tautan hasil.
  *
  * - Tab hari berupa tautan `?hari=<Y-m-d>` (tanpa JavaScript).
