@@ -24,7 +24,7 @@ Rencana: [`dokumen/draf/rencana-implementasi-tahap-9.md`](../../dokumen/draf/ren
 | [F9-16 Halaman admin hari lomba dan pengaturan ke Tailwind](../tugas/F9-16-admin-hari-lomba-pengaturan-tailwind.md) | selesai | C | #146 |
 | [F9-17 Skeleton, keadaan kosong, dan perapian](../tugas/F9-17-skeleton-perapian.md) | selesai | C | #149 |
 | [F9-19 Pemasangan visual tambahan](../tugas/F9-19-pemasangan-visual-tambahan.md) | selesai | C | #150 |
-| [F9-18 Penutupan Tahap 9](../tugas/F9-18-penutupan-tahap-9.md) | selesai | akhir | PR penutupan ini |
+| [F9-18 Penutupan Tahap 9](../tugas/F9-18-penutupan-tahap-9.md) | selesai | akhir | #151 |
 
 PR dokumen koordinator: #121 (rencana), #128, #130, #133, #139, #143, #147.
 
