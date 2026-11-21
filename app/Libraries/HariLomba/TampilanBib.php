@@ -14,6 +14,10 @@ use RuntimeException;
  * - Satu latar untuk semua BIB. Latar unggahan dipotong tengah supaya pas
  *   ukuran BIB (setengah A4 mendatar, 210 × 148,5 mm) lalu disimpan sebagai
  *   JPG 2480 × 1754 piksel (300 dpi) di `unggahan/bib/`.
+ * - Latar bawaan (G9-01, F9-16): empat gambar siap pakai di
+ *   `public/aset/gambar/bib/<kunci>.jpg`, hanya ditawarkan bila berkasnya
+ *   ada. Disimpan di pengaturan sebagai `bawaan:<kunci>`; berkasnya tidak
+ *   disalin ke `unggahan/`.
  * - Tanpa latar: kepala selalu dicetak dan tulisan gelap, seperti BIB F8-03.
  * - Dengan latar: admin memilih kepala dicetak atau tidak (`Bib.tampilkan_kepala`)
  *   dan warna tulisan gelap atau terang (`Bib.warna_teks`).
@@ -38,6 +42,22 @@ final class TampilanBib
     public const BATAS_LATAR = 5 * 1024 * 1024;
 
     private const FOLDER = 'bib';
+
+    /**
+     * Awalan nilai `Bib.latar` untuk latar bawaan: `bawaan:latar-terang-1`.
+     */
+    public const AWALAN_BAWAAN = 'bawaan:';
+
+    /**
+     * Latar bawaan G9-01 (`desain/tugas/G9-01-latar-bib.md`): kunci => [label, warna tulisan yang cocok].
+     * Berkas `public/aset/gambar/bib/<kunci>.jpg`.
+     */
+    public const LATAR_BAWAAN = [
+        'latar-terang-1' => ['Terang 1', 'gelap'],
+        'latar-terang-2' => ['Terang 2', 'gelap'],
+        'latar-gelap-1'  => ['Gelap 1', 'terang'],
+        'latar-gelap-2'  => ['Gelap 2', 'terang'],
+    ];
 
     /**
      * Warna tulisan per bagian BIB.
@@ -77,7 +97,7 @@ final class TampilanBib
     public static function dariPengaturan(Unggahan $unggahan = new Unggahan()): self
     {
         $jalur = trim((string) setting('Bib.latar'));
-        $latar = $jalur !== '' && $unggahan->ada($jalur) ? $jalur : null;
+        $latar = $jalur !== '' && (self::berkasBawaan($jalur) !== null || $unggahan->ada($jalur)) ? $jalur : null;
 
         return self::buat($latar, (bool) setting('Bib.tampilkan_kepala'), (string) setting('Bib.warna_teks'));
     }
@@ -97,10 +117,62 @@ final class TampilanBib
      */
     public function latarJpg(Unggahan $unggahan = new Unggahan()): ?string
     {
-        $penuh = $this->latar === null ? null : $unggahan->jalurPenuh($this->latar);
+        $penuh = $this->latar === null ? null : (self::berkasBawaan($this->latar) ?? $unggahan->jalurPenuh($this->latar));
         $isi   = $penuh === null ? false : @file_get_contents($penuh);
 
         return $isi === false || $isi === '' ? null : $isi;
+    }
+
+    /**
+     * Kunci latar bawaan yang sedang dipakai (`latar-terang-1`), atau `null`
+     * bila tanpa latar atau memakai latar unggahan sendiri.
+     */
+    public function kunciBawaan(): ?string
+    {
+        return $this->latar !== null && str_starts_with($this->latar, self::AWALAN_BAWAAN)
+            ? substr($this->latar, strlen(self::AWALAN_BAWAAN))
+            : null;
+    }
+
+    /**
+     * Latar bawaan yang berkasnya ada, untuk pilihan di halaman Cetak BIB.
+     *
+     * @return array<string, array{label: string, warna: string, alamat: string}> kunci => data
+     */
+    public static function daftarBawaan(): array
+    {
+        $daftar = [];
+
+        foreach (self::LATAR_BAWAAN as $kunci => [$label, $warna]) {
+            $berkas = self::berkasBawaan(self::AWALAN_BAWAAN . $kunci);
+
+            if ($berkas !== null) {
+                $daftar[$kunci] = ['label' => $label, 'warna' => $warna, 'alamat' => base_url('aset/gambar/bib/' . $kunci . '.jpg') . '?v=' . (int) @filemtime($berkas)];
+            }
+        }
+
+        return $daftar;
+    }
+
+    /**
+     * Jalur penuh berkas latar bawaan dari nilai `bawaan:<kunci>`, atau
+     * `null` bila bukan latar bawaan yang dikenal atau berkasnya belum ada.
+     */
+    private static function berkasBawaan(string $nilai): ?string
+    {
+        if (! str_starts_with($nilai, self::AWALAN_BAWAAN)) {
+            return null;
+        }
+
+        $kunci = substr($nilai, strlen(self::AWALAN_BAWAAN));
+
+        if (! isset(self::LATAR_BAWAAN[$kunci])) {
+            return null;
+        }
+
+        $berkas = FCPATH . 'aset' . DIRECTORY_SEPARATOR . 'gambar' . DIRECTORY_SEPARATOR . 'bib' . DIRECTORY_SEPARATOR . $kunci . '.jpg';
+
+        return is_file($berkas) ? $berkas : null;
     }
 
     /**
@@ -108,12 +180,20 @@ final class TampilanBib
      * dipilih) diperiksa, dipotong, dan disimpan lebih dulu; latar lama
      * dihapus setelah yang baru tersimpan.
      *
+     * `$bawaan`: pilihan latar bawaan dari formulir (`null` = tidak dikirim,
+     * `''` = tidak memakai latar bawaan, atau kunci `LATAR_BAWAAN`). Urutan:
+     * berkas unggahan baru, lalu latar bawaan, lalu hapus latar.
+     *
      * @throws RuntimeException Dengan pesan ramah bila gambar ditolak; tidak ada yang disimpan.
      */
-    public static function simpan(?UploadedFile $berkas, bool $hapusLatar, bool $kepala, string $warna, Unggahan $unggahan = new Unggahan()): void
+    public static function simpan(?UploadedFile $berkas, bool $hapusLatar, bool $kepala, string $warna, Unggahan $unggahan = new Unggahan(), ?string $bawaan = null): void
     {
         if (! isset(self::WARNA[$warna])) {
             throw new RuntimeException('Pilih warna tulisan Gelap atau Terang.');
+        }
+
+        if ($bawaan !== null && $bawaan !== '' && self::berkasBawaan(self::AWALAN_BAWAAN . $bawaan) === null) {
+            throw new RuntimeException('Latar bawaan itu tidak tersedia. Pilih latar lain.');
         }
 
         $lama = trim((string) setting('Bib.latar'));
@@ -132,10 +212,20 @@ final class TampilanBib
         setting('Bib.tampilkan_kepala', $kepala);
         setting('Bib.warna_teks', $warna);
 
+        $lamaBawaan = str_starts_with($lama, self::AWALAN_BAWAAN);
+
+        if ($baru === null && $bawaan !== null && $bawaan !== '') {
+            $baru = self::AWALAN_BAWAAN . $bawaan;
+        } elseif ($baru === null && $bawaan === '' && $lamaBawaan) {
+            // "Tanpa latar bawaan" saat latar bawaan dipakai: kembali ke BIB putih.
+            $hapusLatar = true;
+        }
+
         if ($baru !== null || $hapusLatar) {
             setting('Bib.latar', $baru ?? '');
 
-            if ($lama !== '' && $lama !== $baru) {
+            // Berkas latar bawaan tidak pernah dihapus; hanya unggahan.
+            if ($lama !== '' && $lama !== $baru && ! $lamaBawaan) {
                 $unggahan->hapus($lama);
             }
         }

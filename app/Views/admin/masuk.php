@@ -1,7 +1,7 @@
 <?php
 /**
- * Halaman masuk admin. Kartu dan jaraknya disediakan tata letak `polos`,
- * jadi isinya cukup judul, pesan, dan formulir Bootstrap biasa.
+ * Halaman masuk admin, tata letak `polos_tw` (Tahap 9). Kartu dan jaraknya
+ * disediakan tata letak, jadi isinya cukup judul, pesan, dan formulir.
  *
  * @var CodeIgniter\View\View $this
  * @var string|null           $galat        pesan galat di atas formulir
@@ -12,53 +12,46 @@
 $turnstile ??= null;
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
+
+$kelasIsian = 'block w-full rounded-lg border border-gray-300 bg-white p-3 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 sm:text-sm';
 ?>
-<?= $this->extend('tata_letak/polos') ?>
+<?= $this->extend('tata_letak/polos_tw') ?>
 
 <?= $this->section('judul') ?>Masuk Admin<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<h1 class="h4 mb-1">Masuk Admin</h1>
-<p class="text-body-secondary mb-4">Panel panitia <?= esc(AcaraController::namaTampil()) ?></p>
+<h1 class="text-2xl font-bold text-gray-900">Masuk Admin</h1>
+<p class="mb-6 mt-1 text-sm text-gray-600">Panel panitia <?= esc(AcaraController::namaTampil()) ?></p>
 
 <?php if (! empty($galat)) : ?>
-    <div class="alert alert-danger d-flex gap-2" role="alert">
-        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-        <div><?= esc($galat) ?></div>
-    </div>
+    <?= komponen('peringatan', ['jenis' => 'bahaya', 'isi' => esc($galat), 'kelas' => 'mb-4']) ?>
 <?php elseif (! empty($info)) : ?>
-    <div class="alert alert-info d-flex gap-2" role="status">
-        <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
-        <div><?= esc($info) ?></div>
-    </div>
+    <?= komponen('peringatan', ['jenis' => 'info', 'isi' => esc($info), 'kelas' => 'mb-4']) ?>
 <?php endif ?>
 
-<form action="<?= site_url('admin/masuk') ?>" method="post">
+<form action="<?= site_url('admin/masuk') ?>" method="post" class="space-y-4">
     <?= csrf_field() ?>
 
-    <div class="mb-3">
-        <label for="nama_pengguna" class="form-label">Nama pengguna</label>
-        <input type="text" class="form-control" id="nama_pengguna" name="nama_pengguna"
+    <div>
+        <label for="nama_pengguna" class="mb-1.5 block text-sm font-semibold text-gray-900">Nama pengguna</label>
+        <input type="text" class="<?= $kelasIsian ?>" id="nama_pengguna" name="nama_pengguna"
             value="<?= esc($namaPengguna, 'attr') ?>" maxlength="100"
             autocomplete="username" autocapitalize="none" spellcheck="false" required
             <?= $namaPengguna === '' ? 'autofocus' : '' ?>>
     </div>
 
-    <div class="mb-4">
-        <label for="sandi" class="form-label">Kata sandi</label>
-        <input type="password" class="form-control" id="sandi" name="sandi"
+    <div>
+        <label for="sandi" class="mb-1.5 block text-sm font-semibold text-gray-900">Kata sandi</label>
+        <input type="password" class="<?= $kelasIsian ?>" id="sandi" name="sandi"
             maxlength="255" autocomplete="current-password" required
             <?= $namaPengguna !== '' ? 'autofocus' : '' ?>>
     </div>
 
     <?php if ($turnstile !== null) : ?>
-        <div class="cf-turnstile mb-3" data-sitekey="<?= esc($turnstile['kunci_situs'], 'attr') ?>" data-action="<?= esc($turnstile['aksi'], 'attr') ?>" data-language="id"></div>
+        <div class="cf-turnstile" data-sitekey="<?= esc($turnstile['kunci_situs'], 'attr') ?>" data-action="<?= esc($turnstile['aksi'], 'attr') ?>" data-language="id"></div>
     <?php endif ?>
 
-    <button type="submit" class="btn btn-primary w-100">
-        <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
-        Masuk
-    </button>
+    <?= komponen('tombol', ['label' => 'Masuk', 'tipe' => 'submit', 'ikon' => 'log-in', 'blok' => true]) ?>
 </form>
 <?= $this->endSection() ?>
 

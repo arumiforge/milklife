@@ -164,8 +164,10 @@ trait KirimFormulir
 
     /**
      * Isian salah: formulir ditampilkan lagi (status 200, tanpa pengalihan)
-     * dengan ringkasan `admin/_galat_isian` dan `is-invalid` pada setiap kotak
-     * yang disebut (dicari dari atribut `name`, termasuk `name="kotak[]"`).
+     * dengan ringkasan `#galat-isian` (`admin/_galat_isian_tw` atau
+     * `admin/_galat_isian`) dan setiap kotak yang disebut ditandai salah
+     * (dicari dari atribut `name`, termasuk `name="kotak[]"`): `aria-invalid="true"`
+     * di halaman bertampilan baru, atau `is-invalid` di halaman lama.
      *
      * @param list<string> $kotak Nama kotak isian yang harus ditandai salah.
      */
@@ -175,14 +177,14 @@ trait KirimFormulir
         $this->assertFalse($hasil->isRedirect(), 'Isian salah tidak boleh dialihkan.');
 
         $xpath = $this->xpathDari($hasil);
-        $this->assertSame(1, $xpath->query('//*[@id="galat-isian"]')->length, 'Ringkasan isian salah (admin/_galat_isian) tidak tampil.');
+        $this->assertSame(1, $xpath->query('//*[@id="galat-isian"]')->length, 'Ringkasan isian salah (#galat-isian) tidak tampil.');
 
         foreach ($kotak as $nama) {
             $kueri = sprintf(
-                '//*[(@name="%1$s" or @name="%1$s[]") and contains(concat(" ", normalize-space(@class), " "), " is-invalid ")]',
+                '//*[(@name="%1$s" or @name="%1$s[]") and (@aria-invalid="true" or contains(concat(" ", normalize-space(@class), " "), " is-invalid "))]',
                 $nama,
             );
-            $this->assertGreaterThan(0, $xpath->query($kueri)->length, "Kotak {$nama} tidak ditandai is-invalid.");
+            $this->assertGreaterThan(0, $xpath->query($kueri)->length, "Kotak {$nama} tidak ditandai salah (aria-invalid).");
         }
     }
 

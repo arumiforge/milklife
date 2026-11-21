@@ -20,7 +20,8 @@ use RuntimeException;
  *   unduhan per kelompok umur (PDF), per sekolah (PDF atau ZIP gambar), dan
  *   ZIP semua sekolah.
  * - `pdf`: `?ku=<id kelompok umur>` atau `?ku=semua`; dua BIB per A4.
- * - `simpanTampilan`: unggah atau hapus latar, kepala, dan warna tulisan.
+ * - `simpanTampilan`: unggah latar sendiri, pilih latar bawaan G9-01 (bila
+ *   berkasnya ada), atau hapus latar; kepala dan warna tulisan.
  * - `contoh`: gambar JPG contoh dengan tampilan yang berlaku.
  * - `sekolah`: `<kunci sekolah>/pdf` atau `/zip` (gambar JPG per atlet dan PDF).
  * - `zip`: semua sekolah, satu folder per sekolah.
@@ -39,6 +40,7 @@ class CetakBibController extends BaseController
             'jumlahSemua'  => array_sum(array_column($kelompok, 'atlet')),
             'sekolahBib'   => $bib->sekolah(),
             'tampilanBib'  => TampilanBib::dariPengaturan(),
+            'latarBawaan'  => TampilanBib::daftarBawaan(),
             'kepalaDipilih' => (bool) setting('Bib.tampilkan_kepala'),
             'warnaDipilih' => (string) setting('Bib.warna_teks'),
         ]);
@@ -62,12 +64,15 @@ class CetakBibController extends BaseController
 
     public function simpanTampilan(): ResponseInterface
     {
+        $bawaan = $this->request->getPost('latar_bawaan');
+
         try {
             TampilanBib::simpan(
                 $this->request->getFile('latar'),
                 $this->request->getPost('hapus_latar') === '1',
                 $this->request->getPost('tampilkan_kepala') === '1',
                 (string) $this->request->getPost('warna_teks'),
+                bawaan: is_string($bawaan) ? $bawaan : null,
             );
         } catch (RuntimeException $e) {
             return redirect()->to(self::ALAMAT)->with('pesan_galat', $e->getMessage());

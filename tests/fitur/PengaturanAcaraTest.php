@@ -199,7 +199,7 @@ final class PengaturanAcaraTest extends UjiBasisData
 
         // Halaman masuk (tata letak polos).
         $xpath = $this->xpathDari($this->withSession([])->get('admin/masuk'));
-        $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//*[contains(@class, "polos-merek")]'));
+        $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//*[@data-polos-merek]'));
     }
 
     public function testTeksPenggantiSebelumDataAcaraDiisi(): void
@@ -219,7 +219,7 @@ final class PengaturanAcaraTest extends UjiBasisData
         $this->assertSame('Pendaftaran Lomba Panel admin', $this->teks($xpath, '//aside//a[contains(@class, "menu-samping-merek")]'));
 
         $xpath = $this->xpathDari($this->withSession([])->get('admin/masuk'));
-        $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//*[contains(@class, "polos-merek")]'));
+        $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//*[@data-polos-merek]'));
     }
 
     public function testDataAcaraSebagianDanNamaSatuKata(): void

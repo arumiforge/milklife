@@ -67,7 +67,7 @@ final class HariLombaBibSekolahTest extends UjiBasisData
         $halaman = $this->bukaSebagaiAdmin(self::ALAMAT);
         $halaman->assertOK();
         $halaman->assertSeeElement('#unduh-zip-semua');
-        $tautan = $this->xpathDari($halaman)->query('//table[@id="daftar-bib-sekolah"]//a');
+        $tautan = $this->xpathDari($halaman)->query('//*[@id="daftar-bib-sekolah"]//a');
         $this->assertSame(6, $tautan->length);
         $this->assertSame(site_url(self::ALAMAT . '/sekolah/99999913/pdf'), $tautan->item(0)->getAttribute('href'));
         $this->assertSame(site_url(self::ALAMAT . '/sekolah/99999913/zip'), $tautan->item(1)->getAttribute('href'));
@@ -186,6 +186,78 @@ final class HariLombaBibSekolahTest extends UjiBasisData
         service('superglobals')->setFilesArray([]);
         $this->assertGagalDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/tampilan', ['warna_teks' => 'merah']), self::ALAMAT, 'Pilih warna tulisan Gelap atau Terang.');
         $this->assertSame('gelap', setting('Bib.warna_teks'));
+    }
+
+    /**
+     * Latar bawaan G9-01 (F9-16): hanya ditawarkan bila berkasnya ada; dipilih
+     * menggantikan latar unggahan (berkas unggahan dihapus, berkas bawaan tidak).
+     */
+    public function testLatarBawaanHanyaBilaBerkasAda(): void
+    {
+        $folder = FCPATH . 'aset/gambar/bib/';
+        $berkas = $folder . 'latar-gelap-1.jpg';
+
+        if (is_file($berkas)) {
+            $this->markTestSkipped('Berkas latar bawaan G9-01 sudah ada; uji ini memakai berkas buatannya sendiri.');
+        }
+
+        // Tanpa berkas: tidak ditawarkan dan ditolak.
+        $this->assertSame([], array_intersect_key(TampilanBib::daftarBawaan(), ['latar-gelap-1' => true]));
+        $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT))->query('//input[@name="latar_bawaan"][@value="latar-gelap-1"]')->length);
+        $this->assertGagalDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/tampilan', ['warna_teks' => 'terang', 'latar_bawaan' => 'latar-gelap-1']), self::ALAMAT, 'Latar bawaan itu tidak tersedia. Pilih latar lain.');
+        $this->assertSame('', setting('Bib.latar'));
+
+        $folderBaru = ! is_dir($folder);
+
+        if ($folderBaru) {
+            mkdir($folder, 0775, true);
+        }
+
+        $gambar = imagecreatetruecolor(248, 175);
+        imagefill($gambar, 0, 0, (int) imagecolorallocate($gambar, 2, 31, 123));
+        imagejpeg($gambar, $berkas, 90);
+
+        try {
+            $this->siapkanTigaSekolah();
+            $halaman = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
+            $this->assertSame(1, $halaman->query('//*[@data-latar-bawaan]//input[@type="radio"][@name="latar_bawaan"][@value="latar-gelap-1"]')->length);
+            $this->assertSame('checked', $halaman->query('//input[@name="latar_bawaan"][@value=""]')->item(0)?->getAttribute('checked'));
+
+            // Latar unggahan dulu, lalu diganti latar bawaan: berkas unggahan dihapus.
+            $this->siapkanBerkas('latar', 'latar.png', self::gambarPng(400, 200));
+            $this->kirimSebagaiAdmin(self::ALAMAT . '/tampilan', ['warna_teks' => 'gelap', 'latar_bawaan' => '']);
+            $this->assertCount(1, $this->isiFolderUnggahan());
+
+            service('superglobals')->setFilesArray([]);
+            $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . '/tampilan', ['warna_teks' => 'terang', 'latar_bawaan' => 'latar-gelap-1']);
+            $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+            $this->assertSame('bawaan:latar-gelap-1', setting('Bib.latar'));
+            $this->assertSame([], $this->isiFolderUnggahan());
+
+            $tampilan = TampilanBib::dariPengaturan();
+            $this->assertSame('latar-gelap-1', $tampilan->kunciBawaan());
+            $this->assertSame((string) file_get_contents($berkas), $tampilan->latarJpg());
+            $this->assertStringContainsString('src="var:latar"', CetakBib::html((new CetakBib())->atlet(null), 'MILKLIFE', '', false, $tampilan, true));
+            $this->assertSame(IMAGETYPE_JPEG, getimagesizefromstring($this->bukaSebagaiAdmin(self::ALAMAT . '/contoh')->response()->getBody())[2] ?? null);
+
+            $halaman = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
+            $this->assertSame('checked', $halaman->query('//input[@name="latar_bawaan"][@value="latar-gelap-1"]')->item(0)?->getAttribute('checked'));
+            $this->assertSame(1, $halaman->query('//input[@id="hapus_latar"]')->length);
+
+            // Kunci asing ditolak; "Tanpa latar bawaan" kembali ke BIB putih tanpa menghapus berkas bawaan.
+            $this->assertGagalDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/tampilan', ['warna_teks' => 'gelap', 'latar_bawaan' => '../../index']), self::ALAMAT);
+            $this->assertSame('bawaan:latar-gelap-1', setting('Bib.latar'));
+            $this->kirimSebagaiAdmin(self::ALAMAT . '/tampilan', ['warna_teks' => 'gelap', 'latar_bawaan' => '']);
+            $this->assertSame('', setting('Bib.latar'));
+            $this->assertFileExists($berkas);
+            $this->assertNull(TampilanBib::dariPengaturan()->latar);
+        } finally {
+            @unlink($berkas);
+
+            if ($folderBaru) {
+                @rmdir($folder);
+            }
+        }
     }
 
     public function testContohTanpaAtlet(): void
