@@ -348,6 +348,9 @@
   .z-50 {
     z-index: 50;
   }
+  .order-first {
+    order: -9999;
+  }
   .col-5 {
     grid-column: 5;
   }
@@ -362,6 +365,9 @@
   }
   .col-auto {
     grid-column: auto;
+  }
+  .col-span-2 {
+    grid-column: span 2 / span 2;
   }
   .float-none {
     float: none;
@@ -1498,6 +1504,9 @@
   .bg-primary-700 {
     background-color: var(--color-primary-700);
   }
+  .bg-primary-800 {
+    background-color: var(--color-primary-800);
+  }
   .bg-primary-900 {
     background-color: var(--color-primary-900);
   }
@@ -1628,6 +1637,9 @@
   .py-0\.5 {
     padding-block: calc(var(--spacing) * 0.5);
   }
+  .py-1 {
+    padding-block: var(--spacing);
+  }
   .py-1\.5 {
     padding-block: calc(var(--spacing) * 1.5);
   }
@@ -1646,6 +1658,9 @@
   .py-5 {
     padding-block: calc(var(--spacing) * 5);
   }
+  .py-6 {
+    padding-block: calc(var(--spacing) * 6);
+  }
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
   }
@@ -1658,8 +1673,14 @@
   .ps-3 {
     padding-inline-start: calc(var(--spacing) * 3);
   }
+  .ps-3\.5 {
+    padding-inline-start: calc(var(--spacing) * 3.5);
+  }
   .ps-4 {
     padding-inline-start: calc(var(--spacing) * 4);
+  }
+  .ps-11 {
+    padding-inline-start: calc(var(--spacing) * 11);
   }
   .ps-12 {
     padding-inline-start: calc(var(--spacing) * 12);
@@ -1712,6 +1733,9 @@
   .align-middle {
     vertical-align: middle;
   }
+  .align-top {
+    vertical-align: top;
+  }
   .text-2xl {
     font-size: var(--text-2xl);
     line-height: var(--tw-leading, var(--text-2xl--line-height));
@@ -1743,6 +1767,9 @@
   .text-xs {
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+  .text-\[0\.6875rem\] {
+    font-size: 0.6875rem;
   }
   .text-\[11px\] {
     font-size: 11px;
@@ -1790,6 +1817,9 @@
   .text-nowrap {
     text-wrap: nowrap;
   }
+  .break-words {
+    overflow-wrap: break-word;
+  }
   .whitespace-nowrap {
     white-space: nowrap;
   }
@@ -1832,6 +1862,9 @@
   .text-oranye-800 {
     color: var(--color-oranye-800);
   }
+  .text-primary-100 {
+    color: var(--color-primary-100);
+  }
   .text-primary-700 {
     color: var(--color-primary-700);
   }
@@ -1861,6 +1894,13 @@
   }
   .uppercase {
     text-transform: uppercase;
+  }
+  .tabular-nums {
+    --tw-numeric-spacing: tabular-nums;
+    font-variant-numeric: var(--tw-ordinal, ) var(--tw-slashed-zero, ) var(--tw-numeric-figure, ) var(--tw-numeric-spacing, ) var(--tw-numeric-fraction, );
+  }
+  .underline {
+    text-decoration-line: underline;
   }
   .placeholder-red-400::placeholder {
     color: var(--color-red-400);
@@ -2183,6 +2223,9 @@
     --tw-ring-inset: inset;
   }
   @media (width >= 40rem) {
+    .sm\:order-none {
+      order: 0;
+    }
     .sm\:block {
       display: block;
     }
@@ -2198,6 +2241,9 @@
     }
     .sm\:h-72 {
       height: calc(var(--spacing) * 72);
+    }
+    .sm\:w-auto {
+      width: auto;
     }
     .sm\:grid-cols-2 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2235,6 +2281,9 @@
     .sm\:px-6 {
       padding-inline: calc(var(--spacing) * 6);
     }
+    .sm\:py-12 {
+      padding-block: calc(var(--spacing) * 12);
+    }
     .sm\:py-14 {
       padding-block: calc(var(--spacing) * 14);
     }
@@ -2259,11 +2308,32 @@
     }
   }
   @media (width >= 48rem) {
+    .md\:col-span-1 {
+      grid-column: span 1 / span 1;
+    }
+    .md\:col-span-3 {
+      grid-column: span 3 / span 3;
+    }
+    .md\:col-span-9 {
+      grid-column: span 9 / span 9;
+    }
+    .md\:col-span-12 {
+      grid-column: span 12 / span 12;
+    }
     .md\:block {
       display: block;
     }
+    .md\:hidden {
+      display: none;
+    }
     .md\:grid-cols-3 {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .md\:grid-cols-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .md\:items-end {
+      align-items: flex-end;
     }
     .md\:opacity-100 {
       opacity: 100%;
@@ -2275,6 +2345,9 @@
     }
     .lg\:col-span-2 {
       grid-column: span 2 / span 2;
+    }
+    .lg\:col-span-5 {
+      grid-column: span 5 / span 5;
     }
     .lg\:ms-64 {
       margin-inline-start: calc(var(--spacing) * 64);
@@ -3000,6 +3073,26 @@
   syntax: "*";
   inherits: false;
 }
+@property --tw-ordinal {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-slashed-zero {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-numeric-figure {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-numeric-spacing {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-numeric-fraction {
+  syntax: "*";
+  inherits: false;
+}
 @property --tw-shadow {
   syntax: "*";
   inherits: false;
@@ -3208,6 +3301,11 @@
       --tw-leading: initial;
       --tw-font-weight: initial;
       --tw-tracking: initial;
+      --tw-ordinal: initial;
+      --tw-slashed-zero: initial;
+      --tw-numeric-figure: initial;
+      --tw-numeric-spacing: initial;
+      --tw-numeric-fraction: initial;
       --tw-shadow: 0 0 #0000;
       --tw-shadow-color: initial;
       --tw-shadow-alpha: 100%;

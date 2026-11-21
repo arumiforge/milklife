@@ -153,6 +153,8 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
             </button>
         </div>
     </form>
+
+    <?= $this->include('admin/pengaturan/_halaman_peserta') ?>
 </div>
 <?= $this->endSection() ?>
 

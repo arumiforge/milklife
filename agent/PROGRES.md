@@ -4,19 +4,19 @@ Diperbarui: 21 November 2026
 
 ## Sedang berjalan
 
-**Tahap 9 — Rombak tampilan dan fitur publik hari lomba** (K140, K141). Rencana: [`dokumen/draf/rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md), disetujui pemilik beserta delapan asumsinya (K142). Dikerjakan paralel: F9-01, F9-04, dan F9-10 bersamaan. Staging: https://staging.mac2026.web.id (K139). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
+**Tahap 9 — Rombak tampilan dan fitur publik hari lomba** (K140, K141). Rencana: [`dokumen/draf/rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md), disetujui pemilik beserta delapan asumsinya (K142). Dikerjakan paralel, paling banyak 3 sub-sesi (K142). Jawaban pertanyaan gelombang A: K143. Staging: https://staging.mac2026.web.id (K139). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
 
 | Tugas | Status | Prioritas | Gelombang |
 |---|---|---|---|
-| [F9-01 Fondasi Flowbite Pro](tugas/F9-01-fondasi-flowbite-pro.md) | menunggu tinjauan | P1 | 0 |
+| [F9-01 Fondasi Flowbite Pro](tugas/F9-01-fondasi-flowbite-pro.md) | selesai (#122) | P1 | 0 |
 | [F9-02 Saluran Codex](tugas/F9-02-saluran-codex.md) | selesai (#121) | P1 | 0 |
 | [F9-03 Tata letak publik dan halaman depan](tugas/F9-03-tata-letak-publik-beranda.md) | rencana | P1 | A |
-| [F9-04 Bantuan dan FAQ](tugas/F9-04-bantuan-faq.md) | menunggu tinjauan | P1 | A |
+| [F9-04 Bantuan dan FAQ](tugas/F9-04-bantuan-faq.md) | selesai (#123) | P1 | A |
 | [F9-07 Jadwal pertandingan](tugas/F9-07-jadwal-pertandingan.md) | rencana | P1 | A |
 | [F9-10 Kalkulator poin multi-lomba](tugas/F9-10-kalkulator-poin-multilomba.md) | rencana | P1 | A |
 | [F9-08 Seri, lintasan, dan alur babak](tugas/F9-08-seri-lintasan-bagan.md) | rencana | P1 | B |
 | [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | rencana | P1 | B |
-| [F9-12 Peserta publik](tugas/F9-12-peserta-publik.md) | rencana | P1 | B |
+| [F9-12 Peserta publik](tugas/F9-12-peserta-publik.md) | menunggu tinjauan | P1 | B |
 | [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | rencana | P1 | B |
 | [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | rencana | P2 | B |
 | [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | rencana | P2 | B |
@@ -43,7 +43,7 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 
 ## Berikutnya
 
-Setelah F9-01 masuk `main`: sisa gelombang A (F9-03, F9-07) dan bagian publik F9-04. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
+Gabung berurutan #124 (F9-10) lalu #125 (F9-03); F9-07 dimulai setelah #124 masuk. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel` sekali. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
 
 ## Selesai
 

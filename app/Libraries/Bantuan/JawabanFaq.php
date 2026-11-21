@@ -43,13 +43,19 @@ final class JawabanFaq
         'ofisial_minimal'         => 'Ofisial paling sedikit',
         'ofisial_maksimal'        => 'Ofisial paling banyak',
         'daftar_kelompok_umur'    => 'Daftar kelompok umur aktif: jenjang dan tahun lahir',
-        'daftar_biaya'            => 'Daftar biaya individu dan beregu per kelompok umur',
+        'daftar_biaya'            => 'Daftar biaya individu dan beregu per kelompok umur (bila "Tampilkan biaya di halaman depan" menyala; bila mati, kalimat bahwa rincian biaya ada di langkah Biaya, K143)',
     ];
 
     /**
      * Pengganti isian yang pengaturannya masih kosong.
      */
     public const BELUM_DIATUR = '(belum diumumkan panitia)';
+
+    /**
+     * Pengganti `{daftar_biaya}` selama rincian biaya disembunyikan dari
+     * halaman depan (`HalamanDepan.tampilkan_biaya` mati, K74, K143).
+     */
+    public const BIAYA_TERSEMBUNYI = 'Rincian biaya tampil di langkah **Biaya** saat mendaftar, setelah atlet dan nomor lombanya diisi.';
 
     /**
      * Nilai isian, diisi sekali saat pertama dipakai.
@@ -149,7 +155,8 @@ final class JawabanFaq
             'ofisial_minimal'         => (string) (int) setting('Pendaftaran.penanggung_jawab_minimal'),
             'ofisial_maksimal'        => (string) (int) setting('Pendaftaran.penanggung_jawab_maksimal'),
             'daftar_kelompok_umur'    => self::daftarKelompokUmur($isiKu),
-            'daftar_biaya'            => self::daftarBiaya($isiKu),
+            // Biaya hanya dirinci bila panitia menampilkannya di halaman depan (K74, K143).
+            'daftar_biaya'            => (bool) setting('HalamanDepan.tampilkan_biaya') ? self::daftarBiaya($isiKu) : self::BIAYA_TERSEMBUNYI,
         ];
     }
 
