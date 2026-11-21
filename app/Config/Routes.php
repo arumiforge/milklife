@@ -223,6 +223,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('seri/babak/(:num)/(kunci|buka)', 'SeriController::kunci/$1/$2');
     // ---------- Akhir seri dan lintasan ----------
 
+    // ---------- Lembar juri (F9-09, K140 butir 7d) ----------
+    // Isian prestasi cepat dari ponsel per babak dan seri; simpan per baris.
+    $routes->get('juri', 'JuriController::index');
+    $routes->get('juri/babak/(:num)', 'JuriController::babak/$1');
+    $routes->post('juri/babak/(:num)/(:num)', 'JuriController::simpan/$1/$2');
+    // ---------- Akhir lembar juri ----------
+
     // Klasemen sekolah per jenjang, semua nomor termasuk yang belum terbit (F8-05).
     $routes->get('klasemen', 'KlasemenController::index');
     $routes->get('klasemen/(pdf|excel)', 'KlasemenController::unduh/$1');

@@ -1,7 +1,7 @@
 <?php
 /**
  * Tab halaman hari lomba (F8-03): Daftar ulang, Cetak BIB, Daftar peserta,
- * Jadwal pertandingan (F9-07), dan Seri dan lintasan (F9-08). Satu butir menu admin "Hari lomba" membuka semuanya. Di ponsel label
+ * Jadwal pertandingan (F9-07), Seri dan lintasan (F9-08), dan Lembar juri (F9-09). Satu butir menu admin "Hari lomba" membuka semuanya. Di ponsel label
  * "Daftar peserta" dan "Jadwal pertandingan" dipendekkan supaya muat.
  *
  * @var string $aktif alamat tab yang sedang dibuka
@@ -14,6 +14,8 @@ $tab = [
     'admin/jadwal-pertandingan' => ['Jadwal pertandingan', 'calendar-week', 'Jadwal'],
     // Seri dan lintasan (F9-08), halaman bertampilan baru.
     'admin/seri' => ['Seri dan lintasan', 'list-ol', 'Seri'],
+    // Lembar juri (F9-09), halaman bertampilan baru.
+    'admin/juri' => ['Lembar juri', 'phone', 'Juri'],
 ];
 ?>
 <nav class="mb-4" aria-label="Halaman hari lomba">

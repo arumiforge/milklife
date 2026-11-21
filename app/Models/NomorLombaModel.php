@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Libraries\Hasil\JenisHasil;
+use App\Libraries\Hasil\Percobaan;
 use App\Libraries\Pendaftaran\Regu;
 use CodeIgniter\Model;
 
@@ -85,6 +86,8 @@ class NomorLombaModel extends Model
         'kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil', 'tabel_skor_id', 'komponen_skor',
         'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu',
         'urutan', 'aktif',
+        // Aturan nomor lompat/lempar (F9-09).
+        'jumlah_percobaan', 'pemecah_seri',
     ];
 
     protected $useTimestamps = true;
@@ -103,7 +106,7 @@ class NomorLombaModel extends Model
      *
      * @param array<string, mixed> $mentah
      *
-     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string}
+     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string, jumlah_percobaan: string, pemecah_seri: string}
      */
     public static function rapikanIsian(array $mentah): array
     {
@@ -125,6 +128,9 @@ class NomorLombaModel extends Model
             'biaya_beregu'     => $teks('biaya_beregu'),
             'urutan'           => $teks('urutan'),
             'aktif'            => $teks('aktif') === '1' ? '1' : '0',
+            // Aturan nomor lompat/lempar (F9-09); pemecah seri bawaan menyala.
+            'jumlah_percobaan' => $teks('jumlah_percobaan'),
+            'pemecah_seri'     => $teks('pemecah_seri') === '0' ? '0' : '1',
         ];
 
         if ($isian['jenis'] === 'individu') {
@@ -183,6 +189,14 @@ class NomorLombaModel extends Model
             $galat += self::periksaMulti($isian, $tabelSkor);
         }
 
+        // Percobaan lompat/lempar (F9-09): kosong = 3. Jenis hasil kosong = ditebak dari nama.
+        $jenisHasil = ($isian['jenis_hasil'] ?? '') === '' ? JenisHasil::tebak($isian['nama']) : $isian['jenis_hasil'];
+
+        if ($jenisHasil === JenisHasil::JARAK && ($isian['jumlah_percobaan'] ?? '') !== ''
+            && self::angka($isian['jumlah_percobaan'], 1, Percobaan::MAKSIMAL) === null) {
+            $galat['jumlah_percobaan'] = 'Banyak percobaan harus angka 1 sampai ' . Percobaan::MAKSIMAL . ', misalnya 3. Kosongkan untuk memakai 3 percobaan.';
+        }
+
         if ($isian['jenis'] === 'beregu') {
             $galat += self::periksaTim($isian);
         }
@@ -224,6 +238,9 @@ class NomorLombaModel extends Model
             'biaya_beregu'     => $isian['biaya_beregu'] === '' ? null : angka_rupiah($isian['biaya_beregu']),
             'urutan'           => $angka($isian['urutan']),
             'aktif'            => $isian['aktif'] === '1' ? 1 : 0,
+            // Aturan nomor lompat/lempar (F9-09), hanya untuk jenis hasil jarak.
+            'jumlah_percobaan' => $jenisHasil === JenisHasil::JARAK ? $angka($isian['jumlah_percobaan'] ?? '') : null,
+            'pemecah_seri'     => ($isian['pemecah_seri'] ?? '1') === '0' && $jenisHasil === JenisHasil::JARAK ? 0 : 1,
         ];
     }
 
@@ -243,6 +260,10 @@ class NomorLombaModel extends Model
         }
 
         $isian['aktif'] = (int) ($baris['aktif'] ?? 0) === 1 ? '1' : '0';
+
+        // Aturan nomor lompat/lempar (F9-09).
+        $isian['jumlah_percobaan'] = (string) ($baris['jumlah_percobaan'] ?? '');
+        $isian['pemecah_seri']     = (int) ($baris['pemecah_seri'] ?? 1) === 0 ? '0' : '1';
 
         return $isian;
     }

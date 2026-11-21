@@ -20,6 +20,14 @@ use Throwable;
  * - Nomor berjenis hasil `multi` (F9-10): admin mengisi prestasi tiap
  *   komponen, poinnya dicari di tabel skor nomor itu (`TabelSkor`), total
  *   poin disimpan di `prestasi` dan rinciannya di `rincian`.
+ * - Nomor lompat/lempar (F9-09): prestasi tiap percobaan (`Percobaan`),
+ *   prestasi = jarak sah terbaik, prestasi sama dipisah jarak terbaik kedua
+ *   bila `pemecah_seri` menyala. Lari: waktu seperseribu detik bila diisi
+ *   memisah waktu yang sama (`Peringkat::pemecah()`).
+ * - Penyimpanan (halaman hasil dan lembar juri) mengunci baris babaknya
+ *   (`SELECT … FOR UPDATE`), jadi beberapa admin bisa mengisi babak berbeda
+ *   bersamaan; baris yang sudah diubah admin lain sejak dibuka (`versi`)
+ *   ditolak dengan `PESAN_BENTROK`.
  * - Terbitkan dan Tarik kembali per nomor (`nomor_lomba.hasil_terbit_pada`);
  *   halaman publik hanya memuat nomor yang terbit.
  *
@@ -36,6 +44,11 @@ use Throwable;
 final class HasilLomba
 {
     public const NAMA_BABAK_MAKSIMAL = 60;
+
+    /**
+     * Pesan bila baris yang disimpan sudah diubah admin lain sejak halamannya dibuka (F9-09).
+     */
+    public const PESAN_BENTROK = 'Baris ini baru saja diubah admin lain. Muat ulang halaman untuk melihat isian terbaru, lalu ubah lagi bila perlu.';
 
     /**
      * Isi peserta babak baru.
@@ -123,12 +136,15 @@ final class HasilLomba
      * `komponen` hanya terisi untuk jenis hasil `multi`: komponen tabel skor
      * yang dipakai nomor itu.
      *
-     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string, tabel_skor_id: int|null, komponen: list<array{kode: string, nama: string, jenis: string}>}|null
+     * `jumlah_percobaan` dan `pemecah_seri` (F9-09): aturan nomor lompat/lempar
+     * (berlaku untuk jenis hasil jarak).
+     *
+     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string, tabel_skor_id: int|null, komponen: list<array{kode: string, nama: string, jenis: string}>, jumlah_percobaan: int, pemecah_seri: bool}|null
      */
     public function nomor(int $id): ?array
     {
         $n = $this->db->table('nomor_lomba nl')
-            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.tabel_skor_id, nl.komponen_skor, nl.hasil_terbit_pada, nl.kelompok_umur_id, ku.nama AS kelompok_umur')
+            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.tabel_skor_id, nl.komponen_skor, nl.hasil_terbit_pada, nl.kelompok_umur_id, nl.jumlah_percobaan, nl.pemecah_seri, ku.nama AS kelompok_umur')
             ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
             ->where('nl.id', $id)
             ->get()->getRowArray();
@@ -151,6 +167,9 @@ final class HasilLomba
             'kelompok_umur'    => (string) $n['kelompok_umur'],
             'tabel_skor_id'    => $tabelSkor,
             'komponen'         => $jenisHasil === JenisHasil::MULTI ? (new DataTabelSkor($this->db))->komponenNomor($tabelSkor, $n['komponen_skor']) : [],
+            // Aturan nomor (F9-09).
+            'jumlah_percobaan' => Percobaan::jumlah($n['jumlah_percobaan']),
+            'pemecah_seri'     => (int) ($n['pemecah_seri'] ?? 1) === 1,
         ];
     }
 
@@ -201,7 +220,13 @@ final class HasilLomba
      * `seri` dan `lintasan` (F9-08): seri dan lintasan atau urutan tampil;
      * `null` bila babak belum dibagi.
      *
-     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, peringkat: int|null, manual: bool, seri: int|null, lintasan: int|null}>
+     * F9-09: `percobaan` prestasi tiap percobaan (nomor jarak; `null` bila
+     * tidak dicatat), `percobaan_teks` teksnya sepanjang jumlah percobaan
+     * nomor, `seperseribu` waktu dalam seperseribu detik, `prestasi_isian`
+     * teks untuk kotak isian (dengan seperseribu bila ada), `pemecah` untuk
+     * `Peringkat::hitung()`, `versi` penanda perubahan baris.
+     *
+     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, peringkat: int|null, manual: bool, seri: int|null, lintasan: int|null, percobaan: list<int|string|null>|null, percobaan_teks: list<string>, seperseribu: int|null, prestasi_isian: string, pemecah: list<int>|null, versi: int}>
      */
     public function hasilBabak(int $babakId, array $nomor): array
     {
@@ -223,8 +248,15 @@ final class HasilLomba
         $hasil       = [];
         $komponen    = $nomor['jenis_hasil'] === JenisHasil::MULTI ? (array) ($nomor['komponen'] ?? []) : [];
 
+        $jenisHasil = (string) $nomor['jenis_hasil'];
+        $jarak      = $jenisHasil === JenisHasil::JARAK;
+        $jumlahP    = (int) ($nomor['jumlah_percobaan'] ?? Percobaan::BAWAAN);
+
         foreach ($baris as $b) {
-            $prestasi = $b['prestasi'] === null ? null : (int) $b['prestasi'];
+            $prestasi  = $b['prestasi'] === null ? null : (int) $b['prestasi'];
+            $percobaan = $jarak ? Percobaan::baca($b['percobaan'] ?? null) : null;
+            $ribu      = $jenisHasil === JenisHasil::WAKTU && isset($b['seperseribu']) ? (int) $b['seperseribu'] : null;
+            $teks      = Prestasi::tulis($prestasi, $jenisHasil);
             $rincian  = $komponen === [] ? [] : TabelSkor::bacaRincian($b['rincian'] ?? null);
             $isianK   = [];
 
@@ -254,7 +286,7 @@ final class HasilLomba
                 'nomor_dada'     => $b['nomor_dada'],
                 'anggota'        => $anggota[$kunci] ?? [],
                 'prestasi'       => $prestasi,
-                'prestasi_teks'  => Prestasi::tulis($prestasi, (string) $nomor['jenis_hasil']),
+                'prestasi_teks'  => $teks,
                 'rincian'        => $komponen === [] || $rincian === [] ? [] : TabelSkor::rincianTampil($komponen, $rincian),
                 'rincian_isian'  => $isianK,
                 'keterangan'     => Peringkat::keterangan($b['keterangan']),
@@ -263,6 +295,13 @@ final class HasilLomba
                 // Seri dan lintasan (F9-08).
                 'seri'           => isset($b['seri']) ? (int) $b['seri'] : null,
                 'lintasan'       => isset($b['lintasan']) ? (int) $b['lintasan'] : null,
+                // Aturan nomor dan lembar juri (F9-09).
+                'percobaan'      => $percobaan,
+                'percobaan_teks' => $jarak ? Percobaan::teks($percobaan, max($jumlahP, count($percobaan ?? []))) : [],
+                'seperseribu'    => $ribu,
+                'prestasi_isian' => $ribu !== null ? Prestasi::tulisSeperseribu($ribu) : $teks,
+                'pemecah'        => Peringkat::pemecah($jenisHasil, $percobaan, $ribu, (bool) ($nomor['pemecah_seri'] ?? true)),
+                'versi'          => (int) ($b['versi'] ?? 0),
             ];
         }
 
@@ -459,7 +498,25 @@ final class HasilLomba
      * Simpan prestasi, keterangan, dan (khusus Final) koreksi peringkat, lalu
      * hitung ulang peringkat. Bila ada isian salah tidak ada yang tersimpan.
      *
-     * @param array<int|string, mixed> $isian id hasil => ['prestasi' => teks, 'keterangan' => 'DNS'|…, 'peringkat' => teks]
+     * Kunci tiap baris (semua boleh tidak ada):
+     * - `prestasi`: teks prestasi. Waktu boleh memuat seperseribu detik
+     *   (`12,345`, F9-09).
+     * - `percobaan`: daftar teks tiap percobaan (nomor jarak, F9-09); bila ada,
+     *   prestasi = jarak sah terbaik dan `prestasi` diabaikan. Tanpa
+     *   `percobaan`, percobaan tersimpan dipertahankan selama prestasinya
+     *   tidak diubah.
+     * - `komponen`: kode komponen => teks prestasi (poin multi-lomba, F9-10).
+     * - `keterangan`: DNS, DNF, DQ, atau kosong.
+     * - `peringkat`: koreksi peringkat (khusus Final); bila kunci ini tidak
+     *   ada (lembar juri), koreksi yang tersimpan dipertahankan.
+     * - `versi`: `hasilBabak()['versi']` saat isian dibuka; bila baris sudah
+     *   diubah sejak itu, simpanan ditolak dengan `PESAN_BENTROK`.
+     *
+     * Baris yang isinya sama dengan yang tersimpan dilewati. Penyimpanan
+     * mengunci baris babak (`SELECT … FOR UPDATE`), jadi admin lain di babak
+     * yang sama menunggu sebentar; babak lain tidak terpengaruh.
+     *
+     * @param array<int|string, mixed> $isian id hasil => isian baris
      *
      * @return array<int, string> id hasil => pesan galat; kosong bila tersimpan
      */
@@ -471,17 +528,18 @@ final class HasilLomba
             return [0 => 'Babak tidak ditemukan. Muat ulang halaman.'];
         }
 
-        $jenis = $babak['nomor']['jenis_hasil'];
+        $nomor = $babak['nomor'];
+        $jenis = $nomor['jenis_hasil'];
         $ada   = array_column($this->db->table('hasil')->select('id')->where('babak_id', $babakId)->get()->getResultArray(), 'id', 'id');
         $galat = [];
-        $ubah  = [];
+        $siap  = [];
         $multi = $jenis === JenisHasil::MULTI;
 
-        if ($multi && $babak['nomor']['komponen'] === []) {
+        if ($multi && $nomor['komponen'] === []) {
             return [0 => 'Nomor ini belum punya tabel skor. Pilih tabel skor dan komponennya di Pengaturan > Nomor Lomba.'];
         }
 
-        $barisSkor = $multi ? (new DataTabelSkor($this->db))->barisKomponen((int) $babak['nomor']['tabel_skor_id'], $babak['nomor']['komponen'], $babak['nomor']['kategori']) : [];
+        $barisSkor = $multi ? (new DataTabelSkor($this->db))->barisKomponen((int) $nomor['tabel_skor_id'], $nomor['komponen'], $nomor['kategori']) : [];
 
         foreach ($isian as $id => $baris) {
             $id = (int) $id;
@@ -490,27 +548,16 @@ final class HasilLomba
                 continue;
             }
 
-            $rincian = null;
+            $urai = $this->uraiBaris($nomor, $barisSkor, $baris);
 
-            if ($multi) {
-                $hitung   = TabelSkor::hitung($babak['nomor']['komponen'], $barisSkor, is_array($baris['komponen'] ?? null) ? $baris['komponen'] : []);
-                $prestasi = ['nilai' => $hitung['total'], 'galat' => $hitung['galat'] === [] ? null : implode(' ', $hitung['galat'])];
-                $rincian  = $hitung['total'] === null ? null : TabelSkor::tulisRincian($hitung['rincian']);
-            } else {
-                $teks     = is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '';
-                $prestasi = Prestasi::urai($teks, $jenis);
-            }
-
-            $keterangan = Peringkat::keterangan($baris['keterangan'] ?? null);
-            $peringkat  = is_string($baris['peringkat'] ?? null) ? trim($baris['peringkat']) : '';
-
-            if ($prestasi['galat'] !== null) {
-                $galat[$id] = $prestasi['galat'];
+            if (isset($urai['galat'])) {
+                $galat[$id] = $urai['galat'];
 
                 continue;
             }
 
-            $manual = $babak['final'] && $peringkat !== '' && $keterangan === null;
+            $peringkat = is_string($baris['peringkat'] ?? null) ? trim($baris['peringkat']) : '';
+            $manual    = $babak['final'] && $peringkat !== '' && $urai['data']['keterangan'] === null;
 
             if ($manual && preg_match('/^[1-9]\d{0,2}$/D', $peringkat) !== 1) {
                 $galat[$id] = 'Peringkat "' . $peringkat . '" belum benar. Tulis angka 1 atau lebih, atau kosongkan supaya dihitung otomatis dari prestasi.';
@@ -518,12 +565,11 @@ final class HasilLomba
                 continue;
             }
 
-            $ubah[$id] = [
-                'prestasi'         => $prestasi['nilai'],
-                'rincian'          => $rincian,
-                'keterangan'       => $keterangan,
-                'peringkat'        => $manual ? (int) $peringkat : null,
-                'peringkat_manual' => $manual ? 1 : 0,
+            $siap[$id] = [
+                'data'      => $urai['data'] + ['peringkat' => $manual ? (int) $peringkat : null, 'peringkat_manual' => $manual ? 1 : 0],
+                'percobaan' => $urai['percobaan'],
+                'koreksi'   => array_key_exists('peringkat', $baris),
+                'versi'     => is_numeric($baris['versi'] ?? null) ? (int) $baris['versi'] : null,
             ];
         }
 
@@ -533,13 +579,66 @@ final class HasilLomba
 
         $sekarang = date('Y-m-d H:i:s');
 
-        $this->transaksi(function () use ($ubah, $sekarang, $babakId, $jenis): void {
+        $galat = $this->transaksi(function () use ($siap, $sekarang, $babakId, $jenis): array {
+            $this->kunciBabak($babakId);
+
+            $kini    = [];
+            $ubah    = [];
+            $bentrok = [];
+
+            foreach ($this->db->table('hasil')->select('id, prestasi, rincian, percobaan, seperseribu, keterangan, peringkat, peringkat_manual, versi')->where('babak_id', $babakId)->get()->getResultArray() as $h) {
+                $kini[(int) $h['id']] = $h;
+            }
+
+            foreach ($siap as $id => $s) {
+                if (! isset($kini[$id])) {
+                    continue;
+                }
+
+                $lama = $kini[$id];
+                $data = $s['data'];
+
+                // Lembar juri tidak mengirim koreksi peringkat: koreksi yang ada tetap.
+                if (! $s['koreksi']) {
+                    $tetap                    = (int) $lama['peringkat_manual'] === 1 && $data['keterangan'] === null;
+                    $data['peringkat']        = $tetap ? (int) $lama['peringkat'] : null;
+                    $data['peringkat_manual'] = $tetap ? 1 : 0;
+                }
+
+                // Prestasi tidak diubah di halaman hasil: percobaan tersimpan tetap.
+                if (! $s['percobaan'] && $lama['percobaan'] !== null && $data['prestasi'] !== null && (int) $lama['prestasi'] === $data['prestasi']) {
+                    $data['percobaan'] = $lama['percobaan'];
+                }
+
+                if (! self::berubah($lama, $data)) {
+                    continue;
+                }
+
+                if ($s['versi'] !== null && $s['versi'] !== (int) $lama['versi']) {
+                    $bentrok[$id] = self::PESAN_BENTROK;
+
+                    continue;
+                }
+
+                $ubah[$id] = $data + ['versi' => (int) $lama['versi'] + 1];
+            }
+
+            if ($bentrok !== []) {
+                return $bentrok;
+            }
+
             foreach ($ubah as $id => $data) {
                 $this->db->table('hasil')->where('id', $id)->update($data + ['diubah_pada' => $sekarang]);
             }
 
             $this->hitungUlang($babakId, $jenis);
+
+            return [];
         });
+
+        if ($galat !== []) {
+            return $galat;
+        }
 
         // Seri dan lintasan (F9-08): babak berikut terisi dari Q/q bila babak
         // ini sudah dibagi ke seri dan hasilnya lengkap.
@@ -558,17 +657,20 @@ final class HasilLomba
 
     /**
      * Hitung ulang peringkat otomatis satu babak; koreksi admin tetap.
+     * Prestasi sama dipisah pemecah seri nomornya (F9-09).
      */
     public function hitungUlang(int $babakId, string $jenis): void
     {
+        $aktif   = (int) ($this->db->table('babak b')->select('nl.pemecah_seri')->join('nomor_lomba nl', 'nl.id = b.nomor_lomba_id')->where('b.id', $babakId)->get()->getRow()->pemecah_seri ?? 1) === 1;
         $peserta = [];
 
-        foreach ($this->db->table('hasil')->select('id, prestasi, keterangan, peringkat, peringkat_manual')->where('babak_id', $babakId)->get()->getResultArray() as $h) {
+        foreach ($this->db->table('hasil')->select('id, prestasi, percobaan, seperseribu, keterangan, peringkat, peringkat_manual')->where('babak_id', $babakId)->get()->getResultArray() as $h) {
             $peserta[(int) $h['id']] = [
                 'prestasi'   => $h['prestasi'] === null ? null : (int) $h['prestasi'],
                 'keterangan' => $h['keterangan'],
                 'peringkat'  => $h['peringkat'] === null ? null : (int) $h['peringkat'],
                 'manual'     => (int) $h['peringkat_manual'] === 1,
+                'pemecah'    => Peringkat::pemecah($jenis, Percobaan::baca($h['percobaan']), $h['seperseribu'] === null ? null : (int) $h['seperseribu'], $aktif),
             ];
         }
 
@@ -636,6 +738,87 @@ final class HasilLomba
     public static function rapikanNama(string $nama): string
     {
         return trim((string) preg_replace('/\s+/u', ' ', $nama));
+    }
+
+    /**
+     * Urai isian satu baris menjadi kolom `hasil` (tanpa peringkat).
+     *
+     * @param array<string, mixed>                      $nomor     `nomor()`
+     * @param array<string, list<array{0: int, 1: int}>> $barisSkor baris tabel skor (multi)
+     * @param array<string, mixed>                      $baris     isian baris
+     *
+     * @return array{data: array{prestasi: int|null, rincian: string|null, percobaan: string|null, seperseribu: int|null, keterangan: string|null}, percobaan: bool}|array{galat: string}
+     */
+    private function uraiBaris(array $nomor, array $barisSkor, array $baris): array
+    {
+        $jenis     = $nomor['jenis_hasil'];
+        $rincian   = null;
+        $percobaan = null;
+        $ribu      = null;
+        $adaCoba   = $jenis === JenisHasil::JARAK && is_array($baris['percobaan'] ?? null);
+
+        if ($jenis === JenisHasil::MULTI) {
+            $hitung   = TabelSkor::hitung($nomor['komponen'], $barisSkor, is_array($baris['komponen'] ?? null) ? $baris['komponen'] : []);
+            $prestasi = ['nilai' => $hitung['total'], 'galat' => $hitung['galat'] === [] ? null : implode(' ', $hitung['galat'])];
+            $rincian  = $hitung['total'] === null ? null : TabelSkor::tulisRincian($hitung['rincian']);
+        } elseif ($adaCoba) {
+            $coba      = Percobaan::urai($baris['percobaan'], (int) $nomor['jumlah_percobaan']);
+            $prestasi  = ['nilai' => $coba['percobaan'] === null ? null : Percobaan::terbaik($coba['percobaan']), 'galat' => $coba['galat']];
+            $percobaan = Percobaan::tulis($coba['percobaan']);
+        } elseif ($jenis === JenisHasil::WAKTU) {
+            $prestasi = Prestasi::uraiWaktuRinci(is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '');
+            $ribu     = $prestasi['seperseribu'];
+        } else {
+            $prestasi = Prestasi::urai(is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '', $jenis);
+        }
+
+        if ($prestasi['galat'] !== null) {
+            return ['galat' => $prestasi['galat']];
+        }
+
+        return [
+            'data' => [
+                'prestasi'    => $prestasi['nilai'],
+                'rincian'     => $rincian,
+                'percobaan'   => $percobaan,
+                'seperseribu' => $ribu,
+                'keterangan'  => Peringkat::keterangan($baris['keterangan'] ?? null),
+            ],
+            'percobaan' => $adaCoba,
+        ];
+    }
+
+    /**
+     * Isi baris berbeda dari yang tersimpan?
+     *
+     * @param array<string, mixed> $lama baris `hasil`
+     * @param array<string, mixed> $baru kolom yang akan disimpan
+     */
+    private static function berubah(array $lama, array $baru): bool
+    {
+        // Peringkat otomatis dihitung ulang sendiri; hanya koreksi admin yang dibandingkan.
+        if ((int) ($baru['peringkat_manual'] ?? 0) === 0 && (int) ($lama['peringkat_manual'] ?? 0) === 0) {
+            unset($baru['peringkat']);
+        }
+
+        foreach ($baru as $kolom => $nilai) {
+            $tersimpan = $lama[$kolom] ?? null;
+
+            if (($tersimpan === null) !== ($nilai === null) || ($nilai !== null && (string) $tersimpan !== (string) $nilai)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Kunci baris babak sampai transaksi selesai (F9-09): penyimpanan hasil
+     * babak yang sama berjalan bergantian, babak lain tidak tertahan.
+     */
+    private function kunciBabak(int $babakId): void
+    {
+        $this->db->query('SELECT id FROM ' . $this->db->prefixTable('babak') . ' WHERE id = ? FOR UPDATE', [$babakId]);
     }
 
     /**

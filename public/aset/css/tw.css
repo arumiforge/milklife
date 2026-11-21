@@ -11,6 +11,7 @@
     --color-red-300: #FCA5A5;
     --color-red-400: #F87171;
     --color-red-500: #EF4444;
+    --color-red-600: #DC2626;
     --color-red-700: #B91C1C;
     --color-red-800: #991B1B;
     --color-red-900: #7F1D1D;
@@ -1034,6 +1035,9 @@
   .h-12 {
     height: calc(var(--spacing) * 12);
   }
+  .h-14 {
+    height: calc(var(--spacing) * 14);
+  }
   .h-16 {
     height: calc(var(--spacing) * 16);
   }
@@ -1085,6 +1089,9 @@
   .min-h-14 {
     min-height: calc(var(--spacing) * 14);
   }
+  .min-h-16 {
+    min-height: calc(var(--spacing) * 16);
+  }
   .min-h-24 {
     min-height: calc(var(--spacing) * 24);
   }
@@ -1123,6 +1130,9 @@
   }
   .w-11\/12 {
     width: calc(11 / 12 * 100%);
+  }
+  .w-14 {
+    width: calc(var(--spacing) * 14);
   }
   .w-16 {
     width: calc(var(--spacing) * 16);
@@ -1196,6 +1206,9 @@
   .grow {
     flex-grow: 1;
   }
+  .basis-40 {
+    flex-basis: calc(var(--spacing) * 40);
+  }
   .basis-48 {
     flex-basis: calc(var(--spacing) * 48);
   }
@@ -1264,6 +1277,9 @@
   }
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2357,6 +2373,18 @@
   :is(:where(.group):focus .group-focus\:ring-white) {
     --tw-ring-color: var(--color-white);
   }
+  :is(:where(.group)[data-keadaan="belum"] .group-data-\[keadaan\=belum\]\:text-oranye-800) {
+    color: var(--color-oranye-800);
+  }
+  :is(:where(.group)[data-keadaan="bentrok"] .group-data-\[keadaan\=bentrok\]\:text-red-700) {
+    color: var(--color-red-700);
+  }
+  :is(:where(.group)[data-keadaan="galat"] .group-data-\[keadaan\=galat\]\:text-red-700) {
+    color: var(--color-red-700);
+  }
+  :is(:where(.group)[data-keadaan="tersimpan"] .group-data-\[keadaan\=tersimpan\]\:text-green-800) {
+    color: var(--color-green-800);
+  }
   :is(:where(.peer):checked ~ .peer-checked\:bg-primary-700) {
     background-color: var(--color-primary-700);
   }
@@ -2366,6 +2394,13 @@
   }
   :is(:where(.peer):focus-visible ~ .peer-focus-visible\:ring-primary-300) {
     --tw-ring-color: var(--color-primary-300);
+  }
+  .placeholder\:font-normal::placeholder {
+    --tw-font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-normal);
+  }
+  .placeholder\:text-gray-400::placeholder {
+    color: var(--color-gray-400);
   }
   .after\:absolute::after {
     content: var(--tw-content);
@@ -2536,6 +2571,9 @@
   .focus\:border-red-500:focus {
     border-color: var(--color-red-500);
   }
+  .focus\:bg-gray-50:focus {
+    background-color: var(--color-gray-50);
+  }
   .focus\:ring-2:focus {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -2602,6 +2640,33 @@
   }
   .disabled\:text-gray-500:disabled {
     color: var(--color-gray-500);
+  }
+  .aria-pressed\:border-red-600[aria-pressed="true"] {
+    border-color: var(--color-red-600);
+  }
+  .aria-pressed\:bg-red-600[aria-pressed="true"] {
+    background-color: var(--color-red-600);
+  }
+  .aria-pressed\:text-white[aria-pressed="true"] {
+    color: var(--color-white);
+  }
+  .aria-\[invalid\=true\]\:border-red-500[aria-invalid="true"] {
+    border-color: var(--color-red-500);
+  }
+  .aria-\[invalid\=true\]\:bg-red-50[aria-invalid="true"] {
+    background-color: var(--color-red-50);
+  }
+  .data-\[keadaan\=belum\]\:border-oranye-300[data-keadaan="belum"] {
+    border-color: var(--color-oranye-300);
+  }
+  .data-\[keadaan\=bentrok\]\:border-red-500[data-keadaan="bentrok"] {
+    border-color: var(--color-red-500);
+  }
+  .data-\[keadaan\=galat\]\:border-red-500[data-keadaan="galat"] {
+    border-color: var(--color-red-500);
+  }
+  .data-\[keadaan\=menyimpan\]\:border-primary-300[data-keadaan="menyimpan"] {
+    border-color: var(--color-primary-300);
   }
   @media (prefers-reduced-motion: reduce) {
     .motion-reduce\:transition-none {
@@ -2701,6 +2766,9 @@
     }
     .sm\:gap-6 {
       gap: calc(var(--spacing) * 6);
+    }
+    .sm\:p-5 {
+      padding: calc(var(--spacing) * 5);
     }
     .sm\:p-6 {
       padding: calc(var(--spacing) * 6);
