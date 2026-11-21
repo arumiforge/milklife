@@ -13,7 +13,7 @@ use RuntimeException;
  * Yang disimpan di pengaturan atau tabel adalah jalur relatifnya,
  * `unggahan/<folder>/<nama acak>.<ekstensi>`, dan alamatnya `base_url($jalur)`.
  *
- * - Folder yang boleh dipakai: `FOLDER` (`halaman-depan`, `pembayaran`, `unduhan`).
+ * - Folder yang boleh dipakai: `FOLDER` (`halaman-depan`, `pembayaran`, `unduhan`, `bib`).
  * - Gambar: JPG, PNG, atau WEBP, paling besar 2 MB. Gambar yang sisi
  *   terpanjangnya lebih dari `SISI_GAMBAR` piksel dikecilkan saat disimpan,
  *   dengan format yang sama (PNG dan WEBP tetap transparan).
@@ -52,7 +52,7 @@ class Unggahan
     /**
      * Folder di bawah `unggahan/` yang boleh dipakai.
      */
-    public const FOLDER = ['halaman-depan', 'pembayaran', 'unduhan'];
+    public const FOLDER = ['halaman-depan', 'pembayaran', 'unduhan', 'bib'];
 
     /**
      * Gambar: ekstensi tersimpan => jenis isi (MIME) yang diterima.
@@ -138,11 +138,43 @@ class Unggahan
 
     /**
      * Periksa gambar. `null` bila sah; selain itu pesan ramah yang menyebut
-     * cara memperbaikinya.
+     * cara memperbaikinya. `$batas` dalam bita, bawaan `BATAS_GAMBAR`.
      */
-    public function periksaGambar(?UploadedFile $berkas): ?string
+    public function periksaGambar(?UploadedFile $berkas, int $batas = self::BATAS_GAMBAR): ?string
     {
-        return $this->periksa($berkas, self::JENIS_GAMBAR, self::BATAS_GAMBAR, 'gambar')['pesan'];
+        return $this->periksa($berkas, self::JENIS_GAMBAR, $batas, 'gambar')['pesan'];
+    }
+
+    /**
+     * Simpan gambar GD yang sudah diolah sebagai JPG di `unggahan/<folder>/`
+     * dan kembalikan jalur relatifnya (dipakai latar BIB, K137).
+     *
+     * @throws RuntimeException Bila gagal disimpan; pesannya ramah.
+     */
+    public function simpanJpg(\GdImage $gambar, string $folder, int $mutu = self::MUTU_GAMBAR): string
+    {
+        if (! in_array($folder, self::FOLDER, true)) {
+            throw new RuntimeException('Folder unggahan tidak dikenal: ' . $folder . '. Pakai salah satu: ' . implode(', ', self::FOLDER) . '.');
+        }
+
+        $tujuanFolder = self::folderDasar() . $folder;
+
+        if (! is_dir($tujuanFolder) && ! @mkdir($tujuanFolder, 0755, true) && ! is_dir($tujuanFolder)) {
+            throw new RuntimeException('Gambar gagal disimpan karena folder unggahan tidak bisa dibuat. Pastikan folder public/unggahan boleh ditulisi, lalu coba lagi.');
+        }
+
+        $nama   = bin2hex(random_bytes(16)) . '.jpg';
+        $tujuan = $tujuanFolder . DIRECTORY_SEPARATOR . $nama;
+
+        if (! @imagejpeg($gambar, $tujuan, $mutu)) {
+            @unlink($tujuan);
+
+            throw new RuntimeException('Gambar gagal disimpan. Pastikan folder public/unggahan boleh ditulisi dan ruang penyimpanan masih cukup, lalu coba lagi.');
+        }
+
+        @chmod($tujuan, 0644);
+
+        return 'unggahan/' . $folder . '/' . $nama;
     }
 
     /**
@@ -422,7 +454,7 @@ class Unggahan
      * Terapkan arah foto dari data EXIF (foto ponsel yang diambil miring),
      * karena data EXIF hilang saat gambar disimpan ulang.
      */
-    private static function putarSesuaiExif(\GdImage $gambar, string $penuh): \GdImage
+    public static function putarSesuaiExif(\GdImage $gambar, string $penuh): \GdImage
     {
         if (! function_exists('exif_read_data')) {
             return $gambar;
