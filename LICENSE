@@ -1,0 +1,43 @@
+Lisensi Hak Milik (Proprietary)
+
+Hak cipta (c) 2026 Arumi Studios. Seluruh hak dilindungi.
+
+Perangkat lunak ini, yaitu web pendaftaran MilkLife Athletics Challenge
+beserta kode sumber, dokumen, tampilan, dan berkas lain di repo ini (disebut
+"Perangkat Lunak"), adalah milik Arumi Studios dan bersifat rahasia.
+
+1. Tanpa izin tertulis dari Arumi Studios, tidak seorang pun boleh menyalin,
+   mengubah, menggabungkan, menerbitkan, menyebarkan, memberi sublisensi,
+   menjual, atau memakai Perangkat Lunak, seluruhnya maupun sebagian.
+
+2. Akses ke repo ini tidak memberi lisensi apa pun. Pengembang yang diberi
+   akses oleh Arumi Studios hanya boleh memakai Perangkat Lunak untuk
+   mengerjakan proyek ini, dan wajib merahasiakannya, termasuk setelah
+   aksesnya berakhir.
+
+3. Pihak penyelenggara acara memakai Perangkat Lunak sesuai perjanjian dengan
+   Arumi Studios. Lisensi ini tidak mengubah perjanjian tersebut.
+
+4. Bagian berikut bukan milik Arumi Studios dan tetap tunduk pada lisensi
+   atau hak pemiliknya masing-masing:
+
+   a. Pustaka pihak ketiga yang dipasang lewat Composer (lihat
+      `composer.lock`) dan pustaka tampilan di `public/aset/vendor/` (lihat
+      `public/aset/vendor/README.md`), masing-masing dengan lisensinya
+      sendiri, sebagian besar MIT.
+   b. Templat Flowbite Pro di `template-flowbites/` dan berkas yang
+      diturunkan darinya, dipakai berdasarkan lisensi Flowbite Pro milik
+      Arumi Studios (https://flowbite.com/license/). Berkas tersebut tidak
+      boleh dipakai di luar proyek ini dan tidak boleh dibagikan kepada pihak
+      yang tidak tercakup lisensi tersebut.
+   c. Nama, logo, merek, flyer, petunjuk teknis, foto acara, dan materi lain
+      dari penyelenggara di `sumber/`, `data/halaman-depan/`, dan
+      `bahan-rombak/`, milik pemiliknya masing-masing.
+   d. Data sekolah di `data/sekolah/`, bersumber dari data terbuka
+      Kementerian Pendidikan Dasar dan Menengah.
+
+PERANGKAT LUNAK DISEDIAKAN "SEBAGAIMANA ADANYA", TANPA JAMINAN APA PUN,
+TERSURAT MAUPUN TERSIRAT. ARUMI STUDIOS TIDAK BERTANGGUNG JAWAB ATAS KERUGIAN
+YANG TIMBUL DARI PEMAKAIAN PERANGKAT LUNAK DI LUAR PERJANJIAN YANG BERLAKU.
+
+Permintaan izin: Arumi Studios, melalui pemilik repo arumiforge/milklife.

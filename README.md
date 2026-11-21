@@ -13,6 +13,7 @@ Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Ka
 | Aturan kerja di repo ini | [`agent/ALUR-KERJA.md`](agent/ALUR-KERJA.md) |
 | Keputusan yang sudah diambil | [`agent/KEPUTUSAN.md`](agent/KEPUTUSAN.md) |
 | Memasang di komputer server produksi | [`dokumen/final/panduan-pemasangan-produksi.md`](dokumen/final/panduan-pemasangan-produksi.md) |
+| Memasang staging (salinan untuk mencoba perubahan) | [`.env.staging.example`](.env.staging.example), langkahnya di kepala berkas |
 
 ## Memasang di Laragon
 
@@ -161,3 +162,7 @@ composer uji
 CodeIgniter 4.7, PHP 8.2+, MySQL 8, Nginx (Laragon), Bootstrap 5.3 dan Bootstrap Icons (disimpan lokal, tanpa CDN).
 
 Pustaka Composer: mPDF (bukti dan rekap PDF), PhpSpreadsheet (ekspor Excel), chillerlan/php-qrcode (kode QR di bukti), matthiasmullie/minify (`aset:minify`), dan CodeIgniter Settings. Untuk uji: PHPUnit 10, Faker, vfsStream.
+
+## Lisensi
+
+Repo ini privat dan berlisensi hak milik Arumi Studios; seluruh hak dilindungi. Isi lengkapnya, termasuk bagian yang tetap milik pihak lain (pustaka, templat Flowbite Pro, materi penyelenggara, data sekolah), ada di [`LICENSE`](LICENSE).
