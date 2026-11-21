@@ -340,7 +340,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // Bagian yang sudah diisi tugas lain tampil sesuai urutan K42.
         $this->assertSame('pembuka', $urutan[0]);
         $this->assertSame(
-            array_values(array_intersect(['pembuka', 'lomba', 'jadwal', 'unduhan', 'kontak'], $urutan)),
+            array_values(array_intersect(['pembuka', 'lomba', 'jadwal', 'angka', 'hasil', 'faq', 'unduhan', 'kontak'], $urutan)),
             $urutan,
         );
     }

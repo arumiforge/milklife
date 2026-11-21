@@ -130,7 +130,8 @@ final class TataLetakHalamanTest extends UjiHalaman
 
         // Beranda aktif di halaman depan; Unduhan aktif di halamannya (F9-03).
         $depan = $butir('/');
-        $this->assertSame(['Beranda', 'Unduhan'], array_keys($depan));
+        // Kategori bergantung pada kelompok umur di basis data (diuji di KatalogTampilanTest).
+        $this->assertSame(['Beranda', 'Unduhan', 'Bantuan'], array_values(array_diff(array_keys($depan), ['Kategori'])));
         $this->assertSame('page', $depan['Beranda']->getAttribute('aria-current'));
         $this->assertFalse($depan['Unduhan']->hasAttribute('aria-current'));
         $this->assertSame('page', $butir('unduhan')['Unduhan']->getAttribute('aria-current'));

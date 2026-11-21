@@ -76,7 +76,7 @@ final class HalamanDepanAngkaHasilTest extends UjiBasisData
 
         // Urutan bagian: angka sesudah jadwal, sebelum unduhan.
         $urutan = array_map(static fn (DOMElement $s): string => $s->getAttribute('id'), iterator_to_array($xpath->query('//main/section')));
-        $this->assertSame(array_values(array_intersect(['pembuka', 'lomba', 'jadwal', 'angka', 'hasil', 'unduhan', 'kontak'], $urutan)), $urutan);
+        $this->assertSame(array_values(array_intersect(['pembuka', 'lomba', 'jadwal', 'angka', 'hasil', 'faq', 'unduhan', 'kontak'], $urutan)), $urutan);
     }
 
     public function testHasilTerbaruDanJuaraUmumHanyaYangTerbit(): void
@@ -108,6 +108,23 @@ final class HalamanDepanAngkaHasilTest extends UjiBasisData
         $this->assertCount(2, $umum);
         $this->assertStringStartsWith('1. SD KARANGAN SATU 1', $umum[0]);
         $this->assertStringStartsWith('2. SD KARANGAN DUA 0', $umum[1]);
+    }
+
+    public function testFaqTeratasDariBantuan(): void
+    {
+        // Data awal memasang tanya-jawab bawaan (F9-04): satu per kategori, paling banyak enam.
+        $xpath  = $this->xpathDari($this->get('/'));
+        $butir  = $xpath->query('//section[@id="faq"]//details[@data-faq-butir]');
+        $jumlah = min(6, $this->db->table('faq')->select('kategori')->where('aktif', 1)->distinct()->countAllResults());
+
+        $this->assertGreaterThan(0, $jumlah);
+        $this->assertSame($jumlah, $butir->length);
+        $this->assertSame(0, $xpath->query('//section[@id="faq"]//details[@open]')->length);
+        $this->assertSame(1, $xpath->query('//section[@id="faq"]//a[@href="' . site_url('bantuan') . '"]')->length);
+
+        // Tanpa tanya-jawab aktif, bagiannya tidak tampil.
+        $this->db->table('faq')->update(['aktif' => 0]);
+        $this->assertSame(0, $this->xpathDari($this->get('/'))->query('//section[@id="faq"]')->length);
     }
 
     /**

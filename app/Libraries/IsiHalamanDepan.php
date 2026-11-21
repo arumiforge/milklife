@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
+use App\Libraries\Bantuan\IsiBantuan;
 use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\Hasil\Klasemen;
 use App\Libraries\Pendaftaran\KelompokUmurAtlet;
@@ -150,6 +151,7 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  *   dari pendaftaran Lunas, atau `null` bila belum ada.
  * - `hasilTerbaru()`: nomor yang paling akhir terbit beserta juaranya dan
  *   juara umum I–III per jenjang, atau `null` bila belum ada yang terbit.
+ * - `faqTeratas()`: tanya-jawab pertama tiap kategori Bantuan (F9-04).
  *
  * Tabel yang belum bisa dibaca (basis data belum dimigrasi) dianggap kosong
  * dan galatnya dicatat di log, sama seperti `DataKelengkapan`, supaya halaman
@@ -178,6 +180,11 @@ final class IsiHalamanDepan
      * Banyak nomor yang paling akhir diterbitkan di bagian hasil halaman depan (F9-03).
      */
     public const JUMLAH_HASIL_TERBARU = 4;
+
+    /**
+     * Banyak tanya-jawab di bagian FAQ halaman depan (F9-03).
+     */
+    public const JUMLAH_FAQ_TERATAS = 6;
 
     /**
      * Logo yang tampil di kepala halaman depan (K93): logo persegi, atau
@@ -679,6 +686,28 @@ final class IsiHalamanDepan
         }
 
         return ['nomor' => $nomor, 'juara_umum' => $juaraUmum];
+    }
+
+    /**
+     * Tanya-jawab teratas untuk halaman depan: butir pertama tiap kategori
+     * Bantuan (F9-04), paling banyak `JUMLAH_FAQ_TERATAS`. `jawaban` sudah
+     * HTML aman dari `JawabanFaq`. `[]` bila belum ada.
+     *
+     * @return list<array{id: int, pertanyaan: string, jawaban: string, kategori: string}>
+     */
+    public function faqTeratas(): array
+    {
+        $hasil = [];
+
+        foreach ((new IsiBantuan())->kategori() as $kategori) {
+            $hasil[] = ['id' => $kategori['butir'][0]['id'], 'pertanyaan' => $kategori['butir'][0]['pertanyaan'], 'jawaban' => $kategori['butir'][0]['jawaban'], 'kategori' => $kategori['label']];
+
+            if (count($hasil) >= self::JUMLAH_FAQ_TERATAS) {
+                break;
+            }
+        }
+
+        return $hasil;
     }
 
     // ---------------------------------------------------------------

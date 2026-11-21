@@ -34,6 +34,7 @@ class BerandaController extends BaseController
             'carousel'       => $isi->carousel(),
             'angka'          => $isi->angkaAcara(),
             'hasilTerbaru'   => $isi->hasilTerbaru(),
+            'faq'            => $isi->faqTeratas(),
         ]);
     }
 }
