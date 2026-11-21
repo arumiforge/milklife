@@ -1,7 +1,7 @@
 <?php
 /**
  * Daftar semua halaman pengaturan dan halaman Akun, dikelompokkan, dalam
- * kartu berikon dan berketerangan singkat. Data dari
+ * kartu berikon dan berketerangan singkat, tata letak `admin_tw`. Data dari
  * `BerandaPengaturanController::index()`.
  *
  * Tanda lengkap/belum (F2-09) dibaca dari `lengkap` tiap butir: `true` →
@@ -11,49 +11,50 @@
  * @var CodeIgniter\View\View                                   $this
  * @var array<string, list<array<string, mixed>>>               $kelompok judul kelompok => butir (lihat `BerandaPengaturanController::daftarHalaman()`)
  */
+
+// Ikon dari `daftarHalaman()`; tulis juga di sini supaya masuk sprite.
+// ikon-sprite: calendar-days door-open users trophy landmark app-window clock download phone circle-help images table award monitor user-cog
 ?>
-<?= $this->extend('tata_letak/admin') ?>
+<?= $this->extend('tata_letak/admin_tw') ?>
 
 <?= $this->section('judul') ?>Pengaturan<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Pengaturan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="container-fluid px-3 px-lg-4">
-    <p class="teks-info mb-4">
+<div class="space-y-6 p-4 sm:p-6">
+    <p class="max-w-3xl text-gray-700">
         Pilih bagian yang ingin diisi atau diubah. Bagian pertama wajib lengkap sebelum pendaftaran bisa dibuka.
     </p>
 
     <?php foreach ($kelompok as $judulKelompok => $daftarButir) : ?>
         <?php $idKelompok = 'kelompok-' . url_title($judulKelompok, '-', true); ?>
-        <section class="mb-4" aria-labelledby="<?= esc($idKelompok, 'attr') ?>">
-            <h2 id="<?= esc($idKelompok, 'attr') ?>" class="h6 text-uppercase text-body-secondary fw-bold mb-3 judul-kelompok-pengaturan"><?= esc($judulKelompok) ?></h2>
-            <ul class="row g-3 list-unstyled mb-0">
+        <section aria-labelledby="<?= esc($idKelompok, 'attr') ?>">
+            <h2 id="<?= esc($idKelompok, 'attr') ?>" class="judul-kelompok-pengaturan mb-3 text-xs font-bold uppercase tracking-wide text-gray-600"><?= esc($judulKelompok) ?></h2>
+            <ul class="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
                 <?php foreach ($daftarButir as $butir) : ?>
-                    <li class="col-12 col-md-6 col-xxl-4">
-                        <a class="card h-100 kartu-pengaturan" href="<?= site_url($butir['alamat']) ?>" data-kunci="<?= esc($butir['kunci'], 'attr') ?>">
-                            <span class="card-body d-flex align-items-start gap-3">
-                                <span class="ikon-bulat kartu-pengaturan-ikon flex-shrink-0">
-                                    <i class="bi bi-<?= esc($butir['ikon'], 'attr') ?>" aria-hidden="true"></i>
-                                </span>
-                                <span class="flex-grow-1 min-w-0">
-                                    <span class="kartu-pengaturan-judul d-block h5 mb-1"><?= esc($butir['label']) ?></span>
-                                    <span class="d-block text-body-secondary small"><?= esc($butir['keterangan']) ?></span>
-                                    <?php if ($butir['lengkap'] === true) : ?>
-                                        <span class="badge rounded-pill text-bg-success mt-2 tanda-kelengkapan">
-                                            <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Lengkap
-                                        </span>
-                                    <?php elseif ($butir['lengkap'] === false) : ?>
-                                        <span class="badge rounded-pill text-bg-warning mt-2 tanda-kelengkapan">
-                                            <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> Belum lengkap
-                                        </span>
-                                        <?php if (($butir['keterangan_kelengkapan'] ?? '') !== '') : ?>
-                                            <span class="d-block small mt-1 keterangan-kelengkapan"><?= esc($butir['keterangan_kelengkapan']) ?></span>
-                                        <?php endif ?>
-                                    <?php endif ?>
-                                </span>
-                                <i class="bi bi-chevron-right text-body-secondary align-self-center kartu-pengaturan-panah" aria-hidden="true"></i>
+                    <li class="min-w-0">
+                        <a class="kartu-pengaturan flex h-full items-start gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut transition-colors hover:border-primary-300 hover:bg-primary-50 focus:outline-none focus:ring-4 focus:ring-primary-100" href="<?= site_url($butir['alamat']) ?>" data-kunci="<?= esc($butir['kunci'], 'attr') ?>">
+                            <span class="kartu-pengaturan-ikon inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700">
+                                <?= ikon($butir['ikon'], 'size-6') ?>
                             </span>
+                            <span class="min-w-0 flex-1">
+                                <span class="kartu-pengaturan-judul block text-base font-bold text-gray-900"><?= esc($butir['label']) ?></span>
+                                <span class="kartu-pengaturan-keterangan mt-1 block text-sm text-gray-600"><?= esc($butir['keterangan']) ?></span>
+                                <?php if ($butir['lengkap'] === true) : ?>
+                                    <span class="tanda-kelengkapan mt-2 inline-flex items-center gap-1 rounded-md bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800" data-lengkap="1">
+                                        <?= ikon('circle-check', 'size-3.5') ?> Lengkap
+                                    </span>
+                                <?php elseif ($butir['lengkap'] === false) : ?>
+                                    <span class="tanda-kelengkapan mt-2 inline-flex items-center gap-1 rounded-md bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-800" data-lengkap="0">
+                                        <?= ikon('circle-alert', 'size-3.5') ?> Belum lengkap
+                                    </span>
+                                    <?php if (($butir['keterangan_kelengkapan'] ?? '') !== '') : ?>
+                                        <span class="keterangan-kelengkapan mt-1 block text-sm text-gray-700"><?= esc($butir['keterangan_kelengkapan']) ?></span>
+                                    <?php endif ?>
+                                <?php endif ?>
+                            </span>
+                            <?= ikon('chevron-right', 'kartu-pengaturan-panah size-5 shrink-0 self-center text-gray-400') ?>
                         </a>
                     </li>
                 <?php endforeach; ?>

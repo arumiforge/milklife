@@ -1,6 +1,12 @@
 <?php
 /**
- * Klasemen sekolah di panel admin (F8-05, K124). Data dari `KlasemenController::index()`.
+ * Klasemen sekolah di panel admin (F8-05, K124), tata letak Tailwind
+ * `admin_tw`. Data dari `KlasemenController::index()`.
+ *
+ * Tabel per jenjang dari `hasil/_klasemen_tw.php` (sama dengan halaman
+ * publik) dengan tanda "belum terbit" pada piala dari nomor yang belum diterbitkan.
+ * Kolom poin selalu tampil (F9-11): pada metode poin ditebalkan dan tampil di
+ * ponsel, pada metode medali disembunyikan di ponsel.
  *
  * @var CodeIgniter\View\View               $this
  * @var array<string, array<string, mixed>> $klasemen    `Klasemen::hitung()`, semua nomor
@@ -10,37 +16,39 @@
  */
 
 use App\Libraries\Hasil\Klasemen;
+
+$metodePoin = $metode === Klasemen::POIN;
 ?>
-<?= $this->extend('tata_letak/admin') ?>
+<?= $this->extend('tata_letak/admin_tw') ?>
 
 <?= $this->section('judul') ?>Klasemen Sekolah<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="container-fluid px-3 px-lg-4">
-    <div class="d-flex flex-wrap gap-2 align-items-start mb-3">
-        <p class="teks-info mb-0 flex-grow-1">
+<div class="space-y-6 p-4 sm:p-6">
+    <div class="flex flex-wrap items-start gap-4">
+        <p class="max-w-3xl min-w-0 flex-1 basis-72 text-gray-700">
             <?= esc($keterangan) ?>
-            Klasemen dihitung per jenjang dari babak Final semua nomor<?= $metode === Klasemen::POIN ? ' (poin dari peringkat 1–' . Klasemen::PERINGKAT_POIN . ')' : '' ?>; satu regu juara = satu piala untuk sekolahnya, sekolah dikenali dari NPSN.
-            Metode diatur di <a href="<?= site_url('admin/pengaturan/hasil') ?>">Pengaturan &gt; Hasil</a>.
+            Klasemen dihitung per jenjang dari babak Final semua nomor<?= $metodePoin ? ' (poin dari peringkat 1–' . Klasemen::PERINGKAT_POIN . ')' : '' ?>; satu regu juara = satu piala untuk sekolahnya, sekolah dikenali dari NPSN.
+            Metode diatur di <a href="<?= site_url('admin/pengaturan/hasil') ?>" class="font-semibold text-primary-700 underline">Pengaturan &gt; Hasil</a>.
             Halaman publik hanya menghitung nomor yang sudah diterbitkan.
         </p>
-        <div class="btn-group btn-group-sm" role="group" aria-label="Unduh klasemen">
-            <a class="btn btn-outline-primary" href="<?= site_url('admin/klasemen/pdf') ?>"><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> PDF</a>
-            <a class="btn btn-outline-success" href="<?= site_url('admin/klasemen/excel') ?>"><i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Excel</a>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Unduh klasemen">
+            <?= komponen('tombol', ['label' => 'PDF', 'href' => site_url('admin/klasemen/pdf'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-text', 'kelas' => 'min-h-11']) ?>
+            <?= komponen('tombol', ['label' => 'Excel', 'href' => site_url('admin/klasemen/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-spreadsheet', 'kelas' => 'min-h-11']) ?>
         </div>
     </div>
 
     <?php if ($belumTerbit > 0) : ?>
-        <div class="alert alert-warning" id="belum-terbit">
-            <?= $belumTerbit ?> nomor yang juaranya ikut dihitung di sini belum diterbitkan, jadi klasemen publik masih berbeda.
-            <a href="<?= site_url('admin/hasil') ?>">Buka Hasil lomba</a> untuk menerbitkannya.
+        <div id="belum-terbit">
+            <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => $belumTerbit . ' nomor yang juaranya ikut dihitung di sini belum diterbitkan, jadi klasemen publik masih berbeda. '
+                . '<a href="' . site_url('admin/hasil') . '" class="font-semibold underline">Buka Hasil lomba</a> untuk menerbitkannya.']) ?>
         </div>
     <?php endif ?>
 
     <?php if ($klasemen === []) : ?>
-        <p class="text-body-secondary" id="klasemen-kosong">Belum ada juara. Juara diambil dari babak Final di menu Hasil lomba.</p>
+        <p class="text-gray-600" id="klasemen-kosong">Belum ada juara. Juara diambil dari babak Final di menu Hasil lomba.</p>
     <?php endif ?>
 
-    <?= view('hasil/_klasemen', ['klasemen' => $klasemen, 'admin' => true, 'metode' => $metode], ['saveData' => false]) ?>
+    <?= view('hasil/_klasemen_tw', ['klasemen' => $klasemen, 'metode' => $metode, 'admin' => true], ['saveData' => false]) ?>
 </div>
 <?= $this->endSection() ?>

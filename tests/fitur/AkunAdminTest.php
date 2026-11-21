@@ -318,7 +318,7 @@ final class AkunAdminTest extends UjiBasisData
         $hasil->assertStatus(429);
         $hasil->assertHeader('Retry-After', '12');
         $hasil->assertSee('Terlalu banyak percobaan kata sandi. Tunggu 12 detik lagi');
-        $this->assertSame(1, $this->xpathDari($hasil)->query('//*[@name="sandi_saat_ini" and contains(@class, "is-invalid")]')->length);
+        $this->assertSame(1, $this->xpathDari($hasil)->query('//*[@name="sandi_saat_ini" and @aria-invalid="true"]')->length);
         $this->assertTrue(password_verify(self::SANDI_UJI, $this->baris($this->idAdmin)['sandi']));
     }
 

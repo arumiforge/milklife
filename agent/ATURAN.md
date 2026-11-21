@@ -92,7 +92,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Juara umum per jenjang dengan metode pilihan admin di Pengaturan > Hasil: **Medali** (bawaan, juknis: juara I, lalu II, lalu III) atau **Poin per peringkat** 1–8 (bawaan 7-5-4-3-2-1-0-0; poin, lalu juara I, II, III); masih sama = peringkat bersama; kolom poin selalu tampil; kontingen = NPSN (K124, K140 butir 7a).
 - Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri (K130). Di ponsel semua butir ada di sidebar yang dibuka tombol menu di kepala halaman; menu bawah 5 butir urusan pendaftaran: Dasbor, Pendaftaran, Atlet, Ditolak, Rekap; butir aktif cukup ikon oranye tanpa garis bawah (K131–K133).
 - Tandai hadir di daftar ulang hanya untuk pendaftaran Lunas (K129).
-- Cetak BIB per kelompok umur (PDF) dan per sekolah (PDF, ZIP gambar JPG 300 dpi + PDF); ZIP semua sekolah satu folder per sekolah; satu latar penuh untuk semua BIB, kepala dan warna tulisan (gelap/terang) dipilih admin (K137).
+- Cetak BIB per kelompok umur (PDF) dan per sekolah (PDF, ZIP gambar JPG 300 dpi + PDF); ZIP semua sekolah satu folder per sekolah; satu latar penuh untuk semua BIB (unggahan sendiri, atau latar bawaan G9-01 bila berkasnya ada), kepala dan warna tulisan (gelap/terang) dipilih admin (K137, F9-16).
 - Pecah berkas besar tanpa ubah perilaku setelah F7-26, F7-27, F8-01 (K121).
 
 ## Tahap 9 (rombak tampilan dan hari lomba)

@@ -105,7 +105,7 @@ final class PengaturanKontakTest extends UjiBasisData
         $this->assertSame(1, $media->length);
         $this->assertSame((string) $ig, $media->item(0)->getAttribute('data-id'));
         $this->assertSame(1, $xpath->query('.//a[@href="https://www.instagram.com/contoh"][@rel="noopener noreferrer"]', $media->item(0))->length);
-        $this->assertSame(1, $xpath->query('.//i[contains(@class, "bi-instagram")]', $media->item(0))->length);
+        $this->assertSame(1, $xpath->query('.//*[@data-ikon-media="instagram"]//*[local-name()="use"][contains(@href, "#instagram")]', $media->item(0))->length);
 
         // Hapus lewat POST, token CSRF, dan jendela konfirmasi.
         $hapus = $xpath->query('.//form[@data-konfirmasi]', $media->item(0))->item(0);
