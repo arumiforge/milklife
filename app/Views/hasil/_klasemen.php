@@ -3,11 +3,18 @@
  * Tabel klasemen sekolah per jenjang (F8-05), dipakai halaman admin
  * `admin/klasemen` dan publik `hasil/klasemen`. Rincian piala tiap sekolah
  * bisa dibuka (`<details>`). Di admin, piala dari nomor yang belum terbit
- * diberi tanda.
+ * diberi tanda. Kolom poin selalu tampil (F9-11); pada metode poin kolom itu
+ * ditebalkan dan tampil di ponsel, pada metode medali disembunyikan di ponsel.
  *
  * @var array<string, array<string, mixed>> $klasemen `Klasemen::hitung()`
  * @var bool                                $admin
+ * @var string                              $metode   `Klasemen::MEDALI` atau `Klasemen::POIN`
  */
+
+use App\Libraries\Hasil\Klasemen;
+
+$metodePoin = ($metode ?? Klasemen::MEDALI) === Klasemen::POIN;
+$kelasPoin  = $metodePoin ? 'text-center fw-semibold' : 'text-center d-none d-sm-table-cell';
 $romawi = [1 => 'I', 2 => 'II', 3 => 'III'];
 ?>
 <?php foreach ($klasemen as $jenjang) : ?>
@@ -24,6 +31,7 @@ $romawi = [1 => 'I', 2 => 'II', 3 => 'III'];
                             <th scope="col" class="text-center"><span class="visually-hidden">Juara </span>II</th>
                             <th scope="col" class="text-center"><span class="visually-hidden">Juara </span>III</th>
                             <th scope="col" class="text-center d-none d-sm-table-cell">Jumlah</th>
+                            <th scope="col" class="<?= $kelasPoin ?>" data-kolom="poin">Poin</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,6 +45,7 @@ $romawi = [1 => 'I', 2 => 'II', 3 => 'III'];
                                     <?php endif ?>
                                     <details class="small text-body-secondary">
                                         <summary>Rincian <?= $b['jumlah'] ?> piala</summary>
+                                        <?php if ($b['piala'] === []) : ?><p class="mb-0">Belum ada piala; poin dari peringkat 4 ke bawah.</p><?php endif ?>
                                         <ul class="mb-0 ps-3">
                                             <?php foreach ($b['piala'] as $p) : ?>
                                                 <li>
@@ -51,6 +60,7 @@ $romawi = [1 => 'I', 2 => 'II', 3 => 'III'];
                                 <td class="text-center"><?= $b['perak'] ?></td>
                                 <td class="text-center"><?= $b['perunggu'] ?></td>
                                 <td class="text-center d-none d-sm-table-cell"><?= $b['jumlah'] ?></td>
+                                <td class="<?= $kelasPoin ?>"><?= $b['poin'] ?></td>
                             </tr>
                         <?php endforeach ?>
                     </tbody>

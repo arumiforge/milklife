@@ -5,7 +5,9 @@
  *
  * @var CodeIgniter\View\View               $this
  * @var string                              $namaAcara
- * @var array<string, array<string, mixed>> $klasemen `Klasemen::hitung()`
+ * @var array<string, array<string, mixed>> $klasemen   `HasilLomba::klasemen(true)`
+ * @var string                              $metode     `Klasemen::MEDALI` atau `Klasemen::POIN`
+ * @var string                              $keterangan `Klasemen::keterangan()`
  */
 ?>
 <?= $this->extend('tata_letak/publik') ?>
@@ -17,7 +19,7 @@
     <div class="halaman-unduhan-kepala">
         <div class="container">
             <h1><i class="bi bi-award" aria-hidden="true"></i> Klasemen Sekolah</h1>
-            <p class="mb-0">Juara umum per jenjang ditentukan jumlah juara I terbanyak, lalu juara II, lalu juara III. Dihitung dari nomor yang hasilnya sudah diterbitkan panitia.</p>
+            <p class="mb-0">Klasemen per jenjang sekolah. <?= esc($keterangan) ?> Dihitung dari nomor yang hasilnya sudah diterbitkan panitia.</p>
         </div>
     </div>
 
@@ -38,7 +40,7 @@
             </div>
         <?php endif ?>
 
-        <?= view('hasil/_klasemen', ['klasemen' => $klasemen, 'admin' => false], ['saveData' => false]) ?>
+        <?= view('hasil/_klasemen', ['klasemen' => $klasemen, 'admin' => false, 'metode' => $metode], ['saveData' => false]) ?>
     </div>
 </div>
 <?= $this->endSection() ?>

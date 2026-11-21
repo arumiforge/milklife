@@ -1,5 +1,6 @@
 <?php
 
+use App\Libraries\Bantuan\JawabanFaq;
 use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\Hasil\Klasemen;
 use App\Libraries\Hasil\UnduhanKlasemen;
@@ -53,16 +54,19 @@ final class KlasemenSekolahTest extends UjiBasisData
         $admin->assertSee('belum terbit');
         $admin->assertSeeElement('#belum-terbit');
 
-        $semua = Klasemen::hitung((new HasilLomba())->juara());
+        $semua = (new HasilLomba())->klasemen();
+        $this->assertSame(Klasemen::hitung((new HasilLomba())->juara(false, 8)), $semua, 'Bawaan: metode medali, poin 7-5-4-3-2-1.');
         $this->assertSame(['SD KARANGAN MAJU', 'SD KARANGAN LAIN'], array_column($semua['A']['baris'], 'sekolah'));
         $this->assertSame([2, 0], array_column($semua['A']['baris'], 'emas'));
 
         // Publik: hanya Lari 60 m putra yang terbit.
         $publik = $this->get('hasil/klasemen');
         $publik->assertOK();
-        $terbit = Klasemen::hitung((new HasilLomba())->juara(true));
+        $terbit = (new HasilLomba())->klasemen(true);
         $this->assertSame([1, 1], [$terbit['A']['baris'][0]['emas'], $terbit['A']['baris'][1]['perak']]);
         $publik->assertDontSee('belum terbit');
+        $publik->assertSee('juara I terbanyak');
+        $publik->assertSee('data-kolom="poin"', null);
         $publik->assertSee('SD KARANGAN LAIN');
         $this->get('hasil')->assertSee('Klasemen sekolah');
 
@@ -72,8 +76,54 @@ final class KlasemenSekolahTest extends UjiBasisData
         $this->assertStringContainsString('Juara umum I', (new UnduhanKlasemen($semua, false))->html(false));
 
         $lembar = $this->bacaExcel($this->bukaSebagaiAdmin('admin/klasemen/excel'));
-        $this->assertSame(['Peringkat', 'Sekolah', 'NPSN', 'Juara I', 'Juara II', 'Juara III', 'Jumlah', 'Juara umum'], $lembar[0]);
-        $this->assertSame(['SD KARANGAN MAJU', '99999911', 2, 'Juara umum I'], [$lembar[1][1], (string) $lembar[1][2], (int) $lembar[1][3], $lembar[1][7]]);
+        $this->assertSame(['Peringkat', 'Sekolah', 'NPSN', 'Juara I', 'Juara II', 'Juara III', 'Jumlah', 'Poin', 'Juara umum'], $lembar[0]);
+        $this->assertSame(['SD KARANGAN MAJU', '99999911', 2, 14, 'Juara umum I'], [$lembar[1][1], (string) $lembar[1][2], (int) $lembar[1][3], (int) $lembar[1][7], $lembar[1][8]]);
+    }
+
+    public function testMetodePoinDipakaiDiSemuaTampilan(): void
+    {
+        $this->siapkanJuara();
+
+        // Poin peringkat 2 dibuat sama dengan peringkat 1: KARANGAN MAJU (2 × juara I) dan KARANGAN LAIN
+        // (2 × juara II) sama-sama 14 poin; pemecah seri juara I memenangkan KARANGAN MAJU.
+        $simpan = $this->kirimSebagaiAdmin('admin/pengaturan/hasil', ['metode' => 'poin', 'poin' => ['7', '7', '4', '3', '2', '1', '0', '0']]);
+        $simpan->assertRedirectTo(site_url('admin/pengaturan/hasil'));
+        $this->assertSame('poin', setting('Klasemen.metode'));
+        $this->assertSame('7,7,4,3,2,1,0,0', setting('Klasemen.poin'));
+
+        $baris = (new HasilLomba())->klasemen()['A']['baris'];
+        $this->assertSame(['SD KARANGAN MAJU', 'SD KARANGAN LAIN'], array_column($baris, 'sekolah'));
+        $this->assertSame([14, 14], array_column($baris, 'poin'));
+        $this->assertSame([1, 2], array_column($baris, 'peringkat'), 'Poin sama: juara I memecah seri.');
+
+        $admin = $this->bukaSebagaiAdmin('admin/klasemen');
+        $admin->assertSee('jumlah poin terbanyak');
+        $admin->assertSee('Poin');
+
+        $this->assertStringContainsString('jumlah poin terbanyak', (new UnduhanKlasemen((new HasilLomba())->klasemen(), false))->html(false));
+        $this->get('hasil/klasemen')->assertSee('jumlah poin terbanyak');
+        $this->assertStringContainsString('jumlah poin terbanyak (peringkat 1 = 7, 2 = 7, 3 = 4', (new JawabanFaq())->teks('{cara_juara_umum}'));
+        $this->assertSame(['Peringkat', 'Sekolah', 'NPSN', 'Juara I', 'Juara II', 'Juara III', 'Jumlah', 'Poin', 'Juara umum'], $this->bacaExcel($this->bukaSebagaiAdmin('admin/klasemen/excel'))[0]);
+    }
+
+    public function testPengaturanHasilMenolakIsianSalah(): void
+    {
+        $halaman = $this->bukaSebagaiAdmin('admin/pengaturan/hasil');
+        $halaman->assertOK();
+        $this->assertMatchesRegularExpression('/id="metode-medali"[^>]*checked/', $halaman->getBody());
+        $this->assertMatchesRegularExpression('/id="poin_1" name="poin\[\]" value="7"/', $halaman->getBody());
+        $this->assertMatchesRegularExpression('/id="poin_8" name="poin\[\]" value="0"/', $halaman->getBody());
+
+        $salah = $this->kirimSebagaiAdmin('admin/pengaturan/hasil', ['metode' => 'poin', 'poin' => ['7', '5', '9', '3', '2', '1', '0', '0']]);
+        $salah->assertOK();
+        $salah->assertSee('Poin peringkat 3 tidak boleh lebih besar dari poin peringkat 2.');
+        $this->assertMatchesRegularExpression('/is-invalid" id="poin_3" name="poin\[\]" value="9"/', $salah->getBody());
+        $this->assertMatchesRegularExpression('/id="metode-poin"[^>]*checked/', $salah->getBody());
+        $this->assertSame('medali', setting('Klasemen.metode'));
+
+        $this->assertBelumMasukDialihkan('admin/pengaturan/hasil');
+        $this->assertBelumMasukDialihkan('admin/pengaturan/hasil', 'post');
+        $this->assertTokenCsrfWajib('admin/pengaturan/hasil', ['metode' => 'medali', 'poin' => ['7', '5', '4', '3', '2', '1', '0', '0']]);
     }
 
     public function testKlasemenKosong(): void

@@ -277,7 +277,7 @@ final class FaqBawaan
             Nomor Tri Lomba (lari 60 m, lompat jauh, tolak peluru) dinilai dari poin gabungan ketiga nomor.
             MD],
         ['hasil', 'Bagaimana juara umum dihitung?', <<<'MD'
-            Juara umum dihitung **per jenjang sekolah** dari jumlah juara I terbanyak. Bila sama, dibandingkan jumlah juara II, lalu juara III. Satu sekolah (satu NPSN) dihitung satu kontingen.
+            Juara umum dihitung **per jenjang sekolah**. {cara_juara_umum} Satu sekolah (satu NPSN) dihitung satu kontingen.
 
             Kontingen juara umum I, II, dan III mendapat piala dan uang pembinaan. Klasemennya ada di halaman **Hasil**, bagian klasemen sekolah.
             MD],

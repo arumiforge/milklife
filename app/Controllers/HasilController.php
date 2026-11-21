@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\Hasil\Klasemen;
+use App\Libraries\Hasil\MetodeKlasemen;
 use App\Libraries\Hasil\UnduhanHasil;
 use App\Libraries\Hasil\UnduhanKlasemen;
 use App\Libraries\IsiHalamanDepan;
@@ -56,7 +57,9 @@ class HasilController extends BaseController
     {
         return view('hasil/klasemen', [
             'namaAcara' => (new IsiHalamanDepan())->acara()['nama'],
-            'klasemen'  => Klasemen::hitung((new HasilLomba())->juara(true)),
+            'klasemen'   => (new HasilLomba())->klasemen(true),
+            'metode'     => MetodeKlasemen::metode(),
+            'keterangan' => Klasemen::keterangan(MetodeKlasemen::metode(), MetodeKlasemen::poin()),
         ]);
     }
 
@@ -68,7 +71,7 @@ class HasilController extends BaseController
             return $batas;
         }
 
-        $unduhan = new UnduhanKlasemen(Klasemen::hitung((new HasilLomba())->juara(true)), true);
+        $unduhan = new UnduhanKlasemen((new HasilLomba())->klasemen(true), true);
 
         if ($jenis === 'excel') {
             return $unduhan->excel()->unduh(UnduhanKlasemen::namaBerkas('xlsx'));
