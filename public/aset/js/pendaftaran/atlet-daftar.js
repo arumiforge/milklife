@@ -222,7 +222,8 @@
 
     /** Tanda Inti atau Cadangan. */
     function lencanaPeran(peran) {
-        return buat('span', 'lencana-peran lencana-' + peran, peran === 'inti' ? 'Inti' : 'Cadangan');
+        return buat('span', 'lencana-peran lencana-' + peran + ' inline-block rounded-full px-2 py-px align-[0.1em] text-[0.7rem] font-semibold uppercase leading-normal tracking-wide '
+            + (peran === 'inti' ? 'bg-primary-700 text-white' : 'border border-dashed border-gray-500 bg-white text-gray-600'), peran === 'inti' ? 'Inti' : 'Cadangan');
     }
 
     /**
@@ -230,19 +231,19 @@
      * `tombolBaris()`.
      */
     function barisAtlet(atlet, indeks, jalur, keterangan, hapusNomor) {
-        var li = buat('li', 'baris-atlet');
+        var li = buat('li', 'baris-atlet flex flex-wrap items-start justify-between gap-2 rounded-lg border border-gray-200 bg-white p-3');
         li.setAttribute('data-baris-jalur', jalur);
-        var isi = buat('div', 'baris-atlet-isi');
-        var nama = buat('strong', 'baris-atlet-nama', atlet.nama);
+        var isi = buat('div', 'baris-atlet-isi min-w-0 flex-[1_1_14rem] break-words');
+        var nama = buat('strong', 'baris-atlet-nama block text-gray-900', atlet.nama);
         isi.appendChild(nama);
         var ku = tentukanKu(Number(String(atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah(), atlet.kelompok_umur_id).ku;
-        isi.appendChild(buat('span', 'baris-atlet-keterangan', ['NISN ' + atlet.nisn, ku ? ku.nama : null, atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
+        isi.appendChild(buat('span', 'baris-atlet-keterangan block text-sm text-gray-500', ['NISN ' + atlet.nisn, ku ? ku.nama : null, atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
         if (keterangan) {
-            isi.appendChild(buat('span', 'baris-atlet-nomor', keterangan));
+            isi.appendChild(buat('span', 'baris-atlet-nomor block text-sm text-primary-900', keterangan));
         }
         var masalah = masalahAtlet(atlet);
         if (masalah) {
-            isi.appendChild(buat('p', 'galat-baris', masalah));
+            isi.appendChild(buat('p', W.KELAS.galatBaris, masalah));
         }
         li.appendChild(isi);
 
@@ -252,7 +253,7 @@
 
     /** Teks tombol; `ringkas`: hanya tampil di layar lebar, di ponsel tombolnya berikon saja. */
     function teksTombol(teks, ringkas) {
-        return ringkas ? buat('span', 'd-none d-sm-inline', teks) : document.createTextNode(teks);
+        return ringkas ? buat('span', 'hidden sm:inline', teks) : document.createTextNode(teks);
     }
 
     /**
@@ -261,17 +262,17 @@
      * (atau `hapusNomor` kosong), atletnya ikut dihapus.
      */
     function tombolBaris(atlet, hapusNomor, ringkas) {
-        var tombol = buat('div', 'baris-atlet-tombol');
-        var ubah = buat('button', 'btn btn-sm btn-outline-primary');
+        var tombol = buat('div', 'baris-atlet-tombol flex flex-none gap-1.5');
+        var ubah = buat('button', W.KELAS.garisKecil + ' min-w-9');
         ubah.type = 'button';
         ubah.appendChild(ikon('pencil'));
         ubah.appendChild(teksTombol(' Ubah', ringkas));
         ubah.setAttribute('aria-label', 'Ubah ' + atlet.nama);
         ubah.title = 'Ubah';
         ubah.addEventListener('click', function () { muatAtlet(atlet); });
-        var hapus = buat('button', 'btn btn-sm btn-outline-danger');
+        var hapus = buat('button', W.KELAS.hapusKecil + ' min-w-9');
         hapus.type = 'button';
-        hapus.appendChild(ikon('trash'));
+        hapus.appendChild(ikon('trash-2'));
         hapus.appendChild(teksTombol(' Hapus', ringkas));
         var namaNomor = (hapusNomor || []).map(function (id) { return NOMOR[id] ? NOMOR[id].nama_lengkap : ''; }).join(', ');
         var sisa = atlet.nomor.filter(function (id) { return (hapusNomor || []).indexOf(id) === -1; });
@@ -315,16 +316,17 @@
      * dan tombol. Peran ditandai oleh kelompok Inti/Cadangan tempat baris ini.
      */
     function barisAnggota(a, urut, n) {
-        var li = buat('li', 'anggota-regu anggota-' + a.peran);
+        var li = buat('li', 'anggota-regu anggota-' + a.peran + ' flex items-center gap-2.5 border-t border-primary-50 py-1.5 first:border-t-0');
         li.setAttribute('data-baris-jalur', 'atlet.' + a.indeks);
-        li.appendChild(buat('span', 'anggota-regu-urut', String(urut)));
-        var isi = buat('div', 'anggota-regu-isi');
-        isi.appendChild(buat('strong', 'anggota-regu-nama', a.atlet.nama));
+        li.appendChild(buat('span', 'anggota-regu-urut inline-flex size-6.5 flex-none items-center justify-center rounded-full text-xs font-bold '
+            + (a.peran === 'inti' ? 'bg-primary-700 text-white' : 'border border-dashed border-gray-500 bg-white text-gray-600'), String(urut)));
+        var isi = buat('div', 'anggota-regu-isi min-w-0 flex-auto break-words');
+        isi.appendChild(buat('strong', 'anggota-regu-nama me-1.5 block text-gray-900 sm:inline', a.atlet.nama));
         var ku = tentukanKu(Number(String(a.atlet.tanggal_lahir).slice(0, 4)), jenjangSekolah(), a.atlet.kelompok_umur_id).ku;
-        isi.appendChild(buat('span', 'anggota-regu-keterangan', ['NISN ' + a.atlet.nisn, ku ? ku.nama : null, a.atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
+        isi.appendChild(buat('span', 'anggota-regu-keterangan text-xs text-gray-500', ['NISN ' + a.atlet.nisn, ku ? ku.nama : null, a.atlet.jenis_kelamin === 'L' ? 'Putra' : 'Putri'].filter(Boolean).join(' · ')));
         var masalah = masalahAtlet(a.atlet);
         if (masalah) {
-            isi.appendChild(buat('p', 'galat-baris', masalah));
+            isi.appendChild(buat('p', W.KELAS.galatBaris, masalah));
         }
         li.appendChild(isi);
         li.appendChild(tombolBaris(a.atlet, [n.id], true));
@@ -333,13 +335,13 @@
 
     /** Satu kelompok anggota regu (Inti atau Cadangan) dengan judul dan hitungan. */
     function kelompokPeran(peran, anggota, mulai, n, hitungan, kurang) {
-        var wadah = buat('div', 'kelompok-peran kelompok-' + peran);
-        var judul = buat('div', 'kelompok-peran-judul');
+        var wadah = buat('div', 'kelompok-peran kelompok-' + peran + ' [&+&]:mt-1 [&+&]:border-t [&+&]:border-dashed [&+&]:border-gray-200');
+        var judul = buat('div', 'kelompok-peran-judul flex items-center gap-2 pt-2 pb-1');
         judul.appendChild(lencanaPeran(peran));
-        judul.appendChild(buat('span', 'kelompok-peran-hitungan' + (kurang ? ' hitungan-salah' : ''), hitungan));
+        judul.appendChild(buat('span', 'kelompok-peran-hitungan text-xs ' + (kurang ? 'hitungan-salah font-semibold text-red-800' : 'text-gray-500'), hitungan));
         wadah.appendChild(judul);
         if (anggota.length === 0) {
-            wadah.appendChild(buat('p', 'kelompok-peran-kosong', peran === 'inti' ? 'Belum ada atlet inti.' : 'Belum ada cadangan. Cadangan boleh tidak ada.'));
+            wadah.appendChild(buat('p', 'kelompok-peran-kosong mb-1.5 text-sm text-gray-500', peran === 'inti' ? 'Belum ada atlet inti.' : 'Belum ada cadangan. Cadangan boleh tidak ada.'));
             return wadah;
         }
         var ul = buat('ol', 'anggota-regu-daftar');
@@ -353,7 +355,7 @@
      */
     function lencanaTim(lencana, t) {
         var perluKonfirmasi = t.susulan && !t.dikonfirmasi;
-        lencana.className = 'badge ' + (t.pesan.length || perluKonfirmasi ? 'text-bg-warning' : 'text-bg-success');
+        lencana.className = 'inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold ' + (t.pesan.length || perluKonfirmasi ? 'bg-yellow-100 text-yellow-900' : 'bg-green-100 text-green-800');
         lencana.textContent = t.pesan.length ? 'Belum lengkap' : (perluKonfirmasi ? 'Perlu dicentang' : (t.susulan ? 'Tambahan anggota' : 'Lengkap'));
     }
 
@@ -363,27 +365,27 @@
      * inti lama (K105).
      */
     function daftarReguLama(n, t) {
-        var wadah = buat('div', 'regu-lama');
+        var wadah = buat('div', 'regu-lama mx-3 mt-3 break-words rounded-lg border border-dashed border-gray-300 bg-white px-3 py-2');
         wadah.setAttribute('data-turun-nomor', String(n.id));
-        wadah.appendChild(buat('p', 'small fw-semibold mb-1', 'Anggota yang sudah terdaftar di regu ini:'));
-        var ul = buat('ul', 'list-unstyled small mb-2');
+        wadah.appendChild(buat('p', 'mb-1 text-sm font-semibold text-gray-900', 'Anggota yang sudah terdaftar di regu ini:'));
+        var ul = buat('ul', 'mb-2 space-y-1 text-sm');
         t.lamaAnggota.forEach(function (a) {
-            var li = buat('li', 'regu-lama-baris');
+            var li = buat('li', 'regu-lama-baris flex flex-wrap items-center gap-x-3 gap-y-1');
             var turun = a.peran === 'inti' && diturunkan(n.id, a.id);
             var namaLama = buat('span', 'regu-lama-nama', a.nama + ' ');
             namaLama.appendChild(lencanaPeran(turun ? 'cadangan' : a.peran));
             if (turun) {
-                namaLama.appendChild(buat('span', 'small text-body-secondary', ' (sebelumnya inti)'));
+                namaLama.appendChild(buat('span', 'text-sm text-gray-500', ' (sebelumnya inti)'));
             }
             li.appendChild(namaLama);
             if (a.peran === 'inti') {
-                var kotak = buat('span', 'form-check form-check-inline ms-2 mb-0');
-                var masukan = buat('input', 'form-check-input');
+                var kotak = buat('span', 'inline-flex items-center gap-2');
+                var masukan = buat('input', W.KELAS.centang);
                 masukan.type = 'checkbox';
                 masukan.id = 'turun-' + n.id + '-' + a.id;
                 masukan.checked = turun;
                 masukan.setAttribute('data-jalur', 'turun.' + n.id);
-                var label = buat('label', 'form-check-label', 'Jadikan cadangan');
+                var label = buat('label', 'cursor-pointer', 'Jadikan cadangan');
                 label.htmlFor = masukan.id;
                 masukan.addEventListener('change', function () {
                     var kunci = n.id + ':' + a.id;
@@ -412,17 +414,17 @@
      */
     function kotakKonfirmasi(n, t, lencana) {
         var kunci = t.kunci;
-        var kotak = buat('div', 'form-check konfirmasi-susulan');
-        var masukan = buat('input', 'form-check-input');
+        var kotak = buat('div', 'konfirmasi-susulan mx-3 mt-3 mb-3 flex flex-wrap items-start gap-x-3 gap-y-1 break-words rounded-lg border border-gray-300 bg-white px-3 py-2.5 has-[.is-invalid]:border-red-500');
+        var masukan = buat('input', W.KELAS.centang + ' mt-0.5');
         masukan.type = 'checkbox';
         masukan.id = 'konfirmasi-susulan-' + idAman(kunci);
         masukan.checked = t.dikonfirmasi;
         masukan.setAttribute('data-jalur', 'konfirmasi.' + kunci);
-        var label = buat('label', 'form-check-label',
+        var label = buat('label', 'min-w-0 flex-1 cursor-pointer text-[0.9375rem]',
             'Saya mengerti ' + (t.anggota.length === 1 ? 'atlet ini' : t.anggota.length + ' atlet ini') + ' ditambahkan ke ' + namaRegu(n, t.regu)
             + ' sekolah yang sudah terdaftar (' + t.lama + ' atlet), tanpa biaya regu');
         label.htmlFor = masukan.id;
-        var umpan = buat('div', 'invalid-feedback');
+        var umpan = buat('div', W.KELAS.umpan + ' basis-full');
 
         masukan.addEventListener('change', function () {
             W.draf.konfirmasiSusulan = W.draf.konfirmasiSusulan.filter(function (k) { return k !== kunci; });
@@ -461,7 +463,7 @@
                 adaIndividu = true;
                 var baris = barisAtlet(atlet, i, 'atlet.' + i, n.nama_lengkap, [n.id]);
                 if (kuota[n.id]) {
-                    baris.firstChild.appendChild(buat('p', 'galat-baris', kuota[n.id]));
+                    baris.firstChild.appendChild(buat('p', W.KELAS.galatBaris, kuota[n.id]));
                 }
                 individu.appendChild(baris);
             });
@@ -477,14 +479,14 @@
         urutan.forEach(function (kunci) {
             var t = tim[kunci];
             var n = t.nomor;
-            var kartu = buat('div', 'kartu-tim');
+            var kartu = buat('div', 'kartu-tim mb-4 overflow-hidden rounded-xl border border-gray-200 bg-white');
             kartu.setAttribute('data-baris-jalur', 'beregu.' + kunci);
-            var kepala = buat('div', 'kartu-tim-kepala');
-            var judul = buat('div', 'kartu-tim-judul');
+            var kepala = buat('div', 'kartu-tim-kepala flex flex-wrap items-center justify-between gap-2 bg-primary-100 px-3 pt-2.5');
+            var judul = buat('div', 'kartu-tim-judul flex min-w-0 flex-wrap items-center gap-1.5 break-words text-primary-900');
             judul.appendChild(buat('strong', 'kartu-tim-nomor', n.nama_lengkap));
             var tunggal = reguTunggal(n.id);
             if (!tunggal) {
-                judul.appendChild(buat('span', 'regu-pil', labelReguLengkap(t.regu)));
+                judul.appendChild(buat('span', 'regu-pil whitespace-nowrap rounded-full bg-oranye-600 px-2.5 py-0.5 text-xs font-bold text-white', labelReguLengkap(t.regu)));
             }
             kepala.appendChild(judul);
             var lencana = buat('span');
@@ -495,18 +497,18 @@
             var inti = t.anggota.filter(function (a) { return a.peran === 'inti'; });
             var cadangan = t.anggota.filter(function (a) { return a.peran !== 'inti'; });
             var batasCadangan = Math.max(0, n.batas_anggota - n.jumlah_inti);
-            var ringkas = buat('div', 'kartu-tim-ringkas');
+            var ringkas = buat('div', 'kartu-tim-ringkas flex flex-wrap gap-1 border-b border-gray-200 bg-primary-100 px-3 pt-1.5 pb-2.5');
             [
                 t.susulan ? ['', 'tambahan untuk ' + (tunggal ? AWALAN_REGU.toLowerCase() : labelReguLengkap(t.regu)) + ' yang sudah terdaftar (' + t.lama + ' atlet)'] : null,
                 ['', t.anggota.length + ' atlet'],
                 ['biaya', t.susulan ? 'tanpa biaya regu' : rupiah(n.biaya_beregu)]
             ].filter(Boolean).forEach(function (b) {
-                ringkas.appendChild(buat('span', 'nomor-beregu-chip' + (b[0] ? ' chip-' + b[0] : ''), b[1]));
+                ringkas.appendChild(buat('span', W.kelasKeping(b[0]), b[1]));
             });
             kartu.appendChild(ringkas);
-            t.pesan.forEach(function (p) { kartu.appendChild(buat('p', 'galat-baris', p)); });
+            t.pesan.forEach(function (p) { kartu.appendChild(buat('p', W.KELAS.galatBaris + ' mx-3', p)); });
 
-            var badan = buat('div', 'kartu-tim-badan');
+            var badan = buat('div', 'kartu-tim-badan px-3 pt-1 pb-2');
             badan.appendChild(kelompokPeran('inti', inti, 1, n,
                 t.susulan ? inti.length + ' atlet baru' : inti.length + ' dari ' + n.jumlah_inti, !t.susulan && inti.length !== n.jumlah_inti));
             if (cadangan.length > 0 || batasCadangan > 0) {
