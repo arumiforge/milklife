@@ -10,7 +10,10 @@ $minimal  = (int) $wizard['aturan']['penanggung_jawab_minimal'];
 $maksimal = (int) $wizard['aturan']['penanggung_jawab_maksimal'];
 ?>
 <section class="langkah" id="langkah-2" data-langkah="2" aria-labelledby="judul-langkah-2" hidden>
-    <h2 id="judul-langkah-2" tabindex="-1">2. Ofisial</h2>
+    <div class="langkah-judul">
+        <h2 id="judul-langkah-2" tabindex="-1">2. Ofisial</h2>
+        <?= view('pendaftaran/_tombol_bantuan', ['langkah' => 2], ['saveData' => false]) ?>
+    </div>
     <p class="langkah-keterangan">
         Isi <?= $minimal === $maksimal ? $minimal : $minimal . ' sampai ' . $maksimal ?> orang yang bisa dihubungi panitia.
         Foto wajib diisi dan hanya dilihat panitia.

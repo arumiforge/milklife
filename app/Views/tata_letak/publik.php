@@ -57,6 +57,9 @@ if ($adaHasil) {
     $menuPublik[] = ['label' => 'Hasil', 'alamat' => site_url('hasil'), 'aktif' => $diHasil];
 }
 
+// Bantuan dan FAQ (F9-04), juga dari halaman yang belum pindah ke tata letak baru.
+$menuPublik[] = ['label' => 'Bantuan', 'alamat' => site_url('bantuan'), 'aktif' => url_is('bantuan')];
+
 // Logo dan label seri hanya di kepala halaman depan.
 $logoKepala = null;
 $seriTahun  = '';

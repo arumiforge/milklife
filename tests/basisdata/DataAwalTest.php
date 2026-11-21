@@ -138,6 +138,24 @@ final class DataAwalTest extends UjiBasisData
         $this->seeNumRecords(1, 'tautan', []);
     }
 
+    public function testMemasangTanyaJawabBantuanBawaan(): void
+    {
+        $this->assertSame(EXIT_SUCCESS, $this->jalankan());
+
+        $this->seeNumRecords(count(App\Libraries\Bantuan\FaqBawaan::DAFTAR), 'faq', ['aktif' => 1]);
+        $this->assertStringContainsString('Bantuan      : ' . count(App\Libraries\Bantuan\FaqBawaan::DAFTAR) . ' tanya-jawab bawaan', $this->getStreamFilterBuffer());
+    }
+
+    public function testTanyaJawabAdminTidakDitimpa(): void
+    {
+        $this->db->table('faq')->insert(['kategori' => 'sebelum', 'pertanyaan' => 'Pertanyaan admin?', 'jawaban' => 'Jawaban admin.', 'urutan' => 1, 'aktif' => 1]);
+
+        $this->assertSame(EXIT_SUCCESS, $this->jalankan());
+
+        $this->seeNumRecords(1, 'faq', []);
+        $this->assertStringNotContainsString('tanya-jawab bawaan', $this->getStreamFilterBuffer());
+    }
+
     public function testMemasangUnduhanBawaan(): void
     {
         $this->assertSame(['tersimpan' => count(DataAwal::UNDUHAN), 'gagal' => []], DataAwal::pasangUnduhanBawaan($this->db));

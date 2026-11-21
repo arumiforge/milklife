@@ -77,6 +77,8 @@ $langkah = [
                 </p>
             </div>
 
+            <?= $this->include('pendaftaran/_laci_bantuan') ?>
+
             <script type="application/json" id="data-pendaftaran"><?= json_encode($wizard, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?></script>
         <?php endif ?>
     </div>
@@ -105,5 +107,6 @@ $langkah = [
         <script src="<?= aset('js/pendaftaran/' . $bagian . '.js') ?>"></script>
     <?php endforeach ?>
     <script src="<?= aset('js/pendaftaran.js') ?>"></script>
+    <script src="<?= aset('js/bantuan.js') ?>"></script>
     <?= $this->endSection() ?>
 <?php endif ?>

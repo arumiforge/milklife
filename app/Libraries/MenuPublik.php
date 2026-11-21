@@ -58,6 +58,10 @@ final class MenuPublik
             $butir[] = ['label' => 'Hasil', 'alamat' => site_url('hasil'), 'aktif' => $diHasil];
         }
 
+        // ---------- Bantuan (F9-04): selalu tampil ----------
+        $butir[] = ['label' => 'Bantuan', 'alamat' => site_url('bantuan'), 'aktif' => url_is('bantuan')];
+        // ---------- Akhir Bantuan ----------
+
         return $butir;
     }
 

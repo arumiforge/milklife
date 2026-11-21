@@ -97,8 +97,8 @@ final class HalamanUnduhanTest extends UjiBasisData
     {
         $menu = $this->menu($this->xpathDari($this->get('unduhan')));
 
-        // Tata letak baru (F9-03): Kategori hanya tampil bila kelompok umur sudah ada.
-        $this->assertSame(['Beranda', 'Unduhan'], array_keys($menu));
+        // Tata letak baru (F9-03): Kategori hanya tampil bila kelompok umur sudah ada; Bantuan selalu (F9-04).
+        $this->assertSame(['Beranda', 'Unduhan', 'Bantuan'], array_keys($menu));
         $this->assertSame(site_url('unduhan'), $menu['Unduhan']->getAttribute('href'));
         $this->assertSame('page', $menu['Unduhan']->getAttribute('aria-current'));
         $this->assertFalse($menu['Beranda']->hasAttribute('aria-current'));

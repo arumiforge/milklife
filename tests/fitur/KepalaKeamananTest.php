@@ -56,7 +56,7 @@ final class KepalaKeamananTest extends UjiBasisData
 
     public function testHalamanPublik(): void
     {
-        foreach (['/', 'unduhan', 'cek-pendaftaran', 'pendaftaran', 'admin/masuk'] as $alamat) {
+        foreach (['/', 'unduhan', 'bantuan', 'cek-pendaftaran', 'pendaftaran', 'admin/masuk'] as $alamat) {
             $hasil = $this->withSession([])->get($alamat);
 
             $hasil->assertOK();

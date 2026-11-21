@@ -15,6 +15,7 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 | Hasil lomba (F8-04) | `hasil`, `hasil/(:num)[/pdf\|excel]` (hanya nomor terbit) | `HasilController` | `Hasil/HasilLomba`, `Hasil/UnduhanHasil` | `hasil/` (publik `_tabel_tw`, tata letak baru F9-03) | - | f `HasilLombaTest` |
 | Klasemen sekolah (F8-05) | `hasil/klasemen[/pdf\|excel]` (hanya nomor terbit) | `HasilController::klasemen` | `Hasil/Klasemen`, `Hasil/UnduhanKlasemen` | `hasil/klasemen.php`, `hasil/_klasemen_tw.php` (tata letak baru F9-03) | - | f `KlasemenSekolahTest`, u `HasilKlasemenTest` |
 | Unduhan | `unduhan` | `UnduhanController` | `IsiHalamanDepan` | `unduhan.php` (tata letak baru F9-03), `beranda/_daftar_unduhan.php` | - | f `HalamanUnduhanTest` |
+| Bantuan (F9-04) | `bantuan` (Tailwind, `publik_tw`); laci "Bantuan" di tiap langkah wizard (Bootstrap offcanvas sampai F9-05) | `BantuanController` | `Bantuan/IsiBantuan` (kategori, panduan G9-03, kontak WA), `Bantuan/JawabanFaq`, `MenuPublik` | `bantuan/index.php`, `pendaftaran/_laci_bantuan.php`, `pendaftaran/_tombol_bantuan.php` | `bantuan` | f `BantuanFaqTest` |
 
 Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 
@@ -45,6 +46,7 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 | Klasemen sekolah (F8-05): juara umum per jenjang, semua nomor | `klasemen[/pdf\|excel]` | `Admin/KlasemenController` | `Hasil/Klasemen` (murni), `Hasil/HasilLomba::juara()`, `Hasil/UnduhanKlasemen` | `admin/hasil/klasemen.php`, `hasil/_klasemen.php`, `hasil/klasemen_pdf.php` | - | f `KlasemenSekolahTest`, u `HasilKlasemenTest` |
 | Sekolah, usulan nama (K99), nama desa (K114) | `sekolah[/data\|/excel\|/(:num)/ubah]`, `sekolah/usulan…`, `sekolah/nama-desa` | `Admin/SekolahController` | `Panel/UsulanNamaSekolah`, `Panel/NamaDesaSekolah` | `admin/sekolah/` | `centang-semua` | f `PanelSekolahTest`, `PanelUsulanNamaSekolahTest`, `PanelNamaDesaSekolah*Test` |
 | Pengaturan | `pengaturan/{acara,pendaftaran,pembayaran,halaman-depan}` + CRUD `{kelompok-umur,nomor-lomba,jadwal,kontak,unduhan}`, sakelar `kelompok-umur/pilihan` (K134), foto carousel `halaman-depan/carousel[/(:num)/(naik\|turun\|hapus)]` (F9-03) | `Admin/Pengaturan/*Controller` (carousel: `CarouselController`) | `KelengkapanPengaturan`, `MarkdownSederhana` | `admin/pengaturan/` | `konfirmasi`, `pilih-tanggal` | f `Pengaturan*Test`, b `*ModelTest` |
+| Bantuan dan FAQ (F9-04) | `pengaturan/bantuan[/tambah\|/bawaan\|/(:num)[/ubah\|/hapus\|/aktif\|/naik\|/turun]]` | `Admin/Pengaturan/FaqController` | `Bantuan/JawabanFaq` (Markdown + isian otomatis `{tutup_pendaftaran}` …), `Bantuan/FaqBawaan` (54 bawaan, dipasang `data:awal`, `faq:awal`, tombol bawaan); tabel `faq` ikut `PaketPendaftaran` | `admin/pengaturan/faq/` | `konfirmasi` | f `PengaturanFaqTest`, b `FaqAwalTest`, u `BantuanFaqBawaanTest`, `BantuanJawabanFaqTest` |
 
 ## Tampilan baru (Tahap 9, K140, K141)
 
@@ -59,7 +61,7 @@ Ikon Lucide baru: tulis `ikon('nama')` (atau `'ikon' => 'nama'` di berkas yang m
 
 ## Perintah spark (`app/Commands/`)
 
-`admin:buat`, `cadangan:buat`, `data:awal`, `dokumen:pdf`, `halaman-depan:carousel` (`PasangCarousel.php`), `pendaftaran:gabung`, `pendaftaran:impor`, `sekolah:impor`, `aset:minify`, `pembaruan:periksa`, `nomor-dada:reset` (mis. `nomor-dada:reset` = `ResetNomorDada.php`).
+`admin:buat`, `cadangan:buat`, `data:awal`, `dokumen:pdf`, `faq:awal`, `halaman-depan:carousel` (`PasangCarousel.php`), `pendaftaran:gabung`, `pendaftaran:impor`, `sekolah:impor`, `aset:minify`, `pembaruan:periksa`, `nomor-dada:reset` (mis. `nomor-dada:reset` = `ResetNomorDada.php`).
 
 ## Invarian kritis
 
@@ -81,4 +83,4 @@ Ikon Lucide baru: tulis `ikon('nama')` (atau `'ikon' => 'nama'` di berkas yang m
 - Analisis statis: `composer analisis` (PHPStan tingkat 1, `phpstan.neon`, K123). Jalan di CI sebelum uji.
 - Semua: `composer uji` (= `phpunit`, `phpunit.dist.xml`). Suite: `vendor/bin/phpunit --testsuite unit|basisdata|fitur`.
 - Satu area: `vendor/bin/phpunit --filter '<pola>'`, pola:
-  wizard `Pendaftaran(Halaman|Kirim|Simpan|Pemeriksa|Sekolah)` · cek/bukti `CekPendaftaran|BuktiPendaftaran|UnggahBuktiBayar` · panel pendaftaran `PanelPendaftaran|PanelUbahPendaftaran|BuktiBayar|PanelRiwayatAdmin|PanelBuktiBaru` · tolak/gabung `PanelTolakAtlet|PanelGabungPendaftaran` · nomor dada `NomorDada` · rekap `PanelRekap` · sekolah `Sekolah` · pengaturan `Pengaturan` · admin `MasukAdmin|AkunAdmin` · hari lomba `HariLomba` · hasil `HasilLomba|HasilPrestasi|Klasemen` · alur Tahap 6 `PanelGabunganTest` · alur menyeluruh minify + Tahap 8 `AlurMenyeluruhTest`.
+  wizard `Pendaftaran(Halaman|Kirim|Simpan|Pemeriksa|Sekolah)` · cek/bukti `CekPendaftaran|BuktiPendaftaran|UnggahBuktiBayar` · panel pendaftaran `PanelPendaftaran|PanelUbahPendaftaran|BuktiBayar|PanelRiwayatAdmin|PanelBuktiBaru` · tolak/gabung `PanelTolakAtlet|PanelGabungPendaftaran` · nomor dada `NomorDada` · rekap `PanelRekap` · sekolah `Sekolah` · pengaturan `Pengaturan` · bantuan `Faq|Bantuan` · admin `MasukAdmin|AkunAdmin` · hari lomba `HariLomba` · hasil `HasilLomba|HasilPrestasi|Klasemen` · alur Tahap 6 `PanelGabunganTest` · alur menyeluruh minify + Tahap 8 `AlurMenyeluruhTest`.
