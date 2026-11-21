@@ -4,7 +4,7 @@ Diperbarui: 21 November 2026
 
 ## Sedang berjalan
 
-**Tahap 9 — Rombak tampilan dan fitur publik hari lomba** (K140, K141). Rencana: [`dokumen/draf/rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md), disetujui pemilik beserta delapan asumsinya (K142). Dikerjakan paralel, paling banyak 3 sub-sesi (K142). Jawaban pertanyaan gelombang A: K143; F9-12: K144. Koordinator menjalankan semua tugas otomatis sampai selesai (K145). Staging: https://staging.mac2026.web.id (K139). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
+**Tahap 9 — Rombak tampilan dan fitur publik hari lomba** (K140, K141). Rencana: [`dokumen/draf/rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md), disetujui pemilik beserta delapan asumsinya (K142). Dikerjakan paralel, paling banyak 5 sub-sesi (K142, K145). Jawaban pertanyaan gelombang A: K143; F9-12: K144. Koordinator menjalankan semua tugas otomatis sampai selesai (K145). Staging: https://staging.mac2026.web.id (K139). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
 
 | Tugas | Status | Prioritas | Gelombang |
 |---|---|---|---|
@@ -18,7 +18,7 @@ Diperbarui: 21 November 2026
 | [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | rencana | P1 | B |
 | [F9-12 Peserta publik](tugas/F9-12-peserta-publik.md) | selesai (#127) | P1 | B |
 | [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | dikerjakan | P1 | B |
-| [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | rencana | P2 | B |
+| [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | dikerjakan | P2 | B |
 | [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | rencana | P2 | B |
 | [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | rencana | P2 | C (setelah 30 November) |
 | [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | rencana | P2 | C |
@@ -43,7 +43,7 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 
 ## Berikutnya
 
-Gabung #125 (F9-03) setelah CI hijau, lalu F9-11 di slot yang kosong. F9-08 dimulai setelah F9-07 masuk `main`, disusul F9-09; F9-06 menyusul bila ada slot. Gelombang C mulai 1 Desember. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel` (setelah #125), lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
+F9-11 dimulai sekarang (slot ke-4). Gabung #125 (F9-03) setelah CI hijau, lalu F9-06. F9-08 dimulai setelah F9-07 masuk `main`, disusul F9-09; F9-06 menyusul bila ada slot. Gelombang C mulai 1 Desember. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel` (setelah #125), lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
 
 ## Selesai
 
