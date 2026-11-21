@@ -53,6 +53,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('dasbor', 'DasborController::index');
     // Pengecekan (K102): keadaan pendaftaran, kelengkapan pengaturan, gambar kepala.
     $routes->get('pengecekan', 'PengecekanController::index');
+    // Katalog komponen tampilan baru (Tahap 9, F9-01): untuk menilai gaya di staging.
+    $routes->get('gaya', 'GayaController::index');
 
     // Akun admin yang sedang masuk (F2-08): dua formulir di satu halaman.
     $routes->get('akun', 'AkunController::index');

@@ -112,6 +112,19 @@ Web dibuka dari internet lewat Cloudflare Tunnel (K31). Susunannya:
 
 Jangan jalankan `cloudflared` di komputer lain yang meneruskan ke server ini; bila terpaksa, alamat komputer itu harus ditambahkan ke `$proxyIPs`.
 
+## Tampilan (Tahap 9)
+
+Tampilan baru memakai Flowbite Pro (Tailwind 4), ikon Lucide, dan Three.js (K140, K141). CSS dan pustakanya **sudah ada di git**, jadi komputer server tidak perlu Node. Node 22 hanya diperlukan di komputer pengembang yang mengubah tampilan:
+
+```
+npm install
+npm run bangun
+```
+
+`npm run bangun` menyalin pustaka tampilan ke `public/aset/vendor/` (`npm run vendor`), membuat sprite ikon dari semua `ikon('…')` di view (`npm run ikon`), dan membangun `public/aset/css/tw.css` dari `public/aset/tailwind/masukan.css` (`npm run css`). Selama menyunting view, `npm run css:pantau` membangun ulang CSS otomatis. Commit hasilnya bersama perubahan view; CI menolak bila hasil bangun tidak sama.
+
+Komponen siap pakai ada di `app/Views/komponen/` (`komponen('tombol', […])`), contohnya di halaman admin **Katalog tampilan** (`/admin/gaya`).
+
 ## Perintah
 
 Semua dijalankan dari folder proyek dengan `php spark <perintah>`.
@@ -152,14 +165,16 @@ composer uji
 | `public/` | Folder yang dibuka peramban: `index.php` dan aset |
 | `public/unggahan/` | Gambar dan berkas unggahan admin; tidak masuk git |
 | `writable/unggahan/` | Foto ofisial dan bukti bayar, di luar folder publik dan hanya disajikan ke admin; tidak masuk git |
-| `public/aset/` | CSS, JavaScript, dan pustaka tampilan (Bootstrap, Bootstrap Icons) |
+| `public/aset/` | CSS, JavaScript, dan pustaka tampilan (Bootstrap dan Bootstrap Icons untuk halaman lama; Flowbite, Lucide, Three.js, dan `css/tw.css` untuk tampilan baru) |
+| `public/aset/tailwind/` | Sumber CSS tampilan baru (`npm run css`) |
+| `alat/` | Skrip Node pembangun tampilan (`npm run vendor`, `npm run ikon`) |
 | `tests/` | Uji: `unit/` (aturan murni), `basisdata/` (migrasi dan model), `fitur/` (halaman dan rute) |
 | `writable/` | Sesi, log, dan berkas sementara buatan aplikasi; isinya tidak masuk git |
 | `vendor/` | Pustaka dari Composer; dibuat oleh `composer install`, tidak masuk git |
 
 ## Teknologi
 
-CodeIgniter 4.7, PHP 8.2+, MySQL 8, Nginx (Laragon), Bootstrap 5.3 dan Bootstrap Icons (disimpan lokal, tanpa CDN).
+CodeIgniter 4.7, PHP 8.2+, MySQL 8, Nginx (Laragon). Tampilan: Bootstrap 5.3 dan Bootstrap Icons untuk halaman yang belum dipindah, Flowbite Pro (Tailwind 4), Lucide, dan Three.js untuk tampilan baru; semuanya disimpan lokal, tanpa CDN.
 
 Pustaka Composer: mPDF (bukti dan rekap PDF), PhpSpreadsheet (ekspor Excel), chillerlan/php-qrcode (kode QR di bukti), matthiasmullie/minify (`aset:minify`), dan CodeIgniter Settings. Untuk uji: PHPUnit 10, Faker, vfsStream.
 

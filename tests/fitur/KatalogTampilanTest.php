@@ -1,0 +1,80 @@
+<?php
+
+use App\Libraries\MenuPublik;
+use Tests\Support\KirimFormulir;
+use Tests\Support\PendaftaranContoh;
+use Tests\Support\UjiBasisData;
+
+/**
+ * Halaman Katalog tampilan (`admin/gaya`) dan tata letak bertampilan baru
+ * `publik_tw.php` / `admin_tw.php` (Tahap 9, F9-01, K140, K141): Flowbite Pro
+ * (Tailwind) tanpa Bootstrap, JS Flowbite lokal, menu baru, menu bawah ponsel
+ * 5 butir (K133).
+ *
+ * @internal
+ */
+final class KatalogTampilanTest extends UjiBasisData
+{
+    use KirimFormulir;
+    use PendaftaranContoh;
+
+    public function testKatalogHanyaUntukAdmin(): void
+    {
+        $this->get('admin/gaya')->assertRedirectTo(site_url('admin/masuk'));
+    }
+
+    public function testKatalogMemakaiTataLetakBaru(): void
+    {
+        $hasil = $this->bukaSebagaiAdmin('admin/gaya');
+        $hasil->assertOK();
+        $html = (string) $hasil->response()->getBody();
+
+        $this->assertStringContainsString('aset/css/tw.css', $html);
+        $this->assertStringContainsString('aset/vendor/flowbite/flowbite.min.js', $html);
+        $this->assertStringContainsString('type="module" src="' . base_url('aset/js/adegan-merek.js'), $html);
+        $this->assertStringNotContainsString('bootstrap', $html, 'Tata letak baru tidak memuat Bootstrap.');
+
+        $xpath = $this->xpathDari($hasil);
+        $this->assertSame('Katalog tampilan', trim($xpath->query('//header//h1')->item(0)->textContent));
+        $this->assertGreaterThan(0, $xpath->query('//*[@data-carousel-item]')->length, 'Carousel berindikator.');
+        $this->assertGreaterThan(0, $xpath->query('//*[@data-carousel-slide-to]')->length);
+        $this->assertSame(1, $xpath->query('//*[@id="menu-laci"]')->length);
+    }
+
+    public function testMenuBawahPonselLimaButirPendaftaran(): void
+    {
+        $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/gaya'));
+        $butir = $xpath->query('//nav[@aria-label="Menu pendaftaran"]//a');
+
+        $label = [];
+        foreach ($butir as $a) {
+            $label[] = trim($a->textContent);
+        }
+
+        $this->assertSame(['Dasbor', 'Pendaftaran', 'Atlet', 'Ditolak', 'Rekap'], $label, 'K133.');
+    }
+
+    public function testTataLetakPublikBaruDanMenunya(): void
+    {
+        setting('Acara.nama', 'Lomba Lari Karangan');
+
+        $html = view('tata_letak/publik_tw');
+
+        $this->assertStringContainsString('Lomba Lari Karangan', $html);
+        $this->assertStringContainsString('aset/css/tw.css', $html);
+        $this->assertStringNotContainsString('bootstrap', $html);
+        $this->assertStringContainsString('href="' . site_url('cek-pendaftaran') . '"', $html);
+        $this->assertStringContainsString('Masuk panitia', $html);
+        $this->assertStringNotContainsString('>Daftar<', $html, 'Tombol Daftar hanya saat pendaftaran terbuka.');
+    }
+
+    public function testTombolDaftarSaatPendaftaranTerbuka(): void
+    {
+        $this->bukaPendaftaranUji();
+
+        $label = array_column(MenuPublik::tombol(), 'label');
+
+        $this->assertSame(['Cek Pendaftaran', 'Daftar'], $label);
+        $this->assertSame(['Beranda', 'Unduhan'], array_column(MenuPublik::butir(), 'label'), 'Hasil hanya setelah ada yang terbit.');
+    }
+}

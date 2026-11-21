@@ -1,0 +1,138 @@
+/*
+ * Sumber CSS tampilan Tahap 9 (K140, K141), meniru `src/app.css` templat
+ * Flowbite Pro di `template-flowbites/`. Dibangun dengan `npm run css` menjadi
+ * `public/aset/css/tw.css` (di-commit; jangan disunting tangan).
+ *
+ * Hanya F9-01 dan F9-17 yang mengubah berkas ini (rencana Tahap 9, aturan 7);
+ * tugas lain cukup memakai kelas Tailwind/Flowbite di view.
+ *
+ * `source(none)`: Tailwind hanya memindai folder yang disebut `@source`, supaya
+ * templat Pro (ribuan halaman HTML) tidak ikut terbangun.
+ */
+@import "tailwindcss" source(none);
+@import "flowbite/src/themes/default";
+
+@plugin "flowbite/plugin";
+@plugin "flowbite-typography";
+
+@source "../../../node_modules/flowbite/dist/flowbite.js";
+@source "../../../app/Views";
+@source "../../../app/Libraries";
+@source "../../../app/Helpers";
+@source "../../../public/aset/js";
+
+/* Mode terang saja (K140): kelas `dark:` dari templat Pro hanya aktif bila
+   ada kelas `.dark`, yang tidak pernah dipasang. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url('../vendor/inter/inter-latin-wght-normal.woff2') format('woff2-variations');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url('../vendor/inter/inter-latin-ext-wght-normal.woff2') format('woff2-variations');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@theme {
+    /* Biru MilkLife (`--ml-biru` #234987 = 700, `--ml-biru-tua` #021F7B = 900). */
+    --color-primary-50: #F3F6FB;
+    --color-primary-100: #E6F2FB;
+    --color-primary-200: #C6D0E0;
+    --color-primary-300: #9EAFCA;
+    --color-primary-400: #728BB2;
+    --color-primary-500: #4B6A9D;
+    --color-primary-600: #355891;
+    --color-primary-700: #234987;
+    --color-primary-800: #123481;
+    --color-primary-900: #021F7B;
+    --color-primary-950: #011450;
+
+    /* Oranye MilkLife: 500 hiasan, 600 tombol (kontras AA dengan putih). */
+    --color-oranye-50: #FDF4F1;
+    --color-oranye-100: #FCE9E2;
+    --color-oranye-200: #F8CFC1;
+    --color-oranye-300: #F4AF98;
+    --color-oranye-400: #EE8764;
+    --color-oranye-500: #E85F31;
+    --color-oranye-600: #C4461B;
+    --color-oranye-700: #A93E18;
+    --color-oranye-800: #963714;
+    --color-oranye-900: #69260E;
+
+    /* Magenta flyer dan biru muda MilkLife. */
+    --color-magenta-500: #F0005A;
+    --color-magenta-600: #C8004B;
+    --color-langit-300: #9BCCEC;
+    --color-langit-100: #E6F2FB;
+
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-body: var(--font-sans);
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+    /* Bayangan lembut dan gradien merek (inspirasi railway.com, mode terang). */
+    --shadow-lembut: 0 1px 2px rgb(2 31 123 / 0.04), 0 4px 16px rgb(2 31 123 / 0.06);
+    --shadow-angkat: 0 2px 4px rgb(2 31 123 / 0.06), 0 12px 32px rgb(2 31 123 / 0.10);
+    --radius-kartu: 1rem;
+}
+
+@layer base {
+    html {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        @apply bg-primary-50 font-sans text-gray-900 antialiased;
+    }
+
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-primary-700;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+@layer components {
+    /* Ikon Lucide dari sprite (`ikon()`): ukuran bawaan mengikuti teks. */
+    .ikon {
+        @apply inline-block size-5 shrink-0 align-[-0.2em];
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    /* Latar gradien merek untuk pembuka dan bagian sorot. */
+    .latar-merek {
+        background-image:
+            radial-gradient(60rem 30rem at 85% -10%, rgb(240 0 90 / 0.10), transparent 60%),
+            radial-gradient(50rem 30rem at -10% 10%, rgb(155 204 236 / 0.45), transparent 60%),
+            linear-gradient(180deg, #ffffff 0%, var(--color-primary-50) 100%);
+    }
+
+    .pita-merek {
+        background-image: linear-gradient(100deg, var(--color-primary-900) 0%, var(--color-primary-700) 45%, var(--color-oranye-500) 80%, var(--color-magenta-500) 100%);
+    }
+
+    /* Skeleton: kotak abu berdenyut selama data dimuat. */
+    .kerangka {
+        @apply animate-pulse rounded-md bg-gray-200;
+    }
+}

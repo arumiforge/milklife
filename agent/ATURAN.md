@@ -15,6 +15,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Tampilan pindah ke Tailwind 4 berdasar Flowbite Pro (`template-flowbites/`) per halaman di Tahap 9; CSS hasil bangun di-commit, server tanpa Node; halaman yang belum dipindah tetap Bootstrap 5 (K140, K141, menggantikan K103). Mode terang, ilustrasi 3D lembut. Videotron cair untuk ukuran layar apa pun (K141).
 - Codex hanya membuat aset gambar lewat `desain/` dan `AGENTS.md`; kode ditulis Claude, yang juga meninjau dan menggabung PR Codex (K140).
 - Staging dan produksi mengambil `main`; setiap PR ke `main` harus aman langsung dipasang di produksi (K139, K140).
+- Rencana Tahap 9 dan 8 asumsinya disetujui; tugas dijalankan paralel bila memungkinkan, paling banyak 3 sesi (K142).
 - Susunan dokumen agen ringkas: `ATURAN.md`, `PETA-KODE.md`, `SETUP-CLOUD.md`, status hanya di `PROGRES.md` (K120).
 - Kesiapan server (`/sehat`, uptime, tembolok, `client_max_body_size`, `memory_limit`, uji pulih) ditangani pemilik (K119).
 

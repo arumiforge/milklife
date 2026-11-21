@@ -22,6 +22,36 @@ permissions:
   contents: read
 
 jobs:
+  tampilan:
+    # CSS Flowbite Pro (Tailwind 4), sprite Lucide, dan pustaka tampilan di
+    # public/aset/ dibangun dengan Node dan di-commit (K141). Job ini memastikan
+    # berkas yang di-commit sama dengan hasil bangun dari sumbernya.
+    name: Hasil bangun tampilan (Node)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Pasang Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Pasang paket tampilan
+        run: npm ci --no-audit --no-fund
+
+      - name: Bangun ulang dan bandingkan
+        run: |
+          npm run bangun
+          git status --porcelain -- public/aset
+          if [ -n "$(git status --porcelain -- public/aset)" ]; then
+            echo "Berkas tampilan berbeda dari hasil bangun. Jalankan 'npm run bangun' lalu commit hasilnya."
+            git diff --stat -- public/aset
+            exit 1
+          fi
+
   uji:
     name: PHPUnit (PHP 8.3, MySQL 8)
     runs-on: ubuntu-latest
