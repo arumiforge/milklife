@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Draf, **menunggu persetujuan pemilik** |
+| Status | Draf, **disetujui pemilik 21 November 2026 beserta delapan asumsinya (K142)** |
 | Tanggal | 21 November 2026 |
 | Dasar | Wawancara 21 November 2026 (K138–K141); juknis `sumber/juknis/petunjuk-teknis-seri2-2026.pdf` bagian Tri Lomba dan 11; tabel skor `sumber/tabel-skor/`; foto dan contoh desain `bahan-rombak/gambar-foto/`; rujukan UI `template-flowbites/` |
 

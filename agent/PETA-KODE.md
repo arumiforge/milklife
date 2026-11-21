@@ -46,6 +46,17 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 | Sekolah, usulan nama (K99), nama desa (K114) | `sekolah[/data\|/excel\|/(:num)/ubah]`, `sekolah/usulan…`, `sekolah/nama-desa` | `Admin/SekolahController` | `Panel/UsulanNamaSekolah`, `Panel/NamaDesaSekolah` | `admin/sekolah/` | `centang-semua` | f `PanelSekolahTest`, `PanelUsulanNamaSekolahTest`, `PanelNamaDesaSekolah*Test` |
 | Pengaturan | `pengaturan/{acara,pendaftaran,pembayaran,halaman-depan}` + CRUD `{kelompok-umur,nomor-lomba,jadwal,kontak,unduhan}`, sakelar `kelompok-umur/pilihan` (K134) | `Admin/Pengaturan/*Controller` | `KelengkapanPengaturan`, `MarkdownSederhana` | `admin/pengaturan/` | `konfirmasi`, `pilih-tanggal` | f `Pengaturan*Test`, b `*ModelTest` |
 
+## Tampilan baru (Tahap 9, K140, K141)
+
+| Bagian | Letak | Uji |
+|---|---|---|
+| Tata letak | `tata_letak/publik_tw.php` (menu `Libraries/MenuPublik`), `tata_letak/admin_tw.php` (menu `tata_letak/_menu_admin_tw.php`), pesan kilat `tata_letak/_pesan_tw.php`; halaman pindah dengan mengganti `extend` | f `KatalogTampilanTest` |
+| Komponen | `app/Views/komponen/` (tombol, kartu, peringatan, lencana, isian, pilihan, sakelar, modal, tabel, kerangka, kosong, langkah) lewat `komponen()`; ikon `ikon()`, atribut `atribut_html()` di `Helpers/tampilan_helper.php` | u `KomponenTampilanTest` |
+| Katalog tampilan | `admin/gaya`, `Admin/GayaController`, `admin/gaya.php`; adegan Three.js `public/aset/js/adegan-merek.js` (modul ES) | f `KatalogTampilanTest`, `KepalaKeamananTest` |
+| Bangun | `package.json`, `alat/vendor.mjs`, `alat/ikon.mjs`, `public/aset/tailwind/masukan.css` → `public/aset/css/tw.css`; job CI "Hasil bangun tampilan" | CI |
+
+Ikon Lucide baru: tulis `ikon('nama')` (atau `'ikon' => 'nama'` di berkas yang memakai `ikon()`, atau komentar `// ikon-sprite: nama-1 nama-2` untuk daftar biasa), lalu `npm run ikon` dan `npm run css`.
+
 ## Perintah spark (`app/Commands/`)
 
 `admin:buat`, `cadangan:buat`, `data:awal`, `dokumen:pdf`, `pendaftaran:gabung`, `pendaftaran:impor`, `sekolah:impor`, `aset:minify`, `pembaruan:periksa`, `nomor-dada:reset` (mis. `nomor-dada:reset` = `ResetNomorDada.php`).
@@ -62,6 +73,7 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 - Bukti PDF hanya lewat kode acak 24 heksa + ID (K77), dibatasi `throttler`.
 - Kelompok umur atlet: `Pendaftaran/KelompokUmurAtlet::tentukan()` (jenjang → tahun lahir → pilihan bila lebih dari satu cocok, K95, K134), kembarannya di JS `pendaftaran/atlet.js` dan `admin-ubah-pendaftaran.js`; irisan per jenjang `KelompokUmurAtlet::irisan()`.
 - Perutean otomatis mati (`Config/Routing.php`); admin dijaga `Filters/AdminFilter`.
+- Tampilan baru: CSS `tw.css` dan pustaka di `public/aset/vendor/` hasil `npm run bangun`, di-commit; jangan disunting tangan (K141). Modul ES (`<script type="module" src>`) dan `import()` dari berkas lokal lolos CSP.
 - CSP menyala (`Config/App.php`, `Config/ContentSecurityPolicy.php`, K127): view tanpa `style="…"`, atribut `on…`, atau `<script>`/`<style>` sebaris tanpa nonce (dijaga `KepalaKeamananTest`). Ukuran kecil memakai kelas di `tema.css` (`min-w-*`, `maks-w-*`, `lebar-*` lewat `lebar_bilah()`); skrip halaman di `public/aset/js/`; halaman galat memakai `csp_style_nonce()`; ApexCharts menerima nonce dari `data-nonce-gaya`.
 
 ## Perintah uji per area

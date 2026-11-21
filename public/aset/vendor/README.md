@@ -1,6 +1,6 @@
 # Pustaka tampilan
 
-Berkas jadi dari pustaka luar, disimpan di sini supaya halaman tidak memuat apa pun dari internet (tanpa CDN, tanpa Node). Berkas di folder ini tidak disunting; untuk memperbarui, unduh versi baru dan ganti berkasnya.
+Berkas jadi dari pustaka luar, disimpan di sini supaya halaman tidak memuat apa pun dari internet (tanpa CDN) dan server tidak butuh Node. Berkas di folder ini tidak disunting. Pustaka lama (tabel pertama) diperbarui dengan mengunduh versi baru dan mengganti berkasnya; pustaka tampilan Tahap 9 (bagian "Tampilan Tahap 9" di bawah) disalin otomatis oleh `npm run vendor`.
 
 | Pustaka | Versi | Lisensi | Asal unduhan |
 |---|---|---|---|
@@ -43,7 +43,20 @@ Arsip Bootstrap diunduh dengan `curl` pada 11 November 2026, arsip DataTables da
 | `apexcharts/LICENSE` | `package/LICENSE` |
 | `flowbite/flowbite-dasbor.css` | salinan apa adanya `template-flowbites/flowbite-admin-dashboard-v2.2.0/static/app.css` |
 
-ApexCharts dimuat di dasbor admin (`aset/js/dasbor.js`) dan di halaman Monitoring `arumi.php`. CSS Flowbite hanya dimuat `arumi.php`; panel admin tetap Bootstrap (K103). CSS itu sudah dipangkas Tailwind untuk kelas yang dipakai template, jadi kelas Tailwind yang tidak dipakai template tidak ada di dalamnya.
+## Tampilan Tahap 9 (K140, K141)
+
+Dipasang lewat `package.json` di akar repo (versi mengikuti `package.json` templat Flowbite Pro, dikunci `package-lock.json`) dan disalin `npm run bangun` (`alat/vendor.mjs`, `alat/ikon.mjs`). Versi terpasang tercatat di `VERSI-TAMPILAN.txt`. Hasil salinan di-commit; CI (job "Hasil bangun tampilan") gagal bila berbeda dari hasil bangun.
+
+| Di sini | Paket npm | Lisensi |
+|---|---|---|
+| `flowbite/flowbite.min.js` | `flowbite` (`dist/flowbite.min.js`), JS komponen templat Pro: carousel, laci, modal, dropdown, tab, tooltip, akordeon, pemilih tanggal | MIT (`flowbite/LICENSE-flowbite.md`) |
+| `three/three.module.min.js`, `three/three.core.min.js` | `three` (`build/`), modul ES; berkas pertama mengimpor yang kedua | MIT (`three/LICENSE`) |
+| `inter/inter-latin-wght-normal.woff2`, `inter/inter-latin-ext-wght-normal.woff2` | `@fontsource-variable/inter`, huruf templat Pro | OFL 1.1 (`inter/LICENSE`) |
+| `lucide/lucide.svg` | `lucide-static` (`icons/*.svg`), sprite berisi ikon yang dipakai saja (`npm run ikon`) | ISC (`lucide/LICENSE`) |
+
+CSS tampilan baru bukan di folder ini: `public/aset/css/tw.css` dibangun `npm run css` dari `public/aset/tailwind/masukan.css` dengan Tailwind 4, plugin dan tema Flowbite, dan `flowbite-typography`, seperti `src/app.css` templat Pro.
+
+ApexCharts dimuat di dasbor admin (`aset/js/dasbor.js`) dan di halaman Monitoring `arumi.php`. CSS Flowbite Dashboard lama hanya dimuat `arumi.php`; halaman bertampilan baru memakai `css/tw.css` (K140, K141). CSS itu sudah dipangkas Tailwind untuk kelas yang dipakai template, jadi kelas Tailwind yang tidak dipakai template tidak ada di dalamnya.
 
 DataTables 2 membutuhkan jQuery, jadi jQuery ikut disimpan. Keduanya hanya dimuat di halaman admin yang memakai tabel data (lihat `tata_letak/admin.php`, bagian `tabel`).
 

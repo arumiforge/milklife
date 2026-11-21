@@ -4,12 +4,12 @@ Diperbarui: 21 November 2026
 
 ## Sedang berjalan
 
-**Tahap 9 — Rombak tampilan dan fitur publik hari lomba** (K140, K141). Rencana: [`dokumen/draf/rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md), menunggu persetujuan pemilik. Staging: https://staging.mac2026.web.id (K139). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
+**Tahap 9 — Rombak tampilan dan fitur publik hari lomba** (K140, K141). Rencana: [`dokumen/draf/rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md), disetujui pemilik beserta delapan asumsinya (K142). Dikerjakan paralel: F9-01, F9-04, dan F9-10 bersamaan. Staging: https://staging.mac2026.web.id (K139). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
 
 | Tugas | Status | Prioritas | Gelombang |
 |---|---|---|---|
-| [F9-01 Fondasi Flowbite Pro](tugas/F9-01-fondasi-flowbite-pro.md) | rencana | P1 | 0 |
-| [F9-02 Saluran Codex](tugas/F9-02-saluran-codex.md) | menunggu tinjauan | P1 | 0 |
+| [F9-01 Fondasi Flowbite Pro](tugas/F9-01-fondasi-flowbite-pro.md) | menunggu tinjauan | P1 | 0 |
+| [F9-02 Saluran Codex](tugas/F9-02-saluran-codex.md) | selesai (#121) | P1 | 0 |
 | [F9-03 Tata letak publik dan halaman depan](tugas/F9-03-tata-letak-publik-beranda.md) | rencana | P1 | A |
 | [F9-04 Bantuan dan FAQ](tugas/F9-04-bantuan-faq.md) | rencana | P1 | A |
 | [F9-07 Jadwal pertandingan](tugas/F9-07-jadwal-pertandingan.md) | rencana | P1 | A |
@@ -43,7 +43,7 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 
 ## Berikutnya
 
-Setelah rencana Tahap 9 disetujui: F9-01 di satu sesi, lalu gelombang A (tiga sesi). Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
+Setelah F9-01 masuk `main`: sisa gelombang A (F9-03, F9-07) dan bagian publik F9-04. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
 
 ## Selesai
 
@@ -59,6 +59,5 @@ Setelah rencana Tahap 9 disetujui: F9-01 di satu sesi, lalu gelombang A (tiga se
 
 ## Menunggu pemilik
 
-- Persetujuan rencana Tahap 9 beserta delapan asumsinya.
 - Deploy key untuk server produksi dan staging (repo privat, K138; panduan produksi bagian 3 langkah 2).
 - Memastikan paket lisensi Flowbite Pro mencakup semua pengembang yang punya akses repo (K138).

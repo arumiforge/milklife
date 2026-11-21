@@ -12,6 +12,11 @@
 /vendor/
 
 #-------------------------
+# Node (alat bangun tampilan, K141); hasil bangun di public/aset/ tetap masuk git
+#-------------------------
+/node_modules/
+
+#-------------------------
 # Isi writable/ (hanya .htaccess dan index.html yang disimpan)
 #-------------------------
 /writable/cache/*

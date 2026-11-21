@@ -133,7 +133,7 @@ final class KepalaKeamananTest extends UjiBasisData
     {
         $p = $this->buatPendaftaranPanel();
 
-        foreach (['admin/dasbor', 'admin/pendaftaran', 'admin/pendaftaran/' . $p['id'], 'admin/rekap', 'admin/pengaturan', 'admin/akun'] as $alamat) {
+        foreach (['admin/dasbor', 'admin/pendaftaran', 'admin/pendaftaran/' . $p['id'], 'admin/rekap', 'admin/pengaturan', 'admin/akun', 'admin/gaya'] as $alamat) {
             $hasil = $this->bukaSebagaiAdmin($alamat);
 
             $hasil->assertOK();

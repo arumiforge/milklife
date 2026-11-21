@@ -1,0 +1,115 @@
+<?php
+/**
+ * Tata letak publik bertampilan baru (Tahap 9, K140, K141), dari potongan
+ * navbar dan footer templat Flowbite Pro Landing Pages. Halaman berpindah ke
+ * sini dengan `$this->extend('tata_letak/publik_tw')`; tata letak lama
+ * `tata_letak/publik.php` tetap dipakai halaman yang belum dipindah.
+ * Bootstrap tidak dimuat di sini.
+ *
+ * Bagian yang diisi tampilan:
+ * - `judul`: judul tab peramban (di-escape pemanggil).
+ * - `isi`: isi halaman di dalam `<main id="isi">`. Halaman menulis `<h1>`-nya sendiri.
+ * - `kepala`: tag tambahan di `<head>`.
+ * - `skrip`: `<script src>` tambahan, dimuat setelah JS Flowbite. Modul ES
+ *   (Three.js) memakai `<script type="module" src>`.
+ *
+ * Menu dari `App\Libraries\MenuPublik`; teks dan logo kaki sama dengan tata
+ * letak lama (`IsiHalamanDepan::kaki()`, logo Bakti Olahraga Djarum Foundation K84).
+ *
+ * @var CodeIgniter\View\View $this
+ */
+
+use App\Libraries\IsiHalamanDepan;
+use App\Libraries\MenuPublik;
+
+$menu   = MenuPublik::butir();
+$tombol = MenuPublik::tombol();
+$kaki   = IsiHalamanDepan::kaki();
+
+try {
+    $isiDepan = new IsiHalamanDepan();
+    $acara    = $isiDepan->acara();
+    $tampilan = $isiDepan->tampilan();
+    $kunci    = IsiHalamanDepan::logoKepala($tampilan);
+    $logo     = $kunci === null ? null : ['alamat' => $tampilan[$kunci], 'ukuran' => $tampilan['ukuran'][$kunci] ?? null];
+    $logoKaki = array_values(array_filter(
+        IsiHalamanDepan::logoPembuka($tampilan, $acara['nama']),
+        static fn (array $butir): bool => $butir['kunci'] === 'logo_djarum',
+    ))[0] ?? null;
+} catch (Throwable) {
+    $acara    = ['nama' => 'MilkLife Athletics Challenge', 'seri_tahun' => ''];
+    $logo     = null;
+    $logoKaki = null;
+}
+?>
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#021F7B">
+    <title><?= $this->renderSection('judul') ?></title>
+    <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
+    <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
+    <?= $this->renderSection('kepala') ?>
+</head>
+<body class="flex min-h-screen flex-col bg-primary-50">
+    <a href="#isi" class="sr-only z-50 rounded-lg bg-white px-4 py-3 font-semibold text-primary-800 shadow-angkat focus:not-sr-only focus:fixed focus:start-4 focus:top-4">Lompat ke isi</a>
+
+    <header class="sticky top-0 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur" data-kepala-publik>
+        <nav class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between gap-3 px-4 py-2.5" aria-label="Menu utama">
+            <a href="<?= site_url('/') ?>" class="flex min-h-11 items-center gap-3">
+                <?php if ($logo !== null) : ?>
+                    <img src="<?= esc($logo['alamat']) ?>" class="h-10 w-auto" alt="<?= esc('Logo ' . $acara['nama']) ?>"<?= $logo['ukuran'] === null ? '' : ' width="' . (int) $logo['ukuran']['lebar'] . '" height="' . (int) $logo['ukuran']['tinggi'] . '"' ?>>
+                <?php endif ?>
+                <span class="flex flex-col leading-tight">
+                    <span class="text-base font-extrabold text-primary-900 sm:text-lg"><?= esc($acara['nama']) ?></span>
+                    <?php if (($acara['seri_tahun'] ?? '') !== '') : ?>
+                        <span class="text-xs font-semibold text-oranye-600"><?= esc($acara['seri_tahun']) ?></span>
+                    <?php endif ?>
+                </span>
+            </a>
+            <button type="button" data-collapse-toggle="menu-publik" aria-controls="menu-publik" aria-expanded="false" class="inline-flex size-11 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 lg:hidden">
+                <?= ikon('menu', 'size-6', 'Buka atau tutup menu') ?>
+            </button>
+            <div id="menu-publik" class="hidden w-full lg:flex lg:w-auto lg:items-center lg:gap-6">
+                <ul class="mt-2 flex flex-col gap-1 border-t border-gray-100 pt-2 font-semibold lg:mt-0 lg:flex-row lg:gap-1 lg:border-0 lg:pt-0">
+                    <?php foreach ($menu as $butir) : ?>
+                        <li>
+                            <a href="<?= esc($butir['alamat']) ?>" class="<?= $butir['aktif'] ? 'bg-primary-100 text-primary-800' : 'text-gray-700 hover:bg-gray-100 hover:text-primary-700' ?> flex min-h-11 items-center rounded-lg px-3"<?= $butir['aktif'] ? ' aria-current="page"' : '' ?>><?= esc($butir['label']) ?></a>
+                        </li>
+                    <?php endforeach ?>
+                </ul>
+                <div class="mt-3 flex flex-col gap-2 pb-2 sm:flex-row lg:mt-0 lg:pb-0">
+                    <?php foreach ($tombol as $t) : ?>
+                        <?= komponen('tombol', ['label' => $t['label'], 'href' => $t['alamat'], 'varian' => $t['varian'], 'ikon' => $t['ikon'], 'ikonKanan' => $t['varian'] === 'oranye']) ?>
+                    <?php endforeach ?>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="isi" class="flex-1">
+        <?= view('tata_letak/_pesan_tw', [], ['saveData' => false]) ?>
+        <?= $this->renderSection('isi') ?>
+    </main>
+
+    <footer class="mt-16 border-t border-gray-200 bg-white">
+        <div class="mx-auto flex max-w-screen-xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+            <div class="text-sm text-gray-600">
+                <p><?= nl2br(esc($kaki), false) ?></p>
+                <p class="mt-2"><a href="<?= site_url('admin/masuk') ?>" class="inline-flex min-h-11 items-center gap-1 font-semibold text-primary-700 hover:underline"><?= ikon('lock') ?>Masuk panitia</a></p>
+            </div>
+            <?php if ($logoKaki !== null) : ?>
+                <img src="<?= esc($logoKaki['alamat']) ?>" alt="<?= esc($logoKaki['alt']) ?>" class="h-12 w-auto"<?= $logoKaki['ukuran'] === null ? '' : ' width="' . (int) $logoKaki['ukuran']['lebar'] . '" height="' . (int) $logoKaki['ukuran']['tinggi'] . '"' ?>>
+            <?php endif ?>
+        </div>
+        <div class="pita-merek h-1.5" aria-hidden="true"></div>
+    </footer>
+
+    <script src="<?= base_url('aset/vendor/flowbite/flowbite.min.js') ?>"></script>
+    <?= $this->renderSection('skrip') ?>
+</body>
+</html>
