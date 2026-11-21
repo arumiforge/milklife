@@ -80,5 +80,5 @@ Semuanya aman diulang dan tidak menimpa isian admin. Sakelar fitur publik baru *
 ## Yang dibawa ke tahap berikutnya
 
 - Gambar G9-02 sampai G9-12 menunggu Codex; kode pemasangannya siap, ditinjau dan digabung koordinator.
-- Staging perlu diperbarui ke `main`, mode produksi, dan kepala `X-Robots-Tag` (K139 butir 3) sebelum pemilik mencoba fitur bersakelar.
+- **Tindakan server untuk pengelola staging** (temuan F9-18, sudah diteruskan koordinator ke pemilik): (1) `git pull` ke `main` lalu perintah sekali jalan Tahap 9 di atas; (2) `CI_ENVIRONMENT = production` di `.env` staging, karena saat diperiksa debugbar, Kint, komentar `DEBUG-VIEW`, dan jalur berkas Windows tampil di HTML publik; (3) kepala `X-Robots-Tag: noindex` lewat Cloudflare (K139 butir 3). Setelah itu pemilik mencoba fitur bersakelar di staging.
 - Sakelar fitur publik dinyalakan admin di produksi setelah dicoba di staging.
