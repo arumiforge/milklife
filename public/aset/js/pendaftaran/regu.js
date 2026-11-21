@@ -245,7 +245,7 @@
      * dari regu yang sudah ada (K106).
      */
     function kotakRegu(nomor, terpilih) {
-        var kotak = buat('div', 'pilihan-regu');
+        var kotak = buat('div', 'pilihan-regu mt-2 flex basis-full flex-wrap items-start gap-x-4 gap-y-2 rounded-lg bg-primary-100 px-3 py-2.5');
         kotak.setAttribute('data-regu-untuk', String(nomor.id));
         // Regu sekolah ini di nomor ini selain atlet yang sedang diisi. Selama
         // hanya satu dan masih ada tempat, atlet baru masuk regu itu (K108).
@@ -262,7 +262,7 @@
         var reguId = 'atlet-regu-' + nomor.id;
         var regu;
         if (REGU_BEBAS) {
-            regu = buat('input', 'form-control form-control-sm');
+            regu = buat('input', W.KELAS.isian);
             regu.type = 'text';
             regu.maxLength = 30;
             regu.placeholder = 'Misalnya A atau Merah';
@@ -278,7 +278,7 @@
             regu.setAttribute('list', daftar.id);
             kotak.appendChild(daftar);
         } else {
-            regu = buat('select', 'form-select form-select-sm');
+            regu = buat('select', W.KELAS.isian);
             var jumlahDraf = {};
             W.draf.atlet.forEach(function (a) {
                 var p = a !== W.atletDiubah && a.nomor.indexOf(nomor.id) !== -1 ? pilihanRegu(a, nomor.id) : null;
@@ -300,21 +300,22 @@
 
         // Inti/Cadangan sebagai dua tombol bersebelahan.
         var nilaiPeran = terpilih && terpilih.regu === label ? terpilih.peran : peranBawaan(nomor, label);
-        var peran = buat('div', 'btn-group btn-group-sm pilihan-peran');
+        var peran = buat('div', 'pilihan-peran flex w-full');
         peran.setAttribute('role', 'group');
         peran.setAttribute('aria-label', 'Peran di regu');
         var tombolPeran = {};
         [['inti', 'Inti'], ['cadangan', 'Cadangan']].forEach(function (p) {
-            var masukan = buat('input', 'btn-check');
+            var masukan = buat('input', 'sr-only');
             masukan.type = 'radio';
             masukan.name = 'atlet-peran-' + nomor.id;
             masukan.id = 'atlet-peran-' + nomor.id + '-' + p[0];
             masukan.value = p[0];
             masukan.checked = p[0] === nilaiPeran;
             masukan.setAttribute('data-peran', String(nomor.id));
-            var tombol = buat('label', 'btn btn-outline-primary', p[1]);
+            // Radio di dalam labelnya supaya tampilan terpilih memakai `has-checked:` (F9-05).
+            var tombol = buat('label', W.KELAS.pilihanKecil + ' min-h-10', p[1]);
             tombol.htmlFor = masukan.id;
-            peran.appendChild(masukan);
+            tombol.insertBefore(masukan, tombol.firstChild);
             peran.appendChild(tombol);
             tombolPeran[p[0]] = masukan;
         });
@@ -325,13 +326,13 @@
         };
         regu.addEventListener('change', pilihPeran);
 
-        var l1 = buat('label', 'pilihan-regu-label', AWALAN_REGU);
+        var l1 = buat('label', 'pilihan-regu-label text-xs font-semibold uppercase tracking-wide text-primary-900', AWALAN_REGU);
         l1.htmlFor = reguId;
-        var l2 = buat('span', 'pilihan-regu-label', 'Sebagai');
-        var b1 = buat('div', 'pilihan-regu-isian');
+        var l2 = buat('span', 'pilihan-regu-label text-xs font-semibold uppercase tracking-wide text-primary-900', 'Sebagai');
+        var b1 = buat('div', 'pilihan-regu-isian flex min-w-0 flex-[1_1_10rem] flex-col gap-1');
         b1.appendChild(l1);
         b1.appendChild(regu);
-        var b2 = buat('div', 'pilihan-regu-isian');
+        var b2 = buat('div', 'pilihan-regu-isian flex min-w-0 flex-[1_1_10rem] flex-col gap-1');
         b2.appendChild(l2);
         b2.appendChild(peran);
         kotak.appendChild(b1);
@@ -346,9 +347,9 @@
             b1.hidden = true;
             kotak.classList.add('pilihan-regu-tunggal');
             if (!satu) {
-                var buka = buat('button', 'btn btn-link btn-sm pilihan-regu-lain');
+                var buka = buat('button', 'pilihan-regu-lain basis-full ' + W.KELAS.tautan);
                 buka.type = 'button';
-                buka.appendChild(ikon('plus-circle'));
+                buka.appendChild(ikon('circle-plus'));
                 buka.appendChild(document.createTextNode(' Daftarkan ' + AWALAN_REGU.toLowerCase() + ' lain'));
                 buka.addEventListener('click', function () {
                     W.reguDibuka[nomor.id] = true;
@@ -371,7 +372,7 @@
                 kotak.appendChild(buka);
             }
         }
-        kotak.appendChild(buat('p', 'pilihan-regu-bantuan', 'Inti: ' + nomor.jumlah_inti + ' atlet yang berlomba di tiap regu. Cadangan: pengganti bila ada inti yang berhalangan.'));
+        kotak.appendChild(buat('p', 'pilihan-regu-bantuan basis-full text-xs text-gray-600', 'Inti: ' + nomor.jumlah_inti + ' atlet yang berlomba di tiap regu. Cadangan: pengganti bila ada inti yang berhalangan.'));
         return kotak;
     }
 

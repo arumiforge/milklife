@@ -143,16 +143,19 @@ final class BantuanFaqTest extends UjiBasisData
         for ($langkah = 1; $langkah <= 5; $langkah++) {
             $tombol = $xpath->query('//section[@id="langkah-' . $langkah . '"]//button[@data-buka-bantuan="' . $langkah . '"]')->item(0);
             $this->assertNotNull($tombol, "Tombol bantuan langkah {$langkah}.");
-            $this->assertSame('offcanvas', $tombol->getAttribute('data-bs-toggle'));
-            $this->assertSame('#laci-bantuan', $tombol->getAttribute('data-bs-target'));
+            $this->assertSame('laci-bantuan', $tombol->getAttribute('data-drawer-show'));
+            $this->assertSame('laci-bantuan', $tombol->getAttribute('aria-controls'));
         }
 
-        $laci = $xpath->query('//div[@id="laci-bantuan"][contains(@class, "offcanvas")]')->item(0);
+        // Drawer Flowbite (F9-05): satu pemicu `data-drawer-target` (tombol tutup di dalam laci).
+        $laci = $xpath->query('//div[@id="laci-bantuan"]')->item(0);
         $this->assertNotNull($laci);
+        $this->assertSame(1, $xpath->query('//*[@data-drawer-target="laci-bantuan"]')->length);
+        $this->assertSame(1, $xpath->query('.//*[@data-drawer-target="laci-bantuan"][@data-drawer-hide="laci-bantuan"]', $laci)->length);
 
         $pertanyaan = static fn (int $langkah): array => array_map(
             static fn (DOMElement $e): string => trim($e->textContent),
-            iterator_to_array($xpath->query('.//*[@data-bantuan-langkah="' . $langkah . '"]//button[contains(@class, "accordion-button")]', $laci)),
+            iterator_to_array($xpath->query('.//*[@data-bantuan-langkah="' . $langkah . '"]//button[@data-accordion-target]', $laci)),
         );
         $this->assertSame(['Foto ofisial dari HP boleh?'], $pertanyaan(2));
         $this->assertSame(['Bukti transfer hilang?'], $pertanyaan(5));

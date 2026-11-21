@@ -110,8 +110,8 @@
         }
 
         var ringkasan = $('.ringkasan-galat', bagian);
-        ringkasan.appendChild(buat('p', 'fw-semibold mb-1', galat.length === 1 ? 'Ada 1 isian yang perlu diperbaiki:' : 'Ada ' + galat.length + ' isian yang perlu diperbaiki:'));
-        var daftar = buat('ul', 'mb-0');
+        ringkasan.appendChild(buat('p', 'mb-1 font-semibold', galat.length === 1 ? 'Ada 1 isian yang perlu diperbaiki:' : 'Ada ' + galat.length + ' isian yang perlu diperbaiki:'));
+        var daftar = buat('ul');
         galat.forEach(function (g) {
             daftar.appendChild(buat('li', null, g.pesan));
             tandaiIsian(bagian, g.jalur, g.pesan);
@@ -162,7 +162,7 @@
                 ? $('[data-turun-nomor="' + akarJalur[1] + '"]', bagian)
                 : $('[data-baris-jalur="' + akarJalur.join('.') + '"]', bagian);
             if (baris) {
-                baris.appendChild(buat('p', 'galat-baris', pesan));
+                baris.appendChild(buat('p', W.KELAS.galatBaris, pesan));
             }
             return;
         }

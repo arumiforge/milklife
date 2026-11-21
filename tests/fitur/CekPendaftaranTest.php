@@ -63,7 +63,7 @@ final class CekPendaftaranTest extends UjiBasisData
         $hasil = $this->get('cek-pendaftaran');
         $hasil->assertOK();
         $hasil->assertSee('NPSN atau ID pendaftaran');
-        $hasil->assertDontSee('alert-warning');
+        $this->assertSame(0, $this->xpathDari($hasil)->query('//*[@id="kode-galat"]')->length);
 
         $tombol = $this->xpathDari($this->get('/'))->query('//*[@data-tombol="cek"]')->item(0);
         $this->assertSame(site_url('cek-pendaftaran'), $tombol->getAttribute('href'));

@@ -1,12 +1,14 @@
 <?php
 /**
- * Tombol bantuan di judul tiap langkah wizard (F9-04): membuka laci
- * `pendaftaran/_laci_bantuan.php` berisi tanya-jawab kategori langkah itu.
- * Bootstrap offcanvas sampai wizard pindah ke Tailwind (F9-05).
+ * Tombol bantuan di judul tiap langkah wizard (F9-04, F9-05): membuka laci
+ * `pendaftaran/_laci_bantuan.php` (drawer Flowbite) berisi tanya-jawab
+ * kategori langkah itu. `data-buka-bantuan` dibaca `aset/js/bantuan.js`.
  *
  * @var int $langkah 1–5
  */
+
+use App\Libraries\Pendaftaran\KelasTampilan as K;
 ?>
-<button type="button" class="btn btn-outline-primary tombol-bantuan-langkah" data-bs-toggle="offcanvas" data-bs-target="#laci-bantuan" aria-controls="laci-bantuan" data-buka-bantuan="<?= (int) $langkah ?>">
-    <i class="bi bi-question-circle" aria-hidden="true"></i> Bantuan<span class="visually-hidden"> untuk langkah <?= (int) $langkah ?></span>
+<button type="button" class="tombol-bantuan-langkah <?= K::GARIS ?> shrink-0 whitespace-nowrap" data-drawer-show="laci-bantuan" aria-controls="laci-bantuan" data-buka-bantuan="<?= (int) $langkah ?>">
+    <?= ikon('circle-help', 'size-5') ?> Bantuan<span class="sr-only"> untuk langkah <?= (int) $langkah ?></span>
 </button>

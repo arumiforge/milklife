@@ -64,14 +64,15 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame(1, $xpath->query('//main/section[@id="pembuka"]')->length);
     }
 
-    public function testTataLetakPublikLamaMasihDipakaiHalamanLain(): void
+    /**
+     * Sejak F9-05 tidak ada halaman publik yang memakai tata letak lama; tata
+     * letak itu tetap diuji lewat halaman contoh sampai dilepas (F9-17).
+     */
+    public function testTataLetakPublikLama(): void
     {
         $this->isiDataAcara();
 
-        $hasil = $this->get('cek-pendaftaran');
-        $hasil->assertOK();
-
-        $xpath = $this->xpath($hasil->getBody());
+        $xpath = $this->xpath($this->renderDiAlamat('cek-pendaftaran', 'Tests\Support\Views\contoh_publik'));
 
         $this->assertSame(1, $xpath->query('//body[@data-bs-theme="light"]')->length, 'Tema terang harus dipasang.');
         $this->assertSame(1, $xpath->query('//header[contains(@class, "kepala-publik")]')->length);
@@ -92,7 +93,7 @@ final class TataLetakHalamanTest extends UjiHalaman
 
     public function testMenuPublikLamaDenganButirNonAktif(): void
     {
-        $xpath = $this->xpath($this->get('cek-pendaftaran')->getBody());
+        $xpath = $this->xpath($this->renderDiAlamat('cek-pendaftaran', 'Tests\Support\Views\contoh_publik'));
         $butir = [];
 
         foreach ($xpath->query('//nav[@aria-label="Menu utama"]//*[contains(@class, "nav-link")]') as $tautan) {
