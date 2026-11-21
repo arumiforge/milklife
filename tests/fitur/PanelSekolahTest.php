@@ -165,6 +165,19 @@ final class PanelSekolahTest extends UjiBasisData
         $this->seeInDatabase('pendaftaran', ['npsn' => '99100001', 'nama_sekolah' => 'MIS KARANGAN']);
     }
 
+
+    public function testTetapTersimpanWalauKoneksiPernahMenggagalkanTransaksi(): void
+    {
+        $this->db->table('pendaftaran')->insert(['jenjang' => 'A', 'npsn' => '99100001', 'nama_sekolah' => 'MIS KARANGAN', 'kabupaten' => 'Blora', 'subtotal_individu' => 0, 'subtotal_beregu' => 0, 'total' => 0]);
+        $this->tinggalkanStatusTransaksiGagal();
+
+        $hasil = $this->kirimSebagaiAdmin('admin/sekolah/' . $this->id['99100001'], $this->isianSah());
+
+        $this->assertBerhasilDialihkan($hasil, 'admin/sekolah', 'Perubahan sekolah MIS KARANGAN REKAAN (NPSN 99100001) tersimpan. Nama sekolah di 1 pendaftaran ikut diganti.');
+        $this->seeInDatabase('sekolah', ['npsn' => '99100001', 'nama' => 'MIS KARANGAN REKAAN']);
+        $this->seeInDatabase('pendaftaran', ['npsn' => '99100001', 'nama_sekolah' => 'MIS KARANGAN REKAAN']);
+    }
+
     public function testNamaBaruYangSamaDenganSekolahLainDitolak(): void
     {
         $hasil = $this->kirimSebagaiAdmin('admin/sekolah/' . $this->id['99100001'], $this->isianSah(['nama' => 'smp karangan jaya']));

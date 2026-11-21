@@ -6,6 +6,7 @@ use App\Models\SekolahModel;
 use App\Models\UsulanNamaSekolahModel;
 use CodeIgniter\Database\BaseConnection;
 use RuntimeException;
+use Throwable;
 
 /**
  * Keputusan admin atas usulan nama sekolah dari pendaftar (K99).
@@ -87,29 +88,29 @@ final class UsulanNamaSekolah
 
         $waktu = date('Y-m-d H:i:s');
 
-        $this->db->transStart();
-        $this->db->table('sekolah')->where('id', $sekolah['id'])->update(['nama' => $nama, 'disunting_pada' => $waktu, 'diubah_pada' => $waktu]);
-        $this->db->table('pendaftaran')->where('npsn', $usulan['npsn'])->where('nama_sekolah !=', $nama)
-            ->update(['nama_sekolah' => $nama, 'diubah_pada' => $waktu]);
-        $hasil['pendaftaran'] = $this->db->affectedRows();
-        $this->db->table('usulan_nama_sekolah')->where('id', $id)->update([
-            'status'          => UsulanNamaSekolahModel::DISETUJUI,
-            'nama_disetujui'  => $nama,
-            'diputuskan_pada' => $waktu,
-            'diubah_pada'     => $waktu,
-        ]);
-        $this->db->table('usulan_nama_sekolah')
-            ->where('npsn', $usulan['npsn'])->where('status', UsulanNamaSekolahModel::MENUNGGU)->where('id !=', $id)
-            ->update([
-                'status'          => UsulanNamaSekolahModel::DITOLAK,
-                'alasan'          => mb_substr('Nama lain sudah disetujui: ' . $nama, 0, UsulanNamaSekolahModel::ALASAN_MAKSIMAL),
+        $tersimpan = $this->transaksi(function () use ($id, $nama, $usulan, $sekolah, $waktu, &$hasil): void {
+            $this->pastikan($this->db->table('sekolah')->where('id', $sekolah['id'])->update(['nama' => $nama, 'disunting_pada' => $waktu, 'diubah_pada' => $waktu]));
+            $this->pastikan($this->db->table('pendaftaran')->where('npsn', $usulan['npsn'])->where('nama_sekolah !=', $nama)
+                ->update(['nama_sekolah' => $nama, 'diubah_pada' => $waktu]));
+            $hasil['pendaftaran'] = $this->db->affectedRows();
+            $this->pastikan($this->db->table('usulan_nama_sekolah')->where('id', $id)->update([
+                'status'          => UsulanNamaSekolahModel::DISETUJUI,
+                'nama_disetujui'  => $nama,
                 'diputuskan_pada' => $waktu,
                 'diubah_pada'     => $waktu,
-            ]);
-        $hasil['usulan_lain'] = $this->db->affectedRows();
-        $this->db->transComplete();
+            ]));
+            $this->pastikan($this->db->table('usulan_nama_sekolah')
+                ->where('npsn', $usulan['npsn'])->where('status', UsulanNamaSekolahModel::MENUNGGU)->where('id !=', $id)
+                ->update([
+                    'status'          => UsulanNamaSekolahModel::DITOLAK,
+                    'alasan'          => mb_substr('Nama lain sudah disetujui: ' . $nama, 0, UsulanNamaSekolahModel::ALASAN_MAKSIMAL),
+                    'diputuskan_pada' => $waktu,
+                    'diubah_pada'     => $waktu,
+                ]));
+            $hasil['usulan_lain'] = $this->db->affectedRows();
+        });
 
-        if (! $this->db->transStatus()) {
+        if (! $tersimpan) {
             return ['galat' => 'Keputusan belum tersimpan karena basis data sedang bermasalah. Tunggu sebentar, lalu coba lagi.', 'pendaftaran' => 0, 'usulan_lain' => 0] + $hasil;
         }
 
@@ -135,25 +136,24 @@ final class UsulanNamaSekolah
 
         $waktu = date('Y-m-d H:i:s');
 
-        $this->db->transStart();
+        $tersimpan = $this->transaksi(function () use ($id, $alasan, $usulan, $sekolah, $waktu, &$hasil): void {
+            // Hanya pendaftaran yang masih memakai nama usulan yang dikembalikan.
+            if ($usulan['pendaftaran_id'] !== null) {
+                $this->pastikan($this->db->table('pendaftaran')
+                    ->where('id', (int) $usulan['pendaftaran_id'])->where('nama_sekolah', $usulan['nama_usulan'])
+                    ->update(['nama_sekolah' => $sekolah['nama'], 'diubah_pada' => $waktu]));
+                $hasil['pendaftaran'] = $this->db->affectedRows();
+            }
 
-        // Hanya pendaftaran yang masih memakai nama usulan yang dikembalikan.
-        if ($usulan['pendaftaran_id'] !== null) {
-            $this->db->table('pendaftaran')
-                ->where('id', (int) $usulan['pendaftaran_id'])->where('nama_sekolah', $usulan['nama_usulan'])
-                ->update(['nama_sekolah' => $sekolah['nama'], 'diubah_pada' => $waktu]);
-            $hasil['pendaftaran'] = $this->db->affectedRows();
-        }
+            $this->pastikan($this->db->table('usulan_nama_sekolah')->where('id', $id)->update([
+                'status'          => UsulanNamaSekolahModel::DITOLAK,
+                'alasan'          => $alasan === '' ? null : $alasan,
+                'diputuskan_pada' => $waktu,
+                'diubah_pada'     => $waktu,
+            ]));
+        });
 
-        $this->db->table('usulan_nama_sekolah')->where('id', $id)->update([
-            'status'          => UsulanNamaSekolahModel::DITOLAK,
-            'alasan'          => $alasan === '' ? null : $alasan,
-            'diputuskan_pada' => $waktu,
-            'diubah_pada'     => $waktu,
-        ]);
-        $this->db->transComplete();
-
-        if (! $this->db->transStatus()) {
+        if (! $tersimpan) {
             return ['galat' => 'Keputusan belum tersimpan karena basis data sedang bermasalah. Tunggu sebentar, lalu coba lagi.', 'pendaftaran' => 0] + $hasil;
         }
 
@@ -184,5 +184,41 @@ final class UsulanNamaSekolah
         }
 
         return [$usulan, $sekolah, null];
+    }
+
+    /**
+     * Jalankan `$kerja` dalam satu transaksi; `false` bila basis data gagal
+     * (semua perubahan dibatalkan).
+     *
+     * transBegin/transCommit dalam try/catch, bukan transStart/transStatus:
+     * dalam mode ketat CodeIgniter tidak mengembalikan status gagal dari
+     * transaksi sebelumnya di koneksi yang sama (lihat `FaqModel::pindah()`,
+     * #129). Di dalam transaksi kueri yang gagal mengembalikan `false`, jadi
+     * setiap tulis diperiksa dengan `pastikan()`.
+     *
+     * @param callable(): void $kerja
+     */
+    private function transaksi(callable $kerja): bool
+    {
+        $this->db->transBegin();
+
+        try {
+            $kerja();
+            $this->db->transCommit();
+
+            return true;
+        } catch (Throwable $e) {
+            $this->db->transRollback();
+            log_message('error', '{kelas}: {pesan}', ['kelas' => self::class, 'pesan' => $e->getMessage()]);
+
+            return false;
+        }
+    }
+
+    private function pastikan(bool $hasil): void
+    {
+        if (! $hasil) {
+            throw new RuntimeException('Kueri tulis gagal.');
+        }
     }
 }

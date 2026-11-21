@@ -9,10 +9,11 @@ use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /**
- * Pengaturan jadwal: `/admin/pengaturan/jadwal` (pola halaman daftar data,
+ * Pengaturan agenda (nama tampil "Agenda" sejak F9-07; alamat, tabel, dan
+ * kelas tetap `jadwal`): `/admin/pengaturan/jadwal` (pola halaman daftar data,
  * rencana Tahap 2 "Rute").
  *
- * Jadwal berisi judul, keterangan, waktu (boleh kosong), tempat, tautan
+ * Agenda berisi judul, keterangan, waktu (boleh kosong), tempat, tautan
  * (alamat web `http`/`https`), urutan, dan tampil. Halaman depan (Tahap 3)
  * hanya menampilkan jadwal yang `tampil`.
  */
@@ -58,7 +59,7 @@ class JadwalController extends BaseController
 
         $this->jadwal->insert($data);
 
-        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Jadwal "' . $data['judul'] . '" tersimpan.');
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Agenda "' . $data['judul'] . '" tersimpan.');
     }
 
     public function ubah(int $id): ResponseInterface|string
@@ -97,7 +98,7 @@ class JadwalController extends BaseController
 
         $this->jadwal->update($id, $data);
 
-        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Perubahan jadwal "' . $data['judul'] . '" tersimpan.');
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Perubahan agenda "' . $data['judul'] . '" tersimpan.');
     }
 
     public function hapus(int $id): RedirectResponse
@@ -110,7 +111,7 @@ class JadwalController extends BaseController
 
         $this->jadwal->delete($id);
 
-        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Jadwal "' . $jadwal['judul'] . '" sudah dihapus.');
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Agenda "' . $jadwal['judul'] . '" sudah dihapus.');
     }
 
     /**
@@ -230,7 +231,7 @@ class JadwalController extends BaseController
     {
         return redirect()->to(self::ALAMAT)->with(
             'pesan_galat',
-            'Jadwal itu tidak ditemukan, mungkin sudah dihapus. Pilih jadwal dari daftar di bawah.',
+            'Agenda itu tidak ditemukan, mungkin sudah dihapus. Pilih agenda dari daftar di bawah.',
         );
     }
 }
