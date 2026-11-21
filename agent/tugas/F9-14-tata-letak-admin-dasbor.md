@@ -12,10 +12,10 @@ Panel admin memakai tampilan baru dengan menu berkelompok yang menampung menu-me
 
 ## Hasil
 
-- [ ] `admin_tw.php`: sidebar berkelompok (Pendaftaran, Hari lomba, Hasil, Konten, Pengaturan), kepala, menu bawah ponsel K133
-- [ ] Dasbor dan Pengecekan pindah; grafik ApexCharts dengan skeleton
-- [ ] Gaya DataTables untuk Tailwind (CSS sendiri), dipakai halaman berikutnya
-- [ ] Halaman admin yang belum pindah tetap memakai tata letak lama dengan menu yang sama isinya
+- [x] `admin_tw.php`: sidebar berkelompok (Pendaftaran, Hari lomba, Hasil, Konten, Pengaturan), kepala, menu bawah ponsel K133
+- [x] Dasbor dan Pengecekan pindah; grafik ApexCharts dengan skeleton
+- [x] Gaya DataTables untuk Tailwind (CSS sendiri), dipakai halaman berikutnya
+- [x] Halaman admin yang belum pindah tetap memakai tata letak lama dengan menu yang sama isinya
 
 ## Berkas dan uji
 

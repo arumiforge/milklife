@@ -26,7 +26,7 @@ Batas waktu: **pendaftaran tutup 30 November 23.59**, **pertemuan teknik 6 Desem
 Pemilik memilih semua sebelum lomba. Bila waktu tidak cukup, tugas **P2** yang bergeser, bukan P1. Penggeseran diajukan ke pemilik, tidak diputuskan sesi pelaksana.
 
 - **P1 (dipakai saat pendaftaran atau hari lomba)**: F9-01, F9-02, F9-03, F9-04, F9-07, F9-08, F9-09, F9-10, F9-12, F9-13.
-- **P2 (tampilan dan pelengkap)**: F9-05, F9-06, F9-11, F9-14, F9-15, F9-16, F9-17.
+- **P2 (tampilan dan pelengkap)**: F9-05, F9-06, F9-11, F9-14, F9-15, F9-16, F9-17, F9-19.
 
 ## Tugas dan urutan
 
@@ -49,6 +49,7 @@ Pemilik memilih semua sebelum lomba. Bila waktu tidak cukup, tugas **P2** yang b
 | F9-15 Halaman admin pendaftaran | Pendaftaran, rincian, ubah, tolak atlet, atlet, atlet ditolak, sekolah | F9-14 | C | 5 Des |
 | F9-16 Halaman admin hari lomba dan pengaturan | Hari lomba, hasil, klasemen, rekap, pengaturan, akun, masuk | F9-14, F9-08, F9-09 | C | 6 Des |
 | F9-17 Skeleton, keadaan kosong, dan perapian | Skeleton di bagian yang dimuat JS, ilustrasi kosong/galat, tinjau ulang semua tombol, aksesibilitas | Semua halaman sudah dipindah | C | 7 Des |
+| F9-19 Pemasangan visual tambahan | Gambar G9-08 sampai G9-12 (K150): panel admin, pita judul, `og:image`, ikon aplikasi, hiasan; aman bila gambar belum ada | F9-14, F9-16 | C | 5 Des |
 | F9-18 Penutupan Tahap 9 | Uji peramban menyeluruh di staging, rancangan final revisi, PETA-KODE, arsip | Semua | Akhir | 8 Des |
 
 Tugas Codex (gambar) berjalan **sejajar** sejak rencana ini masuk `main`; urutannya di `desain/README.md`. Tugas Claude yang memakai gambar tetap bisa selesai sebelum gambarnya ada: gambar tersebut ditampilkan **hanya bila berkasnya ada** (`is_file()`), jadi tidak pernah muncul kotak kosong (K41).

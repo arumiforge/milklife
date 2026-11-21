@@ -105,3 +105,22 @@ if (! function_exists('atribut_html')) {
         return $teks;
     }
 }
+
+if (! function_exists('lebar_tw')) {
+    /**
+     * Kelas lebar Tailwind untuk bilah kemajuan, dibulatkan ke kelipatan 5 %
+     * (padanan `lebar_bilah()` tata letak lama). Kelasnya ditulis utuh supaya
+     * ikut dibangun Tailwind; CSP melarang `style="width: …"` (K127).
+     *
+     *     <div class="h-2 rounded-full bg-green-600 <?= lebar_tw(45) ?>"></div>
+     */
+    function lebar_tw(int|float $persen): string
+    {
+        $kelas = [
+            'w-0', 'w-[5%]', 'w-[10%]', 'w-[15%]', 'w-[20%]', 'w-[25%]', 'w-[30%]', 'w-[35%]', 'w-[40%]', 'w-[45%]', 'w-[50%]',
+            'w-[55%]', 'w-[60%]', 'w-[65%]', 'w-[70%]', 'w-[75%]', 'w-[80%]', 'w-[85%]', 'w-[90%]', 'w-[95%]', 'w-full',
+        ];
+
+        return $kelas[(int) round(max(0, min(100, $persen)) / 5)];
+    }
+}

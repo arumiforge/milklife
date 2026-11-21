@@ -58,11 +58,14 @@ final class HariLombaDaftarUlangTest extends UjiBasisData
         $hasil->assertSee('js/daftar-ulang.js');
         $hasil->assertDontSeeElement('#hasil-daftar-ulang');
 
-        // Menu "Hari lomba" aktif di ketiga halaman hari lomba. Butir ini ada
-        // di menu samping (sidebar di ponsel), tidak di menu bawah (K133).
+        // Kelompok "Hari lomba" di menu samping (F9-14): setiap halaman hari
+        // lomba menandai butirnya sendiri. Butir ini hanya di menu samping
+        // (sidebar di ponsel), tidak di menu bawah (K133).
         foreach ([self::ALAMAT, 'admin/nomor-atlet/cetak', 'admin/daftar-peserta'] as $alamat) {
-            $aktif = $this->xpathDari($this->bukaSebagaiAdmin($alamat))->query('//aside[contains(@class,"menu-samping")]//a[@aria-current="page"]');
-            $this->assertSame(site_url(self::ALAMAT), $aktif->item(0)?->getAttribute('href'), $alamat);
+            $aktif = $this->xpathDari($this->bukaSebagaiAdmin($alamat))->query('//a[@data-menu-tautan][@aria-current="page"]');
+            $this->assertSame(1, $aktif->length, $alamat);
+            $this->assertSame(site_url($alamat), $aktif->item(0)?->getAttribute('href'), $alamat);
+            $this->assertSame(1, $this->xpathDari($this->bukaSebagaiAdmin($alamat))->query('//*[@data-menu-kelompok="Hari lomba"]//a[@aria-current="page"]')->length, $alamat);
         }
     }
 
