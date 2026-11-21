@@ -50,6 +50,11 @@ $routes->get('jadwal', 'JadwalController::index');
 $routes->get('jadwal/(\d{4}-\d{2}-\d{2})/pdf', 'JadwalController::pdf/$1');
 // ---------- Akhir jadwal pertandingan publik ----------
 
+// ---------- Galeri publik (F9-06) ----------
+// 404 selama sakelar `Galeri.tampil` mati.
+$routes->get('galeri', 'GaleriController::index');
+// ---------- Akhir galeri publik ----------
+
 // ---------- Papan videotron (F9-13) ----------
 // Hanya data terbit; 404 selama sakelar `Videotron.tampil` mati.
 $routes->get('layar', 'LayarController::index');
@@ -268,6 +273,18 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         // ---------- Sakelar halaman Jadwal pertandingan (F9-07) ----------
         $routes->post('halaman-depan/jadwal', 'HalamanJadwalController::simpan');
         // ---------- Akhir sakelar halaman Jadwal pertandingan ----------
+
+        // ---------- Galeri (F9-06) ----------
+        $routes->get('galeri', 'GaleriController::index');
+        $routes->get('galeri/tambah', 'GaleriController::tambah');
+        $routes->post('galeri', 'GaleriController::buat');
+        $routes->post('galeri/tampil', 'GaleriController::tampil');
+        $routes->get('galeri/(:num)/ubah', 'GaleriController::ubah/$1');
+        $routes->post('galeri/(:num)', 'GaleriController::perbarui/$1');
+        $routes->post('galeri/(:num)/hapus', 'GaleriController::hapus/$1');
+        $routes->post('galeri/(:num)/aktif', 'GaleriController::aktif/$1');
+        $routes->post('galeri/(:num)/(naik|turun)', 'GaleriController::pindah/$1/$2');
+        // ---------- Akhir galeri ----------
 
         // ---------- Tabel skor multi-lomba (F9-10) ----------
         // Daftar tabel, pasang tabel bawaan, tambah/hapus tabel; baris per komponen dan kategori.
