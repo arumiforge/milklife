@@ -96,13 +96,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
                                             class="<?= $nama === 'gambar_kepala' ? 'size-full object-cover' : 'size-full object-contain p-2' ?>">
                                     </div>
                                 <?php else : ?>
-                                    <div class="tanpa-gambar <?= $kelasRasio($butir['rasio']) ?> flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-2 text-center text-gray-500" role="img" aria-label="<?= esc('Belum ada gambar: ' . $butir['label'], 'attr') ?>">
-                                        <span class="contents" aria-hidden="true">
-                                            <?= ikon('image', 'size-6') ?>
-                                            <span class="text-sm font-semibold">Belum ada gambar</span>
-                                            <span class="text-xs"><?= esc($butir['label']) ?></span>
-                                        </span>
-                                    </div>
+                                    <?= view('tata_letak/_tanpa_gambar_tw', ['rasio' => $butir['rasio'], 'label' => $butir['label']], ['saveData' => false]) ?>
                                 <?php endif ?>
                             </div>
 

@@ -7,6 +7,7 @@
  * Bagian yang diisi tampilan:
  * - `judul`: judul halaman; tab peramban menampilkan `<judul> – <nama acara>`.
  * - `isi`: isi kartu (judul `<h1>`, pesan, formulir), tanpa kartu sendiri.
+ * - `kepala` (pilihan): tambahan di `<head>`, misalnya `<meta name="robots">`.
  * - `skrip`: `<script src>` tambahan.
  *
  * Penanda uji: `data-polos-merek` (nama acara), `data-polos-kartu` (kartu).
@@ -31,6 +32,7 @@ $judulTab  = $judul === '' ? $namaAcara : $judul . ' – ' . $namaAcara;
     <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
     <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
+<?= $this->renderSection('kepala') ?>
 </head>
 <body class="min-h-screen bg-primary-50">
     <main id="isi" class="flex min-h-screen items-center justify-center px-4 py-10">

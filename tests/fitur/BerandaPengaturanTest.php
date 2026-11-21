@@ -170,7 +170,7 @@ final class BerandaPengaturanTest extends UjiHalaman
             $xpath = $this->xpathHtml($this->renderDiAlamat($alamat, 'Tests\Support\Views\contoh_admin'));
             $aktif = [];
 
-            foreach ($xpath->query('//a[contains(@class, "menu-admin-tautan")][@aria-current="page"]') as $tautan) {
+            foreach ($xpath->query('//a[@data-menu-tautan][@aria-current="page"]') as $tautan) {
                 $aktif[] = $this->teks($tautan);
             }
 
@@ -209,24 +209,24 @@ final class BerandaPengaturanTest extends UjiHalaman
         $this->assertSame('Data <acara> tersimpan.', $this->teks($sukses));
         $this->assertSame('status', $sukses->getAttribute('role'));
         $this->assertSame('alert', $galat->getAttribute('role'));
-        $this->assertStringContainsString('alert-danger', $galat->getAttribute('class'));
-        $this->assertSame(1, $xpath->query('.//button[@data-bs-dismiss="alert"][@aria-label="Tutup pesan"]', $sukses)->length);
+        $this->assertStringContainsString('bg-red-50', $galat->getAttribute('class'));
+        $this->assertSame(1, $xpath->query('.//button[@data-dismiss-target][.//*[@aria-label="Tutup pesan"]]', $sukses)->length);
 
         // Pesan berada di atas isi halaman.
-        $this->assertSame(1, $xpath->query('//main[@id="isi"]/*[1][contains(@class, "pesan-kilat")]')->length);
+        $this->assertSame(1, $xpath->query('//main[@id="isi"]/*[1][.//*[@data-pesan]]')->length);
     }
 
     public function testTanpaPesanKilatTidakAdaKotakPesan(): void
     {
         $_SESSION = self::SESI_ADMIN;
 
-        $this->assertStringNotContainsString('pesan-kilat', view('Tests\Support\Views\contoh_admin'));
-        $this->assertStringNotContainsString('pesan-kilat', $this->bukaSebagaiAdmin('admin/pengaturan')->getBody());
+        $this->assertStringNotContainsString('data-pesan=', view('Tests\Support\Views\contoh_admin'));
+        $this->assertStringNotContainsString('data-pesan=', $this->bukaSebagaiAdmin('admin/pengaturan')->getBody());
     }
 
     public function testRingkasanGalatIsian(): void
     {
-        $html  = view('admin/_galat_isian', ['galat' => ['nama' => 'Nama belum diisi <b>.', 'jenjang.*' => 'Pilih jenjang.', 'kosong' => '']], ['saveData' => false]);
+        $html  = view('admin/_galat_isian_tw', ['galat' => ['nama' => 'Nama belum diisi <b>.', 'jenjang.*' => 'Pilih jenjang.', 'kosong' => '']], ['saveData' => false]);
         $xpath = $this->xpathHtml($html);
 
         $this->assertSame(1, $xpath->query('//*[@id="galat-isian"][@role="alert"]')->length);
@@ -236,10 +236,10 @@ final class BerandaPengaturanTest extends UjiHalaman
         $this->assertSame(0, $xpath->query('//a[contains(@href, "jenjang")]')->length, 'Kunci yang bukan id kotak tidak menjadi tautan.');
         $this->assertSame(2, $xpath->query('//li')->length);
 
-        $this->assertStringContainsString('Ada 1 isian yang perlu diperbaiki:', view('admin/_galat_isian', ['galat' => ['nama' => 'X']], ['saveData' => false]));
-        $this->assertStringContainsString('Periksa lagi:', view('admin/_galat_isian', ['galat' => ['nama' => 'X'], 'judul' => 'Periksa lagi:'], ['saveData' => false]));
-        $this->assertStringNotContainsString('galat-isian', view('admin/_galat_isian', ['galat' => []], ['saveData' => false]));
-        $this->assertStringNotContainsString('galat-isian', view('admin/_galat_isian', [], ['saveData' => false]));
+        $this->assertStringContainsString('Ada 1 isian yang perlu diperbaiki:', view('admin/_galat_isian_tw', ['galat' => ['nama' => 'X']], ['saveData' => false]));
+        $this->assertStringContainsString('Periksa lagi:', view('admin/_galat_isian_tw', ['galat' => ['nama' => 'X'], 'judul' => 'Periksa lagi:'], ['saveData' => false]));
+        $this->assertStringNotContainsString('galat-isian', view('admin/_galat_isian_tw', ['galat' => []], ['saveData' => false]));
+        $this->assertStringNotContainsString('galat-isian', view('admin/_galat_isian_tw', [], ['saveData' => false]));
     }
 
     public function testNavigasiPengaturan(): void

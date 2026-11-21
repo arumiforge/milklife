@@ -9,6 +9,8 @@
  * - kartu (ponsel) dan baris tabel (layar lebar) dibuat dari `<template>` dan
  *   diisi dengan `textContent` (tanpa HTML dari data);
  * - memilih kelompok umur menyembunyikan nomor lomba kelompok umur lain;
+ * - nomor lomba yang dipilih menampilkan ilustrasinya (`data-gambar` pada
+ *   `<option>`, G9-05, F9-17) di `[data-ilustrasi-nomor]`;
  * - alamat peramban ikut diperbarui supaya hasil bisa dibagikan.
  *
  * Tanpa skrip sebaris (CSP, K127). Dimuat sebagai `<script src>`.
@@ -48,6 +50,8 @@
     var templatKartu = document.querySelector('[data-templat-kartu]');
     var templatBaris = document.querySelector('[data-templat-baris]');
     var templatNomor = document.querySelector('[data-templat-nomor]');
+
+    var ilustrasi = document.querySelector('[data-ilustrasi-nomor]');
 
     var KELAS_NONAKTIF = ['pointer-events-none', 'cursor-not-allowed', 'opacity-60'];
     var pengendali = null;
@@ -97,6 +101,25 @@
         if (terpilih && terpilih.parentNode && terpilih.parentNode.disabled) {
             pilihNomor.value = '';
         }
+
+        tampilkanIlustrasi();
+    }
+
+    /** Ilustrasi G9-05 nomor lomba yang dipilih, bila berkasnya ada. */
+    function tampilkanIlustrasi() {
+        if (!ilustrasi) {
+            return;
+        }
+
+        var terpilih = pilihNomor.value === '' ? null : pilihNomor.options[pilihNomor.selectedIndex];
+        var gambar = terpilih ? terpilih.getAttribute('data-gambar') : null;
+
+        if (gambar) {
+            ilustrasi.querySelector('[data-gambar-nomor]').setAttribute('src', gambar);
+            ilustrasi.querySelector('[data-nama-nomor]').textContent = terpilih.textContent;
+        }
+
+        tampil(ilustrasi, !!gambar);
     }
 
     function isi(akar, p) {
@@ -253,6 +276,8 @@
         rapikanNomor();
         muat(1, false);
     });
+
+    pilihNomor.addEventListener('change', tampilkanIlustrasi);
 
     [pilihNomor, pilihJk].forEach(function (el) {
         el.addEventListener('change', function () { muat(1, false); });

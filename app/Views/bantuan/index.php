@@ -56,7 +56,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
                     <label for="cari-bantuan" class="mb-2 block font-semibold text-gray-900">Cari pertanyaan</label>
                     <div class="relative">
                         <span class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-4 text-gray-500"><?= ikon('search', 'size-5') ?></span>
-                        <input type="search" id="cari-bantuan" class="block min-h-12 w-full rounded-xl border border-gray-300 bg-white ps-12 pe-4 text-base text-gray-900 shadow-lembut focus:border-primary-500 focus:ring-primary-500" placeholder="Contoh: bukti transfer, foto ofisial, KU 10" autocomplete="off" aria-describedby="hasil-cari-bantuan">
+                        <input type="search" id="cari-bantuan" class="block min-h-12 w-full rounded-xl border border-gray-300 bg-white ps-12 pe-4 text-base text-gray-900 shadow-lembut focus:border-primary-600 focus:ring-4 focus:ring-primary-100" placeholder="Contoh: bukti transfer, foto ofisial, KU 10" autocomplete="off" aria-describedby="hasil-cari-bantuan">
                     </div>
                     <p id="hasil-cari-bantuan" class="mt-2 min-h-6 text-sm text-gray-600" aria-live="polite"></p>
                 </form>
@@ -144,7 +144,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
         <?php endforeach ?>
 
         <div class="hidden" data-cari-kosong>
-            <?= komponen('kosong', ['ikon' => 'search', 'judul' => 'Belum ada jawaban yang cocok', 'teks' => 'Coba kata lain yang lebih pendek, misalnya "foto", "transfer", atau "NISN". Atau tanyakan langsung ke panitia lewat WA di bawah.']) ?>
+            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/tidak-ketemu.webp', 'ikon' => 'search', 'judul' => 'Belum ada jawaban yang cocok', 'teks' => 'Coba kata lain yang lebih pendek, misalnya "foto", "transfer", atau "NISN". Atau tanyakan langsung ke panitia lewat WA di bawah.']) ?>
         </div>
     </div>
 

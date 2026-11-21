@@ -100,13 +100,13 @@ final class BerandaPengaturanPolaHalamanTest extends UjiBasisData
         $this->assertSame('Stadion Karangan', setting('Acara.tempat'));
         $this->seeInDatabase('settings', ['class' => 'Config\Acara', 'key' => 'nama', 'value' => 'Lomba Karangan']);
 
-        // Halaman berikutnya menampilkan pesan lewat tata letak (admin/_pesan.php).
+        // Halaman berikutnya menampilkan pesan lewat tata letak (tata_letak/_pesan_tw.php).
         $berikut = $this->withSession($_SESSION)->get(self::ALAMAT);
         $xpath   = $this->xpathDari($berikut);
         $pesan   = $xpath->query('//main//*[@data-pesan="pesan_sukses"][@role="status"]')->item(0);
         $this->assertNotNull($pesan);
         $this->assertStringContainsString('Data acara tersimpan.', $pesan->textContent);
-        $this->assertStringContainsString('alert-success', $pesan->getAttribute('class'));
+        $this->assertStringContainsString('bg-green-50', $pesan->getAttribute('class'));
     }
 
     public function testGagalKarenaKeadaanDataDialihkanDenganPesanGalat(): void

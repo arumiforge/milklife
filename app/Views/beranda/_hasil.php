@@ -24,8 +24,8 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                 <h2 id="judul-hasil" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Hasil dan juara umum terbaru</h2>
             </div>
             <div class="flex flex-wrap gap-2">
-                <?= komponen('tombol', ['label' => 'Semua hasil', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']) ?>
-                <?= komponen('tombol', ['label' => 'Klasemen sekolah', 'href' => site_url('hasil/klasemen'), 'varian' => 'kedua', 'ikon' => 'award']) ?>
+                <?= komponen('tombol', ['label' => 'Lihat semua hasil', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']) ?>
+                <?= komponen('tombol', ['label' => 'Lihat klasemen sekolah', 'href' => site_url('hasil/klasemen'), 'varian' => 'kedua', 'ikon' => 'award']) ?>
             </div>
         </div>
 

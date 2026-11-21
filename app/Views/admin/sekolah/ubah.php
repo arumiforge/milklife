@@ -136,7 +136,7 @@ $teks = static function (string $kotak, string $label, int $panjang, string $ban
 
                 <div class="flex flex-wrap gap-2 pt-1">
                     <?= komponen('tombol', ['label' => 'Simpan perubahan', 'tipe' => 'submit', 'ikon' => 'check']) ?>
-                    <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/sekolah'), 'varian' => 'kedua']) ?>
+                    <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/sekolah'), 'varian' => 'kedua', 'ikon' => 'x']) ?>
                 </div>
             </form>
         </section>

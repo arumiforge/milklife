@@ -326,7 +326,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
 
                 <div class="flex flex-wrap gap-2">
                     <?= komponen('tombol', ['label' => 'Simpan', 'tipe' => 'submit', 'ikon' => 'check']) ?>
-                    <?= komponen('tombol', ['label' => 'Batal', 'href' => $kembali, 'varian' => 'kedua']) ?>
+                    <?= komponen('tombol', ['label' => 'Batal', 'href' => $kembali, 'varian' => 'kedua', 'ikon' => 'x']) ?>
                 </div>
             </form>
         </section>

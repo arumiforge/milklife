@@ -4,7 +4,7 @@
  * Membuat DataTables 2 dari atribut data-* pada <table data-tabel-admin>.
  * Data diambil dari alamat JSON (App\Libraries\Panel\TabelSisiServer):
  * halaman, pencarian, saringan, dan urutan dikerjakan server.
- * Dimuat oleh tata_letak/admin.php bila halaman mengisi bagian `tabel`.
+ * Dimuat oleh tata_letak/admin_tw.php bila halaman mengisi bagian `tabel`.
  *
  * Atribut pada <table>:
  *   data-tabel-admin             penanda (wajib)
@@ -18,6 +18,9 @@
  *   data-kosong-saring="…"       pesan bila tidak ada yang cocok dengan saringan
  *   data-urut="2" data-arah="desc"   urutan awal (nomor kolom, mulai 0; bawaan: tanpa urutan, server memakai urutan bawaannya)
  *   data-panjang="25"            baris per halaman (bawaan 25)
+ *   data-kosong-gambar="…"       alamat ilustrasi keadaan kosong G9-04 (pilihan,
+ *                                tampilan baru); server mengisinya hanya bila
+ *                                berkasnya ada (K41)
  *
  * Atribut pada setiap <th> di <thead>:
  *   data-kolom="nama_sekolah"    kunci data di JSON (wajib, kecuali bentuk nomor)
@@ -48,15 +51,20 @@
  * yang menyebut cara memperbaikinya.
  *
  * Selama data dimuat, bilah kemajuan di atas halaman menyala (kemajuan.js) dan
- * tabel diredupkan (.tabel-admin-memuat di admin.css, wilayah Tahap 6).
+ * tabel diredupkan (`opacity-60`).
  *
- * Tampilan baru (F9-14): di tata letak `admin_tw` (`<body data-tata="tw">`)
- * DataTables dimuat tanpa gaya Bootstrap. Skrip ini lalu memasang kelas
- * Tailwind sendiri (GAYA_TW di bawah) pada kotak cari, pilihan jumlah baris,
- * tabel, dan tombol halaman, juga lencana status dan pesan galat. Kelasnya
- * ditulis utuh di berkas ini supaya ikut dibangun ke `tw.css`. Panah urutan
- * kolom ditulis sebagai teks (↑ ↓ ↕) karena DataTables biasanya
- * menggambarnya dengan CSS bawaannya. Halaman tata letak lama tidak berubah.
+ * Gaya (F9-14): DataTables dimuat tanpa gaya bawaannya; skrip ini memasang
+ * kelas Tailwind sendiri (GAYA_TW di bawah) pada kotak cari, pilihan jumlah
+ * baris, tabel, dan tombol halaman, juga lencana status dan pesan galat.
+ * Kelasnya ditulis utuh di berkas ini supaya ikut dibangun ke `tw.css`. Panah
+ * urutan kolom ditulis sebagai teks (↑ ↓ ↕) karena DataTables biasanya
+ * menggambarnya dengan CSS bawaannya.
+ *
+ * Skeleton (F9-17): sampai data pertama tiba, badan tabel
+ * berisi baris kerangka abu berdenyut (`.kerangka`) dengan teks pembaca layar
+ * "Memuat data…"; pemuatan berikutnya (cari, saring, pindah halaman) cukup
+ * meredupkan tabel. Bila belum ada data sama sekali, pesan kosong diberi
+ * ilustrasi dari `data-kosong-gambar` bila ada.
  */
 (function () {
     'use strict';
@@ -65,7 +73,6 @@
         return;
     }
 
-    var TATA_TW = !!document.body && document.body.getAttribute('data-tata') === 'tw';
 
     // Kelas Tailwind untuk tampilan baru; padanan dataTables.bootstrap5.js.
     var GAYA_TW = {
@@ -107,18 +114,38 @@
         merah: 'inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap text-red-800'
     };
 
-    if (TATA_TW) {
-        Object.keys(GAYA_TW).forEach(function (kunci) {
-            var nilai = GAYA_TW[kunci];
-            DataTable.ext.classes[kunci] = typeof nilai === 'string'
-                ? nilai
-                : Object.assign({}, DataTable.ext.classes[kunci] || {}, nilai);
-        });
+    Object.keys(GAYA_TW).forEach(function (kunci) {
+        var nilai = GAYA_TW[kunci];
+        DataTable.ext.classes[kunci] = typeof nilai === 'string'
+            ? nilai
+            : Object.assign({}, DataTable.ext.classes[kunci] || {}, nilai);
+    });
+
+    // Lebar kotak kerangka per kolom, bergantian supaya tidak tampak seperti garis.
+    var LEBAR_KERANGKA = ['w-3/4', 'w-1/2', 'w-2/3', 'w-5/6', 'w-2/5'];
+
+    /** Baris kerangka (skeleton) selama data pertama dimuat; diganti DataTables saat data tiba. */
+    function isiKerangka(tabel, jumlahKolom, jumlahBaris) {
+        var tubuh = tabel.querySelector('tbody');
+        if (!tubuh) {
+            tubuh = document.createElement('tbody');
+            tabel.appendChild(tubuh);
+        }
+        var html = '';
+        for (var b = 0; b < jumlahBaris; b++) {
+            html += '<tr class="border-b border-gray-100 last:border-b-0" data-baris-kerangka>';
+            for (var k = 0; k < jumlahKolom; k++) {
+                html += '<td class="px-4 py-3.5">' + (b === 0 && k === 0 ? '<span class="sr-only">Memuat data…</span>' : '')
+                    + '<div class="kerangka h-4 ' + LEBAR_KERANGKA[(b + k) % LEBAR_KERANGKA.length] + '" aria-hidden="true"></div></td>';
+            }
+            html += '</tr>';
+        }
+        tubuh.innerHTML = html;
+        tabel.setAttribute('aria-busy', 'true');
     }
 
     function lencana(teks, warna) {
-        var bootstrap = { hijau: 'text-bg-success', kuning: 'text-bg-warning', merah: 'text-bg-danger' };
-        return '<span class="' + (TATA_TW ? LENCANA_TW[warna] : 'badge ' + bootstrap[warna]) + '">' + teks + '</span>';
+        return '<span class="' + LENCANA_TW[warna] + '">' + teks + '</span>';
     }
 
     /** Panah urutan pada judul kolom (tampilan baru), dari aria-sort DataTables. */
@@ -185,7 +212,7 @@
             if (!nilai || typeof nilai !== 'object' || !nilai.alamat) {
                 return escape(nilai && nilai.teks);
             }
-            return '<a' + (TATA_TW ? ' class="font-semibold text-primary-700 hover:underline"' : '') + ' href="' + escape(nilai.alamat) + '">' + escape(nilai.teks || nilai.alamat) + '</a>';
+            return '<a' + ' class="font-semibold text-primary-700 hover:underline"' + ' href="' + escape(nilai.alamat) + '">' + escape(nilai.teks || nilai.alamat) + '</a>';
         },
         html: function (nilai) {
             return kosong(nilai) ? '' : String(nilai);
@@ -299,7 +326,7 @@
             kolom.push({
                 data: nomorUrut ? null : th.getAttribute('data-kolom'),
                 orderable: !nomorUrut && th.getAttribute('data-urut') !== 'tidak',
-                className: nomorUrut ? 'text-end ' + (TATA_TW ? 'text-gray-500' : 'text-body-secondary') : kelas,
+                className: nomorUrut ? 'text-end text-gray-500' : kelas,
                 render: function (nilai, jenis, baris, meta) {
                     if (nomorUrut) {
                         return jenis === 'display' ? String(meta.settings._iDisplayStart + meta.row + 1) : null;
@@ -318,11 +345,16 @@
             urutAwal.push([parseInt(tabel.getAttribute('data-urut'), 10) || 0, tabel.getAttribute('data-arah') === 'desc' ? 'desc' : 'asc']);
         }
 
-        var bahasa = Object.assign({}, BAHASA, { emptyTable: pesanKosong, zeroRecords: pesanKosongSaring });
+        var gambarKosong = tabel.getAttribute('data-kosong-gambar');
+        var htmlKosong = gambarKosong
+            ? '<span class="flex flex-col items-center gap-3 py-4"><img src="' + escape(gambarKosong) + '" alt="" class="h-32 w-auto" loading="lazy">'
+                + '<span class="max-w-md text-base font-semibold text-gray-700">' + escape(pesanKosong) + '</span></span>'
+            : pesanKosong;
+        var bahasa = Object.assign({}, BAHASA, { emptyTable: htmlKosong, zeroRecords: pesanKosongSaring });
         var dt;
         var bilahMenyala = false;
 
-        var kelasMemuat = TATA_TW ? 'opacity-60' : 'tabel-admin-memuat';
+        var kelasMemuat = 'opacity-60';
 
         function mulaiMemuat() {
             tabel.classList.add(kelasMemuat);
@@ -385,27 +417,25 @@
 
         // DataTables sendiri memilih pesan kosong: emptyTable bila belum ada data
         // sama sekali (recordsTotal 0), zeroRecords bila saringan terlalu ketat.
-        dt.on('xhr.dt', selesaiMemuat);
+        dt.on('xhr.dt', function () {
+            selesaiMemuat();
+            tabel.removeAttribute('aria-busy');
+        });
 
         // DataTables 2 menamai peristiwa galatnya `dt-error`.
         dt.on('dt-error', function () {
             selesaiMemuat();
+            tabel.removeAttribute('aria-busy');
             var tubuh = tabel.querySelector('tbody');
             if (tubuh) {
-                tubuh.innerHTML = TATA_TW
-                    ? '<tr><td colspan="' + kolom.length + '" class="px-4 py-6 font-semibold text-red-700" data-tabel-galat>'
-                        + escape(PESAN_GALAT) + '</td></tr>'
-                    : '<tr><td colspan="' + kolom.length + '" class="text-danger py-4">'
-                        + '<i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>'
-                        + escape(PESAN_GALAT) + '</td></tr>';
+                tubuh.innerHTML = '<tr><td colspan="' + kolom.length + '" class="px-4 py-6 font-semibold text-red-700" data-tabel-galat>'
+                    + escape(PESAN_GALAT) + '</td></tr>';
             }
         });
 
         dt.on('draw.dt', function () {
             perbaruiExcel(tautanExcel, formulir, dt, kolom);
-            if (TATA_TW) {
-                tandaiUrutan(tabel);
-            }
+            tandaiUrutan(tabel);
         });
 
         if (formulir) {
@@ -424,6 +454,10 @@
         }
 
         perbaruiExcel(tautanExcel, formulir, dt, kolom);
+
+        // Data pertama masih di jalan (ajax selalu tak serempak): ganti baris
+        // "Memuat data…" DataTables dengan kerangka setinggi beberapa baris.
+        isiKerangka(tabel, kolom.length, Math.min(panjang, 8));
 
         if (tabel.id) {
             daftarTabel['#' + tabel.id] = dt;

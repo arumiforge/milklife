@@ -7,9 +7,12 @@
  * `galat.css` di folder ini (tanpa permintaan berkas), dan alamat beranda
  * memakai `site_url()` bila bisa, dengan cadangan jalur akar `/`.
  *
+ * Ilustrasi G9-04 (`gambar`, nama berkas di `public/aset/gambar/keadaan/`)
+ * hanya tampil bila berkasnya ada (K41, F9-17).
+ *
  * Dipanggil dengan `require __DIR__ . '/_galat.php'` setelah `$galat` diisi:
  *
- * @var array{kode?: string, judul: string, pesan: list<string>, teknis?: string} $galat
+ * @var array{kode?: string, judul: string, pesan: list<string>, teknis?: string, gambar?: string} $galat
  */
 
 $galatTeks = static fn (string $teks): string => htmlspecialchars($teks, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -22,6 +25,22 @@ try {
     }
 } catch (Throwable) {
     $galatBeranda = '/';
+}
+
+// Ilustrasi G9-04: alamat dari `base_url()` bila bisa, cadangannya jalur akar.
+$galatGambar = null;
+$galatNama   = $galat['gambar'] ?? '';
+
+if (preg_match('/^[a-z0-9-]+\.webp$/D', $galatNama) === 1 && defined('FCPATH') && is_file(FCPATH . 'aset/gambar/keadaan/' . $galatNama)) {
+    $galatGambar = '/aset/gambar/keadaan/' . $galatNama;
+
+    try {
+        if (function_exists('base_url')) {
+            $galatGambar = base_url('aset/gambar/keadaan/' . $galatNama);
+        }
+    } catch (Throwable) {
+        $galatGambar = '/aset/gambar/keadaan/' . $galatNama;
+    }
 }
 
 // Komentar CSS dibuang supaya nama berkas di dalamnya tidak ikut terkirim.
@@ -46,6 +65,9 @@ $galatGaya = trim((string) preg_replace('#/\*.*?\*/#s', '', $galatGaya));
             <a href="<?= $galatTeks($galatBeranda) ?>">MilkLife <span>Athletics Challenge</span></a>
         </p>
         <div class="galat-kartu">
+            <?php if ($galatGambar !== null) : ?>
+                <img class="galat-gambar" src="<?= $galatTeks($galatGambar) ?>" alt="" width="800" height="600">
+            <?php endif; ?>
             <?php if (($galat['kode'] ?? '') !== '') : ?>
                 <p class="galat-kode"><span><?= $galatTeks($galat['kode']) ?></span></p>
             <?php endif; ?>

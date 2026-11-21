@@ -109,10 +109,7 @@ $kelasKartu  = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm
             <?php if ($gambarKepala !== '') : ?>
                 <img class="w-full rounded-lg" src="<?= esc(base_url($gambarKepala), 'attr') ?>" alt="Gambar kepala halaman depan">
             <?php else : ?>
-                <div class="flex aspect-[21/9] w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 bg-gray-50 text-gray-500" role="img" aria-label="Belum ada gambar: Gambar kepala halaman depan" data-tanpa-gambar>
-                    <?= ikon('image', 'size-8 text-gray-400') ?>
-                    <span class="text-sm font-semibold" aria-hidden="true">Belum ada gambar</span>
-                </div>
+                <?= view('tata_letak/_tanpa_gambar_tw', ['rasio' => '21x9', 'label' => 'Gambar kepala halaman depan', 'kelas' => 'w-full'], ['saveData' => false]) ?>
             <?php endif ?>
             <p class="mt-3 text-sm text-gray-600">
                 Gambar kepala dan logo diatur di

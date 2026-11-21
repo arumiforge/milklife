@@ -38,10 +38,11 @@ $sekolah = $hasil[0] ?? null;
     <?php if (! $siap) : ?>
         <div class="cek-belum-siap mt-8" role="status">
             <?= komponen('kosong', [
-                'ikon'  => 'hourglass',
-                'judul' => 'Cek pendaftaran belum bisa dipakai',
-                'teks'  => 'Panitia masih menyiapkan pengaturan pendaftaran. Silakan kembali lagi nanti.',
-                'aksi'  => komponen('tombol', ['label' => 'Kembali ke beranda', 'href' => site_url('/'), 'varian' => 'kedua', 'ikon' => 'arrow-left']),
+                'gambar' => 'gambar/keadaan/pendaftaran-tutup.webp',
+                'ikon'   => 'hourglass',
+                'judul'  => 'Cek pendaftaran belum bisa dipakai',
+                'teks'   => 'Panitia masih menyiapkan pengaturan pendaftaran. Silakan kembali lagi nanti.',
+                'aksi'   => komponen('tombol', ['label' => 'Kembali ke beranda', 'href' => site_url('/'), 'varian' => 'kedua', 'ikon' => 'arrow-left']),
             ]) ?>
         </div>
     <?php else : ?>

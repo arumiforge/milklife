@@ -165,7 +165,7 @@ $jumlahBaru   = count(array_filter($daftarBukti, static fn (array $b): bool => (
                         <input type="file" class="block w-full cursor-pointer rounded-lg border border-gray-300 bg-white text-sm text-gray-900 file:me-3 file:min-h-11 file:cursor-pointer file:border-0 file:bg-gray-800 file:px-4 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-primary-100" id="bukti-bayar-berkas" name="<?= App\Controllers\Admin\BuktiBayarController::KOTAK ?>" required
                             accept="image/jpeg,image/png,image/webp" aria-describedby="bukti-bayar-bantuan"
                             data-ukuran-maksimal="<?= BerkasBuktiBayar::BATAS_BITA ?>">
-                        <?= komponen('tombol', ['label' => 'Unggah', 'tipe' => 'submit', 'ikon' => 'upload', 'blok' => true]) ?>
+                        <?= komponen('tombol', ['label' => 'Unggah bukti bayar', 'tipe' => 'submit', 'ikon' => 'upload', 'blok' => true]) ?>
                         <p id="bukti-bayar-bantuan" class="text-sm text-gray-600">
                             Foto atau tangkapan layar JPG, PNG, atau WEBP, paling besar 10 MB. Gambar dikecilkan otomatis.
                             Masih bisa <?= $batasBukti - $jumlahBukti ?> gambar lagi.

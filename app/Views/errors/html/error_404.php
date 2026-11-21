@@ -7,6 +7,7 @@
 
 $galat = [
     'kode'   => '404',
+    'gambar' => 'galat-404.webp',
     'judul'  => 'Halaman tidak ditemukan',
     'pesan'  => [
         'Alamat yang Anda buka tidak ada atau sudah dipindahkan.',

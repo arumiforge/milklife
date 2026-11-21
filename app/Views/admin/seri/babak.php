@@ -134,7 +134,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
             </header>
 
             <?php if ($peserta === []) : ?>
-                <div class="p-5 sm:p-6"><?= komponen('kosong', ['ikon' => 'list-ordered', 'judul' => 'Belum ada peserta', 'teks' => $pertama ? 'Tekan Bagi otomatis untuk mengambil peserta Lunas nomor ini.' : 'Peserta masuk sendiri dari yang lolos setelah hasil ' . $babak['sebelum']['nama'] . ' lengkap.']) ?></div>
+                <div class="p-5 sm:p-6"><?= komponen('kosong', ['gambar' => 'gambar/keadaan/kosong-data.webp', 'ikon' => 'list-ordered', 'judul' => 'Belum ada peserta', 'teks' => $pertama ? 'Tekan Bagi otomatis untuk mengambil peserta Lunas nomor ini.' : 'Peserta masuk sendiri dari yang lolos setelah hasil ' . $babak['sebelum']['nama'] . ' lengkap.']) ?></div>
             <?php endif ?>
 
             <?php foreach ($perSeri as $seri => $daftar) : ?>
@@ -186,7 +186,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
             </form>
         <?php else : ?>
             <p class="mt-1 text-sm text-gray-600">Setelah diperiksa, kunci daftarnya supaya tidak berubah lagi. Daftar yang dikunci tampil untuk umum (bila sakelarnya menyala) dan dipakai juri.</p>
-            <form action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/kunci') ?>" method="post" class="mt-3">
+            <form action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/kunci') ?>" method="post" class="mt-3" data-konfirmasi="<?= esc('Daftar seri ' . $babak['nama'] . ' dikunci: tidak bisa diubah lagi sebelum kuncinya dibuka, dipakai juri, dan tampil untuk umum bila sakelarnya menyala.', 'attr') ?>" data-konfirmasi-judul="Kunci daftar seri?" data-konfirmasi-tombol="Kunci daftar seri" data-konfirmasi-jenis="utama">
                 <?= csrf_field() ?>
                 <?= komponen('tombol', ['label' => 'Kunci daftar seri', 'tipe' => 'submit', 'ikon' => 'lock', 'nonaktif' => $babak['peserta'] === 0]) ?>
             </form>

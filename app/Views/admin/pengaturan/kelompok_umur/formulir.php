@@ -184,7 +184,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
 
             <div class="flex flex-wrap gap-2">
                 <?= komponen('tombol', ['label' => 'Simpan', 'tipe' => 'submit', 'ikon' => 'check']) ?>
-                <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/kelompok-umur'), 'varian' => 'kedua']) ?>
+                <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/kelompok-umur'), 'varian' => 'kedua', 'ikon' => 'x']) ?>
             </div>
         </form>
     </div>

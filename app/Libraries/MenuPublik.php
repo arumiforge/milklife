@@ -12,9 +12,7 @@ use Throwable;
  * di `butir()` bersama halamannya (Jadwal F9-07, Peserta F9-12, Galeri F9-06,
  * Bantuan F9-04), dengan syarat tampil yang sama dengan sakelar halaman itu:
  * butir yang halamannya belum dibuka admin tidak tampil (rencana Tahap 9).
- *
- * Tata letak lama (`tata_letak/publik.php`) tetap memakai menunya sendiri
- * sampai semua halaman publik dipindah (F9-03, F9-05).
+
  */
 final class MenuPublik
 {

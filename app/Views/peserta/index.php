@@ -11,6 +11,11 @@
  * Isi hanya nama, sekolah, nomor atlet, kelompok umur, putra/putri, dan nomor
  * lomba dari pendaftaran Lunas (`App\Libraries\PesertaPublik`).
  *
+ * Ilustrasi nomor lomba G9-05 (K144, F9-17): saat saringan Nomor lomba
+ * dipilih, gambarnya tampil di bawah formulir. Nama nomor dipetakan ke berkas
+ * oleh `IlustrasiBeranda::nomor()` (milik F9-03); pilihan tanpa berkas tidak
+ * diberi gambar (K41). Alamatnya di `data-gambar` tiap `<option>`.
+ *
  * @var CodeIgniter\View\View $this
  * @var string $namaAcara
  * @var array{q: string, ku: int|null, nomor: int|null, jk: string|null, halaman: int} $saring
@@ -19,11 +24,28 @@
  */
 
 use App\Controllers\PesertaController;
+use App\Libraries\IlustrasiBeranda;
 use App\Libraries\PesertaPublik;
 
 $kelasPilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 sm:text-sm';
 $disaring     = $saring['q'] !== '' || $saring['ku'] !== null || $saring['nomor'] !== null || $saring['jk'] !== null;
 $kosongRow    = ['nama' => '', 'sekolah' => '', 'nomor_atlet' => '', 'kelompok_umur' => '', 'jenis_kelamin' => '', 'nomor' => []];
+
+// Ilustrasi G9-05 per nomor lomba (id => alamat), hanya yang berkasnya ada.
+$gambarNomor = [];
+$namaNomor   = [];
+
+foreach ($pilihan as $ku) {
+    foreach ($ku['nomor'] as $n) {
+        $namaNomor[$n['id']] = $n['nama'];
+        $alamat              = IlustrasiBeranda::nomor($n['nama']);
+
+        if ($alamat !== null) {
+            $gambarNomor[$n['id']] = $alamat;
+        }
+    }
+}
+$gambarTerpilih = $saring['nomor'] === null ? null : ($gambarNomor[$saring['nomor']] ?? null);
 
 // Alamat halaman lain dengan saringan yang sama.
 $alamatHalaman = static function (int $halaman) use ($saring): string {
@@ -103,7 +125,7 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
                         <?php foreach ($pilihan as $ku) : ?>
                             <optgroup label="<?= esc($ku['nama'], 'attr') ?>" data-ku="<?= $ku['id'] ?>">
                                 <?php foreach ($ku['nomor'] as $n) : ?>
-                                    <option value="<?= $n['id'] ?>"<?= $saring['nomor'] === $n['id'] ? ' selected' : '' ?>><?= esc($n['nama']) ?></option>
+                                    <option value="<?= $n['id'] ?>"<?= $saring['nomor'] === $n['id'] ? ' selected' : '' ?><?= isset($gambarNomor[$n['id']]) ? ' data-gambar="' . esc($gambarNomor[$n['id']], 'attr') . '"' : '' ?>><?= esc($n['nama']) ?></option>
                                 <?php endforeach ?>
                             </optgroup>
                         <?php endforeach ?>
@@ -113,10 +135,20 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
             <div class="flex gap-2 md:col-span-3 lg:col-span-2">
                 <?= komponen('tombol', ['label' => 'Cari', 'tipe' => 'submit', 'ikon' => 'search', 'kelas' => 'flex-1', 'atribut' => ['data-tombol-cari' => '']]) ?>
                 <span<?= $disaring ? '' : ' class="hidden"' ?> data-hapus-saringan>
-                    <?= komponen('tombol', ['label' => 'Hapus', 'href' => site_url('peserta'), 'varian' => 'kedua', 'atribut' => ['aria-label' => 'Hapus pencarian dan saringan']]) ?>
+                    <?= komponen('tombol', ['label' => 'Hapus saringan', 'href' => site_url('peserta'), 'varian' => 'kedua', 'ikon' => 'x']) ?>
                 </span>
             </div>
         </form>
+
+        <?php if ($gambarNomor !== []) : ?>
+            <div class="mt-5 flex items-center gap-4 rounded-2xl border border-primary-100 bg-primary-50 p-3 pe-5<?= $gambarTerpilih === null ? ' hidden' : '' ?>" data-ilustrasi-nomor>
+                <img<?= $gambarTerpilih === null ? '' : ' src="' . esc($gambarTerpilih, 'attr') . '"' ?> alt="" width="512" height="512" class="size-16 shrink-0 sm:size-20" data-gambar-nomor>
+                <p class="min-w-0">
+                    <span class="block text-xs font-semibold tracking-wide text-primary-700 uppercase">Nomor lomba</span>
+                    <span class="block text-lg font-bold break-words text-primary-900" data-nama-nomor><?= esc($gambarTerpilih === null ? '' : ($namaNomor[$saring['nomor']] ?? '')) ?></span>
+                </p>
+            </div>
+        <?php endif ?>
     </div>
 </section>
 

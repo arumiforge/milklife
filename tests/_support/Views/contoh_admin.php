@@ -5,7 +5,7 @@
  * @var CodeIgniter\View\View $this
  */
 ?>
-<?= $this->extend('tata_letak/admin') ?>
+<?= $this->extend('tata_letak/admin_tw') ?>
 
 <?= $this->section('judul') ?>Judul Contoh admin<?= $this->endSection() ?>
 

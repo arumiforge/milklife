@@ -165,7 +165,7 @@ composer uji
 | `public/` | Folder yang dibuka peramban: `index.php` dan aset |
 | `public/unggahan/` | Gambar dan berkas unggahan admin; tidak masuk git |
 | `writable/unggahan/` | Foto ofisial dan bukti bayar, di luar folder publik dan hanya disajikan ke admin; tidak masuk git |
-| `public/aset/` | CSS, JavaScript, dan pustaka tampilan (Bootstrap dan Bootstrap Icons untuk halaman lama; Flowbite, Lucide, Three.js, dan `css/tw.css` untuk tampilan baru) |
+| `public/aset/` | CSS, JavaScript, dan pustaka tampilan (Flowbite, Lucide, Three.js, DataTables, ApexCharts, dan `css/tw.css`) |
 | `public/aset/tailwind/` | Sumber CSS tampilan baru (`npm run css`) |
 | `alat/` | Skrip Node pembangun tampilan (`npm run vendor`, `npm run ikon`) |
 | `tests/` | Uji: `unit/` (aturan murni), `basisdata/` (migrasi dan model), `fitur/` (halaman dan rute) |
@@ -174,7 +174,7 @@ composer uji
 
 ## Teknologi
 
-CodeIgniter 4.7, PHP 8.2+, MySQL 8, Nginx (Laragon). Tampilan: Bootstrap 5.3 dan Bootstrap Icons untuk halaman yang belum dipindah, Flowbite Pro (Tailwind 4), Lucide, dan Three.js untuk tampilan baru; semuanya disimpan lokal, tanpa CDN.
+CodeIgniter 4.7, PHP 8.2+, MySQL 8, Nginx (Laragon). Tampilan: Flowbite Pro (Tailwind 4), Lucide, dan Three.js; semuanya disimpan lokal, tanpa CDN.
 
 Pustaka Composer: mPDF (bukti dan rekap PDF), PhpSpreadsheet (ekspor Excel), chillerlan/php-qrcode (kode QR di bukti), matthiasmullie/minify (`aset:minify`), dan CodeIgniter Settings. Untuk uji: PHPUnit 10, Faker, vfsStream.
 

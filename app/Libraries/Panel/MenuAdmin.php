@@ -5,10 +5,8 @@ namespace App\Libraries\Panel;
 /**
  * Menu panel admin, satu-satunya tempat butir menu ditulis (F9-14).
  *
- * Dipakai dua tata letak supaya isinya selalu sama:
- * - `tata_letak/_menu_admin_tw.php` (tata letak baru `admin_tw`, Tailwind);
- * - `tata_letak/_menu_admin.php` (tata letak lama `admin`, Bootstrap), selama
- *   masih ada halaman yang belum pindah.
+ * Dipakai `tata_letak/_menu_admin_tw.php` (tata letak `admin_tw`, Tailwind);
+ * menu lama Bootstrap dilepas di F9-17.
  *
  * Bentuk menu (rencana Tahap 9, "Panel admin"):
  * - sidebar berkelompok: Pendaftaran, Hari lomba, Hasil, Konten, Pengaturan,

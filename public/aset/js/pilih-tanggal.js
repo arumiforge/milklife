@@ -10,8 +10,8 @@
  * (`isian.value = …`) langsung tampil di pilihan. Tanda `is-invalid` pada
  * isian asli ikut menandai pilihannya, begitu juga `disabled`.
  *
- * Halaman bertampilan baru (Tailwind, `css/tw.css`, Tahap 9) memakai kelas
- * Tailwind untuk pilihannya, dan tanda salahnya `aria-invalid="true"`.
+ * Pilihannya memakai kelas Tailwind (`css/tw.css`, Tahap 9), dan tanda
+ * salahnya `aria-invalid="true"`.
  *
  * Rentang tahun dari atribut `min`/`max` bila ada; selain itu tanggal 25
  * tahun ke belakang (tanggal lahir) dan tanggal-waktu setahun ke belakang
@@ -23,8 +23,6 @@
 
     var BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     var nilaiAsli = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
-    // Halaman Tailwind (F9-16): dikenali dari lembar gaya `css/tw(.min).css`.
-    var tw = !!document.querySelector('link[rel="stylesheet"][href*="/css/tw."]');
     var KELAS_TW = {
         pilihan: 'block min-h-11 rounded-lg border p-2.5 text-base text-gray-900 focus:ring-4 sm:text-sm',
         biasa: 'border-gray-300 bg-white focus:border-primary-600 focus:ring-primary-100',
@@ -32,20 +30,16 @@
         baris: 'flex flex-wrap items-center gap-2',
         wadah: 'space-y-2',
         pukul: 'text-sm text-gray-700',
-        lebar: { 'pilih-tanggal-hari': 'w-28', 'pilih-tanggal-bulan': 'min-w-36 flex-1', 'pilih-tanggal-tahun': 'w-28', 'pilih-tanggal-jam': 'w-24', 'pilih-tanggal-menit': 'w-24' }
+        lebar: { 'pilih-tanggal-hari': 'w-24', 'pilih-tanggal-bulan': 'min-w-32 flex-1', 'pilih-tanggal-tahun': 'w-24', 'pilih-tanggal-jam': 'w-24', 'pilih-tanggal-menit': 'w-24' }
     };
 
     function aturSalah(s, salah) {
-        if (tw) {
-            (salah ? KELAS_TW.biasa : KELAS_TW.salah).split(' ').forEach(function (k) { s.classList.remove(k); });
-            (salah ? KELAS_TW.salah : KELAS_TW.biasa).split(' ').forEach(function (k) { s.classList.add(k); });
-            if (salah) {
-                s.setAttribute('aria-invalid', 'true');
-            } else {
-                s.removeAttribute('aria-invalid');
-            }
+        (salah ? KELAS_TW.biasa : KELAS_TW.salah).split(' ').forEach(function (k) { s.classList.remove(k); });
+        (salah ? KELAS_TW.salah : KELAS_TW.biasa).split(' ').forEach(function (k) { s.classList.add(k); });
+        if (salah) {
+            s.setAttribute('aria-invalid', 'true');
         } else {
-            s.classList.toggle('is-invalid', salah);
+            s.removeAttribute('aria-invalid');
         }
     }
 
@@ -55,7 +49,7 @@
 
     function pilihan(kelas, label, isi) {
         var s = document.createElement('select');
-        s.className = tw ? kelas + ' ' + KELAS_TW.pilihan + ' ' + KELAS_TW.biasa + ' ' + KELAS_TW.lebar[kelas] : 'form-select ' + kelas;
+        s.className = kelas + ' ' + KELAS_TW.pilihan + ' ' + KELAS_TW.biasa + ' ' + KELAS_TW.lebar[kelas];
         s.setAttribute('aria-label', label);
         var kosong = document.createElement('option');
         kosong.value = '';
@@ -92,7 +86,7 @@
         var semua = [hari, bulan, tahun].concat(waktu ? [jam, menit] : []);
 
         var wadah = document.createElement('div');
-        wadah.className = 'pilih-tanggal' + (waktu ? ' pilih-tanggal-waktu' : '') + (tw ? ' ' + KELAS_TW.wadah : '');
+        wadah.className = 'pilih-tanggal' + (waktu ? ' pilih-tanggal-waktu' : '') + ' ' + KELAS_TW.wadah;
         wadah.setAttribute('role', 'group');
         var label = isian.id ? document.querySelector('label[for="' + isian.id + '"]') : null;
         if (label) {
@@ -105,19 +99,19 @@
             label.addEventListener('click', function () { hari.focus(); });
         }
         var tanggalBaris = document.createElement('div');
-        tanggalBaris.className = 'pilih-tanggal-baris' + (tw ? ' ' + KELAS_TW.baris : '');
+        tanggalBaris.className = 'pilih-tanggal-baris' + ' ' + KELAS_TW.baris;
         [hari, bulan, tahun].forEach(function (s) { tanggalBaris.appendChild(s); });
         wadah.appendChild(tanggalBaris);
         if (waktu) {
             var jamBaris = document.createElement('div');
-            jamBaris.className = 'pilih-tanggal-baris pilih-tanggal-jam-baris' + (tw ? ' ' + KELAS_TW.baris : '');
+            jamBaris.className = 'pilih-tanggal-baris pilih-tanggal-jam-baris' + ' ' + KELAS_TW.baris;
             var pukul = document.createElement('span');
-            pukul.className = 'pilih-tanggal-pukul' + (tw ? ' ' + KELAS_TW.pukul : '');
+            pukul.className = 'pilih-tanggal-pukul' + ' ' + KELAS_TW.pukul;
             pukul.textContent = 'pukul';
             jamBaris.appendChild(pukul);
             jamBaris.appendChild(jam);
             var titik = document.createElement('span');
-            titik.className = 'pilih-tanggal-pukul' + (tw ? ' ' + KELAS_TW.pukul : '');
+            titik.className = 'pilih-tanggal-pukul' + ' ' + KELAS_TW.pukul;
             titik.textContent = '.';
             jamBaris.appendChild(titik);
             jamBaris.appendChild(menit);

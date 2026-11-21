@@ -78,7 +78,7 @@ $ikonKategori = [
                     <p class="mt-1 text-sm text-gray-600"><?= esc($kategori['keterangan']) ?></p>
                 </div>
                 <?php if (FaqModel::kategoriSah($kunci)) : ?>
-                    <?= komponen('tombol', ['label' => 'Tambah tanya-jawab', 'href' => $alamat('tambah') . '?kategori=' . esc((string) $kunci, 'url'), 'ikon' => 'plus']) ?>
+                    <?= komponen('tombol', ['label' => 'Tambah tanya-jawab', 'href' => $alamat('tambah') . '?kategori=' . esc((string) $kunci, 'url'), 'varian' => 'kedua', 'ikon' => 'plus']) ?>
                 <?php endif ?>
             </div>
 

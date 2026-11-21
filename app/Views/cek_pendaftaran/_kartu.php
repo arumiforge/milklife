@@ -61,7 +61,7 @@ $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 
                     <?= ikon('user-x', 'size-4') ?> <?= $jumlahDitolak ?> atlet ditolak
                 </a>
             <?php endif ?>
-            <a class="<?= K::UTAMA ?>" href="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p), 'attr') ?>" target="_blank" rel="noopener">
+            <a class="<?= K::KEDUA ?>" href="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p), 'attr') ?>" target="_blank" rel="noopener">
                 <?= ikon('printer', 'size-5') ?> <?= $ditolakSemua ? 'Cetak keterangan' : 'Cetak bukti' ?>
             </a>
         </div>
@@ -176,7 +176,7 @@ $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 
                         <label class="sr-only" for="bukti-<?= $urutan ?>">Gambar bukti transfer <?= esc($p['id_pendaftaran']) ?></label>
                         <div class="flex flex-wrap gap-2">
                             <input class="<?= K::BERKAS ?> !w-auto min-w-0 flex-[1_1_14rem]" type="file" id="bukti-<?= $urutan ?>" name="bukti" accept="image/jpeg,image/png,image/webp" data-ukuran-maksimal="<?= App\Libraries\Panel\BerkasBuktiBayar::BATAS_BITA ?>" required>
-                            <button class="<?= K::UTAMA ?> min-h-12" type="submit"><?= ikon('upload', 'size-5') ?> Unggah</button>
+                            <button class="<?= K::UTAMA ?> min-h-12" type="submit"><?= ikon('upload', 'size-5') ?> Unggah bukti bayar</button>
                         </div>
                         <div class="<?= K::BANTU ?>">JPG, PNG, atau WEBP, paling besar 10 MB.</div>
                     </form>

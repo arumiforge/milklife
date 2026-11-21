@@ -1,8 +1,7 @@
 <?php
 /**
  * Menu panel admin bertampilan baru (`tata_letak/admin_tw.php`, Tahap 9).
- * Butirnya dari `App\Libraries\Panel\MenuAdmin`, sumber yang sama dengan menu
- * tata letak lama (`tata_letak/_menu_admin.php`), jadi isinya selalu sama.
+ * Butirnya dari `App\Libraries\Panel\MenuAdmin`.
  *
  * Dipakai dua kali:
  * - `$tempatMenu = 'samping'`: sidebar berkelompok (layar lebar tetap di kiri,
