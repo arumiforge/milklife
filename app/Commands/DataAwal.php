@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Libraries\Bantuan\FaqBawaan;
+use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Unggahan;
 use CodeIgniter\CLI\BaseCommand;
@@ -264,6 +265,15 @@ class DataAwal extends BaseCommand
             } else {
                 CLI::error($nama . ' bawaan gagal disalin. Pastikan folder public/unggahan boleh ditulisi, lalu unggah gambarnya lewat ' . $halaman . '.');
             }
+        }
+
+        // Tabel skor multi-lomba bawaan (F9-10): Trilomba memakai tabel Trilomba O2SN SMP.
+        try {
+            $tabelSkor = (new DataTabelSkor($db))->pasangBawaan();
+            $trilomba  = (new DataTabelSkor($db))->pakaiUntukTrilomba();
+            CLI::write('Tabel skor dipasang: ' . implode(', ', $tabelSkor['dipasang']) . '; ' . $trilomba . ' nomor Trilomba memakai poin multi-lomba (tabelnya bisa diubah di Pengaturan > Tabel Skor).');
+        } catch (Throwable $e) {
+            CLI::error('Tabel skor bawaan gagal dipasang: ' . $e->getMessage() . ' Pasang lewat Pengaturan > Tabel Skor.');
         }
 
         $unduhan = self::pasangUnduhanBawaan($db);

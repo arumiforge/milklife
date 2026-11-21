@@ -16,6 +16,9 @@ use CodeIgniter\Database\BaseConnection;
  *   diisi semua peserta, kosong, atau peringkat teratas babak lain (yang lolos).
  * - Prestasi diurai `Prestasi`, peringkat dihitung `Peringkat`. Di Final admin
  *   boleh mengoreksi peringkat; baris itu bertanda `peringkat_manual`.
+ * - Nomor berjenis hasil `multi` (F9-10): admin mengisi prestasi tiap
+ *   komponen, poinnya dicari di tabel skor nomor itu (`TabelSkor`), total
+ *   poin disimpan di `prestasi` dan rinciannya di `rincian`.
  * - Terbitkan dan Tarik kembali per nomor (`nomor_lomba.hasil_terbit_pada`);
  *   halaman publik hanya memuat nomor yang terbit.
  *
@@ -116,12 +119,15 @@ final class HasilLomba
     /**
      * Satu nomor lomba, atau `null` bila tidak ada.
      *
-     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string}|null
+     * `komponen` hanya terisi untuk jenis hasil `multi`: komponen tabel skor
+     * yang dipakai nomor itu.
+     *
+     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string, tabel_skor_id: int|null, komponen: list<array{kode: string, nama: string, jenis: string}>}|null
      */
     public function nomor(int $id): ?array
     {
         $n = $this->db->table('nomor_lomba nl')
-            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.hasil_terbit_pada, nl.kelompok_umur_id, ku.nama AS kelompok_umur')
+            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.tabel_skor_id, nl.komponen_skor, nl.hasil_terbit_pada, nl.kelompok_umur_id, ku.nama AS kelompok_umur')
             ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
             ->where('nl.id', $id)
             ->get()->getRowArray();
@@ -130,15 +136,20 @@ final class HasilLomba
             return null;
         }
 
+        $jenisHasil = JenisHasil::sah($n['jenis_hasil']) ? (string) $n['jenis_hasil'] : JenisHasil::WAKTU;
+        $tabelSkor  = $n['tabel_skor_id'] === null ? null : (int) $n['tabel_skor_id'];
+
         return [
             'id'               => (int) $n['id'],
             'nama'             => NomorLombaModel::namaLengkap($n),
             'jenis'            => (string) $n['jenis'],
             'kategori'         => (string) $n['kategori'],
-            'jenis_hasil'      => JenisHasil::sah($n['jenis_hasil']) ? (string) $n['jenis_hasil'] : JenisHasil::WAKTU,
+            'jenis_hasil'      => $jenisHasil,
             'terbit_pada'      => $n['hasil_terbit_pada'],
             'kelompok_umur_id' => (int) $n['kelompok_umur_id'],
             'kelompok_umur'    => (string) $n['kelompok_umur'],
+            'tabel_skor_id'    => $tabelSkor,
+            'komponen'         => $jenisHasil === JenisHasil::MULTI ? (new DataTabelSkor($this->db))->komponenNomor($tabelSkor, $n['komponen_skor']) : [],
         ];
     }
 
@@ -183,7 +194,10 @@ final class HasilLomba
      *
      * @param array<string, mixed> $nomor hasil `nomor()`
      *
-     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, keterangan: string|null, peringkat: int|null, manual: bool}>
+     * `rincian`: prestasi dan poin per komponen untuk nomor `multi` (kosong
+     * untuk jenis hasil lain); `rincian_isian` kode komponen => teks prestasi.
+     *
+     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, peringkat: int|null, manual: bool}>
      */
     public function hasilBabak(int $babakId, array $nomor): array
     {
@@ -203,9 +217,16 @@ final class HasilLomba
         $reguSekolah = $nomor['jenis'] === 'beregu' ? $this->jumlahReguSekolah((int) $nomor['id']) : [];
         $anggota     = $nomor['jenis'] === 'beregu' ? $this->anggotaRegu((int) $nomor['id']) : [];
         $hasil       = [];
+        $komponen    = $nomor['jenis_hasil'] === JenisHasil::MULTI ? (array) ($nomor['komponen'] ?? []) : [];
 
         foreach ($baris as $b) {
             $prestasi = $b['prestasi'] === null ? null : (int) $b['prestasi'];
+            $rincian  = $komponen === [] ? [] : TabelSkor::bacaRincian($b['rincian'] ?? null);
+            $isianK   = [];
+
+            foreach ($komponen as $k) {
+                $isianK[$k['kode']] = Prestasi::tulis($rincian[$k['kode']]['prestasi'] ?? null, $k['jenis']);
+            }
 
             if ($nomor['jenis'] === 'beregu') {
                 $pid   = (int) $b['pendaftaran_id'];
@@ -230,6 +251,8 @@ final class HasilLomba
                 'anggota'        => $anggota[$kunci] ?? [],
                 'prestasi'       => $prestasi,
                 'prestasi_teks'  => Prestasi::tulis($prestasi, (string) $nomor['jenis_hasil']),
+                'rincian'        => $komponen === [] || $rincian === [] ? [] : TabelSkor::rincianTampil($komponen, $rincian),
+                'rincian_isian'  => $isianK,
                 'keterangan'     => Peringkat::keterangan($b['keterangan']),
                 'peringkat'      => $b['peringkat'] === null ? null : (int) $b['peringkat'],
                 'manual'         => (int) $b['peringkat_manual'] === 1,
@@ -445,6 +468,13 @@ final class HasilLomba
         $ada   = array_column($this->db->table('hasil')->select('id')->where('babak_id', $babakId)->get()->getResultArray(), 'id', 'id');
         $galat = [];
         $ubah  = [];
+        $multi = $jenis === JenisHasil::MULTI;
+
+        if ($multi && $babak['nomor']['komponen'] === []) {
+            return [0 => 'Nomor ini belum punya tabel skor. Pilih tabel skor dan komponennya di Pengaturan > Nomor Lomba.'];
+        }
+
+        $barisSkor = $multi ? (new DataTabelSkor($this->db))->barisKomponen((int) $babak['nomor']['tabel_skor_id'], $babak['nomor']['komponen'], $babak['nomor']['kategori']) : [];
 
         foreach ($isian as $id => $baris) {
             $id = (int) $id;
@@ -453,8 +483,17 @@ final class HasilLomba
                 continue;
             }
 
-            $teks       = is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '';
-            $prestasi   = Prestasi::urai($teks, $jenis);
+            $rincian = null;
+
+            if ($multi) {
+                $hitung   = TabelSkor::hitung($babak['nomor']['komponen'], $barisSkor, is_array($baris['komponen'] ?? null) ? $baris['komponen'] : []);
+                $prestasi = ['nilai' => $hitung['total'], 'galat' => $hitung['galat'] === [] ? null : implode(' ', $hitung['galat'])];
+                $rincian  = $hitung['total'] === null ? null : TabelSkor::tulisRincian($hitung['rincian']);
+            } else {
+                $teks     = is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '';
+                $prestasi = Prestasi::urai($teks, $jenis);
+            }
+
             $keterangan = Peringkat::keterangan($baris['keterangan'] ?? null);
             $peringkat  = is_string($baris['peringkat'] ?? null) ? trim($baris['peringkat']) : '';
 
@@ -474,6 +513,7 @@ final class HasilLomba
 
             $ubah[$id] = [
                 'prestasi'         => $prestasi['nilai'],
+                'rincian'          => $rincian,
                 'keterangan'       => $keterangan,
                 'peringkat'        => $manual ? (int) $peringkat : null,
                 'peringkat_manual' => $manual ? 1 : 0,

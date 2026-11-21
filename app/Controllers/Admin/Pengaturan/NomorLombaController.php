@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin\Pengaturan;
 
 use App\Controllers\BaseController;
+use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\Hasil\JenisHasil;
 use App\Models\NomorLombaModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
@@ -102,6 +103,8 @@ class NomorLombaController extends BaseController
             'jenis'            => 'individu',
             'kategori'         => 'putra',
             'jenis_hasil'      => 'waktu',
+            'tabel_skor_id'    => '',
+            'komponen_skor'    => '',
             'jumlah_inti'      => '',
             'batas_anggota'    => '',
             'regu_maksimal'    => '',
@@ -223,6 +226,14 @@ class NomorLombaController extends BaseController
             $kiriman[$kotak] = $this->request->getPost($kotak);
         }
 
+        // Poin multi-lomba (F9-10): komponen dicentang per tabel, `komponen_skor[<id tabel>][]`.
+        $tabel                    = $this->request->getPost('tabel_skor_id');
+        $komponen                 = $this->request->getPost('komponen_skor');
+        $kiriman['tabel_skor_id'] = $tabel;
+        $kiriman['komponen_skor'] = is_scalar($tabel) && is_array($komponen) && is_array($komponen[(string) $tabel] ?? null)
+            ? implode(',', array_filter($komponen[(string) $tabel], 'is_string'))
+            : '';
+
         return $kiriman;
     }
 
@@ -238,7 +249,8 @@ class NomorLombaController extends BaseController
     private function periksa(array $isian, ?array $lama = null): array
     {
         $kelompokUmur = $this->kelompokUmur();
-        $galat        = NomorLombaModel::periksaIsian($isian, array_keys($kelompokUmur));
+        $tabelSkor    = array_map(static fn (array $t): array => array_column($t['komponen'], 'kode'), (new DataTabelSkor())->pilihan());
+        $galat        = NomorLombaModel::periksaIsian($isian, array_keys($kelompokUmur), $tabelSkor);
 
         if ($lama !== null && $this->model->dipakai((int) $lama['id'])) {
             $sebab = 'Nomor ini sudah dipakai atlet atau tim, jadi ';
@@ -256,6 +268,13 @@ class NomorLombaController extends BaseController
         // Prestasi yang sudah dicatat memakai satuan jenis hasil lama (F8-04).
         if ($lama !== null && ! isset($galat['jenis_hasil']) && $isian['jenis_hasil'] !== (string) $lama['jenis_hasil'] && $this->model->adaPrestasi((int) $lama['id'])) {
             $galat['jenis_hasil'] = 'Nomor ini sudah punya prestasi di hasil lomba, jadi jenis hasilnya tetap ' . mb_strtolower(JenisHasil::LABEL[$lama['jenis_hasil']] ?? (string) $lama['jenis_hasil']) . '. Kosongkan prestasinya dulu bila memang perlu diganti.';
+        }
+
+        // Tabel skor dan komponennya menentukan arti rincian yang tersimpan (F9-10).
+        if ($lama !== null && $galat === [] && $isian['jenis_hasil'] === JenisHasil::MULTI && (string) $lama['jenis_hasil'] === JenisHasil::MULTI
+            && ((string) $lama['tabel_skor_id'] !== $isian['tabel_skor_id'] || (string) $lama['komponen_skor'] !== $isian['komponen_skor'])
+            && $this->model->adaPrestasi((int) $lama['id'])) {
+            $galat['tabel_skor_id'] = 'Nomor ini sudah punya prestasi di hasil lomba, jadi tabel skor dan komponennya tidak bisa diganti. Baris tabelnya tetap bisa diubah di Pengaturan > Tabel Skor.';
         }
 
         if (array_intersect_key($galat, array_flip(['kelompok_umur_id', 'nama', 'kategori'])) === []
@@ -280,6 +299,7 @@ class NomorLombaController extends BaseController
             'dipakai'      => $nomor !== null && $this->model->dipakai((int) $nomor['id']),
             'kekurangan'   => $nomor !== null ? NomorLombaModel::kekuranganTim($nomor) : [],
             'kelompokUmur' => $this->kelompokUmur(),
+            'tabelSkor'    => (new DataTabelSkor())->pilihan(),
             'galat'        => $galat,
         ]);
     }

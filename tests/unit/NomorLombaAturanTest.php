@@ -247,6 +247,28 @@ final class NomorLombaAturanTest extends CIUnitTestCase
         $this->assertSame('jarak', NomorLombaModel::untukDisimpan(self::individu(['nama' => 'Lompat Jauh']))['jenis_hasil']);
     }
 
+    public function testPoinMultiLombaButuhTabelSkor(): void
+    {
+        $tabel = [4 => ['lari-60', 'lompat-jauh', 'tolak-peluru']];
+        $multi = ['nama' => 'Trilomba', 'jenis_hasil' => 'multi'];
+
+        $this->assertSame([], NomorLombaModel::periksaIsian(self::individu($multi + ['tabel_skor_id' => '4']), self::KU, $tabel));
+        $this->assertSame([], NomorLombaModel::periksaIsian(self::individu($multi + ['tabel_skor_id' => '4', 'komponen_skor' => 'lari-60, tolak-peluru']), self::KU, $tabel));
+
+        $this->assertSame(['tabel_skor_id'], array_keys(NomorLombaModel::periksaIsian(self::individu($multi), self::KU, $tabel)));
+        $this->assertSame(['tabel_skor_id'], array_keys(NomorLombaModel::periksaIsian(self::individu($multi + ['tabel_skor_id' => '9']), self::KU, $tabel)));
+        $this->assertSame(['komponen_skor'], array_keys(NomorLombaModel::periksaIsian(self::individu($multi + ['tabel_skor_id' => '4', 'komponen_skor' => 'lari-100']), self::KU, $tabel)));
+        $this->assertSame(['komponen_skor'], array_keys(NomorLombaModel::periksaIsian(self::individu($multi + ['tabel_skor_id' => '4', 'komponen_skor' => 'lari-60,lari-60']), self::KU, $tabel)));
+        $this->assertSame(['jenis_hasil'], array_keys(NomorLombaModel::periksaIsian(self::beregu(['jenis_hasil' => 'multi']), self::KU, $tabel)));
+
+        $data = NomorLombaModel::untukDisimpan(self::individu($multi + ['tabel_skor_id' => '4', 'komponen_skor' => 'lari-60,tolak-peluru']));
+        $this->assertSame(['multi', 4, 'lari-60,tolak-peluru'], [$data['jenis_hasil'], $data['tabel_skor_id'], $data['komponen_skor']]);
+
+        // Jenis hasil lain: tabel skor tidak disimpan.
+        $data = NomorLombaModel::untukDisimpan(self::individu(['jenis_hasil' => 'poin', 'tabel_skor_id' => '4', 'komponen_skor' => 'lari-60']));
+        $this->assertSame([null, null], [$data['tabel_skor_id'], $data['komponen_skor']]);
+    }
+
     public function testUntukDisimpan(): void
     {
         $this->assertSame([
@@ -256,6 +278,8 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             'kategori'         => 'mix',
             // F8-04: kosong = ditebak dari nama.
             'jenis_hasil'      => 'waktu',
+            'tabel_skor_id'    => null,
+            'komponen_skor'    => null,
             'jumlah_inti'      => 8,
             'batas_anggota'    => 10,
             'regu_maksimal'    => null,
@@ -285,7 +309,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
 
         $this->assertSame([
             'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri', 'jenis_hasil' => '',
-            'jumlah_inti' => '4', 'batas_anggota' => '', 'regu_maksimal' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
+            'tabel_skor_id' => '', 'komponen_skor' => '', 'jumlah_inti' => '4', 'batas_anggota' => '', 'regu_maksimal' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
             'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1',
         ], $isian);
 

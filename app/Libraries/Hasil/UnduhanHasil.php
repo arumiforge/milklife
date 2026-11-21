@@ -72,6 +72,12 @@ final class UnduhanHasil
             'keterangan' => 'Keterangan',
         ];
 
+        // Poin multi-lomba (F9-10): prestasi dan poin tiap komponen.
+        foreach ($this->nomor['jenis_hasil'] === JenisHasil::MULTI ? $this->nomor['komponen'] : [] as $i => $k) {
+            $kolom['komponen_' . $i]      = $k['nama'];
+            $kolom['komponen_poin_' . $i] = ['judul' => 'Poin ' . $k['nama'], 'jenis' => 'angka'];
+        }
+
         if ($beregu) {
             unset($kolom['nomor_dada']);
         } else {
@@ -82,7 +88,7 @@ final class UnduhanHasil
         $utama = null;
 
         foreach ($this->babak as $b) {
-            $lembar = (new EksporExcel(DaftarPeserta::judulLembar($b['nama'], $pakai), $kolom))->tambahBaris(array_map(static fn (array $h): array => [
+            $lembar = (new EksporExcel(DaftarPeserta::judulLembar($b['nama'], $pakai), $kolom))->tambahBaris(array_map(static fn (array $h): array => self::kolomRincian($h) + [
                 'peringkat'  => $h['peringkat'],
                 'nomor_dada' => $h['nomor_dada'],
                 'nama'       => $h['nama'],
@@ -100,5 +106,23 @@ final class UnduhanHasil
         }
 
         return $utama ?? new EksporExcel('Hasil', $kolom);
+    }
+
+    /**
+     * @param array<string, mixed> $h satu hasil `HasilLomba::hasilBabak()`
+     *
+     * @return array<string, int|string|null>
+     */
+    private static function kolomRincian(array $h): array
+    {
+        $kolom = [];
+
+        foreach ($h['rincian'] ?? [] as $i => $r) {
+            // Komponen kosong ditulis "–" dengan 0 poin (K143).
+            $kolom['komponen_' . $i]      = $r['prestasi'] === '' ? '–' : $r['prestasi'];
+            $kolom['komponen_poin_' . $i] = $r['poin'];
+        }
+
+        return $kolom;
     }
 }

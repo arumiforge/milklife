@@ -7,8 +7,13 @@ namespace App\Libraries\Hasil;
  *
  * - `waktu`: makin kecil makin baik, disimpan dalam perseratus detik.
  * - `jarak`: makin besar makin baik, disimpan dalam sentimeter.
- * - `poin`: makin besar makin baik, disimpan apa adanya (Tri Lomba: poin
- *   akhir yang sudah dikonversi panitia, K124 butir 3).
+ * - `poin`: makin besar makin baik, disimpan apa adanya (poin akhir yang
+ *   diisi admin).
+ * - `multi`: poin multi-lomba (F9-10, K140 butir 7b): admin mengisi prestasi
+ *   mentah tiap komponen (misalnya Trilomba: Lari 60 m, Lompat Jauh, Tolak
+ *   Peluru), web menghitung poinnya dengan tabel skor (`TabelSkor`). Kolom
+ *   `hasil.prestasi` berisi total poin, rincian per komponen di
+ *   `hasil.rincian`. Makin besar makin baik.
  *
  * `tebak()` dipakai data awal dan migrasi untuk nomor yang sudah ada:
  * Trilomba = poin; lompat, lempar, tolak, Frog Jump, dan Turbo Throw = jarak;
@@ -20,6 +25,7 @@ final class JenisHasil
     public const WAKTU = 'waktu';
     public const JARAK = 'jarak';
     public const POIN  = 'poin';
+    public const MULTI = 'multi';
 
     /**
      * @var array<string, string> kode => label
@@ -28,6 +34,7 @@ final class JenisHasil
         self::WAKTU => 'Waktu',
         self::JARAK => 'Jarak',
         self::POIN  => 'Poin',
+        self::MULTI => 'Poin multi-lomba',
     ];
 
     /**
@@ -38,7 +45,8 @@ final class JenisHasil
     public const KETERANGAN = [
         self::WAKTU => 'makin kecil makin baik; ditulis 12,34 atau 2:05,10',
         self::JARAK => 'makin jauh makin baik; ditulis dalam meter, misalnya 3,45',
-        self::POIN  => 'makin besar makin baik; poin akhir dari panitia, misalnya 1250',
+        self::POIN  => 'makin besar makin baik; poin akhir ditulis langsung, misalnya 1250',
+        self::MULTI => 'makin besar makin baik; prestasi tiap komponen diisi, poinnya dihitung dari tabel skor',
     ];
 
     public static function sah(mixed $jenis): bool

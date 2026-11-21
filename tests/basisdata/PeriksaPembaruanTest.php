@@ -1,5 +1,6 @@
 <?php
 
+use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\PemeriksaPembaruan;
 use CodeIgniter\Test\StreamFilterTrait;
 use Tests\Support\UjiBasisData;
@@ -61,9 +62,9 @@ final class PeriksaPembaruanTest extends UjiBasisData
     {
         $hasil = $this->periksa();
 
-        $this->assertSame(['composer', 'migrasi', 'sekolah', 'gabung', 'aset'], array_keys($hasil));
+        $this->assertSame(['composer', 'migrasi', 'sekolah', 'gabung', 'tabel_skor', 'aset'], array_keys($hasil));
         $this->assertSame([], array_filter(array_column($hasil, 'perlu')), json_encode($hasil, JSON_PRETTY_PRINT));
-        $this->assertSame([null, null, null, null, null], array_column($hasil, 'perintah'));
+        $this->assertSame([null, null, null, null, null, null], array_column($hasil, 'perintah'));
         $this->assertStringContainsString('migrasi sudah dijalankan', $hasil['migrasi']['keterangan']);
     }
 
@@ -92,6 +93,24 @@ final class PeriksaPembaruanTest extends UjiBasisData
         $this->assertSame('php spark pendaftaran:gabung', $hasil['gabung']['perintah']);
         $this->assertSame('php spark aset:minify', $hasil['aset']['perintah']);
         $this->assertStringContainsString('js/contoh.js', $hasil['aset']['keterangan']);
+    }
+
+    public function testTabelSkorBawaanDanTrilombaPoin(): void
+    {
+        // F9-10, K143: tabel bawaan belum terpasang → tabel-skor:impor --trilomba.
+        mkdir($this->akar . 'data/tabel-skor', 0o777, true);
+        copy(ROOTPATH . 'data/tabel-skor/trilomba-o2sn-smp.json', $this->akar . 'data/tabel-skor/trilomba-o2sn-smp.json');
+        $ku = $this->db->table('kelompok_umur')->insert(['nama' => 'KU 12', 'tahun_lahir_awal' => 2014, 'tahun_lahir_akhir' => 2015, 'biaya_individu' => 75000]) ? (int) $this->db->insertID() : 0;
+        $this->db->table('nomor_lomba')->insert(['kelompok_umur_id' => $ku, 'nama' => 'Trilomba', 'jenis' => 'individu', 'kategori' => 'putra', 'jenis_hasil' => 'poin']);
+
+        $hasil = $this->periksa()['tabel_skor'];
+        $this->assertSame('php spark tabel-skor:impor --trilomba', $hasil['perintah']);
+        $this->assertStringContainsString('Trilomba O2SN SMP', $hasil['keterangan']);
+        $this->assertStringContainsString('1 nomor Trilomba masih berjenis hasil poin', $hasil['keterangan']);
+
+        (new DataTabelSkor($this->db))->pasangBawaan(false, $this->akar . 'data/tabel-skor');
+        $this->assertSame(1, (new DataTabelSkor($this->db))->pakaiUntukTrilomba());
+        $this->assertFalse($this->periksa()['tabel_skor']['perlu']);
     }
 
     public function testBerkasRusakTidakDianggapBeres(): void

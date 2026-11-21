@@ -2,14 +2,15 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101) |
+| Revisi 7 | Pembaruan yang membawa kalkulator poin multi-lomba (F9-10): perintah sekali jalan `php spark tabel-skor:impor --trilomba` memasang tabel skor bawaan dan memindah nomor Trilomba yang belum punya prestasi ke poin multi-lomba; `pembaruan:periksa` ikut memeriksanya (K140 butir 7b, K143). Bagian yang berubah: 10 |
 | Revisi 6 | Repo menjadi privat (K138): komputer server memakai deploy key (kunci SSH baca saja) untuk `git clone` dan `git pull`, termasuk server yang sudah terpasang. Bagian yang berubah: 3, 10, asumsi 5 |
 | Revisi 5 | Pemeriksaan keamanan Cloudflare Turnstile di kirim pendaftaran, Cek Pendaftaran, dan masuk admin: memasang kunci rahasia dari dasbor Cloudflare, daftar nama host, dan cara mematikan sementara (K122). Bagian yang berubah: 5, 7, 10, 11 |
 | Revisi 4 | Perintah `php spark pembaruan:periksa` untuk memeriksa perintah yang masih perlu dijalankan setelah `git pull` (K115). Bagian yang berubah: 10 |
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, 17, dan 21 November 2026 (revisi 3, 4, 5, dan 6) |
+| Tanggal | 12 November 2026, revisi 14, 16, 17, dan 21 November 2026 (revisi 3, 4, 5, 6, dan 7) |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -336,7 +337,7 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    php spark pembaruan:periksa
    ```
 
-   Perintah ini tidak mengubah apa pun. Ia memeriksa pustaka Composer, migrasi, data sekolah, pendaftaran Lunas ber-NPSN sama, dan CSS/JavaScript kecil, lalu menulis `[beres]` atau `[PERLU]` untuk masing-masing dan daftar perintah yang masih perlu dijalankan, berurutan. Jalankan perintah itu, lalu jalankan `pembaruan:periksa` lagi sampai tertulis "Tidak ada perintah lain yang perlu dijalankan". Bila tertulis basis data tidak bisa dihubungi, nyalakan MySQL di Laragon dulu.
+   Perintah ini tidak mengubah apa pun. Ia memeriksa pustaka Composer, migrasi, data sekolah, pendaftaran Lunas ber-NPSN sama, tabel skor Trilomba, dan CSS/JavaScript kecil, lalu menulis `[beres]` atau `[PERLU]` untuk masing-masing dan daftar perintah yang masih perlu dijalankan, berurutan. Jalankan perintah itu, lalu jalankan `pembaruan:periksa` lagi sampai tertulis "Tidak ada perintah lain yang perlu dijalankan". Bila tertulis basis data tidak bisa dihubungi, nyalakan MySQL di Laragon dulu.
 
    Pembaruan yang membawa penggabungan pendaftaran (16 November 2026, K109) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
 
@@ -347,6 +348,14 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    Perintah ini menampilkan sekolah yang punya lebih dari satu pendaftaran Lunas, lalu meminta Anda mengetik `GABUNG`. Setiap sekolah digabung ke pendaftaran yang Lunas paling dulu; ID dan kode QR bukti lama tetap mengarah ke pendaftaran gabungan. Bila muncul "Tidak ada yang perlu digabung", tidak ada yang berubah.
 
    Pembaruan yang sama mengubah KU 12 menjadi kelahiran 2014–2015 sesuai juknis (K112), otomatis saat `migrate`, asalkan KU 12 di panel masih kelahiran 2015 saja. Periksa di **Pengaturan → Kelompok Umur**. Ganti juga berkas contoh "Petunjuk teknis lomba" di **Pengaturan → Unduhan** dengan PDF juknis, dan samakan jadwal pertemuan teknik (Minggu, 6 Desember 2026 pukul 10.00, Super Cafe SSA Kudus) di **Pengaturan → Jadwal**.
+
+   Pembaruan yang membawa kalkulator poin multi-lomba (21 November 2026, F9-10, K143) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
+
+   ```
+   php spark tabel-skor:impor --trilomba
+   ```
+
+   Perintah ini memasang tabel skor panitia (Trilomba O2SN SMP dan Pancalomba SMA/SMK) dan memindah nomor Trilomba yang belum punya prestasi ke jenis hasil **Poin multi-lomba**, sehingga juri cukup mengisi prestasi tiap komponen dan web menghitung poinnya. Nomor yang sudah punya prestasi tidak diubah. Menjalankannya lagi tidak mengubah apa pun. Periksa hasilnya di **Pengaturan → Tabel Skor** dan **Pengaturan → Nomor Lomba** (Trilomba putra dan putri).
 
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 

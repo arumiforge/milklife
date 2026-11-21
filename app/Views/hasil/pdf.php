@@ -63,7 +63,7 @@ $kolom  = $beregu ? 4 : 6;
                 <?php if (! $beregu) : ?><th width="17mm">No. Atlet</th><?php endif ?>
                 <th><?= $beregu ? 'Regu' : 'Nama' ?></th>
                 <?php if (! $beregu) : ?><th>Sekolah</th><?php endif ?>
-                <th width="24mm">Prestasi</th>
+                <th width="<?= $nomor['jenis_hasil'] === JenisHasil::MULTI ? '38mm' : '24mm' ?>">Prestasi</th>
                 <th width="18mm">Ket.</th>
             </tr>
         </thead>
@@ -77,7 +77,10 @@ $kolom  = $beregu ? 4 : 6;
                         <?php if ($beregu && $h['anggota'] !== []) : ?><div class="anggota"><?= esc(implode(', ', $h['anggota'])) ?></div><?php endif ?>
                     </td>
                     <?php if (! $beregu) : ?><td><?= esc($h['sekolah']) ?></td><?php endif ?>
-                    <td><?= esc($h['prestasi_teks']) ?></td>
+                    <td>
+                        <?= esc($h['prestasi_teks']) ?>
+                        <?php foreach ($h['rincian'] ?? [] as $r) : ?><div class="anggota"><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '– (0)' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></div><?php endforeach ?>
+                    </td>
                     <td><?= esc((string) $h['keterangan']) ?></td>
                 </tr>
             <?php endforeach ?>

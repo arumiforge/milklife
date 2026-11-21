@@ -83,6 +83,7 @@ final class BerandaPengaturanTest extends UjiHalaman
             ['unduhan', 'Unduhan', site_url('admin/pengaturan/unduhan')],
             ['kontak', 'Kontak', site_url('admin/pengaturan/kontak')],
             ['bantuan', 'Bantuan', site_url('admin/pengaturan/bantuan')],
+            ['tabel-skor', 'Tabel Skor', site_url('admin/pengaturan/tabel-skor')],
             ['akun', 'Akun', site_url('admin/akun')],
         ], $kartu);
 
@@ -93,7 +94,7 @@ final class BerandaPengaturanTest extends UjiHalaman
             $judul[] = $this->teks($h2);
         }
 
-        $this->assertSame(['Wajib diisi sebelum pendaftaran dibuka', 'Isi halaman depan', 'Akun Anda'], $judul);
+        $this->assertSame(['Wajib diisi sebelum pendaftaran dibuka', 'Isi halaman depan', 'Hasil lomba', 'Akun Anda'], $judul);
         $hasil->assertSee('Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor atlet (BIB).');
 
         // Tanda lengkap/belum (F2-09) hanya ada pada lima kartu wajib.
@@ -145,7 +146,7 @@ final class BerandaPengaturanTest extends UjiHalaman
     {
         $halaman = BerandaPengaturanController::daftarHalaman();
 
-        $this->assertCount(11, $halaman);
+        $this->assertCount(12, $halaman);
         $this->assertSame(array_unique(array_column($halaman, 'kunci')), array_column($halaman, 'kunci'));
 
         foreach ($halaman as $butir) {

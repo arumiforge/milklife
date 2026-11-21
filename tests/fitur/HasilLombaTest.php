@@ -239,7 +239,8 @@ final class HasilLombaTest extends UjiBasisData
         $tolak = $this->kirimSebagaiAdmin('admin/pengaturan/nomor-lomba/' . $this->idInduk['lari60putra'], $isian);
         $this->assertIsianSalahDitampilkanUlang($tolak, ['jenis_hasil']);
 
-        $this->assertSame(3, $this->xpathDari($this->bukaSebagaiAdmin('admin/pengaturan/nomor-lomba/' . $this->idInduk['frog'] . '/ubah'))->query('//input[@name="jenis_hasil"]')->length);
+        // Waktu, jarak, poin, dan poin multi-lomba (F9-10).
+        $this->assertSame(4, $this->xpathDari($this->bukaSebagaiAdmin('admin/pengaturan/nomor-lomba/' . $this->idInduk['frog'] . '/ubah'))->query('//input[@name="jenis_hasil"]')->length);
         $this->kirimSebagaiAdmin('admin/pengaturan/nomor-lomba/' . $this->idInduk['frog'], ['nama' => 'Frog Jump', 'jenis_hasil' => 'jarak', 'kelompok_umur_id' => (string) $this->idInduk['ku10']] + $isian);
         $this->assertSame('jarak', $this->db->table('nomor_lomba')->where('id', $this->idInduk['frog'])->get()->getRow()->jenis_hasil);
     }

@@ -20,6 +20,10 @@ use CodeIgniter\Model;
  * - Nomor beregu dari `data:awal` boleh belum lengkap; `kekuranganTim()`
  *   menyebut apa yang belum diisi, untuk tanda "belum lengkap" di daftar.
  *
+ * Jenis hasil `multi` (poin multi-lomba, F9-10) hanya untuk nomor individu
+ * putra/putri dan wajib memilih tabel skor; `komponen_skor` berisi kode
+ * komponen tabel yang dipakai, dipisah koma (kosong = semua komponen).
+ *
  * Nomor yang sudah dipakai atlet (`atlet_nomor`) atau tim
  * (`pendaftaran_beregu`) tidak bisa dihapus, dan kelompok umur, jenis,
  * kategori, serta isian timnya (selain biaya) tidak bisa diubah (`dipakai()`,
@@ -78,7 +82,7 @@ class NomorLombaModel extends Model
     protected $returnType       = 'array';
     protected $useAutoIncrement = true;
     protected $allowedFields    = [
-        'kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil',
+        'kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil', 'tabel_skor_id', 'komponen_skor',
         'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu',
         'urutan', 'aktif',
     ];
@@ -99,7 +103,7 @@ class NomorLombaModel extends Model
      *
      * @param array<string, mixed> $mentah
      *
-     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string}
+     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string}
      */
     public static function rapikanIsian(array $mentah): array
     {
@@ -111,6 +115,8 @@ class NomorLombaModel extends Model
             'jenis'            => $teks('jenis'),
             'kategori'         => $teks('kategori'),
             'jenis_hasil'      => $teks('jenis_hasil'),
+            'tabel_skor_id'    => $teks('tabel_skor_id'),
+            'komponen_skor'    => (string) preg_replace('/\s+/', '', $teks('komponen_skor')),
             'jumlah_inti'      => $teks('jumlah_inti'),
             'batas_anggota'    => $teks('batas_anggota'),
             'regu_maksimal'    => $teks('regu_maksimal'),
@@ -136,12 +142,13 @@ class NomorLombaModel extends Model
     /**
      * Periksa isian yang sudah dirapikan, tanpa basis data.
      *
-     * @param array<string, string> $isian           Hasil `rapikanIsian()`.
-     * @param list<int|string>      $idKelompokUmur  ID kelompok umur yang ada.
+     * @param array<string, string>                 $isian           Hasil `rapikanIsian()`.
+     * @param list<int|string>                      $idKelompokUmur  ID kelompok umur yang ada.
+     * @param array<int, list<string>>              $tabelSkor       ID tabel skor => kode komponennya (jenis hasil multi).
      *
      * @return array<string, string> nama kotak => pesan yang menyebut cara memperbaikinya; kosong bila benar
      */
-    public static function periksaIsian(array $isian, array $idKelompokUmur): array
+    public static function periksaIsian(array $isian, array $idKelompokUmur, array $tabelSkor = []): array
     {
         $galat = [];
 
@@ -171,7 +178,9 @@ class NomorLombaModel extends Model
 
         // Jenis hasil untuk hasil lomba (F8-04); kosong = ditebak dari nama saat disimpan.
         if (($isian['jenis_hasil'] ?? '') !== '' && ! JenisHasil::sah($isian['jenis_hasil'])) {
-            $galat['jenis_hasil'] = 'Jenis hasil belum dipilih. Pilih waktu (lari, jalan, estafet), jarak (lompat, lempar, tolak), atau poin (Tri Lomba).';
+            $galat['jenis_hasil'] = 'Jenis hasil belum dipilih. Pilih waktu (lari, jalan, estafet), jarak (lompat, lempar, tolak), poin, atau poin multi-lomba (Trilomba).';
+        } elseif (($isian['jenis_hasil'] ?? '') === JenisHasil::MULTI) {
+            $galat += self::periksaMulti($isian, $tabelSkor);
         }
 
         if ($isian['jenis'] === 'beregu') {
@@ -195,14 +204,18 @@ class NomorLombaModel extends Model
      */
     public static function untukDisimpan(array $isian): array
     {
-        $angka = static fn (string $nilai): ?int => $nilai === '' ? null : (int) $nilai;
+        $angka      = static fn (string $nilai): ?int => $nilai === '' ? null : (int) $nilai;
+        $jenisHasil = JenisHasil::sah($isian['jenis_hasil'] ?? null) ? $isian['jenis_hasil'] : JenisHasil::tebak($isian['nama']);
+        $multi      = $jenisHasil === JenisHasil::MULTI;
 
         return [
             'kelompok_umur_id' => (int) $isian['kelompok_umur_id'],
             'nama'             => $isian['nama'],
             'jenis'            => $isian['jenis'],
             'kategori'         => $isian['kategori'],
-            'jenis_hasil'      => JenisHasil::sah($isian['jenis_hasil'] ?? null) ? $isian['jenis_hasil'] : JenisHasil::tebak($isian['nama']),
+            'jenis_hasil'      => $jenisHasil,
+            'tabel_skor_id'    => $multi ? $angka($isian['tabel_skor_id'] ?? '') : null,
+            'komponen_skor'    => $multi && ($isian['komponen_skor'] ?? '') !== '' ? $isian['komponen_skor'] : null,
             'jumlah_inti'      => $angka($isian['jumlah_inti']),
             'batas_anggota'    => $angka($isian['batas_anggota']),
             'regu_maksimal'    => $angka($isian['regu_maksimal'] ?? ''),
@@ -225,7 +238,7 @@ class NomorLombaModel extends Model
     {
         $isian = [];
 
-        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan'] as $kolom) {
+        foreach (['kelompok_umur_id', 'nama', 'jenis', 'kategori', 'jenis_hasil', 'tabel_skor_id', 'komponen_skor', 'jumlah_inti', 'batas_anggota', 'regu_maksimal', 'jumlah_putra', 'jumlah_putri', 'biaya_beregu', 'urutan'] as $kolom) {
             $isian[$kolom] = (string) ($baris[$kolom] ?? '');
         }
 
@@ -372,6 +385,42 @@ class NomorLombaModel extends Model
             ->getRowArray();
 
         return min(self::URUTAN_MAKSIMAL, (int) ($baris['terbesar'] ?? 0) + 1);
+    }
+
+    /**
+     * Aturan jenis hasil poin multi-lomba (F9-10).
+     *
+     * @param array<string, string>    $isian
+     * @param array<int, list<string>> $tabelSkor
+     *
+     * @return array<string, string>
+     */
+    private static function periksaMulti(array $isian, array $tabelSkor): array
+    {
+        $galat = [];
+
+        if ($isian['jenis'] === 'beregu') {
+            $galat['jenis_hasil'] = 'Poin multi-lomba hanya untuk nomor individu. Pilih jenis hasil lain untuk nomor beregu.';
+
+            return $galat;
+        }
+
+        $id = $isian['tabel_skor_id'] ?? '';
+
+        if ($id === '') {
+            $galat['tabel_skor_id'] = 'Tabel skor belum dipilih. Pilih tabel skor untuk menghitung poin, misalnya Trilomba O2SN SMP.';
+        } elseif (! ctype_digit($id) || ! isset($tabelSkor[(int) $id])) {
+            $galat['tabel_skor_id'] = 'Tabel skor yang dipilih tidak ditemukan. Pilih lagi dari daftar, atau pasang tabelnya di Pengaturan > Tabel Skor.';
+        } else {
+            $kode   = array_filter(explode(',', $isian['komponen_skor'] ?? ''), static fn (string $k): bool => $k !== '');
+            $asing  = array_diff($kode, $tabelSkor[(int) $id]);
+
+            if ($asing !== [] || count($kode) !== count(array_unique($kode))) {
+                $galat['komponen_skor'] = 'Komponen yang dipilih tidak ada di tabel skor itu. Centang lagi komponennya.';
+            }
+        }
+
+        return $galat;
     }
 
     /**
