@@ -48,7 +48,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $bagian = $xpath->query('//main/section[@id="jadwal"]')->item(0);
         $this->assertNotNull($bagian);
         $this->assertSame('judul-jadwal', $bagian->getAttribute('aria-labelledby'));
-        $this->assertSame('Jadwal', $this->teks($xpath, '//section[@id="jadwal"]//h2[@id="judul-jadwal"]'));
+        $this->assertSame('Agenda', $this->teks($xpath, '//section[@id="jadwal"]//h2[@id="judul-jadwal"]'));
 
         $butir = $xpath->query('//section[@id="jadwal"]//li[contains(@class, "jadwal-butir")]');
         $this->assertSame(2, $butir->length, 'Jadwal yang disembunyikan tidak tampil.');
