@@ -60,6 +60,12 @@ final class TampilanBib
     ];
 
     /**
+     * Folder berkas latar bawaan; `null` = `public/aset/gambar/bib/`. Hanya
+     * diganti uji supaya keadaan "berkas belum ada" bisa diperiksa.
+     */
+    public static ?string $folderBawaan = null;
+
+    /**
      * Warna tulisan per bagian BIB.
      */
     private const WARNA = [
@@ -170,7 +176,8 @@ final class TampilanBib
             return null;
         }
 
-        $berkas = FCPATH . 'aset' . DIRECTORY_SEPARATOR . 'gambar' . DIRECTORY_SEPARATOR . 'bib' . DIRECTORY_SEPARATOR . $kunci . '.jpg';
+        $folder = self::$folderBawaan ?? FCPATH . 'aset' . DIRECTORY_SEPARATOR . 'gambar' . DIRECTORY_SEPARATOR . 'bib' . DIRECTORY_SEPARATOR;
+        $berkas = $folder . $kunci . '.jpg';
 
         return is_file($berkas) ? $berkas : null;
     }

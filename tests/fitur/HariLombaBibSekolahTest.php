@@ -194,31 +194,26 @@ final class HariLombaBibSekolahTest extends UjiBasisData
      */
     public function testLatarBawaanHanyaBilaBerkasAda(): void
     {
-        $folder = FCPATH . 'aset/gambar/bib/';
+        // Folder sementara, supaya keadaan "berkas belum ada" bisa diuji walau
+        // berkas G9-01 sudah ada di public/aset/gambar/bib/.
+        $folder = sys_get_temp_dir() . '/milklife-latar-bib-' . bin2hex(random_bytes(4)) . '/';
+        mkdir($folder);
+        TampilanBib::$folderBawaan = $folder;
         $berkas = $folder . 'latar-gelap-1.jpg';
 
-        if (is_file($berkas)) {
-            $this->markTestSkipped('Berkas latar bawaan G9-01 sudah ada; uji ini memakai berkas buatannya sendiri.');
-        }
-
-        // Tanpa berkas: tidak ditawarkan dan ditolak.
-        $this->assertSame([], array_intersect_key(TampilanBib::daftarBawaan(), ['latar-gelap-1' => true]));
-        $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT))->query('//input[@name="latar_bawaan"][@value="latar-gelap-1"]')->length);
-        $this->assertGagalDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/tampilan', ['warna_teks' => 'terang', 'latar_bawaan' => 'latar-gelap-1']), self::ALAMAT, 'Latar bawaan itu tidak tersedia. Pilih latar lain.');
-        $this->assertSame('', setting('Bib.latar'));
-
-        $folderBaru = ! is_dir($folder);
-
-        if ($folderBaru) {
-            mkdir($folder, 0775, true);
-        }
-
-        $gambar = imagecreatetruecolor(248, 175);
-        imagefill($gambar, 0, 0, (int) imagecolorallocate($gambar, 2, 31, 123));
-        imagejpeg($gambar, $berkas, 90);
-
         try {
+            // Tanpa berkas: tidak ditawarkan dan ditolak.
+            $this->assertSame([], TampilanBib::daftarBawaan());
+            $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT))->query('//*[@data-latar-bawaan]')->length);
+            $this->assertGagalDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/tampilan', ['warna_teks' => 'terang', 'latar_bawaan' => 'latar-gelap-1']), self::ALAMAT, 'Latar bawaan itu tidak tersedia. Pilih latar lain.');
+            $this->assertSame('', setting('Bib.latar'));
+
+            $gambar = imagecreatetruecolor(248, 175);
+            imagefill($gambar, 0, 0, (int) imagecolorallocate($gambar, 2, 31, 123));
+            imagejpeg($gambar, $berkas, 90);
+
             $this->siapkanTigaSekolah();
+            $this->assertSame(['latar-gelap-1'], array_keys(TampilanBib::daftarBawaan()));
             $halaman = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
             $this->assertSame(1, $halaman->query('//*[@data-latar-bawaan]//input[@type="radio"][@name="latar_bawaan"][@value="latar-gelap-1"]')->length);
             $this->assertSame('checked', $halaman->query('//input[@name="latar_bawaan"][@value=""]')->item(0)?->getAttribute('checked'));
@@ -252,11 +247,27 @@ final class HariLombaBibSekolahTest extends UjiBasisData
             $this->assertFileExists($berkas);
             $this->assertNull(TampilanBib::dariPengaturan()->latar);
         } finally {
+            TampilanBib::$folderBawaan = null;
             @unlink($berkas);
+            @rmdir($folder);
+        }
+    }
 
-            if ($folderBaru) {
-                @rmdir($folder);
+    /**
+     * Berkas latar bawaan G9-01 yang terpasang memenuhi brief: JPG 2480 × 1754, paling besar 2 MB.
+     */
+    public function testBerkasLatarBawaanTerpasangSesuaiUkuran(): void
+    {
+        foreach (array_keys(TampilanBib::LATAR_BAWAAN) as $kunci) {
+            $berkas = FCPATH . 'aset/gambar/bib/' . $kunci . '.jpg';
+
+            if (! is_file($berkas)) {
+                continue;
             }
+
+            $info = getimagesize($berkas) ?: [];
+            $this->assertSame([TampilanBib::LEBAR, TampilanBib::TINGGI, IMAGETYPE_JPEG], [$info[0] ?? null, $info[1] ?? null, $info[2] ?? null], $kunci);
+            $this->assertLessThanOrEqual(2 * 1024 * 1024, filesize($berkas), $kunci);
         }
     }
 

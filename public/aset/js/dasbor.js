@@ -7,6 +7,10 @@
  *
  * Bila ApexCharts gagal dimuat, kotak grafik menampilkan keterangan, dan
  * angka di kartu tetap bisa dibaca.
+ *
+ * Setiap wadah grafik berisi kerangka (`[data-kerangka]`, F9-14) yang dibuang
+ * tepat sebelum grafiknya digambar. Tombol isi grafik tren ditandai
+ * `aria-pressed`; gayanya kelas Tailwind `aria-pressed:` di view.
  */
 (function () {
     'use strict';
@@ -108,8 +112,10 @@
     function gambar(id, opsi) {
         var el = document.getElementById(id);
         if (!el) { return null; }
+        var kerangka = el.querySelector('[data-kerangka]');
+        if (kerangka) { kerangka.remove(); }
         if (typeof window.ApexCharts !== 'function') {
-            el.innerHTML = '<p class="text-body-secondary small py-5 text-center mb-0">Grafik tidak bisa dimuat. Muat ulang halaman.</p>';
+            el.innerHTML = '<p class="py-12 text-center text-sm text-gray-500" data-grafik-gagal>Grafik tidak bisa dimuat. Muat ulang halaman.</p>';
             return null;
         }
         var g = new window.ApexCharts(el, gabung(dasar, opsi));
@@ -158,9 +164,7 @@
     document.querySelectorAll('[data-tren]').forEach(function (tombol) {
         tombol.addEventListener('click', function () {
             document.querySelectorAll('[data-tren]').forEach(function (t) {
-                var aktif = t === tombol;
-                t.classList.toggle('active', aktif);
-                t.setAttribute('aria-pressed', aktif ? 'true' : 'false');
+                t.setAttribute('aria-pressed', t === tombol ? 'true' : 'false');
             });
             if (grafikTren) {
                 var opsi = opsiTren(tombol.getAttribute('data-tren'));

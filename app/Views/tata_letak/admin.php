@@ -7,7 +7,8 @@
  *   `offcanvas-lg`) yang dibuka tombol menu di kepala halaman, berisi semua
  *   butir (K131, K133). Menu yang menempel di bawah hanya 5 butir urusan
  *   pendaftaran (K132, K133). Tombol Keluar tetap di kepala halaman.
- * Kedua menu memakai daftar yang sama: `tata_letak/_menu_admin.php`.
+ * Kedua menu memakai daftar yang sama: `tata_letak/_menu_admin.php`, yang
+ * membaca `App\Libraries\Panel\MenuAdmin` seperti tata letak baru `admin_tw`.
  * Pengecekan dan Halaman depan (K102) menempel di bagian bawah menu samping;
  * di ponsel dan tablet keduanya juga ikon di kepala halaman.
  *
@@ -90,17 +91,17 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
             <div class="offcanvas-header menu-laci-kepala">
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#menu-laci" aria-label="Tutup menu"></button>
             </div>
-            <a class="menu-samping-merek merek" href="<?= site_url('admin/dasbor') ?>">
+            <a class="menu-samping-merek merek" href="<?= site_url('admin/dasbor') ?>" data-merek-admin>
                 <?= view('tata_letak/_merek', [], ['saveData' => false]) ?>
                 <span class="menu-samping-peran">Panel admin</span>
             </a>
-            <nav class="menu-samping-nav" aria-label="Menu admin">
+            <nav class="menu-samping-nav" aria-label="Menu admin" data-menu-admin="samping">
                 <?= view('tata_letak/_menu_admin', ['tempatMenu' => 'samping'], ['saveData' => false]) ?>
             </nav>
         </aside>
 
         <div class="admin-utama">
-            <header class="kepala-admin">
+            <header class="kepala-admin" data-kepala-admin>
                 <button type="button" class="btn btn-outline-primary tombol-menu d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#menu-laci" aria-controls="menu-laci" title="Buka menu">
                     <i class="bi bi-list" aria-hidden="true"></i>
                     <span class="visually-hidden">Buka menu</span>
@@ -117,7 +118,7 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
                         <span class="d-none d-md-inline tombol-kepala-teks">Halaman depan</span>
                         <span class="visually-hidden">(tab baru)</span>
                     </a>
-                    <a class="kepala-admin-nama" href="<?= site_url('admin/akun') ?>" title="Buka Akun: ganti nama dan kata sandi">
+                    <a class="kepala-admin-nama" data-nama-admin href="<?= site_url('admin/akun') ?>" title="Buka Akun: ganti nama dan kata sandi">
                         <i class="bi bi-person-circle" aria-hidden="true"></i>
                         <span class="visually-hidden">Masuk sebagai</span>
                         <span class="kepala-admin-nama-teks"><?= esc((string) session('admin_nama')) ?></span>
@@ -143,7 +144,7 @@ $pakaiTabel = trim($this->renderSection('tabel')) !== '';
         </div>
     </div>
 
-    <nav class="menu-bawah d-lg-none" aria-label="Menu pendaftaran">
+    <nav class="menu-bawah d-lg-none" aria-label="Menu pendaftaran" data-menu-admin="bawah">
         <?= $this->include('tata_letak/_menu_admin') ?>
     </nav>
 

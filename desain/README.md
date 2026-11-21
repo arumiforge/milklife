@@ -21,6 +21,11 @@ Status tugas gambar hanya dicatat di `agent/PROGRES.md` oleh koordinator.
 | [G9-05](tugas/G9-05-ikon-nomor-lomba.md) | Ilustrasi nomor lomba dan kelompok umur | F9-03, F9-07, F9-12 | 27 November |
 | [G9-06](tugas/G9-06-videotron-podium.md) | Latar videotron (potongan untuk layar ukuran apa pun), podium, medali | F9-13 | 2 Desember |
 | [G9-07](tugas/G9-07-bantuan-kategori.md) | Ilustrasi kategori Bantuan dan FAQ | F9-04 | 25 November |
+| [G9-08](tugas/G9-08-panel-admin.md) | Halaman masuk dan panel admin | F9-19 | 1 Desember |
+| [G9-09](tugas/G9-09-pita-judul.md) | Pita judul halaman publik | F9-19 | 1 Desember |
+| [G9-10](tugas/G9-10-gambar-bagikan.md) | Gambar bagikan (Open Graph) | F9-19 | 1 Desember |
+| [G9-11](tugas/G9-11-ikon-aplikasi.md) | Ikon aplikasi dan favicon | F9-19 | 1 Desember |
+| [G9-12](tugas/G9-12-pola-hiasan.md) | Pola dan hiasan latar | F9-19 | 3 Desember |
 
 ## Tinjauan PR gambar (untuk Claude)
 

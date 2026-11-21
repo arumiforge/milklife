@@ -49,12 +49,90 @@
  *
  * Selama data dimuat, bilah kemajuan di atas halaman menyala (kemajuan.js) dan
  * tabel diredupkan (.tabel-admin-memuat di admin.css, wilayah Tahap 6).
+ *
+ * Tampilan baru (F9-14): di tata letak `admin_tw` (`<body data-tata="tw">`)
+ * DataTables dimuat tanpa gaya Bootstrap. Skrip ini lalu memasang kelas
+ * Tailwind sendiri (GAYA_TW di bawah) pada kotak cari, pilihan jumlah baris,
+ * tabel, dan tombol halaman, juga lencana status dan pesan galat. Kelasnya
+ * ditulis utuh di berkas ini supaya ikut dibangun ke `tw.css`. Panah urutan
+ * kolom ditulis sebagai teks (↑ ↓ ↕) karena DataTables biasanya
+ * menggambarnya dengan CSS bawaannya. Halaman tata letak lama tidak berubah.
  */
 (function () {
     'use strict';
 
     if (typeof window.DataTable !== 'function') {
         return;
+    }
+
+    var TATA_TW = !!document.body && document.body.getAttribute('data-tata') === 'tw';
+
+    // Kelas Tailwind untuk tampilan baru; padanan dataTables.bootstrap5.js.
+    var GAYA_TW = {
+        container: 'dt-container space-y-3',
+        info: { container: 'dt-info text-sm text-gray-600' },
+        layout: {
+            row: 'dt-layout-row flex flex-wrap items-center justify-between gap-3',
+            cell: 'dt-layout-cell flex flex-wrap items-center gap-2',
+            tableRow: 'dt-layout-table',
+            tableCell: 'block! w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut',
+            start: 'dt-layout-start',
+            end: 'dt-layout-end sm:ms-auto',
+            full: 'dt-layout-full w-full'
+        },
+        length: {
+            container: 'dt-length flex items-center gap-2 text-sm text-gray-700',
+            select: 'dt-input min-h-11 rounded-lg border border-gray-300 bg-white py-2 ps-3 pe-8 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500'
+        },
+        search: {
+            container: 'dt-search flex flex-wrap items-center gap-2 text-sm text-gray-700',
+            input: 'dt-input min-h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 sm:w-64'
+        },
+        table: 'dataTable w-full text-left text-sm text-gray-700',
+        thead: { row: '', cell: 'border-b border-gray-200 bg-gray-50 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap text-gray-600' },
+        tbody: { row: 'border-b border-gray-100 last:border-b-0 hover:bg-gray-50', cell: 'px-4 py-3 align-top' },
+        empty: { row: 'dt-empty px-4 py-8 text-center text-gray-500' },
+        paging: {
+            container: 'dt-paging',
+            nav: 'flex flex-wrap items-center gap-1',
+            button: 'dt-paging-button inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 hover:bg-gray-100 disabled:opacity-50',
+            active: 'current border-primary-700! bg-primary-700! text-white!',
+            disabled: 'disabled pointer-events-none opacity-50'
+        }
+    };
+
+    var LENCANA_TW = {
+        hijau: 'inline-flex items-center rounded-md bg-green-100 px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap text-green-800',
+        kuning: 'inline-flex items-center rounded-md bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap text-yellow-800',
+        merah: 'inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap text-red-800'
+    };
+
+    if (TATA_TW) {
+        Object.keys(GAYA_TW).forEach(function (kunci) {
+            var nilai = GAYA_TW[kunci];
+            DataTable.ext.classes[kunci] = typeof nilai === 'string'
+                ? nilai
+                : Object.assign({}, DataTable.ext.classes[kunci] || {}, nilai);
+        });
+    }
+
+    function lencana(teks, warna) {
+        var bootstrap = { hijau: 'text-bg-success', kuning: 'text-bg-warning', merah: 'text-bg-danger' };
+        return '<span class="' + (TATA_TW ? LENCANA_TW[warna] : 'badge ' + bootstrap[warna]) + '">' + teks + '</span>';
+    }
+
+    /** Panah urutan pada judul kolom (tampilan baru), dari aria-sort DataTables. */
+    function tandaiUrutan(tabel) {
+        tabel.querySelectorAll('thead th').forEach(function (th) {
+            var panah = th.querySelector('.dt-column-order');
+            if (!panah || !(th.classList.contains('dt-orderable-asc') || th.classList.contains('dt-orderable-desc'))) {
+                return;
+            }
+            var arah = th.getAttribute('aria-sort');
+            th.classList.add('cursor-pointer', 'select-none');
+            panah.classList.add('ms-1', 'inline-block', 'w-3', 'text-gray-400');
+            panah.textContent = arah === 'ascending' ? '↑' : (arah === 'descending' ? '↓' : '↕');
+        });
     }
 
     var BULAN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -93,13 +171,13 @@
         status: function (nilai, baris) {
             // Pendaftaran yang semua atletnya ditolak panitia (K117).
             if (baris && baris.ditolak_semua) {
-                return '<span class="badge text-bg-danger">Semua atlet ditolak</span>';
+                return lencana('Semua atlet ditolak', 'merah');
             }
             if (nilai === 'lunas') {
-                return '<span class="badge text-bg-success">Lunas</span>';
+                return lencana('Lunas', 'hijau');
             }
             if (nilai === 'menunggu') {
-                return '<span class="badge text-bg-warning">Menunggu</span>';
+                return lencana('Menunggu', 'kuning');
             }
             return escape(nilai);
         },
@@ -221,7 +299,7 @@
             kolom.push({
                 data: nomorUrut ? null : th.getAttribute('data-kolom'),
                 orderable: !nomorUrut && th.getAttribute('data-urut') !== 'tidak',
-                className: nomorUrut ? 'text-end text-body-secondary' : kelas,
+                className: nomorUrut ? 'text-end ' + (TATA_TW ? 'text-gray-500' : 'text-body-secondary') : kelas,
                 render: function (nilai, jenis, baris, meta) {
                     if (nomorUrut) {
                         return jenis === 'display' ? String(meta.settings._iDisplayStart + meta.row + 1) : null;
@@ -244,8 +322,10 @@
         var dt;
         var bilahMenyala = false;
 
+        var kelasMemuat = TATA_TW ? 'opacity-60' : 'tabel-admin-memuat';
+
         function mulaiMemuat() {
-            tabel.classList.add('tabel-admin-memuat');
+            tabel.classList.add(kelasMemuat);
             if (!bilahMenyala && window.Kemajuan) {
                 window.Kemajuan.mulai();
                 bilahMenyala = true;
@@ -253,7 +333,7 @@
         }
 
         function selesaiMemuat() {
-            tabel.classList.remove('tabel-admin-memuat');
+            tabel.classList.remove(kelasMemuat);
             if (bilahMenyala && window.Kemajuan) {
                 window.Kemajuan.selesai();
             }
@@ -312,14 +392,20 @@
             selesaiMemuat();
             var tubuh = tabel.querySelector('tbody');
             if (tubuh) {
-                tubuh.innerHTML = '<tr><td colspan="' + kolom.length + '" class="text-danger py-4">'
-                    + '<i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>'
-                    + escape(PESAN_GALAT) + '</td></tr>';
+                tubuh.innerHTML = TATA_TW
+                    ? '<tr><td colspan="' + kolom.length + '" class="px-4 py-6 font-semibold text-red-700" data-tabel-galat>'
+                        + escape(PESAN_GALAT) + '</td></tr>'
+                    : '<tr><td colspan="' + kolom.length + '" class="text-danger py-4">'
+                        + '<i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>'
+                        + escape(PESAN_GALAT) + '</td></tr>';
             }
         });
 
         dt.on('draw.dt', function () {
             perbaruiExcel(tautanExcel, formulir, dt, kolom);
+            if (TATA_TW) {
+                tandaiUrutan(tabel);
+            }
         });
 
         if (formulir) {

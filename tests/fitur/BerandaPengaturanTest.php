@@ -185,7 +185,7 @@ final class BerandaPengaturanTest extends UjiHalaman
     public function testNamaAdminDiKepalaMenautkeAkun(): void
     {
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'));
-        $nama  = $xpath->query('//header[contains(@class, "kepala-admin")]//a[contains(@class, "kepala-admin-nama")]')->item(0);
+        $nama  = $xpath->query('//header[@data-kepala-admin]//a[@data-nama-admin]')->item(0);
 
         $this->assertNotNull($nama);
         $this->assertSame(site_url('admin/akun'), $nama->getAttribute('href'));
