@@ -24,20 +24,20 @@ $metodePoin = ($metode ?? Klasemen::MEDALI) === Klasemen::POIN;
             <table class="w-full text-left text-sm text-gray-700">
                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                     <tr>
-                        <th scope="col" class="px-3 py-3 text-center">Per.</th>
-                        <th scope="col" class="px-3 py-3">Sekolah</th>
-                        <th scope="col" class="px-3 py-3 text-center"><span class="sr-only">Juara </span>I</th>
-                        <th scope="col" class="px-3 py-3 text-center"><span class="sr-only">Juara </span>II</th>
-                        <th scope="col" class="px-3 py-3 text-center"><span class="sr-only">Juara </span>III</th>
-                        <th scope="col" class="hidden px-3 py-3 text-center sm:table-cell">Jumlah</th>
-                        <th scope="col" class="<?= $metodePoin ? '' : 'hidden sm:table-cell ' ?>px-3 py-3 text-center" data-kolom="poin">Poin</th>
+                        <th scope="col" class="px-2 py-3 text-center sm:px-3">Per.</th>
+                        <th scope="col" class="px-2 py-3 sm:px-3">Sekolah</th>
+                        <th scope="col" class="px-2 py-3 text-center sm:px-3"><span class="sr-only">Juara </span>I</th>
+                        <th scope="col" class="px-2 py-3 text-center sm:px-3"><span class="sr-only">Juara </span>II</th>
+                        <th scope="col" class="px-2 py-3 text-center sm:px-3"><span class="sr-only">Juara </span>III</th>
+                        <th scope="col" class="hidden px-2 py-3 text-center sm:px-3 sm:table-cell">Jumlah</th>
+                        <th scope="col" class="<?= $metodePoin ? '' : 'hidden sm:table-cell ' ?>px-2 py-3 text-center sm:px-3" data-kolom="poin">Poin</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($jenjang['baris'] as $b) : ?>
                         <tr class="border-t border-gray-100 align-top <?= $b['juara_umum'] !== null ? 'bg-yellow-50' : 'bg-white' ?>"<?= $b['juara_umum'] !== null ? ' data-juara-umum="' . (int) $b['juara_umum'] . '"' : '' ?>>
-                            <td class="px-3 py-3 text-center font-bold text-gray-900"><?= $b['peringkat'] ?></td>
-                            <td class="px-3 py-3">
+                            <td class="px-2 py-3 text-center sm:px-3 font-bold text-gray-900"><?= $b['peringkat'] ?></td>
+                            <td class="px-2 py-3 sm:px-3">
                                 <span class="font-semibold text-gray-900"><?= esc($b['sekolah']) ?></span>
                                 <?php if ($b['juara_umum'] !== null) : ?>
                                     <?= komponen('lencana', ['label' => 'Juara umum ' . $romawi[$b['juara_umum']], 'warna' => 'kuning']) ?>
@@ -55,11 +55,11 @@ $metodePoin = ($metode ?? Klasemen::MEDALI) === Klasemen::POIN;
                                     </details>
                                 <?php endif ?>
                             </td>
-                            <td class="px-3 py-3 text-center font-semibold"><?= $b['emas'] ?></td>
-                            <td class="px-3 py-3 text-center font-semibold"><?= $b['perak'] ?></td>
-                            <td class="px-3 py-3 text-center font-semibold"><?= $b['perunggu'] ?></td>
-                            <td class="hidden px-3 py-3 text-center font-bold sm:table-cell"><?= $b['jumlah'] ?></td>
-                            <td class="<?= $metodePoin ? 'font-extrabold text-gray-900' : 'hidden font-semibold sm:table-cell' ?> px-3 py-3 text-center"><?= $b['poin'] ?></td>
+                            <td class="px-2 py-3 text-center sm:px-3 font-semibold"><?= $b['emas'] ?></td>
+                            <td class="px-2 py-3 text-center sm:px-3 font-semibold"><?= $b['perak'] ?></td>
+                            <td class="px-2 py-3 text-center sm:px-3 font-semibold"><?= $b['perunggu'] ?></td>
+                            <td class="hidden px-2 py-3 text-center sm:px-3 font-bold sm:table-cell"><?= $b['jumlah'] ?></td>
+                            <td class="<?= $metodePoin ? 'font-extrabold text-gray-900' : 'hidden font-semibold sm:table-cell' ?> px-2 py-3 text-center sm:px-3"><?= $b['poin'] ?></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
