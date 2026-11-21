@@ -35,6 +35,7 @@ abstract class UjiBasisData extends CIUnitTestCase
 {
     use DatabaseTestTrait;
     use PengaturanBersih;
+    use TampilanBersih;
     use SesiAdminUji;
 
     /**
