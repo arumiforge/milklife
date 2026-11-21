@@ -84,6 +84,26 @@ final class BantuanFaqTest extends UjiBasisData
         $hasil->assertDontSee('{rekening}');
     }
 
+    /**
+     * K143: rincian biaya di FAQ mengikuti sakelar "Tampilkan biaya di halaman
+     * depan" (K74, bawaan mati).
+     */
+    public function testBiayaDiFaqMengikutiSakelarTampilkanBiaya(): void
+    {
+        $this->isiDataIndukPendaftaran();
+        $this->buatFaq('pembayaran', 'Berapa biayanya?', '{daftar_biaya}');
+
+        $tersembunyi = $this->get('bantuan');
+        $tersembunyi->assertSee('Rincian biaya tampil di langkah');
+        $tersembunyi->assertDontSee('Rp ');
+
+        setting('HalamanDepan.tampilkan_biaya', true);
+
+        $tampil = $this->get('bantuan');
+        $tampil->assertSee('Rp ');
+        $tampil->assertDontSee('Rincian biaya tampil di langkah');
+    }
+
     public function testSemuaBawaanTampil(): void
     {
         FaqBawaan::pasang($this->db);
