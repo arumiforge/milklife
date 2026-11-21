@@ -198,7 +198,12 @@ if (akar) {
         if (jenis === 'juara_umum') {
             const adaPoin = butir.baris.some((b) => b.poin !== undefined && b.poin !== null);
             const jumlah = !kecil && lebarU >= 30;
-            const medali = [['emas', 'I', 'bg-amber-300'], ['perak', 'II', 'bg-slate-200'], ['perunggu', 'III', 'bg-oranye-300']];
+            // Panel sempit (ponsel tegak) tidak muat Per., Sekolah, tiga medali, dan Poin
+            // sekaligus: kolom Sekolah terjepit sampai pecah per huruf. Yang dipertahankan
+            // dasar peringkatnya: Poin pada metode poin, medali pada metode medali.
+            const sempit = adaPoin && lebarU < 23;
+            const metodePoin = butir.metode === 'poin';
+            const medali = sempit && metodePoin ? [] : [['emas', 'I', 'bg-amber-300'], ['perak', 'II', 'bg-slate-200'], ['perunggu', 'III', 'bg-oranye-300']];
             const kolom = [
                 { judul: 'Per.', kelas: 'w-[calc(var(--u)*2.4)]', isi: (b) => { const td = el('td', kelasSel); td.append(lencanaPeringkat(b.peringkat)); return td; } },
                 { judul: 'Sekolah', kelas: '', isi: (b) => selTeks(b.sekolah, null) },
@@ -212,7 +217,7 @@ if (akar) {
                 });
             }
             if (jumlah) kolom.push({ judul: 'Jml', judulPanjang: 'Jumlah', kelas: 'w-[calc(var(--u)*2.6)] text-center', isi: (b) => el('td', kelasSel + ' text-center tabular-nums text-primary-100', b.jumlah ?? '') });
-            if (adaPoin) kolom.push({ judul: 'Poin', kelas: 'w-[calc(var(--u)*3.2)] text-end', isi: (b) => el('td', kelasSel + ' text-end font-extrabold tabular-nums text-amber-200', b.poin ?? '') });
+            if (adaPoin && !(sempit && !metodePoin)) kolom.push({ judul: 'Poin', kelas: 'w-[calc(var(--u)*3.2)] text-end', isi: (b) => el('td', kelasSel + ' text-end font-extrabold tabular-nums text-amber-200', b.poin ?? '') });
             return kolom;
         }
         // jadwal dan berlangsung
@@ -356,7 +361,7 @@ if (akar) {
         }
         if (jenis === 'juara_umum') {
             return (data.juara_umum || []).filter((j) => j.baris?.length).map((j) => ({
-                jenis, kunci: 'juara:' + j.jenjang, judul: j.label, sub: '', baris: j.baris,
+                jenis, kunci: 'juara:' + j.jenjang, judul: j.label, sub: '', metode: j.metode, baris: j.baris,
             }));
         }
         const daftar = data[jenis];

@@ -19,12 +19,13 @@ use CodeIgniter\I18n\Time;
  *     //  'pengaturan' => ['isi' => ['hasil', 'juara_umum', …], 'lama' => 12],
  *     //  'hasil' => [['id' => 10, 'nomor' => 'Lari 60 m putra', 'kelompok_umur' => 'KU 10', 'babak' => 'Final',
  *     //               'satuan' => '', 'baris' => [['peringkat' => 1, 'nama' => …, 'sekolah' => …, 'nomor_dada' => …, 'prestasi' => '9,87', 'keterangan' => null], …]], …],
- *     //  'juara_umum' => [['jenjang' => 'A', 'label' => 'SD/MI', 'baris' => [['peringkat' => 1, 'sekolah' => …, 'emas' => 3, …], …]], …],
+ *     //  'juara_umum' => [['jenjang' => 'A', 'label' => 'SD/MI', 'metode' => 'medali', 'baris' => [['peringkat' => 1, 'sekolah' => …, 'emas' => 3, …], …]], …],
  *     //  'jadwal' => [['nomor' => …, 'kelompok_umur' => …, 'babak' => …, 'hari' => 'Rabu, 9 Desember', 'jam' => '08.30', 'lokasi' => …], …],
  *     //  'berlangsung' => [… sama dengan jadwal …]]
  *
  * Klasemen memakai `HasilLomba::klasemen(true)`, jadi mengikuti metode di
- * Pengaturan > Hasil (F9-11); kolom `poin` ikut terkirim.
+ * Pengaturan > Hasil (F9-11); kolom `poin` ikut terkirim, dan `metode`
+ * (`medali` atau `poin`) supaya layar sempit tahu kolom mana yang dipertahankan.
  *
  * "Sedang berlangsung": babak hari ini yang berstatus Berlangsung menurut
  * `JadwalPertandingan::status()` (jam mulai sudah lewat, belum Selesai).
@@ -218,11 +219,12 @@ final class PapanVideotron
      * Klasemen nomor terbit per jenjang, sampai peringkat `BATAS_KLASEMEN`,
      * tanpa NPSN dan rincian piala.
      *
-     * @return list<array{jenjang: string, label: string, baris: list<array<string, mixed>>}>
+     * @return list<array{jenjang: string, label: string, metode: string, baris: list<array<string, mixed>>}>
      */
     private function juaraUmum(): array
     {
         $daftar = [];
+        $metode = MetodeKlasemen::metode();
 
         // Metode dan poin dari Pengaturan > Hasil (F9-11), sama dengan `hasil/klasemen`.
         foreach ((new HasilLomba($this->db))->klasemen(true) as $jenjang) {
@@ -237,7 +239,7 @@ final class PapanVideotron
                 $baris[] = array_filter($b, static fn (mixed $nilai): bool => is_scalar($nilai) || $nilai === null);
             }
 
-            $daftar[] = ['jenjang' => (string) $jenjang['jenjang'], 'label' => (string) $jenjang['label'], 'baris' => $baris];
+            $daftar[] = ['jenjang' => (string) $jenjang['jenjang'], 'label' => (string) $jenjang['label'], 'metode' => $metode, 'baris' => $baris];
         }
 
         return $daftar;
