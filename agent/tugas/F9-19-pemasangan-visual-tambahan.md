@@ -12,12 +12,12 @@ Gambar tambahan dari Codex (G9-08 sampai G9-12, K150) terpasang di halaman yang 
 
 ## Hasil
 
-- [ ] Pembantu gambar opsional: gambar hanya dirender bila berkasnya ada (`is_file`), tanpa galat dan tanpa ruang kosong bila belum ada
-- [ ] Halaman masuk, sapaan dasbor, daftar ulang, cetak BIB, input hasil, dan keadaan kosong admin memakai G9-08
-- [ ] `_judul_halaman_tw` menerima parameter gambar; halaman publik yang memakai pita judul memasang ilustrasi G9-09 (disembunyikan di bawah `md`)
-- [ ] `og:image`, `og:title`, `og:description`, dan `twitter:card` di tata letak publik, gambar G9-10 per halaman dengan cadangan `umum.jpg`
-- [ ] Favicon PNG, `apple-touch-icon`, dan `manifest.webmanifest` (G9-11) tanpa melanggar CSP (`manifest-src` bila perlu); `ikon.svg` tetap
-- [ ] Hiasan G9-12 dipakai hemat (beranda, layar berhasil, halaman masuk) dan disembunyikan dari pembaca layar
+- [x] Pembantu gambar opsional: gambar hanya dirender bila berkasnya ada (`is_file`), tanpa galat dan tanpa ruang kosong bila belum ada
+- [x] Halaman masuk, sapaan dasbor, daftar ulang, cetak BIB, input hasil, dan keadaan kosong admin memakai G9-08
+- [x] `_judul_halaman_tw` menerima parameter gambar; halaman publik yang memakai pita judul memasang ilustrasi G9-09 (disembunyikan di bawah `md`)
+- [x] `og:image`, `og:title`, `og:description`, dan `twitter:card` di tata letak publik, gambar G9-10 per halaman dengan cadangan `umum.jpg`
+- [x] Favicon PNG, `apple-touch-icon`, dan `manifest.webmanifest` (G9-11) tanpa melanggar CSP (`manifest-src` bila perlu); `ikon.svg` tetap
+- [x] Hiasan G9-12 dipakai hemat (beranda, layar berhasil, halaman masuk) dan disembunyikan dari pembaca layar
 
 ## Berkas dan uji
 

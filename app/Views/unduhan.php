@@ -15,8 +15,10 @@
 
 <?= $this->section('judul') ?>Unduhan – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
+<?= $this->section('keterangan') ?>Flyer, petunjuk teknis, dan berkas lain dari panitia.<?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
-<?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Unduhan', 'ikon' => 'download', 'teks' => 'Flyer, petunjuk teknis, dan berkas lain dari panitia ' . $namaAcara . '.'], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Unduhan', 'ikon' => 'download', 'gambar' => 'judul/unduhan.webp', 'teks' => 'Flyer, petunjuk teknis, dan berkas lain dari panitia ' . $namaAcara . '.'], ['saveData' => false]) ?>
 
 <div class="mx-auto max-w-screen-xl px-4 py-10">
     <?php if ($unduhan === []) : ?>

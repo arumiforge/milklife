@@ -89,6 +89,7 @@ final class KepalaKeamananTest extends UjiBasisData
         $this->assertMatchesRegularExpression("#frame-src 'self' https://challenges\\.cloudflare\\.com#", $kepala);
         $this->assertMatchesRegularExpression("#img-src 'self' data: blob:#", $kepala);
         $this->assertStringContainsString("object-src 'none'", $kepala);
+        $this->assertStringContainsString("manifest-src 'self'", $kepala);
         $this->assertStringNotContainsString('unsafe-inline', $kepala);
         $this->assertStringNotContainsString('unsafe-eval', $kepala);
         $this->assertMatchesRegularExpression('#^<script nonce="[^"]+"></script><style nonce="[^"]+"></style>$#', (string) $jawaban->getBody());

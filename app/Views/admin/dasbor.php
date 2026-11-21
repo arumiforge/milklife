@@ -12,6 +12,9 @@
  * sebagai JSON di `#data-grafik-dasbor`; setiap wadah grafik (`[data-grafik]`)
  * berisi kerangka sampai `dasbor.js` menggambarnya.
  *
+ * Kartu keadaan memakai ilustrasi sapaan G9-08 `admin/dasbor-sapaan.webp` di
+ * kanan mulai `md`, hanya bila berkasnya ada (F9-19).
+ *
  * ikon-sprite: hourglass calendar-days lock-open lock clipboard-list circle-alert
  * ikon-sprite: file-text user-round school users receipt circle-check arrow-right
  * ikon-sprite: file-search bell clock badge-check hash user calculator calendar-check
@@ -66,19 +69,22 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-label="Keadaan pendaftaran">
-        <div class="flex flex-wrap items-center gap-3">
-            <span data-keadaan="<?= esc($keadaan, 'attr') ?>"><?= komponen('lencana', ['label' => $labelKeadaan, 'warna' => $warnaKeadaan, 'ikon' => $ikonKeadaan]) ?></span>
-            <p class="min-w-0 flex-1 basis-60 font-semibold text-gray-900" data-kalimat-keadaan><?= esc($kalimat) ?></p>
-            <?= komponen('tombol', ['label' => 'Buka Pengecekan', 'href' => site_url('admin/pengecekan'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'clipboard-list']) ?>
+    <section class="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-label="Keadaan pendaftaran">
+        <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-3">
+                <span data-keadaan="<?= esc($keadaan, 'attr') ?>"><?= komponen('lencana', ['label' => $labelKeadaan, 'warna' => $warnaKeadaan, 'ikon' => $ikonKeadaan]) ?></span>
+                <p class="min-w-0 flex-1 basis-60 font-semibold text-gray-900" data-kalimat-keadaan><?= esc($kalimat) ?></p>
+                <?= komponen('tombol', ['label' => 'Buka Pengecekan', 'href' => site_url('admin/pengecekan'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'clipboard-list']) ?>
+            </div>
+            <?php if (! $semuaLengkap) : ?>
+                <p class="mt-3 flex items-start gap-2 text-sm text-yellow-800" id="peringatan-kelengkapan">
+                    <?= ikon('circle-alert', 'mt-0.5 size-4 shrink-0') ?>
+                    <span>Pengaturan wajib baru <?= $jumlahLengkap ?> dari <?= $jumlahButir ?> yang lengkap.
+                    <a class="font-semibold underline hover:no-underline" href="<?= site_url('admin/pengecekan') ?>#kelengkapan-pengaturan">Lihat yang belum lengkap</a>.</span>
+                </p>
+            <?php endif ?>
         </div>
-        <?php if (! $semuaLengkap) : ?>
-            <p class="mt-3 flex items-start gap-2 text-sm text-yellow-800" id="peringatan-kelengkapan">
-                <?= ikon('circle-alert', 'mt-0.5 size-4 shrink-0') ?>
-                <span>Pengaturan wajib baru <?= $jumlahLengkap ?> dari <?= $jumlahButir ?> yang lengkap.
-                <a class="font-semibold underline hover:no-underline" href="<?= site_url('admin/pengecekan') ?>#kelengkapan-pengaturan">Lihat yang belum lengkap</a>.</span>
-            </p>
-        <?php endif ?>
+        <?= gambar_opsional('admin/dasbor-sapaan.webp', ['class' => 'hidden h-28 w-auto shrink-0 md:block', 'data-gambar-admin' => 'dasbor-sapaan']) ?>
     </section>
 
     <section aria-labelledby="judul-angka" id="angka-pendaftaran">

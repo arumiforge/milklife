@@ -18,8 +18,10 @@
 
 <?= $this->section('judul') ?>Galeri – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
+<?= $this->section('keterangan') ?>Album foto acara dari panitia.<?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
-<?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Galeri', 'ikon' => 'images', 'teks' => 'Foto-foto ' . $namaAcara . '. Tekan album untuk membukanya di Instagram atau Google Drive panitia.'], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Galeri', 'ikon' => 'images', 'gambar' => 'judul/galeri.webp', 'teks' => 'Foto-foto ' . $namaAcara . '. Tekan album untuk membukanya di Instagram atau Google Drive panitia.'], ['saveData' => false]) ?>
 
 <div class="mx-auto max-w-screen-xl px-4 py-10">
     <?php if ($album === []) : ?>

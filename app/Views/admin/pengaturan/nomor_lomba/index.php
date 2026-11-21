@@ -59,7 +59,7 @@ $ringkasTim = static function (array $nomor): string {
 
     <?php if ($kelompokUmur === []) : ?>
         <?= komponen('kosong', [
-            'gambar' => 'gambar/keadaan/kosong-data.webp',
+            'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'],
             'ikon'   => 'users',
             'judul'  => 'Belum ada kelompok umur',
             'teks'   => 'Setiap nomor lomba milik satu kelompok umur. Buat kelompok umur dulu, lalu kembali ke sini untuk menambah nomor lombanya.',
@@ -67,7 +67,7 @@ $ringkasTim = static function (array $nomor): string {
         ]) ?>
     <?php elseif ($jumlahSemua === 0) : ?>
         <?= komponen('kosong', [
-            'gambar' => 'gambar/keadaan/kosong-data.webp',
+            'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'],
             'ikon'   => 'trophy',
             'judul'  => 'Belum ada nomor lomba',
             'teks'   => 'Tambahkan nomor individu dan beregu untuk tiap kelompok umur. Sekolah hanya bisa memilih nomor yang ada di sini.',

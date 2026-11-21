@@ -17,6 +17,7 @@
 <?= view('tata_letak/_judul_halaman_tw', [
     'judul'        => $nomor['nama'],
     'ikon'         => 'trophy',
+    'gambar'       => 'judul/hasil.webp',
     'teks'         => $nomor['kelompok_umur'] . ' · Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.',
     'kembali'      => site_url('hasil'),
     'labelKembali' => 'Semua hasil',

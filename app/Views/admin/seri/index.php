@@ -76,7 +76,7 @@ $keadaan = static function (array $b): array {
     <?php endif ?>
 
     <?php if ($kelompokUmur === []) : ?>
-        <?= komponen('kosong', ['gambar' => 'gambar/keadaan/kosong-data.webp', 'ikon' => 'list-ordered', 'judul' => 'Belum ada nomor lomba', 'teks' => 'Tambahkan nomor lomba di Pengaturan, lalu babaknya di Hasil lomba.']) ?>
+        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'list-ordered', 'judul' => 'Belum ada nomor lomba', 'teks' => 'Tambahkan nomor lomba di Pengaturan, lalu babaknya di Hasil lomba.']) ?>
     <?php endif ?>
 
     <?php foreach ($kelompokUmur as $ku) : ?>

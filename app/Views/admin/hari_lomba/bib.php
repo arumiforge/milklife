@@ -32,12 +32,15 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
 <div class="space-y-6 p-4 sm:p-6">
     <?= view('admin/hari_lomba/_tab', ['aktif' => 'admin/nomor-atlet/cetak'], ['saveData' => false]) ?>
 
-    <p class="max-w-3xl text-gray-700">
-        Satu nomor atlet (BIB) seukuran setengah A4 mendatar (210 × 148,5 mm). PDF memuat dua BIB per halaman A4; potong di garis putus-putus.
-        Gambar JPG berukuran 2480 × 1754 piksel (300 dpi), satu berkas per atlet, untuk dikirim ke percetakan.
-        Isinya nomor atlet, nama atlet, sekolah, dan kelompok umur. Hanya atlet dari pendaftaran Lunas.
-        Urutkan nomor atlet lebih dulu bila perlu (<a class="font-semibold text-primary-700 underline" href="<?= site_url('admin/atlet/nomor-dada') ?>">Urutkan nomor atlet</a>).
-    </p>
+    <div class="flex items-center gap-6">
+        <p class="max-w-3xl flex-1 text-gray-700">
+            Satu nomor atlet (BIB) seukuran setengah A4 mendatar (210 × 148,5 mm). PDF memuat dua BIB per halaman A4; potong di garis putus-putus.
+            Gambar JPG berukuran 2480 × 1754 piksel (300 dpi), satu berkas per atlet, untuk dikirim ke percetakan.
+            Isinya nomor atlet, nama atlet, sekolah, dan kelompok umur. Hanya atlet dari pendaftaran Lunas.
+            Urutkan nomor atlet lebih dulu bila perlu (<a class="font-semibold text-primary-700 underline" href="<?= site_url('admin/atlet/nomor-dada') ?>">Urutkan nomor atlet</a>).
+        </p>
+        <?= gambar_opsional('admin/cetak-bib.webp', ['class' => 'hidden h-28 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'cetak-bib']) ?>
+    </div>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-tampilan">
         <h2 class="text-lg font-bold text-gray-900" id="judul-tampilan">Tampilan BIB</h2>
