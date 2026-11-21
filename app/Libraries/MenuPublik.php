@@ -70,6 +70,18 @@ final class MenuPublik
         }
         // ---------- Akhir Peserta ----------
 
+        // ---------- Galeri (F9-06): hanya bila sakelar Pengaturan > Galeri menyala ----------
+        try {
+            $adaGaleri = (bool) setting('Galeri.tampil');
+        } catch (Throwable) {
+            $adaGaleri = false;
+        }
+
+        if ($adaGaleri) {
+            $butir[] = ['label' => 'Galeri', 'alamat' => site_url('galeri'), 'aktif' => url_is('galeri')];
+        }
+        // ---------- Akhir Galeri ----------
+
         // ---------- Bantuan (F9-04): selalu tampil ----------
         $butir[] = ['label' => 'Bantuan', 'alamat' => site_url('bantuan'), 'aktif' => url_is('bantuan')];
         // ---------- Akhir Bantuan ----------

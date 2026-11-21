@@ -44,6 +44,11 @@ $routes->get('peserta', 'PesertaController::index');
 $routes->get('peserta/data', 'PesertaController::data');
 // ---------- Akhir peserta publik ----------
 
+// ---------- Galeri publik (F9-06) ----------
+// 404 selama sakelar `Galeri.tampil` mati.
+$routes->get('galeri', 'GaleriController::index');
+// ---------- Akhir galeri publik ----------
+
 // ---------- Pendaftaran (Tahap 4) ----------
 // Wizard pendaftaran dan titik akhir JSON-nya (rencana Tahap 4, "Rute dan
 // pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.
@@ -244,6 +249,18 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         // ---------- Sakelar halaman Peserta publik (F9-12) ----------
         $routes->post('halaman-depan/peserta', 'HalamanPesertaController::simpan');
         // ---------- Akhir sakelar halaman Peserta ----------
+
+        // ---------- Galeri (F9-06) ----------
+        $routes->get('galeri', 'GaleriController::index');
+        $routes->get('galeri/tambah', 'GaleriController::tambah');
+        $routes->post('galeri', 'GaleriController::buat');
+        $routes->post('galeri/tampil', 'GaleriController::tampil');
+        $routes->get('galeri/(:num)/ubah', 'GaleriController::ubah/$1');
+        $routes->post('galeri/(:num)', 'GaleriController::perbarui/$1');
+        $routes->post('galeri/(:num)/hapus', 'GaleriController::hapus/$1');
+        $routes->post('galeri/(:num)/aktif', 'GaleriController::aktif/$1');
+        $routes->post('galeri/(:num)/(naik|turun)', 'GaleriController::pindah/$1/$2');
+        // ---------- Akhir galeri ----------
 
         // ---------- Tabel skor multi-lomba (F9-10) ----------
         // Daftar tabel, pasang tabel bawaan, tambah/hapus tabel; baris per komponen dan kategori.
