@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use RuntimeException;
+use Throwable;
 
 /**
  * Tanya-jawab halaman Bantuan (tabel `faq`, F9-04).
@@ -206,6 +208,8 @@ class FaqModel extends Model
      * menjadi 1, 2, 3, … supaya angka kembar tidak membuat tombol diam.
      *
      * @return bool `false` bila sudah paling atas/bawah atau tidak ditemukan.
+     *
+     * @throws RuntimeException Bila penyimpanan gagal; tidak ada yang berubah.
      */
     public function pindah(int $id, string $arah): bool
     {
@@ -231,15 +235,26 @@ class FaqModel extends Model
 
         [$daftar[$posisi], $daftar[$tujuan]] = [$daftar[$tujuan], $daftar[$posisi]];
 
-        $this->db->transStart();
+        // transBegin/transCommit, bukan transStart/transStatus: dalam mode ketat
+        // CodeIgniter tidak mengembalikan status gagal dari transaksi sebelumnya
+        // di koneksi yang sama, sehingga transComplete() ikut membatalkan.
+        $this->db->transBegin();
 
-        foreach ($daftar as $indeks => $idBaris) {
-            $this->builder()->where('id', $idBaris)->update(['urutan' => min(self::URUTAN_MAKSIMAL, $indeks + 1)]);
+        try {
+            foreach ($daftar as $indeks => $idBaris) {
+                if (! $this->builder()->where('id', $idBaris)->update(['urutan' => min(self::URUTAN_MAKSIMAL, $indeks + 1)])) {
+                    throw new RuntimeException('Urutan tanya-jawab gagal disimpan.');
+                }
+            }
+
+            $this->db->transCommit();
+        } catch (Throwable $e) {
+            $this->db->transRollback();
+
+            throw $e;
         }
 
-        $this->db->transComplete();
-
-        return $this->db->transStatus();
+        return true;
     }
 
     /**
