@@ -14,24 +14,26 @@
  * - Bagian tidak ditampilkan bila `$unduhan === []`.
  * - `<section id="unduhan" aria-labelledby="judul-unduhan">` dengan `<h2 id="judul-unduhan">`.
  * - Tautan ke halaman semua unduhan: `site_url('unduhan')`.
- * - Gaya hanya di wilayah "Bagian jadwal, unduhan, kontak (F3-03)" di `tema.css`.
+ * - Tata letak baru Tailwind (F9-03); penanda uji berupa atribut `data-*`.
  */
 
 if ($unduhan === []) {
     return;
 }
 ?>
-<section id="unduhan" class="bagian-tambahan bagian-unduhan" aria-labelledby="judul-unduhan">
-    <div class="container">
-        <h2 id="judul-unduhan" class="bagian-tambahan-judul"><i class="bi bi-download" aria-hidden="true"></i> Unduhan</h2>
-        <p class="bagian-tambahan-pengantar">Flyer, petunjuk teknis, dan berkas lain dari panitia.</p>
+<section id="unduhan" class="scroll-mt-20" aria-labelledby="judul-unduhan">
+    <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Berkas panitia</p>
+                <h2 id="judul-unduhan" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Unduhan</h2>
+                <p class="mt-2 text-lg text-gray-600">Flyer, petunjuk teknis, dan berkas lain dari panitia.</p>
+            </div>
+            <?= komponen('tombol', ['label' => 'Lihat semua unduhan', 'href' => site_url('unduhan'), 'varian' => 'kedua', 'ikon' => 'arrow-right', 'ikonKanan' => true, 'atribut' => ['data-unduhan-semua' => true]]) ?>
+        </div>
 
-        <?= view('beranda/_daftar_unduhan', ['unduhan' => $unduhan, 'tingkatJudul' => 'h3'], ['saveData' => false]) ?>
-
-        <p class="unduhan-semua">
-            <a class="btn btn-outline-primary" href="<?= site_url('unduhan') ?>">
-                Lihat semua unduhan <i class="bi bi-arrow-right" aria-hidden="true"></i>
-            </a>
-        </p>
+        <div class="mt-8">
+            <?= view('beranda/_daftar_unduhan', ['unduhan' => $unduhan, 'tingkatJudul' => 'h3'], ['saveData' => false]) ?>
+        </div>
     </div>
 </section>

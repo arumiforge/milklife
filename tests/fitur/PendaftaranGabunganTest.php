@@ -122,7 +122,7 @@ final class PendaftaranGabunganTest extends UjiBasisData
     public function testTombolDaftarMengikutiKeadaan(): void
     {
         // K81: Pendaftaran dibuka dari tombol di bagian pembuka halaman depan, bukan dari menu.
-        $tombol = fn () => $this->xpathDari($this->get('/'))->query('//section[@id="pembuka"]//*[contains(@class, "tombol-pendaftaran")]')->item(0);
+        $tombol = fn () => $this->xpathDari($this->get('/'))->query('//section[@id="pembuka"]//*[@data-tombol="pendaftaran"]')->item(0);
 
         // Terbuka: menaut ke wizard.
         $this->assertSame(site_url('pendaftaran'), $tombol()->getAttribute('href'));

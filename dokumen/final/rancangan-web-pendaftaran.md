@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100); **revisi 7 disetujui 15 November 2026** (K101); **revisi 8, 9, 10, dan 11 15 November 2026** (K105–K108, diubah langsung sesuai K101); **revisi 12, 13, dan 14 16 November 2026** (K109–K113, diubah langsung sesuai K101); **revisi 15 dan 16 17 November 2026** (K114, K115, diubah langsung sesuai K101); **revisi 17 dan 18 17 November 2026** (K116–K125, diubah langsung sesuai K101 dan K120); **revisi 19 18 November 2026** (K134, diubah langsung sesuai K101); **revisi 21 dan 22 18 November 2026** (K135, K136, diubah langsung sesuai K101); **revisi 23 21 November 2026** (K137, diubah langsung sesuai K101); **revisi 24 21 November 2026** (K140 butir 7b, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 10 November 2026** (K17); revisi 1 (K27), revisi 2 (K35), dan revisi 3 (K38) disetujui 11 November 2026; **revisi 4 disetujui 12 November 2026**; **revisi 5 disetujui 14 November 2026** (K96); **revisi 6 disetujui 14 November 2026** (K100); **revisi 7 disetujui 15 November 2026** (K101); **revisi 8, 9, 10, dan 11 15 November 2026** (K105–K108, diubah langsung sesuai K101); **revisi 12, 13, dan 14 16 November 2026** (K109–K113, diubah langsung sesuai K101); **revisi 15 dan 16 17 November 2026** (K114, K115, diubah langsung sesuai K101); **revisi 17 dan 18 17 November 2026** (K116–K125, diubah langsung sesuai K101 dan K120); **revisi 19 18 November 2026** (K134, diubah langsung sesuai K101); **revisi 21 dan 22 18 November 2026** (K135, K136, diubah langsung sesuai K101); **revisi 23 21 November 2026** (K137, diubah langsung sesuai K101); **revisi 24 21 November 2026** (K140 butir 7b, diubah langsung sesuai K101); **revisi 25 21 November 2026** (K140, K141, K143, diubah langsung sesuai K101) |
 | Tanggal | 10 November 2026, revisi 11, 12, 14, 15, 16, 17, 18, dan 21 November 2026 |
 | Revisi 1 | Kelompok umur dibatasi jenjang sekolah yang diatur admin (K23, K24); asumsi 2 dan 3 dikonfirmasi (K21, K22); data awal lewat perintah sekali jalan (K25); halaman Akun hanya untuk akun sendiri (K26). Bagian yang berubah: 3, 5, 6.1, 6.4, 6.5, 7, 11, 17, lampiran |
 | Revisi 2 | SLB tidak ikut (K28); web lewat Cloudflare Tunnel (K31); asumsi 4–7 dikonfirmasi dan asumsi 8 diganti (K32); bukti bayar diunggah admin (K34); awalan nomor atlet (BIB) awal per kelompok umur (K33). Bagian yang berubah: 6.2, 6.9, 9, 11, 13, 15, 17, lampiran |
@@ -10,6 +10,7 @@
 | Revisi 4 | Disesuaikan dengan yang dibangun di Tahap 4–7: foto ofisial wajib (K50); batas nomor individu per atlet dan atlet per nomor (K51, K53); konfirmasi tim susulan (K57); tim tanpa pembayar (K68); ID pendaftaran tetap saat diubah (K63); cek dan bukti tanpa tanggal lahir dan nomor atlet (K49, K52); panel tanpa pendaftaran baru, nomor atlet atlet tambahan, saringan status rekap (K58–K60); sesi lain keluar saat ganti sandi dan halaman galat ramah (K67); CI GitHub (K46); cadangan harian (K66); juknis tidak ditunggu (K55). Bagian yang berubah: 5, 6.3, 6.5, 6.6, 6.8, 6.9, 8, 9, 13, 14, 15, 16, 17 |
 | Revisi 5 | Kelompok umur ditentukan jenjang dulu, baru tahun lahir; rentang tahun lahir boleh beririsan antar-jenjang, tidak dalam satu jenjang (K95). Bagian yang berubah: 6.4, 17 |
 | Revisi 6 | Data sekolah dari Sekolah Kita dan menu Sekolah di panel untuk memberi nama pembeda (K97); kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan saat admin mengubah pendaftaran (K98); usulan nama sekolah dari pendaftar (K99). Disesuaikan juga dengan keputusan yang sudah berjalan: penulisan rupiah (K80), bukti transfer diunggah ofisial dan pendaftaran baru masuk bersama bukti transfer (K83, K90), alamat dan isi bukti PDF serta halaman cek (K77, K78, K87–K89, K91). Bagian yang berubah: 5, 6.2, 6.7, 7, 8, 9, 11, 15, 17 |
+| Revisi 25 | Halaman depan, Unduhan, Hasil, dan Klasemen memakai tampilan baru Flowbite Pro (F9-03): carousel foto acara sebelumnya dengan indikator, tombol jeda, dan geser (foto bawaan dari pemilik, dikelola di Pengaturan > Halaman Depan), angka acara dari pendaftaran Lunas, hasil dan juara umum terbaru dengan sakelar hari lomba, tanya-jawab teratas, dan menu publik baru (K140, K141, K143). Bagian yang berubah: 5, 10, 12 |
 | Revisi 24 | Kalkulator poin multi-lomba (K140 butir 7b, menggantikan K124 butir 3): jenis hasil **Poin multi-lomba**, admin mengisi prestasi mentah tiap komponen dan web menghitung poinnya dari tabel skor; tabel bawaan Trilomba O2SN SMP dan Pancalomba SMA/SMK dari tabel penilaian panitia; Pengaturan > Tabel Skor untuk mengubah baris dan mengimpor dari Excel; Backup data membawa tabel skor dan rincian poin. Komponen kosong ditulis "–" dengan 0 poin dan server lama memakai `tabel-skor:impor --trilomba` yang ikut diperiksa `pembaruan:periksa` (K143). Bagian yang berubah: 2, 9, 11, 15, 18 |
 | Revisi 23 | Cetak nomor atlet (BIB) per sekolah sebagai PDF dan ZIP gambar JPG 300 dpi, ZIP semua sekolah satu folder per sekolah, satu latar penuh untuk semua BIB dengan pilihan kepala dan warna tulisan, dan gambar contoh (K137). Bagian yang berubah: 5, 18 |
 | Revisi 22 | Bukti bayar per pendaftaran bawaan 100 gambar dan paling banyak 200 yang bisa diatur admin, menggantikan bawaan 5 dan paling banyak 20 di revisi 21 (K136). Bagian yang berubah: 9, 11 |
@@ -123,7 +124,7 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/admin/pengaturan/kelompok-umur` | Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya individu, awalan nomor atlet; sakelar "Pendaftar memilih kelompok umur" dan daftar tahun lahir yang masuk dua kelompok umur per jenjang (K134) |
 | `/admin/pengaturan/nomor-lomba` | Nomor lomba, jenis, jumlah anggota, biaya beregu |
 | `/admin/pengaturan/pembayaran` | Bank, rekening, WA pemilik rekening, isi pesan |
-| `/admin/pengaturan/halaman-depan` | Gambar, logo, judul, teks, tombol, footer |
+| `/admin/pengaturan/halaman-depan` | Gambar, logo, foto carousel pembuka, judul, teks, tombol, footer |
 | `/admin/pengaturan/jadwal` | Jadwal sosialisasi, pertemuan teknik, dan lainnya |
 | `/admin/pengaturan/unduhan` | Berkas unduhan |
 | `/admin/pengaturan/kontak` | Narahubung dan media sosial |
@@ -348,22 +349,25 @@ Nama acara, seri, dan tahun pada bukti dan nama berkas diambil dari pengaturan a
 
 ## 10. Halaman depan
 
-Semua isi diatur dari panel admin.
+Semua isi diatur dari panel admin. Tampilan baru Flowbite Pro sejak Tahap 9 (K140, K141, F9-03), mode terang dengan gradien halus.
 
-- **Kepala** menempel di atas saat digulir, dengan pita bawah oranye (K75). Isinya logo persegi (logo persegi panjang hanya bila yang persegi belum ada) tanpa latar, label seri, menu Tentang, Kategori, Jadwal, Unduhan, dan tombol Panitia (K81, K93).
-- **Pembuka** berlatar krem (K81–K83, K92):
-  - judul besar huruf besar, satu kata per baris dengan kata terakhir oranye (judul data awal "MilkLife Athletics Challenge"; judul panjang mengalir biasa, K86);
-  - gambar kepala di kanan yang memudar ke latar dengan tepi kiri setengah lingkaran;
+- **Kepala** menempel di atas saat digulir: logo persegi (logo persegi panjang hanya bila yang persegi belum ada, K93), nama acara dan label seri, menu Beranda, Kategori (bila kelompok umur sudah ada), Unduhan, Hasil (setelah ada yang terbit), dan Bantuan, lalu tombol **Cek Pendaftaran** dan **Daftar** (hanya saat pendaftaran terbuka). Butir Jadwal, Peserta, dan Galeri ditambahkan tugas Tahap 9 masing-masing dan hanya tampil bila halamannya sudah dibuka admin. Di ponsel menu dilipat.
+- **Pembuka** berlatar gradien merek dengan hiasan 3D lembut (Three.js, mati bila pengunjung memilih kurangi gerak):
+  - label seri, judul besar huruf besar, satu kata per baris dengan kata terakhir oranye (judul data awal "MilkLife Athletics Challenge"; judul panjang mengalir biasa, K86), dan teks pengantar;
   - kapsul info berisi tanggal, tempat, dan keadaan pendaftaran (6.1), dengan ujung keadaan biru saat pendaftaran terbuka (K82, K92);
-  - tombol **Daftar Sekarang** (saat terbuka) dan **Cek Pendaftaran**.
-- **Kartu kelompok umur** (label "Kelompok umur", sama dengan istilah di bagian lain, K112) bergambar pelari dan lintasan, menaut ke rinciannya, dengan julukan dan jumlah nomor individu dan beregu (K85, K88).
+  - tombol besar **Daftar Sekarang** (saat terbuka) dan **Cek Pendaftaran**. Judul, keadaan, dan kedua tombol selalu di layar pertama (K81);
+  - **carousel foto acara sebelumnya** dengan indikator, tombol sebelumnya/berikutnya, tombol jeda, dan geser di layar sentuh; berganti otomatis kecuali pengunjung memilih kurangi gerak. Foto bawaan dari pemilik (K140 butir 6) dipasang `php spark data:awal` atau `php spark halaman-depan:carousel`; admin menambah, mengurutkan, dan menghapus foto beserta keterangannya di Pengaturan > Halaman Depan (paling banyak 20). Foto bawaan dan unggahan admin dikecilkan ke sisi terpanjang 1600 piksel (K143). Bila carousel kosong, gambar kepala yang tampil; bila keduanya kosong, tidak ada kotak kosong (K41).
+- **Kartu kelompok umur** (label "Kelompok umur", K112) menaut ke rinciannya, dengan julukan dan jumlah nomor individu dan beregu (K88).
 - Rincian kelompok umur di bagian lomba menulis tahun lahir yang boleh memilih, misalnya "SD/MI lahir 2016 boleh memilih KU 10 atau KU 12, dipilih saat mendaftar", pada kedua kelompok umurnya (K134).
-- **Kelompok umur, nomor lomba, dan biaya** dari data induk, paling banyak 2 kolom dengan lencana kategori Putra, Putri, atau Mixed (K76). Rincian biaya **disembunyikan** secara bawaan dan dinyalakan admin lewat sakelar di Pengaturan > Halaman Depan (K74).
+- **Kelompok umur, nomor lomba, dan biaya** dari data induk, paling banyak 2 kolom dengan lencana kategori Putra, Putri, atau Mixed (K76). Rincian biaya **disembunyikan** secara bawaan dan dinyalakan admin lewat sakelar di Pengaturan > Halaman Depan (K74). Ilustrasi nomor lomba tampil bila gambarnya sudah ada.
 - Jadwal: sosialisasi daring, pertemuan teknik, dan jadwal lain yang ditambahkan admin.
+- **Angka acara**: jumlah atlet, sekolah, kabupaten/kota, dan atlet per kelompok umur, hanya dari pendaftaran Lunas; tampil setelah ada datanya.
+- **Hasil dan juara umum terbaru**: juara umum I–III per jenjang dan nomor yang paling akhir diterbitkan beserta juaranya, hanya dari nomor yang sudah terbit (18, K124), dengan tautan ke halaman hasil dan klasemen. Selama hari lomba admin bisa menyalakan sakelar "Tampilkan hasil di atas (hari lomba)" di Pengaturan > Halaman Depan (bawaan mati) supaya bagian ini pindah tepat di bawah pembuka (K143).
+- **Pertanyaan yang sering ditanyakan**: pertanyaan pertama tiap kategori Bantuan, paling banyak enam, dengan tautan ke halaman Bantuan (F9-04).
 - Unduhan, narahubung, media sosial.
-- Tautan **Hasil** ke halaman hasil lomba dan klasemen, tampil setelah ada nomor lomba yang hasilnya diterbitkan (18, K124).
 - Tombol bagikan ke WA dan tombol tanya admin lewat WA dengan teks yang sudah diatur.
-- **Kaki halaman** dengan logo Bakti Olahraga Djarum Foundation di kanan, di semua halaman publik (K84).
+- **Kaki halaman** dengan logo Bakti Olahraga Djarum Foundation di kanan dan tautan masuk panitia, di semua halaman publik (K84).
+- Halaman Unduhan, Hasil, dan Klasemen memakai tata letak yang sama. Halaman publik lain (wizard, cek, bukti) masih tampilan lama sampai dipindah (F9-05).
 
 ## 11. Model data
 
@@ -419,6 +423,7 @@ Keunikan NISN, nomor atlet, dan kunci kirim dijaga oleh basis data, bukan hanya 
 - Warna dari flyer: biru utama, biru tua, oranye sebagai aksen dan tombol utama, biru muda untuk bidang informasi, putih untuk kartu.
 - Responsif, dirancang dari ponsel lebih dulu.
 - Bahasa ramah untuk orang non-teknis: tanpa istilah teknis, pesan galat menjelaskan cara memperbaikinya.
+- Sejak Tahap 9 halaman berpindah bertahap ke tampilan Flowbite Pro (Tailwind CSS, ikon Lucide, hiasan Three.js), mode terang dengan inspirasi railway.com: ruang lega, kartu bersih, gradien halus (K140, K141). Halaman depan, Unduhan, Hasil, dan Klasemen sudah pindah (F9-03).
 
 ## 13. Keamanan dan privasi
 

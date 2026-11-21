@@ -1,7 +1,7 @@
 <?php
 /**
- * Hasil satu nomor lomba yang sudah terbit, semua babak (F8-04, K124).
- * Pengendali: `App\Controllers\HasilController::nomor()`.
+ * Hasil satu nomor lomba yang sudah terbit, semua babak (F8-04, K124), tata
+ * letak baru `publik_tw` (F9-03). Pengendali: `App\Controllers\HasilController::nomor()`.
  *
  * @var CodeIgniter\View\View      $this
  * @var string                     $namaAcara
@@ -9,38 +9,34 @@
  * @var list<array<string, mixed>> $babak `HasilLomba::semuaBabak()`
  */
 ?>
-<?= $this->extend('tata_letak/publik') ?>
+<?= $this->extend('tata_letak/publik_tw') ?>
 
 <?= $this->section('judul') ?>Hasil <?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?> – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="halaman-unduhan halaman-hasil">
-    <div class="halaman-unduhan-kepala">
-        <div class="container">
-            <h1><i class="bi bi-trophy" aria-hidden="true"></i> <?= esc($nomor['nama']) ?></h1>
-            <p class="mb-0"><?= esc($nomor['kelompok_umur']) ?> · Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.</p>
-        </div>
-    </div>
+<?= view('tata_letak/_judul_halaman_tw', [
+    'judul'        => $nomor['nama'],
+    'ikon'         => 'trophy',
+    'teks'         => $nomor['kelompok_umur'] . ' · Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.',
+    'kembali'      => site_url('hasil'),
+    'labelKembali' => 'Semua hasil',
+    'aksi'         => komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('hasil/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ikon' => 'file-text'])
+        . komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('hasil/' . $nomor['id'] . '/excel'), 'varian' => 'kedua', 'ikon' => 'file-spreadsheet']),
+], ['saveData' => false]) ?>
 
-    <div class="container halaman-unduhan-isi">
-        <div class="d-flex flex-wrap gap-2 mb-4">
-            <a class="btn btn-outline-primary" href="<?= site_url('hasil') ?>"><i class="bi bi-arrow-left" aria-hidden="true"></i> Semua hasil</a>
-            <a class="btn btn-outline-primary" href="<?= site_url('hasil/' . $nomor['id'] . '/pdf') ?>"><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> PDF</a>
-            <a class="btn btn-outline-success" href="<?= site_url('hasil/' . $nomor['id'] . '/excel') ?>"><i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Excel</a>
-        </div>
+<div class="mx-auto max-w-screen-xl space-y-6 px-4 py-10">
+    <?php if ($babak === []) : ?>
+        <p class="text-gray-600">Belum ada babak.</p>
+    <?php endif ?>
 
-        <?php if ($babak === []) : ?>
-            <p class="text-body-secondary">Belum ada babak.</p>
-        <?php endif ?>
-
-        <?php foreach ($babak as $b) : ?>
-            <section class="card mb-4" aria-labelledby="babak-<?= $b['id'] ?>">
-                <div class="card-body">
-                    <h2 class="h5 fw-bold" id="babak-<?= $b['id'] ?>"><?= esc($b['nama']) ?></h2>
-                    <?= view('hasil/_tabel', ['nomor' => $nomor, 'babak' => $b, 'admin' => false], ['saveData' => false]) ?>
-                </div>
-            </section>
-        <?php endforeach ?>
-    </div>
+    <?php foreach ($babak as $b) : ?>
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6" aria-labelledby="babak-<?= $b['id'] ?>">
+            <h2 class="flex flex-wrap items-center gap-2 text-xl font-extrabold text-primary-900" id="babak-<?= $b['id'] ?>">
+                <?= esc($b['nama']) ?>
+                <?php if ($b['final'] && mb_strtolower(trim($b['nama'])) !== 'final') : ?><?= komponen('lencana', ['label' => 'Final', 'warna' => 'oranye']) ?><?php endif ?>
+            </h2>
+            <div class="mt-4"><?= view('hasil/_tabel_tw', ['nomor' => $nomor, 'babak' => $b], ['saveData' => false]) ?></div>
+        </section>
+    <?php endforeach ?>
 </div>
 <?= $this->endSection() ?>

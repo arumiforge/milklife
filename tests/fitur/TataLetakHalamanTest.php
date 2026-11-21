@@ -17,7 +17,7 @@ final class TataLetakHalamanTest extends UjiHalaman
 {
     // ---------- Publik ----------
 
-    public function testHalamanDepanMemakaiTataLetakPublik(): void
+    public function testHalamanDepanMemakaiTataLetakPublikBaru(): void
     {
         $this->isiDataAcara();
 
@@ -27,40 +27,60 @@ final class TataLetakHalamanTest extends UjiHalaman
         $html  = $hasil->getBody();
         $xpath = $this->xpath($html);
 
+        // Tata letak baru (F9-03): Tailwind dan Flowbite, tanpa Bootstrap.
+        $this->assertSame(1, $xpath->query('//header[@data-kepala-publik]')->length);
+        $this->assertSame(1, $xpath->query('//header//nav[@aria-label="Menu utama"]')->length);
+        $this->assertSame(1, $xpath->query('//main[@id="isi"]')->length);
+        $this->assertSame(1, $xpath->query('//a[@href="#isi"][contains(., "Lompat ke isi")]')->length);
+        $this->assertSame(1, $xpath->query('//link[@rel="stylesheet"][contains(@href, "aset/css/tw.css")]')->length);
+        $this->assertSame(0, $xpath->query('//link[contains(@href, "bootstrap")] | //script[contains(@src, "bootstrap")]')->length, 'Bootstrap tidak dimuat.');
+        $this->assertSame(1, $xpath->query('//script[contains(@src, "vendor/flowbite/flowbite.min.js")]')->length);
+
+        // Kepala memuat nama acara sebagai teks.
+        $merek = $xpath->query('//header//a[@data-merek]')->item(0);
+        $this->assertNotNull($merek);
+        $this->assertSame('MilkLife Athletics Challenge Seri 2 – 2026', $this->teks($merek));
+
+        // Kaki: nama acara dan tahun.
+        $this->assertSame('MilkLife Athletics Challenge 2026', $this->teks($xpath->query('//footer//*[@data-kaki-teks]')->item(0)));
+
+        // Kepala halaman depan (rinciannya di HalamanDepanKepalaTest).
+        $this->assertSame(1, $xpath->query('//main//h1')->length, 'Halaman depan punya tepat satu h1.');
+        $hasil->assertSee('Pendaftaran sedang disiapkan.');
+        $hasil->assertSee('Seri 2 – 2026');
+        $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath->query('//*[@data-pembuka-waktu]')->item(0)));
+        $this->assertSame(1, $xpath->query('//main/section[@id="pembuka"]')->length);
+    }
+
+    public function testTataLetakPublikLamaMasihDipakaiHalamanLain(): void
+    {
+        $this->isiDataAcara();
+
+        $hasil = $this->get('cek-pendaftaran');
+        $hasil->assertOK();
+
+        $xpath = $this->xpath($hasil->getBody());
+
         $this->assertSame(1, $xpath->query('//body[@data-bs-theme="light"]')->length, 'Tema terang harus dipasang.');
         $this->assertSame(1, $xpath->query('//header[contains(@class, "kepala-publik")]')->length);
         $this->assertSame(1, $xpath->query('//header//nav[@aria-label="Menu utama"]')->length);
         $this->assertSame(1, $xpath->query('//main[@id="isi"]')->length);
-        $this->assertSame(1, $xpath->query('//a[@href="#isi"][contains(., "Lompat ke isi")]')->length);
 
-        // Bilah muat, jendela konfirmasi, dan pemilih tanggal di semua halaman publik (K89).
+        // Bilah muat, jendela konfirmasi, dan pemilih tanggal di semua halaman publik lama (K89).
         $this->assertSame(1, $xpath->query('//*[@id="bilah-kemajuan"][@hidden]')->length);
         foreach (['js/kemajuan.js', 'js/konfirmasi.js', 'js/pilih-tanggal.js'] as $skrip) {
             $this->assertSame(1, $xpath->query('//script[@src="' . aset($skrip) . '"]')->length, $skrip);
         }
 
-        // Kepala memuat nama acara sebagai teks.
         $merek = $xpath->query('//header//a[contains(@class, "navbar-brand")]')->item(0);
         $this->assertNotNull($merek);
         $this->assertSame('MilkLife Athletics Challenge', $this->teks($merek));
-
-        // Kaki: nama acara dan tahun.
-        $kaki = $xpath->query('//footer')->item(0);
-        $this->assertNotNull($kaki);
-        $this->assertSame('MilkLife Athletics Challenge 2026', $this->teks($kaki));
-
-        // Kepala halaman depan (sejak F3-01; rinciannya di HalamanDepanKepalaTest).
-        $this->assertSame(1, $xpath->query('//main//h1')->length, 'Halaman depan punya tepat satu h1.');
-        $hasil->assertSee('Pendaftaran sedang disiapkan.');
-        $hasil->assertSee('Seri 2 – 2026');
-        // Tanggal dan tempat dipecah per baris di kartu info (K82); teksnya tetap utuh.
-        $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath->query('//*[contains(@class, "pembuka-waktu")]')->item(0)));
-        $this->assertSame(1, $xpath->query('//main/section[@id="pembuka"]')->length);
+        $this->assertSame('MilkLife Athletics Challenge 2026', $this->teks($xpath->query('//footer')->item(0)));
     }
 
-    public function testMenuPublikDenganButirNonAktif(): void
+    public function testMenuPublikLamaDenganButirNonAktif(): void
     {
-        $xpath = $this->xpath($this->get('/')->getBody());
+        $xpath = $this->xpath($this->get('cek-pendaftaran')->getBody());
         $butir = [];
 
         foreach ($xpath->query('//nav[@aria-label="Menu utama"]//*[contains(@class, "nav-link")]') as $tautan) {
@@ -72,8 +92,6 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame(site_url('/') . '#pembuka', $butir['Tentang']->getAttribute('href'));
         $this->assertSame(site_url('/') . '#lomba', $butir['Kategori']->getAttribute('href'));
         $this->assertSame(site_url('/') . '#jadwal', $butir['Jadwal']->getAttribute('href'));
-
-        // Unduhan punya halaman sendiri (F3-03, K40): bertautan, tidak aktif di halaman depan.
         $this->assertSame(site_url('unduhan'), $butir['Unduhan']->getAttribute('href'));
         $this->assertFalse($butir['Unduhan']->hasAttribute('aria-current'));
 
@@ -88,17 +106,40 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame(site_url('admin/masuk'), $panitia->getAttribute('href'));
         $this->assertSame(0, $xpath->query('.//i', $panitia)->length);
 
-        // Halaman depan memakai kepala terang; halaman lain tetap biru dan Unduhan aktif di halamannya.
-        $this->assertSame(1, $xpath->query('//header[contains(@class, "kepala-beranda")]')->length);
-        $unduhan = $this->xpath($this->get('unduhan')->getBody());
-        $this->assertSame(0, $unduhan->query('//header[contains(@class, "kepala-beranda")]')->length);
-        $this->assertSame('page', $unduhan->query('//nav[@aria-label="Menu utama"]//a[normalize-space()="Unduhan"]')->item(0)?->getAttribute('aria-current'));
+        // Halaman selain halaman depan memakai kepala biru.
+        $this->assertSame(0, $xpath->query('//header[contains(@class, "kepala-beranda")]')->length);
 
         // Menu melipat di ponsel.
         $tombol = $xpath->query('//button[@data-bs-toggle="collapse"][@data-bs-target="#menu-publik"]')->item(0);
         $this->assertNotNull($tombol);
         $this->assertSame('menu-publik', $tombol->getAttribute('aria-controls'));
         $this->assertSame(1, $xpath->query('//*[@id="menu-publik"][contains(@class, "collapse")]')->length);
+    }
+
+    public function testMenuPublikBaru(): void
+    {
+        $butir = function (string $alamat): array {
+            $hasil = [];
+
+            foreach ($this->xpath($this->get($alamat)->getBody())->query('//nav[@aria-label="Menu utama"]//ul/li/a') as $tautan) {
+                $hasil[$this->teks($tautan)] = $tautan;
+            }
+
+            return $hasil;
+        };
+
+        // Beranda aktif di halaman depan; Unduhan aktif di halamannya (F9-03).
+        $depan = $butir('/');
+        // Kategori bergantung pada kelompok umur di basis data (diuji di KatalogTampilanTest).
+        $this->assertSame(['Beranda', 'Unduhan', 'Bantuan'], array_values(array_diff(array_keys($depan), ['Kategori'])));
+        $this->assertSame('page', $depan['Beranda']->getAttribute('aria-current'));
+        $this->assertFalse($depan['Unduhan']->hasAttribute('aria-current'));
+        $this->assertSame('page', $butir('unduhan')['Unduhan']->getAttribute('aria-current'));
+
+        // Menu melipat di ponsel (Flowbite).
+        $xpath = $this->xpath($this->get('/')->getBody());
+        $this->assertSame(1, $xpath->query('//button[@data-collapse-toggle="menu-publik"][@aria-controls="menu-publik"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@id="menu-publik"]')->length);
     }
 
     // ---------- Admin ----------
