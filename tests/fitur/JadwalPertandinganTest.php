@@ -207,7 +207,7 @@ final class JadwalPertandinganTest extends UjiBasisData
 
         $halaman = $this->bukaSebagaiAdmin('admin/hasil/babak/' . $id);
         $halaman->assertOK();
-        $this->assertSame(1, $this->xpathDari($halaman)->query('//section[@id="jadwal-babak"]//form[@action="' . site_url('admin/hasil/babak/' . $id . '/jadwal') . '"]//input[@type="date"][@name="tanggal"]')->length);
+        $this->assertSame(1, $this->xpathDari($halaman)->query('//section[@id="jadwal-babak"]//form[@action="' . site_url('admin/hasil/babak/' . $id . '/jadwal') . '"]//input[@data-pemilih-tanggal][@name="tanggal"]')->length);
 
         $simpan = $this->kirimSebagaiAdmin('admin/hasil/babak/' . $id . '/jadwal', ['tanggal' => self::HARI_NANTI, 'jam_mulai' => '09:15', 'lokasi' => 'Lintasan utama']);
         $simpan->assertRedirectTo(site_url('admin/hasil/babak/' . $id) . '#jadwal-babak');
@@ -215,7 +215,7 @@ final class JadwalPertandinganTest extends UjiBasisData
         $this->assertSame([self::HARI_NANTI, '09:15:00', 'Lintasan utama'], $this->jadwalDb($id));
 
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/hasil/babak/' . $id));
-        $this->assertSame(self::HARI_NANTI, $xpath->query('//input[@name="tanggal"]')->item(0)->getAttribute('value'));
+        $this->assertSame(JadwalPertandingan::tanggalIsian(self::HARI_NANTI), $xpath->query('//input[@name="tanggal"]')->item(0)->getAttribute('value'));
         $this->assertSame('09:15', $xpath->query('//input[@name="jam_mulai"]')->item(0)->getAttribute('value'));
 
         $salah = $this->kirimSebagaiAdmin('admin/hasil/babak/' . $id . '/jadwal', ['tanggal' => self::HARI_NANTI, 'jam_mulai' => 'pagi', 'lokasi' => '']);

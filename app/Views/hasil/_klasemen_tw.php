@@ -1,8 +1,8 @@
 <?php
 /**
- * Tabel klasemen sekolah per jenjang untuk halaman publik bertampilan baru
- * (F9-03). Panel admin masih memakai `hasil/_klasemen.php` (Bootstrap)
- * sampai dipindah (F9-16). Rincian piala tiap sekolah bisa dibuka
+ * Tabel klasemen sekolah per jenjang untuk halaman publik (F9-03) dan panel
+ * admin (F9-16, `admin` = tanda "belum terbit" pada piala dari nomor yang
+ * belum diterbitkan). Rincian piala tiap sekolah bisa dibuka
  * (`<details>`); juara umum I–III diberi latar kuning dan `data-juara-umum`.
  *
  * Kolom poin selalu tampil (F9-11): pada metode poin ditebalkan dan tampil di
@@ -10,12 +10,14 @@
  *
  * @var array<string, array<string, mixed>> $klasemen `HasilLomba::klasemen()`
  * @var string                              $metode   `Klasemen::MEDALI` atau `Klasemen::POIN`
+ * @var bool|null                           $admin
  */
 
 use App\Libraries\Hasil\Klasemen;
 
 $romawi     = [1 => 'I', 2 => 'II', 3 => 'III'];
 $metodePoin = ($metode ?? Klasemen::MEDALI) === Klasemen::POIN;
+$admin ??= false;
 ?>
 <?php foreach ($klasemen as $jenjang) : ?>
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6" aria-labelledby="klasemen-<?= esc($jenjang['jenjang'], 'attr') ?>">
@@ -38,7 +40,7 @@ $metodePoin = ($metode ?? Klasemen::MEDALI) === Klasemen::POIN;
                         <tr class="border-t border-gray-100 align-top <?= $b['juara_umum'] !== null ? 'bg-yellow-50' : 'bg-white' ?>"<?= $b['juara_umum'] !== null ? ' data-juara-umum="' . (int) $b['juara_umum'] . '"' : '' ?>>
                             <td class="px-2 py-3 text-center sm:px-3 font-bold text-gray-900"><?= $b['peringkat'] ?></td>
                             <td class="px-2 py-3 sm:px-3">
-                                <span class="font-semibold text-gray-900"><?= esc($b['sekolah']) ?></span>
+                                <span class="font-semibold break-words text-gray-900"><?= esc($b['sekolah']) ?></span>
                                 <?php if ($b['juara_umum'] !== null) : ?>
                                     <?= komponen('lencana', ['label' => 'Juara umum ' . $romawi[$b['juara_umum']], 'warna' => 'kuning']) ?>
                                 <?php endif ?>
@@ -49,7 +51,7 @@ $metodePoin = ($metode ?? Klasemen::MEDALI) === Klasemen::POIN;
                                         <summary class="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-700">Rincian <?= $b['jumlah'] ?> piala</summary>
                                         <ul class="mb-1 list-disc space-y-0.5 ps-5 text-sm">
                                             <?php foreach ($b['piala'] as $p) : ?>
-                                                <li>Juara <?= $romawi[$p['peringkat']] ?> <?= esc($p['kelompok_umur'] . ' ' . $p['nomor']) ?> – <?= esc($p['nama']) ?></li>
+                                                <li>Juara <?= $romawi[$p['peringkat']] ?> <?= esc($p['kelompok_umur'] . ' ' . $p['nomor']) ?> – <?= esc($p['nama']) ?><?php if ($admin && empty($p['terbit'])) : ?> <?= komponen('lencana', ['label' => 'belum terbit', 'warna' => 'abu']) ?><?php endif ?></li>
                                             <?php endforeach ?>
                                         </ul>
                                     </details>

@@ -5,9 +5,9 @@
  * peserta; jadwal babak; ubah nama atau tanda Final; hapus babak. Data dari
  * `HasilController::babak()`.
  *
- * Tanggal jadwal tetap `<input type="date">` bawaan peramban (nilai
- * `YYYY-MM-DD`); `pilih-tanggal.js` lama tidak dimuat karena menulis kelas
- * Bootstrap.
+ * Tanggal jadwal memakai pemilih tanggal Flowbite berbahasa Indonesia
+ * (`aset/js/pemilih-tanggal-tw.js`, isian `hh/bb/tttt`) seperti halaman
+ * Jadwal pertandingan; `JadwalPertandingan::periksa()` juga menerima `YYYY-MM-DD`.
  *
  * @var CodeIgniter\View\View      $this
  * @var array<string, mixed>       $babak      `HasilLomba::babak()`
@@ -237,7 +237,7 @@ foreach ($calon as $kunci => $c) {
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-12">
                 <div class="lg:col-span-4">
                     <label for="jadwal-tanggal" class="mb-1.5 block text-sm font-semibold text-gray-900">Tanggal</label>
-                    <input type="date" class="<?= $kelasIsian(isset($galatJadwal['tanggal'])) ?>" id="jadwal-tanggal" name="tanggal" min="<?= (int) date('Y') - 1 ?>-01-01" max="<?= (int) date('Y') + 2 ?>-12-31" value="<?= esc($nilaiJadwal('tanggal', (string) $jadwal['tanggal']), 'attr') ?>"<?= $tandaJadwal('tanggal', 'jadwal-tanggal') ?>>
+                    <input type="text" class="<?= $kelasIsian(isset($galatJadwal['tanggal'])) ?>" id="jadwal-tanggal" name="tanggal" value="<?= esc($nilaiJadwal('tanggal', JadwalPertandingan::tanggalIsian($jadwal['tanggal'])), 'attr') ?>" placeholder="hh/bb/tttt" inputmode="numeric" autocomplete="off" data-pemilih-tanggal<?= $tandaJadwal('tanggal', 'jadwal-tanggal') ?>>
                     <?= $pesanJadwal('tanggal', 'jadwal-tanggal') ?>
                 </div>
                 <div class="lg:col-span-3">
@@ -288,4 +288,5 @@ foreach ($calon as $kunci => $c) {
 
 <?= $this->section('skrip') ?>
 <script src="<?= aset('js/konfirmasi.js') ?>"></script>
+<script type="module" src="<?= aset('js/pemilih-tanggal-tw.js') ?>"></script>
 <?= $this->endSection() ?>

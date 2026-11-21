@@ -4,8 +4,8 @@
  * `admin_tw`: semua babak dan hasilnya, tambah babak, Terbitkan/Tarik
  * kembali, unduh PDF dan Excel. Data dari `HasilController::nomor()`.
  *
- * Tabel tiap babak sama dengan `hasil/_tabel_tw.php` (halaman publik),
- * ditambah tanda "diubah admin" pada peringkat yang dikoreksi.
+ * Tabel tiap babak dari `hasil/_tabel_tw.php` (sama dengan halaman publik)
+ * dengan tanda "diubah admin" pada peringkat yang dikoreksi.
  *
  * @var CodeIgniter\View\View      $this
  * @var array<string, mixed>       $nomor `HasilLomba::nomor()`
@@ -88,50 +88,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
                 </h2>
                 <?= komponen('tombol', ['label' => 'Isi hasil', 'href' => site_url('admin/hasil/babak/' . $b['id']), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'square-pen', 'kelas' => 'min-h-11']) ?>
             </div>
-            <div class="relative mt-4 overflow-x-auto rounded-xl border border-gray-200">
-                <table class="w-full text-left text-sm text-gray-700">
-                    <caption class="sr-only">Hasil <?= esc($b['nama']) ?></caption>
-                    <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
-                        <tr>
-                            <th scope="col" class="px-2 py-3 text-center sm:px-3">Per.</th>
-                            <?php if (! $beregu) : ?><th scope="col" class="hidden px-2 py-3 whitespace-nowrap sm:table-cell sm:px-3">No. Atlet</th><?php endif ?>
-                            <th scope="col" class="px-2 py-3 sm:px-3"><?= $beregu ? 'Regu' : 'Nama' ?></th>
-                            <?php if (! $beregu) : ?><th scope="col" class="hidden px-2 py-3 sm:px-3 md:table-cell">Sekolah</th><?php endif ?>
-                            <th scope="col" class="px-2 py-3 sm:px-3">Prestasi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($b['hasil'] as $h) : ?>
-                            <?php $juara = $b['final'] && $h['peringkat'] !== null && $h['peringkat'] <= 3; ?>
-                            <tr class="border-t border-gray-100 <?= $juara ? 'bg-yellow-50' : 'bg-white' ?>"<?= $juara ? ' data-juara="' . (int) $h['peringkat'] . '"' : '' ?>>
-                                <td class="px-2 py-3 text-center font-bold text-gray-900 sm:px-3"><?= $h['peringkat'] ?? '–' ?></td>
-                                <?php if (! $beregu) : ?><td class="hidden px-2 py-3 font-semibold whitespace-nowrap sm:table-cell sm:px-3"><?= esc((string) $h['nomor_dada']) ?></td><?php endif ?>
-                                <td class="px-2 py-3 sm:px-3">
-                                    <span class="font-semibold text-gray-900"><?= esc($h['nama']) ?></span>
-                                    <?php if ($h['manual']) : ?><?= komponen('lencana', ['label' => 'diubah admin', 'warna' => 'oranye']) ?><?php endif ?>
-                                    <?php if (! $beregu) : ?><span class="block text-gray-500 md:hidden"><span class="sm:hidden">No. <?= esc((string) $h['nomor_dada']) ?> · </span><?= esc($h['sekolah']) ?></span><?php endif ?>
-                                    <?php if ($beregu && $h['anggota'] !== []) : ?><span class="block text-gray-500"><?= esc(implode(', ', $h['anggota'])) ?></span><?php endif ?>
-                                </td>
-                                <?php if (! $beregu) : ?><td class="hidden px-2 py-3 sm:px-3 md:table-cell"><?= esc($h['sekolah']) ?></td><?php endif ?>
-                                <td class="px-2 py-3 font-semibold whitespace-nowrap text-gray-900 sm:px-3">
-                                    <?= esc($h['prestasi_teks']) ?><?= $h['prestasi_teks'] !== '' && ($h['rincian'] ?? []) !== [] ? ' poin' : '' ?><?= $h['keterangan'] !== null ? ' ' . komponen('lencana', ['label' => $h['keterangan'], 'warna' => 'abu']) : '' ?>
-                                    <?php if (($h['rincian'] ?? []) !== []) : ?>
-                                        <?php // Poin multi-lomba (F9-10): prestasi dan poin tiap komponen. ?>
-                                        <ul class="mt-1 text-xs font-normal whitespace-normal text-gray-500" data-rincian-poin>
-                                            <?php foreach ($h['rincian'] as $r) : ?>
-                                                <li><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '– (0)' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></li>
-                                            <?php endforeach ?>
-                                        </ul>
-                                    <?php endif ?>
-                                </td>
-                            </tr>
-                        <?php endforeach ?>
-                        <?php if ($b['hasil'] === []) : ?>
-                            <tr><td colspan="<?= $beregu ? 3 : 5 ?>" class="px-3 py-6 text-center text-gray-500">Belum ada peserta.</td></tr>
-                        <?php endif ?>
-                    </tbody>
-                </table>
-            </div>
+            <div class="mt-4"><?= view('hasil/_tabel_tw', ['nomor' => $nomor, 'babak' => $b, 'admin' => true], ['saveData' => false]) ?></div>
         </section>
     <?php endforeach ?>
 
