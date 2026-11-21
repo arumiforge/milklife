@@ -1,7 +1,7 @@
 <?php
 /**
  * Jadwal pertandingan satu hari untuk mPDF (F9-07), A4 tegak
- * (`App\Libraries\Hasil\UnduhanJadwal`). Kolom seperti `contohjadwal1.jpg`:
+ * (`App\Libraries\Hasil\UnduhanJadwal`). Kolom seperti `sumber/foto-acara/contohjadwal1.jpg`:
  * waktu, nomor, putra/putri, kelompok umur, babak; ditambah lokasi.
  *
  * @var string                     $hari      "Rabu, 15 Juli 2026"

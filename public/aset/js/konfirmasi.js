@@ -30,6 +30,11 @@
  * memeriksa semua aturan. Jendelanya modal Flowbite (`window.Modal`, F9-05;
  * Bootstrap dilepas di F9-17); bila Flowbite tidak termuat, `window.confirm` dipakai.
  *
+ * Kotak centang yang menghapus sesuatu saat formulir disimpan ("Hapus gambar
+ * ini", "Hapus logo ini") diberi `data-konfirmasi-centang="<kalimat>"`
+ * (pilihan: `data-konfirmasi-judul`, `data-konfirmasi-tombol`). Saat dicentang
+ * jendela yang sama muncul; bila admin memilih Batal, centangnya dilepas lagi.
+ *
  * Skrip yang sama memeriksa ukuran berkas sebelum formulir dikirim. Kotak
  * unggah dengan `data-ukuran-maksimal="<bita>"` menolak berkas yang lebih
  * besar dengan pesan ramah, supaya admin tidak mengirim berkas yang akan
@@ -197,6 +202,22 @@
 
         if (kotak instanceof HTMLInputElement && kotak.type === 'file' && kotak.hasAttribute('data-ukuran-maksimal')) {
             periksaUkuran(kotak);
+        }
+
+        if (kotak instanceof HTMLInputElement && kotak.type === 'checkbox' && kotak.checked && kotak.hasAttribute('data-konfirmasi-centang')) {
+            tanya(
+                kotak.getAttribute('data-konfirmasi-judul') || 'Hapus gambar?',
+                kotak.getAttribute('data-konfirmasi-centang'),
+                kotak.getAttribute('data-konfirmasi-tombol') || 'Ya, hapus saat disimpan',
+                'bahaya',
+                function (setuju) {
+                    if (!setuju) {
+                        kotak.checked = false;
+                    }
+
+                    kotak.focus();
+                }
+            );
         }
     });
 

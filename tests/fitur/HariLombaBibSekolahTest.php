@@ -153,6 +153,7 @@ final class HariLombaBibSekolahTest extends UjiBasisData
 
         $halaman = $this->bukaSebagaiAdmin(self::ALAMAT);
         $halaman->assertSeeElement('#hapus_latar');
+        $this->assertSame(1, $this->xpathDari($halaman)->query('//input[@id="hapus_latar"][@data-konfirmasi-centang]')->length, 'Centang hapus latar meminta konfirmasi.');
         $this->assertSame('checked', $this->xpathDari($halaman)->query('//input[@id="warna_terang"]')->item(0)?->getAttribute('checked'));
 
         // Latar baru menggantikan yang lama; berkas lama dihapus.

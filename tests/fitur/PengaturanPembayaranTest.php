@@ -204,6 +204,8 @@ final class PengaturanPembayaranTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//*[@data-pratinjau="logo_bank"]//img[@src="' . base_url($jalur) . '"]')->length);
         $this->assertSame(0, $xpath->query('//*[@data-pratinjau="logo_bank"]//*[contains(concat(" ", @class, " "), " tanpa-gambar ")]')->length);
         $this->assertSame(1, $xpath->query('//input[@name="hapus_logo_bank"]')->length);
+        // Mencentang hapus meminta konfirmasi dulu (konfirmasi.js, F9-18).
+        $this->assertSame(1, $xpath->query('//input[@name="hapus_logo_bank"][@data-konfirmasi-centang]')->length);
     }
 
     public function testGantiLogoMenghapusBerkasLama(): void
