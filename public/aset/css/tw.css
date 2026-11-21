@@ -1129,6 +1129,9 @@
   .w-4 {
     width: calc(var(--spacing) * 4);
   }
+  .w-6 {
+    width: calc(var(--spacing) * 6);
+  }
   .w-7\/12 {
     width: calc(7 / 12 * 100%);
   }
@@ -1261,6 +1264,9 @@
   .grow {
     flex-grow: 1;
   }
+  .basis-48 {
+    flex-basis: calc(var(--spacing) * 48);
+  }
   .basis-\[12em\] {
     flex-basis: 12em;
   }
@@ -1356,6 +1362,9 @@
   }
   .flex-wrap {
     flex-wrap: wrap;
+  }
+  .content-center {
+    align-content: center;
   }
   .items-baseline {
     align-items: baseline;
@@ -1562,6 +1571,10 @@
   }
   .rounded-xl {
     border-radius: var(--radius-xl);
+  }
+  .rounded-t-2xl {
+    border-top-left-radius: var(--radius-2xl);
+    border-top-right-radius: var(--radius-2xl);
   }
   .rounded-l-lg {
     border-top-left-radius: var(--radius-lg);
@@ -1776,6 +1789,9 @@
   }
   .border-primary-200 {
     border-color: var(--color-primary-200);
+  }
+  .border-primary-600 {
+    border-color: var(--color-primary-600);
   }
   .border-primary-700 {
     border-color: var(--color-primary-700);
@@ -2111,6 +2127,9 @@
   }
   .px-1 {
     padding-inline: var(--spacing);
+  }
+  .px-1\.5 {
+    padding-inline: calc(var(--spacing) * 1.5);
   }
   .px-2 {
     padding-inline: calc(var(--spacing) * 2);
@@ -2521,6 +2540,9 @@
   .text-yellow-900 {
     color: var(--color-yellow-900);
   }
+  .normal-case {
+    text-transform: none;
+  }
   .uppercase {
     text-transform: uppercase;
   }
@@ -2592,11 +2614,18 @@
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+  .ring-2 {
+    --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
   .ring-black\/5 {
     --tw-ring-color: color-mix(in srgb, #000000 5%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-ring-color: color-mix(in oklab, var(--color-black) 5%, transparent);
     }
+  }
+  .ring-primary-200 {
+    --tw-ring-color: var(--color-primary-200);
   }
   .ring-white\/15 {
     --tw-ring-color: color-mix(in srgb, #ffffff 15%, transparent);
@@ -2966,6 +2995,12 @@
   .focus-visible\:ring-primary-300:focus-visible {
     --tw-ring-color: var(--color-primary-300);
   }
+  .disabled\:bg-gray-100:disabled {
+    background-color: var(--color-gray-100);
+  }
+  .disabled\:text-gray-500:disabled {
+    color: var(--color-gray-500);
+  }
   :where([data-susunan="kecil"]) .in-data-\[susunan\=kecil\]\:hidden {
     display: none;
   }
@@ -3046,6 +3081,9 @@
     }
     .sm\:w-fit {
       width: fit-content;
+    }
+    .sm\:max-w-md {
+      max-width: var(--container-md);
     }
     .sm\:grid-cols-2 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3230,12 +3268,21 @@
     .lg\:w-auto {
       width: auto;
     }
+    .lg\:max-w-3xl {
+      max-width: var(--container-3xl);
+    }
     .lg\:flex-none {
       flex: none;
     }
     .lg\:translate-x-0 {
       --tw-translate-x: 0px;
       translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+    .lg\:auto-cols-fr {
+      grid-auto-columns: minmax(0, 1fr);
+    }
+    .lg\:grid-flow-col {
+      grid-auto-flow: column;
     }
     .lg\:grid-cols-2 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3252,6 +3299,9 @@
     .lg\:grid-cols-12 {
       grid-template-columns: repeat(12, minmax(0, 1fr));
     }
+    .lg\:grid-cols-none {
+      grid-template-columns: none;
+    }
     .lg\:flex-row {
       flex-direction: row;
     }
@@ -3266,6 +3316,9 @@
     }
     .lg\:justify-center {
       justify-content: center;
+    }
+    .lg\:gap-0 {
+      gap: 0px;
     }
     .lg\:gap-1 {
       gap: var(--spacing);
@@ -3291,6 +3344,12 @@
     .lg\:border-0 {
       border-style: var(--tw-border-style);
       border-width: 0px;
+    }
+    .lg\:px-2 {
+      padding-inline: calc(var(--spacing) * 2);
+    }
+    .lg\:py-0 {
+      padding-block: 0px;
     }
     .lg\:pt-0 {
       padding-top: 0px;

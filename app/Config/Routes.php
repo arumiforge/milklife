@@ -50,6 +50,12 @@ $routes->get('jadwal', 'JadwalController::index');
 $routes->get('jadwal/(\d{4}-\d{2}-\d{2})/pdf', 'JadwalController::pdf/$1');
 // ---------- Akhir jadwal pertandingan publik ----------
 
+// ---------- Seri dan lintasan publik (F9-08) ----------
+// Daftar seri babak yang sudah dikunci dan bagan alur babak nomornya;
+// 404 selama sakelar `HalamanDepan.tampil_seri` mati.
+$routes->get('jadwal/(:num)', 'SeriController::babak/$1');
+// ---------- Akhir seri dan lintasan publik ----------
+
 // ---------- Galeri publik (F9-06) ----------
 // 404 selama sakelar `Galeri.tampil` mati.
 $routes->get('galeri', 'GaleriController::index');
@@ -207,6 +213,21 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('jadwal-pertandingan/(\d{4}-\d{2}-\d{2})/pdf', 'JadwalPertandinganController::pdf/$1');
     $routes->post('hasil/babak/(:num)/jadwal', 'JadwalPertandinganController::simpanBabak/$1');
     // ---------- Akhir jadwal pertandingan ----------
+
+    // ---------- Seri dan lintasan (F9-08) ----------
+    // Aturan seri per nomor, bagi otomatis, geser, aturan lolos, kunci, unduhan.
+    $routes->get('seri', 'SeriController::index');
+    $routes->post('seri/tampil', 'SeriController::tampil');
+    $routes->get('seri/nomor/(:num)', 'SeriController::nomor/$1');
+    $routes->post('seri/nomor/(:num)', 'SeriController::simpanAturan/$1');
+    $routes->get('seri/nomor/(:num)/(pdf|excel)', 'SeriController::unduhNomor/$1/$2');
+    $routes->get('seri/hari/(\d{4}-\d{2}-\d{2})/(pdf|excel)', 'SeriController::unduhHari/$1/$2');
+    $routes->get('seri/babak/(:num)', 'SeriController::babak/$1');
+    $routes->post('seri/babak/(:num)/bagi', 'SeriController::bagi/$1');
+    $routes->post('seri/babak/(:num)/geser', 'SeriController::geser/$1');
+    $routes->post('seri/babak/(:num)/lolos', 'SeriController::lolos/$1');
+    $routes->post('seri/babak/(:num)/(kunci|buka)', 'SeriController::kunci/$1/$2');
+    // ---------- Akhir seri dan lintasan ----------
 
     // Klasemen sekolah per jenjang, semua nomor termasuk yang belum terbit (F8-05).
     $routes->get('klasemen', 'KlasemenController::index');

@@ -62,7 +62,7 @@ final class JadwalPertandingan
      * waktu yang sama menurut kelompok umur, nomor lomba, lalu babak (Final
      * paling akhir).
      *
-     * @return list<array{id: int, nomor_id: int, nomor: string, nomor_lengkap: string, kategori: string, jenis_kelamin: string, kelompok_umur_id: int, kelompok_umur: string, babak: string, final: bool, tanggal: string|null, jam: string|null, lokasi: string, terbit: bool, ada_hasil: bool}>
+     * @return list<array{id: int, nomor_id: int, nomor: string, nomor_lengkap: string, kategori: string, jenis_kelamin: string, kelompok_umur_id: int, kelompok_umur: string, babak: string, final: bool, tanggal: string|null, jam: string|null, lokasi: string, terbit: bool, ada_hasil: bool, seri_dikunci: bool}>
      */
     public function semua(): array
     {
@@ -73,7 +73,7 @@ final class JadwalPertandingan
             ->get()->getResultArray(), 'babak_id')));
 
         $baris = $this->db->table('babak b')
-            ->select('b.id, b.nama AS babak, b.final, b.tanggal, b.jam_mulai, b.lokasi, nl.id AS nomor_id, nl.nama, nl.kategori, nl.hasil_terbit_pada, ku.id AS kelompok_umur_id, ku.nama AS kelompok_umur')
+            ->select('b.id, b.nama AS babak, b.final, b.tanggal, b.jam_mulai, b.lokasi, b.seri_dikunci_pada, nl.id AS nomor_id, nl.nama, nl.kategori, nl.hasil_terbit_pada, ku.id AS kelompok_umur_id, ku.nama AS kelompok_umur')
             ->join('nomor_lomba nl', 'nl.id = b.nomor_lomba_id')
             ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
             ->orderBy('b.tanggal IS NULL', '', false)->orderBy('b.tanggal')
@@ -99,6 +99,8 @@ final class JadwalPertandingan
             'lokasi'           => (string) ($b['lokasi'] ?? ''),
             'terbit'           => $b['hasil_terbit_pada'] !== null,
             'ada_hasil'        => isset($adaHasil[(int) $b['id']]),
+            // Daftar seri sudah dikunci (F9-08): tautan Daftar seri di halaman publik.
+            'seri_dikunci'     => $b['seri_dikunci_pada'] !== null,
         ], $baris);
     }
 

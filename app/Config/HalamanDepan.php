@@ -106,4 +106,16 @@ class HalamanDepan extends BaseConfig
     public bool $tampil_jadwal = false;
 
     // ---------- Akhir jadwal pertandingan ----------
+
+    // ---------- Seri dan lintasan (F9-08) ----------
+
+    /**
+     * Tampilkan daftar seri dan lintasan serta bagan alur babak di halaman
+     * publik (`/jadwal/<id babak>`, F9-08) dan tautan Daftar seri di halaman
+     * Jadwal. Nilai awal mati: alamat itu 404 sampai admin menyalakannya di
+     * halaman Seri dan lintasan setelah mencobanya di staging (rencana Tahap 9).
+     */
+    public bool $tampil_seri = false;
+
+    // ---------- Akhir seri dan lintasan ----------
 }
