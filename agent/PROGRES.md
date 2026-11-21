@@ -59,5 +59,4 @@ Gelombang A dan B selesai (F9-09 lewat #140). Perbaikan kecil masuk lewat #134 (
 
 ## Menunggu pemilik
 
-- Deploy key untuk server produksi dan staging (repo privat, K138; panduan produksi bagian 3 langkah 2).
-- Memastikan paket lisensi Flowbite Pro mencakup semua pengembang yang punya akses repo (K138).
+- Tidak ada. Deploy key diurus pengembang sendiri dan lisensi Flowbite Pro sudah mencakup semua pengembang (K148).
