@@ -21,8 +21,8 @@ Diperbarui: 21 November 2026
 | [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | selesai (#136) | P2 | B |
 | [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | selesai (#135) | P2 | B |
 | [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | dikerjakan | P2 | C |
-| [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | menunggu tinjauan | P2 | C |
-| [F9-15 Halaman admin pendaftaran ke Tailwind](tugas/F9-15-admin-pendaftaran-tailwind.md) | rencana | P2 | C |
+| [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | selesai (#145) | P2 | C |
+| [F9-15 Halaman admin pendaftaran ke Tailwind](tugas/F9-15-admin-pendaftaran-tailwind.md) | dikerjakan | P2 | C |
 | [F9-16 Halaman admin hari lomba dan pengaturan ke Tailwind](tugas/F9-16-admin-hari-lomba-pengaturan-tailwind.md) | dikerjakan | P2 | C |
 | [F9-17 Skeleton, keadaan kosong, dan perapian](tugas/F9-17-skeleton-perapian.md) | rencana | P2 | C |
 | [F9-19 Pemasangan visual tambahan](tugas/F9-19-pemasangan-visual-tambahan.md) | rencana | P2 | C |
@@ -34,7 +34,7 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 
 | Tugas gambar | Status |
 |---|---|
-| [G9-01 Latar BIB](../desain/tugas/G9-01-latar-bib.md) | rencana |
+| [G9-01 Latar BIB](../desain/tugas/G9-01-latar-bib.md) | selesai (#142) |
 | [G9-02 Ilustrasi halaman depan](../desain/tugas/G9-02-ilustrasi-halaman-depan.md) | rencana |
 | [G9-03 Panduan pendaftaran](../desain/tugas/G9-03-panduan-pendaftaran.md) | rencana |
 | [G9-04 Keadaan kosong dan galat](../desain/tugas/G9-04-keadaan-kosong-galat.md) | rencana |
