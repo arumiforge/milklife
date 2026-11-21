@@ -37,7 +37,7 @@ final class FaqBawaan
         ['sebelum', 'Apakah harus punya akun atau kata sandi untuk mendaftar?', <<<'MD'
             Tidak perlu. Tidak ada akun, kata sandi, atau kode OTP.
 
-            Cukup buka halaman depan, tekan tombol **Daftar Sekarang**, lalu isi formulirnya sampai selesai. Untuk melihat pendaftaran yang sudah dikirim, pakai menu **Cek Pendaftaran** dengan NPSN sekolah atau ID pendaftaran.
+            Cukup buka halaman depan, tekan tombol **Daftar**, lalu isi formulirnya sampai selesai. Untuk melihat pendaftaran yang sudah dikirim, pakai menu **Cek Pendaftaran** dengan NPSN sekolah atau ID pendaftaran.
             MD],
         ['sebelum', 'Kapan pendaftaran dibuka dan ditutup?', <<<'MD'
             Pendaftaran dibuka **{buka_pendaftaran}** dan ditutup otomatis **{tutup_pendaftaran}** WIB.
@@ -87,7 +87,7 @@ final class FaqBawaan
 
         // ---------- Mengisi pendaftaran ----------
         ['mengisi', 'Bagaimana langkah mendaftar?', <<<'MD'
-            Tekan tombol **Daftar Sekarang** di halaman depan, lalu ikuti lima langkah:
+            Tekan tombol **Daftar** di halaman depan, lalu ikuti lima langkah:
 
             1. **Data Sekolah**: pilih jenjang dan kabupaten, ketik NPSN, tekan **Cari**.
             2. **Ofisial**: isi nama, nomor WA, dan foto pendamping.
@@ -143,7 +143,7 @@ final class FaqBawaan
             Tunggu beberapa detik sampai kotak itu bertanda centang hijau, baru tekan **Kirim Pendaftaran**. Bila lama tidak berubah, periksa internet, muat ulang halaman (isian tidak hilang), lalu coba lagi.
             MD],
         ['mengisi', 'Sudah mendaftar, ternyata ada atlet yang belum ikut. Bagaimana menambahnya?', <<<'MD'
-            Daftar lagi lewat tombol **Daftar Sekarang** dengan NPSN sekolah yang sama, lalu isi hanya atlet tambahan itu. Atlet yang sudah terdaftar tidak perlu diisi lagi (NISN-nya akan ditolak).
+            Daftar lagi lewat tombol **Daftar** dengan NPSN sekolah yang sama, lalu isi hanya atlet tambahan itu. Atlet yang sudah terdaftar tidak perlu diisi lagi (NISN-nya akan ditolak).
 
             Bila atlet tambahan masuk ke regu yang sudah terdaftar, formulir meminta Anda mencentang konfirmasi, dan tidak ada biaya regu lagi. Pendaftaran tambahan dibayar terpisah sesuai rinciannya.
             MD],

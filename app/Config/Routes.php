@@ -34,6 +34,10 @@ $routes->get('hasil/klasemen', 'HasilController::klasemen');
 $routes->get('hasil/klasemen/(pdf|excel)', 'HasilController::unduhKlasemen/$1');
 // ---------- Akhir hasil lomba publik (F8-04, F8-05) ----------
 
+// ---------- Bantuan dan FAQ (F9-04) ----------
+$routes->get('bantuan', 'BantuanController::index');
+// ---------- Akhir Bantuan dan FAQ ----------
+
 // ---------- Pendaftaran (Tahap 4) ----------
 // Wizard pendaftaran dan titik akhir JSON-nya (rencana Tahap 4, "Rute dan
 // pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.

@@ -15,6 +15,7 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 | Hasil lomba (F8-04) | `hasil`, `hasil/(:num)[/pdf\|excel]` (hanya nomor terbit) | `HasilController` | `Hasil/HasilLomba`, `Hasil/UnduhanHasil` | `hasil/` | - | f `HasilLombaTest` |
 | Klasemen sekolah (F8-05) | `hasil/klasemen[/pdf\|excel]` (hanya nomor terbit) | `HasilController::klasemen` | `Hasil/Klasemen`, `Hasil/UnduhanKlasemen` | `hasil/klasemen.php`, `hasil/_klasemen.php` | - | f `KlasemenSekolahTest`, u `HasilKlasemenTest` |
 | Unduhan | `unduhan` | `UnduhanController` | `IsiHalamanDepan` | `unduhan.php`, `beranda/_daftar_unduhan.php` | - | f `HalamanUnduhanTest` |
+| Bantuan (F9-04) | `bantuan` (Tailwind, `publik_tw`); laci "Bantuan" di tiap langkah wizard (Bootstrap offcanvas sampai F9-05) | `BantuanController` | `Bantuan/IsiBantuan` (kategori, panduan G9-03, kontak WA), `Bantuan/JawabanFaq`, `MenuPublik` | `bantuan/index.php`, `pendaftaran/_laci_bantuan.php`, `pendaftaran/_tombol_bantuan.php` | `bantuan` | f `BantuanFaqTest` |
 
 Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 

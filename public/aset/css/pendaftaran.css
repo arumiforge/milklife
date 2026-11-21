@@ -181,6 +181,32 @@
     outline: 0;
 }
 
+/* Judul langkah dengan tombol Bantuan (F9-04). */
+.langkah-judul {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.tombol-bantuan-langkah {
+    flex-shrink: 0;
+    min-height: 44px;
+    white-space: nowrap;
+}
+
+.laci-bantuan .accordion-button {
+    min-height: 44px;
+    font-weight: 600;
+}
+
+.laci-bantuan .gambar-panduan {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    background: var(--ml-latar, #f3f6fb);
+}
+
 .langkah legend.form-label {
     float: none;
     margin-bottom: 0.5rem;
