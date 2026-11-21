@@ -3,7 +3,8 @@
  * Formulir pengaturan Pendaftaran (`PendaftaranController`): jadwal buka dan
  * tutup, buka manual, tampilan usia, dan batas-batas pendaftaran. Waktu
  * dalam WIB. Tata letak `admin_tw`; isian waktu memakai `datetime-local`
- * bawaan peramban (nilai `Y-m-d\TH:i` tetap sama).
+ * (nilai `Y-m-d\TH:i`) yang ditampilkan `pilih-tanggal.js` sebagai pilihan
+ * Tanggal, Bulan, Tahun, Jam, dan Menit (K89).
  *
  * @var CodeIgniter\View\View  $this
  * @var array<string, string>  $isian             nilai kotak (tersimpan atau yang tadi diketik); waktu dalam bentuk `Y-m-d\TH:i`
@@ -190,4 +191,8 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
         </form>
     </div>
 </div>
+<?= $this->endSection() ?>
+
+<?= $this->section('skrip') ?>
+<script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
 <?= $this->endSection() ?>

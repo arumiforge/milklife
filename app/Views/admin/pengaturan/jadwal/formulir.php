@@ -2,9 +2,9 @@
 /**
  * Formulir tambah dan ubah jadwal (`GET …/jadwal/tambah`, `GET …/jadwal/<id>/ubah`),
  * tata letak `admin_tw`. Ditampilkan ulang dengan isian yang diketik bila ada
- * yang salah. Waktu memakai `datetime-local` bawaan peramban (nilai
- * `YYYY-MM-DDTHH:MM`); `pilih-tanggal.js` lama tidak dimuat karena menulis
- * kelas Bootstrap.
+ * yang salah. Waktu memakai `datetime-local` (nilai `YYYY-MM-DDTHH:MM`)
+ * yang ditampilkan `pilih-tanggal.js` sebagai pilihan Tanggal, Bulan, Tahun,
+ * Jam, dan Menit (K89).
  *
  * @var CodeIgniter\View\View       $this
  * @var array<string, mixed>|null   $jadwal jadwal yang diubah, `null` untuk jadwal baru
@@ -126,4 +126,8 @@ $pilihan = '<span class="font-normal text-gray-500">(boleh kosong)</span>';
         </form>
     </section>
 </div>
+<?= $this->endSection() ?>
+
+<?= $this->section('skrip') ?>
+<script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
 <?= $this->endSection() ?>

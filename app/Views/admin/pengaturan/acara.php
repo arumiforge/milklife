@@ -93,3 +93,7 @@ $kotak = static function (string $nama, string $label, string $jenis, string $ke
     </div>
 </div>
 <?= $this->endSection() ?>
+
+<?= $this->section('skrip') ?>
+<script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
+<?= $this->endSection() ?>
