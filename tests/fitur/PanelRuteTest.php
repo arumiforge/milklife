@@ -137,7 +137,7 @@ final class PanelRuteTest extends UjiHalaman
             $xpath = $this->xpathHtml($this->renderDiAlamat($alamat, 'Tests\Support\Views\contoh_admin'));
             $aktif = [];
 
-            foreach ($xpath->query('//a[contains(@class, "menu-admin-tautan")][@aria-current="page"]') as $tautan) {
+            foreach ($xpath->query('//a[@data-menu-tautan][@aria-current="page"]') as $tautan) {
                 $aktif[] = trim($tautan->textContent);
             }
 

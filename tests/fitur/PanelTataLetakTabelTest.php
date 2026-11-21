@@ -12,8 +12,6 @@ final class PanelTataLetakTabelTest extends UjiHalaman
 {
     private const BERKAS_VENDOR = [
         'vendor/datatables/js/dataTables.min.js',
-        'vendor/datatables/js/dataTables.bootstrap5.min.js',
-        'vendor/datatables/css/dataTables.bootstrap5.min.css',
         'vendor/datatables/LICENSE',
         'vendor/jquery/jquery.min.js',
         'vendor/jquery/LICENSE',
@@ -54,16 +52,13 @@ final class PanelTataLetakTabelTest extends UjiHalaman
     {
         $html = view('Tests\Support\Views\PanelContohTabel');
 
-        $css = '<link rel="stylesheet" href="' . aset('vendor/datatables/css/dataTables.bootstrap5.min.css') . '">';
-        $this->assertStringContainsString($css, $html);
-        $this->assertLessThan(strpos($html, '</head>'), strpos($html, $css), 'Gaya DataTables dimuat di kepala halaman.');
+        // Gaya DataTables dari kelas Tailwind di tabel-admin.js, tanpa CSS bawaan (F9-14, F9-17).
+        $this->assertStringNotContainsString('dataTables.bootstrap5', $html);
 
         $urutan = [
-            aset('vendor/bootstrap/js/bootstrap.bundle.min.js'),
             aset('js/kemajuan.js'),
             aset('vendor/jquery/jquery.min.js'),
             aset('vendor/datatables/js/dataTables.min.js'),
-            aset('vendor/datatables/js/dataTables.bootstrap5.min.js'),
             aset('js/tabel-admin.js'),
         ];
         $posisi = array_map(static function (string $alamat) use ($html): int {
@@ -75,7 +70,7 @@ final class PanelTataLetakTabelTest extends UjiHalaman
         $this->assertNotContains(-1, $posisi, 'Semua skrip dimuat.');
         $urut = $posisi;
         sort($urut);
-        $this->assertSame($urut, $posisi, 'Urutan skrip: Bootstrap, kemajuan, jQuery, DataTables, gaya Bootstrap 5, tabel-admin.');
+        $this->assertSame($urut, $posisi, 'Urutan skrip: kemajuan, jQuery, DataTables, tabel-admin.');
 
         // Tanpa CDN: semua skrip dan gaya dari situs sendiri.
         preg_match_all('/(?:src|href)="([^"]+\.(?:js|css))"/', $html, $cocok);
@@ -116,15 +111,16 @@ final class PanelTataLetakTabelTest extends UjiHalaman
         $this->assertDoesNotMatchRegularExpression('#https?://#', $js);
     }
 
-    public function testWilayahTahapEnamDiAdminCss(): void
+    public function testGayaBootstrapDataTablesDilepas(): void
     {
-        $css = (string) file_get_contents(FCPATH . 'aset/css/admin.css');
+        $this->assertFileDoesNotExist(FCPATH . 'aset/vendor/datatables/js/dataTables.bootstrap5.min.js');
+        $this->assertFileDoesNotExist(FCPATH . 'aset/vendor/datatables/css/dataTables.bootstrap5.min.css');
+        $this->assertFileDoesNotExist(FCPATH . 'aset/css/admin.css');
 
-        $this->assertStringContainsString('Tahap 6', $css);
-        $this->assertStringContainsString('.tabel-admin-memuat', $css);
-        $this->assertStringContainsString('.saringan-tabel', $css);
-        // Bilah kemajuan dipakai admin dan publik, jadi gayanya di tema.css (K89).
-        $this->assertStringContainsString('.bilah-kemajuan {', (string) file_get_contents(FCPATH . 'aset/css/tema.css'));
-        $this->assertStringNotContainsString('.bilah-kemajuan {', $css);
+        // Skeleton dan peredupan memakai kelas Tailwind (F9-17).
+        $js = (string) file_get_contents(FCPATH . 'aset/js/tabel-admin.js');
+        $this->assertStringContainsString('data-baris-kerangka', $js);
+        $this->assertStringContainsString("'opacity-60'", $js);
+        $this->assertStringNotContainsString('bi bi-', $js);
     }
 }

@@ -3,9 +3,9 @@
  * Jadwal pertandingan di panel admin (F9-07), tata letak Tailwind `admin_tw`.
  * Data dari `Admin\JadwalPertandinganController::index()`.
  *
- * - Satu formulir untuk semua babak: tanggal (pemilih tanggal Flowbite
- *   berbahasa Indonesia, `aset/js/pemilih-tanggal-tw.js`), jam mulai, dan
- *   lokasi. Urutan baris = urutan jadwal; babak yang belum dijadwalkan di akhir.
+ * - Satu formulir untuk semua babak: tanggal (pilihan Tanggal, Bulan, Tahun
+ *   dari `aset/js/pilih-tanggal.js`, K89, sama dengan halaman admin lain),
+ *   jam mulai, dan lokasi. Urutan baris = urutan jadwal; babak yang belum dijadwalkan di akhir.
  * - "Isi berurutan" (`aset/js/admin-jadwal-pertandingan.js`) mengisi jam
  *   baris yang dicentang mulai jam tertentu dengan jeda tetap, tanpa menyimpan.
  * - Sakelar tampil untuk umum memakai pengendali Pengaturan > Halaman Depan.
@@ -29,6 +29,7 @@ $nilai = static fn (array $b, string $kotak, string $asal): string => is_string(
 $warnaStatus = ['belum' => 'abu', 'berlangsung' => 'oranye', 'selesai' => 'hijau'];
 $ikonStatus  = ['belum' => 'clock', 'berlangsung' => 'circle-play', 'selesai' => 'circle-check'];
 $terjadwal   = count(array_filter($babak, static fn (array $b): bool => $b['tanggal'] !== null));
+$rentangTanggal = JadwalPertandingan::rentangIsian($kini);
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -60,7 +61,7 @@ $terjadwal   = count(array_filter($babak, static fn (array $b): bool => $b['tang
     </section>
 
     <?php if ($babak === []) : ?>
-        <?= komponen('kosong', ['gambar' => 'gambar/admin/kosong-admin.webp', 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Jadwal disusun dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini untuk mengisi tanggal dan jamnya.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
+        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Jadwal disusun dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini untuk mengisi tanggal dan jamnya.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
     <?php else : ?>
         <?php if ($hari !== []) : ?>
             <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-unduh-jadwal">
@@ -68,7 +69,7 @@ $terjadwal   = count(array_filter($babak, static fn (array $b): bool => $b['tang
                 <p class="mt-1 text-sm text-gray-600">PDF untuk dicetak atau dibagikan ke grup ofisial. Simpan jadwal dulu supaya perubahan ikut tercetak.</p>
                 <div class="mt-3 flex flex-wrap gap-2" data-unduh-hari>
                     <?php foreach ($hari as $h) : ?>
-                        <?= komponen('tombol', ['label' => JadwalPertandingan::namaHari($h), 'href' => site_url('admin/jadwal-pertandingan/' . $h . '/pdf'), 'varian' => 'kedua', 'ikon' => 'download']) ?>
+                        <?= komponen('tombol', ['label' => 'Unduh PDF ' . JadwalPertandingan::namaHari($h), 'href' => site_url('admin/jadwal-pertandingan/' . $h . '/pdf'), 'varian' => 'kedua', 'ikon' => 'download']) ?>
                     <?php endforeach ?>
                 </div>
             </section>
@@ -77,10 +78,10 @@ $terjadwal   = count(array_filter($babak, static fn (array $b): bool => $b['tang
         <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-isi-berurutan" data-isi-berurutan hidden>
             <h2 id="judul-isi-berurutan" class="text-lg font-bold text-gray-900">Isi berurutan</h2>
             <p class="mt-1 text-sm text-gray-600">Centang babak di tabel, lalu isi jam mulai pertama dan jeda antarbabak. Jam diisi dari atas ke bawah; tanggal dan lokasi ikut diisi bila ditulis. Periksa hasilnya, lalu tekan Simpan jadwal.</p>
-            <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
-                <div>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-6 xl:items-end">
+                <div class="sm:col-span-2">
                     <label for="urut-tanggal" class="mb-1.5 block text-sm font-semibold text-gray-900">Tanggal</label>
-                    <input type="text" id="urut-tanggal" class="<?= $kelasIsian(false) ?>" placeholder="hh/bb/tttt" inputmode="numeric" autocomplete="off" data-pemilih-tanggal>
+                    <input type="date" id="urut-tanggal" class="<?= $kelasIsian(false) ?>"<?= $rentangTanggal ?>>
                 </div>
                 <div>
                     <label for="urut-jam" class="mb-1.5 block text-sm font-semibold text-gray-900">Jam mulai pertama</label>
@@ -95,7 +96,7 @@ $terjadwal   = count(array_filter($babak, static fn (array $b): bool => $b['tang
                     <input type="text" id="urut-lokasi" class="<?= $kelasIsian(false) ?>" maxlength="<?= JadwalPertandingan::LOKASI_MAKSIMAL ?>" placeholder="Boleh kosong">
                 </div>
                 <div>
-                    <?= komponen('tombol', ['label' => 'Isi yang dicentang', 'ikon' => 'list-ordered', 'blok' => true, 'atribut' => ['data-tombol-isi-berurutan' => '']]) ?>
+                    <?= komponen('tombol', ['label' => 'Isi yang dicentang', 'ikon' => 'list-ordered', 'varian' => 'kedua', 'blok' => true, 'atribut' => ['data-tombol-isi-berurutan' => '']]) ?>
                 </div>
             </div>
             <p class="mt-3 min-h-5 text-sm font-semibold text-primary-800" aria-live="polite" data-pesan-isi-berurutan></p>
@@ -131,11 +132,11 @@ $terjadwal   = count(array_filter($babak, static fn (array $b): bool => $b['tang
                                     <p class="mt-1"><?= komponen('lencana', ['label' => JadwalPertandingan::STATUS[$status], 'warna' => $warnaStatus[$status], 'ikon' => $ikonStatus[$status]]) ?></p>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:col-span-8">
-                                <div>
+                            <div class="grid grid-cols-2 gap-3 lg:col-span-8">
+                                <div class="col-span-2">
                                     <label for="<?= $awal ?>-tanggal" class="mb-1 block text-sm font-semibold text-gray-900">Tanggal</label>
-                                    <input type="text" id="<?= $awal ?>-tanggal" name="babak[<?= $b['id'] ?>][tanggal]" class="<?= $kelasIsian(isset($g['tanggal'])) ?>"
-                                        value="<?= esc($nilai($b, 'tanggal', JadwalPertandingan::tanggalIsian($b['tanggal'])), 'attr') ?>" placeholder="hh/bb/tttt" inputmode="numeric" autocomplete="off" data-pemilih-tanggal data-kotak="tanggal"<?= isset($g['tanggal']) ? ' aria-invalid="true" aria-describedby="' . $awal . '-tanggal-galat"' : '' ?>>
+                                    <input type="date" id="<?= $awal ?>-tanggal" name="babak[<?= $b['id'] ?>][tanggal]" class="<?= $kelasIsian(isset($g['tanggal'])) ?>"
+                                        value="<?= esc($nilai($b, 'tanggal', (string) $b['tanggal']), 'attr') ?>"<?= $rentangTanggal ?> data-kotak="tanggal"<?= isset($g['tanggal']) ? ' aria-invalid="true" aria-describedby="' . $awal . '-tanggal-galat"' : '' ?>>
                                     <?php if (isset($g['tanggal'])) : ?><p id="<?= $awal ?>-tanggal-galat" class="mt-1 text-sm text-red-700"><?= esc($g['tanggal']) ?></p><?php endif ?>
                                 </div>
                                 <div>
@@ -144,7 +145,7 @@ $terjadwal   = count(array_filter($babak, static fn (array $b): bool => $b['tang
                                         value="<?= esc($nilai($b, 'jam_mulai', (string) $b['jam']), 'attr') ?>" data-kotak="jam"<?= isset($g['jam_mulai']) ? ' aria-invalid="true" aria-describedby="' . $awal . '-jam-galat"' : '' ?>>
                                     <?php if (isset($g['jam_mulai'])) : ?><p id="<?= $awal ?>-jam-galat" class="mt-1 text-sm text-red-700"><?= esc($g['jam_mulai']) ?></p><?php endif ?>
                                 </div>
-                                <div class="col-span-2 sm:col-span-1">
+                                <div>
                                     <label for="<?= $awal ?>-lokasi" class="mb-1 block text-sm font-semibold text-gray-900">Lokasi</label>
                                     <input type="text" id="<?= $awal ?>-lokasi" name="babak[<?= $b['id'] ?>][lokasi]" class="<?= $kelasIsian(isset($g['lokasi'])) ?>"
                                         value="<?= esc($nilai($b, 'lokasi', $b['lokasi']), 'attr') ?>" maxlength="<?= JadwalPertandingan::LOKASI_MAKSIMAL ?>" placeholder="Boleh kosong" data-kotak="lokasi"<?= isset($g['lokasi']) ? ' aria-invalid="true" aria-describedby="' . $awal . '-lokasi-galat"' : '' ?>>
@@ -168,6 +169,6 @@ $terjadwal   = count(array_filter($babak, static fn (array $b): bool => $b['tang
 <?= $this->endSection() ?>
 
 <?= $this->section('skrip') ?>
-<script type="module" src="<?= aset('js/pemilih-tanggal-tw.js') ?>"></script>
+<script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
 <script src="<?= aset('js/admin-jadwal-pertandingan.js') ?>"></script>
 <?= $this->endSection() ?>

@@ -59,7 +59,7 @@ $ringkasTim = static function (array $nomor): string {
 
     <?php if ($kelompokUmur === []) : ?>
         <?= komponen('kosong', [
-            'gambar' => 'gambar/admin/kosong-admin.webp',
+            'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'],
             'ikon'   => 'users',
             'judul'  => 'Belum ada kelompok umur',
             'teks'   => 'Setiap nomor lomba milik satu kelompok umur. Buat kelompok umur dulu, lalu kembali ke sini untuk menambah nomor lombanya.',
@@ -67,7 +67,7 @@ $ringkasTim = static function (array $nomor): string {
         ]) ?>
     <?php elseif ($jumlahSemua === 0) : ?>
         <?= komponen('kosong', [
-            'gambar' => 'gambar/admin/kosong-admin.webp',
+            'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'],
             'ikon'   => 'trophy',
             'judul'  => 'Belum ada nomor lomba',
             'teks'   => 'Tambahkan nomor individu dan beregu untuk tiap kelompok umur. Sekolah hanya bisa memilih nomor yang ada di sini.',
@@ -112,7 +112,7 @@ $ringkasTim = static function (array $nomor): string {
                 Belum lengkap saja (<?= $jumlahBelum ?>)
             </label>
             <div class="flex flex-wrap gap-2">
-                <?= komponen('tombol', ['label' => 'Tampilkan', 'tipe' => 'submit', 'varian' => 'kedua']) ?>
+                <?= komponen('tombol', ['label' => 'Tampilkan', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'filter']) ?>
                 <?php if ($saringKu !== 0 || $saringBelumLengkap) : ?>
                     <?= komponen('tombol', ['label' => 'Hapus saringan', 'href' => site_url($alamat), 'varian' => 'hantu']) ?>
                 <?php endif ?>
@@ -121,7 +121,7 @@ $ringkasTim = static function (array $nomor): string {
 
         <?php if ($jumlahTampil === 0 && $saringBelumLengkap) : ?>
             <?= komponen('kosong', [
-                'gambar' => 'gambar/admin/kosong-admin.webp',
+                'gambar' => 'gambar/keadaan/berhasil.webp',
                 'ikon'   => 'circle-check',
                 'judul'  => 'Semua nomor sudah lengkap',
                 'teks'   => 'Tidak ada nomor beregu yang belum lengkap' . ($saringKu !== 0 ? ' di ' . $kelompokUmur[$saringKu]['nama'] : '') . '.',

@@ -3,10 +3,10 @@
  * Tata letak panel admin bertampilan baru (Tahap 9, K140, K141), dari potongan
  * navbar dan sidebar templat Flowbite Pro Admin Dashboard. Halaman berpindah ke
  * sini dengan `$this->extend('tata_letak/admin_tw')` (F9-14 sampai F9-16);
- * `tata_letak/admin.php` tetap dipakai halaman yang belum dipindah. Menu kedua
- * tata letak dari sumber yang sama (`App\Libraries\Panel\MenuAdmin`).
+ * tata letak lama Bootstrap dilepas di F9-17. Menu dari
+ * `App\Libraries\Panel\MenuAdmin`.
  *
- * Bagian sama dengan tata letak lama supaya halaman cukup mengganti `extend`:
+ * Bagian yang diisi tampilan:
  * - `judul`: nama halaman; tab peramban `<judul> – Admin <nama acara>`.
  * - `judul_halaman` (pilihan): `<h1>` di kepala; bila kosong memakai `judul`.
  * - `jejak` (pilihan): jejak navigasi dari `admin/_jejak` (K117).

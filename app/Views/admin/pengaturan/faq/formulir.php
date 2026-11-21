@@ -109,7 +109,7 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
 
                 <div class="flex flex-wrap gap-2 pt-2">
                     <?= komponen('tombol', ['label' => $baru ? 'Simpan tanya-jawab' : 'Simpan perubahan', 'tipe' => 'submit', 'ikon' => 'check']) ?>
-                    <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/bantuan'), 'varian' => 'kedua']) ?>
+                    <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/bantuan'), 'varian' => 'kedua', 'ikon' => 'x']) ?>
                 </div>
             </form>
         </section>

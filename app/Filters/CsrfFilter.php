@@ -18,7 +18,7 @@ use CodeIgniter\Security\Security;
  * ditampilkan siapa pun:
  *
  * - Kiriman biasa (formulir) dialihkan kembali ke halaman asal dengan pesan
- *   kilat `pesan_galat` (lihat `admin/_pesan` dan `tata_letak/_pesan_publik`)
+ *   kilat `pesan_galat` (lihat `tata_letak/_pesan_tw`)
  *   dan isian lama (`withInput()`), kecuali kata sandi dan token.
  * - Kiriman JSON atau AJAX (wizard pendaftaran) mendapat jawaban JSON 403
  *   `{status: 'kedaluwarsa', pesan, csrf}`. `csrf` berisi token yang berlaku,

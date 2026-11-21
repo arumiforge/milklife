@@ -101,10 +101,16 @@
             hapus.hidden = W.draf.penanggungJawab.length <= minimalPj;
             hapus.setAttribute('aria-label', 'Hapus ofisial ' + (i + 1));
             hapus.addEventListener('click', function () {
-                W.draf.penanggungJawab.splice(i, 1);
-                W.rincian = null;
-                simpanDraf();
-                tampilkanPenanggungJawab();
+                // Tidak bisa dibatalkan, jadi ditanyakan dulu (K89, F9-17).
+                W.yakin('Hapus ofisial ' + (i + 1) + '?', 'Nama, nomor WhatsApp, dan foto ofisial ini dihapus dari isian.', 'Hapus ofisial', 'bahaya').then(function (ya) {
+                    if (!ya) {
+                        return;
+                    }
+                    W.draf.penanggungJawab.splice(i, 1);
+                    W.rincian = null;
+                    simpanDraf();
+                    tampilkanPenanggungJawab();
+                });
             });
 
             tampilkanFoto();

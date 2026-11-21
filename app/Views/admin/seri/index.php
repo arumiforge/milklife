@@ -67,8 +67,8 @@ $keadaan = static function (array $b): array {
                 <?php foreach ($hari as $h) : ?>
                     <li class="flex flex-wrap items-center gap-2">
                         <span class="min-w-0 flex-1 font-semibold text-gray-900"><?= esc(JadwalPertandingan::namaHari($h)) ?></span>
-                        <?= komponen('tombol', ['label' => 'PDF', 'href' => site_url('admin/seri/hari/' . $h . '/pdf'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'download', 'atribut' => ['aria-label' => 'Unduh PDF daftar seri ' . JadwalPertandingan::namaHari($h)]]) ?>
-                        <?= komponen('tombol', ['label' => 'Excel', 'href' => site_url('admin/seri/hari/' . $h . '/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'sheet', 'atribut' => ['aria-label' => 'Unduh Excel daftar seri ' . JadwalPertandingan::namaHari($h)]]) ?>
+                        <?= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('admin/seri/hari/' . $h . '/pdf'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'download', 'atribut' => ['aria-label' => 'Unduh PDF daftar seri ' . JadwalPertandingan::namaHari($h)]]) ?>
+                        <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/seri/hari/' . $h . '/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'sheet', 'atribut' => ['aria-label' => 'Unduh Excel daftar seri ' . JadwalPertandingan::namaHari($h)]]) ?>
                     </li>
                 <?php endforeach ?>
             </ul>
@@ -76,7 +76,7 @@ $keadaan = static function (array $b): array {
     <?php endif ?>
 
     <?php if ($kelompokUmur === []) : ?>
-        <?= komponen('kosong', ['gambar' => 'gambar/admin/kosong-admin.webp', 'ikon' => 'list-ordered', 'judul' => 'Belum ada nomor lomba', 'teks' => 'Tambahkan nomor lomba di Pengaturan, lalu babaknya di Hasil lomba.']) ?>
+        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'list-ordered', 'judul' => 'Belum ada nomor lomba', 'teks' => 'Tambahkan nomor lomba di Pengaturan, lalu babaknya di Hasil lomba.']) ?>
     <?php endif ?>
 
     <?php foreach ($kelompokUmur as $ku) : ?>

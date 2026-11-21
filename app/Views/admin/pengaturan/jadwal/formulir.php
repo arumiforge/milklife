@@ -121,7 +121,7 @@ $pilihan = '<span class="font-normal text-gray-500">(boleh kosong)</span>';
 
             <div class="mt-6 flex flex-wrap gap-2">
                 <?= komponen('tombol', ['label' => $baru ? 'Simpan agenda' : 'Simpan perubahan', 'tipe' => 'submit', 'ikon' => 'check']) ?>
-                <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/jadwal'), 'varian' => 'kedua']) ?>
+                <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/jadwal'), 'varian' => 'kedua', 'ikon' => 'x']) ?>
             </div>
         </form>
     </section>

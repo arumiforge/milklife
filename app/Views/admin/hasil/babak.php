@@ -5,9 +5,9 @@
  * peserta; jadwal babak; ubah nama atau tanda Final; hapus babak. Data dari
  * `HasilController::babak()`.
  *
- * Tanggal jadwal memakai pemilih tanggal Flowbite berbahasa Indonesia
- * (`aset/js/pemilih-tanggal-tw.js`, isian `hh/bb/tttt`) seperti halaman
- * Jadwal pertandingan; `JadwalPertandingan::periksa()` juga menerima `YYYY-MM-DD`.
+ * Tanggal jadwal memakai pilihan Tanggal, Bulan, Tahun (`aset/js/pilih-tanggal.js`,
+ * K89) seperti halaman Jadwal pertandingan; nilainya `YYYY-MM-DD`, dan
+ * `JadwalPertandingan::periksa()` juga menerima `05/12/2026`.
  *
  * @var CodeIgniter\View\View      $this
  * @var array<string, mixed>       $babak      `HasilLomba::babak()`
@@ -90,9 +90,9 @@ foreach ($calon as $kunci => $c) {
     </p>
     <div class="flex flex-wrap gap-2">
         <?php // Seri dan lintasan (F9-08). ?>
-        <?= komponen('tombol', ['label' => 'Seri dan lintasan babak ini', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'list-ordered', 'atribut' => ['id' => 'tautan-seri-babak']]) ?>
+        <?= komponen('tombol', ['label' => 'Atur seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'list-ordered', 'atribut' => ['id' => 'tautan-seri-babak']]) ?>
         <?php // Lembar juri (F9-09). ?>
-        <?= komponen('tombol', ['label' => 'Lembar juri babak ini', 'href' => site_url('admin/juri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'smartphone', 'atribut' => ['id' => 'tautan-lembar-juri']]) ?>
+        <?= komponen('tombol', ['label' => 'Buka lembar juri', 'href' => site_url('admin/juri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'smartphone', 'atribut' => ['id' => 'tautan-lembar-juri']]) ?>
     </div>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-hasil">
@@ -186,7 +186,7 @@ foreach ($calon as $kunci => $c) {
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <?= komponen('tombol', ['label' => 'Simpan hasil', 'tipe' => 'submit', 'ikon' => 'save']) ?>
-                    <?= komponen('tombol', ['label' => 'Kembali ke ' . $nomor['nama'], 'href' => site_url('admin/hasil/nomor/' . $nomor['id']), 'varian' => 'hantu']) ?>
+                    <?= komponen('tombol', ['label' => 'Kembali ke ' . $nomor['nama'], 'href' => site_url('admin/hasil/nomor/' . $nomor['id']), 'varian' => 'hantu', 'ikon' => 'arrow-left']) ?>
                 </div>
             </form>
         <?php endif ?>
@@ -198,7 +198,7 @@ foreach ($calon as $kunci => $c) {
         <?php if ($pilihan === []) : ?>
             <p class="mt-3 text-gray-600" id="calon-kosong">Belum ada <?= $beregu ? 'regu' : 'atlet' ?> dari pendaftaran Lunas di nomor ini.</p>
         <?php else : ?>
-            <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/peserta') ?>" method="post" class="mt-4 space-y-4">
+            <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/peserta') ?>" method="post" class="mt-4 space-y-4"<?= $hasil === [] ? '' : ' data-konfirmasi="Peserta yang tidak dicentang dikeluarkan dari babak ini, dan prestasinya di babak ini ikut terhapus." data-konfirmasi-judul="Simpan peserta?" data-konfirmasi-tombol="Simpan peserta" data-konfirmasi-jenis="utama"' ?>>
                 <?= csrf_field() ?>
                 <div class="grid gap-x-4 sm:grid-cols-2">
                     <?php foreach ($pilihan as $kunci => $p) : ?>
@@ -235,9 +235,9 @@ foreach ($calon as $kunci => $c) {
         <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/jadwal') ?>" method="post" class="mt-4 space-y-4" novalidate>
             <?= csrf_field() ?>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-12">
-                <div class="lg:col-span-4">
+                <div class="sm:col-span-2 lg:col-span-5">
                     <label for="jadwal-tanggal" class="mb-1.5 block text-sm font-semibold text-gray-900">Tanggal</label>
-                    <input type="text" class="<?= $kelasIsian(isset($galatJadwal['tanggal'])) ?>" id="jadwal-tanggal" name="tanggal" value="<?= esc($nilaiJadwal('tanggal', JadwalPertandingan::tanggalIsian($jadwal['tanggal'])), 'attr') ?>" placeholder="hh/bb/tttt" inputmode="numeric" autocomplete="off" data-pemilih-tanggal<?= $tandaJadwal('tanggal', 'jadwal-tanggal') ?>>
+                    <input type="date" class="<?= $kelasIsian(isset($galatJadwal['tanggal'])) ?>" id="jadwal-tanggal" name="tanggal" value="<?= esc($nilaiJadwal('tanggal', (string) $jadwal['tanggal']), 'attr') ?>"<?= JadwalPertandingan::rentangIsian() ?><?= $tandaJadwal('tanggal', 'jadwal-tanggal') ?>>
                     <?= $pesanJadwal('tanggal', 'jadwal-tanggal') ?>
                 </div>
                 <div class="lg:col-span-3">
@@ -245,7 +245,7 @@ foreach ($calon as $kunci => $c) {
                     <input type="time" class="<?= $kelasIsian(isset($galatJadwal['jam_mulai'])) ?>" id="jadwal-jam" name="jam_mulai" value="<?= esc($nilaiJadwal('jam_mulai', (string) $jadwal['jam']), 'attr') ?>"<?= $tandaJadwal('jam_mulai', 'jadwal-jam') ?>>
                     <?= $pesanJadwal('jam_mulai', 'jadwal-jam') ?>
                 </div>
-                <div class="sm:col-span-2 lg:col-span-5">
+                <div class="lg:col-span-4">
                     <label for="jadwal-lokasi" class="mb-1.5 block text-sm font-semibold text-gray-900">Lokasi</label>
                     <input type="text" class="<?= $kelasIsian(isset($galatJadwal['lokasi'])) ?>" id="jadwal-lokasi" name="lokasi" maxlength="<?= JadwalPertandingan::LOKASI_MAKSIMAL ?>" placeholder="Boleh kosong, misalnya Lintasan utama" value="<?= esc($nilaiJadwal('lokasi', $jadwal['lokasi']), 'attr') ?>"<?= $tandaJadwal('lokasi', 'jadwal-lokasi') ?>>
                     <?= $pesanJadwal('lokasi', 'jadwal-lokasi') ?>
@@ -274,7 +274,7 @@ foreach ($calon as $kunci => $c) {
                     <?php if (isset($galatBabak['final'])) : ?><p id="final-galat" class="mt-1.5 text-sm font-medium text-red-700"><?= esc($galatBabak['final']) ?></p><?php endif ?>
                 </div>
             </div>
-            <?= komponen('tombol', ['label' => 'Simpan babak', 'tipe' => 'submit', 'varian' => 'kedua']) ?>
+            <?= komponen('tombol', ['label' => 'Simpan babak', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'save']) ?>
         </form>
         <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/hapus') ?>" method="post" class="mt-6 border-t border-gray-100 pt-4"
             data-konfirmasi="<?= esc('Babak ' . $babak['nama'] . ' beserta semua prestasi pesertanya akan dihapus. Tindakan ini tidak bisa dibatalkan.', 'attr') ?>"
@@ -288,5 +288,5 @@ foreach ($calon as $kunci => $c) {
 
 <?= $this->section('skrip') ?>
 <script src="<?= aset('js/konfirmasi.js') ?>"></script>
-<script type="module" src="<?= aset('js/pemilih-tanggal-tw.js') ?>"></script>
+<script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
 <?= $this->endSection() ?>

@@ -14,7 +14,7 @@ namespace App\Libraries\Pendaftaran;
 final class KelasTampilan
 {
     /** Kotak isian teks, pilihan, dan berkas. */
-    public const ISIAN = 'block min-h-12 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100 [&.is-invalid]:border-red-500 [&.is-invalid]:bg-red-50 [&.is-invalid]:focus:ring-red-100';
+    public const ISIAN = 'block min-h-12 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 placeholder:text-gray-500 focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100 [&.is-invalid]:border-red-500 [&.is-invalid]:bg-red-50 [&.is-invalid]:focus:ring-red-100';
 
     /** Kotak unggah berkas (tombol "Pilih berkas" bergaya merek). */
     public const BERKAS = 'block w-full cursor-pointer rounded-lg border border-gray-300 bg-white text-base text-gray-900 file:me-3 file:min-h-12 file:cursor-pointer file:border-0 file:bg-primary-100 file:px-4 file:font-semibold file:text-primary-800 hover:file:bg-primary-200 focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100 [&.is-invalid]:border-red-500 [&.is-invalid]:bg-red-50';

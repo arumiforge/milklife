@@ -2,9 +2,8 @@
 /**
  * Tata letak publik bertampilan baru (Tahap 9, K140, K141), dari potongan
  * navbar dan footer templat Flowbite Pro Landing Pages. Halaman berpindah ke
- * sini dengan `$this->extend('tata_letak/publik_tw')`; tata letak lama
- * `tata_letak/publik.php` tetap dipakai halaman yang belum dipindah.
- * Bootstrap tidak dimuat di sini.
+ * sini dengan `$this->extend('tata_letak/publik_tw')`. Tata letak lama
+ * Bootstrap dilepas di F9-17.
  *
  * Bagian yang diisi tampilan:
  * - `judul`: judul tab peramban (di-escape pemanggil); juga `og:title`.

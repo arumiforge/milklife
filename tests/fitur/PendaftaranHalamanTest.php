@@ -72,6 +72,8 @@ final class PendaftaranHalamanTest extends UjiBasisData
         $this->assertSame(0, $xpath->query('//head/link[contains(@href, "bootstrap") or contains(@href, "pendaftaran.css")]')->length);
         $this->assertSame(0, $xpath->query('//script[contains(@src, "bootstrap")]')->length);
         $this->assertSame(1, $xpath->query('//script[contains(@src, "aset/js/pendaftaran.js")]')->length);
+        // Pemilih tanggal lahir Tanggal, Bulan, Tahun (K89) dimuat sebelum bagian wizard.
+        $this->assertSame(1, $xpath->query('//script[contains(@src, "aset/js/pilih-tanggal.js")][following::script[contains(@src, "aset/js/pendaftaran/atlet.js")]]')->length);
         $this->assertSame('X-CSRF-TOKEN', $xpath->query('//meta[@name="csrf-kepala"]')->item(0)->getAttribute('content'));
         $this->assertNotSame('', $xpath->query('//meta[@name="csrf-token"]')->item(0)->getAttribute('content'));
 

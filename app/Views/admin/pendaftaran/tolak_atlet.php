@@ -167,7 +167,7 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
 
             <div class="flex flex-wrap gap-2">
                 <?= komponen('tombol', ['label' => 'Tolak atlet', 'tipe' => 'submit', 'varian' => 'bahaya', 'ikon' => 'user-x']) ?>
-                <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url($alamat), 'varian' => 'kedua']) ?>
+                <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url($alamat), 'varian' => 'kedua', 'ikon' => 'x']) ?>
             </div>
         </form>
     <?php endif ?>

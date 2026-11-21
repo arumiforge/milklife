@@ -20,12 +20,12 @@ Diperbarui: 21 November 2026
 | [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | selesai (#132, #138) | P1 | B |
 | [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | selesai (#136) | P2 | B |
 | [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | selesai (#135) | P2 | B |
-| [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | dikerjakan | P2 | C |
-| [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | menunggu tinjauan | P2 | C |
-| [F9-15 Halaman admin pendaftaran ke Tailwind](tugas/F9-15-admin-pendaftaran-tailwind.md) | rencana | P2 | C |
-| [F9-16 Halaman admin hari lomba dan pengaturan ke Tailwind](tugas/F9-16-admin-hari-lomba-pengaturan-tailwind.md) | menunggu tinjauan | P2 | C |
+| [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | selesai (#144) | P2 | C |
+| [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | selesai (#145) | P2 | C |
+| [F9-15 Halaman admin pendaftaran ke Tailwind](tugas/F9-15-admin-pendaftaran-tailwind.md) | dikerjakan | P2 | C |
+| [F9-16 Halaman admin hari lomba dan pengaturan ke Tailwind](tugas/F9-16-admin-hari-lomba-pengaturan-tailwind.md) | selesai (#146) | P2 | C |
 | [F9-17 Skeleton, keadaan kosong, dan perapian](tugas/F9-17-skeleton-perapian.md) | rencana | P2 | C |
-| [F9-19 Pemasangan visual tambahan](tugas/F9-19-pemasangan-visual-tambahan.md) | rencana | P2 | C |
+| [F9-19 Pemasangan visual tambahan](tugas/F9-19-pemasangan-visual-tambahan.md) | dikerjakan | P2 | C |
 | [F9-18 Penutupan Tahap 9](tugas/F9-18-penutupan-tahap-9.md) | rencana | P1 | akhir |
 
 ### Gambar (Codex)
@@ -34,7 +34,7 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 
 | Tugas gambar | Status |
 |---|---|
-| [G9-01 Latar BIB](../desain/tugas/G9-01-latar-bib.md) | rencana |
+| [G9-01 Latar BIB](../desain/tugas/G9-01-latar-bib.md) | selesai (#142) |
 | [G9-02 Ilustrasi halaman depan](../desain/tugas/G9-02-ilustrasi-halaman-depan.md) | rencana |
 | [G9-03 Panduan pendaftaran](../desain/tugas/G9-03-panduan-pendaftaran.md) | rencana |
 | [G9-04 Keadaan kosong dan galat](../desain/tugas/G9-04-keadaan-kosong-galat.md) | rencana |
@@ -49,7 +49,7 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 
 ## Berikutnya
 
-Gelombang A dan B selesai (F9-09 lewat #140). Perbaikan kecil masuk lewat #134 (nama Agenda di Pengaturan, pola transaksi) dan #138 (uji tampilan bersih). Gelombang C: F9-14 dan F9-16 dikerjakan sejak 21 November (K147), F9-15 setelah F9-14, F9-05 dikerjakan sejak 21 November dan digabung begitu CI hijau (K149); kemudian F9-17 dan F9-18. Jawaban pertanyaan gelombang A dan B: K146. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali, diurus pengembang (K138, K148). Kesiapan server ditangani pemilik (K119).
+Gelombang A dan B selesai (F9-09 lewat #140). Perbaikan kecil masuk lewat #134 (nama Agenda di Pengaturan, pola transaksi) dan #138 (uji tampilan bersih). Gelombang C: F9-05 (#144), F9-14 (#145), dan F9-16 (#146) selesai 21 November; F9-15 dan F9-19 dikerjakan; kemudian F9-17 dan F9-18. Jawaban pertanyaan gelombang C: K151. Jawaban pertanyaan gelombang A dan B: K146. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali, diurus pengembang (K138, K148). Kesiapan server ditangani pemilik (K119).
 
 ## Selesai
 

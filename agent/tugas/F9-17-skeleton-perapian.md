@@ -17,6 +17,7 @@ Seluruh web terasa rapi dan konsisten: tidak ada layar kosong yang membingungkan
 - [ ] Tinjau ulang semua tombol: satu tombol utama per layar, label kata kerja, ikon Lucide, keadaan memuat/nonaktif, konfirmasi tindakan yang tidak bisa dibatalkan
 - [ ] Bootstrap, Bootstrap Icons, dan CSS lama dilepas bila tidak ada halaman yang memakainya; `tema.css` dirampingkan
 - [ ] Ilustrasi nomor lomba G9-05 di halaman Peserta (saringan atau kartu), memakai pemeta nama nomor milik F9-03 (K144)
+- [ ] Titipan PR gelombang C (K151): `admin/hari_lomba/bukti_admin.php` ke `tata_letak/polos_tw`; satu gaya pemilih tanggal untuk semua halaman admin (tetap memenuhi K89); kotak "Belum ada gambar" disatukan dalam potongan Tailwind; gaya `cek-*`/`halaman-cek-*` yang tidak terpakai dilepas dari `tema.css`
 - [ ] Pemeriksaan aksesibilitas (kontras, fokus, label) di halaman utama
 
 ## Berkas dan uji

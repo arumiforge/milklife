@@ -266,6 +266,11 @@ final class GambarOpsionalTest extends UjiBasisData
         $xpath = $this->xpath($this->bukaAdminOk('admin/seri'));
         $this->assertSame(0, $xpath->query('//img[contains(@src, "kosong-admin")]')->length);
 
+        // Keadaan kosong admin memakai cadangan G9-04 selama G9-08 belum ada.
+        $this->buatGambar('keadaan/kosong-data.webp', 800, 600);
+        $xpath = $this->xpath($this->bukaAdminOk('admin/seri'));
+        $this->assertSame(1, $xpath->query('//img[contains(@src, "aset/gambar/keadaan/kosong-data.webp")]')->length);
+
         $this->buatSemuaGambar();
 
         foreach ($halaman as $alamat => $berkas) {
@@ -280,6 +285,7 @@ final class GambarOpsionalTest extends UjiBasisData
         // Keadaan kosong admin: belum ada nomor lomba.
         $xpath = $this->xpath($this->bukaAdminOk('admin/seri'));
         $this->assertSame(1, $xpath->query('//img[contains(@src, "aset/gambar/admin/kosong-admin.webp")]')->length);
+        $this->assertSame(0, $xpath->query('//img[contains(@src, "keadaan/kosong-data.webp")]')->length);
         $this->assertSame(1, $xpath->query('//link[@rel="apple-touch-icon"]')->length);
     }
 

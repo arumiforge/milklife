@@ -41,7 +41,7 @@ $petunjuk = [
     JenisHasil::MULTI => 'Tulis prestasi tiap komponen: waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poinnya dihitung dari tabel skor saat tersimpan.',
 ][$jenis] ?? '';
 
-$kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-2 text-center text-2xl font-bold text-gray-900 tabular-nums placeholder:font-normal placeholder:text-gray-400 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 aria-[invalid=true]:border-red-500 aria-[invalid=true]:bg-red-50';
+$kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-2 text-center text-2xl font-bold text-gray-900 tabular-nums placeholder:font-normal placeholder:text-gray-500 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 aria-[invalid=true]:border-red-500 aria-[invalid=true]:bg-red-50';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -70,7 +70,7 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
     <?php endif ?>
 
     <?php if ($peserta === []) : ?>
-        <?= komponen('kosong', ['gambar' => 'gambar/admin/kosong-admin.webp', 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Atur pesertanya di halaman hasil babak atau di Seri dan lintasan.', 'aksi' => komponen('tombol', ['label' => 'Buka Seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'ikon' => 'list-ordered'])]) ?>
+        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Atur pesertanya di halaman hasil babak atau di Seri dan lintasan.', 'aksi' => komponen('tombol', ['label' => 'Buka Seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'ikon' => 'list-ordered'])]) ?>
     <?php else : ?>
         <h3 class="text-base font-bold tracking-wide text-oranye-700 uppercase"><?= esc($namaSeri($seri)) ?></h3>
         <ol class="space-y-3" aria-label="Peserta <?= esc($namaSeri($seri), 'attr') ?>">

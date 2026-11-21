@@ -7,6 +7,7 @@
  * Bagian yang diisi tampilan:
  * - `judul`: judul halaman; tab peramban menampilkan `<judul> – <nama acara>`.
  * - `isi`: isi kartu (judul `<h1>`, pesan, formulir), tanpa kartu sendiri.
+ * - `kepala` (pilihan): tambahan di `<head>`, misalnya `<meta name="robots">`.
  * - `skrip`: `<script src>` tambahan.
  *
  * Gambar Codex (F9-19, hanya bila berkasnya ada): ilustrasi G9-08
@@ -36,6 +37,7 @@ $ilustrasi = gambar_opsional('admin/masuk.webp', ['class' => 'size-full object-c
     <?= view('tata_letak/_ikon_aplikasi', [], ['saveData' => false]) ?>
     <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
+<?= $this->renderSection('kepala') ?>
 </head>
 <body class="min-h-screen bg-primary-50">
 <div class="<?= $ilustrasi === '' ? '' : 'lg:grid lg:grid-cols-2' ?>">

@@ -110,7 +110,7 @@ if (! function_exists('atribut_html')) {
 if (! function_exists('lebar_tw')) {
     /**
      * Kelas lebar Tailwind untuk bilah kemajuan, dibulatkan ke kelipatan 5 %
-     * (padanan `lebar_bilah()` tata letak lama). Kelasnya ditulis utuh supaya
+     * (F9-14). Kelasnya ditulis utuh supaya
      * ikut dibangun Tailwind; CSP melarang `style="width: …"` (K127).
      *
      *     <div class="h-2 rounded-full bg-green-600 <?= lebar_tw(45) ?>"></div>

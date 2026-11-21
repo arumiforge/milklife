@@ -144,8 +144,8 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
                             <p class="text-sm text-gray-600"><?php if ($s['npsn'] !== '') : ?>NPSN <?= esc($s['npsn']) ?> · <?php endif ?><span data-jumlah-atlet><?= $s['atlet'] ?></span> atlet</p>
                         </div>
                         <div class="flex gap-2">
-                            <a class="<?= $tombolUnduh ?>" href="<?= site_url('admin/nomor-atlet/cetak/sekolah/' . $s['kunci'] . '/pdf') ?>" aria-label="<?= esc('PDF BIB ' . $s['nama'], 'attr') ?>"><?= ikon('file-text', 'size-4') ?>PDF</a>
-                            <a class="<?= $tombolUnduh ?>" href="<?= site_url('admin/nomor-atlet/cetak/sekolah/' . $s['kunci'] . '/zip') ?>" aria-label="<?= esc('ZIP gambar BIB ' . $s['nama'], 'attr') ?>"><?= ikon('file-archive', 'size-4') ?>ZIP</a>
+                            <a class="<?= $tombolUnduh ?>" href="<?= site_url('admin/nomor-atlet/cetak/sekolah/' . $s['kunci'] . '/pdf') ?>" aria-label="<?= esc('Unduh PDF BIB ' . $s['nama'], 'attr') ?>"><?= ikon('file-text', 'size-4') ?>PDF</a>
+                            <a class="<?= $tombolUnduh ?>" href="<?= site_url('admin/nomor-atlet/cetak/sekolah/' . $s['kunci'] . '/zip') ?>" aria-label="<?= esc('Unduh ZIP gambar BIB ' . $s['nama'], 'attr') ?>"><?= ikon('file-archive', 'size-4') ?>ZIP</a>
                         </div>
                     </li>
                 <?php endforeach ?>

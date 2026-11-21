@@ -4,7 +4,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Support\UjiHalaman;
 
 /**
- * Kesepakatan tata letak dari kerangka (F1-01): bagian `judul`, `isi`, `skrip`,
+ * Kesepakatan tata letak dari kerangka (F1-01; tata letak Tailwind sejak F9-17): bagian `judul`, `isi`, `skrip`,
  * aset lokal lewat `aset()`, dan tidak ada yang dimuat dari luar.
  *
  * @internal
@@ -28,18 +28,16 @@ final class KerangkaTataLetakTest extends UjiHalaman
     {
         $html = $this->render($nama);
 
-        $this->assertMatchesRegularExpression('/<html lang="id">/', $html);
+        $this->assertMatchesRegularExpression('/<html lang="id"[^>]*>/', $html);
         $this->assertStringContainsString('<meta name="viewport" content="width=device-width, initial-scale=1">', $html);
         // Tata letak admin dan polos menambahkan nama acara di judul tab (F3-04).
         $this->assertMatchesRegularExpression('#<title>Judul Contoh ' . $nama . '( – .+)?</title>#', $html);
         $this->assertStringContainsString('<p id="isi-contoh">Isi contoh ' . $nama . '</p>', $html);
 
-        // Skrip halaman dimuat setelah Bootstrap.
-        $posisiBootstrap = strpos($html, aset('vendor/bootstrap/js/bootstrap.bundle.min.js'));
-        $posisiSkrip     = strpos($html, '<script id="skrip-contoh">');
-        $this->assertNotFalse($posisiBootstrap);
+        // Skrip halaman dimuat paling akhir, setelah skrip tata letak.
+        $posisiSkrip = strpos($html, '<script id="skrip-contoh">');
         $this->assertNotFalse($posisiSkrip);
-        $this->assertGreaterThan($posisiBootstrap, $posisiSkrip);
+        $this->assertSame(0, preg_match('#<script[^>]*\ssrc=#', substr($html, $posisiSkrip)), 'Tidak ada skrip tata letak setelah skrip halaman.');
     }
 
     #[DataProvider('tataLetak')]
@@ -47,21 +45,17 @@ final class KerangkaTataLetakTest extends UjiHalaman
     {
         $html = $this->render($nama);
 
-        foreach ([
-            'vendor/bootstrap/css/bootstrap.min.css',
-            'vendor/bootstrap-icons/bootstrap-icons.min.css',
-            'vendor/bootstrap/js/bootstrap.bundle.min.js',
-            'css/tema.css',
-        ] as $jalur) {
-            $this->assertStringContainsString('"' . aset($jalur) . '"', $html);
-            $this->assertFileExists(FCPATH . 'aset/' . $jalur);
-        }
+        $this->assertStringContainsString('"' . aset('css/tw.css') . '"', $html);
+        $this->assertFileExists(FCPATH . 'aset/css/tw.css');
 
-        if ($nama === 'admin') {
-            $this->assertStringContainsString('"' . aset('css/admin.css') . '"', $html);
-        } else {
-            $this->assertStringNotContainsString('css/admin.css', $html);
+        // Bootstrap, Bootstrap Icons, dan CSS lama dilepas (F9-17).
+        foreach (['bootstrap', 'css/tema', 'css/admin.'] as $lama) {
+            $this->assertStringNotContainsString($lama, $html);
         }
+        $this->assertDirectoryDoesNotExist(FCPATH . 'aset/vendor/bootstrap');
+        $this->assertDirectoryDoesNotExist(FCPATH . 'aset/vendor/bootstrap-icons');
+        $this->assertFileDoesNotExist(FCPATH . 'aset/css/tema.css');
+        $this->assertFileDoesNotExist(FCPATH . 'aset/css/admin.css');
     }
 
     #[DataProvider('tataLetak')]

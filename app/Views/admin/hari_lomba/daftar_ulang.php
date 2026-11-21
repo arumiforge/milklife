@@ -41,7 +41,7 @@ $tautan     = 'font-semibold text-primary-700 underline';
             <div id="bingkai-kamera" class="aspect-[4/3] overflow-hidden rounded-xl bg-gray-900" hidden>
                 <video id="video-pindai" muted playsinline class="size-full object-cover"></video>
             </div>
-            <?= komponen('tombol', ['label' => 'Berhenti memindai', 'varian' => 'kedua', 'blok' => true, 'atribut' => ['id' => 'tombol-berhenti', 'hidden' => true]]) ?>
+            <?= komponen('tombol', ['label' => 'Berhenti memindai', 'varian' => 'kedua', 'ikon' => 'camera-off', 'blok' => true, 'atribut' => ['id' => 'tombol-berhenti', 'hidden' => true]]) ?>
             <p class="text-sm text-gray-600" id="status-pindai" role="status" aria-live="polite"></p>
         </div>
 
@@ -135,7 +135,7 @@ $tautan     = 'font-semibold text-primary-700 underline';
                                 data-konfirmasi="<?= esc('Tanda hadir ' . $a['nama'] . ' dibatalkan.', 'attr') ?>" data-konfirmasi-judul="Batal hadir?" data-konfirmasi-tombol="Batal hadir">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="atlet" value="<?= $a['id'] ?>">
-                                <?= komponen('tombol', ['label' => 'Batal hadir', 'tipe' => 'submit', 'varian' => 'hantu', 'ukuran' => 'kecil', 'kelas' => 'min-h-11']) ?>
+                                <?= komponen('tombol', ['label' => 'Batal hadir', 'tipe' => 'submit', 'varian' => 'hantu', 'ikon' => 'undo-2', 'ukuran' => 'kecil', 'kelas' => 'min-h-11']) ?>
                             </form>
                         <?php endif ?>
                     </li>

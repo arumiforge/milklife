@@ -98,7 +98,7 @@
         }, gerakDikurangi ? 0 : 200);
     }
 
-    var BERKAS = /\/(excel|pdf|unduh|ekspor)(\/|$)|\/bukti\/[0-9a-f]{24}\//;
+    var BERKAS = /\/(excel|pdf|zip|unduh|ekspor)(\/|$)|\/bukti\/[0-9a-f]{24}\//;
 
     function pindahHalaman() {
         // Bila halaman tidak berganti (mis. unduhan tak dikenali), jangan menggantung.

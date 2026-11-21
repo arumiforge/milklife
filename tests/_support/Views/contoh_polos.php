@@ -5,7 +5,7 @@
  * @var CodeIgniter\View\View $this
  */
 ?>
-<?= $this->extend('tata_letak/polos') ?>
+<?= $this->extend('tata_letak/polos_tw') ?>
 
 <?= $this->section('judul') ?>Judul Contoh polos<?= $this->endSection() ?>
 

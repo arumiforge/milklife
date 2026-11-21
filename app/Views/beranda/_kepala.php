@@ -12,6 +12,8 @@
  * - Carousel (Flowbite, `data-carousel="static"`): putar otomatis, jeda,
  *   dan geser diatur `public/aset/js/carousel-beranda.js`. Foto pertama
  *   dimuat lebih dulu, sisanya `loading="lazy"`. Satu foto tampil diam.
+ *   Selama foto dimuat, latarnya warna rata-rata foto itu (`warna`, F9-17),
+ *   digambar sebagai `<svg>` berisi satu kotak karena CSP menolak `style`.
  *   Bila carousel kosong, gambar kepala dari pengaturan yang tampil; bila
  *   itu pun belum ada, tidak ada gambar sama sekali (K41).
  * - Judul dari pengaturan, huruf besar; tiap kalimat (atau tiap kata bila
@@ -31,7 +33,7 @@
  * @var App\Libraries\BukaTutupPendaftaran                                                                     $bukaTutup
  * @var list<array{kunci: string, label: string, alamat: string|null, utama: bool, keterangan?: string|null}> $tombol
  * @var list<array{id: int, nama: string, nomor_individu: list<mixed>, nomor_beregu: list<mixed>}>             $kelompokUmur
- * @var list<array{alamat: string, keterangan: string, ukuran: array{lebar: int, tinggi: int}|null}>          $carousel
+ * @var list<array{alamat: string, keterangan: string, ukuran: array{lebar: int, tinggi: int}|null, warna?: string|null}> $carousel
  */
 
 use App\Libraries\BukaTutupPendaftaran;
@@ -171,6 +173,9 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                     <div class="relative aspect-[4/3] overflow-hidden rounded-3xl bg-primary-100 shadow-angkat ring-1 ring-black/5 sm:aspect-[16/10]">
                         <?php foreach ($foto as $i => $f) : ?>
                             <div class="<?= $putar ? ($i === 0 ? '' : 'hidden ') . 'duration-700 ease-in-out' : 'absolute inset-0' ?>"<?= $putar ? ' data-carousel-item' . ($i === 0 ? '="active"' : '') . ' role="group" aria-roledescription="slide" aria-label="' . ($i + 1) . ' dari ' . count($foto) . '"' : '' ?> data-foto-pembuka>
+                                <?php if (preg_match('/^#[0-9a-f]{6}$/D', (string) ($f['warna'] ?? '')) === 1) : ?>
+                                    <svg class="absolute inset-0 size-full" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true" focusable="false" data-latar-foto><rect width="1" height="1" fill="<?= $f['warna'] ?>"/></svg>
+                                <?php endif ?>
                                 <img src="<?= esc($f['alamat'], 'attr') ?>" alt="<?= esc($f['keterangan'] !== '' ? $f['keterangan'] : 'Foto acara ' . ($i + 1), 'attr') ?>" class="absolute inset-0 size-full object-cover"<?= $ukuranAtribut($f['ukuran']) ?> decoding="async"<?= $i === 0 ? ' fetchpriority="high"' : ' loading="lazy"' ?>>
                             </div>
                         <?php endforeach ?>

@@ -13,8 +13,7 @@ const salinan = [
     // akordeon, pemilih tanggal); pemilih tanggal sudah termasuk di flowbite.min.js.
     ['flowbite/dist/flowbite.min.js', 'flowbite/flowbite.min.js'],
     ['flowbite/LICENSE.md', 'flowbite/LICENSE-flowbite.md'],
-    // Bahasa Indonesia untuk pemilih tanggal Flowbite (F9-07); modul ES, dimuat `js/pemilih-tanggal-tw.js`.
-    ['flowbite-datepicker/dist/js/locales/id.js', 'flowbite/datepicker-id.js'],
+    // Pemilih tanggal Flowbite termasuk di flowbite.min.js; panel admin memakai `js/pilih-tanggal.js` (K89, F9-17).
     ['flowbite-datepicker/LICENSE', 'flowbite/LICENSE-flowbite-datepicker'],
     // Three.js: modul ES; three.module.min.js mengimpor three.core.min.js dari folder yang sama.
     ['three/build/three.module.min.js', 'three/three.module.min.js'],
