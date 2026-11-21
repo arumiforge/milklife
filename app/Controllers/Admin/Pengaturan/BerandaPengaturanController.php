@@ -132,6 +132,7 @@ class BerandaPengaturanController extends BaseController
             ['galeri', 'Galeri', 'images', 'admin/pengaturan/galeri', 'Album foto acara yang membuka Instagram atau Google Drive panitia.', $depan],
             ['tabel-skor', 'Tabel Skor', 'table', 'admin/pengaturan/tabel-skor', 'Tabel prestasi ke poin untuk Trilomba dan nomor multi-lomba lain.', 'Hasil lomba'],
             ['hasil', 'Hasil', 'award', 'admin/pengaturan/hasil', 'Metode klasemen juara umum: medali atau poin per peringkat.', 'Hasil lomba'],
+            ['videotron', 'Videotron', 'display', 'admin/pengaturan/videotron', 'Papan hasil di videotron arena: tampil atau tidak, isi, dan lama tiap tampilan.', 'Hasil lomba'],
             ['akun', 'Akun', 'person-gear', 'admin/akun', 'Ganti nama, nama pengguna, dan kata sandi Anda.', $sendiri],
         ];
 

@@ -52,6 +52,35 @@ jobs:
             exit 1
           fi
 
+  layar:
+    # Papan videotron /layar (F9-13, K141) di delapan ukuran layar: tanpa teks
+    # terpotong atau tumpang tindih, tanpa pelanggaran CSP, dan tanpa
+    # kebocoran setelah ribuan pergantian tampilan (alat/uji-layar.mjs).
+    name: Tampilan videotron (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Pasang Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Pasang paket tampilan
+        run: npm ci --no-audit --no-fund
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      # Memakai Google Chrome yang sudah terpasang di runner ubuntu-latest,
+      # tanpa mengunduh Chromium Playwright.
+      - name: Uji tampilan videotron
+        run: npm run uji:layar
+        env:
+          CHROMIUM_PATH: /usr/bin/google-chrome
+
   uji:
     name: PHPUnit (PHP 8.3, MySQL 8)
     runs-on: ubuntu-latest
