@@ -18,7 +18,10 @@
 $turnstile = $wizard['turnstile'] ?? null;
 ?>
 <section class="langkah" id="langkah-5" data-langkah="5" aria-labelledby="judul-langkah-5" hidden>
-    <h2 id="judul-langkah-5" tabindex="-1">5. Pembayaran</h2>
+    <div class="langkah-judul">
+        <h2 id="judul-langkah-5" tabindex="-1">5. Pembayaran</h2>
+        <?= view('pendaftaran/_tombol_bantuan', ['langkah' => 5], ['saveData' => false]) ?>
+    </div>
 
     <div id="bayar-isi">
         <p class="langkah-keterangan">Pendaftaran belum terkirim. Transfer dulu, lalu unggah bukti transfernya. Isian di halaman ini tetap tersimpan di perangkat ini, jadi bila belum sempat transfer, buka lagi halaman ini nanti dan tinggal unggah buktinya.</p>

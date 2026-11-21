@@ -7,7 +7,10 @@
  */
 ?>
 <section class="langkah" id="langkah-4" data-langkah="4" aria-labelledby="judul-langkah-4" hidden>
-    <h2 id="judul-langkah-4" tabindex="-1">4. Biaya</h2>
+    <div class="langkah-judul">
+        <h2 id="judul-langkah-4" tabindex="-1">4. Biaya</h2>
+        <?= view('pendaftaran/_tombol_bantuan', ['langkah' => 4], ['saveData' => false]) ?>
+    </div>
     <p class="langkah-keterangan">Periksa lagi daftar atlet dan biayanya. Pendaftaran baru terkirim ke panitia setelah bukti transfer diunggah di langkah berikutnya.</p>
 
     <div class="ringkasan-galat alert alert-danger" role="alert" hidden></div>
