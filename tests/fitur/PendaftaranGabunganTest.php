@@ -146,7 +146,8 @@ final class PendaftaranGabunganTest extends UjiBasisData
         $xpath = $this->xpathDari($this->get('pendaftaran'));
 
         $this->assertSame(0, $xpath->query('//nav[@aria-label="Menu utama"]//a[@aria-current="page"]')->length);
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Menu utama"]//a[contains(@class, "tombol-panitia")]')->length);
+        // Tata letak Tailwind (F9-05): tautan masuk panitia ada di kaki halaman.
+        $this->assertSame(1, $xpath->query('//footer//a[@href="' . site_url('admin/masuk') . '"]')->length);
     }
 
     public function testPesanKilatDiTataLetakPublik(): void

@@ -5,21 +5,20 @@
  * `#rincian-biaya`. Belum ada yang disimpan di langkah ini (K90): pendaftaran
  * baru masuk sistem bersama bukti transfer di langkah 5.
  */
+
+use App\Libraries\Pendaftaran\KelasTampilan as K;
 ?>
 <section class="langkah" id="langkah-4" data-langkah="4" aria-labelledby="judul-langkah-4" hidden>
-    <div class="langkah-judul">
-        <h2 id="judul-langkah-4" tabindex="-1">4. Biaya</h2>
-        <?= view('pendaftaran/_tombol_bantuan', ['langkah' => 4], ['saveData' => false]) ?>
-    </div>
-    <p class="langkah-keterangan">Periksa lagi daftar atlet dan biayanya. Pendaftaran baru terkirim ke panitia setelah bukti transfer diunggah di langkah berikutnya.</p>
+    <?= view('pendaftaran/_kepala_langkah', ['langkah' => 4, 'judul' => 'Biaya'], ['saveData' => false]) ?>
+    <p class="langkah-keterangan mb-5 text-gray-600">Periksa lagi daftar atlet dan biayanya. Pendaftaran baru terkirim ke panitia setelah bukti transfer diunggah di langkah berikutnya.</p>
 
-    <div class="ringkasan-galat alert alert-danger" role="alert" hidden></div>
+    <div class="<?= K::RINGKASAN ?>" role="alert" hidden></div>
 
     <div id="rincian-biaya" aria-live="polite"></div>
 
-    <div class="langkah-tombol">
-        <button type="button" class="btn btn-outline-secondary" data-kembali><i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali</button>
-        <button type="button" class="btn btn-primary btn-lg" data-lanjut>Lanjut ke Pembayaran <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+    <div class="langkah-tombol mt-6 flex flex-wrap items-center justify-between gap-3">
+        <button type="button" class="<?= K::KEDUA ?>" data-kembali><?= ikon('arrow-left', 'size-5') ?> Kembali</button>
+        <button type="button" class="<?= K::UTAMA_BESAR ?>" data-lanjut>Lanjut ke Pembayaran <?= ikon('arrow-right', 'size-5') ?></button>
     </div>
 
 </section>

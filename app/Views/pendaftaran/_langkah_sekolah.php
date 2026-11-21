@@ -4,79 +4,79 @@
  *
  * @var array<string, mixed> $wizard
  */
+
+use App\Libraries\Pendaftaran\KelasTampilan as K;
 ?>
 <section class="langkah" id="langkah-1" data-langkah="1" aria-labelledby="judul-langkah-1" hidden>
-    <div class="langkah-judul">
-        <h2 id="judul-langkah-1" tabindex="-1">1. Data Sekolah</h2>
-        <?= view('pendaftaran/_tombol_bantuan', ['langkah' => 1], ['saveData' => false]) ?>
-    </div>
-    <p class="langkah-keterangan">Jenjang sekolah menentukan kelompok umur yang boleh diikuti atlet.</p>
+    <?= view('pendaftaran/_kepala_langkah', ['langkah' => 1, 'judul' => 'Data Sekolah'], ['saveData' => false]) ?>
+    <p class="langkah-keterangan mb-5 text-gray-600">Jenjang sekolah menentukan kelompok umur yang boleh diikuti atlet.</p>
 
-    <div class="ringkasan-galat alert alert-danger" role="alert" hidden></div>
+    <div class="<?= K::RINGKASAN ?>" role="alert" hidden></div>
 
-    <div class="kartu-isian">
-        <fieldset class="mb-3" data-jalur="sekolah.jenjang">
-            <legend class="form-label">Jenjang sekolah</legend>
-            <div class="pilihan-tombol">
+    <div class="<?= K::KARTU ?> space-y-5">
+        <fieldset data-jalur="sekolah.jenjang">
+            <legend class="<?= K::LABEL ?> !text-base">Jenjang sekolah</legend>
+            <div class="pilihan-tombol flex flex-wrap gap-2">
                 <?php foreach ($wizard['jenjang'] as $kode => $label) : ?>
-                    <input type="radio" class="btn-check" name="sekolah-jenjang" id="sekolah-jenjang-<?= esc($kode, 'attr') ?>" value="<?= esc($kode, 'attr') ?>">
-                    <label class="btn btn-outline-primary" for="sekolah-jenjang-<?= esc($kode, 'attr') ?>"><?= esc($label) ?></label>
+                    <label class="<?= K::PILIHAN ?>" for="sekolah-jenjang-<?= esc($kode, 'attr') ?>">
+                        <input type="radio" class="sr-only" name="sekolah-jenjang" id="sekolah-jenjang-<?= esc($kode, 'attr') ?>" value="<?= esc($kode, 'attr') ?>"><?= esc($label) ?>
+                    </label>
                 <?php endforeach ?>
             </div>
-            <div class="invalid-feedback"></div>
+            <div class="<?= K::UMPAN ?>"></div>
         </fieldset>
 
-        <div class="mb-3">
-            <label class="form-label" for="sekolah-kabupaten">Kabupaten</label>
-            <select class="form-select" id="sekolah-kabupaten" data-jalur="sekolah.kabupaten">
+        <div>
+            <label class="<?= K::LABEL ?>" for="sekolah-kabupaten">Kabupaten</label>
+            <select class="<?= K::ISIAN ?>" id="sekolah-kabupaten" data-jalur="sekolah.kabupaten">
                 <option value="">Pilih kabupaten</option>
                 <?php foreach ($wizard['kabupaten'] as $kabupaten) : ?>
                     <option value="<?= esc($kabupaten, 'attr') ?>"><?= esc($kabupaten) ?></option>
                 <?php endforeach ?>
             </select>
-            <div class="invalid-feedback"></div>
+            <div class="<?= K::UMPAN ?>"></div>
         </div>
 
-        <div class="mb-2">
-            <label class="form-label" for="sekolah-npsn">NPSN</label>
-            <div class="input-group has-validation">
-                <input type="text" class="form-control" id="sekolah-npsn" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="8 angka" data-jalur="sekolah.npsn" aria-describedby="sekolah-npsn-keterangan">
-                <button type="button" class="btn btn-primary" id="sekolah-cari">
-                    <i class="bi bi-search" aria-hidden="true"></i> Cari
+        <div>
+            <label class="<?= K::LABEL ?>" for="sekolah-npsn">NPSN</label>
+            <div class="input-group flex flex-wrap gap-2">
+                <input type="text" class="<?= K::ISIAN ?> !w-auto min-w-0 flex-1" id="sekolah-npsn" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="8 angka" data-jalur="sekolah.npsn" aria-describedby="sekolah-npsn-keterangan">
+                <button type="button" class="<?= K::UTAMA ?> min-h-12" id="sekolah-cari">
+                    <?= ikon('search', 'size-5') ?> Cari
                 </button>
-                <div class="invalid-feedback"></div>
+                <div class="<?= K::UMPAN ?> basis-full !mt-0"></div>
             </div>
-            <div id="sekolah-npsn-keterangan" class="form-text">Nama sekolah tampil sendiri setelah NPSN dicari.</div>
+            <div id="sekolah-npsn-keterangan" class="<?= K::BANTU ?>">Nama sekolah tampil sendiri setelah NPSN dicari.</div>
         </div>
 
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" id="sekolah-tanpa-npsn">
-            <label class="form-check-label" for="sekolah-tanpa-npsn">Sekolah belum punya NPSN</label>
+        <div class="flex items-center gap-3">
+            <input class="<?= K::CENTANG ?>" type="checkbox" id="sekolah-tanpa-npsn">
+            <label class="text-gray-900" for="sekolah-tanpa-npsn">Sekolah belum punya NPSN</label>
         </div>
 
-        <div id="sekolah-hasil" aria-live="polite"></div>
+        <div id="sekolah-hasil" class="empty:hidden" aria-live="polite"></div>
 
         <?php // Usulan nama sekolah yang lebih lengkap (K99); ditampilkan `pendaftaran/sekolah.js`. ?>
-        <div class="mb-3" id="sekolah-usulan-kotak" hidden>
-            <label class="form-label" for="sekolah-nama-usulan">Nama sekolah lengkap yang diusulkan</label>
-            <input type="text" class="form-control" id="sekolah-nama-usulan" maxlength="150" autocomplete="off" data-jalur="sekolah.nama_usulan"
+        <div id="sekolah-usulan-kotak" hidden>
+            <label class="<?= K::LABEL ?>" for="sekolah-nama-usulan">Nama sekolah lengkap yang diusulkan</label>
+            <input type="text" class="<?= K::ISIAN ?>" id="sekolah-nama-usulan" maxlength="150" autocomplete="off" data-jalur="sekolah.nama_usulan"
                 placeholder="Contoh: MIS MUHAMMADIYAH JATI" aria-describedby="sekolah-nama-usulan-keterangan">
-            <div class="invalid-feedback"></div>
-            <div id="sekolah-nama-usulan-keterangan" class="form-text">
+            <div class="<?= K::UMPAN ?>"></div>
+            <div id="sekolah-nama-usulan-keterangan" class="<?= K::BANTU ?>">
                 Nama ini langsung dipakai untuk pendaftaran Anda dan dikirim ke panitia untuk diperiksa.
                 Bila panitia tidak menyetujuinya, pendaftaran memakai nama dari data sekolah. Kosongkan bila nama di atas sudah benar.
             </div>
         </div>
 
-        <div class="mb-3" id="sekolah-nama-kotak" hidden>
-            <label class="form-label" for="sekolah-nama">Nama sekolah</label>
-            <input type="text" class="form-control" id="sekolah-nama" maxlength="150" autocomplete="organization" data-jalur="sekolah.nama" placeholder="Contoh: SD Negeri 1 Kudus">
-            <div class="invalid-feedback"></div>
+        <div id="sekolah-nama-kotak" hidden>
+            <label class="<?= K::LABEL ?>" for="sekolah-nama">Nama sekolah</label>
+            <input type="text" class="<?= K::ISIAN ?>" id="sekolah-nama" maxlength="150" autocomplete="organization" data-jalur="sekolah.nama" placeholder="Contoh: SD Negeri 1 Kudus">
+            <div class="<?= K::UMPAN ?>"></div>
         </div>
     </div>
 
-    <div class="langkah-tombol">
+    <div class="langkah-tombol mt-6 flex flex-wrap items-center justify-between gap-3">
         <span></span>
-        <button type="button" class="btn btn-primary btn-lg" data-lanjut>Lanjut <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+        <button type="button" class="<?= K::UTAMA_BESAR ?>" data-lanjut>Lanjut <?= ikon('arrow-right', 'size-5') ?></button>
     </div>
 </section>
