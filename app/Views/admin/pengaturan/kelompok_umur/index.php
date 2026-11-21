@@ -106,7 +106,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
     <?php else : ?>
         <section aria-labelledby="judul-daftar">
             <h2 id="judul-daftar" class="sr-only">Daftar kelompok umur</h2>
-            <div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut">
+            <div class="relative overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut">
                 <table class="w-full text-left text-sm text-gray-700" id="tabel-kelompok-umur">
                     <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                         <tr>

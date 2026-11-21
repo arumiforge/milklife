@@ -102,7 +102,7 @@ $galatBaris = $galat === [] ? '' : ' aria-describedby="baris-galat"';
                         data-konfirmasi="<?= esc('Baris yang dipilih akan dihapus dari tabel ' . $judul . ', lalu poin hasil lomba dihitung ulang.', 'attr') ?>"
                         data-konfirmasi-judul="Hapus baris?" data-konfirmasi-tombol="Hapus baris">
                         <?= csrf_field() ?>
-                        <div class="overflow-x-auto rounded-xl border border-gray-200">
+                        <div class="relative overflow-x-auto rounded-xl border border-gray-200">
                             <table class="w-full text-left text-sm text-gray-700" id="tabel-baris">
                                 <caption class="sr-only">Baris <?= esc($judul) ?></caption>
                                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">

@@ -146,7 +146,7 @@ $ringkasTim = static function (array $nomor): string {
                         Belum ada nomor lomba di kelompok umur ini.
                     </p>
                 <?php else : ?>
-                    <div class="overflow-x-auto rounded-b-2xl">
+                    <div class="relative overflow-x-auto rounded-b-2xl">
                         <table class="w-full text-left text-sm text-gray-700">
                             <caption class="sr-only">Nomor lomba <?= esc($ku['nama']) ?></caption>
                             <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">

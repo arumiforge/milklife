@@ -54,7 +54,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
             <p class="mt-1 text-sm text-gray-700" data-pemakai>
                 <?= $t['nomor'] === [] ? 'Belum dipakai nomor lomba.' : 'Dipakai: ' . esc(implode(', ', $t['nomor'])) . '.' ?>
             </p>
-            <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200">
+            <div class="relative mt-4 overflow-x-auto rounded-xl border border-gray-200">
                 <table class="w-full text-left text-sm text-gray-700">
                     <caption class="sr-only">Komponen <?= esc($t['nama']) ?></caption>
                     <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">

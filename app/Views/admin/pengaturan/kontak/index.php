@@ -78,7 +78,7 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                     <p class="max-w-xl"><?= esc($b['kosong']) ?></p>
                 </div>
             <?php else : ?>
-                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                <div class="relative overflow-x-auto rounded-xl border border-gray-200">
                     <table class="w-full text-left text-sm text-gray-700">
                         <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                             <tr>

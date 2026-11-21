@@ -68,7 +68,7 @@ $penuh    = count($album) >= GaleriModel::BATAS;
         <?php if ($album === []) : ?>
             <p class="rounded-xl border border-gray-200 px-4 py-3 text-gray-600">Belum ada album. Tekan <strong class="font-semibold text-gray-900">Tambah album</strong> untuk menambahkan album pertama.</p>
         <?php else : ?>
-            <div class="overflow-x-auto rounded-xl border border-gray-200">
+            <div class="relative overflow-x-auto rounded-xl border border-gray-200">
                 <table class="w-full text-left text-sm text-gray-700">
                     <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                         <tr>

@@ -29,7 +29,7 @@ $sel      = static function (array $kolom, mixed $nilai): string {
     };
 };
 $tabel = static function (array $bagian, string $id, string $keterangan) use ($sel): string {
-    $html = '<div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white"><table class="w-full text-left text-sm text-gray-700" id="' . esc($id, 'attr') . '">'
+    $html = '<div class="relative overflow-x-auto rounded-2xl border border-gray-200 bg-white"><table class="w-full text-left text-sm text-gray-700" id="' . esc($id, 'attr') . '">'
         . '<caption class="sr-only">' . esc($keterangan) . '</caption>'
         . '<thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700"><tr><th scope="col" class="px-4 py-3 text-right">No</th>';
 

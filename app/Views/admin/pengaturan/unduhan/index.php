@@ -38,7 +38,7 @@
             <?= komponen('tombol', ['label' => 'Tambah berkas', 'href' => site_url('admin/pengaturan/unduhan/tambah'), 'ikon' => 'plus']) ?>
         </div>
 
-        <div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut">
+        <div class="relative overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut">
             <table class="w-full text-left text-sm text-gray-700">
                 <caption class="sr-only">Daftar berkas unduhan</caption>
                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
