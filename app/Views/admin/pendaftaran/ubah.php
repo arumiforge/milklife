@@ -487,7 +487,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 
         <div class="flex flex-wrap gap-2">
             <?= komponen('tombol', ['label' => 'Simpan perubahan', 'tipe' => 'submit', 'ikon' => 'check', 'kelas' => 'disabled:opacity-60', 'atribut' => ['id' => 'simpan-ubah']]) ?>
-            <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url($alamat), 'varian' => 'kedua']) ?>
+            <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url($alamat), 'varian' => 'kedua', 'ikon' => 'x']) ?>
         </div>
     </form>
 

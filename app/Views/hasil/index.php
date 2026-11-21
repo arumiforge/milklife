@@ -21,7 +21,7 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
     'judul' => 'Hasil Lomba',
     'ikon'  => 'trophy',
     'teks'  => 'Hasil resmi ' . $namaAcara . ' yang sudah diterbitkan panitia, per kelompok umur dan nomor lomba.',
-    'aksi'  => $kelompokUmur === [] ? null : komponen('tombol', ['label' => 'Klasemen sekolah', 'href' => site_url('hasil/klasemen'), 'ikon' => 'award', 'atribut' => ['data-tautan-klasemen' => true]]),
+    'aksi'  => $kelompokUmur === [] ? null : komponen('tombol', ['label' => 'Lihat klasemen sekolah', 'href' => site_url('hasil/klasemen'), 'varian' => 'kedua', 'ikon' => 'award', 'atribut' => ['data-tautan-klasemen' => true]]),
 ], ['saveData' => false]) ?>
 
 <div class="mx-auto max-w-screen-xl space-y-10 px-4 py-10">

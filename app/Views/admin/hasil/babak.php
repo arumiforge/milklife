@@ -90,9 +90,9 @@ foreach ($calon as $kunci => $c) {
     </p>
     <div class="flex flex-wrap gap-2">
         <?php // Seri dan lintasan (F9-08). ?>
-        <?= komponen('tombol', ['label' => 'Seri dan lintasan babak ini', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'list-ordered', 'atribut' => ['id' => 'tautan-seri-babak']]) ?>
+        <?= komponen('tombol', ['label' => 'Atur seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'list-ordered', 'atribut' => ['id' => 'tautan-seri-babak']]) ?>
         <?php // Lembar juri (F9-09). ?>
-        <?= komponen('tombol', ['label' => 'Lembar juri babak ini', 'href' => site_url('admin/juri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'smartphone', 'atribut' => ['id' => 'tautan-lembar-juri']]) ?>
+        <?= komponen('tombol', ['label' => 'Buka lembar juri', 'href' => site_url('admin/juri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'smartphone', 'atribut' => ['id' => 'tautan-lembar-juri']]) ?>
     </div>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-hasil">
@@ -186,7 +186,7 @@ foreach ($calon as $kunci => $c) {
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <?= komponen('tombol', ['label' => 'Simpan hasil', 'tipe' => 'submit', 'ikon' => 'save']) ?>
-                    <?= komponen('tombol', ['label' => 'Kembali ke ' . $nomor['nama'], 'href' => site_url('admin/hasil/nomor/' . $nomor['id']), 'varian' => 'hantu']) ?>
+                    <?= komponen('tombol', ['label' => 'Kembali ke ' . $nomor['nama'], 'href' => site_url('admin/hasil/nomor/' . $nomor['id']), 'varian' => 'hantu', 'ikon' => 'arrow-left']) ?>
                 </div>
             </form>
         <?php endif ?>
@@ -198,7 +198,7 @@ foreach ($calon as $kunci => $c) {
         <?php if ($pilihan === []) : ?>
             <p class="mt-3 text-gray-600" id="calon-kosong">Belum ada <?= $beregu ? 'regu' : 'atlet' ?> dari pendaftaran Lunas di nomor ini.</p>
         <?php else : ?>
-            <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/peserta') ?>" method="post" class="mt-4 space-y-4">
+            <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/peserta') ?>" method="post" class="mt-4 space-y-4"<?= $hasil === [] ? '' : ' data-konfirmasi="Peserta yang tidak dicentang dikeluarkan dari babak ini, dan prestasinya di babak ini ikut terhapus." data-konfirmasi-judul="Simpan peserta?" data-konfirmasi-tombol="Simpan peserta" data-konfirmasi-jenis="utama"' ?>>
                 <?= csrf_field() ?>
                 <div class="grid gap-x-4 sm:grid-cols-2">
                     <?php foreach ($pilihan as $kunci => $p) : ?>
@@ -274,7 +274,7 @@ foreach ($calon as $kunci => $c) {
                     <?php if (isset($galatBabak['final'])) : ?><p id="final-galat" class="mt-1.5 text-sm font-medium text-red-700"><?= esc($galatBabak['final']) ?></p><?php endif ?>
                 </div>
             </div>
-            <?= komponen('tombol', ['label' => 'Simpan babak', 'tipe' => 'submit', 'varian' => 'kedua']) ?>
+            <?= komponen('tombol', ['label' => 'Simpan babak', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'save']) ?>
         </form>
         <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/hapus') ?>" method="post" class="mt-6 border-t border-gray-100 pt-4"
             data-konfirmasi="<?= esc('Babak ' . $babak['nama'] . ' beserta semua prestasi pesertanya akan dihapus. Tindakan ini tidak bisa dibatalkan.', 'attr') ?>"

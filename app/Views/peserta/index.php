@@ -135,7 +135,7 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
             <div class="flex gap-2 md:col-span-3 lg:col-span-2">
                 <?= komponen('tombol', ['label' => 'Cari', 'tipe' => 'submit', 'ikon' => 'search', 'kelas' => 'flex-1', 'atribut' => ['data-tombol-cari' => '']]) ?>
                 <span<?= $disaring ? '' : ' class="hidden"' ?> data-hapus-saringan>
-                    <?= komponen('tombol', ['label' => 'Hapus', 'href' => site_url('peserta'), 'varian' => 'kedua', 'atribut' => ['aria-label' => 'Hapus pencarian dan saringan']]) ?>
+                    <?= komponen('tombol', ['label' => 'Hapus saringan', 'href' => site_url('peserta'), 'varian' => 'kedua', 'ikon' => 'x']) ?>
                 </span>
             </div>
         </form>

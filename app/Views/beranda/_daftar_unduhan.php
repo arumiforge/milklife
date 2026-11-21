@@ -47,7 +47,7 @@ $namaSimpan = static function (string $judul, string $jenis): string {
                     <p class="mt-1 text-sm text-gray-500" data-unduhan-rincian><?= esc($rincian) ?></p>
                 <?php endif ?>
             </div>
-            <a class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary-700 px-5 text-sm font-semibold text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300" href="<?= esc($berkas['alamat'], 'attr') ?>" download="<?= esc($namaSimpan($berkas['judul'], $berkas['jenis']), 'attr') ?>" data-unduhan-tombol>
+            <a class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-primary-700 bg-white px-5 text-sm font-semibold text-primary-700 hover:bg-primary-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($berkas['alamat'], 'attr') ?>" download="<?= esc($namaSimpan($berkas['judul'], $berkas['jenis']), 'attr') ?>" data-unduhan-tombol>
                 <?= ikon('download', 'size-4') ?> Unduh<span class="sr-only"> <?= esc($berkas['judul']) ?><?= $rincian !== '' ? ' (' . esc($rincian) . ')' : '' ?></span>
             </a>
         </li>

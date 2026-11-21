@@ -1,7 +1,7 @@
 <?php
 /**
  * Jejak navigasi (breadcrumb, K117) untuk halaman admin bertampilan baru
- * (`admin_tw`, Tahap 9), padanan `admin/_jejak.php` dengan data yang sama:
+ * (`admin_tw`, Tahap 9), dengan data:
  *
  *     <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [
  *         ['label' => 'Hasil lomba', 'alamat' => 'admin/hasil'],

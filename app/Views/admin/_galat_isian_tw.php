@@ -1,7 +1,7 @@
 <?php
 /**
  * Ringkasan isian yang salah untuk halaman admin bertampilan baru (`admin_tw`,
- * Tahap 9), padanan `admin/_galat_isian.php`. Diletakkan tepat di atas
+ * Tahap 9). Diletakkan tepat di atas
  * formulir yang ditampilkan ulang (status 200, tanpa pengalihan). Pesan per
  * kotak ditulis komponen `isian`/`pilihan` (`galat`) atau halaman sendiri
  * dengan `aria-invalid="true"` dan `aria-describedby="<id>-galat"`.

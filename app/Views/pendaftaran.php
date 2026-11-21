@@ -85,9 +85,10 @@ $sprite  = base_url('aset/vendor/lucide/lucide.svg') . (($versi = @filemtime(FCP
         <?php // Dipasang `pendaftaran/turnstile.js` saat langkah 5 tampil (K122). ?>
         <script src="<?= esc($wizard['turnstile']['skrip']) ?>?render=explicit" async defer></script>
     <?php endif ?>
-    <?php // Bilah muat (K89) dan jendela konfirmasi (`window.Konfirmasi`, jendela Flowbite). ?>
+    <?php // Bilah muat, jendela konfirmasi (`window.Konfirmasi`, jendela Flowbite), dan pemilih tanggal lahir Tanggal, Bulan, Tahun (K89). ?>
     <script src="<?= aset('js/kemajuan.js') ?>"></script>
     <script src="<?= aset('js/konfirmasi.js') ?>"></script>
+    <script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
     <?php
     // Wizard dipecah per bagian (F7-30), tanpa alat bangun. Urutan ini wajib:
     // `pendaftaran/dasar.js` membuat `window.Pendaftaran`, setiap bagian memakai

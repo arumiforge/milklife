@@ -170,7 +170,7 @@ final class MinifyAsetTest extends CIUnitTestCase
         $hasil = MinifyAset::perkecil($salinan);
 
         $this->assertNotEmpty($hasil);
-        $this->assertContains('css/tema.css', array_column($hasil, 'berkas'));
+        $this->assertContains('css/tw.css', array_column($hasil, 'berkas'));
         $this->assertContains('js/pendaftaran.js', array_column($hasil, 'berkas'));
         // Bagian wizard di subfolder (F7-30) ikut diperkecil.
         $this->assertContains('js/pendaftaran/dasar.js', array_column($hasil, 'berkas'));

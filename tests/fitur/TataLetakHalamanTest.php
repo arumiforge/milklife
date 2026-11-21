@@ -65,70 +65,44 @@ final class TataLetakHalamanTest extends UjiHalaman
     }
 
     /**
-     * Sejak F9-05 tidak ada halaman publik yang memakai tata letak lama; tata
-     * letak itu tetap diuji lewat halaman contoh sampai dilepas (F9-17).
+     * Tata letak lama Bootstrap (publik, admin, polos) dan potongannya dilepas
+     * setelah semua halaman pindah ke Tailwind (F9-17); tidak ada view yang
+     * masih memakainya.
      */
-    public function testTataLetakPublikLama(): void
+    public function testTataLetakLamaDilepas(): void
+    {
+        foreach (['tata_letak/publik', 'tata_letak/admin', 'tata_letak/polos', 'tata_letak/_menu_admin', 'tata_letak/_pesan_publik', 'tata_letak/_tanpa_gambar', 'admin/_pesan', 'admin/_galat_isian', 'admin/_jejak'] as $view) {
+            $this->assertFileDoesNotExist(APPPATH . 'Views/' . $view . '.php', $view);
+        }
+
+        $berkas = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(APPPATH . 'Views', FilesystemIterator::SKIP_DOTS));
+
+        foreach ($berkas as $b) {
+            if ($b->getExtension() !== 'php') {
+                continue;
+            }
+            $isi = (string) file_get_contents($b->getPathname());
+            $this->assertDoesNotMatchRegularExpression("#extend\\('tata_letak/(publik|admin|polos)'\\)#", $isi, $b->getPathname());
+            $this->assertDoesNotMatchRegularExpression('#\\bbi bi-|bootstrap|data-bs-#', $isi, $b->getPathname());
+        }
+    }
+
+    /**
+     * Tata letak publik memuat bilah muat, jendela konfirmasi (K89) lewat
+     * halaman contoh, dan skrip halaman paling akhir.
+     */
+    public function testTataLetakPublikHalamanContoh(): void
     {
         $this->isiDataAcara();
 
-        $xpath = $this->xpath($this->renderDiAlamat('cek-pendaftaran', 'Tests\Support\Views\contoh_publik'));
+        $html  = $this->renderDiAlamat('unduhan', 'Tests\Support\Views\contoh_publik');
+        $xpath = $this->xpath($html);
 
-        $this->assertSame(1, $xpath->query('//body[@data-bs-theme="light"]')->length, 'Tema terang harus dipasang.');
-        $this->assertSame(1, $xpath->query('//header[contains(@class, "kepala-publik")]')->length);
-        $this->assertSame(1, $xpath->query('//header//nav[@aria-label="Menu utama"]')->length);
-        $this->assertSame(1, $xpath->query('//main[@id="isi"]')->length);
-
-        // Bilah muat, jendela konfirmasi, dan pemilih tanggal di semua halaman publik lama (K89).
-        $this->assertSame(1, $xpath->query('//*[@id="bilah-kemajuan"][@hidden]')->length);
-        foreach (['js/kemajuan.js', 'js/konfirmasi.js', 'js/pilih-tanggal.js'] as $skrip) {
-            $this->assertSame(1, $xpath->query('//script[@src="' . aset($skrip) . '"]')->length, $skrip);
-        }
-
-        $merek = $xpath->query('//header//a[contains(@class, "navbar-brand")]')->item(0);
-        $this->assertNotNull($merek);
-        $this->assertSame('MilkLife Athletics Challenge', $this->teks($merek));
-        $this->assertSame('MilkLife Athletics Challenge 2026', $this->teks($xpath->query('//footer')->item(0)));
-    }
-
-    public function testMenuPublikLamaDenganButirNonAktif(): void
-    {
-        $xpath = $this->xpath($this->renderDiAlamat('cek-pendaftaran', 'Tests\Support\Views\contoh_publik'));
-        $butir = [];
-
-        foreach ($xpath->query('//nav[@aria-label="Menu utama"]//*[contains(@class, "nav-link")]') as $tautan) {
-            $butir[$this->teks($tautan)] = $tautan;
-        }
-
-        // K81: menu mengikuti konsep visual; Pendaftaran dan Cek ada di tombol pembuka.
-        $this->assertSame(['Tentang', 'Kategori', 'Agenda', 'Unduhan', 'Bantuan'], array_keys($butir));
-        $this->assertSame(site_url('/') . '#pembuka', $butir['Tentang']->getAttribute('href'));
-        $this->assertSame(site_url('/') . '#lomba', $butir['Kategori']->getAttribute('href'));
-        $this->assertSame(site_url('/') . '#jadwal', $butir['Agenda']->getAttribute('href'));
-
-        // Unduhan punya halaman sendiri (F3-03, K40): bertautan, tidak aktif di halaman depan.
-        $this->assertSame(site_url('unduhan'), $butir['Unduhan']->getAttribute('href'));
-        $this->assertFalse($butir['Unduhan']->hasAttribute('aria-current'));
-
-        foreach ($butir as $label => $tautan) {
-            $this->assertFalse($tautan->hasAttribute('aria-disabled'), $label);
-        }
-
-        // Tombol Panitia ke halaman masuk admin, tanpa ikon panah.
-        $panitia = $xpath->query('//nav[@aria-label="Menu utama"]//a[contains(@class, "tombol-panitia")]')->item(0);
-        $this->assertNotNull($panitia);
-        $this->assertSame('Panitia', $this->teks($panitia));
-        $this->assertSame(site_url('admin/masuk'), $panitia->getAttribute('href'));
-        $this->assertSame(0, $xpath->query('.//i', $panitia)->length);
-
-        // Halaman selain halaman depan memakai kepala biru.
-        $this->assertSame(0, $xpath->query('//header[contains(@class, "kepala-beranda")]')->length);
-
-        // Menu melipat di ponsel.
-        $tombol = $xpath->query('//button[@data-bs-toggle="collapse"][@data-bs-target="#menu-publik"]')->item(0);
-        $this->assertNotNull($tombol);
-        $this->assertSame('menu-publik', $tombol->getAttribute('aria-controls'));
-        $this->assertSame(1, $xpath->query('//*[@id="menu-publik"][contains(@class, "collapse")]')->length);
+        $this->assertSame(1, $xpath->query('//main[@id="isi"]//p[@id="isi-contoh"]')->length);
+        $this->assertSame(1, $xpath->query('//header//nav')->length);
+        $this->assertSame(1, $xpath->query('//footer')->length);
+        $this->assertSame(0, $xpath->query('//link[contains(@href, "bootstrap")] | //script[contains(@src, "bootstrap")]')->length);
+        $this->assertGreaterThan(strpos($html, aset('js/kemajuan.js')), strpos($html, '<script id="skrip-contoh">'));
     }
 
     public function testMenuPublikBaru(): void
@@ -253,37 +227,6 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertSame(1, $pengecekan->query('//nav[@data-menu-admin="samping"]//a[@aria-current="page"][@data-menu-tautan="admin/pengecekan"]')->length);
     }
 
-    public function testTataLetakLamaMemakaiMenuYangSama(): void
-    {
-        $_SESSION = self::SESI_ADMIN;
-        $lama     = $this->xpath($this->renderDiAlamat('admin/dasbor', 'Tests\Support\Views\contoh_admin'));
-        $baru     = $this->xpath($this->withSession(self::SESI_ADMIN)->get('admin/dasbor')->getBody());
-
-        $this->assertSame(0, $lama->query('//body[@data-tata="tw"]')->length, 'Contoh memakai tata letak lama.');
-
-        foreach (['samping', 'bawah'] as $tempat) {
-            $menuLama = $lama->query('//nav[@data-menu-admin="' . $tempat . '"]')->item(0);
-            $menuBaru = $baru->query('//nav[@data-menu-admin="' . $tempat . '"]')->item(0);
-            $this->assertNotNull($menuLama, $tempat);
-            $this->assertNotNull($menuBaru, $tempat);
-            $this->assertSame($this->daftarMenu($baru, $menuBaru), $this->daftarMenu($lama, $menuLama), "Isi menu {$tempat} kedua tata letak harus sama.");
-        }
-
-        $this->assertSame(self::MENU_SAMPING, $this->kelompokMenu($lama, $lama->query('//nav[@data-menu-admin="samping"]')->item(0)));
-
-        // Bentuk tata letak lama tetap: sidebar offcanvas Bootstrap, menu bawah d-lg-none (K131, K133).
-        $laci = $lama->query('//aside[@id="menu-laci"]')->item(0);
-        $this->assertNotNull($laci);
-        $this->assertStringContainsString('offcanvas-lg', $laci->getAttribute('class'));
-        $this->assertStringContainsString('d-lg-none', $lama->query('//nav[@data-menu-admin="bawah"]')->item(0)?->getAttribute('class') ?? '');
-        $tombolMenu = $lama->query('//header[@data-kepala-admin]//button[@data-bs-toggle="offcanvas"]')->item(0);
-        $this->assertSame('#menu-laci', $tombolMenu?->getAttribute('data-bs-target'));
-
-        // Ikon Lucide (sprite) juga di tata letak lama, disembunyikan dari pembaca layar.
-        $this->assertGreaterThan(0, $lama->query('//nav[@data-menu-admin]//*[name()="svg"]')->length);
-        $this->assertSame(0, $lama->query('//nav[@data-menu-admin]//i[contains(@class, "bi")]')->length);
-    }
-
     public function testPenandaMenuAktifMengikutiAlamat(): void
     {
         $_SESSION = self::SESI_ADMIN;
@@ -336,13 +279,14 @@ final class TataLetakHalamanTest extends UjiHalaman
         $_SESSION = self::SESI_ADMIN;
         $html     = view('Tests\Support\Views\contoh_admin');
 
-        $posisiBootstrap = strpos($html, aset('vendor/bootstrap/js/bootstrap.bundle.min.js'));
-        $posisiKemajuan  = strpos($html, aset('js/kemajuan.js'));
-        $posisiSkrip     = strpos($html, '<script id="skrip-contoh">');
+        $posisiFlowbite = strpos($html, aset('vendor/flowbite/flowbite.min.js'));
+        $posisiKemajuan = strpos($html, aset('js/kemajuan.js'));
+        $posisiSkrip    = strpos($html, '<script id="skrip-contoh">');
 
+        $this->assertNotFalse($posisiFlowbite);
         $this->assertNotFalse($posisiKemajuan);
-        $this->assertGreaterThan($posisiBootstrap, $posisiKemajuan);
         $this->assertGreaterThan($posisiKemajuan, $posisiSkrip);
+        $this->assertGreaterThan($posisiFlowbite, $posisiSkrip);
 
         $js = (string) file_get_contents(FCPATH . 'aset/js/kemajuan.js');
         $this->assertStringContainsString('window.Kemajuan', $js);
@@ -359,48 +303,19 @@ final class TataLetakHalamanTest extends UjiHalaman
 
         $xpath = $this->xpath(view('Tests\Support\Views\tata_letak_polos_formulir'));
 
-        $this->assertSame(1, $xpath->query('//body[@data-bs-theme="light"]')->length);
-
-        $kolom = $xpath->query('//main[@id="isi"]//*[contains(@class, "polos-kolom")]')->item(0);
-        $this->assertNotNull($kolom);
-
         // Nama acara di atas kartu, bukan heading.
-        $merek = $xpath->query('./*[contains(@class, "polos-merek")]', $kolom)->item(0);
+        $merek = $xpath->query('//main[@id="isi"]//*[@data-polos-merek]')->item(0);
         $this->assertNotNull($merek);
         $this->assertSame('p', $merek->nodeName);
         $this->assertSame('MilkLife Athletics Challenge', $this->teks($merek));
 
         // Isi halaman (formulir) berada di dalam kartu.
-        $this->assertSame(1, $xpath->query('.//*[contains(@class, "card") and contains(@class, "polos-kartu")]/*[contains(@class, "card-body")]//form[@id="formulir-contoh"]', $kolom)->length);
+        $this->assertSame(1, $xpath->query('//main[@id="isi"]//*[@data-polos-kartu]//form[@id="formulir-contoh"]')->length);
         $this->assertSame(1, $xpath->query('//h1')->length);
+        $this->assertSame(0, $xpath->query('//link[contains(@href, "bootstrap")]')->length);
     }
 
     // ---------- Komponen tanpa gambar ----------
-
-    public function testKomponenTanpaGambar(): void
-    {
-        $html  = view('tata_letak/_tanpa_gambar', ['rasio' => '1x1', 'label' => 'Logo <persegi>'], ['saveData' => false]);
-        $xpath = $this->xpath($html);
-
-        $kotak = $xpath->query('//div[contains(@class, "tanpa-gambar")]')->item(0);
-        $this->assertNotNull($kotak);
-        $this->assertStringContainsString('ratio-1x1', $kotak->getAttribute('class'));
-        $this->assertSame('img', $kotak->getAttribute('role'));
-        $this->assertSame('Belum ada gambar: Logo <persegi>', $kotak->getAttribute('aria-label'));
-        $this->assertStringContainsString('Belum ada gambar', $this->teks($kotak));
-        $this->assertStringContainsString('Logo &lt;persegi&gt;', $html);
-        $this->assertSame(1, $xpath->query('//i[contains(@class, "bi-image")]')->length);
-        $this->assertSame(0, $xpath->query('//img')->length, 'Bukan gambar tiruan.');
-    }
-
-    public function testKomponenTanpaGambarNilaiBawaan(): void
-    {
-        $html = view('tata_letak/_tanpa_gambar', ['rasio' => 'sembarang'], ['saveData' => false]);
-
-        $this->assertStringContainsString('ratio-16x9', $html);
-        $this->assertSame('Belum ada gambar', $this->xpath($html)->query('//div[@role="img"]')->item(0)?->getAttribute('aria-label'));
-        $this->assertStringNotContainsString('tanpa-gambar-label', $html);
-    }
 
     public function testKomponenTanpaGambarTailwind(): void
     {
@@ -431,7 +346,7 @@ final class TataLetakHalamanTest extends UjiHalaman
             $this->get('/')->getBody(),
             $this->withSession(self::SESI_ADMIN)->get('admin/dasbor')->getBody(),
             view('Tests\Support\Views\tata_letak_polos_formulir'),
-            view('tata_letak/_tanpa_gambar', [], ['saveData' => false]),
+            view('tata_letak/_tanpa_gambar_tw', [], ['saveData' => false]),
         ];
 
         foreach ($halaman as $html) {

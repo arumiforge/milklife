@@ -4,7 +4,8 @@
  * Disisipkan langsung ke <style> oleh _galat.php, bukan dimuat lewat alamat,
  * karena halaman galat bisa tampil saat sistem bermasalah (fungsi bantu atau
  * berkas statis mungkin belum tersedia). Tampilannya meniru tata letak polos;
- * warnanya sama dengan variabel di public/aset/css/tema.css (diuji di
+ * warnanya warna flyer, sama dengan palet `primary`/`oranye` di
+ * public/aset/tailwind/masukan.css (diuji di
  * TataLetakTemaTest).
  */
 :root {

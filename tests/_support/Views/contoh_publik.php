@@ -5,7 +5,7 @@
  * @var CodeIgniter\View\View $this
  */
 ?>
-<?= $this->extend('tata_letak/publik') ?>
+<?= $this->extend('tata_letak/publik_tw') ?>
 
 <?= $this->section('judul') ?>Judul Contoh publik<?= $this->endSection() ?>
 

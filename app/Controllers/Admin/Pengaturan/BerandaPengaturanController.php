@@ -55,19 +55,18 @@ use App\Libraries\DataKelengkapan;
  *
  * Tampilannya:
  *
- *     <?= $this->extend('tata_letak/admin') ?>
+ *     <?= $this->extend('tata_letak/admin_tw') ?>
  *     <?= $this->section('judul') ?>Data Acara<?= $this->endSection() ?>
- *     <?= $this->section('judul_halaman') ?>Data Acara<?= $this->endSection() ?>
  *     <?= $this->section('isi') ?>
- *     <div class="container-fluid px-3 px-lg-4">
+ *     <div class="p-4 sm:p-6">
  *         <?= $this->include('admin/pengaturan/_navigasi') ?>
- *         <?= view('admin/_galat_isian', ['galat' => $galat], ['saveData' => false]) ?>
+ *         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
  *         <form action="<?= site_url('admin/pengaturan/acara') ?>" method="post" novalidate> <?= csrf_field() ?> … </form>
  *     </div>
  *     <?= $this->endSection() ?>
  *
  * - Pesan kilat (`pesan_sukses`, `pesan_galat`) ditampilkan tata letak lewat
- *   `admin/_pesan.php`; halaman tidak menampilkannya sendiri.
+ *   `tata_letak/_pesan_tw.php`; halaman tidak menampilkannya sendiri.
  * - Gagal karena keadaan data (misalnya hapus yang tidak diizinkan): alihkan
  *   dengan `pesan_galat` yang menyebut sebab dan jalan keluarnya.
  * - Hapus: formulir `POST` dengan `csrf_field()` dan

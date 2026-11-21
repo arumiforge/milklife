@@ -7,26 +7,26 @@
  * @var CodeIgniter\View\View $this
  */
 ?>
-<?= $this->extend('tata_letak/admin') ?>
+<?= $this->extend('tata_letak/admin_tw') ?>
 
 <?= $this->section('judul') ?>Tabel contoh<?= $this->endSection() ?>
 
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="container-fluid">
-    <form id="saringan-contoh" class="saringan-tabel" role="search" aria-label="Saring data contoh">
+<div class="space-y-4 p-4 sm:p-6">
+    <form id="saringan-contoh" class="flex flex-wrap gap-3" role="search" aria-label="Saring data contoh">
         <div>
-            <label class="form-label" for="saring-status">Status</label>
-            <select class="form-select" id="saring-status" name="status">
+            <label class="mb-1.5 block text-sm font-semibold text-gray-900" for="saring-status">Status</label>
+            <select class="block min-h-11 rounded-lg border border-gray-300 bg-white p-2.5 text-sm" id="saring-status" name="status">
                 <option value="">Semua</option>
                 <option value="lunas">Lunas</option>
                 <option value="menunggu">Menunggu</option>
             </select>
         </div>
     </form>
-    <a id="excel-contoh" class="btn btn-outline-primary" href="<?= site_url('admin/pendaftaran/excel') ?>">Unduh Excel</a>
-    <table id="tabel-contoh" class="table" data-tabel-admin
+    <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/pendaftaran/excel'), 'varian' => 'kedua', 'ikon' => 'download', 'atribut' => ['id' => 'excel-contoh']]) ?>
+    <table id="tabel-contoh" data-tabel-admin
         data-alamat="<?= site_url('admin/pendaftaran/data') ?>"
         data-saringan="#saringan-contoh" data-excel="#excel-contoh"
         data-kosong="Belum ada pendaftaran. Pendaftaran yang masuk lewat halaman Pendaftaran akan tampil di sini.">

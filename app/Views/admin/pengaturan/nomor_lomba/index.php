@@ -112,7 +112,7 @@ $ringkasTim = static function (array $nomor): string {
                 Belum lengkap saja (<?= $jumlahBelum ?>)
             </label>
             <div class="flex flex-wrap gap-2">
-                <?= komponen('tombol', ['label' => 'Tampilkan', 'tipe' => 'submit', 'varian' => 'kedua']) ?>
+                <?= komponen('tombol', ['label' => 'Tampilkan', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'filter']) ?>
                 <?php if ($saringKu !== 0 || $saringBelumLengkap) : ?>
                     <?= komponen('tombol', ['label' => 'Hapus saringan', 'href' => site_url($alamat), 'varian' => 'hantu']) ?>
                 <?php endif ?>

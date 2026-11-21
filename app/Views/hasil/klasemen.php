@@ -10,7 +10,7 @@
  * @var string                              $metode     `Klasemen::MEDALI` atau `Klasemen::POIN` (Pengaturan > Hasil, F9-11)
  * @var string                              $keterangan `Klasemen::keterangan()`
  */
-$aksi = komponen('tombol', ['label' => 'Hasil per nomor', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']);
+$aksi = komponen('tombol', ['label' => 'Lihat hasil per nomor', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']);
 
 if ($klasemen !== []) {
     $aksi .= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('hasil/klasemen/pdf'), 'varian' => 'kedua', 'ikon' => 'file-text'])

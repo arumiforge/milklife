@@ -1,7 +1,7 @@
 <?php
 /**
  * Bilah muat tipis di atas halaman bertampilan baru, untuk `aset/js/kemajuan.js`
- * (K89): padanan `#bilah-kemajuan` di tata letak lama. Dipasang halaman yang
+ * (K89). Dipasang tata letak `admin_tw`, `publik_tw`, dan halaman yang
  * memuat `kemajuan.js` (wizard dan Cek Pendaftaran, F9-05). Lebar diatur
  * skrip lewat `style.width`; kelas `selesai` memudarkannya.
  */

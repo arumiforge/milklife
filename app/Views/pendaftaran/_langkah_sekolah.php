@@ -41,7 +41,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
             <label class="<?= K::LABEL ?>" for="sekolah-npsn">NPSN</label>
             <div class="input-group flex flex-wrap gap-2">
                 <input type="text" class="<?= K::ISIAN ?> !w-auto min-w-0 flex-1" id="sekolah-npsn" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="8 angka" data-jalur="sekolah.npsn" aria-describedby="sekolah-npsn-keterangan">
-                <button type="button" class="<?= K::UTAMA ?> min-h-12" id="sekolah-cari">
+                <button type="button" class="<?= K::GARIS ?> min-h-12" id="sekolah-cari">
                     <?= ikon('search', 'size-5') ?> Cari
                 </button>
                 <div class="<?= K::UMPAN ?> basis-full !mt-0"></div>

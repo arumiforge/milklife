@@ -2,7 +2,7 @@
  * Jendela konfirmasi untuk tindakan berisiko (hapus, tandai lunas).
  *
  * Setiap formulir yang punya atribut `data-konfirmasi` tidak langsung
- * dikirim: jendela Bootstrap muncul dengan kalimat dari atribut itu, dan
+ * dikirim: jendela (modal Flowbite) muncul dengan kalimat dari atribut itu, dan
  * formulir baru dikirim bila admin menekan tombol konfirmasi.
  *
  * Pemakaian di tampilan:
@@ -11,7 +11,7 @@
  *         data-konfirmasi="Jadwal &quot;Technical meeting&quot; akan dihapus dan tidak bisa dikembalikan."
  *         data-konfirmasi-tombol="Hapus jadwal">
  *         <?= csrf_field() ?>
- *         <button type="submit" class="btn btn-outline-danger">Hapus</button>
+ *         <?= komponen('tombol', ['label' => 'Hapus', 'tipe' => 'submit', 'varian' => 'bahaya', 'ikon' => 'trash-2']) ?>
  *     </form>
  *
  *     <?= $this->section('skrip') ?>
@@ -27,9 +27,8 @@
  *   `utama` (tombol oranye, untuk tindakan yang tidak menghapus).
  *
  * Tanpa JavaScript formulir tetap terkirim tanpa konfirmasi; server tetap
- * memeriksa semua aturan. Di halaman bertampilan baru (tanpa Bootstrap, F9-05)
- * jendelanya memakai modal Flowbite (`window.Modal`); bila keduanya tidak
- * termuat, `window.confirm` dipakai.
+ * memeriksa semua aturan. Jendelanya modal Flowbite (`window.Modal`, F9-05;
+ * Bootstrap dilepas di F9-17); bila Flowbite tidak termuat, `window.confirm` dipakai.
  *
  * Skrip yang sama memeriksa ukuran berkas sebelum formulir dikirim. Kotak
  * unggah dengan `data-ukuran-maksimal="<bita>"` menolak berkas yang lebih
@@ -37,64 +36,15 @@
  * ditolak server (berkas di atas batas PHP `post_max_size` bahkan tidak
  * sampai ke pengendali). Batasnya dari `App\Libraries\Unggahan`:
  *
- *     <input type="file" class="form-control" id="logo_bank" name="logo_bank"
+ *     <input type="file" id="logo_bank" name="logo_bank"
  *         accept="image/jpeg,image/png,image/webp"
  *         data-ukuran-maksimal="<?= Unggahan::BATAS_GAMBAR ?>">
  */
 (function () {
     'use strict';
 
-    var jendela = null;
     // Dipanggil dengan true (setuju) atau false (batal/tutup) setelah jendela dijawab.
     var tindakanMenunggu = null;
-
-    function buatJendela() {
-        var elemen = document.createElement('div');
-        elemen.className = 'modal fade';
-        elemen.id = 'jendela-konfirmasi';
-        elemen.tabIndex = -1;
-        elemen.setAttribute('aria-labelledby', 'jendela-konfirmasi-judul');
-        elemen.setAttribute('aria-describedby', 'jendela-konfirmasi-isi');
-        elemen.setAttribute('aria-hidden', 'true');
-        elemen.innerHTML =
-            '<div class="modal-dialog modal-dialog-centered">' +
-            '<div class="modal-content">' +
-            '<div class="modal-header">' +
-            '<h2 class="modal-title h5" id="jendela-konfirmasi-judul"></h2>' +
-            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>' +
-            '</div>' +
-            '<div class="modal-body"><p class="mb-0" id="jendela-konfirmasi-isi"></p></div>' +
-            '<div class="modal-footer">' +
-            '<button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Batal</button>' +
-            '<button type="button" class="btn" data-konfirmasi-setuju></button>' +
-            '</div>' +
-            '</div>' +
-            '</div>';
-        document.body.appendChild(elemen);
-
-        elemen.querySelector('[data-konfirmasi-setuju]').addEventListener('click', function () {
-            var tindakan = tindakanMenunggu;
-
-            tindakanMenunggu = null;
-            jendela.hide();
-
-            if (tindakan) {
-                tindakan(true);
-            }
-        });
-
-        elemen.addEventListener('hidden.bs.modal', function () {
-            var tindakan = tindakanMenunggu;
-
-            tindakanMenunggu = null;
-
-            if (tindakan) {
-                tindakan(false);
-            }
-        });
-
-        return new window.bootstrap.Modal(elemen);
-    }
 
     // ---------- Modal Flowbite (halaman Tailwind, F9-05) ----------
 
@@ -179,30 +129,12 @@
      * `jenis`: 'utama' (tombol oranye) atau lainnya (tombol merah).
      */
     function tanya(judul, kalimat, labelTombol, jenis, tindakan) {
-        if (!window.bootstrap || !window.bootstrap.Modal) {
-            if (typeof window.Modal === 'function') {
-                tanyaTw(judul, kalimat, labelTombol, jenis, tindakan);
-                return;
-            }
-
-            tindakan(window.confirm(kalimat));
+        if (typeof window.Modal === 'function') {
+            tanyaTw(judul, kalimat, labelTombol, jenis, tindakan);
             return;
         }
 
-        if (!jendela) {
-            jendela = buatJendela();
-        }
-
-        var elemen = document.getElementById('jendela-konfirmasi');
-        var setuju = elemen.querySelector('[data-konfirmasi-setuju]');
-
-        elemen.querySelector('#jendela-konfirmasi-judul').textContent = judul || 'Yakin?';
-        elemen.querySelector('#jendela-konfirmasi-isi').textContent = kalimat;
-        setuju.textContent = labelTombol || 'Ya, lanjutkan';
-        setuju.className = 'btn ' + (jenis === 'utama' ? 'btn-primary' : 'btn-danger');
-
-        tindakanMenunggu = tindakan;
-        jendela.show();
+        tindakan(window.confirm(kalimat));
     }
 
     /**

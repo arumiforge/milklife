@@ -32,8 +32,7 @@ use CodeIgniter\HTTP\ResponseInterface;
  * Alamat 1 dan 2 hanya dipakai bila masih di situs sendiri (diawali
  * `base_url()`), supaya penjaga ini tidak bisa dipakai mengalihkan ke situs lain.
  *
- * Pesan kilat ditampilkan tata letak admin (`admin/_pesan`). Tata letak publik
- * belum menampilkan pesan kilat (Tahap 4).
+ * Pesan kilat ditampilkan tata letak (`tata_letak/_pesan_tw`).
  */
 class BatasUnggahFilter implements FilterInterface
 {

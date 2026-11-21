@@ -42,7 +42,9 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
             jenjang sekolah yang boleh ikut, biaya per nomor individu, dan awalan nomor atlet (BIB).
             Atlet tidak bisa pindah ke kelompok umur jenjang lain: atlet SMP/MTs tidak bisa ikut kelompok umur yang hanya untuk SD/MI.
         </p>
-        <?= komponen('tombol', ['label' => 'Tambah kelompok umur', 'href' => site_url('admin/pengaturan/kelompok-umur/tambah'), 'ikon' => 'plus', 'kelas' => 'shrink-0 self-start']) ?>
+        <?php if ($daftar !== []) : ?>
+            <?= komponen('tombol', ['label' => 'Tambah kelompok umur', 'href' => site_url('admin/pengaturan/kelompok-umur/tambah'), 'ikon' => 'plus', 'kelas' => 'shrink-0 self-start']) ?>
+        <?php endif ?>
     </div>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-pilih-ku">

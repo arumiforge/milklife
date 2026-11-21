@@ -1,7 +1,6 @@
 <?php
 /**
- * Pesan kilat untuk tata letak bertampilan baru (`publik_tw.php`, `admin_tw.php`),
- * padanan `_pesan_publik.php` dan `admin/_pesan.php`.
+ * Pesan kilat untuk tata letak bertampilan baru (`publik_tw.php`, `admin_tw.php`).
  *
  * Membaca `pesan_sukses` (hijau) dan `pesan_galat` (merah) dari sesi kilat;
  * teks biasa, di-escape di sini. Tombol tutup memakai `data-dismiss-target` Flowbite.
