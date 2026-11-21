@@ -212,5 +212,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
             $routes->post($dasar . '/(:num)', $pengendali . '::perbarui/$1');
             $routes->post($dasar . '/(:num)/hapus', $pengendali . '::hapus/$1');
         }
+
+        // ---------- Bantuan dan FAQ (F9-04) ----------
+        $routes->get('bantuan', 'FaqController::index');
+        $routes->get('bantuan/tambah', 'FaqController::tambah');
+        $routes->post('bantuan', 'FaqController::buat');
+        $routes->post('bantuan/bawaan', 'FaqController::bawaan');
+        $routes->get('bantuan/(:num)/ubah', 'FaqController::ubah/$1');
+        $routes->post('bantuan/(:num)', 'FaqController::perbarui/$1');
+        $routes->post('bantuan/(:num)/hapus', 'FaqController::hapus/$1');
+        $routes->post('bantuan/(:num)/aktif', 'FaqController::aktif/$1');
+        $routes->post('bantuan/(:num)/(naik|turun)', 'FaqController::pindah/$1/$2');
+        // ---------- Akhir Bantuan dan FAQ ----------
     });
 });
