@@ -23,8 +23,8 @@ use CodeIgniter\I18n\Time;
  *     //  'jadwal' => [['nomor' => …, 'kelompok_umur' => …, 'babak' => …, 'hari' => 'Rabu, 9 Desember', 'jam' => '08.30', 'lokasi' => …], …],
  *     //  'berlangsung' => [… sama dengan jadwal …]]
  *
- * Klasemen memakai `Klasemen::hitung()` apa adanya; kolom tambahan yang
- * dihasilkannya kelak (misalnya poin, F9-11) ikut terkirim tanpa diubah di sini.
+ * Klasemen memakai `HasilLomba::klasemen(true)`, jadi mengikuti metode di
+ * Pengaturan > Hasil (F9-11); kolom `poin` ikut terkirim.
  *
  * "Sedang berlangsung": babak hari ini yang berstatus Berlangsung menurut
  * `JadwalPertandingan::status()` (jam mulai sudah lewat, belum Selesai).
@@ -224,7 +224,8 @@ final class PapanVideotron
     {
         $daftar = [];
 
-        foreach (Klasemen::hitung((new HasilLomba($this->db))->juara(true)) as $jenjang) {
+        // Metode dan poin dari Pengaturan > Hasil (F9-11), sama dengan `hasil/klasemen`.
+        foreach ((new HasilLomba($this->db))->klasemen(true) as $jenjang) {
             $baris = [];
 
             foreach ($jenjang['baris'] as $b) {

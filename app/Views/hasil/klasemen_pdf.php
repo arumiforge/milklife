@@ -3,8 +3,9 @@
  * Klasemen sekolah untuk mPDF (F8-05), A4 tegak, satu tabel per jenjang
  * (`App\Libraries\Hasil\UnduhanKlasemen`).
  *
- * @var array<string, array<string, mixed>> $klasemen  `Klasemen::hitung()`
- * @var bool                                $publik    hanya nomor terbit
+ * @var array<string, array<string, mixed>> $klasemen   `Klasemen::hitung()`
+ * @var bool                                $publik     hanya nomor terbit
+ * @var string                              $keterangan `Klasemen::keterangan()` sesuai metode
  * @var string                              $namaAcara nama acara berhuruf besar
  * @var string                              $seriTahun 'Seri 2 Tahun 2026'
  * @var bool                                $logo      logo persegi ada (`var:logo`)
@@ -44,7 +45,7 @@
 </table>
 <h1>Klasemen Sekolah</h1>
 <div class="keterangan">
-    Juara umum ditentukan jumlah juara I terbanyak, lalu juara II, lalu juara III; bila masih sama, peringkat bersama. Dihitung dari babak Final<?= $publik ? ' nomor yang hasilnya sudah diterbitkan' : ' semua nomor, termasuk yang belum diterbitkan' ?>.
+    <?= esc($keterangan) ?> Dihitung dari babak Final<?= $publik ? ' nomor yang hasilnya sudah diterbitkan' : ' semua nomor, termasuk yang belum diterbitkan' ?>.
 </div>
 <?php if ($klasemen === []) : ?>
     <div class="kosong">Belum ada juara.</div>
@@ -60,6 +61,7 @@
                 <th width="16mm" class="tengah">Juara II</th>
                 <th width="16mm" class="tengah">Juara III</th>
                 <th width="16mm" class="tengah">Jumlah</th>
+                <th width="16mm" class="tengah">Poin</th>
             </tr>
         </thead>
         <tbody>
@@ -71,6 +73,7 @@
                     <td class="tengah"><?= $b['perak'] ?></td>
                     <td class="tengah"><?= $b['perunggu'] ?></td>
                     <td class="tengah"><?= $b['jumlah'] ?></td>
+                    <td class="tengah"><?= $b['poin'] ?></td>
                 </tr>
             <?php endforeach ?>
         </tbody>
