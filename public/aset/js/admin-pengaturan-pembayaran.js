@@ -49,12 +49,11 @@
             return;
         }
         var bingkai = document.createElement('div');
-        bingkai.className = 'ratio ratio-16x9 border rounded bg-white';
+        bingkai.className = 'aspect-video overflow-hidden rounded-lg border border-gray-200 bg-white';
         var gambar = document.createElement('img');
         gambar.src = URL.createObjectURL(berkas.files[0]);
         gambar.alt = 'Logo bank yang baru dipilih (belum disimpan)';
-        gambar.className = 'p-2';
-        gambar.style.objectFit = 'contain';
+        gambar.className = 'size-full object-contain p-2';
         bingkai.appendChild(gambar);
         wadah.replaceChildren(bingkai);
     });

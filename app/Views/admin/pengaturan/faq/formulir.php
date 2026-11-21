@@ -1,8 +1,8 @@
 <?php
 /**
  * Formulir tambah dan ubah tanya-jawab Bantuan (`GET …/bantuan/tambah?kategori=…`,
- * `GET …/bantuan/<id>/ubah`, F9-04). Ditampilkan ulang dengan isian yang
- * diketik bila ada yang salah, beserta pratinjau jawaban.
+ * `GET …/bantuan/<id>/ubah`, F9-04), tata letak `admin_tw`. Ditampilkan ulang
+ * dengan isian yang diketik bila ada yang salah, beserta pratinjau jawaban.
  *
  * @var CodeIgniter\View\View        $this
  * @var array<string, mixed>|null    $faq           yang diubah, `null` untuk yang baru
@@ -19,126 +19,121 @@ $baru   = $faq === null;
 $tujuan = $baru ? site_url('admin/pengaturan/bantuan') : site_url('admin/pengaturan/bantuan/' . (int) $faq['id']);
 $judul  = $baru ? 'Tambah tanya-jawab' : 'Ubah tanya-jawab';
 
-$salah  = static fn (string $kotak): string => isset($galat[$kotak]) ? ' is-invalid' : '';
-$uraian = static fn (string $kotak): string => ' aria-describedby="' . $kotak . '-bantuan' . (isset($galat[$kotak]) ? ' ' . $kotak . '-galat' : '') . '"';
+$kelasIsian = static fn (string $kotak): string => 'block w-full rounded-lg border p-2.5 text-base focus:ring-4 sm:text-sm '
+    . (isset($galat[$kotak])
+        ? 'border-red-500 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100'
+        : 'border-gray-300 bg-white text-gray-900 focus:border-primary-600 focus:ring-primary-100');
+$uraian = static fn (string $kotak): string => ' aria-describedby="' . $kotak . '-bantuan' . (isset($galat[$kotak]) ? ' ' . $kotak . '-galat' : '') . '"'
+    . (isset($galat[$kotak]) ? ' aria-invalid="true"' : '');
 $pesan  = static fn (string $kotak): string => isset($galat[$kotak])
-    ? '<div id="' . $kotak . '-galat" class="invalid-feedback">' . esc($galat[$kotak]) . '</div>'
+    ? '<p id="' . $kotak . '-galat" class="mt-1.5 text-sm font-medium text-red-700">' . esc($galat[$kotak]) . '</p>'
     : '';
+$label   = 'mb-1.5 block text-sm font-semibold text-gray-900';
+$bantuan = 'mt-1.5 text-sm text-gray-600';
 ?>
-<?= $this->extend('tata_letak/admin') ?>
+<?= $this->extend('tata_letak/admin_tw') ?>
 
 <?= $this->section('judul') ?><?= esc($judul) ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Bantuan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="container-fluid px-3 px-lg-4">
+<div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <div class="row g-4">
-        <div class="col-12 col-xl-7">
-            <section class="card" aria-labelledby="judul-formulir-faq">
-                <div class="card-body p-3 p-lg-4">
-                    <h2 id="judul-formulir-faq" class="h5 mb-1">
-                        <i class="bi bi-question-circle text-primary" aria-hidden="true"></i> <?= esc($judul) ?>
-                    </h2>
-                    <p class="text-body-secondary small mb-4">Tampil di halaman Bantuan dan di tombol bantuan formulir pendaftaran.</p>
+    <div class="grid gap-6 xl:grid-cols-12">
+        <section class="min-w-0 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6 xl:col-span-7" aria-labelledby="judul-formulir-faq">
+            <h2 id="judul-formulir-faq" class="flex items-center gap-2 text-lg font-bold text-gray-900">
+                <?= ikon('circle-help', 'text-primary-700') ?> <?= esc($judul) ?>
+            </h2>
+            <p class="mt-1 text-sm text-gray-600">Tampil di halaman Bantuan dan di tombol bantuan formulir pendaftaran.</p>
 
-                    <?= view('admin/_galat_isian', ['galat' => $galat], ['saveData' => false]) ?>
+            <div class="mt-4">
+                <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
+            </div>
 
-                    <form action="<?= $tujuan ?>" method="post" novalidate>
-                        <?= csrf_field() ?>
+            <form action="<?= $tujuan ?>" method="post" novalidate class="mt-4 space-y-5">
+                <?= csrf_field() ?>
 
-                        <div class="mb-3">
-                            <label for="kategori" class="form-label">Kategori</label>
-                            <select class="form-select<?= $salah('kategori') ?>" id="kategori" name="kategori" required<?= $uraian('kategori') ?>>
-                                <option value=""<?= $isian['kategori'] === '' ? ' selected' : '' ?>>Pilih kategori</option>
-                                <?php foreach (FaqModel::KATEGORI as $kunci => $kategori) : ?>
-                                    <option value="<?= esc($kunci, 'attr') ?>"<?= $isian['kategori'] === $kunci ? ' selected' : '' ?>><?= esc($kategori['label']) ?></option>
-                                <?php endforeach ?>
-                            </select>
-                            <div id="kategori-bantuan" class="form-text">Kelompok pertanyaan di halaman Bantuan.</div>
-                            <?= $pesan('kategori') ?>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="pertanyaan" class="form-label">Pertanyaan</label>
-                            <input type="text" class="form-control<?= $salah('pertanyaan') ?>" id="pertanyaan" name="pertanyaan"
-                                value="<?= esc($isian['pertanyaan'], 'attr') ?>" maxlength="<?= FaqModel::PANJANG['pertanyaan'] ?>" required<?= $uraian('pertanyaan') ?>>
-                            <div id="pertanyaan-bantuan" class="form-text">Tulis seperti yang biasa ditanyakan sekolah, misalnya "Foto ofisial dari HP boleh?".</div>
-                            <?= $pesan('pertanyaan') ?>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="jawaban" class="form-label">Jawaban</label>
-                            <textarea class="form-control font-monospace<?= $salah('jawaban') ?>" id="jawaban" name="jawaban" rows="10"
-                                maxlength="<?= FaqModel::PANJANG['jawaban'] ?>" required<?= $uraian('jawaban') ?>><?= esc($isian['jawaban']) ?></textarea>
-                            <div id="jawaban-bantuan" class="form-text">
-                                Baris kosong memisahkan paragraf. <code>**tebal**</code> untuk menebalkan nama tombol,
-                                baris diawali <code>1.</code> atau <code>-</code> untuk daftar, dan
-                                <code>[Cek Pendaftaran](/cek-pendaftaran)</code> untuk tautan.
-                            </div>
-                            <?= $pesan('jawaban') ?>
-                            <?php if ($tidakDikenal !== []) : ?>
-                                <div class="alert alert-warning small mt-2 mb-0" role="status">
-                                    Isian otomatis ini tidak dikenal dan akan tampil apa adanya:
-                                    <?= esc(implode(', ', array_map(static fn (string $n): string => '{' . $n . '}', $tidakDikenal))) ?>.
-                                    Periksa ejaannya dengan daftar di samping.
-                                </div>
-                            <?php endif ?>
-                        </div>
-
-                        <div class="row g-3 align-items-end">
-                            <div class="col-sm-5">
-                                <label for="urutan" class="form-label">Urutan</label>
-                                <input type="number" class="form-control<?= $salah('urutan') ?>" id="urutan" name="urutan"
-                                    value="<?= esc($isian['urutan'], 'attr') ?>" min="0" max="<?= FaqModel::URUTAN_MAKSIMAL ?>" step="1" inputmode="numeric"<?= $uraian('urutan') ?>>
-                                <div id="urutan-bantuan" class="form-text">Angka kecil tampil lebih dulu. Kosongkan untuk paling akhir.</div>
-                                <?= $pesan('urutan') ?>
-                            </div>
-                            <div class="col-sm-7">
-                                <div class="form-check form-switch mb-sm-4">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="aktif" name="aktif" value="1"<?= $isian['aktif'] === '1' ? ' checked' : '' ?>>
-                                    <label class="form-check-label" for="aktif">Tampilkan di halaman Bantuan</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-wrap gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-lg" aria-hidden="true"></i> <?= $baru ? 'Simpan tanya-jawab' : 'Simpan perubahan' ?>
-                            </button>
-                            <a class="btn btn-outline-secondary" href="<?= site_url('admin/pengaturan/bantuan') ?>">Batal</a>
-                        </div>
-                    </form>
+                <div>
+                    <label for="kategori" class="<?= $label ?>">Kategori</label>
+                    <select class="<?= $kelasIsian('kategori') ?> min-h-11" id="kategori" name="kategori" required<?= $uraian('kategori') ?>>
+                        <option value=""<?= $isian['kategori'] === '' ? ' selected' : '' ?>>Pilih kategori</option>
+                        <?php foreach (FaqModel::KATEGORI as $kunci => $kategori) : ?>
+                            <option value="<?= esc($kunci, 'attr') ?>"<?= $isian['kategori'] === $kunci ? ' selected' : '' ?>><?= esc($kategori['label']) ?></option>
+                        <?php endforeach ?>
+                    </select>
+                    <p id="kategori-bantuan" class="<?= $bantuan ?>">Kelompok pertanyaan di halaman Bantuan.</p>
+                    <?= $pesan('kategori') ?>
                 </div>
-            </section>
-        </div>
 
-        <div class="col-12 col-xl-5">
-            <?php if ($pratinjau !== '') : ?>
-                <section class="card mb-4" aria-labelledby="judul-pratinjau">
-                    <div class="card-body p-3 p-lg-4">
-                        <h2 id="judul-pratinjau" class="h6 text-body-secondary mb-3">Pratinjau jawaban</h2>
-                        <div class="isi-jawaban-faq"><?= $pratinjau ?></div>
+                <div>
+                    <label for="pertanyaan" class="<?= $label ?>">Pertanyaan</label>
+                    <input type="text" class="<?= $kelasIsian('pertanyaan') ?>" id="pertanyaan" name="pertanyaan"
+                        value="<?= esc($isian['pertanyaan'], 'attr') ?>" maxlength="<?= FaqModel::PANJANG['pertanyaan'] ?>" required<?= $uraian('pertanyaan') ?>>
+                    <p id="pertanyaan-bantuan" class="<?= $bantuan ?>">Tulis seperti yang biasa ditanyakan sekolah, misalnya "Foto ofisial dari HP boleh?".</p>
+                    <?= $pesan('pertanyaan') ?>
+                </div>
+
+                <div>
+                    <label for="jawaban" class="<?= $label ?>">Jawaban</label>
+                    <textarea class="<?= $kelasIsian('jawaban') ?> font-mono" id="jawaban" name="jawaban" rows="10"
+                        maxlength="<?= FaqModel::PANJANG['jawaban'] ?>" required<?= $uraian('jawaban') ?>><?= esc($isian['jawaban']) ?></textarea>
+                    <p id="jawaban-bantuan" class="<?= $bantuan ?>">
+                        Baris kosong memisahkan paragraf. <code class="rounded bg-gray-100 px-1 font-mono text-gray-900">**tebal**</code> untuk menebalkan nama tombol,
+                        baris diawali <code class="rounded bg-gray-100 px-1 font-mono text-gray-900">1.</code> atau <code class="rounded bg-gray-100 px-1 font-mono text-gray-900">-</code> untuk daftar, dan
+                        <code class="rounded bg-gray-100 px-1 font-mono break-all text-gray-900">[Cek Pendaftaran](/cek-pendaftaran)</code> untuk tautan.
+                    </p>
+                    <?= $pesan('jawaban') ?>
+                    <?php if ($tidakDikenal !== []) : ?>
+                        <div class="mt-2 rounded-xl border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-900" role="status">
+                            Isian otomatis ini tidak dikenal dan akan tampil apa adanya:
+                            <?= esc(implode(', ', array_map(static fn (string $n): string => '{' . $n . '}', $tidakDikenal))) ?>.
+                            Periksa ejaannya dengan daftar di samping.
+                        </div>
+                    <?php endif ?>
+                </div>
+
+                <div class="grid items-end gap-4 sm:grid-cols-12">
+                    <div class="sm:col-span-5">
+                        <label for="urutan" class="<?= $label ?>">Urutan</label>
+                        <input type="number" class="<?= $kelasIsian('urutan') ?>" id="urutan" name="urutan"
+                            value="<?= esc($isian['urutan'], 'attr') ?>" min="0" max="<?= FaqModel::URUTAN_MAKSIMAL ?>" step="1" inputmode="numeric"<?= $uraian('urutan') ?>>
+                        <p id="urutan-bantuan" class="<?= $bantuan ?>">Angka kecil tampil lebih dulu. Kosongkan untuk paling akhir.</p>
+                        <?= $pesan('urutan') ?>
                     </div>
+                    <div class="sm:col-span-7 sm:pb-7">
+                        <?= komponen('sakelar', ['label' => 'Tampilkan di halaman Bantuan', 'nama' => 'aktif', 'centang' => $isian['aktif'] === '1']) ?>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 pt-2">
+                    <?= komponen('tombol', ['label' => $baru ? 'Simpan tanya-jawab' : 'Simpan perubahan', 'tipe' => 'submit', 'ikon' => 'check']) ?>
+                    <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/bantuan'), 'varian' => 'kedua']) ?>
+                </div>
+            </form>
+        </section>
+
+        <div class="min-w-0 space-y-6 xl:col-span-5">
+            <?php if ($pratinjau !== '') : ?>
+                <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-pratinjau">
+                    <h2 id="judul-pratinjau" class="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">Pratinjau jawaban</h2>
+                    <div class="isi-jawaban-faq format max-w-none break-words text-gray-700 format-primary"><?= $pratinjau ?></div>
                 </section>
             <?php endif ?>
 
-            <section class="card" aria-labelledby="judul-isian-otomatis">
-                <div class="card-body p-3 p-lg-4">
-                    <h2 id="judul-isian-otomatis" class="h6 mb-1">Isian otomatis</h2>
-                    <p class="text-body-secondary small">
-                        Tulis nama di bawah, lengkap dengan kurung kurawal, di dalam jawaban. Saat tampil, isian itu diganti
-                        nilai dari Pengaturan yang berlaku, jadi jawaban ikut berubah bila tanggal, rekening, atau kelompok umur diubah.
-                    </p>
-                    <dl class="row small mb-0">
-                        <?php foreach ($isianOtomatis as $nama => $keterangan) : ?>
-                            <dt class="col-sm-6 font-monospace text-break">{<?= esc($nama) ?>}</dt>
-                            <dd class="col-sm-6"><?= esc($keterangan) ?></dd>
-                        <?php endforeach ?>
-                    </dl>
-                </div>
+            <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-isian-otomatis">
+                <h2 id="judul-isian-otomatis" class="text-lg font-bold text-gray-900">Isian otomatis</h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    Tulis nama di bawah, lengkap dengan kurung kurawal, di dalam jawaban. Saat tampil, isian itu diganti
+                    nilai dari Pengaturan yang berlaku, jadi jawaban ikut berubah bila tanggal, rekening, atau kelompok umur diubah.
+                </p>
+                <dl class="mt-3 grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
+                    <?php foreach ($isianOtomatis as $nama => $keterangan) : ?>
+                        <dt class="font-mono break-all text-gray-900 sm:pt-2">{<?= esc($nama) ?>}</dt>
+                        <dd class="mb-2 text-gray-600 sm:mb-0 sm:pt-2"><?= esc($keterangan) ?></dd>
+                    <?php endforeach ?>
+                </dl>
             </section>
         </div>
     </div>
