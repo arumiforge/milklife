@@ -5,6 +5,8 @@ namespace App\Commands;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\I18n\Time;
+use RuntimeException;
+use Throwable;
 
 /**
  * `php spark nomor-dada:reset` — mengosongkan semua nomor dada setelah uji
@@ -50,11 +52,30 @@ class ResetNomorDada extends BaseCommand
 
         $sekarang = Time::now(config('App')->appTimezone)->format('Y-m-d H:i:s');
 
-        $db->transException(true)->transStart();
-        $db->table('atlet')->where('nomor_dada IS NOT NULL')->update(['nomor_dada' => null, 'diubah_pada' => $sekarang]);
-        $db->table('awalan_nomor_dada')->update(['nomor_terakhir' => 0, 'diubah_pada' => $sekarang]);
-        $db->table('pendaftaran')->where('status', 'lunas')->update(['status' => 'menunggu', 'waktu_lunas' => null, 'diubah_pada' => $sekarang]);
-        $db->transComplete();
+        // transBegin/transCommit, bukan transStart/transComplete: dalam mode
+        // ketat CodeIgniter tidak mengembalikan status gagal dari transaksi
+        // sebelumnya di koneksi yang sama, sehingga transComplete() diam-diam
+        // membatalkan reset (lihat FaqModel::pindah(), #129). Di dalam
+        // transaksi kueri yang gagal mengembalikan false, jadi hasilnya diperiksa.
+        $db->transBegin();
+
+        try {
+            $tulis = [
+                $db->table('atlet')->where('nomor_dada IS NOT NULL')->update(['nomor_dada' => null, 'diubah_pada' => $sekarang]),
+                $db->table('awalan_nomor_dada')->update(['nomor_terakhir' => 0, 'diubah_pada' => $sekarang]),
+                $db->table('pendaftaran')->where('status', 'lunas')->update(['status' => 'menunggu', 'waktu_lunas' => null, 'diubah_pada' => $sekarang]),
+            ];
+
+            if (in_array(false, $tulis, true)) {
+                throw new RuntimeException('Reset nomor atlet gagal disimpan ke basis data. Tidak ada yang diubah.');
+            }
+
+            $db->transCommit();
+        } catch (Throwable $e) {
+            $db->transRollback();
+
+            throw $e;
+        }
 
         // Keterangan "nomor dada diurutkan ulang" (K111) tidak berlaku lagi.
         setting('NomorDada.diurutkan_pada', null);

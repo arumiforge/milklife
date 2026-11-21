@@ -17,6 +17,8 @@ use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\HTTP\DownloadResponse;
 use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\ResponseInterface;
+use RuntimeException;
+use Throwable;
 
 /**
  * Data sekolah di panel (K97): `admin/sekolah`.
@@ -259,20 +261,35 @@ class SekolahController extends BaseController
         $db                     = db_connect();
         $jumlahPendaftaran      = 0;
 
-        $db->transStart();
-        $model->update($id, $data);
+        // transBegin/transCommit, bukan transStart/transStatus: dalam mode ketat
+        // CodeIgniter tidak mengembalikan status gagal dari transaksi sebelumnya
+        // di koneksi yang sama (lihat FaqModel::pindah(), #129). Di dalam
+        // transaksi kueri yang gagal mengembalikan false, jadi hasilnya diperiksa.
+        $db->transBegin();
 
-        if ($isian['terapkan'] === '1' && $data['nama'] !== $sekolah['nama']) {
-            $db->table('pendaftaran')
-                ->where('npsn', $sekolah['npsn'])
-                ->where('nama_sekolah !=', $data['nama'])
-                ->update(['nama_sekolah' => $data['nama'], 'diubah_pada' => date('Y-m-d H:i:s')]);
-            $jumlahPendaftaran = $db->affectedRows();
-        }
+        try {
+            if (! $model->update($id, $data)) {
+                throw new RuntimeException('Sekolah gagal diperbarui.');
+            }
 
-        $db->transComplete();
+            if ($isian['terapkan'] === '1' && $data['nama'] !== $sekolah['nama']) {
+                $ganti = $db->table('pendaftaran')
+                    ->where('npsn', $sekolah['npsn'])
+                    ->where('nama_sekolah !=', $data['nama'])
+                    ->update(['nama_sekolah' => $data['nama'], 'diubah_pada' => date('Y-m-d H:i:s')]);
 
-        if (! $db->transStatus()) {
+                if ($ganti === false) {
+                    throw new RuntimeException('Nama sekolah di pendaftaran gagal diganti.');
+                }
+
+                $jumlahPendaftaran = $db->affectedRows();
+            }
+
+            $db->transCommit();
+        } catch (Throwable $e) {
+            $db->transRollback();
+            log_message('error', 'Simpan sekolah {id}: {pesan}', ['id' => $id, 'pesan' => $e->getMessage()]);
+
             return $this->tampilkanFormulir($sekolah, $isian, [
                 'nama' => 'Perubahan belum tersimpan karena basis data sedang bermasalah. Tunggu sebentar, lalu tekan Simpan perubahan lagi.',
             ]);

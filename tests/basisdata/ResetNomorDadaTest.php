@@ -88,4 +88,18 @@ final class ResetNomorDadaTest extends UjiBasisData
         $this->assertSame('lunas', $this->pendaftaran($p['id'])['status']);
         $this->assertSame('2001', $this->nomorDada($p['atlet'])[$p['atlet'][0]]);
     }
+
+    public function testTetapDiresetWalauKoneksiPernahMenggagalkanTransaksi(): void
+    {
+        $p = $this->buatPendaftaranPanel();
+        (new StatusPembayaran())->tandaiLunas($p['id']);
+        $this->tinggalkanStatusTransaksiGagal();
+
+        $this->io->setInputs(['RESET']);
+        command('nomor-dada:reset');
+
+        $this->assertSame([null], array_values(array_unique($this->nomorDada($p['atlet']))));
+        $this->assertSame('menunggu', $this->pendaftaran($p['id'])['status']);
+        $this->assertSame([0], array_values(array_unique($this->nomorTerakhir())));
+    }
 }

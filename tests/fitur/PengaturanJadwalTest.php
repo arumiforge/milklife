@@ -72,9 +72,9 @@ final class PengaturanJadwalTest extends UjiBasisData
         $hasil = $this->bukaSebagaiAdmin(self::ALAMAT);
 
         $hasil->assertOK();
-        $hasil->assertSee('Belum ada jadwal');
+        $hasil->assertSee('Belum ada agenda');
         $xpath = $this->xpathDari($hasil);
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Jadwal")]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Agenda")]')->length);
         $this->assertSame(1, $xpath->query('//main//a[@href="' . site_url(self::ALAMAT . '/tambah') . '"]')->length);
         $this->assertSame(0, $xpath->query('//table')->length);
     }
@@ -141,7 +141,7 @@ final class PengaturanJadwalTest extends UjiBasisData
         $this->assertSame('datetime-local', $xpath->query('//input[@name="waktu"]')->item(0)->getAttribute('type'));
         $this->assertSame('4', $xpath->query('//input[@name="urutan"]')->item(0)->getAttribute('value'));
         $this->assertTrue($xpath->query('//input[@name="tampil"]')->item(0)->hasAttribute('checked'));
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Jadwal")]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Agenda")]')->length);
     }
 
     public function testTambahBerhasil(): void
@@ -154,7 +154,7 @@ final class PengaturanJadwalTest extends UjiBasisData
             'tampil' => '1',
         ]);
 
-        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Jadwal "Sosialisasi Daring" tersimpan.');
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Agenda "Sosialisasi Daring" tersimpan.');
         $this->seeInDatabase('jadwal', [
             'judul'      => 'Sosialisasi Daring',
             'keterangan' => null,
@@ -232,7 +232,7 @@ final class PengaturanJadwalTest extends UjiBasisData
         $this->assertSame('Bawa surat tugas.', $xpath->query('//textarea[@name="keterangan"]')->item(0)->textContent);
         $this->assertSame('3', $xpath->query('//input[@name="urutan"]')->item(0)->getAttribute('value'));
         $this->assertFalse($xpath->query('//input[@name="tampil"]')->item(0)->hasAttribute('checked'));
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Jadwal")]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Agenda")]')->length);
     }
 
     public function testUbahBerhasilDanMengosongkanKotak(): void
@@ -247,7 +247,7 @@ final class PengaturanJadwalTest extends UjiBasisData
             'urutan' => '5',
         ]);
 
-        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Perubahan jadwal "Sosialisasi Daring Kedua" tersimpan.');
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Perubahan agenda "Sosialisasi Daring Kedua" tersimpan.');
         $this->seeInDatabase('jadwal', [
             'id'         => $id,
             'judul'      => 'Sosialisasi Daring Kedua',
@@ -273,7 +273,7 @@ final class PengaturanJadwalTest extends UjiBasisData
 
     public function testJadwalYangTidakAdaDialihkanDenganPesan(): void
     {
-        $pesan = 'Jadwal itu tidak ditemukan, mungkin sudah dihapus. Pilih jadwal dari daftar di bawah.';
+        $pesan = 'Agenda itu tidak ditemukan, mungkin sudah dihapus. Pilih agenda dari daftar di bawah.';
 
         $this->assertGagalDialihkan($this->bukaSebagaiAdmin(self::ALAMAT . '/999/ubah'), self::ALAMAT, $pesan);
         $this->assertGagalDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/999', self::ISIAN), self::ALAMAT, $pesan);
@@ -290,7 +290,7 @@ final class PengaturanJadwalTest extends UjiBasisData
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}/hapus");
 
-        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Jadwal "Pertemuan Teknik (Technical Meeting)" sudah dihapus.');
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Agenda "Pertemuan Teknik (Technical Meeting)" sudah dihapus.');
         $this->dontSeeInDatabase('jadwal', ['id' => $id]);
         $this->seeInDatabase('jadwal', ['id' => $lain]);
     }

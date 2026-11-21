@@ -402,22 +402,4 @@ final class JadwalPertandinganTest extends UjiBasisData
 
         return [$b->tanggal, $b->jam_mulai, $b->lokasi];
     }
-
-    /**
-     * Status transaksi gagal yang tertinggal di koneksi bersama (mode ketat
-     * CodeIgniter tidak mengembalikannya), seperti uji #129.
-     */
-    private function tinggalkanStatusTransaksiGagal(): void
-    {
-        $this->db->transStart();
-
-        try {
-            $this->db->query('SELECT * FROM tabel_yang_tidak_ada');
-        } catch (Throwable) {
-            // Kueri gagal memang disengaja.
-        }
-
-        $this->db->transComplete();
-        $this->assertFalse($this->db->transStatus(), 'Prasyarat: status transaksi gagal tertinggal.');
-    }
 }
