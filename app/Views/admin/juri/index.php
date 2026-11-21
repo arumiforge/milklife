@@ -27,7 +27,7 @@ $pertama = array_key_first($hari);
     </p>
 
     <?php if ($hari === []) : ?>
-        <?= komponen('kosong', ['ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Lembar juri dibuat dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
+        <?= komponen('kosong', ['gambar' => 'gambar/keadaan/kosong-data.webp', 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Lembar juri dibuat dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
     <?php endif ?>
 
     <?php foreach ($hari as $tanggal => $daftar) : ?>

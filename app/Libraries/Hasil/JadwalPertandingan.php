@@ -6,6 +6,7 @@ use App\Models\NomorLombaModel;
 use CodeIgniter\Database\BaseConnection;
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use RuntimeException;
 use Throwable;
 
@@ -198,13 +199,15 @@ final class JadwalPertandingan
     }
 
     /**
-     * Tanggal 'Y-m-d' untuk isian admin bergaya Indonesia: "05/12/2026".
+     * Atribut `min` dan `max` isian tanggal jadwal (`<input type="date">`,
+     * ditampilkan `pilih-tanggal.js` sebagai pilihan Tanggal, Bulan, Tahun,
+     * K89): setahun ke belakang sampai dua tahun ke depan dari `$kini`.
      */
-    public static function tanggalIsian(?string $tanggal): string
+    public static function rentangIsian(?DateTimeInterface $kini = null): string
     {
-        $waktu = $tanggal === null ? false : DateTimeImmutable::createFromFormat('!Y-m-d', $tanggal);
+        $tahun = (int) ($kini ?? new DateTimeImmutable('now', new DateTimeZone('Asia/Jakarta')))->format('Y');
 
-        return $waktu === false ? '' : $waktu->format('d/m/Y');
+        return ' min="' . ($tahun - 1) . '-01-01" max="' . ($tahun + 2) . '-12-31"';
     }
 
     /**
@@ -229,7 +232,7 @@ final class JadwalPertandingan
             $data['tanggal'] = self::uraiTanggal($tanggal);
 
             if ($data['tanggal'] === null) {
-                $galat['tanggal'] = 'Tanggal "' . $tanggal . '" belum benar. Pilih dari kalender atau tulis seperti 05/12/2026.';
+                $galat['tanggal'] = 'Tanggal "' . $tanggal . '" belum benar. Pilih tanggal, bulan, dan tahunnya lagi.';
             }
         }
 

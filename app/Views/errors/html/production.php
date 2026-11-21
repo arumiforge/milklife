@@ -5,8 +5,9 @@
  */
 
 $galat = [
-    'judul' => 'Maaf, ada kendala',
-    'pesan' => [
+    'judul'  => 'Maaf, ada kendala',
+    'gambar' => 'galat-500.webp',
+    'pesan'  => [
         'Halaman ini sedang tidak bisa ditampilkan karena ada kendala di sistem kami.',
         'Coba muat ulang halaman ini beberapa menit lagi. Bila kendala masih muncul, hubungi panitia.',
     ],

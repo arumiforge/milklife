@@ -402,6 +402,26 @@ final class TataLetakHalamanTest extends UjiHalaman
         $this->assertStringNotContainsString('tanpa-gambar-label', $html);
     }
 
+    public function testKomponenTanpaGambarTailwind(): void
+    {
+        $html  = view('tata_letak/_tanpa_gambar_tw', ['rasio' => '1x1', 'label' => 'Logo <persegi>', 'kelas' => 'w-full'], ['saveData' => false]);
+        $xpath = $this->xpath($html);
+
+        $kotak = $xpath->query('//div[@data-tanpa-gambar]')->item(0);
+        $this->assertNotNull($kotak);
+        $this->assertStringContainsString('tanpa-gambar aspect-square', $kotak->getAttribute('class'));
+        $this->assertStringContainsString(' w-full', $kotak->getAttribute('class'));
+        $this->assertSame('img', $kotak->getAttribute('role'));
+        $this->assertSame('Belum ada gambar: Logo <persegi>', $kotak->getAttribute('aria-label'));
+        $this->assertStringContainsString('Logo &lt;persegi&gt;', $html);
+        $this->assertSame(1, $xpath->query('//svg')->length, 'Ikon Lucide, bukan Bootstrap Icons.');
+        $this->assertSame(0, $xpath->query('//img|//i')->length, 'Bukan gambar tiruan.');
+
+        $bawaan = view('tata_letak/_tanpa_gambar_tw', ['rasio' => 'sembarang'], ['saveData' => false]);
+        $this->assertStringContainsString('aspect-video', $bawaan);
+        $this->assertSame('Belum ada gambar', $this->xpath($bawaan)->query('//div[@role="img"]')->item(0)?->getAttribute('aria-label'));
+    }
+
     // ---------- Tanpa alamat luar ----------
 
     public function testHalamanTanpaAlamatLuar(): void

@@ -167,6 +167,27 @@
         tampilkanSekolah();
     }
 
+    /**
+     * Kerangka (skeleton) kartu sekolah selama NPSN dicari (F9-17), bentuknya
+     * sama dengan kartu hasil supaya halaman tidak melompat saat data tiba.
+     */
+    function kerangkaSekolah() {
+        var kotak = buat('div', 'mb-3 flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4');
+        kotak.setAttribute('role', 'status');
+        kotak.setAttribute('data-kerangka', '');
+        kotak.appendChild(buat('span', 'sr-only', 'Mencari sekolah…'));
+        var ikonKerangka = buat('div', 'kerangka size-6 shrink-0');
+        var isi = buat('div', 'min-w-0 flex-1 space-y-2');
+        ['h-4 w-2/3', 'h-3 w-11/12', 'h-3 w-1/2'].forEach(function (k) { isi.appendChild(buat('div', 'kerangka ' + k)); });
+        ikonKerangka.setAttribute('aria-hidden', 'true');
+        isi.setAttribute('aria-hidden', 'true');
+        kotak.appendChild(ikonKerangka);
+        kotak.appendChild(isi);
+        return kotak;
+    }
+
+    var nomorCari = 0;
+
     function cariSekolah() {
         var npsn = L1.npsn.value.replace(/\s+/g, '');
         L1.npsn.value = npsn;
@@ -177,8 +198,11 @@
             return Promise.resolve(false);
         }
 
+        var nomorIni = ++nomorCari;
         L1.cari.disabled = true;
-        L1.hasil.textContent = 'Mencari sekolah…';
+        L1.cari.setAttribute('aria-busy', 'true');
+        L1.hasil.textContent = '';
+        L1.hasil.appendChild(kerangkaSekolah());
 
         return ambil(DATA.alamat.sekolah + '?npsn=' + encodeURIComponent(npsn), {
             headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
@@ -187,9 +211,14 @@
             return jawaban.json();
         }).then(function (isi) {
             L1.cari.disabled = false;
+            L1.cari.removeAttribute('aria-busy');
 
             // NPSN sudah diganti selagi menunggu jawaban: jawaban lama diabaikan.
             if (L1.npsn.value.replace(/\s+/g, '') !== npsn) {
+                // Kerangka dibuang bila tidak ada pencarian lebih baru yang sedang berjalan.
+                if (nomorIni === nomorCari && L1.hasil.querySelector('[data-kerangka]')) {
+                    tampilkanSekolah();
+                }
                 return false;
             }
 
@@ -210,6 +239,7 @@
             return false;
         }).catch(function () {
             L1.cari.disabled = false;
+            L1.cari.removeAttribute('aria-busy');
             L1.hasil.textContent = '';
             tampilkanGalat(1, [{ jalur: 'sekolah.npsn', pesan: 'Sekolah belum bisa dicari. Periksa sambungan internet, lalu tekan Cari lagi.' }]);
             return false;

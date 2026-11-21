@@ -59,17 +59,19 @@ $ringkasTim = static function (array $nomor): string {
 
     <?php if ($kelompokUmur === []) : ?>
         <?= komponen('kosong', [
-            'ikon'  => 'users',
-            'judul' => 'Belum ada kelompok umur',
-            'teks'  => 'Setiap nomor lomba milik satu kelompok umur. Buat kelompok umur dulu, lalu kembali ke sini untuk menambah nomor lombanya.',
-            'aksi'  => komponen('tombol', ['label' => 'Buka Kelompok Umur', 'href' => site_url('admin/pengaturan/kelompok-umur'), 'ikon' => 'users']),
+            'gambar' => 'gambar/keadaan/kosong-data.webp',
+            'ikon'   => 'users',
+            'judul'  => 'Belum ada kelompok umur',
+            'teks'   => 'Setiap nomor lomba milik satu kelompok umur. Buat kelompok umur dulu, lalu kembali ke sini untuk menambah nomor lombanya.',
+            'aksi'   => komponen('tombol', ['label' => 'Buka Kelompok Umur', 'href' => site_url('admin/pengaturan/kelompok-umur'), 'ikon' => 'users']),
         ]) ?>
     <?php elseif ($jumlahSemua === 0) : ?>
         <?= komponen('kosong', [
-            'ikon'  => 'trophy',
-            'judul' => 'Belum ada nomor lomba',
-            'teks'  => 'Tambahkan nomor individu dan beregu untuk tiap kelompok umur. Sekolah hanya bisa memilih nomor yang ada di sini.',
-            'aksi'  => komponen('tombol', ['label' => 'Tambah nomor lomba', 'href' => site_url($alamat . '/tambah'), 'ikon' => 'plus']),
+            'gambar' => 'gambar/keadaan/kosong-data.webp',
+            'ikon'   => 'trophy',
+            'judul'  => 'Belum ada nomor lomba',
+            'teks'   => 'Tambahkan nomor individu dan beregu untuk tiap kelompok umur. Sekolah hanya bisa memilih nomor yang ada di sini.',
+            'aksi'   => komponen('tombol', ['label' => 'Tambah nomor lomba', 'href' => site_url($alamat . '/tambah'), 'ikon' => 'plus']),
         ]) ?>
     <?php else : ?>
         <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -119,10 +121,11 @@ $ringkasTim = static function (array $nomor): string {
 
         <?php if ($jumlahTampil === 0 && $saringBelumLengkap) : ?>
             <?= komponen('kosong', [
-                'ikon'  => 'circle-check',
-                'judul' => 'Semua nomor sudah lengkap',
-                'teks'  => 'Tidak ada nomor beregu yang belum lengkap' . ($saringKu !== 0 ? ' di ' . $kelompokUmur[$saringKu]['nama'] : '') . '.',
-                'aksi'  => komponen('tombol', ['label' => 'Tampilkan semua nomor', 'href' => site_url($alamat), 'varian' => 'kedua']),
+                'gambar' => 'gambar/keadaan/berhasil.webp',
+                'ikon'   => 'circle-check',
+                'judul'  => 'Semua nomor sudah lengkap',
+                'teks'   => 'Tidak ada nomor beregu yang belum lengkap' . ($saringKu !== 0 ? ' di ' . $kelompokUmur[$saringKu]['nama'] : '') . '.',
+                'aksi'   => komponen('tombol', ['label' => 'Tampilkan semua nomor', 'href' => site_url($alamat), 'varian' => 'kedua']),
             ]) ?>
         <?php endif ?>
 

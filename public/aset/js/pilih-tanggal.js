@@ -32,7 +32,7 @@
         baris: 'flex flex-wrap items-center gap-2',
         wadah: 'space-y-2',
         pukul: 'text-sm text-gray-700',
-        lebar: { 'pilih-tanggal-hari': 'w-28', 'pilih-tanggal-bulan': 'min-w-36 flex-1', 'pilih-tanggal-tahun': 'w-28', 'pilih-tanggal-jam': 'w-24', 'pilih-tanggal-menit': 'w-24' }
+        lebar: { 'pilih-tanggal-hari': 'w-24', 'pilih-tanggal-bulan': 'min-w-32 flex-1', 'pilih-tanggal-tahun': 'w-24', 'pilih-tanggal-jam': 'w-24', 'pilih-tanggal-menit': 'w-24' }
     };
 
     function aturSalah(s, salah) {

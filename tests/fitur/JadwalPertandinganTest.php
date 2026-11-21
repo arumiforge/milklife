@@ -115,8 +115,11 @@ final class JadwalPertandinganTest extends UjiBasisData
         $halaman->assertOK();
         $xpath = $this->xpathDari($halaman);
         $this->assertSame(3, $xpath->query('//li[@data-baris-jadwal]')->length);
-        $this->assertSame(3, $xpath->query('//input[@data-pemilih-tanggal][starts-with(@name, "babak[")]')->length);
-        $this->assertSame(1, $xpath->query('//script[@type="module"][contains(@src, "js/pemilih-tanggal-tw")]')->length);
+        // Satu gaya pemilih tanggal di semua halaman admin (K89, F9-17).
+        $this->assertSame(3, $xpath->query('//input[@type="date"][starts-with(@name, "babak[")]')->length);
+        $this->assertSame(1, $xpath->query('//input[@type="date"][@id="urut-tanggal"]')->length);
+        $this->assertSame(1, $xpath->query('//script[contains(@src, "js/pilih-tanggal")]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-pemilih-tanggal]|//script[contains(@src, "pemilih-tanggal-tw")]')->length);
 
         $simpan = $this->kirimSebagaiAdmin('admin/jadwal-pertandingan', ['babak' => [
             $babak['penyisihan'] => ['tanggal' => '05/12/2099', 'jam_mulai' => '7.30', 'lokasi' => '  Lintasan   utama '],
@@ -129,9 +132,9 @@ final class JadwalPertandinganTest extends UjiBasisData
         $this->assertSame([self::HARI_NANTI, '10:00:00', null], $this->jadwalDb($babak['final']));
         $this->assertSame([self::HARI_NANTI2, null, 'Lapangan B'], $this->jadwalDb($babak['putri']));
 
-        // Isian admin bergaya Indonesia.
+        // Isian tanggal baku `YYYY-MM-DD`, ditampilkan pilih-tanggal.js sebagai Tanggal, Bulan, Tahun (K89).
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/jadwal-pertandingan'));
-        $this->assertSame('05/12/2099', $xpath->query('//input[@name="babak[' . $babak['penyisihan'] . '][tanggal]"]')->item(0)->getAttribute('value'));
+        $this->assertSame(self::HARI_NANTI, $xpath->query('//input[@name="babak[' . $babak['penyisihan'] . '][tanggal]"]')->item(0)->getAttribute('value'));
         $this->assertSame('07:30', $xpath->query('//input[@name="babak[' . $babak['penyisihan'] . '][jam_mulai]"]')->item(0)->getAttribute('value'));
         $this->assertSame(2, $xpath->query('//*[@data-unduh-hari]//a')->length);
 
@@ -207,7 +210,7 @@ final class JadwalPertandinganTest extends UjiBasisData
 
         $halaman = $this->bukaSebagaiAdmin('admin/hasil/babak/' . $id);
         $halaman->assertOK();
-        $this->assertSame(1, $this->xpathDari($halaman)->query('//section[@id="jadwal-babak"]//form[@action="' . site_url('admin/hasil/babak/' . $id . '/jadwal') . '"]//input[@data-pemilih-tanggal][@name="tanggal"]')->length);
+        $this->assertSame(1, $this->xpathDari($halaman)->query('//section[@id="jadwal-babak"]//form[@action="' . site_url('admin/hasil/babak/' . $id . '/jadwal') . '"]//input[@type="date"][@name="tanggal"]')->length);
 
         $simpan = $this->kirimSebagaiAdmin('admin/hasil/babak/' . $id . '/jadwal', ['tanggal' => self::HARI_NANTI, 'jam_mulai' => '09:15', 'lokasi' => 'Lintasan utama']);
         $simpan->assertRedirectTo(site_url('admin/hasil/babak/' . $id) . '#jadwal-babak');
@@ -215,7 +218,7 @@ final class JadwalPertandinganTest extends UjiBasisData
         $this->assertSame([self::HARI_NANTI, '09:15:00', 'Lintasan utama'], $this->jadwalDb($id));
 
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/hasil/babak/' . $id));
-        $this->assertSame(JadwalPertandingan::tanggalIsian(self::HARI_NANTI), $xpath->query('//input[@name="tanggal"]')->item(0)->getAttribute('value'));
+        $this->assertSame(self::HARI_NANTI, $xpath->query('//input[@name="tanggal"]')->item(0)->getAttribute('value'));
         $this->assertSame('09:15', $xpath->query('//input[@name="jam_mulai"]')->item(0)->getAttribute('value'));
 
         $salah = $this->kirimSebagaiAdmin('admin/hasil/babak/' . $id . '/jadwal', ['tanggal' => self::HARI_NANTI, 'jam_mulai' => 'pagi', 'lokasi' => '']);
@@ -254,8 +257,7 @@ final class JadwalPertandinganTest extends UjiBasisData
         $this->assertSame('2026-12-07', JadwalPertandingan::pilihHari($hari, null, new DateTimeImmutable('2027-01-01')));
 
         $this->assertSame('Rabu, 15 Juli 2026', JadwalPertandingan::namaHari('2026-07-15'));
-        $this->assertSame('05/12/2026', JadwalPertandingan::tanggalIsian('2026-12-05'));
-        $this->assertSame('', JadwalPertandingan::tanggalIsian(null));
+        $this->assertSame(' min="2025-01-01" max="2028-12-31"', JadwalPertandingan::rentangIsian(new DateTimeImmutable('2026-07-15')));
 
         foreach (['05/12/2026', '5-12-2026', '2026-12-05', '5.12.2026'] as $teks) {
             $this->assertSame('2026-12-05', JadwalPertandingan::periksa(['tanggal' => $teks])['data']['tanggal'], $teks);

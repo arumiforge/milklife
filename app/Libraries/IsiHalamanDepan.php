@@ -575,16 +575,23 @@ final class IsiHalamanDepan
 
     /**
      * Foto carousel pembuka yang berkasnya ada, berurutan seperti diatur admin.
+     * `warna` = warna rata-rata foto (`#rrggbb`) untuk latar selama foto dimuat
+     * (skeleton carousel, F9-17).
      *
-     * @return list<array{alamat: string, keterangan: string, ukuran: array{lebar: int, tinggi: int}|null}>
+     * @return list<array{alamat: string, keterangan: string, ukuran: array{lebar: int, tinggi: int}|null, warna: string|null}>
      */
     public function carousel(): array
     {
-        return array_map(fn (array $foto): array => [
-            'alamat'     => base_url($foto['berkas']),
-            'keterangan' => $foto['keterangan'],
-            'ukuran'     => $this->ukuranGambar($foto['berkas']),
-        ], CarouselHalamanDepan::daftar($this->unggahan));
+        return array_map(function (array $foto): array {
+            $penuh = $this->unggahan->jalurPenuh($foto['berkas']);
+
+            return [
+                'alamat'     => base_url($foto['berkas']),
+                'keterangan' => $foto['keterangan'],
+                'ukuran'     => $this->ukuranGambar($foto['berkas']),
+                'warna'      => $penuh === null ? null : WarnaRataRata::dari($penuh),
+            ];
+        }, CarouselHalamanDepan::daftar($this->unggahan));
     }
 
     /**

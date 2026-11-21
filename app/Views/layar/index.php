@@ -45,8 +45,25 @@ foreach ($latar as $kunci => $alamat) {
         data-segar="<?= (int) $segar ?>"
         data-awal="<?= esc((string) json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'attr') ?>"<?= $atributLatar ?>>
         <h1 class="sr-only"><?= esc('Papan hasil ' . $data['acara']['nama']) ?></h1>
+        <?php // Kerangka (F9-17) selama modul `layar.js` dan latarnya dimuat; dibuang skrip begitu papan tersusun. ?>
+        <div class="absolute inset-0 flex flex-col gap-[3vmin] bg-linear-to-br from-primary-950 via-primary-900 to-primary-700 p-[4vmin]" role="status" data-kerangka-layar>
+            <span class="sr-only">Memuat papan hasil…</span>
+            <div class="flex items-center gap-[3vmin]" aria-hidden="true">
+                <div class="flex-1 space-y-[1.5vmin]">
+                    <div class="h-[5vmin] w-1/2 animate-pulse rounded-lg bg-white/15 motion-reduce:animate-none"></div>
+                    <div class="h-[3vmin] w-1/4 animate-pulse rounded-lg bg-white/10 motion-reduce:animate-none"></div>
+                </div>
+                <div class="h-[6vmin] w-[16vmin] animate-pulse rounded-lg bg-white/15 motion-reduce:animate-none"></div>
+            </div>
+            <div class="flex min-h-0 flex-1 flex-col gap-[2vmin] rounded-2xl bg-white/5 p-[3vmin]" aria-hidden="true">
+                <div class="h-[5vmin] w-2/5 animate-pulse rounded-lg bg-white/15 motion-reduce:animate-none"></div>
+                <?php foreach (['w-11/12', 'w-10/12', 'w-9/12', 'w-11/12', 'w-8/12', 'w-10/12'] as $lebar) : ?>
+                    <div class="h-[4.5vmin] <?= $lebar ?> animate-pulse rounded-lg bg-white/10 motion-reduce:animate-none"></div>
+                <?php endforeach ?>
+            </div>
+        </div>
         <noscript>
-            <p class="p-8 text-2xl font-semibold">Papan hasil memerlukan JavaScript. Hasil lengkap ada di <a class="underline" href="<?= site_url('hasil') ?>"><?= esc(site_url('hasil')) ?></a>.</p>
+            <p class="relative z-10 p-8 text-2xl font-semibold">Papan hasil memerlukan JavaScript. Hasil lengkap ada di <a class="underline" href="<?= site_url('hasil') ?>"><?= esc(site_url('hasil')) ?></a>.</p>
         </noscript>
     </div>
 

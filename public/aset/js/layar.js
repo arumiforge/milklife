@@ -121,6 +121,8 @@ if (akar) {
 
     // Pengukur satuan --u dalam piksel (lebarnya 1u).
     const pengukur = el('div', 'invisible absolute start-0 top-0 h-px w-[var(--u)]');
+    // Kerangka muat dari server (F9-17) diganti papan yang sesungguhnya.
+    akar.querySelector('[data-kerangka-layar]')?.remove();
     akar.append(latar, kerangka, pengukur);
 
     function satuan() {

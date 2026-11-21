@@ -7,6 +7,7 @@
 
 $galat = [
     'kode'   => '400',
+    'gambar' => 'galat-404.webp',
     'judul'  => 'Permintaan tidak bisa diproses',
     'pesan'  => [
         'Data yang dikirim ke halaman ini tidak lengkap atau tidak sesuai.',

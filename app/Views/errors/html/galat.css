@@ -91,6 +91,15 @@ body {
     }
 }
 
+/* Ilustrasi G9-04 di atas kode galat, bila berkasnya ada. */
+.galat-gambar {
+    display: block;
+    width: 100%;
+    max-width: 16rem;
+    height: auto;
+    margin: -0.5rem auto 1rem;
+}
+
 .galat-kode {
     display: inline-block;
     margin: 0 0 1rem;

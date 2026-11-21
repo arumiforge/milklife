@@ -83,13 +83,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
                                     <img src="<?= esc(base_url($logo), 'attr') ?>" alt="Logo bank saat ini" class="size-full object-contain p-2">
                                 </div>
                             <?php else : ?>
-                                <div class="tanpa-gambar flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-2 text-center text-gray-500" role="img" aria-label="Belum ada gambar: Logo bank">
-                                    <span class="contents" aria-hidden="true">
-                                        <?= ikon('image', 'size-6') ?>
-                                        <span class="text-sm font-semibold">Belum ada gambar</span>
-                                        <span class="text-xs">Logo bank</span>
-                                    </span>
-                                </div>
+                                <?= view('tata_letak/_tanpa_gambar_tw', ['rasio' => '16x9', 'label' => 'Logo bank'], ['saveData' => false]) ?>
                             <?php endif ?>
                         </div>
                         <label for="logo_bank" class="mb-1 block text-sm text-gray-700"><?= $logo === '' ? 'Unggah logo' : 'Ganti logo' ?></label>

@@ -144,7 +144,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
         <?php endforeach ?>
 
         <div class="hidden" data-cari-kosong>
-            <?= komponen('kosong', ['ikon' => 'search', 'judul' => 'Belum ada jawaban yang cocok', 'teks' => 'Coba kata lain yang lebih pendek, misalnya "foto", "transfer", atau "NISN". Atau tanyakan langsung ke panitia lewat WA di bawah.']) ?>
+            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/tidak-ketemu.webp', 'ikon' => 'search', 'judul' => 'Belum ada jawaban yang cocok', 'teks' => 'Coba kata lain yang lebih pendek, misalnya "foto", "transfer", atau "NISN". Atau tanyakan langsung ke panitia lewat WA di bawah.']) ?>
         </div>
     </div>
 

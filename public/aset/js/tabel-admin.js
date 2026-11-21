@@ -18,6 +18,9 @@
  *   data-kosong-saring="…"       pesan bila tidak ada yang cocok dengan saringan
  *   data-urut="2" data-arah="desc"   urutan awal (nomor kolom, mulai 0; bawaan: tanpa urutan, server memakai urutan bawaannya)
  *   data-panjang="25"            baris per halaman (bawaan 25)
+ *   data-kosong-gambar="…"       alamat ilustrasi keadaan kosong G9-04 (pilihan,
+ *                                tampilan baru); server mengisinya hanya bila
+ *                                berkasnya ada (K41)
  *
  * Atribut pada setiap <th> di <thead>:
  *   data-kolom="nama_sekolah"    kunci data di JSON (wajib, kecuali bentuk nomor)
@@ -57,6 +60,12 @@
  * ditulis utuh di berkas ini supaya ikut dibangun ke `tw.css`. Panah urutan
  * kolom ditulis sebagai teks (↑ ↓ ↕) karena DataTables biasanya
  * menggambarnya dengan CSS bawaannya. Halaman tata letak lama tidak berubah.
+ *
+ * Skeleton (F9-17, tampilan baru): sampai data pertama tiba, badan tabel
+ * berisi baris kerangka abu berdenyut (`.kerangka`) dengan teks pembaca layar
+ * "Memuat data…"; pemuatan berikutnya (cari, saring, pindah halaman) cukup
+ * meredupkan tabel. Bila belum ada data sama sekali, pesan kosong diberi
+ * ilustrasi dari `data-kosong-gambar` bila ada.
  */
 (function () {
     'use strict';
@@ -114,6 +123,29 @@
                 ? nilai
                 : Object.assign({}, DataTable.ext.classes[kunci] || {}, nilai);
         });
+    }
+
+    // Lebar kotak kerangka per kolom, bergantian supaya tidak tampak seperti garis.
+    var LEBAR_KERANGKA = ['w-3/4', 'w-1/2', 'w-2/3', 'w-5/6', 'w-2/5'];
+
+    /** Baris kerangka (skeleton) selama data pertama dimuat; diganti DataTables saat data tiba. */
+    function isiKerangka(tabel, jumlahKolom, jumlahBaris) {
+        var tubuh = tabel.querySelector('tbody');
+        if (!tubuh) {
+            tubuh = document.createElement('tbody');
+            tabel.appendChild(tubuh);
+        }
+        var html = '';
+        for (var b = 0; b < jumlahBaris; b++) {
+            html += '<tr class="border-b border-gray-100 last:border-b-0" data-baris-kerangka>';
+            for (var k = 0; k < jumlahKolom; k++) {
+                html += '<td class="px-4 py-3.5">' + (b === 0 && k === 0 ? '<span class="sr-only">Memuat data…</span>' : '')
+                    + '<div class="kerangka h-4 ' + LEBAR_KERANGKA[(b + k) % LEBAR_KERANGKA.length] + '" aria-hidden="true"></div></td>';
+            }
+            html += '</tr>';
+        }
+        tubuh.innerHTML = html;
+        tabel.setAttribute('aria-busy', 'true');
     }
 
     function lencana(teks, warna) {
@@ -318,7 +350,12 @@
             urutAwal.push([parseInt(tabel.getAttribute('data-urut'), 10) || 0, tabel.getAttribute('data-arah') === 'desc' ? 'desc' : 'asc']);
         }
 
-        var bahasa = Object.assign({}, BAHASA, { emptyTable: pesanKosong, zeroRecords: pesanKosongSaring });
+        var gambarKosong = TATA_TW ? tabel.getAttribute('data-kosong-gambar') : null;
+        var htmlKosong = gambarKosong
+            ? '<span class="flex flex-col items-center gap-3 py-4"><img src="' + escape(gambarKosong) + '" alt="" class="h-32 w-auto" loading="lazy">'
+                + '<span class="max-w-md text-base font-semibold text-gray-700">' + escape(pesanKosong) + '</span></span>'
+            : pesanKosong;
+        var bahasa = Object.assign({}, BAHASA, { emptyTable: htmlKosong, zeroRecords: pesanKosongSaring });
         var dt;
         var bilahMenyala = false;
 
@@ -385,11 +422,15 @@
 
         // DataTables sendiri memilih pesan kosong: emptyTable bila belum ada data
         // sama sekali (recordsTotal 0), zeroRecords bila saringan terlalu ketat.
-        dt.on('xhr.dt', selesaiMemuat);
+        dt.on('xhr.dt', function () {
+            selesaiMemuat();
+            tabel.removeAttribute('aria-busy');
+        });
 
         // DataTables 2 menamai peristiwa galatnya `dt-error`.
         dt.on('dt-error', function () {
             selesaiMemuat();
+            tabel.removeAttribute('aria-busy');
             var tubuh = tabel.querySelector('tbody');
             if (tubuh) {
                 tubuh.innerHTML = TATA_TW
@@ -424,6 +465,12 @@
         }
 
         perbaruiExcel(tautanExcel, formulir, dt, kolom);
+
+        // Data pertama masih di jalan (ajax selalu tak serempak): ganti baris
+        // "Memuat data…" DataTables dengan kerangka setinggi beberapa baris.
+        if (TATA_TW) {
+            isiKerangka(tabel, kolom.length, Math.min(panjang, 8));
+        }
 
         if (tabel.id) {
             daftarTabel['#' + tabel.id] = dt;
