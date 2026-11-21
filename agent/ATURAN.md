@@ -102,3 +102,4 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Halaman depan: sakelar Hasil di atas untuk hari lomba (bawaan mati); foto carousel unggahan 1600 px; menu Kategori dipertahankan (K143).
 - Peserta publik: nama, sekolah, nomor atlet, kelompok umur, putra/putri, nomor lomba; hanya Lunas; dibatasi 60 permintaan per menit per IP (K140, K144).
 - Galeri: album berupa sampul dan tautan luar (Instagram/Google Drive panitia), tautan hanya `https://`, dibuka di tab baru; album tanpa tautan atau disembunyikan tidak tampil; halaman `/galeri` dan menunya bersakelar bawaan mati; album bawaan "Seri sebelumnya" dipasang sekali (K140).
+- Papan videotron `/layar`: hanya hasil nomor terbit dan klasemen dari nomor terbit; sakelar tampil bawaan mati; tata letak cair untuk ukuran layar apa pun (K141).

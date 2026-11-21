@@ -55,6 +55,12 @@ $routes->get('jadwal/(\d{4}-\d{2}-\d{2})/pdf', 'JadwalController::pdf/$1');
 $routes->get('galeri', 'GaleriController::index');
 // ---------- Akhir galeri publik ----------
 
+// ---------- Papan videotron (F9-13) ----------
+// Hanya data terbit; 404 selama sakelar `Videotron.tampil` mati.
+$routes->get('layar', 'LayarController::index');
+$routes->get('layar/data', 'LayarController::data');
+// ---------- Akhir papan videotron ----------
+
 // ---------- Pendaftaran (Tahap 4) ----------
 // Wizard pendaftaran dan titik akhir JSON-nya (rencana Tahap 4, "Rute dan
 // pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.
@@ -292,5 +298,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('tabel-skor/(:num)/([a-z0-9-]+)/(putra|putri)/impor', 'TabelSkorController::impor/$1/$2/$3');
         $routes->get('tabel-skor/(:num)/([a-z0-9-]+)/(putra|putri)/excel', 'TabelSkorController::excel/$1/$2/$3');
         // ---------- Akhir tabel skor (F9-10) ----------
+
+        // ---------- Papan videotron (F9-13) ----------
+        $routes->get('videotron', 'VideotronController::index');
+        $routes->post('videotron', 'VideotronController::simpan');
+        // ---------- Akhir papan videotron ----------
     });
 });

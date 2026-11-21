@@ -98,6 +98,7 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/bukti/{kode-acak}/{id-pendaftaran}` | Bukti pendaftaran PDF; kode acak 24 huruf supaya alamatnya tidak bisa ditebak (K77) |
 | `/hasil` | Hasil lomba per nomor yang sudah diterbitkan admin (Tahap 8, K124) |
 | `/hasil/klasemen` | Klasemen sekolah per jenjang dari nomor yang sudah terbit (Tahap 8, K124) |
+| `/layar` | Papan videotron layar penuh: hasil terbaru, juara umum, sedang berlangsung, jadwal berikutnya; hanya data terbit; tampil setelah dinyalakan di Pengaturan > Videotron (Tahap 9, K141) |
 
 **Admin** (semua di bawah `/admin`)
 
@@ -534,6 +535,8 @@ Ketentuan Tahap 8 (K124, K125). Bagian ini menjadi aturan saat dibangun; rincian
 - Halaman admin menghitung semua nomor (yang belum terbit diberi tanda); halaman publik `hasil/klasemen` hanya menghitung nomor yang sudah terbit.
 
 **Unduhan** (K124 butir 8): hasil per nomor dan klasemen tersedia sebagai PDF dan Excel. Piagam tidak dibuat web.
+
+**Papan videotron** (Tahap 9, K141): `/layar` tanpa masuk, layar penuh, berganti sendiri antara hasil nomor yang baru terbit (babak Final atau babak terakhir), juara umum per jenjang (dari klasemen publik), babak yang sedang berlangsung, dan jadwal berikutnya (dari jam mulai babak). Hanya data terbit. Data diambil ulang setiap 30 detik; bila jaringan putus, data terakhir tetap tampil dengan tanda. Tata letak menyesuaikan ukuran layar apa pun: mendatar lebar (pita LED, hasil dan juara umum berdampingan), mendatar, tegak, dan sangat kecil (hanya peringkat, nama, prestasi); tabel panjang dibagi halaman menurut tinggi layar. Pengaturan > Videotron: sakelar tampil (bawaan mati, `/layar` tidak ditemukan selama mati), isi yang tampil, dan lama tiap tampilan (5–120 detik).
 
 **Data ikut terbawa**: tabel baru (11) ikut di Backup data dan pindah server (K76) serta cadangan; penggabungan pendaftaran (K109) memindahkan baris yang menunjuk pendaftaran; hapus pendaftaran menangani baris yang menunjuknya.
 

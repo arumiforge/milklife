@@ -12,11 +12,11 @@ Penonton di arena melihat hasil terbaru, juara umum, dan jadwal berikutnya di vi
 
 ## Hasil
 
-- [ ] `/layar` tanpa masuk, hanya data terbit; berganti otomatis antara hasil terbaru, juara umum per jenjang, jadwal berikutnya, sedang berlangsung
-- [ ] Data lewat `/layar/data` (JSON, bisa ditembolok), segar 30 detik, tetap menampilkan data terakhir bila jaringan putus
-- [ ] Tata letak cair untuk ukuran apa pun (K141): huruf `clamp()`, baris per halaman dari tinggi layar, susunan otomatis mendatar lebar (≥ 2:1), mendatar, tegak, dan sangat kecil; parameter `?skala=`, `?susunan=`, `?baris=`; tombol layar penuh; latar Three.js dengan cadangan G9-06 yang disusun dari potongan sehingga pas di rasio apa pun
-- [ ] Uji tampilan otomatis (Playwright) di 3840×2160, 1920×1080, 1280×720, 1024×768, 3840×1080, 1920×480, 1080×1920, 512×256 tanpa teks terpotong atau tumpang tindih
-- [ ] Pengaturan > Videotron: isi yang tampil dan lama tiap tampilan
+- [x] `/layar` tanpa masuk, hanya data terbit; berganti otomatis antara hasil terbaru, juara umum per jenjang, jadwal berikutnya, sedang berlangsung
+- [x] Data lewat `/layar/data` (JSON, bisa ditembolok), segar 30 detik, tetap menampilkan data terakhir bila jaringan putus
+- [x] Tata letak cair untuk ukuran apa pun (K141): huruf `clamp()`, baris per halaman dari tinggi layar, susunan otomatis mendatar lebar (≥ 2:1), mendatar, tegak, dan sangat kecil; parameter `?skala=`, `?susunan=`, `?baris=`; tombol layar penuh; latar Three.js dengan cadangan G9-06 yang disusun dari potongan sehingga pas di rasio apa pun
+- [x] Uji tampilan otomatis (Playwright) di 3840×2160, 1920×1080, 1280×720, 1024×768, 3840×1080, 1920×480, 1080×1920, 512×256 tanpa teks terpotong atau tumpang tindih
+- [x] Pengaturan > Videotron: isi yang tampil dan lama tiap tampilan
 
 ## Berkas dan uji
 
