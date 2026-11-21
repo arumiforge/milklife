@@ -18,6 +18,7 @@ Prosedur kerja untuk semua sesi, manusia maupun agen. Aturan wajib ringkasnya ad
 | `dokumen/draf/`, `dokumen/final/`, `dokumen/pdf/` | Dokumen dikerjakan, disetujui, dan PDF-nya |
 | `dokumen/templat/` | Templat tugas dan dokumen |
 | `sumber/` | Bahan pemilik dan dokumen resmi, persis seperti diterima; tidak diubah |
+| `desain/`, `bahan-rombak/` | Gambar Codex, bahan pemilik (K140) |
 | `data/` | Data siap impor, kunci JSON berbahasa Indonesia |
 | `app/`, `public/`, `writable/`, `tests/` | Aplikasi CodeIgniter 4 |
 

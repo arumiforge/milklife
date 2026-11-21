@@ -2,13 +2,14 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101) |
+| Revisi 6 | Repo menjadi privat (K138): komputer server memakai deploy key (kunci SSH baca saja) untuk `git clone` dan `git pull`, termasuk server yang sudah terpasang. Bagian yang berubah: 3, 10, asumsi 5 |
 | Revisi 5 | Pemeriksaan keamanan Cloudflare Turnstile di kirim pendaftaran, Cek Pendaftaran, dan masuk admin: memasang kunci rahasia dari dasbor Cloudflare, daftar nama host, dan cara mematikan sementara (K122). Bagian yang berubah: 5, 7, 10, 11 |
 | Revisi 4 | Perintah `php spark pembaruan:periksa` untuk memeriksa perintah yang masih perlu dijalankan setelah `git pull` (K115). Bagian yang berubah: 10 |
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, dan 17 November 2026 (revisi 3, 4, dan 5) |
+| Tanggal | 12 November 2026, revisi 14, 16, 17, dan 21 November 2026 (revisi 3, 4, 5, dan 6) |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -53,20 +54,35 @@ Panduan ini ditulis untuk Windows dengan Laragon. Semua perintah diketik di **te
 ## 3. Menyalin aplikasi
 
 1. Buka terminal Laragon. Terminal mulai di folder `C:\laragon\www`.
-2. Ambil aplikasi dari GitHub:
+2. Repo GitHub-nya privat (K138), jadi komputer server perlu kunci akses sendiri (deploy key) yang hanya bisa membaca repo ini. Buka **Git Bash** dan buat kuncinya (tekan Enter di setiap pertanyaan, tanpa kata sandi):
 
    ```
-   git clone https://github.com/arumiforge/milklife.git
+   ssh-keygen -t ed25519 -C "server-milklife" -f ~/.ssh/milklife
+   cat ~/.ssh/milklife.pub
+   ```
+
+   Salin baris yang tampil (diawali `ssh-ed25519`). Pemilik repo membuka GitHub → repo `arumiforge/milklife` → **Settings** → **Deploy keys** → **Add deploy key**, memberi judul `Server produksi`, menempelkan baris tadi, dan **tidak** mencentang *Allow write access*. Lalu di Git Bash, beri tahu Git kunci mana yang dipakai untuk GitHub:
+
+   ```
+   printf 'Host github.com\n  IdentityFile ~/.ssh/milklife\n  IdentitiesOnly yes\n' >> ~/.ssh/config
+   ssh -T git@github.com
+   ```
+
+   Jawab `yes` bila ditanya keaslian github.com. Pesan "successfully authenticated" berarti kunci sudah diterima. Kunci `~/.ssh/milklife` (tanpa `.pub`) adalah rahasia: jangan dikirim ke siapa pun dan jangan disalin ke folder proyek.
+3. Ambil aplikasi dari GitHub:
+
+   ```
+   git clone git@github.com:arumiforge/milklife.git
    cd milklife
    ```
 
-3. Pasang pustaka PHP untuk produksi (tanpa alat uji):
+4. Pasang pustaka PHP untuk produksi (tanpa alat uji):
 
    ```
    composer install --no-dev --optimize-autoloader
    ```
 
-4. Klik **Reload** di Laragon. Laragon membuat alamat lokal `http://milklife.test` yang langsung menunjuk ke folder `C:\laragon\www\milklife\public`. Folder `public` saja yang dibuka peramban; kode, `.env`, foto ofisial, dan bukti bayar ada di luar folder itu.
+5. Klik **Reload** di Laragon. Laragon membuat alamat lokal `http://milklife.test` yang langsung menunjuk ke folder `C:\laragon\www\milklife\public`. Folder `public` saja yang dibuka peramban; kode, `.env`, foto ofisial, dan bukti bayar ada di luar folder itu.
 
 ## 4. Basis data
 
@@ -294,6 +310,8 @@ Lakukan hanya bila data rusak atau terhapus, atau saat pindah ke komputer baru. 
 
 Bila ada perbaikan baru di cabang `main` GitHub:
 
+**Server yang dipasang sebelum repo menjadi privat (K138)**: `git pull` akan menolak dengan pesan "Repository not found" atau meminta kata sandi. Sekali saja, buat deploy key seperti bagian 3 langkah 2, lalu di folder `C:\laragon\www\milklife` jalankan `git remote set-url origin git@github.com:arumiforge/milklife.git`. Setelah itu langkah di bawah berjalan seperti biasa.
+
 1. Buat cadangan dulu:
 
    ```
@@ -376,4 +394,4 @@ Selama masa pendaftaran, periksa sesekali bahwa folder cadangan berisi berkas ha
 2. Panduan meminta sandi untuk pengguna `root` MySQL, selain pengguna khusus `milklife` dari bagian PRODUKSI `.env.example`. Akibatnya setiap perintah `mysql -u root -p` menanyakan sandi.
 3. `.env` tidak ikut dalam berkas cadangan (berisi rahasia); pemilik menyimpan salinannya sendiri.
 4. Nginx Laragon dipakai dengan virtual host otomatis `milklife.test`; Cloudflare Tunnel mengirim kepala Host `milklife.test` ke `127.0.0.1:80`, jadi berkas pengaturan Nginx tidak perlu disunting.
-5. Kode diambil dan diperbarui dengan `git` dari repo publik; tidak ada paket rilis terpisah.
+5. Kode diambil dan diperbarui dengan `git` dari repo privat lewat deploy key baca saja (K138); tidak ada paket rilis terpisah.
