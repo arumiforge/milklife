@@ -4,7 +4,7 @@
 |---|---|
 | Status | Draf, **menunggu persetujuan pemilik** |
 | Tanggal | 21 November 2026 |
-| Dasar | Wawancara 21 November 2026 (K138–K140); juknis `sumber/juknis/petunjuk-teknis-seri2-2026.pdf` bagian Tri Lomba dan 11; tabel skor `sumber/tabel-skor/`; foto dan contoh desain `bahan-rombak/gambar-foto/`; rujukan UI `template-flowbites/` |
+| Dasar | Wawancara 21 November 2026 (K138–K141); juknis `sumber/juknis/petunjuk-teknis-seri2-2026.pdf` bagian Tri Lomba dan 11; tabel skor `sumber/tabel-skor/`; foto dan contoh desain `bahan-rombak/gambar-foto/`; rujukan UI `template-flowbites/` |
 
 ## Tujuan
 
@@ -14,7 +14,7 @@ Batas waktu: **pendaftaran tutup 30 November 23.59**, **pertemuan teknik 6 Desem
 
 ## Hasil Tahap 9
 
-1. **Tampilan baru** dengan Tailwind 4, mode terang, inspirasi railway.com, ikon Lucide, sentuhan Three.js, ilustrasi 3D lembut dari Codex, skeleton saat memuat. Berlaku untuk halaman publik dan panel admin.
+1. **Tampilan baru** berdasar **Flowbite Pro** (Tailwind 4), mode terang, inspirasi railway.com, ikon Lucide, sentuhan Three.js, ilustrasi 3D lembut dari Codex, skeleton saat memuat. Berlaku untuk halaman publik dan panel admin.
 2. **Halaman depan baru**: pembuka dengan **carousel foto acara sebelumnya beserta indikator**, bagian yang lebih tertata, dan menu baru: Jadwal, Hasil, Peserta, Galeri, Bantuan.
 3. **Bantuan dan FAQ** untuk ofisial dan guru: tanya-jawab per kategori yang bisa dicari, tombol bantuan di tiap langkah wizard, dan panduan bergambar.
 4. **Hari lomba**: jadwal pertandingan dari babak, seri dan lintasan dibagi otomatis, alur babak ("bagan"), aturan nomor yang bisa diatur, lembar juri, kalkulator poin Trilomba/Pancalomba, metode klasemen medali atau poin.
@@ -32,7 +32,7 @@ Pemilik memilih semua sebelum lomba. Bila waktu tidak cukup, tugas **P2** yang b
 
 | Tugas | Isi singkat | Bergantung pada | Gelombang | Target |
 |---|---|---|---|---|
-| F9-01 Fondasi Tailwind | Tailwind CLI, token warna, CSS hasil bangun, Flowbite JS, Lucide, Three.js, komponen dasar, halaman katalog komponen, aturan CSP | — | 0 | 23 Nov |
+| F9-01 Fondasi Flowbite Pro | Rantai bangun CSS templat Pro, token warna, CSS hasil bangun, JS Flowbite, Lucide, Three.js, komponen dari templat Pro, halaman katalog komponen, aturan CSP | — | 0 | 23 Nov |
 | F9-02 Saluran Codex | `AGENTS.md`, `desain/`, brief gambar G9-01 sampai G9-07 | — (masuk bersama rencana ini) | 0 | 21 Nov |
 | F9-03 Tata letak publik dan halaman depan | Kepala, menu baru, carousel dengan indikator, bagian baru, kaki; unduhan; foto bawaan | F9-01 | A | 26 Nov |
 | F9-04 Bantuan dan FAQ | Tabel `faq`, kelola admin, data bawaan 40–60 tanya-jawab, `/bantuan`, tombol bantuan di wizard, panduan bergambar | F9-01 | A | 26 Nov |
@@ -41,7 +41,7 @@ Pemilik memilih semua sebelum lomba. Bila waktu tidak cukup, tugas **P2** yang b
 | F9-08 Seri, lintasan, dan alur babak | Pembagian otomatis, geser manual, aturan lolos, daftar seri PDF untuk pertemuan teknik, bagan publik | F9-07 | B | 4 Des |
 | F9-09 Aturan nomor dan lembar juri | Percobaan lompat/lempar, pemecah seri, lembar juri ponsel | F9-08 (berkas hasil sama) | B | 5 Des |
 | F9-12 Peserta publik | `/peserta`: cari nama, sekolah, nomor lomba; hanya Lunas | F9-03 | B | 1 Des |
-| F9-13 Papan videotron | `/layar`: layar penuh, putar otomatis, segar berkala, adaptif 16:9 dan 4:3 | F9-01, F9-10 | B | 6 Des |
+| F9-13 Papan videotron | `/layar`: layar penuh, putar otomatis, segar berkala, cair untuk ukuran layar apa pun | F9-01, F9-10 | B | 6 Des |
 | F9-11 Metode klasemen | Pengaturan Medali atau Poin per peringkat, kolom poin | F9-10 | B | 3 Des |
 | F9-06 Galeri tautan luar | Album bersampul dan bertautan, kelola admin, `/galeri` | F9-03 | B | 3 Des |
 | F9-05 Wizard, cek, dan bukti ke Tailwind | Wizard 5 langkah, Cek Pendaftaran, unggah bukti | F9-03, F9-04, **setelah pendaftaran tutup** | C | 3 Des |
@@ -71,8 +71,8 @@ Tiap sesi membaca `agent/PROGRES.md`, rencana ini, lalu berkas tugasnya saja.
 
 1. **Aman untuk produksi.** Staging dan produksi sama-sama mengambil `main` (K139, K140). Setiap PR harus bisa langsung dipasang: halaman dipindah ke Tailwind **utuh dalam satu PR**; fitur baru yang belum siap dipakai disembunyikan dengan sakelar di Pengaturan (bawaan **mati**) sampai pemilik mencobanya di staging. Migrasi basis data hanya **menambah** tabel atau kolom; kolom lama tidak dihapus di Tahap 9.
 2. **`main` sumber kebenaran.** `git fetch origin main && git rebase origin/main` di awal dan sebelum PR; `composer uji` dan `composer analisis` lulus. Satu tugas, satu PR, berbahasa Indonesia. Sesi pelaksana tidak menggabung PR; koordinator menggabungnya setelah CI hijau (K126).
-3. **CSP tetap menyala** (K127): tanpa `style="…"`, atribut `on…`, atau skrip/gaya sebaris tanpa nonce. Kelas Tailwind dengan nilai bebas (`w-[37px]`) boleh karena dibangun ke berkas CSS. Three.js dan Flowbite JS dimuat dari berkas lokal; `KepalaKeamananTest` tetap menjaga.
-4. **CSS Tailwind** dibangun dengan `php spark aset:tailwind` (F9-01) dan hasilnya di-commit. CI memeriksa bahwa hasil bangun sama dengan sumbernya. Jangan menyunting CSS hasil bangun dengan tangan.
+3. **CSP tetap menyala** (K127): tanpa `style="…"`, atribut `on…`, atau skrip/gaya sebaris tanpa nonce. Kelas Tailwind dengan nilai bebas (`w-[37px]`) boleh karena dibangun ke berkas CSS. Three.js dan JS Flowbite dimuat dari berkas lokal; komponen Flowbite yang menyuntik gaya sebaris diperiksa terhadap CSP dan diganti bila melanggar; `KepalaKeamananTest` tetap menjaga.
+4. **CSS** dibangun dengan `npm run css` (rantai bangun templat Flowbite Pro, F9-01) dan hasilnya di-commit. CI memeriksa bahwa hasil bangun sama dengan sumbernya. Jangan menyunting CSS hasil bangun dengan tangan. Server produksi tidak menjalankan Node.
 5. **Bahasa antarmuka** untuk orang non-teknis: tanpa istilah teknis, tombol menyebut tindakannya ("Daftarkan sekolah", bukan "Kirim"), pesan galat menyebut cara memperbaikinya, dan setiap layar punya jalan ke Bantuan.
 6. **Ponsel lebih dulu.** Diperiksa di lebar 360, 390, dan 1280 piksel. Target sentuh paling kecil 44 piksel. Kontras teks memenuhi WCAG AA. Animasi Three.js dan carousel menghormati `prefers-reduced-motion`.
 7. **Kepemilikan berkas**: berkas bersama (`app/Config/Routes.php`, menu publik dan admin, `agent/PROGRES.md`, `app/Commands/DataAwal.php`) hanya ditambah di blok sendiri, seminimal mungkin. Sumber Tailwind bersama (`public/aset/tailwind/masukan.css`) hanya diubah F9-01 dan F9-17; tugas lain cukup memakai kelas.
@@ -82,16 +82,17 @@ Tiap sesi membaca `agent/PROGRES.md`, rencana ini, lalu berkas tugasnya saja.
 
 ## Kesepakatan teknis
 
-### Fondasi Tailwind (F9-01)
+### Fondasi Flowbite Pro (F9-01)
 
-- **Tailwind CSS 4, CLI mandiri** (satu berkas program dari rilis resmi GitHub, versi dipatok dan sidik SHA-256 dicatat). `php spark aset:tailwind` mengunduh CLI ke `writable/alat/` (tidak masuk git) bila belum ada, lalu membangun `public/aset/tailwind/masukan.css` menjadi `public/aset/css/tw.css` (di-commit). Pilihan `--watch` untuk pengembangan. `aset:minify` tetap memperkecil hasilnya di produksi.
-- **Token** di `@theme`: warna `--ml-*` yang sudah ada di `tema.css` (biru `#234987`, biru tua `#021F7B`, oranye `#E85F31`, oranye tombol `#C4461B`, biru muda `#9BCCEC`, latar `#F3F6FB`) ditambah magenta flyer `#F0005A`; huruf sistem dulu, satu huruf tampilan lokal (WOFF2, lisensi OFL) untuk judul bila dipilih; radius, bayangan lembut, gradien halus.
-- **Flowbite JS gratis (MIT)** untuk carousel, laci, modal, dropdown, tab, dan tooltip (atribut `data-*`, aman CSP). Plugin Tailwind Flowbite tidak dipakai bila butuh Node; kelas komponen ditulis sendiri mengikuti `template-flowbites/`.
-- **Lucide**: sprite SVG lokal `public/aset/vendor/lucide/lucide.svg` dan pembantu `ikon('nama', 'kelas')` yang menulis `<svg><use href="…#nama"/></svg>`. Bootstrap Icons tetap dimuat sampai halaman terakhir dipindah (F9-17 melepasnya).
+- **Dasar: Flowbite Pro** di `template-flowbites/` (lisensi pengembang, K138, K141). Landing Pages v1.1.0 untuk halaman publik, Admin Dashboard v2.2.0 untuk panel. Potongan HTML Pro disalin ke view CodeIgniter dan disesuaikan; templat Hugo-nya tidak dipakai.
+- **Rantai bangun sama dengan templat Pro**: `package.json` di akar repo dengan `tailwindcss` 4, `@tailwindcss/cli`, `flowbite`, `flowbite-typography`, dan `flowbite-datepicker`, versinya mengikuti `package.json` templat Pro dan dikunci `package-lock.json`. `public/aset/tailwind/masukan.css` mengikuti `src/app.css` templat Pro (`@plugin "flowbite/plugin"`, tema Flowbite, `@source` ke `app/Views/` dan `public/aset/js/`). `npm run css` membangun `public/aset/css/tw.css` (di-commit); `npm run css:pantau` untuk pengembangan. `node_modules/` tidak masuk git. `aset:minify` tetap memperkecil hasilnya di produksi.
+- **Token** di `@theme`: warna `primary` templat Pro diganti palet MilkLife (`--ml-*` di `tema.css`: biru `#234987`, biru tua `#021F7B`, oranye `#E85F31`, oranye tombol `#C4461B`, biru muda `#9BCCEC`, latar `#F3F6FB`) ditambah magenta flyer `#F0005A`; huruf mengikuti templat Pro bila lisensinya bebas, disimpan lokal; radius, bayangan lembut, gradien halus.
+- **JS Flowbite** (`flowbite.min.js` dan `datepicker.min.js` dari paket yang dipasang templat Pro) disalin `npm run vendor` ke `public/aset/vendor/flowbite/` dan di-commit: carousel, laci, modal, dropdown, tab, tooltip, pemilih tanggal (atribut `data-*`).
+- **Lucide**: sprite SVG lokal `public/aset/vendor/lucide/lucide.svg` dan pembantu `ikon('nama', 'kelas')` yang menulis `<svg><use href="…#nama"/></svg>`. Ikon SVG sebaris di potongan Pro diganti Lucide supaya seragam. Bootstrap Icons tetap dimuat sampai halaman terakhir dipindah (F9-17 melepasnya).
 - **Three.js**: modul ES lokal `public/aset/vendor/three/three.module.min.js`, dimuat lewat `<script type="module">` dari berkas di `public/aset/js/`; adegan dimatikan bila `prefers-reduced-motion` atau WebGL tidak ada, dan diganti gambar diam.
-- **Komponen dasar** sebagai potongan view di `app/Views/komponen/` (tombol, kartu, isian, pilihan, sakelar, lencana, peringatan, modal, tabel, skeleton, keadaan kosong, langkah) dengan uji tampilan. Halaman **Katalog komponen** di `admin/gaya` supaya pemilik bisa menilai gaya di staging sebelum halaman lain dipindah.
-- **Tata letak baru** `tata_letak/publik_tw.php` dan `tata_letak/admin_tw.php` berdampingan dengan yang lama; halaman berpindah dengan mengganti `extend`. Bootstrap tidak dimuat di tata letak baru.
-- Pustaka baru dicatat di `public/aset/vendor/README.md` (versi, lisensi, asal, sha1), sesuai kebiasaan.
+- **Komponen dasar** dari templat Pro sebagai potongan view di `app/Views/komponen/` (tombol, kartu, isian, pilihan, sakelar, lencana, peringatan, modal, tabel, skeleton, keadaan kosong, langkah) dengan uji tampilan. Halaman **Katalog komponen** di `admin/gaya` supaya pemilik bisa menilai gaya di staging sebelum halaman lain dipindah.
+- **Tata letak baru** `tata_letak/publik_tw.php` (dari Landing Pages Pro) dan `tata_letak/admin_tw.php` (dari Admin Dashboard Pro) berdampingan dengan yang lama; halaman berpindah dengan mengganti `extend`. Bootstrap tidak dimuat di tata letak baru.
+- `public/aset/vendor/README.md` mencatat paket, versi, lisensi, dan asal; `public/aset/vendor/flowbite/flowbite-dasbor.css` lama (K102) diganti hasil bangun baru setelah `arumi.php` dipindah.
 
 ### Halaman depan (F9-03)
 
@@ -139,8 +140,9 @@ Tiap sesi membaca `agent/PROGRES.md`, rencana ini, lalu berkas tugasnya saja.
 
 ### Papan videotron (F9-13)
 
-- `/layar` tanpa masuk, hanya data terbit: berganti otomatis antara hasil nomor yang baru terbit, juara umum per jenjang, jadwal berikutnya, dan "Sedang berlangsung"; segar setiap 30 detik lewat JSON `/layar/data` (bisa ditembolok); tombol layar penuh; huruf besar terbaca dari jauh; latar Three.js halus (gambar G9-06 sebagai cadangan).
-- Ukuran layar belum diketahui (K140 butir 13): tata letak adaptif 16:9 dan 4:3, uji di 1920×1080, 1280×720, dan 1024×768; parameter `?skala=` untuk layar LED kecil. Pilihan isi dan lama tiap tampilan di Pengaturan > Videotron.
+- `/layar` tanpa masuk, hanya data terbit: berganti otomatis antara hasil nomor yang baru terbit, juara umum per jenjang, jadwal berikutnya, dan "Sedang berlangsung"; segar setiap 30 detik lewat JSON `/layar/data` (bisa ditembolok); tombol layar penuh; latar Three.js halus (gambar G9-06 sebagai cadangan).
+- **Fleksibel untuk ukuran apa pun** (K141): tata letak cair dengan *container query* dan satuan layar. Huruf diatur `clamp()` dari ukuran layar, dan jumlah baris tabel per halaman dihitung dari tinggi layar. Susunan berpindah otomatis menurut rasio: **mendatar lebar** (≥ 2:1, pita LED; hasil dan juara umum berdampingan), **mendatar** (16:9 sampai 4:3), **tegak** (≤ 3:4; satu kolom), dan **sangat kecil** (sisi pendek < 400 piksel; hanya nomor, nama, prestasi). Parameter `?skala=`, `?susunan=`, dan `?baris=` untuk memaksa bila perlu.
+- Uji tampilan otomatis di 3840×2160, 1920×1080, 1280×720, 1024×768, 3840×1080, 1920×480, 1080×1920, dan 512×256: tidak ada teks terpotong atau saling tindih. Pilihan isi dan lama tiap tampilan di Pengaturan > Videotron.
 
 ### Galeri (F9-06)
 
@@ -166,8 +168,8 @@ Tiap sesi membaca `agent/PROGRES.md`, rencana ini, lalu berkas tugasnya saja.
 
 ## Asumsi yang perlu disetujui
 
-1. Tailwind CLI mandiri boleh diunduh dari rilis resmi GitHub saat membangun CSS (sidik dicocokkan); server produksi tidak perlu mengunduhnya karena CSS hasil bangun di-commit.
-2. Huruf judul memakai satu huruf berlisensi OFL yang disimpan lokal (misalnya Plus Jakarta Sans); badan teks memakai huruf sistem supaya ringan.
+1. Node (sudah ada di Laragon dan sesi cloud) dipakai hanya untuk `npm run css` dan `npm run vendor` di komputer pengembang dan CI; server produksi tidak memasang Node karena CSS dan JS hasil bangun di-commit.
+2. Huruf mengikuti templat Flowbite Pro bila berlisensi OFL, disimpan lokal tanpa Google Fonts; bila tidak, Plus Jakarta Sans (OFL) untuk judul dan huruf sistem untuk badan teks.
 3. Fitur hari lomba baru (seri dan lintasan, lembar juri, kalkulator poin, videotron, peserta publik) disembunyikan sakelar **mati** sampai pemilik mencobanya di staging, lalu dinyalakan di produksi oleh admin.
 4. Semifinal hanya dibuat bila admin menambahkannya; bawaan alur babak Penyisihan → Final sesuai F8-04.
 5. Pembagian seri tidak memakai prestasi terbaik (tidak ada data prestasi pendaftaran); unggulan hanya untuk babak lanjutan, dari hasil babak sebelumnya.

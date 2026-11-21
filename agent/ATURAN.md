@@ -11,8 +11,8 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Koordinator membuat sub-sesi sendiri, paling banyak 3 sekaligus (K38, K65), dan menggabung PR (*squash*) setelah CI hijau; sub-sesi tidak menggabung PR sendiri (K126).
 - Dokumen boleh diubah langsung sesuai kondisi terbaru, PDF dibuat ulang (K100, K101).
 - Laragon untuk pengembangan dan produksi, PHP 8.2+ (K08, K18); web lewat Cloudflare Tunnel, IP dari `CF-Connecting-IP` (K31).
-- Tidak menambah pustaka kecuali yang disetujui: Turnstile tanpa pustaka PHP (K122), PHPStan `require-dev` (K123), Tailwind CLI mandiri, Flowbite JS gratis, Lucide, dan Three.js, semuanya lokal tanpa CDN (K140).
-- Tampilan pindah ke Tailwind 4 per halaman di Tahap 9; CSS hasil bangun di-commit, server tanpa Node; halaman yang belum dipindah tetap Bootstrap 5 (K140, menggantikan K103). Mode terang, ilustrasi 3D lembut.
+- Tidak menambah pustaka kecuali yang disetujui: Turnstile tanpa pustaka PHP (K122), PHPStan `require-dev` (K123), Lucide dan Three.js lokal tanpa CDN (K140), dan rantai bangun Flowbite Pro (Tailwind 4, plugin dan JS Flowbite) dengan Node hanya di komputer pengembang dan CI (K141).
+- Tampilan pindah ke Tailwind 4 berdasar Flowbite Pro (`template-flowbites/`) per halaman di Tahap 9; CSS hasil bangun di-commit, server tanpa Node; halaman yang belum dipindah tetap Bootstrap 5 (K140, K141, menggantikan K103). Mode terang, ilustrasi 3D lembut. Videotron cair untuk ukuran layar apa pun (K141).
 - Codex hanya membuat aset gambar lewat `desain/` dan `AGENTS.md`; kode ditulis Claude, yang juga meninjau dan menggabung PR Codex (K140).
 - Staging dan produksi mengambil `main`; setiap PR ke `main` harus aman langsung dipasang di produksi (K139, K140).
 - Susunan dokumen agen ringkas: `ATURAN.md`, `PETA-KODE.md`, `SETUP-CLOUD.md`, status hanya di `PROGRES.md` (K120).

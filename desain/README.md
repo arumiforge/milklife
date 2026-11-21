@@ -19,7 +19,7 @@ Status tugas gambar hanya dicatat di `agent/PROGRES.md` oleh koordinator.
 | [G9-03](tugas/G9-03-panduan-pendaftaran.md) | Panduan bergambar langkah pendaftaran | F9-04 | 25 November |
 | [G9-04](tugas/G9-04-keadaan-kosong-galat.md) | Keadaan kosong, galat, berhasil | F9-17 | 4 Desember |
 | [G9-05](tugas/G9-05-ikon-nomor-lomba.md) | Ilustrasi nomor lomba dan kelompok umur | F9-03, F9-07, F9-12 | 27 November |
-| [G9-06](tugas/G9-06-videotron-podium.md) | Latar videotron, podium, medali | F9-13 | 2 Desember |
+| [G9-06](tugas/G9-06-videotron-podium.md) | Latar videotron (potongan untuk layar ukuran apa pun), podium, medali | F9-13 | 2 Desember |
 | [G9-07](tugas/G9-07-bantuan-kategori.md) | Ilustrasi kategori Bantuan dan FAQ | F9-04 | 25 November |
 
 ## Tinjauan PR gambar (untuk Claude)
