@@ -4,7 +4,7 @@
 |---|---|
 | Status | Draf, **disetujui pemilik 21 November 2026 beserta delapan asumsinya (K142)** |
 | Tanggal | 21 November 2026 |
-| Dasar | Wawancara 21 November 2026 (K138–K141); juknis `sumber/juknis/petunjuk-teknis-seri2-2026.pdf` bagian Tri Lomba dan 11; tabel skor `sumber/tabel-skor/`; foto dan contoh desain `bahan-rombak/gambar-foto/`; rujukan UI `template-flowbites/` |
+| Dasar | Wawancara 21 November 2026 (K138–K141); juknis `sumber/juknis/petunjuk-teknis-seri2-2026.pdf` bagian Tri Lomba dan 11; tabel skor `sumber/tabel-skor/`; foto dan contoh desain `sumber/foto-acara/` (semula `bahan-rombak/gambar-foto/`, dipindah F9-18); rujukan UI `template-flowbites/` |
 
 ## Tujuan
 
@@ -97,7 +97,7 @@ Tiap sesi membaca `agent/PROGRES.md`, rencana ini, lalu berkas tugasnya saja.
 
 ### Halaman depan (F9-03)
 
-- Pembuka: carousel dengan indikator dan tombol jeda (Flowbite), foto bawaan dari `bahan-rombak/gambar-foto/maclalu*.webp` disalin dan dikecilkan ke `data/halaman-depan/carousel/` lalu dipasang `data:awal` (pemasangan baru) dan perintah `halaman-depan:carousel` (pemasangan lama); admin bisa menambah, mengurutkan, dan menghapus foto di Pengaturan > Halaman Depan. Foto pertama dimuat lebih dulu, sisanya `loading="lazy"`; WebP sisi terpanjang 1600 piksel.
+- Pembuka: carousel dengan indikator dan tombol jeda (Flowbite), foto bawaan dari `sumber/foto-acara/maclalu*.webp` (semula `bahan-rombak/gambar-foto/`) disalin dan dikecilkan ke `data/halaman-depan/carousel/` lalu dipasang `data:awal` (pemasangan baru) dan perintah `halaman-depan:carousel` (pemasangan lama); admin bisa menambah, mengurutkan, dan menghapus foto di Pengaturan > Halaman Depan. Foto pertama dimuat lebih dulu, sisanya `loading="lazy"`; WebP sisi terpanjang 1600 piksel.
 - Judul, keadaan pendaftaran, dan dua tombol besar (Daftar, Cek Pendaftaran) tetap di layar pertama (K81).
 - Bagian: Tentang acara, Kategori dan biaya (kartu kelompok umur), Jadwal ringkas, angka acara (seperti `kompetisi1.jpg`: atlet, sekolah, per kelompok umur, setelah ada data Lunas), Hasil dan juara umum terbaru (setelah ada yang terbit), FAQ teratas, Unduhan, Kontak. Urutan K42 dipertahankan untuk bagian lama.
 - Menu publik: Beranda, Jadwal, Hasil, Peserta, Galeri, Bantuan, tombol Cek Pendaftaran dan Daftar; butir yang halamannya belum terbuka (sakelar mati) tidak tampil.
@@ -147,7 +147,7 @@ Tiap sesi membaca `agent/PROGRES.md`, rencana ini, lalu berkas tugasnya saja.
 
 ### Galeri (F9-06)
 
-- Tabel `galeri` (`judul`, `keterangan`, `tautan` ke Instagram/Google Drive, `sampul` gambar unggahan, `urutan`, `aktif`); kelola di Pengaturan > Galeri; `/galeri` kartu bersampul yang membuka tautan di tab baru. Album bawaan "Seri sebelumnya" memakai foto `bahan-rombak` sebagai sampul, tautannya diisi admin.
+- Tabel `galeri` (`judul`, `keterangan`, `tautan` ke Instagram/Google Drive, `sampul` gambar unggahan, `urutan`, `aktif`); kelola di Pengaturan > Galeri; `/galeri` kartu bersampul yang membuka tautan di tab baru. Album bawaan "Seri sebelumnya" memakai foto acara sebelumnya (`sumber/foto-acara/`) sebagai sampul, tautannya diisi admin.
 
 ### Panel admin (F9-14 sampai F9-16)
 
@@ -175,5 +175,5 @@ Tiap sesi membaca `agent/PROGRES.md`, rencana ini, lalu berkas tugasnya saja.
 4. Semifinal hanya dibuat bila admin menambahkannya; bawaan alur babak Penyisihan → Final sesuai F8-04.
 5. Pembagian seri tidak memakai prestasi terbaik (tidak ada data prestasi pendaftaran); unggulan hanya untuk babak lanjutan, dari hasil babak sebelumnya.
 6. Galat tabel skor (prestasi di luar rentang tabel) diberi poin 0 dengan peringatan di layar admin.
-7. Foto `bahan-rombak/` yang dipakai disalin dalam ukuran web ke `data/halaman-depan/carousel/`; berkas asli di `bahan-rombak/` tetap sebagai rujukan sampai penutupan Tahap 9, lalu dipindah ke `sumber/foto-acara/`.
+7. Foto `bahan-rombak/` yang dipakai disalin dalam ukuran web ke `data/halaman-depan/carousel/`; berkas asli di `bahan-rombak/` tetap sebagai rujukan sampai penutupan Tahap 9, lalu dipindah ke `sumber/foto-acara/`. **Sudah dipindah di F9-18.**
 8. Uji yang memeriksa kelas Bootstrap diubah bersama halaman yang dipindah; jumlah uji tidak boleh berkurang tanpa alasan di deskripsi PR.

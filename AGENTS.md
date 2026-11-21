@@ -15,7 +15,7 @@ Repo ini web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026. Di repo i
 - **Hanya boleh menulis** ke folder keluaran yang disebut tugas (di bawah `public/aset/gambar/`) dan ke `desain/catatan/<ID>.md`. Tidak ada berkas lain yang boleh berubah, termasuk `desain/tugas/`, `desain/README.md`, `agent/`, dan berkas ini.
 - **Tidak boleh ada teks, huruf, angka, logo, atau merek** di dalam gambar, termasuk logo MilkLife, sponsor, dan tulisan di kaus atau papan. Teks selalu ditulis halaman web di atas gambar.
 - **Tidak boleh ada wajah realistis** atau gambar yang bisa disangka foto asli acara. Tokoh bergaya 3D lembut dengan wajah sederhana, anak usia sekolah, berpakaian olahraga sopan, beragam (berjilbab dan tidak).
-- Tidak memakai foto di `bahan-rombak/` sebagai bahan gambar baru; foto itu hanya rujukan suasana dan warna.
+- Tidak memakai foto di `sumber/foto-acara/` sebagai bahan gambar baru; foto itu hanya rujukan suasana dan warna.
 - Gambar untuk anak sekolah: tanpa kekerasan, tanpa unsur dewasa, tanpa simbol politik atau agama tertentu selain pakaian sehari-hari.
 
 ## Gaya bersama
