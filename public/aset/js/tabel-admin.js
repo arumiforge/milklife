@@ -84,7 +84,7 @@
             row: 'dt-layout-row flex flex-wrap items-center justify-between gap-3',
             cell: 'dt-layout-cell flex flex-wrap items-center gap-2',
             tableRow: 'dt-layout-table',
-            tableCell: 'block! w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut',
+            tableCell: 'relative block! w-full min-w-0 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut',
             start: 'dt-layout-start',
             end: 'dt-layout-end sm:ms-auto',
             full: 'dt-layout-full w-full'
@@ -217,7 +217,7 @@
             if (!nilai || typeof nilai !== 'object' || !nilai.alamat) {
                 return escape(nilai && nilai.teks);
             }
-            return '<a href="' + escape(nilai.alamat) + '">' + escape(nilai.teks || nilai.alamat) + '</a>';
+            return '<a' + (TATA_TW ? ' class="font-semibold text-primary-700 hover:underline"' : '') + ' href="' + escape(nilai.alamat) + '">' + escape(nilai.teks || nilai.alamat) + '</a>';
         },
         html: function (nilai) {
             return kosong(nilai) ? '' : String(nilai);

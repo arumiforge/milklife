@@ -51,7 +51,7 @@ final class PanelBuktiBaruTest extends UjiBasisData
         $rincian->assertSeeElement('#bukti-baru');
         $rincian->assertSeeElement('#form-bukti-diperiksa');
         $rincian->assertSee('2 bukti bayar baru dari ofisial belum diperiksa.');
-        $this->assertSame(2, $this->xpathDari($rincian)->query('//*[contains(@class, "bukti-baru-tanda")]')->length);
+        $this->assertSame(2, $this->xpathDari($rincian)->query('//*[@data-bukti-baru-tanda]')->length);
 
         // Membuka rincian saja tidak menandai.
         $this->assertSame(2, $this->belumDiperiksa($p['id']));
@@ -75,7 +75,7 @@ final class PanelBuktiBaruTest extends UjiBasisData
 
         $rincian = $this->bukaSebagaiAdmin('admin/pendaftaran/' . $p['id']);
         $rincian->assertDontSeeElement('#bukti-baru');
-        $rincian->assertDontSeeElement('.bukti-baru-tanda');
+        $this->assertSame(0, $this->xpathDari($rincian)->query('//*[@data-bukti-baru-tanda]')->length);
 
         // Ditekan lagi: tidak ada yang ditandai, tidak dicatat lagi.
         $this->assertBerhasilDialihkan(

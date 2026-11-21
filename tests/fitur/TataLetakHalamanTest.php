@@ -409,7 +409,8 @@ final class TataLetakHalamanTest extends UjiHalaman
 
         $kotak = $xpath->query('//div[@data-tanpa-gambar]')->item(0);
         $this->assertNotNull($kotak);
-        $this->assertStringContainsString('tanpa-gambar aspect-square', $kotak->getAttribute('class'));
+        $this->assertStringContainsString('aspect-square', $kotak->getAttribute('class'));
+        $this->assertSame('1x1', $kotak->getAttribute('data-tanpa-gambar'));
         $this->assertStringContainsString(' w-full', $kotak->getAttribute('class'));
         $this->assertSame('img', $kotak->getAttribute('role'));
         $this->assertSame('Belum ada gambar: Logo <persegi>', $kotak->getAttribute('aria-label'));

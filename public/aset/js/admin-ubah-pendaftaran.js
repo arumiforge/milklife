@@ -18,6 +18,11 @@
  *
  * Semua aturan diperiksa ulang di server saat menyimpan. Teks dari isian dan
  * server ditulis lewat `textContent`.
+ *
+ * Tampilan Tailwind (F9-15): kotak yang salah ditandai `aria-invalid="true"`
+ * (gayanya dari varian `aria-invalid:` di halaman), kotak galat disembunyikan
+ * dengan atribut `hidden`, dan jendela konfirmasi memakai modal Flowbite
+ * (`window.Modal`); tanpa Flowbite, `window.confirm`.
  */
 (function () {
     'use strict';
@@ -163,12 +168,12 @@
             tersembunyi.value = dataUrl;
             var wadah = kartu.querySelector('.pratinjau-foto');
             var gambar = document.createElement('img');
-            gambar.className = 'img-fluid rounded border';
+            gambar.className = 'block h-auto w-full rounded-lg border border-gray-200';
             gambar.alt = 'Foto baru';
             gambar.src = dataUrl;
             wadah.textContent = '';
             wadah.appendChild(gambar);
-            masukan.classList.remove('is-invalid');
+            masukan.removeAttribute('aria-invalid');
         }).catch(function () {
             tersembunyi.value = '';
             masukan.value = '';
@@ -324,9 +329,9 @@
     }
 
     function bersihkanGalat() {
-        kotakGalat.classList.add('d-none');
+        kotakGalat.hidden = true;
         kotakGalat.textContent = '';
-        $$('.is-invalid', formulir).forEach(function (el) { el.classList.remove('is-invalid'); });
+        $$('[aria-invalid="true"]', formulir).forEach(function (el) { el.removeAttribute('aria-invalid'); });
         $$('.galat-js', formulir).forEach(function (el) { el.remove(); });
     }
 
@@ -354,10 +359,10 @@
         bersihkanGalat();
 
         var judul = document.createElement('p');
-        judul.className = 'fw-semibold mb-1';
+        judul.className = 'mb-1 font-semibold';
         judul.textContent = galat.length === 1 ? 'Ada 1 isian yang perlu diperbaiki:' : 'Ada ' + galat.length + ' isian yang perlu diperbaiki:';
         var daftar = document.createElement('ul');
-        daftar.className = 'mb-0 ps-3';
+        daftar.className = 'list-disc space-y-0.5 ps-5';
 
         galat.forEach(function (g) {
             var butir = document.createElement('li');
@@ -365,11 +370,11 @@
             daftar.appendChild(butir);
 
             var kotak = kotakDariJalur(String(g.jalur || '')).filter(Boolean);
-            kotak.forEach(function (el) { el.classList.add('is-invalid'); });
+            kotak.forEach(function (el) { el.setAttribute('aria-invalid', 'true'); });
 
             if (kotak.length > 0 && kotak[0].type !== 'checkbox') {
                 var pesan = document.createElement('div');
-                pesan.className = 'invalid-feedback d-block galat-js';
+                pesan.className = 'galat-js mt-1.5 text-sm font-medium text-red-700';
                 pesan.textContent = g.pesan;
                 kotak[0].insertAdjacentElement('afterend', pesan);
             }
@@ -377,7 +382,7 @@
 
         kotakGalat.appendChild(judul);
         kotakGalat.appendChild(daftar);
-        kotakGalat.classList.remove('d-none');
+        kotakGalat.hidden = false;
         kotakGalat.focus();
         kotakGalat.scrollIntoView({ block: 'start' });
     }
@@ -388,49 +393,76 @@
 
     function konfirmasi(judul, kalimat, labelTombol) {
         return new Promise(function (selesai) {
-            if (!window.bootstrap || !window.bootstrap.Modal) {
+            if (typeof window.Modal !== 'function') {
                 selesai(window.confirm(kalimat));
                 return;
             }
 
-            var elemen = document.getElementById('jendela-ubah');
-            if (!elemen) {
-                elemen = document.createElement('div');
-                elemen.className = 'modal fade';
-                elemen.id = 'jendela-ubah';
-                elemen.tabIndex = -1;
-                elemen.setAttribute('aria-labelledby', 'jendela-ubah-judul');
-                elemen.setAttribute('aria-describedby', 'jendela-ubah-isi');
-                elemen.setAttribute('aria-hidden', 'true');
-                elemen.innerHTML =
-                    '<div class="modal-dialog modal-dialog-centered"><div class="modal-content">' +
-                    '<div class="modal-header"><h2 class="modal-title h5" id="jendela-ubah-judul"></h2>' +
-                    '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button></div>' +
-                    '<div class="modal-body"><p class="mb-0" id="jendela-ubah-isi"></p></div>' +
-                    '<div class="modal-footer">' +
-                    '<button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Batal</button>' +
-                    '<button type="button" class="btn btn-primary" data-setuju></button>' +
-                    '</div></div></div>';
-                document.body.appendChild(elemen);
+            if (!jendelaUbah) {
+                jendelaUbah = buatJendela();
             }
 
-            var jendela = window.bootstrap.Modal.getOrCreateInstance(elemen);
-            var setuju = false;
+            var elemen = jendelaUbah.elemen;
             var tombol = elemen.querySelector('[data-setuju]');
 
+            jendelaUbah.setuju = false;
+            jendelaUbah.selesai = selesai;
             elemen.querySelector('#jendela-ubah-judul').textContent = judul;
             elemen.querySelector('#jendela-ubah-isi').textContent = kalimat;
             tombol.textContent = labelTombol;
-            tombol.onclick = function () {
-                setuju = true;
-                jendela.hide();
-            };
-            elemen.addEventListener('hidden.bs.modal', function tutup() {
-                elemen.removeEventListener('hidden.bs.modal', tutup);
-                selesai(setuju);
-            });
-            jendela.show();
+            jendelaUbah.modal.show();
+            elemen.removeAttribute('aria-hidden');
+            tombol.focus();
         });
+    }
+
+    // Jendela konfirmasi (modal Flowbite), dibuat sekali lalu dipakai ulang.
+    var jendelaUbah = null;
+
+    function buatJendela() {
+        var elemen = document.createElement('div');
+        elemen.className = 'fixed inset-x-0 top-0 z-50 hidden h-full max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden p-4';
+        elemen.id = 'jendela-ubah';
+        elemen.tabIndex = -1;
+        elemen.setAttribute('role', 'dialog');
+        elemen.setAttribute('aria-modal', 'true');
+        elemen.setAttribute('aria-labelledby', 'jendela-ubah-judul');
+        elemen.setAttribute('aria-describedby', 'jendela-ubah-isi');
+        elemen.setAttribute('aria-hidden', 'true');
+        elemen.innerHTML =
+            '<div class="relative max-h-full w-full max-w-md"><div class="relative rounded-2xl bg-white shadow-angkat">' +
+            '<div class="border-b border-gray-200 p-4 sm:px-6"><h2 class="text-lg font-bold text-gray-900" id="jendela-ubah-judul"></h2></div>' +
+            '<div class="p-4 text-gray-700 sm:p-6"><p id="jendela-ubah-isi"></p></div>' +
+            '<div class="flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 p-4 sm:px-6">' +
+            '<button type="button" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100" data-batal>Batal</button>' +
+            '<button type="button" class="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary-700 px-5 text-sm font-semibold text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300" data-setuju></button>' +
+            '</div></div></div>';
+        document.body.appendChild(elemen);
+
+        var hasil = { elemen: elemen, setuju: false, selesai: null, modal: null };
+        hasil.modal = new window.Modal(elemen, {
+            placement: 'center',
+            backdrop: 'dynamic',
+            closable: true,
+            onHide: function () {
+                elemen.setAttribute('aria-hidden', 'true');
+                if (hasil.selesai) {
+                    var selesai = hasil.selesai;
+                    hasil.selesai = null;
+                    selesai(hasil.setuju);
+                }
+            }
+        }, { id: 'jendela-ubah', override: true });
+
+        elemen.querySelector('[data-setuju]').addEventListener('click', function () {
+            hasil.setuju = true;
+            hasil.modal.hide();
+        });
+        elemen.querySelector('[data-batal]').addEventListener('click', function () {
+            hasil.modal.hide();
+        });
+
+        return hasil;
     }
 
     function pratinjau() {
