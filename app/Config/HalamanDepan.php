@@ -72,4 +72,11 @@ class HalamanDepan extends BaseConfig
      * sekolah mendaftar. Nilai awal sembunyi (K74).
      */
     public bool $tampilkan_biaya = false;
+
+    /**
+     * Tampilkan halaman Peserta publik (`/peserta`, F9-12) dan butir menunya.
+     * Nilai awal mati: halaman menjawab 404 sampai admin menyalakannya di
+     * Pengaturan > Halaman Depan setelah mencobanya di staging (rencana Tahap 9).
+     */
+    public bool $tampil_peserta = false;
 }
