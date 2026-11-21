@@ -195,7 +195,7 @@ final class PengaturanAcaraTest extends UjiBasisData
 
         // Panel admin: merek di menu samping.
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'));
-        $this->assertSame('Lomba Lari Karangan Panel admin', $this->teks($xpath, '//aside//a[contains(@class, "menu-samping-merek")]'));
+        $this->assertSame('Lomba Lari Karangan Panel admin', $this->teks($xpath, '//a[@data-merek-admin]'));
 
         // Halaman masuk (tata letak polos).
         $xpath = $this->xpathDari($this->withSession([])->get('admin/masuk'));
@@ -216,7 +216,7 @@ final class PengaturanAcaraTest extends UjiBasisData
         $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
 
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'));
-        $this->assertSame('Pendaftaran Lomba Panel admin', $this->teks($xpath, '//aside//a[contains(@class, "menu-samping-merek")]'));
+        $this->assertSame('Pendaftaran Lomba Panel admin', $this->teks($xpath, '//a[@data-merek-admin]'));
 
         $xpath = $this->xpathDari($this->withSession([])->get('admin/masuk'));
         $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//*[contains(@class, "polos-merek")]'));

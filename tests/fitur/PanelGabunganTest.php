@@ -379,7 +379,7 @@ final class PanelGabunganTest extends UjiBasisData
         $angka = [];
 
         foreach ($xpath->query('//*[@id="angka-pendaftaran"]//*[@data-angka]') as $kartu) {
-            $angka[$kartu->getAttribute('data-angka')] = trim($xpath->query('.//*[contains(@class, "nilai-angka")]', $kartu)->item(0)->textContent);
+            $angka[$kartu->getAttribute('data-angka')] = trim($xpath->query('.//*[@data-nilai]', $kartu)->item(0)->textContent);
         }
 
         $this->assertSame([

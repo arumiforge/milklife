@@ -163,7 +163,7 @@ final class PanelBuktiBaruTest extends UjiBasisData
         $dasbor = $this->bukaSebagaiAdmin('admin/dasbor');
         $kartu  = $this->xpathDari($dasbor)->query('//*[@data-tambahan="bukti_baru"]')->item(0);
         $this->assertNotNull($kartu);
-        $this->assertStringContainsString('kartu-sorot', $kartu->getAttribute('class'));
+        $this->assertTrue($kartu->hasAttribute('data-sorot'), 'Kartu bukti baru disorot.');
         $this->assertStringContainsString('2', $kartu->textContent);
         $this->assertStringContainsString('Bukti bayar baru belum diperiksa', $kartu->textContent);
         $this->assertSame(site_url('admin/pendaftaran?bukti=baru'), $this->xpathDari($dasbor)->query('//*[@data-tambahan="bukti_baru"]//a')->item(0)->getAttribute('href'));
