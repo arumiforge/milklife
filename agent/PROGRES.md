@@ -25,11 +25,12 @@ Diperbarui: 21 November 2026
 | [F9-15 Halaman admin pendaftaran ke Tailwind](tugas/F9-15-admin-pendaftaran-tailwind.md) | rencana | P2 | C |
 | [F9-16 Halaman admin hari lomba dan pengaturan ke Tailwind](tugas/F9-16-admin-hari-lomba-pengaturan-tailwind.md) | dikerjakan | P2 | C |
 | [F9-17 Skeleton, keadaan kosong, dan perapian](tugas/F9-17-skeleton-perapian.md) | rencana | P2 | C |
+| [F9-19 Pemasangan visual tambahan](tugas/F9-19-pemasangan-visual-tambahan.md) | rencana | P2 | C |
 | [F9-18 Penutupan Tahap 9](tugas/F9-18-penutupan-tahap-9.md) | rencana | P1 | akhir |
 
 ### Gambar (Codex)
 
-Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung koordinator.
+Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung koordinator. Semua kebutuhan gambar dan visual dipesan ke Codex tanpa batas jumlah tugas (K150).
 
 | Tugas gambar | Status |
 |---|---|
@@ -40,6 +41,11 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 | [G9-05 Ilustrasi nomor lomba](../desain/tugas/G9-05-ikon-nomor-lomba.md) | rencana |
 | [G9-06 Videotron dan podium](../desain/tugas/G9-06-videotron-podium.md) | rencana |
 | [G9-07 Kategori Bantuan](../desain/tugas/G9-07-bantuan-kategori.md) | rencana |
+| [G9-08 Panel admin](../desain/tugas/G9-08-panel-admin.md) | rencana |
+| [G9-09 Pita judul halaman publik](../desain/tugas/G9-09-pita-judul.md) | rencana |
+| [G9-10 Gambar bagikan](../desain/tugas/G9-10-gambar-bagikan.md) | rencana |
+| [G9-11 Ikon aplikasi](../desain/tugas/G9-11-ikon-aplikasi.md) | rencana |
+| [G9-12 Pola dan hiasan latar](../desain/tugas/G9-12-pola-hiasan.md) | rencana |
 
 ## Berikutnya
 
