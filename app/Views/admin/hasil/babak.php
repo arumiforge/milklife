@@ -77,6 +77,12 @@ foreach ($calon as $kunci => $c) {
         Pilih DNS (tidak start), DNF (tidak finis), atau DQ (diskualifikasi) untuk peserta tanpa peringkat.
         <?php if ($final) : ?>Di Final peringkat boleh dikoreksi (misalnya dari foto finis); kosongkan supaya dihitung otomatis.<?php endif ?>
     </p>
+    <?php // Seri dan lintasan (F9-08). ?>
+    <p class="mb-4">
+        <a class="btn btn-outline-primary" href="<?= site_url('admin/seri/babak/' . $babak['id']) ?>" id="tautan-seri-babak">
+            <i class="bi bi-list-ol" aria-hidden="true"></i> Seri dan lintasan babak ini
+        </a>
+    </p>
 
     <section class="card mb-4" aria-labelledby="judul-hasil">
         <div class="card-body">

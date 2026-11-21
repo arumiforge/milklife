@@ -5,6 +5,7 @@ namespace App\Libraries\Panel;
 use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\JenisHasil;
+use App\Libraries\Hasil\PembagiSeri;
 use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Hasil\TabelSkor;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
@@ -41,7 +42,8 @@ use ZipArchive;
  *   `hasil_lomba`: jenis hasil, waktu terbit, babak, dan hasil per nomor
  *   lomba (F8-04; boleh tidak ada di paket lama). Nomor poin multi-lomba
  *   membawa kode tabel skor dan komponennya, hasilnya membawa `rincian`
- *   per komponen (F9-10).
+ *   per komponen (F9-10). Babak membawa jadwal (F9-07) dan keadaan seri,
+ *   hasil membawa seri dan lintasan, nomor membawa aturan seri (F9-08).
  *   `tabel_skor`: semua tabel skor beserta barisnya, termasuk ubahan admin
  *   (F9-10; boleh tidak ada). Tabel berkode sama di server baru diganti.
  *   `faq`: tanya-jawab halaman Bantuan (F9-04). Bila ada dan berisi, isinya
@@ -815,6 +817,53 @@ final class PaketPendaftaran
     }
 
     /**
+     * Aturan seri satu nomor dari paket (F9-08); isian tidak sah = bawaan.
+     *
+     * @param array<string, mixed> $n
+     *
+     * @return array{tempat_per_seri: int|null, urutan_lintasan: string|null}
+     */
+    private static function aturanSeriNomor(array $n): array
+    {
+        $urutan = is_string($n['urutan_lintasan'] ?? null) ? trim($n['urutan_lintasan']) : '';
+        $tempat = self::angkaKecil($n['tempat_per_seri'] ?? null, 0);
+
+        return [
+            'tempat_per_seri' => $tempat,
+            'urutan_lintasan' => $urutan !== '' && PembagiSeri::periksaUrutan($urutan, $tempat ?? PembagiSeri::LINTASAN_BAWAAN) === null ? PembagiSeri::rapikanUrutan($urutan) : null,
+        ];
+    }
+
+    /**
+     * Keadaan seri satu babak dari paket (F9-08); paket lama = belum dibagi.
+     *
+     * @param array<string, mixed> $b
+     *
+     * @return array{jumlah_seri: int|null, lolos_q: int|null, lolos_q_kecil: int|null, benih: int|null, seri_dikunci_pada: string|null}
+     */
+    private static function seriBabak(array $b): array
+    {
+        $kunci = is_string($b['seri_dikunci_pada'] ?? null) && preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/D', $b['seri_dikunci_pada']) === 1 ? $b['seri_dikunci_pada'] : null;
+        $benih = is_numeric($b['benih'] ?? null) && (int) $b['benih'] > 0 && (int) $b['benih'] <= 4_294_967_295 ? (int) $b['benih'] : null;
+
+        return [
+            'jumlah_seri'       => self::angkaKecil($b['jumlah_seri'] ?? null),
+            'lolos_q'           => self::angkaKecil($b['lolos_q'] ?? null, 0),
+            'lolos_q_kecil'     => self::angkaKecil($b['lolos_q_kecil'] ?? null, 0),
+            'benih'             => $benih,
+            'seri_dikunci_pada' => $kunci,
+        ];
+    }
+
+    /**
+     * Angka 1–99 (atau mulai `$terkecil`) dari paket, selain itu `null`.
+     */
+    private static function angkaKecil(mixed $nilai, int $terkecil = 1): ?int
+    {
+        return is_numeric($nilai) && (int) $nilai >= $terkecil && (int) $nilai <= 99 ? (int) $nilai : null;
+    }
+
+    /**
      * Hasil lomba per nomor (F8-04): jenis hasil, waktu terbit, dan babak
      * beserta hasilnya. Peserta individu dikenali dari NISN, regu dari ID
      * pendaftaran (tetap sama saat diimpor) dan nama regunya.
@@ -837,6 +886,9 @@ final class PaketPendaftaran
                 'keterangan'       => $h['keterangan'],
                 'peringkat'        => $h['peringkat'] === null ? null : (int) $h['peringkat'],
                 'peringkat_manual' => (int) $h['peringkat_manual'],
+                // Seri dan lintasan (F9-08).
+                'seri'     => $h['seri'] === null ? null : (int) $h['seri'],
+                'lintasan' => $h['lintasan'] === null ? null : (int) $h['lintasan'],
             ];
         }
 
@@ -847,6 +899,9 @@ final class PaketPendaftaran
                 'nama' => $b['nama'], 'final' => (int) $b['final'], 'urutan' => (int) $b['urutan'], 'dibuat_pada' => $b['dibuat_pada'],
                 // Jadwal pertandingan (F9-07).
                 'tanggal' => $b['tanggal'], 'jam_mulai' => $b['jam_mulai'], 'lokasi' => $b['lokasi'],
+                // Seri dan lintasan (F9-08).
+                'jumlah_seri' => $b['jumlah_seri'], 'lolos_q' => $b['lolos_q'], 'lolos_q_kecil' => $b['lolos_q_kecil'],
+                'benih' => $b['benih'], 'seri_dikunci_pada' => $b['seri_dikunci_pada'],
                 'hasil' => $hasil[(int) $b['id']] ?? [],
             ];
         }
@@ -855,15 +910,18 @@ final class PaketPendaftaran
 
         $kodeTabel = array_column($this->db->table('tabel_skor')->select('id, kode')->get()->getResultArray(), 'kode', 'id');
 
-        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
+        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
             $id = (int) $n['id'];
 
-            if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null || $n['tabel_skor_id'] !== null)) {
+            if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null || $n['tabel_skor_id'] !== null || $n['tempat_per_seri'] !== null || $n['urutan_lintasan'] !== null)) {
                 $daftar[] = $nomor[$id] + [
                     'jenis_hasil'   => $n['jenis_hasil'],
                     'tabel_skor'    => $kodeTabel[$n['tabel_skor_id']] ?? null,
                     'komponen_skor' => $n['komponen_skor'],
                     'terbit_pada'   => $n['hasil_terbit_pada'],
+                    // Aturan seri (F9-08).
+                    'tempat_per_seri' => $n['tempat_per_seri'] === null ? null : (int) $n['tempat_per_seri'],
+                    'urutan_lintasan' => $n['urutan_lintasan'],
                     'babak'         => $babak[$id] ?? [],
                 ];
             }
@@ -914,6 +972,9 @@ final class PaketPendaftaran
                 $ubah['komponen_skor'] = is_string($n['komponen_skor'] ?? null) && $n['komponen_skor'] !== '' ? mb_substr($n['komponen_skor'], 0, 255) : null;
             }
 
+            // Aturan seri (F9-08); paket lama tanpa aturan = bawaan.
+            $ubah += self::aturanSeriNomor($n);
+
             $this->db->table('nomor_lomba')->where('id', $idNomor)->update($ubah);
 
             foreach (is_array($n['babak'] ?? null) ? $n['babak'] : [] as $b) {
@@ -925,7 +986,7 @@ final class PaketPendaftaran
                     'nomor_lomba_id' => $idNomor, 'nama' => mb_substr($b['nama'], 0, 60), 'final' => (int) ($b['final'] ?? 0) === 1 ? 1 : 0,
                     'urutan' => (int) ($b['urutan'] ?? 0), 'dibuat_pada' => $b['dibuat_pada'] ?? null, 'diubah_pada' => $b['dibuat_pada'] ?? null,
                     // Jadwal pertandingan (F9-07) menyusul; paket lama tanpa jadwal = belum dijadwalkan.
-                ] + self::jadwalBabak($b));
+                ] + self::jadwalBabak($b) + self::seriBabak($b));
 
                 foreach (is_array($b['hasil'] ?? null) ? $b['hasil'] : [] as $h) {
                     $idAtlet = is_array($h) && is_string($h['nisn'] ?? null) ? ($atlet[$h['nisn']] ?? null) : null;
@@ -945,6 +1006,9 @@ final class PaketPendaftaran
                         'keterangan'       => Peringkat::keterangan($h['keterangan'] ?? null),
                         'peringkat'        => is_numeric($h['peringkat'] ?? null) ? (int) $h['peringkat'] : null,
                         'peringkat_manual' => (int) ($h['peringkat_manual'] ?? 0) === 1 ? 1 : 0,
+                        // Seri dan lintasan (F9-08).
+                        'seri'     => self::angkaKecil($h['seri'] ?? null),
+                        'lintasan' => self::angkaKecil($h['lintasan'] ?? null),
                     ]);
                 }
             }

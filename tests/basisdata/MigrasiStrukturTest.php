@@ -48,6 +48,9 @@ final class MigrasiStrukturTest extends UjiBasisData
             // F9-10: tabel skor untuk jenis hasil poin multi-lomba.
             'tabel_skor_id'    => ['int unsigned', true, null],
             'komponen_skor'    => ['varchar(255)', true, null],
+            // F9-08: aturan seri dan lintasan.
+            'tempat_per_seri'  => ['tinyint unsigned', true, null],
+            'urutan_lintasan'  => ['varchar(60)', true, null],
             'jumlah_inti'      => ['tinyint unsigned', true, null],
             'batas_anggota'    => ['tinyint unsigned', true, null],
             'regu_maksimal'    => ['tinyint unsigned', true, null],
@@ -216,6 +219,12 @@ final class MigrasiStrukturTest extends UjiBasisData
             'tanggal'        => ['date', true, null],
             'jam_mulai'      => ['time', true, null],
             'lokasi'         => ['varchar(100)', true, null],
+            // Seri dan lintasan (F9-08).
+            'jumlah_seri'       => ['tinyint unsigned', true, null],
+            'lolos_q'           => ['tinyint unsigned', true, null],
+            'lolos_q_kecil'     => ['tinyint unsigned', true, null],
+            'benih'             => ['int unsigned', true, null],
+            'seri_dikunci_pada' => ['datetime', true, null],
             'dibuat_pada'    => ['datetime', true, null],
             'diubah_pada'    => ['datetime', true, null],
         ],
@@ -225,6 +234,9 @@ final class MigrasiStrukturTest extends UjiBasisData
             'atlet_id'         => ['int unsigned', true, null],
             'pendaftaran_id'   => ['int unsigned', true, null],
             'regu'             => ['varchar(30)', true, null],
+            // F9-08: seri dan lintasan (atau urutan tampil).
+            'seri'             => ['tinyint unsigned', true, null],
+            'lintasan'         => ['tinyint unsigned', true, null],
             'prestasi'         => ['int unsigned', true, null],
             // F9-10: prestasi dan poin per komponen (poin multi-lomba).
             'rincian'          => ['text', true, null],

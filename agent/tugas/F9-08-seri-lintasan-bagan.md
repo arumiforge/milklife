@@ -21,7 +21,7 @@ Panitia mendapat daftar seri dan lintasan otomatis untuk pertemuan teknik 6 Dese
 
 ## Berkas dan uji
 
-Migrasi `seri_babak`/kolom lintasan di `hasil`, `app/Libraries/Hasil/PembagiSeri.php`, `Admin/SeriController`, views admin dan publik. Uji baru `HasilPembagiSeriTest` (unit), `SeriLintasanTest`; `HasilLombaTest`.
+Migrasi `TambahSeriLintasan` (kolom di `nomor_lomba`, `babak`, dan `hasil`; tanpa tabel baru), `app/Libraries/Hasil/PembagiSeri.php`, `Hasil/SeriLintasan`, `Hasil/UnduhanSeri`, `Admin/SeriController`, `SeriController` (publik `jadwal/<babak>`), views `admin/seri/` dan `seri/`. Uji baru `HasilPembagiSeriTest` (unit), `SeriLintasanTest`; `HasilLombaTest`.
 
 ## Selesai bila
 

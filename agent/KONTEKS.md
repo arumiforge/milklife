@@ -4,7 +4,7 @@
 
 Web pendaftaran **MilkLife Athletics Challenge Seri 2 – 2026** untuk sekolah se-Karesidenan Pati (Blora, Rembang, Pati, Kudus, Jepara). Acara berada di bawah Bakti Olahraga Djarum Foundation, berlangsung 9–12 Desember 2026 di Supersoccer Arena, Kudus.
 
-Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 juga hari lomba (daftar ulang lewat kode QR, cetak nomor atlet (BIB), daftar peserta per nomor), hasil lomba semua babak, dan klasemen juara umum sekolah per jenjang. Aturan teknis lomba di lapangan (urutan pelari, penjurian) tetap di luar cakupan.
+Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 juga hari lomba (daftar ulang lewat kode QR, cetak nomor atlet (BIB), daftar peserta per nomor), hasil lomba semua babak, dan klasemen juara umum sekolah per jenjang. Sejak K140 butir 8 urutan pelari juga dalam cakupan: web membagi atlet ke seri dan lintasan, aturan lolos Q/q, dan bagan alur babak (F9-08). Penjurian di lapangan tetap oleh juri.
 
 ## Pengguna
 

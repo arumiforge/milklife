@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Libraries\Hasil\JadwalPertandingan;
+use App\Libraries\Hasil\SeriLintasan;
 use App\Libraries\Hasil\UnduhanJadwal;
 use App\Libraries\IsiHalamanDepan;
 use CodeIgniter\Exceptions\PageNotFoundException;
@@ -42,12 +43,19 @@ class JadwalController extends BaseController
         $kini    = new DateTimeImmutable('now');
         $diminta = $this->request->getGet('hari');
         $hari    = JadwalPertandingan::pilihHari(array_keys($perHari), is_string($diminta) ? $diminta : null, $kini);
+        $babak   = $hari === null ? [] : $perHari[$hari];
+
+        // Tautan Daftar seri (F9-08): babak yang daftar serinya sudah dikunci,
+        // selama sakelar `HalamanDepan.tampil_seri` menyala.
+        if (SeriLintasan::tampil()) {
+            $babak = array_map(static fn (array $b): array => $b + ['alamat_seri' => $b['seri_dikunci'] ? site_url('jadwal/' . $b['id']) : null], $babak);
+        }
 
         return view('jadwal/index', [
             'namaAcara' => (new IsiHalamanDepan())->acara()['nama'],
             'hari'      => array_keys($perHari),
             'dipilih'   => $hari,
-            'babak'     => $hari === null ? [] : $perHari[$hari],
+            'babak'     => $babak,
             'kini'      => $kini,
         ]);
     }

@@ -198,7 +198,10 @@ final class HasilLomba
      * `rincian`: prestasi dan poin per komponen untuk nomor `multi` (kosong
      * untuk jenis hasil lain); `rincian_isian` kode komponen => teks prestasi.
      *
-     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, peringkat: int|null, manual: bool}>
+     * `seri` dan `lintasan` (F9-08): seri dan lintasan atau urutan tampil;
+     * `null` bila babak belum dibagi.
+     *
+     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, peringkat: int|null, manual: bool, seri: int|null, lintasan: int|null}>
      */
     public function hasilBabak(int $babakId, array $nomor): array
     {
@@ -257,6 +260,9 @@ final class HasilLomba
                 'keterangan'     => Peringkat::keterangan($b['keterangan']),
                 'peringkat'      => $b['peringkat'] === null ? null : (int) $b['peringkat'],
                 'manual'         => (int) $b['peringkat_manual'] === 1,
+                // Seri dan lintasan (F9-08).
+                'seri'           => isset($b['seri']) ? (int) $b['seri'] : null,
+                'lintasan'       => isset($b['lintasan']) ? (int) $b['lintasan'] : null,
             ];
         }
 
@@ -534,6 +540,10 @@ final class HasilLomba
 
             $this->hitungUlang($babakId, $jenis);
         });
+
+        // Seri dan lintasan (F9-08): babak berikut terisi dari Q/q bila babak
+        // ini sudah dibagi ke seri dan hasilnya lengkap.
+        (new SeriLintasan($this->db))->setelahHasilTersimpan($babakId);
 
         return [];
     }
