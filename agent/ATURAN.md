@@ -101,3 +101,4 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Poin multi-lomba: prestasi di luar tabel = 0 poin dengan peringatan; komponen kosong = 0 poin, atlet tetap masuk peringkat; server lama memindah Trilomba lewat `tabel-skor:impor --trilomba` (K143).
 - Halaman depan: sakelar Hasil di atas untuk hari lomba (bawaan mati); foto carousel unggahan 1600 px; menu Kategori dipertahankan (K143).
 - Peserta publik: nama, sekolah, nomor atlet, kelompok umur, putra/putri, nomor lomba; hanya Lunas; dibatasi 60 permintaan per menit per IP (K140, K144).
+- Papan videotron `/layar`: hanya hasil nomor terbit dan klasemen dari nomor terbit; sakelar tampil bawaan mati; tata letak cair untuk ukuran layar apa pun (K141).
