@@ -62,13 +62,17 @@ final class MasukAdminTest extends UjiBasisData
 
     public function testHalamanMasukMemakaiKartuTataLetakPolos(): void
     {
-        $html = $this->get('admin/masuk')->getBody();
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $this->get('admin/masuk')->getBody());
+        libxml_clear_errors();
+        $xpath = new DOMXPath($dom);
 
-        // Kartu disediakan tata letak `polos`; halaman masuk tidak membawa
-        // kartu atau kisi sendiri (kartu ganda membuatnya sempit di layar lebar).
-        $this->assertSame(1, preg_match_all('/class="(?:[^"]*\s)?card(?:\s[^"]*)?"/', $html));
-        $this->assertStringContainsString('polos-kartu', $html);
-        $this->assertStringNotContainsString('class="container', $html);
+        // Kartu disediakan tata letak `polos_tw`; formulir masuk ada di dalamnya,
+        // dan halaman tidak membawa kartu sendiri.
+        $this->assertSame(1, $xpath->query('//*[@data-polos-kartu]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-polos-kartu]//form[@method="post"]//input[@name="sandi"][@type="password"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-polos-kartu]//h1')->length);
     }
 
     public function testMasukDenganTokenDariHalaman(): void
@@ -320,7 +324,7 @@ final class MasukAdminTest extends UjiBasisData
         $tiruan = $this->nyalakanTurnstile(TiruanSiteverify::RAHASIA_LOLOS, 'masuk_admin');
 
         $halaman = $this->get('admin/masuk');
-        $halaman->assertSee('class="cf-turnstile mb-3" data-sitekey="' . TiruanSiteverify::SITUS_LOLOS . '" data-action="masuk_admin"');
+        $halaman->assertSee('class="cf-turnstile" data-sitekey="' . TiruanSiteverify::SITUS_LOLOS . '" data-action="masuk_admin"');
         $halaman->assertSee('<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>');
 
         // Tanpa token: 403, sandi tidak diperiksa, tidak masuk.

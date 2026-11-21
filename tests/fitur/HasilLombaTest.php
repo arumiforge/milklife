@@ -149,7 +149,7 @@ final class HasilLombaTest extends UjiBasisData
 
         $halaman = $this->bukaSebagaiAdmin('admin/hasil/babak/' . $babak, ['galat_hasil' => [$id[1] => 'Prestasi "9detik" belum benar. Tulis detik, misalnya 12,34.'], 'isian_hasil' => [$id[1] => ['prestasi' => '9 detik']]]);
         $halaman->assertSee('misalnya 12,34');
-        $this->assertSame(1, $this->xpathDari($halaman)->query('//input[@name="hasil[' . $id[1] . '][prestasi]" and contains(@class, "is-invalid")]')->length);
+        $this->assertSame(1, $this->xpathDari($halaman)->query('//input[@name="hasil[' . $id[1] . '][prestasi]" and @aria-invalid="true"]')->length);
     }
 
     public function testSatuFinalPerNomorDanNamaBabakUnik(): void

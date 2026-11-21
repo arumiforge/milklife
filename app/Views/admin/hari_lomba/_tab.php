@@ -1,33 +1,33 @@
 <?php
 /**
- * Tab halaman hari lomba (F8-03): Daftar ulang, Cetak BIB, Daftar peserta,
- * Jadwal pertandingan (F9-07), Seri dan lintasan (F9-08), dan Lembar juri (F9-09). Satu butir menu admin "Hari lomba" membuka semuanya. Di ponsel label
- * "Daftar peserta" dan "Jadwal pertandingan" dipendekkan supaya muat.
+ * Tab halaman hari lomba (F8-03), tata letak `admin_tw`: Daftar ulang, Cetak
+ * BIB, Daftar peserta, Jadwal pertandingan (F9-07), Seri dan lintasan (F9-08),
+ * dan Lembar juri (F9-09). Di ponsel deretannya bisa digeser mendatar dan
+ * label panjang dipendekkan supaya muat.
  *
  * @var string $aktif alamat tab yang sedang dibuka
  */
 $tab = [
-    'admin/daftar-ulang'      => ['Daftar ulang', 'qr-code-scan', null],
-    'admin/nomor-atlet/cetak' => ['Cetak BIB', 'printer', null],
-    'admin/daftar-peserta'    => ['Daftar peserta', 'list-ol', 'Peserta'],
-    // Jadwal pertandingan (F9-07), halaman bertampilan baru.
-    'admin/jadwal-pertandingan' => ['Jadwal pertandingan', 'calendar-week', 'Jadwal'],
-    // Seri dan lintasan (F9-08), halaman bertampilan baru.
-    'admin/seri' => ['Seri dan lintasan', 'list-ol', 'Seri'],
-    // Lembar juri (F9-09), halaman bertampilan baru.
-    'admin/juri' => ['Lembar juri', 'phone', 'Juri'],
+    'admin/daftar-ulang'        => ['Daftar ulang', 'scan-qr-code', null],
+    'admin/nomor-atlet/cetak'   => ['Cetak BIB', 'printer', null],
+    'admin/daftar-peserta'      => ['Daftar peserta', 'list-ordered', 'Peserta'],
+    'admin/jadwal-pertandingan' => ['Jadwal pertandingan', 'calendar-days', 'Jadwal'],
+    'admin/seri'                => ['Seri dan lintasan', 'list-ordered', 'Seri'],
+    'admin/juri'                => ['Lembar juri', 'smartphone', 'Juri'],
 ];
+// ikon-sprite: scan-qr-code printer list-ordered calendar-days smartphone
 ?>
-<nav class="mb-4" aria-label="Halaman hari lomba">
-    <ul class="nav nav-pills flex-nowrap overflow-auto gap-1">
+<nav class="min-w-0" aria-label="Halaman hari lomba" data-tab-hari-lomba>
+    <ul class="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
         <?php foreach ($tab as $alamat => [$label, $ikon, $pendek]) : ?>
-            <li class="nav-item">
-                <a class="nav-link text-nowrap px-2 px-sm-3<?= $alamat === $aktif ? ' active' : '' ?>" href="<?= site_url($alamat) ?>"<?= $alamat === $aktif ? ' aria-current="page"' : '' ?>>
-                    <i class="bi bi-<?= $ikon ?>" aria-hidden="true"></i>
+            <?php $aktifTab = $alamat === $aktif; ?>
+            <li class="shrink-0">
+                <a class="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-lg px-3 text-sm font-semibold <?= $aktifTab ? 'bg-primary-700 text-white' : 'text-gray-700 hover:bg-gray-100 hover:text-primary-700' ?>" href="<?= site_url($alamat) ?>"<?= $aktifTab ? ' aria-current="page"' : '' ?>>
+                    <?= ikon($ikon, 'size-4') ?>
                     <?php if ($pendek === null) : ?>
                         <?= esc($label) ?>
                     <?php else : ?>
-                        <span class="d-none d-sm-inline"><?= esc($label) ?></span><span class="d-sm-none"><?= esc($pendek) ?></span>
+                        <span class="hidden sm:inline"><?= esc($label) ?></span><span class="sm:hidden"><?= esc($pendek) ?></span>
                     <?php endif ?>
                 </a>
             </li>

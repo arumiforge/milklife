@@ -115,8 +115,8 @@ final class BerandaPengaturanTest extends UjiHalaman
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/pengaturan'));
 
         foreach ($xpath->query('//main//a[contains(@class, "kartu-pengaturan")]') as $tautan) {
-            $this->assertSame(1, $xpath->query('.//*[contains(@class, "kartu-pengaturan-ikon")]/i[@aria-hidden="true"]', $tautan)->length);
-            $this->assertNotSame('', $this->teks($xpath->query('.//*[contains(@class, "text-body-secondary")]', $tautan)->item(0)));
+            $this->assertSame(1, $xpath->query('.//*[contains(@class, "kartu-pengaturan-ikon")]/*[local-name()="svg"][@aria-hidden="true"]', $tautan)->length);
+            $this->assertNotSame('', $this->teks($xpath->query('.//*[contains(@class, "kartu-pengaturan-keterangan")]', $tautan)->item(0)));
         }
     }
 

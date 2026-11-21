@@ -120,7 +120,7 @@ final class KlasemenSekolahTest extends UjiBasisData
         $salah = $this->kirimSebagaiAdmin('admin/pengaturan/hasil', ['metode' => 'poin', 'poin' => ['7', '5', '9', '3', '2', '1', '0', '0']]);
         $salah->assertOK();
         $salah->assertSee('Poin peringkat 3 tidak boleh lebih besar dari poin peringkat 2.');
-        $this->assertMatchesRegularExpression('/is-invalid" id="poin_3" name="poin\[\]" value="9"/', $salah->getBody());
+        $this->assertMatchesRegularExpression('/id="poin_3" name="poin\[\]" value="9" aria-invalid="true"/', $salah->getBody());
         $this->assertMatchesRegularExpression('/id="metode-poin"[^>]*checked/', $salah->getBody());
         $this->assertSame('medali', setting('Klasemen.metode'));
 

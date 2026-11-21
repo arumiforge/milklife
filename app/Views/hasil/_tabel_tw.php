@@ -1,14 +1,15 @@
 <?php
 /**
- * Tabel hasil satu babak (hanya baca) untuk halaman publik bertampilan baru
- * (F9-03). Panel admin masih memakai `hasil/_tabel.php` (Bootstrap) sampai
- * dipindah (F9-16). Juara I–III babak Final diberi latar kuning dan
+ * Tabel hasil satu babak (hanya baca) untuk halaman publik (F9-03) dan
+ * halaman nomor admin (F9-16, `admin` = tanda "diubah admin"). Juara I–III babak Final diberi latar kuning dan
  * `data-juara`. Di layar sempit kolom sekolah pindah ke bawah nama.
  *
  * @var array<string, mixed> $nomor `HasilLomba::nomor()`
  * @var array<string, mixed> $babak satu butir `HasilLomba::semuaBabak()`
+ * @var bool|null            $admin tampilkan tanda "diubah admin" pada peringkat yang dikoreksi
  */
 $beregu = $nomor['jenis'] === 'beregu';
+$admin ??= false;
 ?>
 <div class="relative overflow-x-auto rounded-xl border border-gray-200">
     <table class="w-full text-left text-sm text-gray-700">
@@ -30,6 +31,7 @@ $beregu = $nomor['jenis'] === 'beregu';
                     <?php if (! $beregu) : ?><td class="hidden whitespace-nowrap px-2 py-3 sm:px-3 font-semibold sm:table-cell"><?= esc((string) $h['nomor_dada']) ?></td><?php endif ?>
                     <td class="px-2 py-3 sm:px-3">
                         <span class="font-semibold text-gray-900"><?= esc($h['nama']) ?></span>
+                        <?php if ($admin && ! empty($h['manual'])) : ?><?= komponen('lencana', ['label' => 'diubah admin', 'warna' => 'oranye']) ?><?php endif ?>
                         <?php if (! $beregu) : ?><span class="block text-gray-500 md:hidden"><span class="sm:hidden">No. <?= esc((string) $h['nomor_dada']) ?> · </span><?= esc($h['sekolah']) ?></span><?php endif ?>
                         <?php if ($beregu && $h['anggota'] !== []) : ?><span class="block text-gray-500"><?= esc(implode(', ', $h['anggota'])) ?></span><?php endif ?>
                     </td>

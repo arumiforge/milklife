@@ -103,7 +103,7 @@ class BerandaPengaturanController extends BaseController
      *
      * - `kunci`: nama pendek yang tetap, untuk dicocokkan (F2-09, uji).
      * - `label`: judul kartu dan butir navigasi.
-     * - `ikon`: nama ikon Bootstrap Icons tanpa awalan `bi-`.
+     * - `ikon`: nama ikon Lucide (`ikon()`, Tahap 9).
      * - `alamat`: jalur untuk `site_url()`.
      * - `keterangan`: satu kalimat pendek tentang isinya.
      * - `kelompok`: judul kelompok kartu di halaman daftar.
@@ -119,21 +119,21 @@ class BerandaPengaturanController extends BaseController
         $sendiri = 'Akun Anda';
 
         $daftar = [
-            ['acara', 'Data Acara', 'calendar-event', 'admin/pengaturan/acara', 'Nama, seri, tahun, tempat, dan tanggal acara.', $wajib],
+            ['acara', 'Data Acara', 'calendar-days', 'admin/pengaturan/acara', 'Nama, seri, tahun, tempat, dan tanggal acara.', $wajib],
             ['pendaftaran', 'Pendaftaran', 'door-open', 'admin/pengaturan/pendaftaran', 'Jadwal buka dan tutup, buka manual, tampilan usia, dan batas-batas pendaftaran.', $wajib],
-            ['kelompok-umur', 'Kelompok Umur', 'people', 'admin/pengaturan/kelompok-umur', 'Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor atlet (BIB).', $wajib],
+            ['kelompok-umur', 'Kelompok Umur', 'users', 'admin/pengaturan/kelompok-umur', 'Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor atlet (BIB).', $wajib],
             ['nomor-lomba', 'Nomor Lomba', 'trophy', 'admin/pengaturan/nomor-lomba', 'Nomor individu dan beregu tiap kelompok umur, beserta biaya beregu.', $wajib],
-            ['pembayaran', 'Pembayaran', 'bank', 'admin/pengaturan/pembayaran', 'Rekening, nomor WA konfirmasi, dan isi pesan pembayaran.', $wajib],
-            ['halaman-depan', 'Halaman Depan', 'window', 'admin/pengaturan/halaman-depan', 'Gambar kepala, logo, judul, teks, dan pesan WA.', $depan],
+            ['pembayaran', 'Pembayaran', 'landmark', 'admin/pengaturan/pembayaran', 'Rekening, nomor WA konfirmasi, dan isi pesan pembayaran.', $wajib],
+            ['halaman-depan', 'Halaman Depan', 'app-window', 'admin/pengaturan/halaman-depan', 'Gambar kepala, logo, judul, teks, dan pesan WA.', $depan],
             ['jadwal', 'Agenda', 'clock', 'admin/pengaturan/jadwal', 'Sosialisasi, pertemuan teknik (technical meeting), dan agenda lain.', $depan],
             ['unduhan', 'Unduhan', 'download', 'admin/pengaturan/unduhan', 'Flyer, juknis, dan berkas lain untuk diunduh sekolah.', $depan],
-            ['kontak', 'Kontak', 'telephone', 'admin/pengaturan/kontak', 'Narahubung dan media sosial.', $depan],
-            ['bantuan', 'Bantuan', 'question-circle', 'admin/pengaturan/bantuan', 'Tanya-jawab di halaman Bantuan dan di formulir pendaftaran.', $depan],
+            ['kontak', 'Kontak', 'phone', 'admin/pengaturan/kontak', 'Narahubung dan media sosial.', $depan],
+            ['bantuan', 'Bantuan', 'circle-help', 'admin/pengaturan/bantuan', 'Tanya-jawab di halaman Bantuan dan di formulir pendaftaran.', $depan],
             ['galeri', 'Galeri', 'images', 'admin/pengaturan/galeri', 'Album foto acara yang membuka Instagram atau Google Drive panitia.', $depan],
             ['tabel-skor', 'Tabel Skor', 'table', 'admin/pengaturan/tabel-skor', 'Tabel prestasi ke poin untuk Trilomba dan nomor multi-lomba lain.', 'Hasil lomba'],
             ['hasil', 'Hasil', 'award', 'admin/pengaturan/hasil', 'Metode klasemen juara umum: medali atau poin per peringkat.', 'Hasil lomba'],
-            ['videotron', 'Videotron', 'display', 'admin/pengaturan/videotron', 'Papan hasil di videotron arena: tampil atau tidak, isi, dan lama tiap tampilan.', 'Hasil lomba'],
-            ['akun', 'Akun', 'person-gear', 'admin/akun', 'Ganti nama, nama pengguna, dan kata sandi Anda.', $sendiri],
+            ['videotron', 'Videotron', 'monitor', 'admin/pengaturan/videotron', 'Papan hasil di videotron arena: tampil atau tidak, isi, dan lama tiap tampilan.', 'Hasil lomba'],
+            ['akun', 'Akun', 'user-cog', 'admin/akun', 'Ganti nama, nama pengguna, dan kata sandi Anda.', $sendiri],
         ];
 
         return array_map(static fn (array $butir): array => [

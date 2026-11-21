@@ -1,8 +1,8 @@
 <?php
 /**
  * Daftar nomor lomba, dikelompokkan per kelompok umur, dengan saringan
- * kelompok umur dan "belum lengkap saja". Data dari
- * `NomorLombaController::index()`.
+ * kelompok umur dan "belum lengkap saja", tata letak Tailwind `admin_tw`.
+ * Data dari `NomorLombaController::index()`.
  *
  * Di ponsel, kolom jenis, kategori, tim, dan biaya diringkas di bawah nama
  * nomor supaya tabel tidak perlu digulir mendatar; di layar ≥ md tampil
@@ -47,139 +47,119 @@ $ringkasTim = static function (array $nomor): string {
     return implode(' · ', $bagian);
 };
 ?>
-<?= $this->extend('tata_letak/admin') ?>
+<?= $this->extend('tata_letak/admin_tw') ?>
 
 <?= $this->section('judul') ?>Nomor Lomba<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Nomor Lomba<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="container-fluid px-3 px-lg-4">
+<div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <?php if ($kelompokUmur === []) : ?>
-        <section class="card kartu-kosong" aria-labelledby="judul-kosong">
-            <div class="card-body text-center px-3 py-5">
-                <span class="ikon-bulat mb-3"><i class="bi bi-people" aria-hidden="true"></i></span>
-                <h2 id="judul-kosong" class="h4">Belum ada kelompok umur</h2>
-                <p class="text-body-secondary mx-auto">
-                    Setiap nomor lomba milik satu kelompok umur. Buat kelompok umur dulu, lalu kembali ke sini untuk menambah nomor lombanya.
-                </p>
-                <a class="btn btn-primary" href="<?= site_url('admin/pengaturan/kelompok-umur') ?>">
-                    <i class="bi bi-people" aria-hidden="true"></i> Buka Kelompok Umur
-                </a>
-            </div>
-        </section>
+        <?= komponen('kosong', [
+            'ikon'  => 'users',
+            'judul' => 'Belum ada kelompok umur',
+            'teks'  => 'Setiap nomor lomba milik satu kelompok umur. Buat kelompok umur dulu, lalu kembali ke sini untuk menambah nomor lombanya.',
+            'aksi'  => komponen('tombol', ['label' => 'Buka Kelompok Umur', 'href' => site_url('admin/pengaturan/kelompok-umur'), 'ikon' => 'users']),
+        ]) ?>
     <?php elseif ($jumlahSemua === 0) : ?>
-        <section class="card kartu-kosong" aria-labelledby="judul-kosong">
-            <div class="card-body text-center px-3 py-5">
-                <span class="ikon-bulat mb-3"><i class="bi bi-trophy" aria-hidden="true"></i></span>
-                <h2 id="judul-kosong" class="h4">Belum ada nomor lomba</h2>
-                <p class="text-body-secondary mx-auto">
-                    Tambahkan nomor individu dan beregu untuk tiap kelompok umur. Sekolah hanya bisa memilih nomor yang ada di sini.
-                </p>
-                <a class="btn btn-primary" href="<?= site_url($alamat . '/tambah') ?>">
-                    <i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah nomor lomba
-                </a>
-            </div>
-        </section>
+        <?= komponen('kosong', [
+            'ikon'  => 'trophy',
+            'judul' => 'Belum ada nomor lomba',
+            'teks'  => 'Tambahkan nomor individu dan beregu untuk tiap kelompok umur. Sekolah hanya bisa memilih nomor yang ada di sini.',
+            'aksi'  => komponen('tombol', ['label' => 'Tambah nomor lomba', 'href' => site_url($alamat . '/tambah'), 'ikon' => 'plus']),
+        ]) ?>
     <?php else : ?>
-        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
-            <p class="teks-info mb-0 flex-grow-1">
+        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <p class="max-w-3xl text-gray-700">
                 <?= $jumlahSemua ?> nomor lomba di <?= count($kelompokUmur) ?> kelompok umur.
                 Nomor yang tidak aktif tidak muncul di pendaftaran.
             </p>
-            <a class="btn btn-primary" href="<?= site_url($alamat . '/tambah' . ($saringKu !== 0 ? '?kelompok-umur=' . $saringKu : '')) ?>">
-                <i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah nomor lomba
-            </a>
+            <?= komponen('tombol', ['label' => 'Tambah nomor lomba', 'href' => site_url($alamat . '/tambah' . ($saringKu !== 0 ? '?kelompok-umur=' . $saringKu : '')), 'ikon' => 'plus', 'kelas' => 'shrink-0 self-start']) ?>
         </div>
 
         <?php if ($jumlahBelum > 0) : ?>
-            <div class="alert alert-warning d-flex align-items-start gap-2" role="status" id="ringkasan-belum-lengkap">
-                <i class="bi bi-exclamation-circle-fill flex-shrink-0" aria-hidden="true"></i>
-                <div>
+            <div class="flex items-start gap-3 rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900" role="status" id="ringkasan-belum-lengkap">
+                <?= ikon('circle-alert', 'mt-0.5 shrink-0') ?>
+                <div class="min-w-0">
                     <strong><?= $jumlahBelum ?> nomor beregu belum lengkap.</strong>
                     Isi jumlah inti, batas anggota, dan biaya beregu (untuk nomor mixed juga jumlah putra dan putri minimal) supaya pendaftaran bisa dibuka.
                     <?php if (! $saringBelumLengkap) : ?>
-                        <a class="alert-link" href="<?= site_url($alamat) ?>?belum-lengkap=1">Tampilkan yang belum lengkap saja</a>
+                        <a class="font-semibold underline hover:no-underline" href="<?= site_url($alamat) ?>?belum-lengkap=1">Tampilkan yang belum lengkap saja</a>
                     <?php endif ?>
                 </div>
             </div>
         <?php endif ?>
 
-        <form class="card mb-4" method="get" action="<?= site_url($alamat) ?>" id="saringan" role="search" aria-label="Saring nomor lomba">
-            <div class="card-body row g-3 align-items-end mx-0">
-                <div class="col-12 col-md-6 col-xl-4 ps-0">
-                    <label for="saring-kelompok-umur" class="form-label">Kelompok umur</label>
-                    <select class="form-select" id="saring-kelompok-umur" name="kelompok-umur">
-                        <option value="">Semua kelompok umur (<?= $jumlahSemua ?> nomor)</option>
-                        <?php foreach ($kelompokUmur as $id => $ku) : ?>
-                            <option value="<?= $id ?>"<?= $saringKu === $id ? ' selected' : '' ?>>
-                                <?= esc($ku['nama']) ?> (<?= $jumlahPerKu[$id] ?? 0 ?> nomor)<?= $ku['aktif'] ? '' : ' – tidak aktif' ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-auto ps-0">
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="saring-belum-lengkap" name="belum-lengkap" value="1"<?= $saringBelumLengkap ? ' checked' : '' ?>>
-                        <label class="form-check-label" for="saring-belum-lengkap">Belum lengkap saja (<?= $jumlahBelum ?>)</label>
-                    </div>
-                </div>
-                <div class="col-auto ps-0 d-flex gap-2">
-                    <button type="submit" class="btn btn-outline-primary">Tampilkan</button>
-                    <?php if ($saringKu !== 0 || $saringBelumLengkap) : ?>
-                        <a class="btn btn-link" href="<?= site_url($alamat) ?>">Hapus saringan</a>
-                    <?php endif ?>
-                </div>
+        <form class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6 md:flex-row md:flex-wrap md:items-end" method="get" action="<?= site_url($alamat) ?>" id="saringan" role="search" aria-label="Saring nomor lomba">
+            <div class="w-full md:w-80">
+                <label for="saring-kelompok-umur" class="mb-1.5 block text-sm font-semibold text-gray-900">Kelompok umur</label>
+                <select class="block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 sm:text-sm" id="saring-kelompok-umur" name="kelompok-umur">
+                    <option value="">Semua kelompok umur (<?= $jumlahSemua ?> nomor)</option>
+                    <?php foreach ($kelompokUmur as $id => $ku) : ?>
+                        <option value="<?= $id ?>"<?= $saringKu === $id ? ' selected' : '' ?>>
+                            <?= esc($ku['nama']) ?> (<?= $jumlahPerKu[$id] ?? 0 ?> nomor)<?= $ku['aktif'] ? '' : ' – tidak aktif' ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <label class="inline-flex min-h-11 items-center gap-2 text-sm text-gray-900" for="saring-belum-lengkap">
+                <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" id="saring-belum-lengkap" name="belum-lengkap" value="1"<?= $saringBelumLengkap ? ' checked' : '' ?>>
+                Belum lengkap saja (<?= $jumlahBelum ?>)
+            </label>
+            <div class="flex flex-wrap gap-2">
+                <?= komponen('tombol', ['label' => 'Tampilkan', 'tipe' => 'submit', 'varian' => 'kedua']) ?>
+                <?php if ($saringKu !== 0 || $saringBelumLengkap) : ?>
+                    <?= komponen('tombol', ['label' => 'Hapus saringan', 'href' => site_url($alamat), 'varian' => 'hantu']) ?>
+                <?php endif ?>
             </div>
         </form>
 
         <?php if ($jumlahTampil === 0 && $saringBelumLengkap) : ?>
-            <section class="card kartu-kosong" aria-labelledby="judul-kosong">
-                <div class="card-body text-center px-3 py-5">
-                    <span class="ikon-bulat mb-3"><i class="bi bi-check2-circle" aria-hidden="true"></i></span>
-                    <h2 id="judul-kosong" class="h4">Semua nomor sudah lengkap</h2>
-                    <p class="text-body-secondary mx-auto">Tidak ada nomor beregu yang belum lengkap<?= $saringKu !== 0 ? ' di ' . esc($kelompokUmur[$saringKu]['nama']) : '' ?>.</p>
-                    <a class="btn btn-outline-primary" href="<?= site_url($alamat) ?>">Tampilkan semua nomor</a>
-                </div>
-            </section>
+            <?= komponen('kosong', [
+                'ikon'  => 'circle-check',
+                'judul' => 'Semua nomor sudah lengkap',
+                'teks'  => 'Tidak ada nomor beregu yang belum lengkap' . ($saringKu !== 0 ? ' di ' . $kelompokUmur[$saringKu]['nama'] : '') . '.',
+                'aksi'  => komponen('tombol', ['label' => 'Tampilkan semua nomor', 'href' => site_url($alamat), 'varian' => 'kedua']),
+            ]) ?>
         <?php endif ?>
 
         <?php foreach ($kelompok as $kuId => $ku) : ?>
-            <section class="card mb-4 kelompok-nomor-lomba" id="ku-<?= $kuId ?>" aria-labelledby="judul-ku-<?= $kuId ?>">
-                <div class="card-header bg-transparent d-flex flex-wrap align-items-center justify-content-between gap-2 py-3">
-                    <h2 id="judul-ku-<?= $kuId ?>" class="h5 mb-0">
+            <section class="kelompok-nomor-lomba rounded-2xl border border-gray-200 bg-white shadow-lembut" id="ku-<?= $kuId ?>" aria-labelledby="judul-ku-<?= $kuId ?>">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-5 py-4 sm:px-6">
+                    <h2 id="judul-ku-<?= $kuId ?>" class="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-900">
                         <?= esc($ku['nama']) ?>
-                        <span class="badge rounded-pill text-bg-light border fw-semibold align-middle"><?= $jumlahPerKu[$kuId] ?? 0 ?> nomor</span>
+                        <?= komponen('lencana', ['label' => ($jumlahPerKu[$kuId] ?? 0) . ' nomor', 'warna' => 'abu']) ?>
                         <?php if (! $ku['aktif']) : ?>
-                            <span class="badge rounded-pill text-bg-secondary align-middle">Kelompok umur tidak aktif</span>
+                            <?= komponen('lencana', ['label' => 'Kelompok umur tidak aktif', 'warna' => 'kuning']) ?>
                         <?php endif ?>
                     </h2>
-                    <a class="btn btn-sm btn-outline-primary" href="<?= site_url($alamat . '/tambah?kelompok-umur=' . $kuId) ?>">
-                        <i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah nomor<span class="visually-hidden"> di <?= esc($ku['nama']) ?></span>
+                    <a class="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 hover:text-primary-700 focus:outline-none focus:ring-4 focus:ring-gray-100" href="<?= site_url($alamat . '/tambah?kelompok-umur=' . $kuId) ?>">
+                        <?= ikon('plus', 'size-4') ?> Tambah nomor<span class="sr-only"> di <?= esc($ku['nama']) ?></span>
                     </a>
                 </div>
 
                 <?php if ($ku['nomor'] === []) : ?>
-                    <div class="card-body text-body-secondary">
+                    <p class="px-5 py-4 text-gray-600 sm:px-6">
                         Belum ada nomor lomba di kelompok umur ini.
-                    </div>
+                    </p>
                 <?php else : ?>
-                    <div class="tabel-gulir">
-                        <table class="table table-hover align-middle mb-0">
-                            <caption class="visually-hidden">Nomor lomba <?= esc($ku['nama']) ?></caption>
-                            <thead>
+                    <div class="relative overflow-x-auto rounded-b-2xl">
+                        <table class="w-full text-left text-sm text-gray-700">
+                            <caption class="sr-only">Nomor lomba <?= esc($ku['nama']) ?></caption>
+                            <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                                 <tr>
-                                    <th scope="col" class="text-end">No</th>
-                                    <th scope="col" class="d-none d-md-table-cell text-end">Urutan</th>
-                                    <th scope="col">Nomor</th>
-                                    <th scope="col" class="d-none d-md-table-cell">Jenis</th>
-                                    <th scope="col" class="d-none d-md-table-cell">Kategori</th>
-                                    <th scope="col" class="d-none d-md-table-cell">Tim</th>
-                                    <th scope="col" class="d-none d-md-table-cell text-end">Biaya beregu</th>
-                                    <th scope="col">Aktif</th>
-                                    <th scope="col" class="text-end"><span class="visually-hidden">Tindakan</span></th>
+                                    <th scope="col" class="px-4 py-3 text-end">No</th>
+                                    <th scope="col" class="hidden px-4 py-3 text-end md:table-cell">Urutan</th>
+                                    <th scope="col" class="px-4 py-3">Nomor</th>
+                                    <th scope="col" class="hidden px-4 py-3 md:table-cell">Jenis</th>
+                                    <th scope="col" class="hidden px-4 py-3 md:table-cell">Kategori</th>
+                                    <th scope="col" class="hidden px-4 py-3 md:table-cell">Tim</th>
+                                    <th scope="col" class="hidden px-4 py-3 text-end md:table-cell">Biaya beregu</th>
+                                    <th scope="col" class="px-4 py-3">Aktif</th>
+                                    <th scope="col" class="px-4 py-3 text-end"><span class="sr-only">Tindakan</span></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -192,47 +172,47 @@ $ringkasTim = static function (array $nomor): string {
                                     $biaya       = $nomor['jenis'] === 'beregu' ? rupiah($nomor['biaya_beregu']) : '';
                                     $belum       = $nomor['kekurangan'] !== [];
                                     ?>
-                                    <tr id="nomor-<?= $id ?>" data-id="<?= $id ?>"<?= $belum ? ' data-belum-lengkap="1"' : '' ?>>
-                                        <td class="text-end text-body-secondary"><?= ++$no ?></td>
-                                        <td class="d-none d-md-table-cell text-end text-body-secondary"><?= (int) $nomor['urutan'] ?></td>
-                                        <td>
-                                            <span class="fw-semibold"><?= esc($nomor['nama']) ?></span>
-                                            <span class="d-md-none text-body-secondary"><?= esc($nomor['kategori']) ?></span>
-                                            <span class="d-block d-md-none small text-body-secondary">
+                                    <tr id="nomor-<?= $id ?>" data-id="<?= $id ?>" class="border-t border-gray-100 hover:bg-gray-50"<?= $belum ? ' data-belum-lengkap="1"' : '' ?>>
+                                        <td class="px-4 py-3 text-end text-gray-500"><?= ++$no ?></td>
+                                        <td class="hidden px-4 py-3 text-end text-gray-500 md:table-cell"><?= (int) $nomor['urutan'] ?></td>
+                                        <td class="min-w-48 px-4 py-3">
+                                            <span class="font-semibold text-gray-900"><?= esc($nomor['nama']) ?></span>
+                                            <span class="text-gray-600 md:hidden"><?= esc($nomor['kategori']) ?></span>
+                                            <span class="block text-sm text-gray-600 md:hidden">
                                                 <?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?><?= $tim !== '' ? ' · ' . esc($tim) : '' ?><?= $biaya !== '' ? ' · ' . $biaya . ' per regu' : '' ?>
                                             </span>
                                             <?php if ($belum) : ?>
-                                                <span class="d-block small text-warning-emphasis mt-1">
-                                                    <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
-                                                    Belum lengkap: <?= esc(implode(', ', $nomor['kekurangan'])) ?> belum diisi.
+                                                <span class="mt-1 flex items-start gap-1 text-sm font-medium text-yellow-800">
+                                                    <?= ikon('circle-alert', 'mt-0.5 size-4 shrink-0') ?>
+                                                    <span>Belum lengkap: <?= esc(implode(', ', $nomor['kekurangan'])) ?> belum diisi.</span>
                                                 </span>
                                             <?php endif ?>
                                         </td>
-                                        <td class="d-none d-md-table-cell"><?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?></td>
-                                        <td class="d-none d-md-table-cell"><?= esc(NomorLombaModel::KATEGORI[$nomor['kategori']] ?? $nomor['kategori']) ?></td>
-                                        <td class="d-none d-md-table-cell"><?= $tim !== '' ? esc($tim) : '<span class="text-body-secondary">–</span>' ?></td>
-                                        <td class="d-none d-md-table-cell text-end text-nowrap"><?= $biaya !== '' ? $biaya : '<span class="text-body-secondary">–</span>' ?></td>
-                                        <td>
+                                        <td class="hidden px-4 py-3 md:table-cell"><?= esc(NomorLombaModel::JENIS[$nomor['jenis']] ?? $nomor['jenis']) ?></td>
+                                        <td class="hidden px-4 py-3 md:table-cell"><?= esc(NomorLombaModel::KATEGORI[$nomor['kategori']] ?? $nomor['kategori']) ?></td>
+                                        <td class="hidden px-4 py-3 md:table-cell"><?= $tim !== '' ? esc($tim) : '<span class="text-gray-500">–</span>' ?></td>
+                                        <td class="hidden whitespace-nowrap px-4 py-3 text-end md:table-cell"><?= $biaya !== '' ? $biaya : '<span class="text-gray-500">–</span>' ?></td>
+                                        <td class="px-4 py-3">
                                             <?php if ((int) $nomor['aktif'] === 1) : ?>
-                                                <span class="badge rounded-pill text-bg-success">Aktif</span>
+                                                <?= komponen('lencana', ['label' => 'Aktif', 'warna' => 'hijau']) ?>
                                             <?php else : ?>
-                                                <span class="badge rounded-pill text-bg-secondary">Tidak aktif</span>
+                                                <?= komponen('lencana', ['label' => 'Tidak aktif', 'warna' => 'abu']) ?>
                                             <?php endif ?>
                                         </td>
-                                        <td class="text-end">
-                                            <div class="d-inline-flex gap-1">
-                                                <a class="btn btn-sm text-nowrap <?= $belum ? 'btn-primary' : 'btn-outline-primary' ?>" href="<?= site_url($alamat . '/' . $id . '/ubah') ?>"
+                                        <td class="px-4 py-3 text-end">
+                                            <div class="inline-flex gap-1">
+                                                <a class="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 text-sm font-semibold focus:outline-none focus:ring-4 <?= $belum ? 'bg-primary-700 text-white hover:bg-primary-800 focus:ring-primary-300' : 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 hover:text-primary-700 focus:ring-gray-100' ?>" href="<?= site_url($alamat . '/' . $id . '/ubah') ?>"
                                                     aria-label="<?= esc(($belum ? 'Lengkapi ' : 'Ubah ') . $namaLengkap, 'attr') ?>">
-                                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                    <span class="d-none d-lg-inline"><?= $belum ? 'Lengkapi' : 'Ubah' ?></span>
+                                                    <?= ikon('pencil', 'size-4') ?>
+                                                    <span class="hidden lg:inline"><?= $belum ? 'Lengkapi' : 'Ubah' ?></span>
                                                 </a>
                                                 <?php if (! $nomor['dipakai']) : ?>
                                                     <form method="post" action="<?= site_url($alamat . '/' . $id . '/hapus') ?>"
                                                         data-konfirmasi="Nomor <?= esc($namaLengkap . ' di ' . $ku['nama'], 'attr') ?> akan dihapus dan tidak bisa dikembalikan."
                                                         data-konfirmasi-tombol="Hapus nomor">
                                                         <?= csrf_field() ?>
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="<?= esc('Hapus ' . $namaLengkap, 'attr') ?>">
-                                                            <i class="bi bi-trash" aria-hidden="true"></i>
+                                                        <button type="submit" class="inline-flex size-11 items-center justify-center rounded-lg border border-red-300 bg-white text-red-700 hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100" aria-label="<?= esc('Hapus ' . $namaLengkap, 'attr') ?>">
+                                                            <?= ikon('trash-2', 'size-4') ?>
                                                         </button>
                                                     </form>
                                                 <?php endif ?>
