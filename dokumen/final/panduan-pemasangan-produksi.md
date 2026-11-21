@@ -347,7 +347,7 @@ Bila ada perbaikan baru di cabang `main` GitHub:
 
    Perintah ini menampilkan sekolah yang punya lebih dari satu pendaftaran Lunas, lalu meminta Anda mengetik `GABUNG`. Setiap sekolah digabung ke pendaftaran yang Lunas paling dulu; ID dan kode QR bukti lama tetap mengarah ke pendaftaran gabungan. Bila muncul "Tidak ada yang perlu digabung", tidak ada yang berubah.
 
-   Pembaruan yang sama mengubah KU 12 menjadi kelahiran 2014–2015 sesuai juknis (K112), otomatis saat `migrate`, asalkan KU 12 di panel masih kelahiran 2015 saja. Periksa di **Pengaturan → Kelompok Umur**. Ganti juga berkas contoh "Petunjuk teknis lomba" di **Pengaturan → Unduhan** dengan PDF juknis, dan samakan jadwal pertemuan teknik (Minggu, 6 Desember 2026 pukul 10.00, Super Cafe SSA Kudus) di **Pengaturan → Jadwal**.
+   Pembaruan yang sama mengubah KU 12 menjadi kelahiran 2014–2015 sesuai juknis (K112), otomatis saat `migrate`, asalkan KU 12 di panel masih kelahiran 2015 saja. Periksa di **Pengaturan → Kelompok Umur**. Ganti juga berkas contoh "Petunjuk teknis lomba" di **Pengaturan → Unduhan** dengan PDF juknis, dan samakan jadwal pertemuan teknik (Minggu, 6 Desember 2026 pukul 10.00, Super Cafe SSA Kudus) di **Pengaturan → Agenda**.
 
    Pembaruan yang membawa kalkulator poin multi-lomba (21 November 2026, F9-10, K143) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
 

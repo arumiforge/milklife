@@ -126,6 +126,19 @@ final class PanelNamaDesaSekolahHalamanTest extends UjiBasisData
         $this->seeInDatabase('pendaftaran', ['npsn' => '99100002', 'nama_sekolah' => 'MIS KARANGAN KHAYALAN']);
     }
 
+
+    public function testTerapkanTetapTersimpanWalauKoneksiPernahMenggagalkanTransaksi(): void
+    {
+        $this->pendaftaran(['npsn' => '99100001', 'nama_sekolah' => 'MIS KARANGAN']);
+        $this->tinggalkanStatusTransaksiGagal();
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['id' => [(string) $this->id['99100001']]]);
+
+        $this->assertBerhasilDialihkan($hasil, 'admin/sekolah');
+        $this->seeInDatabase('sekolah', ['npsn' => '99100001', 'nama' => 'MIS KARANGAN REKAAN']);
+        $this->seeInDatabase('pendaftaran', ['npsn' => '99100001', 'nama_sekolah' => 'MIS KARANGAN REKAAN']);
+    }
+
     public function testHanyaYangDicentangDiterapkan(): void
     {
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, ['id' => [(string) $this->id['99100002'], (string) $this->id['99100004'], 'x']]);
