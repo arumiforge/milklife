@@ -252,6 +252,31 @@ final class PengaturanFaqTest extends UjiBasisData
         $this->assertSame([$c, $a, $b], $this->idUrut('sebelum'));
     }
 
+    public function testUrutanTetapBerubahWalauKoneksiPernahMenggagalkanTransaksi(): void
+    {
+        // Uji lain (atau permintaan sebelumnya di proses yang sama) bisa
+        // meninggalkan status transaksi gagal di koneksi bersama: CodeIgniter
+        // dalam mode ketat tidak mengembalikannya saat transaksi baru dimulai.
+        $this->db->transStart();
+
+        try {
+            $this->db->query('SELECT * FROM tabel_yang_tidak_ada');
+        } catch (Throwable) {
+            // Kueri gagal memang disengaja.
+        }
+
+        $this->db->transComplete();
+        $this->assertFalse($this->db->transStatus(), 'Prasyarat: status transaksi gagal tertinggal.');
+
+        $a = $this->buatFaq('sebelum', 'A?', 1);
+        $b = $this->buatFaq('sebelum', 'B?', 2);
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$b}/naik");
+
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT . '#faq-' . $b, 'Urutan "B?" diubah.');
+        $this->assertSame([$b, $a], $this->idUrut('sebelum'));
+    }
+
     // ---------- Bawaan ----------
 
     public function testPasangBawaanHanyaBilaKosong(): void
