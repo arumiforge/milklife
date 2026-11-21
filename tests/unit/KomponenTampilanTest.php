@@ -40,6 +40,31 @@ final class KomponenTampilanTest extends CIUnitTestCase
         $this->assertSame(' data-modal-target="ubah" disabled aria-label="A &quot;B&quot; &lt;C&gt;"', $teks);
     }
 
+    /**
+     * Komponen tidak mewarisi data halaman yang sedang dirender: parameter
+     * opsional yang tidak diberikan tetap memakai nilai bawaannya.
+     */
+    public function testKomponenTidakMewarisiDataPenyajiView(): void
+    {
+        service('renderer')->setData(['ikon' => 'trophy', 'atribut' => [['bersarang']], 'kelas' => 'bocor', 'href' => '/bocor']);
+
+        try {
+            $html = komponen('tombol', ['label' => 'Simpan']);
+        } finally {
+            service('renderer')->resetData();
+        }
+
+        $this->assertStringContainsString('<button type="button"', $html);
+        $this->assertStringNotContainsString('trophy', $html);
+        $this->assertStringNotContainsString('bocor', $html);
+    }
+
+    public function testKomponenTidakDikenalDitolak(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        komponen('../tata_letak/admin');
+    }
+
     public function testTombolMenjadiTautanAtauTombol(): void
     {
         $tautan = komponen('tombol', ['label' => 'Daftar <sekarang>', 'href' => '/pendaftaran', 'ikon' => 'arrow-right', 'ikonKanan' => true, 'varian' => 'oranye']);

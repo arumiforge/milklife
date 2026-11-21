@@ -43,11 +43,34 @@ if (! function_exists('komponen')) {
     /**
      * Potongan komponen dari `app/Views/komponen/<nama>.php` (lihat kepala tiap berkas untuk datanya).
      *
+     * Dirender **terpisah**: komponen hanya melihat `$data` yang diberikan, bukan
+     * data halaman yang sedang dirender. `view()` CodeIgniter menggabungkan data
+     * dengan data penyaji bersama, sehingga parameter opsional (`$ikon`, `$kelas`,
+     * `$atribut`, …) bisa terisi variabel halaman lain. Komponen tidak memakai
+     * `$this` (bagian/section) dan tidak diberi komentar DEBUG-VIEW.
+     *
      * @param array<string, mixed> $data
      */
     function komponen(string $nama, array $data = []): string
     {
-        return view('komponen/' . $nama, $data, ['saveData' => false]);
+        if (preg_match('/^[a-z][a-z0-9_]*$/', $nama) !== 1 || ! is_file($berkas = APPPATH . 'Views/komponen/' . $nama . '.php')) {
+            throw new InvalidArgumentException('Komponen tidak dikenal: ' . $nama);
+        }
+
+        return (static function (string $__berkas, array $__data): string {
+            extract($__data, EXTR_SKIP);
+            ob_start();
+
+            try {
+                include $__berkas;
+            } catch (Throwable $e) {
+                ob_end_clean();
+
+                throw $e;
+            }
+
+            return (string) ob_get_clean();
+        })($berkas, $data);
     }
 }
 
