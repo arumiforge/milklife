@@ -166,6 +166,8 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
         </div>
     </form>
 
+    <?= $this->include('admin/pengaturan/_halaman_peserta') ?>
+
     <?php // Foto carousel pembuka (F9-03): tiap tindakan formulir sendiri, langsung tersimpan. ?>
     <section id="carousel" class="card mt-4 mb-2" aria-labelledby="judul-carousel">
         <div class="card-body p-3 p-md-4">

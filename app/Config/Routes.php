@@ -38,6 +38,12 @@ $routes->get('hasil/klasemen/(pdf|excel)', 'HasilController::unduhKlasemen/$1');
 $routes->get('bantuan', 'BantuanController::index');
 // ---------- Akhir Bantuan dan FAQ ----------
 
+// ---------- Peserta publik (F9-12) ----------
+// Hanya pendaftaran Lunas; 404 selama sakelar `HalamanDepan.tampil_peserta` mati.
+$routes->get('peserta', 'PesertaController::index');
+$routes->get('peserta/data', 'PesertaController::data');
+// ---------- Akhir peserta publik ----------
+
 // ---------- Pendaftaran (Tahap 4) ----------
 // Wizard pendaftaran dan titik akhir JSON-nya (rencana Tahap 4, "Rute dan
 // pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.
@@ -234,5 +240,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('bantuan/(:num)/aktif', 'FaqController::aktif/$1');
         $routes->post('bantuan/(:num)/(naik|turun)', 'FaqController::pindah/$1/$2');
         // ---------- Akhir Bantuan dan FAQ ----------
+
+        // ---------- Sakelar halaman Peserta publik (F9-12) ----------
+        $routes->post('halaman-depan/peserta', 'HalamanPesertaController::simpan');
+        // ---------- Akhir sakelar halaman Peserta ----------
     });
 });

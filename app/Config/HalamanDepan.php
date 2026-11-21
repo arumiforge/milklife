@@ -88,4 +88,11 @@ class HalamanDepan extends BaseConfig
      * @var list<array{berkas: string, keterangan: string}>|null
      */
     public ?array $carousel = null;
+
+    /**
+     * Tampilkan halaman Peserta publik (`/peserta`, F9-12) dan butir menunya.
+     * Nilai awal mati: halaman menjawab 404 sampai admin menyalakannya di
+     * Pengaturan > Halaman Depan setelah mencobanya di staging (rencana Tahap 9).
+     */
+    public bool $tampil_peserta = false;
 }

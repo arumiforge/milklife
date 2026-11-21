@@ -58,6 +58,18 @@ final class MenuPublik
             $butir[] = ['label' => 'Hasil', 'alamat' => site_url('hasil'), 'aktif' => $diHasil];
         }
 
+        // ---------- Peserta (F9-12): hanya bila sakelar Pengaturan menyala ----------
+        try {
+            $adaPeserta = (bool) setting('HalamanDepan.tampil_peserta');
+        } catch (Throwable) {
+            $adaPeserta = false;
+        }
+
+        if ($adaPeserta) {
+            $butir[] = ['label' => 'Peserta', 'alamat' => site_url('peserta'), 'aktif' => url_is('peserta')];
+        }
+        // ---------- Akhir Peserta ----------
+
         // ---------- Bantuan (F9-04): selalu tampil ----------
         $butir[] = ['label' => 'Bantuan', 'alamat' => site_url('bantuan'), 'aktif' => url_is('bantuan')];
         // ---------- Akhir Bantuan ----------
