@@ -1,8 +1,8 @@
 <?php
 /**
- * Tab halaman hari lomba (F8-03): Daftar ulang, Cetak BIB, Daftar peserta.
- * Satu butir menu admin "Hari lomba" membuka ketiganya. Di ponsel label
- * "Daftar peserta" dipendekkan supaya ketiganya muat.
+ * Tab halaman hari lomba (F8-03): Daftar ulang, Cetak BIB, Daftar peserta,
+ * dan Jadwal pertandingan (F9-07). Satu butir menu admin "Hari lomba" membuka semuanya. Di ponsel label
+ * "Daftar peserta" dan "Jadwal pertandingan" dipendekkan supaya muat.
  *
  * @var string $aktif alamat tab yang sedang dibuka
  */
@@ -10,6 +10,8 @@ $tab = [
     'admin/daftar-ulang'      => ['Daftar ulang', 'qr-code-scan', null],
     'admin/nomor-atlet/cetak' => ['Cetak BIB', 'printer', null],
     'admin/daftar-peserta'    => ['Daftar peserta', 'list-ol', 'Peserta'],
+    // Jadwal pertandingan (F9-07), halaman bertampilan baru.
+    'admin/jadwal-pertandingan' => ['Jadwal pertandingan', 'calendar-week', 'Jadwal'],
 ];
 ?>
 <nav class="mb-4" aria-label="Halaman hari lomba">

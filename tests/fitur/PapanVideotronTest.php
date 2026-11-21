@@ -13,7 +13,7 @@ use Tests\Support\UjiBasisData;
 
 /**
  * Papan videotron `/layar` (F9-13, K141): sakelar bawaan mati, hanya data
- * terbit, JSON yang bisa ditembolok, jadwal dari kolom babak F9-07, latar
+ * terbit, JSON yang bisa ditembolok, jadwal dan status dari `JadwalPertandingan` (F9-07), latar
  * G9-06 hanya bila berkasnya ada, dan Pengaturan > Videotron.
  *
  * Tampilan di berbagai ukuran layar diuji terpisah dengan Playwright
@@ -96,10 +96,8 @@ final class PapanVideotronTest extends UjiBasisData
         $this->assertArrayNotHasKey('npsn', $baris[0]);
         $this->assertArrayNotHasKey('piala', $baris[0]);
 
-        if (! (new PapanVideotron())->adaJadwal()) {
-            $this->assertNull($data['jadwal']);
-            $this->assertNull($data['berlangsung']);
-        }
+        $this->assertSame([], $data['jadwal'], 'Belum ada babak terjadwal.');
+        $this->assertSame([], $data['berlangsung']);
 
         // Tanpa perubahan: ETag sama dijawab 304 tanpa isi.
         $etag = $jawaban->response()->getHeaderLine('ETag');
@@ -111,7 +109,6 @@ final class PapanVideotronTest extends UjiBasisData
 
     public function testJadwalBerikutnyaDanSedangBerlangsung(): void
     {
-        $this->pastikanKolomJadwal();
         [$terbit, $belum] = $this->duaNomorBerhasil();
 
         $lain = $this->idInduk['frog'];
@@ -120,17 +117,12 @@ final class PapanVideotronTest extends UjiBasisData
         $babakBelum = (int) $this->db->table('babak')->where('nomor_lomba_id', $belum)->where('final', 1)->get()->getRow()->id;
         $babakTerbit = (int) $this->db->table('babak')->where('nomor_lomba_id', $terbit)->where('final', 1)->get()->getRow()->id;
 
-        $atur = function (int $babak, ?string $tanggal, ?string $jam, string $lokasi = ''): void {
-            $isi = ['tanggal' => $tanggal, 'jam_mulai' => $jam];
-
-            if ($this->db->fieldExists('lokasi', 'babak')) {
-                $isi['lokasi'] = $lokasi;
-            }
-            $this->db->table('babak')->where('id', $babak)->update($isi);
+        $atur = function (int $babak, string $tanggal, string $jam, string $lokasi): void {
+            $this->db->table('babak')->where('id', $babak)->update(['tanggal' => $tanggal, 'jam_mulai' => $jam, 'lokasi' => $lokasi]);
         };
 
-        // Lintasan: 08.00 (sudah disusul), 09.00 (berlangsung); bak lompat: 09.10 berlangsung;
-        // nomor terbit tidak dihitung berlangsung; 11.00 dan besok = berikutnya.
+        // Status sama dengan /jadwal (`JadwalPertandingan::status()`): nomor terbit
+        // berhasil = Selesai; jam mulai lewat = Berlangsung; selain itu Belum mulai.
         $atur($babakTerbit, '2026-12-09', '08:00:00', 'Lintasan');
         $atur($babakBelum, '2026-12-09', '09:00:00', 'Lintasan');
         $atur($babakLain, '2026-12-09', '09:10:00', 'Bak lompat');
@@ -141,13 +133,16 @@ final class PapanVideotronTest extends UjiBasisData
 
         $this->assertSame([$babakBelum, $babakLain], array_column($data['berlangsung'], 'id'));
         $this->assertSame('09.00', $data['berlangsung'][0]['jam']);
+        $this->assertSame('Lintasan', $data['berlangsung'][0]['lokasi']);
         $this->assertSame([$finalLain], array_column($data['jadwal'], 'id'));
         $this->assertSame('Besok', $data['jadwal'][0]['hari']);
         $this->assertSame('08.30', $data['jadwal'][0]['jam']);
 
-        // Terlalu lama sejak mulai: tidak lagi dianggap berlangsung.
-        $malam = Time::createFromFormat('Y-m-d H:i', '2026-12-09 20:00', 'Asia/Jakarta');
-        $this->assertSame([], (new PapanVideotron(null, $malam))->data()['berlangsung']);
+        // Hari berikutnya: babak kemarin tidak lagi tampil sebagai sedang berlangsung.
+        $besok = Time::createFromFormat('Y-m-d H:i', '2026-12-10 07:00', 'Asia/Jakarta');
+        $data  = (new PapanVideotron(null, $besok))->data();
+        $this->assertSame([], $data['berlangsung']);
+        $this->assertSame('Hari ini', $data['jadwal'][0]['hari']);
     }
 
     public function testLatarGambarHanyaBilaBerkasnyaAda(): void
@@ -264,28 +259,5 @@ final class PapanVideotronTest extends UjiBasisData
         $hasil->simpanHasil($finalBelum, $isianBelum);
 
         return [$terbit, $belum];
-    }
-
-    /**
-     * Kolom jadwal babak dari F9-07; ditambahkan di basis data uji bila
-     * migrasinya belum ada di cabang ini.
-     */
-    private function pastikanKolomJadwal(): void
-    {
-        $kolom = [];
-
-        if (! $this->db->fieldExists('tanggal', 'babak')) {
-            $kolom['tanggal'] = ['type' => 'DATE', 'null' => true];
-        }
-        if (! $this->db->fieldExists('jam_mulai', 'babak')) {
-            $kolom['jam_mulai'] = ['type' => 'TIME', 'null' => true];
-        }
-        if (! $this->db->fieldExists('lokasi', 'babak')) {
-            $kolom['lokasi'] = ['type' => 'VARCHAR', 'constraint' => 100, 'null' => true];
-        }
-        if ($kolom !== []) {
-            \Config\Database::forge($this->DBGroup)->addColumn('babak', $kolom);
-            $this->db->resetDataCache();
-        }
     }
 }

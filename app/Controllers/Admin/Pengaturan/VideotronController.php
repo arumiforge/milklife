@@ -66,7 +66,6 @@ class VideotronController extends BaseController
             'isian'      => $isian,
             'galat'      => $galat,
             'pilihanIsi' => PapanVideotron::ISI,
-            'adaJadwal'  => (new PapanVideotron())->adaJadwal(),
         ]);
     }
 }

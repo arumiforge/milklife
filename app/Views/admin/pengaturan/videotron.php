@@ -7,7 +7,6 @@
  * @var array{tampil: bool, lama: string, isi: list<string>} $isian
  * @var array<string, string>                               $galat
  * @var array<string, string>                               $pilihanIsi kode => label (`PapanVideotron::ISI`)
- * @var bool                                                $adaJadwal  kolom jadwal babak (F9-07) sudah ada
  */
 ?>
 <?= $this->extend('tata_letak/admin') ?>
@@ -60,8 +59,8 @@
                                 <div class="form-check mb-2">
                                     <input class="form-check-input<?= isset($galat['isi']) ? ' is-invalid' : '' ?>" type="checkbox" id="isi-<?= esc($kode, 'attr') ?>" name="isi[]" value="<?= esc($kode, 'attr') ?>"<?= in_array($kode, $isian['isi'], true) ? ' checked' : '' ?>>
                                     <label class="form-check-label" for="isi-<?= esc($kode, 'attr') ?>"><?= esc($label) ?></label>
-                                    <?php if (! $adaJadwal && in_array($kode, ['jadwal', 'berlangsung'], true)) : ?>
-                                        <span class="d-block small text-body-secondary">Tampil setelah jam mulai babak bisa diisi (fitur Jadwal pertandingan).</span>
+                                    <?php if (in_array($kode, ['jadwal', 'berlangsung'], true)) : ?>
+                                        <span class="d-block small text-body-secondary">Dari tanggal dan jam mulai babak di <a href="<?= site_url('admin/jadwal-pertandingan') ?>">Jadwal pertandingan</a>.</span>
                                     <?php endif ?>
                                 </div>
                             <?php endforeach; ?>

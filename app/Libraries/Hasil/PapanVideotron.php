@@ -3,16 +3,14 @@
 namespace App\Libraries\Hasil;
 
 use App\Libraries\IsiHalamanDepan;
-use App\Models\NomorLombaModel;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\I18n\Time;
 
 /**
  * Data papan videotron `/layar` (F9-13, K141). Hanya data yang sudah terbit:
  * hasil nomor yang `hasil_terbit_pada`-nya terisi dan klasemen dari nomor
- * terbit. Jadwal berasal dari kolom babak `tanggal`, `jam_mulai`, `lokasi`
- * (F9-07); selama kolom itu belum ada, tampilan Jadwal dan Sedang
- * berlangsung disembunyikan (`null` di data).
+ * terbit. Jadwal dan status babak dari `JadwalPertandingan` (F9-07), sama
+ * dengan halaman `/jadwal`.
  *
  * Isi yang dikirim (JSON `/layar/data`, dibaca `public/aset/js/layar.js`):
  *
@@ -22,16 +20,14 @@ use CodeIgniter\I18n\Time;
  *     //  'hasil' => [['id' => 10, 'nomor' => 'Lari 60 m putra', 'kelompok_umur' => 'KU 10', 'babak' => 'Final',
  *     //               'satuan' => '', 'baris' => [['peringkat' => 1, 'nama' => …, 'sekolah' => …, 'nomor_dada' => …, 'prestasi' => '9,87', 'keterangan' => null], …]], …],
  *     //  'juara_umum' => [['jenjang' => 'A', 'label' => 'SD/MI', 'baris' => [['peringkat' => 1, 'sekolah' => …, 'emas' => 3, …], …]], …],
- *     //  'jadwal' => [['nomor' => …, 'kelompok_umur' => …, 'babak' => …, 'hari' => 'Rabu, 9 Desember', 'jam' => '08.30', 'lokasi' => …], …] | null,
- *     //  'berlangsung' => [… sama dengan jadwal …] | null]
+ *     //  'jadwal' => [['nomor' => …, 'kelompok_umur' => …, 'babak' => …, 'hari' => 'Rabu, 9 Desember', 'jam' => '08.30', 'lokasi' => …], …],
+ *     //  'berlangsung' => [… sama dengan jadwal …]]
  *
  * Klasemen memakai `Klasemen::hitung()` apa adanya; kolom tambahan yang
  * dihasilkannya kelak (misalnya poin, F9-11) ikut terkirim tanpa diubah di sini.
  *
- * "Sedang berlangsung": babak hari ini yang jam mulainya sudah lewat (paling
- * lama `BATAS_BERLANGSUNG_MENIT`), nomornya belum terbit, dan merupakan babak
- * yang paling akhir dimulai di lokasinya (babak yang sudah disusul babak lain
- * di lokasi yang sama dianggap selesai).
+ * "Sedang berlangsung": babak hari ini yang berstatus Berlangsung menurut
+ * `JadwalPertandingan::status()` (jam mulai sudah lewat, belum Selesai).
  */
 final class PapanVideotron
 {
@@ -67,8 +63,6 @@ final class PapanVideotron
      * Babak berikutnya paling banyak di tampilan Jadwal.
      */
     public const JUMLAH_JADWAL = 24;
-
-    public const BATAS_BERLANGSUNG_MENIT = 180;
 
     private const HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
@@ -136,30 +130,20 @@ final class PapanVideotron
     }
 
     /**
-     * Kolom jadwal babak (F9-07) sudah ada?
-     */
-    public function adaJadwal(): bool
-    {
-        $kolom = $this->kolomBabak();
-
-        return in_array('tanggal', $kolom, true) && in_array('jam_mulai', $kolom, true);
-    }
-
-    /**
      * @return array<string, mixed>
      */
     public function data(): array
     {
         $acara  = (new IsiHalamanDepan())->acara();
-        $jadwal = $this->adaJadwal() ? $this->jadwal() : null;
+        $jadwal = $this->jadwal();
 
         $data = [
             'acara'       => ['nama' => (string) $acara['nama'], 'seri_tahun' => (string) ($acara['seri_tahun'] ?? '')],
             'pengaturan'  => self::pengaturan(),
             'hasil'       => $this->hasilTerbaru(),
             'juara_umum'  => $this->juaraUmum(),
-            'jadwal'      => $jadwal['berikutnya'] ?? null,
-            'berlangsung' => $jadwal['berlangsung'] ?? null,
+            'jadwal'      => $jadwal['berikutnya'],
+            'berlangsung' => $jadwal['berlangsung'],
         ];
 
         return ['versi' => substr(md5((string) json_encode($data)), 0, 16)] + $data;
@@ -259,94 +243,49 @@ final class PapanVideotron
     }
 
     /**
+     * Jadwal dan status babak dari `JadwalPertandingan` (F9-07), sama dengan
+     * halaman `/jadwal`: "Sedang berlangsung" = babak hari ini berstatus
+     * berlangsung; "Jadwal berikutnya" = babak hari ini atau sesudahnya yang
+     * belum mulai.
+     *
      * @return array{berikutnya: list<array<string, mixed>>, berlangsung: list<array<string, mixed>>}
      */
     private function jadwal(): array
     {
-        $kolom     = $this->kolomBabak();
-        $adaLokasi = in_array('lokasi', $kolom, true);
-        $hariIni   = $this->sekarang->format('Y-m-d');
-        $detikIni  = $this->sekarang->getTimestamp();
-
-        $baris = $this->db->table('babak b')
-            ->select('b.id, b.nama AS babak, b.tanggal, b.jam_mulai, ' . ($adaLokasi ? 'b.lokasi' : 'NULL AS lokasi') . ', nl.nama, nl.kategori, nl.hasil_terbit_pada, ku.nama AS kelompok_umur', false)
-            ->join('nomor_lomba nl', 'nl.id = b.nomor_lomba_id')
-            ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
-            ->where('b.tanggal IS NOT NULL', null, false)
-            ->where('b.jam_mulai IS NOT NULL', null, false)
-            ->where('b.tanggal >=', $hariIni)
-            ->orderBy('b.tanggal')->orderBy('b.jam_mulai')->orderBy('b.id')
-            ->get()->getResultArray();
-
-        $berikutnya = [];
-        $mulai      = [];
-
-        foreach ($baris as $b) {
-            $tanggal = substr((string) $b['tanggal'], 0, 10);
-            $jam     = substr((string) $b['jam_mulai'], 0, 5);
-
-            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal) !== 1 || preg_match('/^\d{1,2}:\d{2}$/', $jam) !== 1) {
-                continue;
-            }
-
-            $waktu = Time::createFromFormat('Y-m-d H:i', $tanggal . ' ' . $jam, $this->sekarang->getTimezone());
-            $butir = [
-                'id'            => (int) $b['id'],
-                'nomor'         => NomorLombaModel::namaLengkap($b),
-                'kelompok_umur' => (string) $b['kelompok_umur'],
-                'babak'         => (string) $b['babak'],
-                'hari'          => $this->labelHari($waktu),
-                'jam'           => $waktu->format('H.i'),
-                'lokasi'        => trim((string) ($b['lokasi'] ?? '')),
-            ];
-
-            if ($waktu->getTimestamp() > $detikIni) {
-                if (count($berikutnya) < self::JUMLAH_JADWAL) {
-                    $berikutnya[] = $butir;
-                }
-
-                continue;
-            }
-
-            // Sudah dimulai hari ini: calon "sedang berlangsung".
-            if ($tanggal === $hariIni && $b['hasil_terbit_pada'] === null && $detikIni - $waktu->getTimestamp() <= self::BATAS_BERLANGSUNG_MENIT * 60) {
-                $mulai[mb_strtolower($butir['lokasi'])][] = $butir + ['detik' => $waktu->getTimestamp()];
-            }
-        }
-
+        $hariIni     = $this->sekarang->format('Y-m-d');
+        $berikutnya  = [];
         $berlangsung = [];
 
-        foreach ($mulai as $diLokasi) {
-            $terakhir = max(array_column($diLokasi, 'detik'));
+        foreach ((new JadwalPertandingan($this->db))->semua() as $b) {
+            if ($b['tanggal'] === null || $b['tanggal'] < $hariIni) {
+                continue;
+            }
 
-            foreach ($diLokasi as $butir) {
-                if ($butir['detik'] === $terakhir) {
-                    unset($butir['detik']);
+            $status = JadwalPertandingan::status($b, $this->sekarang);
+            $butir  = [
+                'id'            => $b['id'],
+                'nomor'         => $b['nomor_lengkap'],
+                'kelompok_umur' => $b['kelompok_umur'],
+                'babak'         => $b['babak'],
+                'hari'          => $this->labelHari($b['tanggal']),
+                'jam'           => $b['jam'] === null ? '' : str_replace(':', '.', $b['jam']),
+                'lokasi'        => $b['lokasi'],
+            ];
+
+            if ($status === 'berlangsung' && $b['tanggal'] === $hariIni) {
+                if (count($berlangsung) < self::JUMLAH_JADWAL) {
                     $berlangsung[] = $butir;
                 }
+            } elseif ($status === 'belum' && count($berikutnya) < self::JUMLAH_JADWAL) {
+                $berikutnya[] = $butir;
             }
         }
-
-        usort($berlangsung, static fn (array $a, array $b): int => [$a['jam'], $a['id']] <=> [$b['jam'], $b['id']]);
 
         return ['berikutnya' => $berikutnya, 'berlangsung' => $berlangsung];
     }
 
-    /**
-     * Nama kolom tabel `babak`, dibaca langsung (tanpa tembolok nama kolom
-     * sambungan, supaya kolom yang baru ditambah migrasi langsung terlihat).
-     *
-     * @return list<string>
-     */
-    private function kolomBabak(): array
+    private function labelHari(string $tanggal): string
     {
-        return array_values(array_map(static fn (object $k): string => (string) $k->name, $this->db->getFieldData('babak')));
-    }
-
-    private function labelHari(Time $waktu): string
-    {
-        $tanggal = $waktu->format('Y-m-d');
-
         if ($tanggal === $this->sekarang->format('Y-m-d')) {
             return 'Hari ini';
         }
@@ -355,8 +294,6 @@ final class PapanVideotron
             return 'Besok';
         }
 
-        $teks = tanggal_id($tanggal);
-
-        return self::HARI[(int) $waktu->format('w')] . ', ' . preg_replace('/\s\d{4}$/', '', $teks);
+        return self::HARI[(int) date('w', (int) strtotime($tanggal))] . ', ' . preg_replace('/\s\d{4}$/', '', tanggal_id($tanggal));
     }
 }
