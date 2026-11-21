@@ -10,6 +10,10 @@
  * - `kepala` (pilihan): tambahan di `<head>`, misalnya `<meta name="robots">`.
  * - `skrip`: `<script src>` tambahan.
  *
+ * Gambar Codex (F9-19, hanya bila berkasnya ada): ilustrasi G9-08
+ * `admin/masuk.webp` di sisi kanan layar lebar (`lg` ke atas, `data-polos-ilustrasi`)
+ * dan hiasan pita G9-12 `pola/pita-sudut.webp` di sudut kanan atas (`data-hiasan`).
+ *
  * Penanda uji: `data-polos-merek` (nama acara), `data-polos-kartu` (kartu).
  *
  * @var CodeIgniter\View\View $this
@@ -20,6 +24,7 @@ use App\Controllers\Admin\Pengaturan\AcaraController;
 $judul     = trim($this->renderSection('judul'));
 $namaAcara = esc(AcaraController::namaTampil());
 $judulTab  = $judul === '' ? $namaAcara : $judul . ' – ' . $namaAcara;
+$ilustrasi = gambar_opsional('admin/masuk.webp', ['class' => 'size-full object-cover']);
 ?>
 <!doctype html>
 <html lang="id">
@@ -29,14 +34,16 @@ $judulTab  = $judul === '' ? $namaAcara : $judul . ' – ' . $namaAcara;
     <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#021F7B">
     <title><?= $judulTab ?></title>
-    <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
+    <?= view('tata_letak/_ikon_aplikasi', [], ['saveData' => false]) ?>
     <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
 <?= $this->renderSection('kepala') ?>
 </head>
 <body class="min-h-screen bg-primary-50">
-    <main id="isi" class="flex min-h-screen items-center justify-center px-4 py-10">
-        <div class="w-full max-w-md">
+<div class="<?= $ilustrasi === '' ? '' : 'lg:grid lg:grid-cols-2' ?>">
+    <main id="isi" class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
+        <?= gambar_opsional('pola/pita-sudut.webp', ['class' => 'pointer-events-none absolute right-0 top-0 w-40 select-none sm:w-64', 'data-hiasan' => 'pita-sudut']) ?>
+        <div class="relative w-full max-w-md">
             <p class="mb-6 text-center" data-polos-merek>
                 <a href="<?= site_url('/') ?>" class="inline-flex items-center gap-2 text-xl font-extrabold text-primary-900 hover:text-primary-700">
                     <span class="inline-flex size-10 items-center justify-center rounded-xl bg-primary-700 text-white"><?= ikon('zap') ?></span>
@@ -48,6 +55,10 @@ $judulTab  = $judul === '' ? $namaAcara : $judul . ' – ' . $namaAcara;
             </div>
         </div>
     </main>
+    <?php if ($ilustrasi !== '') : ?>
+        <div class="hidden overflow-hidden bg-white lg:block" data-polos-ilustrasi><?= $ilustrasi ?></div>
+    <?php endif ?>
+</div>
     <?= $this->renderSection('skrip') ?>
 </body>
 </html>

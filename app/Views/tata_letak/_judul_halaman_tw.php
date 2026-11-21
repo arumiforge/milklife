@@ -12,10 +12,15 @@
  * @var string|null $kembali    alamat tautan kembali (opsional)
  * @var string|null $labelKembali
  * @var string|null $aksi       HTML tombol (sudah di-escape pemanggil)
+ * @var string|null $gambar     ilustrasi G9-09 relatif `public/aset/gambar/` (misalnya `judul/hasil.webp`),
+ *                              di kanan pita mulai `md`; tidak dirender bila berkasnya belum ada (F9-19)
  */
+
+$ilustrasi = empty($gambar) ? '' : gambar_opsional($gambar, ['class' => 'h-36 w-auto lg:h-44']);
 ?>
 <div class="latar-merek border-b border-gray-200/70">
-    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12">
+    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12<?= $ilustrasi === '' ? '' : ' md:flex md:items-center md:gap-8' ?>">
+        <?php if ($ilustrasi !== '') : ?><div class="min-w-0 md:flex-1"><?php endif ?>
         <?php if (! empty($kembali)) : ?>
             <a href="<?= esc($kembali, 'attr') ?>" class="mb-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primary-700 hover:underline" data-tautan-kembali><?= ikon('arrow-left', 'size-4') ?><?= esc($labelKembali ?? 'Kembali') ?></a>
         <?php endif ?>
@@ -28,6 +33,10 @@
         <?php endif ?>
         <?php if (! empty($aksi)) : ?>
             <div class="mt-5 flex flex-wrap gap-2"><?= $aksi ?></div>
+        <?php endif ?>
+        <?php if ($ilustrasi !== '') : ?>
+            </div>
+            <div class="hidden shrink-0 md:block" data-judul-ilustrasi><?= $ilustrasi ?></div>
         <?php endif ?>
     </div>
 </div>

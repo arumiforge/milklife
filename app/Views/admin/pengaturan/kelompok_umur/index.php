@@ -100,7 +100,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
 
     <?php if ($daftar === []) : ?>
         <?= komponen('kosong', [
-            'gambar' => 'gambar/keadaan/kosong-data.webp',
+            'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'],
             'ikon'   => 'users',
             'judul'  => 'Belum ada kelompok umur',
             'teks'   => 'Pendaftaran belum bisa dibuka sebelum ada kelompok umur. Tambahkan kelompok umur pertama, misalnya KU 10 untuk atlet yang lahir 2016 sampai 2018.',

@@ -30,6 +30,8 @@ $sprite  = base_url('aset/vendor/lucide/lucide.svg') . (($versi = @filemtime(FCP
 
 <?= $this->section('judul') ?>Pendaftaran – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
+<?= $this->section('keterangan') ?>Daftarkan sekolah dan atlet secara daring.<?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Pendaftaran', 'ikon' => 'pencil-line', 'teks' => $bukaTutup->kalimat()], ['saveData' => false]) ?>
 

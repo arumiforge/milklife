@@ -61,7 +61,7 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
     </section>
 
     <?php if ($babak === []) : ?>
-        <?= komponen('kosong', ['gambar' => 'gambar/keadaan/kosong-data.webp', 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Jadwal disusun dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini untuk mengisi tanggal dan jamnya.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
+        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Jadwal disusun dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini untuk mengisi tanggal dan jamnya.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
     <?php else : ?>
         <?php if ($hari !== []) : ?>
             <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-unduh-jadwal">

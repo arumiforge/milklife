@@ -1,0 +1,16 @@
+{
+    "name": "MilkLife Athletics Challenge",
+    "short_name": "MilkLife AC",
+    "description": "Pendaftaran, jadwal, dan hasil MilkLife Athletics Challenge.",
+    "lang": "id",
+    "start_url": "./",
+    "scope": "./",
+    "display": "browser",
+    "theme_color": "#234987",
+    "background_color": "#ffffff",
+    "icons": [
+        { "src": "aset/gambar/ikon-aplikasi/ikon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "aset/gambar/ikon-aplikasi/ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+        { "src": "aset/gambar/ikon-aplikasi/ikon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ]
+}

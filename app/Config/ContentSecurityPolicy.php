@@ -180,9 +180,11 @@ class ContentSecurityPolicy extends BaseConfig
     public $objectSrc = 'none';
 
     /**
+     * Manifest aplikasi web (`public/manifest.webmanifest`, F9-19) dari situs sendiri.
+     *
      * @var list<string>|string|null
      */
-    public $manifestSrc;
+    public $manifestSrc = 'self';
 
     /**
      * @var list<string>|string

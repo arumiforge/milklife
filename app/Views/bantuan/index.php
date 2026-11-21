@@ -40,13 +40,15 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
 
 <?= $this->section('judul') ?>Bantuan – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
+<?= $this->section('keterangan') ?>Jawaban untuk pertanyaan yang sering ditanyakan sekolah, dari mendaftar sampai hasil lomba.<?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <section class="relative overflow-hidden border-b border-primary-100 bg-white" aria-labelledby="judul-bantuan">
     <?php if ($kepala !== null) : ?>
         <img src="<?= esc($kepala) ?>" alt="" class="pointer-events-none absolute inset-y-0 end-0 hidden h-full w-auto max-w-none object-cover opacity-90 md:block" width="1920" height="480">
     <?php endif ?>
-    <div class="relative mx-auto max-w-screen-xl px-4 py-10 sm:py-14">
-        <div class="max-w-2xl">
+    <div class="relative mx-auto max-w-screen-xl px-4 py-10 sm:py-14 md:flex md:items-center md:justify-between md:gap-8">
+        <div class="min-w-0 max-w-2xl md:flex-1">
             <p class="text-sm font-semibold text-oranye-600"><?= esc($namaAcara) ?></p>
             <h1 id="judul-bantuan" class="mt-1 text-3xl font-extrabold text-primary-900 sm:text-4xl">Bantuan</h1>
             <p class="mt-3 text-lg text-gray-700">Jawaban untuk pertanyaan yang sering ditanyakan sekolah, dari mendaftar sampai hasil lomba.</p>
@@ -62,6 +64,9 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
                 </form>
             <?php endif ?>
         </div>
+        <?php if ($kepala === null && ada_gambar('judul/bantuan.webp')) : ?>
+            <div class="hidden shrink-0 md:block" data-judul-ilustrasi><?= gambar_opsional('judul/bantuan.webp', ['class' => 'h-36 w-auto lg:h-44']) ?></div>
+        <?php endif ?>
     </div>
 </section>
 

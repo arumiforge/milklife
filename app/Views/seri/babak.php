@@ -31,7 +31,8 @@ $teksLolos = SeriLintasan::teksLolos($lolos, (string) $nomor['jenis_hasil']);
 
 <?= $this->section('isi') ?>
 <section class="latar-merek border-b border-gray-200/70" aria-labelledby="judul-daftar-seri">
-    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12">
+    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12 md:flex md:items-center md:gap-8">
+        <div class="min-w-0 md:flex-1">
         <?php if ($tampilJadwal) : ?>
             <a href="<?= site_url('jadwal') . ($babak['tanggal'] === null ? '' : '?hari=' . $babak['tanggal']) ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?>Jadwal pertandingan</a>
         <?php endif ?>
@@ -44,6 +45,10 @@ $teksLolos = SeriLintasan::teksLolos($lolos, (string) $nomor['jenis_hasil']);
             <?= $jadwal === '' ? 'Jadwal menyusul.' : esc($jadwal) . '.' ?>
             <?php if ($teksLolos !== '') : ?>Lolos ke <?= esc($babak['berikut']['nama'] ?? 'babak berikutnya') ?>: <?= esc($teksLolos) ?>.<?php endif ?>
         </p>
+        </div>
+        <?php if (ada_gambar('judul/seri.webp')) : ?>
+            <div class="hidden shrink-0 md:block" data-judul-ilustrasi><?= gambar_opsional('judul/seri.webp', ['class' => 'h-36 w-auto lg:h-44']) ?></div>
+        <?php endif ?>
     </div>
 </section>
 

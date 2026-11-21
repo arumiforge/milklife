@@ -23,6 +23,9 @@
  * - Teks admin di-escape; baris baru di dalam paragraf menjadi `<br>`.
  * - Tombol tanpa alamat tampil nonaktif dengan keterangannya (K39).
  *
+ * - Hiasan pita G9-12 (`pola/pita-sudut.webp`) di sudut kanan atas bila
+ *   berkasnya ada (F9-19), di belakang isi dan tersembunyi dari pembaca layar.
+ *
  * Penanda untuk uji dan skrip memakai atribut `data-*`, bukan kelas.
  *
  * @var array{nama: string, seri_tahun: string, tempat: string, tanggal: string}                              $acara
@@ -84,6 +87,8 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
     <div class="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" data-adegan-merek>
         <div data-adegan-cadangan class="absolute inset-0 transition-opacity duration-700"></div>
     </div>
+    <?php // Hiasan pita G9-12 di sudut kanan atas, hanya bila berkasnya ada (F9-19). ?>
+    <?= gambar_opsional('pola/pita-sudut.webp', ['class' => 'pointer-events-none absolute -right-8 -top-8 w-36 select-none opacity-70 sm:w-72 lg:w-96', 'loading' => false, 'data-hiasan' => 'pita-sudut']) ?>
 
     <div class="relative mx-auto grid max-w-screen-xl items-center gap-8 px-4 pb-10 pt-6 sm:pt-10 lg:grid-cols-12 lg:gap-12 lg:pb-14 lg:pt-14">
         <div class="<?= $adaKanan ? 'lg:col-span-6' : 'lg:col-span-10 xl:col-span-8' ?> flex flex-col gap-5 sm:gap-6">

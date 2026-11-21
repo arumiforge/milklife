@@ -16,10 +16,13 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
 
 <?= $this->section('judul') ?>Hasil Lomba – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
+<?= $this->section('keterangan') ?>Hasil resmi lomba per kelompok umur dan nomor lomba yang sudah diterbitkan panitia.<?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_judul_halaman_tw', [
     'judul' => 'Hasil Lomba',
     'ikon'  => 'trophy',
+    'gambar' => 'judul/hasil.webp',
     'teks'  => 'Hasil resmi ' . $namaAcara . ' yang sudah diterbitkan panitia, per kelompok umur dan nomor lomba.',
     'aksi'  => $kelompokUmur === [] ? null : komponen('tombol', ['label' => 'Lihat klasemen sekolah', 'href' => site_url('hasil/klasemen'), 'varian' => 'kedua', 'ikon' => 'award', 'atribut' => ['data-tautan-klasemen' => true]]),
 ], ['saveData' => false]) ?>

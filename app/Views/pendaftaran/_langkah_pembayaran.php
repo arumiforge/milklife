@@ -8,7 +8,8 @@
  * jadi official bisa kembali lain waktu dan tinggal mengunggah bukti.
  * Setelah terkirim, draf dikosongkan dan tampil tombol cetak bukti
  * `/bukti/<kode>/<ID>` (Tahap 5), dengan ilustrasi G9-04 `berhasil.webp`
- * bila berkasnya sudah ada.
+ * bila berkasnya sudah ada, dan hiasan konfeti G9-12 `pola/konfeti.webp` di
+ * belakang isinya (F9-19, juga hanya bila berkasnya ada).
  *
  * Bila Cloudflare Turnstile aktif (K122), kotak pemeriksaan keamanan tampil
  * di atas tombol Kirim; `aset/js/pendaftaran/turnstile.js` memasangnya dan
@@ -20,7 +21,7 @@
 use App\Libraries\Pendaftaran\KelasTampilan as K;
 
 $turnstile = $wizard['turnstile'] ?? null;
-$berhasil  = is_file(FCPATH . 'aset/gambar/keadaan/berhasil.webp') ? aset('gambar/keadaan/berhasil.webp') : null;
+$berhasil  = gambar_opsional('keadaan/berhasil.webp', ['class' => 'mx-auto mb-4 h-40 w-auto sm:h-48', 'data-gambar-berhasil' => true]);
 ?>
 <section class="langkah" id="langkah-5" data-langkah="5" aria-labelledby="judul-langkah-5" hidden>
     <?= view('pendaftaran/_kepala_langkah', ['langkah' => 5, 'judul' => 'Pembayaran'], ['saveData' => false]) ?>
@@ -80,9 +81,10 @@ $berhasil  = is_file(FCPATH . 'aset/gambar/keadaan/berhasil.webp') ? aset('gamba
         </div>
     </div>
 
-    <div id="selesai" class="pendaftaran-selesai rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center shadow-lembut sm:px-8" hidden>
-        <?php if ($berhasil !== null) : ?>
-            <img src="<?= esc($berhasil, 'attr') ?>" alt="" class="mx-auto mb-4 h-40 w-auto sm:h-48" width="800" height="600" data-gambar-berhasil>
+    <div id="selesai" class="pendaftaran-selesai relative isolate overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center shadow-lembut sm:px-8" hidden>
+        <?= gambar_opsional('pola/konfeti.webp', ['class' => 'pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 w-full select-none object-cover object-top opacity-80', 'data-hiasan' => 'konfeti']) ?>
+        <?php if ($berhasil !== '') : ?>
+            <?= $berhasil ?>
         <?php else : ?>
             <span class="mx-auto mb-4 inline-flex size-16 items-center justify-center rounded-2xl bg-green-100 text-green-700"><?= ikon('trophy', 'size-8') ?></span>
         <?php endif ?>
