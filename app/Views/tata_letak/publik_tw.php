@@ -46,7 +46,7 @@ try {
 }
 
 // Pratinjau tautan yang dibagikan (Open Graph, F9-19, G9-10). Gambar hanya bila berkasnya ada.
-$judulHalaman = trim((string) preg_replace('/\s+/u', ' ', $this->renderSection('judul', true)));
+$judulHalaman = trim((string) preg_replace('/\s+/u', ' ', $this->renderSection('judul')));
 $keterangan   = trim((string) preg_replace('/\s+/u', ' ', $this->renderSection('keterangan')));
 if ($keterangan === '') {
     $keterangan = esc('Pendaftaran, jadwal, dan hasil ' . trim($acara['nama'] . ' ' . $acara['seri_tahun']) . '.');
