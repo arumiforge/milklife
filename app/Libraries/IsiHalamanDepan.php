@@ -6,6 +6,7 @@ use App\Controllers\Admin\Pengaturan\AcaraController;
 use App\Libraries\Bantuan\IsiBantuan;
 use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\Hasil\Klasemen;
+use App\Libraries\Hasil\MetodeKlasemen;
 use App\Libraries\Pendaftaran\KelompokUmurAtlet;
 use App\Models\JadwalModel;
 use App\Models\KelompokUmurModel;
@@ -631,7 +632,7 @@ final class IsiHalamanDepan
      * tiga besar juara umum per jenjang (hanya dari nomor terbit, sama dengan
      * `hasil/klasemen`). `null` bila belum ada nomor yang terbit.
      *
-     * @return array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{jenjang: string, label: string, baris: list<array<string, mixed>>}>}|null
+     * @return array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{jenjang: string, label: string, baris: list<array<string, mixed>>}>, metode: string}|null
      */
     public function hasilTerbaru(): ?array
     {
@@ -642,7 +643,9 @@ final class IsiHalamanDepan
                 return null;
             }
 
-            $semuaJuara = $hasil->juara(true);
+            // Peringkat 1–8 untuk klasemen metode poin (F9-11); juara nomor tetap I–III.
+            $peringkat  = $hasil->juara(true, Klasemen::PERINGKAT_POIN);
+            $semuaJuara = array_values(array_filter($peringkat, static fn (array $j): bool => $j['peringkat'] <= 3));
             $terbaru    = db_connect()->table('nomor_lomba')->select('id')
                 ->where('hasil_terbit_pada IS NOT NULL', null, false)
                 ->orderBy('hasil_terbit_pada', 'DESC')->orderBy('id', 'DESC')
@@ -677,7 +680,7 @@ final class IsiHalamanDepan
 
         $juaraUmum = [];
 
-        foreach (Klasemen::hitung($semuaJuara) as $jenjang) {
+        foreach (Klasemen::hitung($peringkat, MetodeKlasemen::metode(), MetodeKlasemen::poin()) as $jenjang) {
             $juaraUmum[] = [
                 'jenjang' => $jenjang['jenjang'],
                 'label'   => $jenjang['label'],
@@ -685,7 +688,7 @@ final class IsiHalamanDepan
             ];
         }
 
-        return ['nomor' => $nomor, 'juara_umum' => $juaraUmum];
+        return ['nomor' => $nomor, 'juara_umum' => $juaraUmum, 'metode' => MetodeKlasemen::metode()];
     }
 
     /**

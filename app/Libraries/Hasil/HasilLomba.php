@@ -682,12 +682,13 @@ final class HasilLomba
     }
 
     /**
-     * Juara I–III dari babak Final semua nomor (atau yang terbit saja), untuk
-     * klasemen (F8-05).
+     * Juara I–III (atau peringkat 1 sampai `$sampai`) dari babak Final semua
+     * nomor (atau yang terbit saja), untuk klasemen (F8-05); metode poin (F9-11)
+     * memakai `$sampai` 8.
      *
      * @return list<array{nomor_id: int, nomor: string, kelompok_umur: string, terbit: bool, peringkat: int, nama: string, sekolah: string, npsn: string|null, pendaftaran_id: int, jenjang: string}>
      */
-    public function juara(bool $hanyaTerbit = false): array
+    public function juara(bool $hanyaTerbit = false, int $sampai = 3): array
     {
         $juara = [];
 
@@ -705,7 +706,7 @@ final class HasilLomba
                 }
 
                 foreach ($this->hasilBabak((int) $final->id, $nomor) as $h) {
-                    if ($h['peringkat'] !== null && $h['peringkat'] <= 3) {
+                    if ($h['peringkat'] !== null && $h['peringkat'] <= $sampai) {
                         $juara[] = [
                             'nomor_id'       => $n['id'],
                             'nomor'          => $n['nama'],
@@ -724,6 +725,18 @@ final class HasilLomba
         }
 
         return $juara;
+    }
+
+    /**
+     * Klasemen sekolah per jenjang memakai metode dan poin dari Pengaturan >
+     * Hasil (F9-11): `Klasemen::hitung()` atas peringkat 1–8 babak Final.
+     * Dipakai halaman klasemen admin dan publik, unduhan, dan videotron.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function klasemen(bool $hanyaTerbit = false): array
+    {
+        return Klasemen::hitung($this->juara($hanyaTerbit, Klasemen::PERINGKAT_POIN), MetodeKlasemen::metode(), MetodeKlasemen::poin());
     }
 
     /**

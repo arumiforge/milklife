@@ -18,7 +18,7 @@ Diperbarui: 21 November 2026
 | [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | menunggu tinjauan | P1 | B |
 | [F9-12 Peserta publik](tugas/F9-12-peserta-publik.md) | selesai (#127) | P1 | B |
 | [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | menunggu tinjauan (#132) | P1 | B |
-| [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | dikerjakan | P2 | B |
+| [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | menunggu tinjauan | P2 | B |
 | [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | menunggu tinjauan | P2 | B |
 | [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | rencana | P2 | C (setelah 30 November) |
 | [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | rencana | P2 | C |
