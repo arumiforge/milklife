@@ -16,6 +16,7 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 | Klasemen sekolah (F8-05) | `hasil/klasemen[/pdf\|excel]` (hanya nomor terbit) | `HasilController::klasemen` | `Hasil/Klasemen`, `Hasil/UnduhanKlasemen` | `hasil/klasemen.php`, `hasil/_klasemen.php` | - | f `KlasemenSekolahTest`, u `HasilKlasemenTest` |
 | Unduhan | `unduhan` | `UnduhanController` | `IsiHalamanDepan` | `unduhan.php`, `beranda/_daftar_unduhan.php` | - | f `HalamanUnduhanTest` |
 | Bantuan (F9-04) | `bantuan` (Tailwind, `publik_tw`); laci "Bantuan" di tiap langkah wizard (Bootstrap offcanvas sampai F9-05) | `BantuanController` | `Bantuan/IsiBantuan` (kategori, panduan G9-03, kontak WA), `Bantuan/JawabanFaq`, `MenuPublik` | `bantuan/index.php`, `pendaftaran/_laci_bantuan.php`, `pendaftaran/_tombol_bantuan.php` | `bantuan` | f `BantuanFaqTest` |
+| Peserta publik (F9-12) | `peserta`, `peserta/data` (JSON paginasi, `throttler`; 404 selama sakelar `HalamanDepan.tampil_peserta` mati), Tailwind `publik_tw`; sakelar POST `admin/pengaturan/halaman-depan/peserta` | `PesertaController`, `Admin/Pengaturan/HalamanPesertaController` | `PesertaPublik` (hanya Lunas, tanpa NISN/tanggal lahir/foto/official, regu K108), `MenuPublik` | `peserta/index.php`, `peserta/_kartu.php`, `admin/pengaturan/_halaman_peserta.php` | `peserta` | f `PesertaPublikTest` |
 
 Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 
