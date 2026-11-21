@@ -75,7 +75,7 @@ Semuanya aman diulang dan tidak menimpa isian admin. Sakelar fitur publik baru *
 
 - Otomatis: `composer uji` lulus; CI tiga job (PHPUnit, Hasil bangun tampilan, Tampilan videotron) hijau di PR penutupan.
 - Staging https://staging.mac2026.web.id terjangkau dari sesi, tetapi saat diperiksa masih kode sebelum F9-03 dan berjalan dalam mode development (debugbar tampil); dilaporkan ke koordinator. Uji peramban karena itu dijalankan di pemasangan lokal mode produksi.
-- Peramban (Chromium, 360, 390, 1280 piksel, videotron 1920×1080) terhadap pemasangan lokal mode produksi dengan `aplikasi.minify = true` dan CSP menyala, data uji karangan: semua halaman publik dan admin. Daftar periksa lengkap di deskripsi PR penutupan.
+- Peramban (Chromium, 360, 390, 1280 piksel, videotron 1920×1080) terhadap pemasangan lokal mode produksi dengan `aplikasi.minify = true` dan CSP menyala, data uji karangan (tiga pendaftaran lewat wizard, dua Lunas, lima sakelar publik dinyalakan, Final diisi dan terbit): semua halaman publik dan admin lulus tanpa galat konsol, pelanggaran CSP, aset gagal, dan gulir mendatar. Satu temuan diperbaiki: kolom Sekolah juara umum di `/layar` pecah per huruf pada ponsel tegak; layar sempit kini hanya memuat kolom dasar metode klasemen (`metode` ikut di `layar/data`). Semua perintah sekali jalan Tahap 9 berjalan tanpa galat. Daftar periksa lengkap di deskripsi PR penutupan.
 
 ## Yang dibawa ke tahap berikutnya
 
