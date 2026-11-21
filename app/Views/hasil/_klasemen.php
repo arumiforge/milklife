@@ -43,18 +43,21 @@ $romawi = [1 => 'I', 2 => 'II', 3 => 'III'];
                                     <?php if ($b['juara_umum'] !== null) : ?>
                                         <span class="badge rounded-pill text-bg-warning">Juara umum <?= $romawi[$b['juara_umum']] ?></span>
                                     <?php endif ?>
-                                    <details class="small text-body-secondary">
-                                        <summary>Rincian <?= $b['jumlah'] ?> piala</summary>
-                                        <?php if ($b['piala'] === []) : ?><p class="mb-0">Belum ada piala; poin dari peringkat 4 ke bawah.</p><?php endif ?>
-                                        <ul class="mb-0 ps-3">
-                                            <?php foreach ($b['piala'] as $p) : ?>
-                                                <li>
-                                                    Juara <?= $romawi[$p['peringkat']] ?> <?= esc($p['kelompok_umur'] . ' ' . $p['nomor']) ?> – <?= esc($p['nama']) ?>
-                                                    <?php if ($admin && ! $p['terbit']) : ?><span class="badge text-bg-secondary">belum terbit</span><?php endif ?>
-                                                </li>
-                                            <?php endforeach ?>
-                                        </ul>
-                                    </details>
+                                    <?php if ($b['piala'] === []) : ?>
+                                        <span class="d-block small text-body-secondary">Tanpa piala; poin dari peringkat 4–<?= Klasemen::PERINGKAT_POIN ?></span>
+                                    <?php else : ?>
+                                        <details class="small text-body-secondary">
+                                            <summary>Rincian <?= $b['jumlah'] ?> piala</summary>
+                                            <ul class="mb-0 ps-3">
+                                                <?php foreach ($b['piala'] as $p) : ?>
+                                                    <li>
+                                                        Juara <?= $romawi[$p['peringkat']] ?> <?= esc($p['kelompok_umur'] . ' ' . $p['nomor']) ?> – <?= esc($p['nama']) ?>
+                                                        <?php if ($admin && ! $p['terbit']) : ?><span class="badge text-bg-secondary">belum terbit</span><?php endif ?>
+                                                    </li>
+                                                <?php endforeach ?>
+                                            </ul>
+                                        </details>
+                                    <?php endif ?>
                                 </td>
                                 <td class="text-center"><?= $b['emas'] ?></td>
                                 <td class="text-center"><?= $b['perak'] ?></td>
