@@ -81,18 +81,19 @@
         pilihKu.daftar.setAttribute('data-ku', kunci);
         hasil.pilihan.forEach(function (ku) {
             var id = 'atlet-ku-' + ku.id;
-            var radio = buat('input', 'btn-check');
+            var radio = buat('input', 'sr-only');
             radio.type = 'radio';
             radio.name = 'atlet-ku';
             radio.id = id;
             radio.value = String(ku.id);
             radio.checked = pilihan !== null && Number(pilihan) === ku.id;
-            var label = buat('label', 'btn btn-outline-primary', ku.nama);
+            // Radio di dalam labelnya supaya tampilan terpilih memakai `has-checked:` (F9-05).
+            var label = buat('label', W.KELAS.pilihan + ' !items-start text-start', ku.nama);
             label.htmlFor = id;
+            label.insertBefore(radio, label.firstChild);
             if (ku.teks_tahun_lahir) {
-                label.appendChild(buat('span', 'pilih-ku-rentang', ku.teks_tahun_lahir));
+                label.appendChild(buat('span', 'pilih-ku-rentang block text-sm font-normal', ku.teks_tahun_lahir));
             }
-            pilihKu.daftar.appendChild(radio);
             pilihKu.daftar.appendChild(label);
         });
     }
@@ -129,23 +130,23 @@
 
         if (!hasil.ku && hasil.pilihan.length > 1) {
             // Belum memilih: bukan galat, cukup arahan.
-            L3.ku.appendChild(ikon('arrow-up-circle'));
+            L3.ku.appendChild(ikon('circle-arrow-up'));
             L3.ku.appendChild(document.createTextNode(' Pilih kelompok umur di atas supaya nomor lombanya tampil.'));
             return;
         }
 
         if (!hasil.ku) {
             L3.ku.classList.add('info-ku-galat');
-            L3.ku.appendChild(ikon('exclamation-triangle'));
+            L3.ku.appendChild(ikon('triangle-alert'));
             L3.ku.appendChild(document.createTextNode(' ' + hasil.galat));
             return;
         }
 
-        L3.ku.appendChild(ikon('person-badge'));
+        L3.ku.appendChild(ikon('id-card'));
         L3.ku.appendChild(document.createTextNode(' ' + (hasil.pilihan.length > 1 ? 'Dipilih ' + namaKu(hasil.ku) : hasil.ku.nama) + (usia(lahir) ? ' · usia ' + usia(lahir) + ' saat lomba' : '')));
 
         if (!jk) {
-            L3.ku.appendChild(buat('span', 'd-block small', 'Pilih jenis kelamin untuk melihat nomor lomba.'));
+            L3.ku.appendChild(buat('span', 'block basis-full text-sm font-normal', 'Pilih jenis kelamin untuk melihat nomor lomba.'));
             return;
         }
 
@@ -158,20 +159,20 @@
             }
             var wadah = nomor.jenis === 'individu' ? L3.individu : L3.beregu;
             var id = 'atlet-nomor-' + nomor.id;
-            var kotak = buat('div', 'form-check');
-            var centang = buat('input', 'form-check-input');
+            var kotak = buat('div', 'flex flex-wrap items-start gap-x-3 gap-y-1 rounded-lg border border-gray-200 bg-white px-3 py-2.5 has-[>input:checked]:border-primary-700 has-[>input:checked]:bg-primary-50');
+            var centang = buat('input', W.KELAS.centang + ' mt-0.5');
             centang.type = 'checkbox';
             centang.name = 'atlet-nomor';
             centang.id = id;
             centang.value = String(nomor.id);
             centang.checked = dipilih.indexOf(nomor.id) !== -1;
             centang.setAttribute('data-jenis', nomor.jenis);
-            var label = buat('label', 'form-check-label', nomor.jenis === 'beregu' ? null : nomor.nama_lengkap);
+            var label = buat('label', 'min-w-0 flex-1 cursor-pointer text-gray-900', nomor.jenis === 'beregu' ? null : nomor.nama_lengkap);
             label.htmlFor = id;
             if (nomor.jenis === 'beregu') {
                 // Judul nomor, lalu keterangan singkat per regu (K106).
-                label.appendChild(buat('span', 'nomor-beregu-judul', nomor.nama_lengkap));
-                var info = buat('span', 'nomor-beregu-info');
+                label.appendChild(buat('span', 'nomor-beregu-judul block font-semibold text-primary-900', nomor.nama_lengkap));
+                var info = buat('span', 'nomor-beregu-info mt-1 flex flex-wrap gap-1');
                 var cadangan = Math.max(0, (nomor.batas_anggota || 0) - (nomor.jumlah_inti || 0));
                 [
                     ['inti', nomor.jumlah_inti + ' inti'],
@@ -180,14 +181,14 @@
                     nomor.regu_maksimal ? ['', 'maks. ' + nomor.regu_maksimal + ' regu'] : null,
                     nomor.biaya_beregu ? ['biaya', rupiah(nomor.biaya_beregu) + ' / regu'] : null
                 ].filter(Boolean).forEach(function (b) {
-                    info.appendChild(buat('span', 'nomor-beregu-chip' + (b[0] ? ' chip-' + b[0] : ''), b[1]));
+                    info.appendChild(buat('span', W.kelasKeping(b[0]), b[1]));
                 });
                 label.appendChild(info);
             }
             kotak.appendChild(centang);
             kotak.appendChild(label);
             if (nomor.jenis === 'beregu') {
-                kotak.classList.add('pilihan-nomor-beregu');
+                kotak.classList.add('pilihan-nomor-beregu', 'sm:col-span-2');
                 var regu = kotakRegu(nomor, reguSebelum[nomor.id] || null);
                 regu.hidden = !centang.checked;
                 kotak.appendChild(regu);
@@ -204,7 +205,7 @@
         $('#atlet-nomor-beregu').hidden = !adaBeregu;
         L3.nomor.hidden = !(adaIndividu || adaBeregu);
         if (!adaIndividu && !adaBeregu) {
-            L3.ku.appendChild(buat('span', 'd-block small', 'Belum ada nomor lomba ' + hasil.ku.nama + ' untuk jenis kelamin ini.'));
+            L3.ku.appendChild(buat('span', 'block basis-full text-sm font-normal', 'Belum ada nomor lomba ' + hasil.ku.nama + ' untuk jenis kelamin ini.'));
         }
         batasiIndividu();
     }

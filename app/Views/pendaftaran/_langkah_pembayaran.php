@@ -7,7 +7,8 @@
  * Tanpa bukti transfer tidak ada yang tersimpan; isian tetap di draf peramban,
  * jadi official bisa kembali lain waktu dan tinggal mengunggah bukti.
  * Setelah terkirim, draf dikosongkan dan tampil tombol cetak bukti
- * `/bukti/<kode>/<ID>` (Tahap 5).
+ * `/bukti/<kode>/<ID>` (Tahap 5), dengan ilustrasi G9-04 `berhasil.webp`
+ * bila berkasnya sudah ada.
  *
  * Bila Cloudflare Turnstile aktif (K122), kotak pemeriksaan keamanan tampil
  * di atas tombol Kirim; `aset/js/pendaftaran/turnstile.js` memasangnya dan
@@ -15,88 +16,93 @@
  *
  * @var array<string, mixed>|null $wizard
  */
+
+use App\Libraries\Pendaftaran\KelasTampilan as K;
+
 $turnstile = $wizard['turnstile'] ?? null;
+$berhasil  = is_file(FCPATH . 'aset/gambar/keadaan/berhasil.webp') ? aset('gambar/keadaan/berhasil.webp') : null;
 ?>
 <section class="langkah" id="langkah-5" data-langkah="5" aria-labelledby="judul-langkah-5" hidden>
-    <div class="langkah-judul">
-        <h2 id="judul-langkah-5" tabindex="-1">5. Pembayaran</h2>
-        <?= view('pendaftaran/_tombol_bantuan', ['langkah' => 5], ['saveData' => false]) ?>
-    </div>
+    <?= view('pendaftaran/_kepala_langkah', ['langkah' => 5, 'judul' => 'Pembayaran'], ['saveData' => false]) ?>
 
     <div id="bayar-isi">
-        <p class="langkah-keterangan">Pendaftaran belum terkirim. Transfer dulu, lalu unggah bukti transfernya. Isian di halaman ini tetap tersimpan di perangkat ini, jadi bila belum sempat transfer, buka lagi halaman ini nanti dan tinggal unggah buktinya.</p>
+        <p class="langkah-keterangan mb-5 text-gray-600">Pendaftaran belum terkirim. Transfer dulu, lalu unggah bukti transfernya. Isian di halaman ini tetap tersimpan di perangkat ini, jadi bila belum sempat transfer, buka lagi halaman ini nanti dan tinggal unggah buktinya.</p>
 
-        <div class="ringkasan-galat alert alert-danger" role="alert" hidden></div>
+        <div class="<?= K::RINGKASAN ?>" role="alert" hidden></div>
 
-        <div class="kartu-isian kartu-rekening">
-            <img id="bayar-logo" class="logo-bank" alt="" hidden>
-            <dl class="data-rekening">
+        <div class="<?= K::KARTU ?> kartu-rekening">
+            <img id="bayar-logo" class="logo-bank mb-4 block max-h-14 max-w-40 object-contain" alt="" hidden>
+            <dl class="data-rekening mb-3 grid gap-0.5 [&_dd]:flex [&_dd]:flex-wrap [&_dd]:items-center [&_dd]:gap-2 [&_dd]:font-semibold [&_dd]:break-words [&_dt]:mt-2 [&_dt]:text-sm [&_dt]:text-gray-500">
                 <dt>Bank</dt>
                 <dd id="bayar-bank"></dd>
                 <dt>Nomor rekening</dt>
                 <dd>
-                    <span class="nomor-rekening" id="bayar-rekening"></span>
-                    <button type="button" class="btn btn-sm btn-outline-primary" id="bayar-salin">
-                        <i class="bi bi-copy" aria-hidden="true"></i> <span>Salin</span>
+                    <span class="nomor-rekening text-xl tracking-wider sm:text-2xl" id="bayar-rekening"></span>
+                    <button type="button" class="<?= K::GARIS_KECIL ?>" id="bayar-salin">
+                        <?= ikon('copy', 'size-4') ?> <span>Salin</span>
                     </button>
                 </dd>
                 <dt>Atas nama</dt>
                 <dd id="bayar-pemilik"></dd>
                 <dt>Total yang dibayar</dt>
-                <dd class="total-bayar" id="bayar-total"></dd>
+                <dd class="total-bayar text-2xl !font-extrabold text-oranye-600" id="bayar-total"></dd>
             </dl>
-            <p class="small text-body-secondary mb-0" id="bayar-rincian"></p>
+            <p class="text-sm text-gray-500" id="bayar-rincian"></p>
         </div>
 
-        <ol class="cara-bayar">
+        <ol class="cara-bayar my-5 list-decimal space-y-1.5 ps-5 text-gray-800">
             <li>Transfer sebesar total di atas ke rekening tersebut.</li>
             <li>Pilih foto atau tangkapan layar bukti transfer di bawah.</li>
             <li>Tekan <strong>Kirim Pendaftaran</strong>. Setelah terkirim, bukti pendaftaran bisa dicetak.</li>
         </ol>
 
-        <div class="kartu-isian unggah-bukti-bayar">
-            <label class="form-label fw-semibold" for="bayar-berkas">Bukti transfer <span class="text-danger" aria-hidden="true">*</span></label>
-            <input class="form-control" type="file" id="bayar-berkas" data-jalur="bukti_bayar" accept="image/jpeg,image/png,image/webp" required aria-describedby="bayar-berkas-keterangan">
-            <div class="invalid-feedback"></div>
-            <div class="form-text" id="bayar-berkas-keterangan">JPG, PNG, atau WEBP, paling besar 10 MB.</div>
+        <div class="<?= K::KARTU ?> unggah-bukti-bayar">
+            <label class="<?= K::LABEL ?>" for="bayar-berkas">Bukti transfer <span class="text-red-700" aria-hidden="true">*</span></label>
+            <input class="<?= K::BERKAS ?>" type="file" id="bayar-berkas" data-jalur="bukti_bayar" accept="image/jpeg,image/png,image/webp" required aria-describedby="bayar-berkas-keterangan">
+            <div class="<?= K::UMPAN ?>"></div>
+            <div class="<?= K::BANTU ?>" id="bayar-berkas-keterangan">JPG, PNG, atau WEBP, paling besar 10 MB.</div>
         </div>
 
         <?php if ($turnstile !== null) : ?>
-            <div class="kartu-isian pemeriksaan-keamanan">
-                <p class="form-label fw-semibold mb-2">Pemeriksaan keamanan</p>
+            <div class="<?= K::KARTU ?> pemeriksaan-keamanan">
+                <p class="<?= K::LABEL ?> mb-2">Pemeriksaan keamanan</p>
                 <div id="turnstile-kirim" class="cf-turnstile" data-jalur="turnstile" data-sitekey="<?= esc($turnstile['kunci_situs'], 'attr') ?>" data-action="<?= esc($turnstile['aksi'], 'attr') ?>"></div>
-                <div class="invalid-feedback d-block"></div>
-                <div class="form-text">Tunggu sampai kotak ini bertanda centang hijau sebelum menekan Kirim Pendaftaran.</div>
+                <div class="<?= K::UMPAN ?>"></div>
+                <div class="<?= K::BANTU ?>">Tunggu sampai kotak ini bertanda centang hijau sebelum menekan Kirim Pendaftaran.</div>
             </div>
         <?php endif ?>
 
-        <div class="langkah-tombol">
-            <button type="button" class="btn btn-outline-secondary" data-kembali><i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali</button>
-            <button type="button" class="btn btn-primary btn-lg" id="tombol-kirim" disabled>
-                <i class="bi bi-send" aria-hidden="true"></i> <span>Kirim Pendaftaran</span>
+        <div class="langkah-tombol mt-6 flex flex-wrap items-center justify-between gap-3">
+            <button type="button" class="<?= K::KEDUA ?>" data-kembali><?= ikon('arrow-left', 'size-5') ?> Kembali</button>
+            <button type="button" class="<?= K::UTAMA_BESAR ?>" id="tombol-kirim" disabled>
+                <?= ikon('send', 'size-5') ?> <span>Kirim Pendaftaran</span>
             </button>
         </div>
     </div>
 
-    <div id="selesai" class="pendaftaran-selesai" hidden>
-        <span class="ikon-bulat mb-3"><i class="bi bi-trophy" aria-hidden="true"></i></span>
-        <h3 class="h4">Pendaftaran terkirim</h3>
-        <p>Pendaftaran <strong id="selesai-sekolah"></strong> tersimpan dengan ID
-            <strong class="id-pendaftaran" id="selesai-id"></strong>
-            <button type="button" class="btn btn-sm btn-outline-primary" id="selesai-salin">
-                <i class="bi bi-copy" aria-hidden="true"></i> <span>Salin ID</span>
+    <div id="selesai" class="pendaftaran-selesai rounded-2xl border border-gray-200 bg-white px-4 py-8 text-center shadow-lembut sm:px-8" hidden>
+        <?php if ($berhasil !== null) : ?>
+            <img src="<?= esc($berhasil, 'attr') ?>" alt="" class="mx-auto mb-4 h-40 w-auto sm:h-48" width="800" height="600" data-gambar-berhasil>
+        <?php else : ?>
+            <span class="mx-auto mb-4 inline-flex size-16 items-center justify-center rounded-2xl bg-green-100 text-green-700"><?= ikon('trophy', 'size-8') ?></span>
+        <?php endif ?>
+        <h3 class="text-2xl font-extrabold text-primary-900">Pendaftaran terkirim</h3>
+        <p class="mt-3 text-gray-700">Pendaftaran <strong id="selesai-sekolah"></strong> tersimpan dengan ID
+            <strong class="id-pendaftaran text-lg tracking-wide break-all text-primary-900" id="selesai-id"></strong>
+            <button type="button" class="<?= K::GARIS_KECIL ?> align-middle" id="selesai-salin">
+                <?= ikon('copy', 'size-4') ?> <span>Salin ID</span>
             </button>
             Catat ID ini untuk memeriksa pendaftaran.</p>
-        <p>Status pembayaran <strong>Menunggu</strong> sampai panitia memeriksa bukti transfer, lalu menjadi <strong>Lunas</strong>.</p>
-        <div class="tombol-bayar">
-            <a class="btn btn-primary btn-lg" id="cetak-bukti" target="_blank" rel="noopener">
-                <i class="bi bi-printer" aria-hidden="true"></i> Cetak Bukti Pendaftaran
+        <p class="mt-3 text-gray-700">Status pembayaran <strong>Menunggu</strong> sampai panitia memeriksa bukti transfer, lalu menjadi <strong>Lunas</strong>.</p>
+        <div class="tombol-bayar mt-6 flex flex-wrap justify-center gap-3 [&>a]:flex-[1_1_15rem]">
+            <a class="<?= K::UTAMA_BESAR ?>" id="cetak-bukti" target="_blank" rel="noopener">
+                <?= ikon('printer', 'size-5') ?> Cetak Bukti Pendaftaran
             </a>
-            <a class="btn btn-outline-success btn-lg" id="bayar-wa" target="_blank" rel="noopener noreferrer" hidden>
-                <i class="bi bi-whatsapp" aria-hidden="true"></i> Konfirmasi lewat WA
+            <a class="<?= K::TOMBOL ?> min-h-12 border border-green-700 bg-white px-6 py-3 text-base text-green-800 hover:bg-green-50 focus:ring-green-200" id="bayar-wa" target="_blank" rel="noopener noreferrer" hidden>
+                <?= ikon('message-circle', 'size-5') ?> Konfirmasi lewat WA
             </a>
         </div>
-        <p class="small text-body-secondary mt-3" id="selesai-keterangan"></p>
-        <a class="btn btn-link" id="daftar-lagi" href="<?= site_url('pendaftaran') ?>">Daftarkan pendaftaran baru</a>
+        <p class="mt-4 text-sm text-gray-500" id="selesai-keterangan"></p>
+        <a class="<?= K::TAUTAN ?> mt-2" id="daftar-lagi" href="<?= site_url('pendaftaran') ?>">Daftarkan pendaftaran baru</a>
     </div>
 </section>

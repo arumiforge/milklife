@@ -9,7 +9,7 @@
  *      dibacakan lewat `#hasil-cari-bantuan` (`aria-live`).
  *    - Alamat `#faq-<id>` membuka tanya-jawab itu dan menggulir ke sana.
  *
- * 2. Laci bantuan wizard (Bootstrap offcanvas `#laci-bantuan`, sampai F9-05):
+ * 2. Laci bantuan wizard (drawer Flowbite `#laci-bantuan`, F9-05):
  *    tombol `[data-buka-bantuan="<langkah>"]` menampilkan hanya kelompok
  *    `[data-bantuan-langkah="<langkah>"]` di laci. Kotak cari di laci menyaring
  *    dengan cara yang sama.
