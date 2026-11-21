@@ -27,8 +27,22 @@ final class MenuPublik
     {
         $butir = [
             ['label' => 'Beranda', 'alamat' => site_url('/'), 'aktif' => url_is('/')],
-            ['label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan')],
         ];
+
+        // ---------- Halaman depan (F9-03) ----------
+        // Kategori menaut ke rincian kelompok umur di halaman depan, bila sudah ada.
+        try {
+            $adaKategori = db_connect()->table('kelompok_umur')->where('aktif', 1)->countAllResults() > 0;
+        } catch (Throwable) {
+            $adaKategori = false;
+        }
+
+        if ($adaKategori) {
+            $butir[] = ['label' => 'Kategori', 'alamat' => site_url('/') . '#lomba', 'aktif' => false];
+        }
+        // ---------- Akhir halaman depan ----------
+
+        $butir[] = ['label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan')];
 
         // Hasil setelah ada nomor yang diterbitkan (F8-04). Halaman galat tetap
         // tampil walau basis data tidak bisa dibaca.

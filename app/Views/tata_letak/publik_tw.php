@@ -60,18 +60,18 @@ try {
 
     <header class="sticky top-0 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur" data-kepala-publik>
         <nav class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between gap-3 px-4 py-2.5" aria-label="Menu utama">
-            <a href="<?= site_url('/') ?>" class="flex min-h-11 items-center gap-3">
+            <a href="<?= site_url('/') ?>" class="flex min-h-11 min-w-0 flex-1 items-center gap-3 lg:flex-none" data-merek>
                 <?php if ($logo !== null) : ?>
-                    <img src="<?= esc($logo['alamat']) ?>" class="h-10 w-auto" alt="<?= esc('Logo ' . $acara['nama']) ?>"<?= $logo['ukuran'] === null ? '' : ' width="' . (int) $logo['ukuran']['lebar'] . '" height="' . (int) $logo['ukuran']['tinggi'] . '"' ?>>
+                    <img src="<?= esc($logo['alamat']) ?>" class="h-10 w-auto mix-blend-multiply sm:h-12" alt="<?= esc('Logo ' . $acara['nama']) ?>"<?= $logo['ukuran'] === null ? '' : ' width="' . (int) $logo['ukuran']['lebar'] . '" height="' . (int) $logo['ukuran']['tinggi'] . '"' ?>>
                 <?php endif ?>
-                <span class="flex flex-col leading-tight">
-                    <span class="text-base font-extrabold text-primary-900 sm:text-lg"><?= esc($acara['nama']) ?></span>
+                <span class="flex min-w-0 flex-col leading-tight">
+                    <span class="text-sm font-extrabold text-primary-900 sm:text-lg" data-merek-nama><?= esc($acara['nama']) ?></span>
                     <?php if (($acara['seri_tahun'] ?? '') !== '') : ?>
-                        <span class="text-xs font-semibold text-oranye-600"><?= esc($acara['seri_tahun']) ?></span>
+                        <span class="text-xs font-semibold text-oranye-700 sm:text-sm" data-kepala-seri><?= esc($acara['seri_tahun']) ?></span>
                     <?php endif ?>
                 </span>
             </a>
-            <button type="button" data-collapse-toggle="menu-publik" aria-controls="menu-publik" aria-expanded="false" class="inline-flex size-11 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 lg:hidden">
+            <button type="button" data-collapse-toggle="menu-publik" aria-controls="menu-publik" aria-expanded="false" class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 lg:hidden">
                 <?= ikon('menu', 'size-6', 'Buka atau tutup menu') ?>
             </button>
             <div id="menu-publik" class="hidden w-full lg:flex lg:w-auto lg:items-center lg:gap-6">
@@ -99,11 +99,11 @@ try {
     <footer class="mt-16 border-t border-gray-200 bg-white">
         <div class="mx-auto flex max-w-screen-xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
             <div class="text-sm text-gray-600">
-                <p><?= nl2br(esc($kaki), false) ?></p>
+                <p data-kaki-teks><?= nl2br(esc($kaki), false) ?></p>
                 <p class="mt-2"><a href="<?= site_url('admin/masuk') ?>" class="inline-flex min-h-11 items-center gap-1 font-semibold text-primary-700 hover:underline"><?= ikon('lock') ?>Masuk panitia</a></p>
             </div>
             <?php if ($logoKaki !== null) : ?>
-                <img src="<?= esc($logoKaki['alamat']) ?>" alt="<?= esc($logoKaki['alt']) ?>" class="h-12 w-auto"<?= $logoKaki['ukuran'] === null ? '' : ' width="' . (int) $logoKaki['ukuran']['lebar'] . '" height="' . (int) $logoKaki['ukuran']['tinggi'] . '"' ?>>
+                <img src="<?= esc($logoKaki['alamat']) ?>" alt="<?= esc($logoKaki['alt']) ?>" class="h-12 w-auto" data-kaki-logo<?= $logoKaki['ukuran'] === null ? '' : ' width="' . (int) $logoKaki['ukuran']['lebar'] . '" height="' . (int) $logoKaki['ukuran']['tinggi'] . '"' ?>>
             <?php endif ?>
         </div>
         <div class="pita-merek h-1.5" aria-hidden="true"></div>

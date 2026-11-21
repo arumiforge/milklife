@@ -50,7 +50,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $this->assertSame('judul-jadwal', $bagian->getAttribute('aria-labelledby'));
         $this->assertSame('Jadwal', $this->teks($xpath, '//section[@id="jadwal"]//h2[@id="judul-jadwal"]'));
 
-        $butir = $xpath->query('//section[@id="jadwal"]//li[contains(@class, "jadwal-butir")]');
+        $butir = $xpath->query('//section[@id="jadwal"]//li[@data-jadwal-butir]');
         $this->assertSame(2, $butir->length, 'Jadwal yang disembunyikan tidak tampil.');
         $hasil->assertDontSee('Jadwal rahasia');
 
@@ -59,19 +59,19 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $this->assertSame('Pertemuan teknik (Technical meeting)', $this->teks($xpath, './/h3', $butir->item(1)));
 
         // Waktu kosong, tanpa tempat dan keterangan; tautan di tab baru.
-        $this->assertSame('Waktu segera diumumkan', $this->teks($xpath, './/*[contains(@class, "jadwal-waktu")]', $butir->item(0)));
-        $this->assertSame(0, $xpath->query('.//*[contains(@class, "jadwal-tempat") or contains(@class, "jadwal-keterangan")]', $butir->item(0))->length);
-        $tautan = $xpath->query('.//a[contains(@class, "jadwal-tautan")]', $butir->item(0))->item(0);
+        $this->assertSame('Waktu segera diumumkan', $this->teks($xpath, './/*[@data-jadwal-waktu]', $butir->item(0)));
+        $this->assertSame(0, $xpath->query('.//*[@data-jadwal-tempat or @data-jadwal-keterangan]', $butir->item(0))->length);
+        $tautan = $xpath->query('.//a[@data-jadwal-tautan]', $butir->item(0))->item(0);
         $this->assertNotNull($tautan);
         $this->assertSame('https://contoh.test/rapat', $tautan->getAttribute('href'));
         $this->assertTabBaru($tautan);
 
         // Waktu dengan jam dan WIB, tempat, keterangan dengan <br>, kotak tanggal.
-        $this->assertSame('8 Desember 2026 pukul 13.30 WIB', $this->teks($xpath, './/*[contains(@class, "jadwal-waktu")]', $butir->item(1)));
-        $this->assertSame('Aula Karangan', $this->teks($xpath, './/*[contains(@class, "jadwal-tempat")]', $butir->item(1)));
-        $this->assertSame('Bawa surat tugas. Satu orang per sekolah.', $this->teks($xpath, './/*[contains(@class, "jadwal-keterangan")]', $butir->item(1)));
-        $this->assertSame(1, $xpath->query('.//*[contains(@class, "jadwal-keterangan")]/br', $butir->item(1))->length);
-        $this->assertSame('8 Des', $this->teks($xpath, './/*[contains(@class, "jadwal-tanggal")]', $butir->item(1)));
+        $this->assertSame('8 Desember 2026 pukul 13.30 WIB', $this->teks($xpath, './/*[@data-jadwal-waktu]', $butir->item(1)));
+        $this->assertSame('Aula Karangan', $this->teks($xpath, './/*[@data-jadwal-tempat]', $butir->item(1)));
+        $this->assertSame('Bawa surat tugas. Satu orang per sekolah.', $this->teks($xpath, './/*[@data-jadwal-keterangan]', $butir->item(1)));
+        $this->assertSame(1, $xpath->query('.//*[@data-jadwal-keterangan]/br', $butir->item(1))->length);
+        $this->assertSame('8 Des', $this->teks($xpath, './/*[@data-jadwal-tanggal]', $butir->item(1)));
         $this->assertSame(0, $xpath->query('.//a', $butir->item(1))->length, 'Jadwal tanpa tautan tidak punya tombol tautan.');
     }
 
@@ -103,26 +103,26 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $this->assertSame('judul-unduhan', $bagian->getAttribute('aria-labelledby'));
         $this->assertSame('Unduhan', $this->teks($xpath, '//section[@id="unduhan"]//h2[@id="judul-unduhan"]'));
 
-        $butir = $xpath->query('//section[@id="unduhan"]//li[contains(@class, "unduhan-butir")]');
+        $butir = $xpath->query('//section[@id="unduhan"]//li[@data-unduhan-butir]');
         $this->assertSame(2, $butir->length, 'Berkas yang hilang atau disembunyikan tidak tampil.');
         $hasil->assertDontSee('Berkas hilang');
         $hasil->assertDontSee('Berkas tersembunyi');
 
         $this->assertSame('Juknis: Lomba/Seri 2', $this->teks($xpath, './/h3', $butir->item(0)));
-        $this->assertSame('Wajib dibaca. Versi terbaru.', $this->teks($xpath, './/*[contains(@class, "unduhan-keterangan")]', $butir->item(0)));
-        $this->assertSame(1, $xpath->query('.//*[contains(@class, "unduhan-keterangan")]/br', $butir->item(0))->length);
-        $this->assertMatchesRegularExpression('/^PDF · \d+ (bita|KB)$/u', $this->teks($xpath, './/*[contains(@class, "unduhan-rincian")]', $butir->item(0)));
-        $this->assertSame(1, $xpath->query('.//i[contains(@class, "bi-file-earmark-pdf")]', $butir->item(0))->length);
+        $this->assertSame('Wajib dibaca. Versi terbaru.', $this->teks($xpath, './/*[@data-unduhan-keterangan]', $butir->item(0)));
+        $this->assertSame(1, $xpath->query('.//*[@data-unduhan-keterangan]/br', $butir->item(0))->length);
+        $this->assertMatchesRegularExpression('/^PDF · \d+ (bita|KB)$/u', $this->teks($xpath, './/*[@data-unduhan-rincian]', $butir->item(0)));
+        $this->assertSame(1, $xpath->query('.//*[@data-ikon-jenis="file-text"]', $butir->item(0))->length);
 
-        $tombol = $xpath->query('.//a[contains(@class, "unduhan-tombol")]', $butir->item(0))->item(0);
+        $tombol = $xpath->query('.//a[@data-unduhan-tombol]', $butir->item(0))->item(0);
         $this->assertNotNull($tombol);
         $this->assertSame(base_url($juknis), $tombol->getAttribute('href'));
         $this->assertSame('Juknis- Lomba-Seri 2.pdf', $tombol->getAttribute('download'), 'Nama simpan dari judul, tanpa tanda yang dilarang.');
         $this->assertStringStartsWith('Unduh Juknis: Lomba/Seri 2 (PDF · ', $this->teksSimpul($tombol));
 
         $this->assertSame('Flyer', $this->teks($xpath, './/h3', $butir->item(1)));
-        $this->assertSame(1, $xpath->query('.//i[contains(@class, "bi-file-earmark-image")]', $butir->item(1))->length);
-        $this->assertSame('Flyer.png', $xpath->query('.//a[contains(@class, "unduhan-tombol")]', $butir->item(1))->item(0)?->getAttribute('download'));
+        $this->assertSame(1, $xpath->query('.//*[@data-ikon-jenis="file-image"]', $butir->item(1))->length);
+        $this->assertSame('Flyer.png', $xpath->query('.//a[@data-unduhan-tombol]', $butir->item(1))->item(0)?->getAttribute('download'));
 
         // Tautan ke halaman semua unduhan.
         $semua = $xpath->query('//section[@id="unduhan"]//a[@href="' . site_url('unduhan') . '"]')->item(0);
@@ -151,7 +151,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $this->assertSame('judul-kontak', $bagian->getAttribute('aria-labelledby'));
         $this->assertSame('Kontak', $this->teks($xpath, '//section[@id="kontak"]//h2[@id="judul-kontak"]'));
 
-        $this->assertSame(0, $xpath->query('//section[@id="kontak"]//*[contains(@class, "daftar-narahubung") or contains(@class, "daftar-media-sosial") or contains(@class, "kontak-tanya")]')->length);
+        $this->assertSame(0, $xpath->query('//section[@id="kontak"]//*[@data-daftar-narahubung or @data-daftar-media-sosial or @data-kontak-tanya]')->length);
         $this->assertSame(0, $xpath->query('//section[@id="kontak"]//h3')->length);
 
         $tautan = $xpath->query('//section[@id="kontak"]//a');
@@ -181,12 +181,12 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         // Narahubung: nama, nomor tampil, tombol WA. Nomor yang tidak sah dilewati.
         $narahubung = [];
 
-        foreach ($xpath->query('//section[@id="kontak"]//li[contains(@class, "narahubung-butir")]') as $li) {
+        foreach ($xpath->query('//section[@id="kontak"]//li[@data-narahubung-butir]') as $li) {
             $tombol = $xpath->query('.//a', $li)->item(0);
             $this->assertTabBaru($tombol);
             $narahubung[] = [
-                $this->teks($xpath, './/*[contains(@class, "narahubung-nama")]', $li),
-                $this->teks($xpath, './/*[contains(@class, "narahubung-nomor")]', $li),
+                $this->teks($xpath, './/*[@data-narahubung-nama]', $li),
+                $this->teks($xpath, './/*[@data-narahubung-nomor]', $li),
                 $tombol->getAttribute('href'),
             ];
         }
@@ -200,31 +200,31 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         // Media sosial: ikon, label, alamat ringkas. Alamat yang bukan http/https dilewati.
         $media = [];
 
-        foreach ($xpath->query('//section[@id="kontak"]//a[contains(@class, "media-sosial-tautan")]') as $a) {
+        foreach ($xpath->query('//section[@id="kontak"]//a[@data-media-sosial-tautan]') as $a) {
             $this->assertTabBaru($a);
             $media[] = [
                 $a->getAttribute('href'),
-                $this->teks($xpath, './/*[contains(@class, "media-sosial-label")]', $a),
-                $this->teks($xpath, './/*[contains(@class, "media-sosial-alamat")]', $a),
-                $xpath->query('.//i', $a)->item(0)?->getAttribute('class'),
+                $this->teks($xpath, './/*[@data-media-sosial-label]', $a),
+                $this->teks($xpath, './/*[@data-media-sosial-alamat]', $a),
+                substr(strrchr((string) $xpath->query('.//*[name()="use"]', $a)->item(0)?->getAttribute('href'), '#'), 1),
             ];
         }
 
         $this->assertSame([
-            ['https://www.instagram.com/lomba.karangan/', 'Instagram', 'instagram.com/lomba.karangan', 'bi bi-instagram'],
-            ['https://youtube.com/@karangan', 'YouTube', 'youtube.com/@karangan', 'bi bi-youtube'],
+            ['https://www.instagram.com/lomba.karangan/', 'Instagram', 'instagram.com/lomba.karangan', 'instagram'],
+            ['https://youtube.com/@karangan', 'YouTube', 'youtube.com/@karangan', 'youtube'],
         ], $media);
         $hasil->assertDontSee('javascript:alert(1)');
 
         // Tombol tanya admin dan bagikan dengan pesan yang diatur (rawurlencode).
-        $tanya = $xpath->query('//section[@id="kontak"]//a[contains(@class, "kontak-tanya")]')->item(0);
+        $tanya = $xpath->query('//section[@id="kontak"]//a[@data-kontak-tanya]')->item(0);
         $this->assertNotNull($tanya);
         $this->assertSame('Tanya admin lewat WA (di tab baru)', $this->teksSimpul($tanya));
         $this->assertSame('https://wa.me/6281299998888?text=' . rawurlencode('Halo admin, saya mau tanya & daftar?'), $tanya->getAttribute('href'));
         $this->assertStringContainsString('?text=Halo%20admin%2C%20saya%20mau%20tanya%20%26%20daftar%3F', $tanya->getAttribute('href'));
         $this->assertTabBaru($tanya);
 
-        $bagikan = $xpath->query('//section[@id="kontak"]//a[contains(@class, "kontak-bagikan")]')->item(0);
+        $bagikan = $xpath->query('//section[@id="kontak"]//a[@data-kontak-bagikan]')->item(0);
         $this->assertNotNull($bagikan);
         $this->assertSame('https://wa.me/?text=' . rawurlencode("Ayo ikut lomba!\nDaftar di sini\n" . site_url('/')), $bagikan->getAttribute('href'));
 
@@ -240,7 +240,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->get('/'));
 
-        $this->assertSame('https://wa.me/6281299998888', $xpath->query('//a[contains(@class, "kontak-tanya")]')->item(0)?->getAttribute('href'));
+        $this->assertSame('https://wa.me/6281299998888', $xpath->query('//a[@data-kontak-tanya]')->item(0)?->getAttribute('href'));
         $this->assertSame(0, $xpath->query('//section[@id="kontak"]//h3')->length, 'Tanpa narahubung dan media sosial, subjudulnya tidak tampil.');
     }
 
@@ -265,10 +265,10 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         }
 
         $this->assertSame('Rapat <b>penting</b>', $this->teks($xpath, '//section[@id="jadwal"]//h3'));
-        $this->assertSame('Catatan <script>alert(1)</script> baris dua', $this->teks($xpath, '//*[contains(@class, "jadwal-keterangan")]'));
+        $this->assertSame('Catatan <script>alert(1)</script> baris dua', $this->teks($xpath, '//*[@data-jadwal-keterangan]'));
         $this->assertSame('Juknis <u>baru</u>', $this->teks($xpath, '//section[@id="unduhan"]//h3'));
-        $this->assertSame('Ibu <s>Karangan</s>', $this->teks($xpath, '//*[contains(@class, "narahubung-nama")]'));
-        $this->assertSame('Insta<img src=x>', $this->teks($xpath, '//*[contains(@class, "media-sosial-label")]'));
+        $this->assertSame('Ibu <s>Karangan</s>', $this->teks($xpath, '//*[@data-narahubung-nama]'));
+        $this->assertSame('Insta<img src=x>', $this->teks($xpath, '//*[@data-media-sosial-label]'));
         $this->assertSame(0, $xpath->query('//main//script | //main//b | //main//img')->length);
     }
 

@@ -52,50 +52,50 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
         $this->assertSame(
             ['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'],
-            $this->daftarTeks($xpath, '//article[contains(@class, "lomba-ku")]/h3'),
+            $this->daftarTeks($xpath, '//article[@data-lomba-ku]/h3'),
         );
         $this->assertSame(
             ['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2014–2015', 'Lahir 2011–2014', 'Lahir 2008–2010'],
-            $this->daftarTeks($xpath, '//*[contains(@class, "lomba-tahun-lahir")]'),
+            $this->daftarTeks($xpath, '//*[@data-lomba-tahun-lahir]'),
         );
 
         // Jenjang dan biaya individu dari data awal (K73).
-        $this->assertSame(['SD/MI', 'SD/MI', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-jenjang")]'));
+        $this->assertSame(['SD/MI', 'SD/MI', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], $this->daftarTeks($xpath, '//*[@data-lomba-jenjang]'));
         $this->assertSame(
             ['Rp 25.000 per atlet per nomor', 'Rp 25.000 per atlet per nomor', 'Rp 25.000 per atlet per nomor', 'Rp 35.000 per atlet per nomor', 'Rp 50.000 per atlet per nomor'],
-            $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'),
+            $this->daftarTeks($xpath, '//*[@data-lomba-biaya-individu]'),
         );
 
         // Ringkasan jumlah per kelompok umur; totalnya 69 nomor.
-        $jumlah = $this->daftarTeks($xpath, '//*[contains(@class, "lomba-nomor-jumlah")]');
+        $jumlah = $this->daftarTeks($xpath, '//*[@data-lomba-nomor-jumlah]');
         $this->assertSame(['2 individu', '6 individu · 5 beregu', '10 individu · 1 beregu', '20 individu · 2 beregu', '20 individu · 3 beregu'], $jumlah);
         preg_match_all('/\d+/', implode(' ', $jumlah), $angka);
         $this->assertSame(69, array_sum(array_map(intval(...), $angka[0])));
 
         // Putra dan putri dengan nama yang sama digabung menjadi satu baris.
-        $ku10 = '(//article[contains(@class, "lomba-ku")])[2]';
+        $ku10 = '(//article[@data-lomba-ku])[2]';
         $this->assertSame(
             ['Lari 60 m — Putra, Putri', 'Frog Jump — Putra, Putri', 'Turbo Throw — Putra, Putri'],
-            $this->daftarTeks($xpath, $ku10 . '//ul[contains(@class, "lomba-daftar-individu")]/li'),
+            $this->daftarTeks($xpath, $ku10 . '//ul[@data-lomba-daftar-individu]/li'),
         );
         $this->assertSame(
             ["Kanga's Escape — Putra, Putri", 'Formula 1 — Putra, Putri', 'Estafet 8 × 50 m — Mixed'],
-            $this->daftarTeks($xpath, $ku10 . '//*[contains(@class, "lomba-beregu-kepala")]'),
+            $this->daftarTeks($xpath, $ku10 . '//*[@data-lomba-beregu-kepala]'),
         );
         $this->assertSame(
             ['Rp 100.000 per regu', 'Rp 100.000 per regu', 'Rp 150.000 per regu'],
-            $this->daftarTeks($xpath, $ku10 . '//*[contains(@class, "lomba-biaya-beregu")]'),
+            $this->daftarTeks($xpath, $ku10 . '//*[@data-lomba-biaya-beregu]'),
         );
         $this->assertSame(
             ['4 atlet inti per regu', '4 atlet inti per regu', '8 atlet inti per regu'],
-            $this->daftarTeks($xpath, $ku10 . '//ul[contains(@class, "lomba-beregu-info")]/li[1]'),
+            $this->daftarTeks($xpath, $ku10 . '//ul[@data-lomba-beregu-info]/li[1]'),
         );
 
         // KU 8 tanpa nomor beregu: tanpa judul "Nomor beregu".
-        $this->assertSame(0, $xpath->query('(//article[contains(@class, "lomba-ku")])[1]//ul[contains(@class, "lomba-daftar-beregu")]')->length);
+        $this->assertSame(0, $xpath->query('(//article[@data-lomba-ku])[1]//ul[@data-lomba-daftar-beregu]')->length);
 
         // Daftar nomor bisa dilipat dan tertutup saat halaman dibuka.
-        $this->assertSame(5, $xpath->query('//article[contains(@class, "lomba-ku")]/details[contains(@class, "lomba-nomor")]/summary')->length);
+        $this->assertSame(5, $xpath->query('//article[@data-lomba-ku]/details[@data-lomba-nomor]/summary')->length);
         $this->assertSame(0, $xpath->query('//details[@open]')->length);
     }
 
@@ -115,10 +115,10 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $hasil = $this->get('/');
         $xpath = $this->xpathDari($hasil);
 
-        $this->assertSame(['KU Hidup'], $this->daftarTeks($xpath, '//article[contains(@class, "lomba-ku")]/h3'));
-        $this->assertSame(['Lari Kancil — Putra'], $this->daftarTeks($xpath, '//ul[contains(@class, "lomba-daftar-individu")]/li'));
-        $this->assertSame(['1 individu'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-nomor-jumlah")]'));
-        $this->assertSame(0, $xpath->query('//ul[contains(@class, "lomba-daftar-beregu")]')->length);
+        $this->assertSame(['KU Hidup'], $this->daftarTeks($xpath, '//article[@data-lomba-ku]/h3'));
+        $this->assertSame(['Lari Kancil — Putra'], $this->daftarTeks($xpath, '//ul[@data-lomba-daftar-individu]/li'));
+        $this->assertSame(['1 individu'], $this->daftarTeks($xpath, '//*[@data-lomba-nomor-jumlah]'));
+        $this->assertSame(0, $xpath->query('//ul[@data-lomba-daftar-beregu]')->length);
 
         foreach (['KU Tidur', 'Lari Tupai', 'Lompat Katak', 'Estafet Bangau'] as $teks) {
             $hasil->assertDontSee($teks);
@@ -132,8 +132,8 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->get('/'));
 
-        $this->assertSame(['KU Sepi'], $this->daftarTeks($xpath, '//article[contains(@class, "lomba-ku")]/h3'));
-        $this->assertSame('Nomor lomba segera diumumkan.', $this->teks($xpath, '//*[contains(@class, "lomba-kosong")]'));
+        $this->assertSame(['KU Sepi'], $this->daftarTeks($xpath, '//article[@data-lomba-ku]/h3'));
+        $this->assertSame('Nomor lomba segera diumumkan.', $this->teks($xpath, '//*[@data-lomba-kosong]'));
         $this->assertSame(0, $xpath->query('//details')->length);
     }
 
@@ -155,9 +155,9 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->get('/'));
 
-        $this->assertSame(['Tahun lahir segera diumumkan', 'Lahir 2016–2018', 'Lahir 2011–2014'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-tahun-lahir")]'));
-        $this->assertSame(['Jenjang sekolah segera diumumkan', 'SD/MI', 'SMP/MTs, SMA/SMK/MA'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-jenjang")]'));
-        $this->assertSame(['Biaya segera diumumkan', 'Gratis', 'Rp 150.000 per atlet per nomor'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'));
+        $this->assertSame(['Tahun lahir segera diumumkan', 'Lahir 2016–2018', 'Lahir 2011–2014'], $this->daftarTeks($xpath, '//*[@data-lomba-tahun-lahir]'));
+        $this->assertSame(['Jenjang sekolah segera diumumkan', 'SD/MI', 'SMP/MTs, SMA/SMK/MA'], $this->daftarTeks($xpath, '//*[@data-lomba-jenjang]'));
+        $this->assertSame(['Biaya segera diumumkan', 'Gratis', 'Rp 150.000 per atlet per nomor'], $this->daftarTeks($xpath, '//*[@data-lomba-biaya-individu]'));
     }
 
     // ---------- Nomor beregu ----------
@@ -178,11 +178,11 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $this->tambahNomor($ku, ['nama' => 'Estafet Kosong', 'jenis' => 'beregu', 'kategori' => 'mix']);
 
         $xpath = $this->xpathDari($this->get('/'));
-        $baris = $xpath->query('//ul[contains(@class, "lomba-daftar-beregu")]/li');
+        $baris = $xpath->query('//ul[@data-lomba-daftar-beregu]/li');
 
         $this->assertSame(5, $baris->length);
-        $this->assertSame(['6 beregu'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-nomor-jumlah")]'), 'Jumlah menghitung nomor, bukan baris.');
-        $this->assertSame(0, $xpath->query('//ul[contains(@class, "lomba-daftar-individu")]')->length);
+        $this->assertSame(['6 beregu'], $this->daftarTeks($xpath, '//*[@data-lomba-nomor-jumlah]'), 'Jumlah menghitung nomor, bukan baris.');
+        $this->assertSame(0, $xpath->query('//ul[@data-lomba-daftar-individu]')->length);
 
         $this->assertSame([
             ['Estafet Rusa — Putra, Putri', '4 atlet inti per regu', 'Rp 100.000 per regu'],
@@ -191,8 +191,8 @@ final class HalamanDepanLombaTest extends UjiBasisData
             ['Tarik Tambang — Putri', '5 atlet per regu', 'Biaya regu segera diumumkan'],
             ['Estafet Kosong — Mixed', 'Biaya regu segera diumumkan'],
         ], array_map(fn (DOMElement $li): array => [
-            $this->teksSimpul($xpath->query('.//*[contains(@class, "lomba-beregu-kepala")]', $li)->item(0)),
-            ...array_map($this->teksSimpul(...), iterator_to_array($xpath->query('.//ul[contains(@class, "lomba-beregu-info")]/li', $li))),
+            $this->teksSimpul($xpath->query('.//*[@data-lomba-beregu-kepala]', $li)->item(0)),
+            ...array_map($this->teksSimpul(...), iterator_to_array($xpath->query('.//ul[@data-lomba-beregu-info]/li', $li))),
         ], iterator_to_array($baris)));
     }
 
@@ -206,7 +206,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
         $this->assertSame(
             ['Minimal 2 putra', 'Rp 50.000 per regu'],
-            $this->daftarTeks($xpath, '//ul[contains(@class, "lomba-beregu-info")]/li'),
+            $this->daftarTeks($xpath, '//ul[@data-lomba-beregu-info]/li'),
         );
     }
 
@@ -227,12 +227,12 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $hasil = $this->get('/');
         $xpath = $this->xpathDari($hasil);
 
-        $this->assertSame(['KU Rahasia'], $this->daftarTeks($xpath, '//article[contains(@class, "lomba-ku")]/h3'));
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "lomba-biaya-individu") or contains(@class, "lomba-biaya-beregu")]')->length);
-        $this->assertSame(['Tahun lahir', 'Jenjang sekolah'], $this->daftarTeks($xpath, '//dl[contains(@class, "lomba-ku-info")]//dt'));
-        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran saat mendaftar.', $this->teks($xpath, '//*[contains(@class, "lomba-pengantar")]'));
-        $this->assertSame(['Estafet Rusa — Putra, Putri', 'Estafet Kosong — Mixed'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-beregu-kepala")]'));
-        $this->assertSame(['4 atlet per regu'], $this->daftarTeks($xpath, '//ul[contains(@class, "lomba-beregu-info")]/li'));
+        $this->assertSame(['KU Rahasia'], $this->daftarTeks($xpath, '//article[@data-lomba-ku]/h3'));
+        $this->assertSame(0, $xpath->query('//*[@data-lomba-biaya-individu or @data-lomba-biaya-beregu]')->length);
+        $this->assertSame(['Tahun lahir', 'Jenjang sekolah'], $this->daftarTeks($xpath, '//dl[@data-lomba-ku-info]//dt'));
+        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran saat mendaftar.', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
+        $this->assertSame(['Estafet Rusa — Putra, Putri', 'Estafet Kosong — Mixed'], $this->daftarTeks($xpath, '//*[@data-lomba-beregu-kepala]'));
+        $this->assertSame(['4 atlet per regu'], $this->daftarTeks($xpath, '//ul[@data-lomba-beregu-info]/li'));
 
         foreach (['Rp', 'Gratis', 'Biaya segera diumumkan', 'Biaya tim', 'Biaya individu'] as $teks) {
             $hasil->assertDontSee($teks);
@@ -248,14 +248,14 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $hasil = $this->get('/');
         $xpath = $this->xpathDari($hasil);
 
-        $this->assertSame([], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'));
+        $this->assertSame([], $this->daftarTeks($xpath, '//*[@data-lomba-biaya-individu]'));
         $hasil->assertDontSee('Rp 150.000');
-        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran', $this->teks($xpath, '//*[contains(@class, "lomba-pengantar")]'));
+        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
 
         setting('HalamanDepan.tampilkan_biaya', true);
         $xpath = $this->xpathDari($this->get('/'));
-        $this->assertSame(['Rp 150.000 per atlet per nomor'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-biaya-individu")]'));
-        $this->assertStringContainsString('Biaya individu dihitung per atlet', $this->teks($xpath, '//*[contains(@class, "lomba-pengantar")]'));
+        $this->assertSame(['Rp 150.000 per atlet per nomor'], $this->daftarTeks($xpath, '//*[@data-lomba-biaya-individu]'));
+        $this->assertStringContainsString('Biaya individu dihitung per atlet', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
     }
 
     public function testSakelarBiayaDiPanelAdmin(): void
@@ -297,14 +297,14 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $hasil = $this->get('/');
         $xpath = $this->xpathDari($hasil);
 
-        $this->assertSame(['KU <b>Tebal</b>'], $this->daftarTeks($xpath, '//article[contains(@class, "lomba-ku")]/h3'));
-        $this->assertSame(['Lari <script>alert(1)</script> — Putra'], $this->daftarTeks($xpath, '//ul[contains(@class, "lomba-daftar-individu")]/li'));
-        $this->assertSame(['Estafet <i>Miring</i> & "Kutip" — Mixed'], $this->daftarTeks($xpath, '//*[contains(@class, "lomba-beregu-kepala")]'));
+        $this->assertSame(['KU <b>Tebal</b>'], $this->daftarTeks($xpath, '//article[@data-lomba-ku]/h3'));
+        $this->assertSame(['Lari <script>alert(1)</script> — Putra'], $this->daftarTeks($xpath, '//ul[@data-lomba-daftar-individu]/li'));
+        $this->assertSame(['Estafet <i>Miring</i> & "Kutip" — Mixed'], $this->daftarTeks($xpath, '//*[@data-lomba-beregu-kepala]'));
 
         $hasil->assertDontSee('<b>Tebal</b>');
         $hasil->assertDontSee('<script>alert(1)</script>');
         $hasil->assertDontSee('<i>Miring</i>');
-        $this->assertSame(0, $xpath->query('//section[@id="lomba"]//b | //section[@id="lomba"]//script | //section[@id="lomba"]//i[not(contains(@class, "bi"))]')->length);
+        $this->assertSame(0, $xpath->query('//section[@id="lomba"]//b | //section[@id="lomba"]//script | //section[@id="lomba"]//i')->length);
     }
 
     // ---------- Bantuan ----------
