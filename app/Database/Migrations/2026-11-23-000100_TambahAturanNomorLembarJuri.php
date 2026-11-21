@@ -39,6 +39,7 @@ class TambahAturanNomorLembarJuri extends Migration
                 'type'       => 'TINYINT',
                 'constraint' => 1,
                 'unsigned'   => true,
+                'null'       => false,
                 'default'    => 1,
                 'after'      => 'jumlah_percobaan',
                 'comment'    => '1 = prestasi sama dipisah prestasi terbaik kedua',
@@ -63,6 +64,7 @@ class TambahAturanNomorLembarJuri extends Migration
             'versi' => [
                 'type'     => 'INT',
                 'unsigned' => true,
+                'null'     => false,
                 'default'  => 0,
                 'after'    => 'peringkat_manual',
                 'comment'  => 'Naik setiap kali baris disimpan',

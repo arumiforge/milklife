@@ -51,6 +51,9 @@ final class MigrasiStrukturTest extends UjiBasisData
             // F9-08: aturan seri dan lintasan.
             'tempat_per_seri'  => ['tinyint unsigned', true, null],
             'urutan_lintasan'  => ['varchar(60)', true, null],
+            // F9-09: aturan nomor lompat/lempar.
+            'jumlah_percobaan' => ['tinyint unsigned', true, null],
+            'pemecah_seri'     => ['tinyint unsigned', false, '1'],
             'jumlah_inti'      => ['tinyint unsigned', true, null],
             'batas_anggota'    => ['tinyint unsigned', true, null],
             'regu_maksimal'    => ['tinyint unsigned', true, null],
@@ -240,9 +243,14 @@ final class MigrasiStrukturTest extends UjiBasisData
             'prestasi'         => ['int unsigned', true, null],
             // F9-10: prestasi dan poin per komponen (poin multi-lomba).
             'rincian'          => ['text', true, null],
+            // F9-09: percobaan lompat/lempar dan seperseribu detik.
+            'percobaan'        => ['varchar(255)', true, null],
+            'seperseribu'      => ['int unsigned', true, null],
             'keterangan'       => ['varchar(3)', true, null],
             'peringkat'        => ['smallint unsigned', true, null],
             'peringkat_manual' => ['tinyint unsigned', false, '0'],
+            // F9-09: versi baris untuk lembar juri.
+            'versi'            => ['int unsigned', false, '0'],
             'dibuat_pada'      => ['datetime', true, null],
             'diubah_pada'      => ['datetime', true, null],
         ],
