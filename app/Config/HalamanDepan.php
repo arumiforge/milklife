@@ -79,4 +79,15 @@ class HalamanDepan extends BaseConfig
      * Pengaturan > Halaman Depan setelah mencobanya di staging (rencana Tahap 9).
      */
     public bool $tampil_peserta = false;
+
+    // ---------- Jadwal pertandingan (F9-07) ----------
+
+    /**
+     * Tampilkan halaman Jadwal pertandingan (`/jadwal`, F9-07) dan butir menunya.
+     * Nilai awal mati: halaman menjawab 404 sampai admin menyalakannya di
+     * Pengaturan > Halaman Depan setelah mencobanya di staging (rencana Tahap 9).
+     */
+    public bool $tampil_jadwal = false;
+
+    // ---------- Akhir jadwal pertandingan ----------
 }

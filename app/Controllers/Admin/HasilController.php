@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Libraries\Hasil\HasilLomba;
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\UnduhanHasil;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -14,7 +15,7 @@ use CodeIgniter\HTTP\ResponseInterface;
  *
  * - `index`: nomor lomba per kelompok umur dengan banyak babak, ada Final, dan tanda terbit.
  * - `nomor`: babak satu nomor beserta hasilnya, tambah babak, Terbitkan/Tarik kembali, unduh PDF/Excel.
- * - `babak`: isian prestasi, keterangan, dan (Final) koreksi peringkat; atur peserta; ubah dan hapus babak.
+ * - `babak`: isian prestasi, keterangan, dan (Final) koreksi peringkat; atur peserta; jadwal babak (F9-07); ubah dan hapus babak.
  */
 class HasilController extends BaseController
 {
@@ -117,6 +118,10 @@ class HasilController extends BaseController
             'galat'      => (array) (session('galat_hasil') ?? []),
             'isian'      => (array) (session('isian_hasil') ?? []),
             'galatBabak' => (array) (session('galat_ubah_babak') ?? []),
+            // Jadwal babak (F9-07), disimpan `JadwalPertandinganController::simpanBabak()`.
+            'jadwal'      => (new JadwalPertandingan())->babak($id),
+            'galatJadwal' => (array) (session('galat_jadwal_babak') ?? []),
+            'isianJadwal' => (array) (session('isian_jadwal_babak') ?? []),
         ]);
     }
 

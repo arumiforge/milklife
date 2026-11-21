@@ -30,6 +30,18 @@ final class MenuPublik
             ['label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan')],
         ];
 
+        // ---------- Jadwal pertandingan (F9-07): hanya bila sakelar Pengaturan menyala ----------
+        try {
+            $adaJadwal = (bool) setting('HalamanDepan.tampil_jadwal');
+        } catch (Throwable) {
+            $adaJadwal = false;
+        }
+
+        if ($adaJadwal) {
+            $butir[] = ['label' => 'Jadwal', 'alamat' => site_url('jadwal'), 'aktif' => url_is('jadwal') || url_is('jadwal/*')];
+        }
+        // ---------- Akhir Jadwal pertandingan ----------
+
         // Hasil setelah ada nomor yang diterbitkan (F8-04). Halaman galat tetap
         // tampil walau basis data tidak bisa dibaca.
         $diHasil = url_is('hasil') || url_is('hasil/*');

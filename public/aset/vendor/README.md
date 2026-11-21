@@ -50,6 +50,7 @@ Dipasang lewat `package.json` di akar repo (versi mengikuti `package.json` templ
 | Di sini | Paket npm | Lisensi |
 |---|---|---|
 | `flowbite/flowbite.min.js` | `flowbite` (`dist/flowbite.min.js`), JS komponen templat Pro: carousel, laci, modal, dropdown, tab, tooltip, akordeon, pemilih tanggal | MIT (`flowbite/LICENSE-flowbite.md`) |
+| `flowbite/datepicker-id.js` | `flowbite-datepicker` (`dist/js/locales/id.js`), nama hari dan bulan Indonesia untuk pemilih tanggal; modul ES yang dimuat `js/pemilih-tanggal-tw.js` (F9-07) | MIT (`flowbite/LICENSE-flowbite-datepicker`) |
 | `three/three.module.min.js`, `three/three.core.min.js` | `three` (`build/`), modul ES; berkas pertama mengimpor yang kedua | MIT (`three/LICENSE`) |
 | `inter/inter-latin-wght-normal.woff2`, `inter/inter-latin-ext-wght-normal.woff2` | `@fontsource-variable/inter`, huruf templat Pro | OFL 1.1 (`inter/LICENSE`) |
 | `lucide/lucide.svg` | `lucide-static` (`icons/*.svg`), sprite berisi ikon yang dipakai saja (`npm run ikon`) | ISC (`lucide/LICENSE`) |

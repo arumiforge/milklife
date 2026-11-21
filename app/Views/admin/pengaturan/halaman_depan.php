@@ -155,6 +155,7 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
     </form>
 
     <?= $this->include('admin/pengaturan/_halaman_peserta') ?>
+    <?= $this->include('admin/pengaturan/_halaman_jadwal') ?>
 </div>
 <?= $this->endSection() ?>
 

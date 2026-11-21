@@ -1,6 +1,6 @@
 <?php
 /**
- * Bagian jadwal halaman depan (`#jadwal`): sosialisasi, technical meeting,
+ * Bagian Agenda halaman depan (`#jadwal`, judul "Agenda" sejak F9-07 supaya beda dari Jadwal pertandingan): sosialisasi, technical meeting,
  * dan jadwal lain yang ditandai tampil oleh admin, berurutan seperti di panel
  * admin.
  *
@@ -29,7 +29,7 @@ if ($jadwal === []) {
 ?>
 <section id="jadwal" class="bagian-tambahan bagian-jadwal" aria-labelledby="judul-jadwal">
     <div class="container">
-        <h2 id="judul-jadwal" class="bagian-tambahan-judul"><i class="bi bi-calendar-week" aria-hidden="true"></i> Jadwal</h2>
+        <h2 id="judul-jadwal" class="bagian-tambahan-judul"><i class="bi bi-calendar-week" aria-hidden="true"></i> Agenda</h2>
 
         <ol class="daftar-jadwal list-unstyled mb-0">
             <?php foreach ($jadwal as $butir) : ?>

@@ -68,10 +68,10 @@ final class TataLetakHalamanTest extends UjiHalaman
         }
 
         // K81: menu mengikuti konsep visual; Pendaftaran dan Cek ada di tombol pembuka.
-        $this->assertSame(['Tentang', 'Kategori', 'Jadwal', 'Unduhan', 'Bantuan'], array_keys($butir));
+        $this->assertSame(['Tentang', 'Kategori', 'Agenda', 'Unduhan', 'Bantuan'], array_keys($butir));
         $this->assertSame(site_url('/') . '#pembuka', $butir['Tentang']->getAttribute('href'));
         $this->assertSame(site_url('/') . '#lomba', $butir['Kategori']->getAttribute('href'));
-        $this->assertSame(site_url('/') . '#jadwal', $butir['Jadwal']->getAttribute('href'));
+        $this->assertSame(site_url('/') . '#jadwal', $butir['Agenda']->getAttribute('href'));
 
         // Unduhan punya halaman sendiri (F3-03, K40): bertautan, tidak aktif di halaman depan.
         $this->assertSame(site_url('unduhan'), $butir['Unduhan']->getAttribute('href'));
