@@ -4,6 +4,7 @@ use App\Libraries\Bantuan\JawabanFaq;
 use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\Hasil\Klasemen;
 use App\Libraries\Hasil\UnduhanKlasemen;
+use App\Libraries\IsiHalamanDepan;
 use App\Libraries\Panel\StatusPembayaran;
 use CodeIgniter\HTTP\DownloadResponse;
 use CodeIgniter\Test\TestResponse;
@@ -102,6 +103,8 @@ final class KlasemenSekolahTest extends UjiBasisData
 
         $this->assertStringContainsString('jumlah poin terbanyak', (new UnduhanKlasemen((new HasilLomba())->klasemen(), false))->html(false));
         $this->get('hasil/klasemen')->assertSee('jumlah poin terbanyak');
+        $this->assertSame('poin', (new IsiHalamanDepan())->hasilTerbaru()['metode']);
+        $this->assertSame([7, 7], array_column((new IsiHalamanDepan())->hasilTerbaru()['juara_umum'][0]['baris'], 'poin'));
         $this->assertStringContainsString('jumlah poin terbanyak (peringkat 1 = 7, 2 = 7, 3 = 4', (new JawabanFaq())->teks('{cara_juara_umum}'));
         $this->assertSame(['Peringkat', 'Sekolah', 'NPSN', 'Juara I', 'Juara II', 'Juara III', 'Jumlah', 'Poin', 'Juara umum'], $this->bacaExcel($this->bukaSebagaiAdmin('admin/klasemen/excel'))[0]);
     }

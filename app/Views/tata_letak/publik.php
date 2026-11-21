@@ -11,7 +11,7 @@
  *   (bilah muat), dan `konfirmasi.js` (jendela konfirmasi, `window.Konfirmasi`).
  *
  * Menu publik ditulis di `$menuPublik` di bawah (K81): Tentang, Kategori,
- * dan Jadwal melompat ke bagian halaman depan, Unduhan ke halaman unduhan,
+ * dan Agenda melompat ke bagian halaman depan, Unduhan ke halaman unduhan,
  * Hasil (setelah ada hasil lomba yang terbit, F8-04), lalu tombol Panitia ke
  * halaman masuk admin. Pendaftaran dan Cek
  * Pendaftaran dibuka dari dua tombol besar di bagian pembuka halaman depan.
@@ -39,7 +39,7 @@ $beranda = url_is('/');
 $menuPublik = [
     ['label' => 'Tentang', 'alamat' => site_url('/') . '#pembuka'],
     ['label' => 'Kategori', 'alamat' => site_url('/') . '#lomba'],
-    ['label' => 'Jadwal', 'alamat' => site_url('/') . '#jadwal'],
+    ['label' => 'Agenda', 'alamat' => site_url('/') . '#jadwal'],
     ['label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan')],
 ];
 

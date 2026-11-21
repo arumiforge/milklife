@@ -74,9 +74,36 @@ class HalamanDepan extends BaseConfig
     public bool $tampilkan_biaya = false;
 
     /**
+     * Hari lomba: bagian hasil dan juara umum dipindah tepat di bawah pembuka
+     * halaman depan (bila sudah ada nomor yang terbit). Bawaan mati (K143, F9-03).
+     */
+    public bool $hasil_di_atas = false;
+
+    /**
+     * Foto carousel pembuka (F9-03): daftar berurutan
+     * `[['berkas' => 'unggahan/halaman-depan/….webp', 'keterangan' => '…'], …]`.
+     * `null` = belum pernah diatur (foto bawaan boleh dipasang); `[]` = admin
+     * sudah menghapus semuanya. Dibaca lewat `App\Libraries\CarouselHalamanDepan`.
+     *
+     * @var list<array{berkas: string, keterangan: string}>|null
+     */
+    public ?array $carousel = null;
+
+    /**
      * Tampilkan halaman Peserta publik (`/peserta`, F9-12) dan butir menunya.
      * Nilai awal mati: halaman menjawab 404 sampai admin menyalakannya di
      * Pengaturan > Halaman Depan setelah mencobanya di staging (rencana Tahap 9).
      */
     public bool $tampil_peserta = false;
+
+    // ---------- Jadwal pertandingan (F9-07) ----------
+
+    /**
+     * Tampilkan halaman Jadwal pertandingan (`/jadwal`, F9-07) dan butir menunya.
+     * Nilai awal mati: halaman menjawab 404 sampai admin menyalakannya di
+     * Pengaturan > Halaman Depan setelah mencobanya di staging (rencana Tahap 9).
+     */
+    public bool $tampil_jadwal = false;
+
+    // ---------- Akhir jadwal pertandingan ----------
 }

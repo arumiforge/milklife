@@ -30,6 +30,8 @@ $kelompok = [
         ['label' => 'Daftar ulang', 'ikon' => 'scan-qr-code', 'alamat' => 'admin/daftar-ulang'],
         ['label' => 'Cetak BIB', 'ikon' => 'printer', 'alamat' => 'admin/nomor-atlet/cetak'],
         ['label' => 'Daftar peserta', 'ikon' => 'list-checks', 'alamat' => 'admin/daftar-peserta'],
+        // Jadwal pertandingan (F9-07).
+        ['label' => 'Jadwal pertandingan', 'ikon' => 'calendar-clock', 'alamat' => 'admin/jadwal-pertandingan'],
     ],
     'Hasil' => [
         ['label' => 'Hasil lomba', 'ikon' => 'trophy', 'alamat' => 'admin/hasil'],

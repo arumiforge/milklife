@@ -5,6 +5,7 @@ namespace App\Libraries\Hasil;
 use App\Libraries\Pendaftaran\Regu;
 use App\Models\NomorLombaModel;
 use CodeIgniter\Database\BaseConnection;
+use Throwable;
 
 /**
  * Hasil lomba per nomor dan babak (F8-04, K124, asumsi 6–8 K125).
@@ -359,11 +360,13 @@ final class HasilLomba
         $sekarang = date('Y-m-d H:i:s');
         $urutan   = (int) ($this->db->table('babak')->selectMax('urutan', 'terbesar')->where('nomor_lomba_id', $nomorId)->get()->getRow()->terbesar ?? 0) + 1;
 
-        $this->db->transStart();
-        $this->db->table('babak')->insert(['nomor_lomba_id' => $nomorId, 'nama' => $nama, 'final' => $final ? 1 : 0, 'urutan' => $urutan, 'dibuat_pada' => $sekarang, 'diubah_pada' => $sekarang]);
-        $id = (int) $this->db->insertID();
-        $this->tulisPeserta($id, $nomor, $isi === 'semua' ? array_keys($this->calon($nomor)) : $lolos, $sekarang);
-        $this->db->transComplete();
+        $id = $this->transaksi(function () use ($nomorId, $nama, $final, $urutan, $sekarang, $nomor, $isi, $lolos): int {
+            $this->db->table('babak')->insert(['nomor_lomba_id' => $nomorId, 'nama' => $nama, 'final' => $final ? 1 : 0, 'urutan' => $urutan, 'dibuat_pada' => $sekarang, 'diubah_pada' => $sekarang]);
+            $id = (int) $this->db->insertID();
+            $this->tulisPeserta($id, $nomor, $isi === 'semua' ? array_keys($this->calon($nomor)) : $lolos, $sekarang);
+
+            return $id;
+        });
 
         return ['id' => $id];
     }
@@ -388,16 +391,15 @@ final class HasilLomba
             return $galat;
         }
 
-        $this->db->transStart();
-        $this->db->table('babak')->where('id', $babakId)->update(['nama' => $nama, 'final' => $final ? 1 : 0, 'diubah_pada' => date('Y-m-d H:i:s')]);
+        $this->transaksi(function () use ($babakId, $nama, $final, $babak): void {
+            $this->db->table('babak')->where('id', $babakId)->update(['nama' => $nama, 'final' => $final ? 1 : 0, 'diubah_pada' => date('Y-m-d H:i:s')]);
 
-        // Koreksi peringkat hanya untuk Final: babak yang bukan Final lagi dihitung ulang.
-        if (! $final && $babak['final']) {
-            $this->db->table('hasil')->where('babak_id', $babakId)->update(['peringkat_manual' => 0]);
-            $this->hitungUlang($babakId, $babak['nomor']['jenis_hasil']);
-        }
-
-        $this->db->transComplete();
+            // Koreksi peringkat hanya untuk Final: babak yang bukan Final lagi dihitung ulang.
+            if (! $final && $babak['final']) {
+                $this->db->table('hasil')->where('babak_id', $babakId)->update(['peringkat_manual' => 0]);
+                $this->hitungUlang($babakId, $babak['nomor']['jenis_hasil']);
+            }
+        });
 
         return [];
     }
@@ -435,15 +437,14 @@ final class HasilLomba
         $baru    = array_values(array_diff($dipilih, array_keys($ada)));
         $buang   = array_values(array_diff_key($ada, array_flip($dipilih)));
 
-        $this->db->transStart();
+        $this->transaksi(function () use ($buang, $babakId, $babak, $baru): void {
+            if ($buang !== []) {
+                $this->db->table('hasil')->whereIn('id', $buang)->delete();
+            }
 
-        if ($buang !== []) {
-            $this->db->table('hasil')->whereIn('id', $buang)->delete();
-        }
-
-        $this->tulisPeserta($babakId, $babak['nomor'], $baru, date('Y-m-d H:i:s'));
-        $this->hitungUlang($babakId, $babak['nomor']['jenis_hasil']);
-        $this->db->transComplete();
+            $this->tulisPeserta($babakId, $babak['nomor'], $baru, date('Y-m-d H:i:s'));
+            $this->hitungUlang($babakId, $babak['nomor']['jenis_hasil']);
+        });
 
         return ['tambah' => count($baru), 'hapus' => count($buang)];
     }
@@ -526,14 +527,13 @@ final class HasilLomba
 
         $sekarang = date('Y-m-d H:i:s');
 
-        $this->db->transStart();
+        $this->transaksi(function () use ($ubah, $sekarang, $babakId, $jenis): void {
+            foreach ($ubah as $id => $data) {
+                $this->db->table('hasil')->where('id', $id)->update($data + ['diubah_pada' => $sekarang]);
+            }
 
-        foreach ($ubah as $id => $data) {
-            $this->db->table('hasil')->where('id', $id)->update($data + ['diubah_pada' => $sekarang]);
-        }
-
-        $this->hitungUlang($babakId, $jenis);
-        $this->db->transComplete();
+            $this->hitungUlang($babakId, $jenis);
+        });
 
         return [];
     }
@@ -639,6 +639,35 @@ final class HasilLomba
     public static function rapikanNama(string $nama): string
     {
         return trim((string) preg_replace('/\s+/u', ' ', $nama));
+    }
+
+    /**
+     * Jalankan `$kerja` dalam satu transaksi: semua tersimpan atau tidak ada.
+     *
+     * transBegin/transCommit dalam try/catch, bukan transStart/transComplete:
+     * dalam mode ketat status gagal transaksi lain di koneksi yang sama tidak
+     * ikut membatalkan penyimpanan ini (lihat `FaqModel::pindah()`, #129).
+     *
+     * @template T
+     *
+     * @param callable(): T $kerja
+     *
+     * @return T
+     */
+    private function transaksi(callable $kerja): mixed
+    {
+        $this->db->transBegin();
+
+        try {
+            $hasil = $kerja();
+            $this->db->transCommit();
+
+            return $hasil;
+        } catch (Throwable $e) {
+            $this->db->transRollback();
+
+            throw $e;
+        }
     }
 
     /**

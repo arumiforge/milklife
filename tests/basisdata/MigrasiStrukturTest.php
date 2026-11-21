@@ -212,6 +212,10 @@ final class MigrasiStrukturTest extends UjiBasisData
             'nama'           => ['varchar(60)', false, null],
             'final'          => ['tinyint unsigned', false, '0'],
             'urutan'         => ['smallint unsigned', false, '0'],
+            // Jadwal pertandingan (F9-07).
+            'tanggal'        => ['date', true, null],
+            'jam_mulai'      => ['time', true, null],
+            'lokasi'         => ['varchar(100)', true, null],
             'dibuat_pada'    => ['datetime', true, null],
             'diubah_pada'    => ['datetime', true, null],
         ],

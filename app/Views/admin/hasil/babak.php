@@ -11,9 +11,13 @@
  * @var array<int|string, string>  $galat      id hasil => pesan
  * @var array<int|string, mixed>   $isian      isian yang dikembalikan saat ada galat
  * @var array<string, string>      $galatBabak galat ubah babak
+ * @var array{tanggal: string|null, jam: string|null, lokasi: string}|null $jadwal `JadwalPertandingan::babak()` (F9-07)
+ * @var array<string, string>      $galatJadwal galat jadwal babak
+ * @var array<string, mixed>       $isianJadwal isian jadwal yang dikembalikan saat ada galat
  */
 
 use App\Libraries\Hasil\HasilLomba;
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\Peringkat;
 
@@ -191,6 +195,44 @@ foreach ($calon as $kunci => $c) {
                     <button type="submit" class="btn btn-outline-primary"><i class="bi bi-people" aria-hidden="true"></i> Simpan peserta</button>
                 </form>
             <?php endif ?>
+        </div>
+    </section>
+
+    <?php
+    // Jadwal babak (F9-07): sama dengan baris babak ini di Jadwal pertandingan.
+    $jadwal      ??= ['tanggal' => null, 'jam' => null, 'lokasi' => ''];
+    $galatJadwal ??= [];
+    $isianJadwal ??= [];
+    $nilaiJadwal = static fn (string $kotak, string $asal): string => is_string($isianJadwal[$kotak] ?? null) ? $isianJadwal[$kotak] : $asal;
+    ?>
+    <section class="card mb-4" id="jadwal-babak" aria-labelledby="judul-jadwal-babak">
+        <div class="card-body">
+            <h2 class="h5" id="judul-jadwal-babak">Jadwal babak</h2>
+            <p class="small text-body-secondary">
+                Tanggal, jam mulai (WIB), dan lokasi babak ini di halaman Jadwal. Semua babak bisa diisi sekaligus di
+                <a href="<?= site_url('admin/jadwal-pertandingan') ?>">Jadwal pertandingan</a>.
+            </p>
+            <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/jadwal') ?>" method="post" class="row g-3 align-items-start" novalidate>
+                <?= csrf_field() ?>
+                <div class="col-12 col-md-4">
+                    <label for="jadwal-tanggal" class="form-label">Tanggal</label>
+                    <input type="date" class="form-control<?= isset($galatJadwal['tanggal']) ? ' is-invalid' : '' ?>" id="jadwal-tanggal" name="tanggal" min="<?= (int) date('Y') - 1 ?>-01-01" max="<?= (int) date('Y') + 2 ?>-12-31" value="<?= esc($nilaiJadwal('tanggal', (string) $jadwal['tanggal']), 'attr') ?>">
+                    <?php if (isset($galatJadwal['tanggal'])) : ?><div class="invalid-feedback d-block"><?= esc($galatJadwal['tanggal']) ?></div><?php endif ?>
+                </div>
+                <div class="col-6 col-md-3">
+                    <label for="jadwal-jam" class="form-label">Jam mulai</label>
+                    <input type="time" class="form-control<?= isset($galatJadwal['jam_mulai']) ? ' is-invalid' : '' ?>" id="jadwal-jam" name="jam_mulai" value="<?= esc($nilaiJadwal('jam_mulai', (string) $jadwal['jam']), 'attr') ?>">
+                    <?php if (isset($galatJadwal['jam_mulai'])) : ?><div class="invalid-feedback d-block"><?= esc($galatJadwal['jam_mulai']) ?></div><?php endif ?>
+                </div>
+                <div class="col-12 col-md-5">
+                    <label for="jadwal-lokasi" class="form-label">Lokasi</label>
+                    <input type="text" class="form-control<?= isset($galatJadwal['lokasi']) ? ' is-invalid' : '' ?>" id="jadwal-lokasi" name="lokasi" maxlength="<?= JadwalPertandingan::LOKASI_MAKSIMAL ?>" placeholder="Boleh kosong, misalnya Lintasan utama" value="<?= esc($nilaiJadwal('lokasi', $jadwal['lokasi']), 'attr') ?>">
+                    <?php if (isset($galatJadwal['lokasi'])) : ?><div class="invalid-feedback d-block"><?= esc($galatJadwal['lokasi']) ?></div><?php endif ?>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-calendar-check" aria-hidden="true"></i> Simpan jadwal babak</button>
+                </div>
+            </form>
         </div>
     </section>
 

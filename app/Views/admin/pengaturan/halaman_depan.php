@@ -8,8 +8,11 @@
  * @var array<string, array{label: string, rasio: string, saran: string, jalur: string}> $gambar kunci => keterangan dan jalur tersimpan ('' bila belum ada)
  * @var list<string>                                                               $gambarPerluDipilihLagi
  * @var bool                                                                       $tampilkanBiaya sakelar `HalamanDepan.tampilkan_biaya`
+ * @var bool                                                                       $hasilDiAtas sakelar `HalamanDepan.hasil_di_atas` (K143)
+ * @var list<array{berkas: string, keterangan: string, ada: bool}>                  $carousel foto carousel pembuka berurutan (F9-03)
  */
 
+use App\Libraries\CarouselHalamanDepan;
 use App\Libraries\Unggahan;
 
 $kotak = static function (string $nama, string $label, string $bantuan, array $isian, array $galat, int $baris = 0, array $atribut = []): string {
@@ -144,6 +147,15 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
                 <div id="tampilkan_biaya-bantuan" class="form-text">
                     Biaya individu tiap kelompok umur dan biaya tiap tim beregu. Bila dimatikan, biaya tidak tampil di halaman depan; rinciannya tetap muncul di bagian pembayaran saat sekolah mendaftar.
                 </div>
+
+                <div class="form-check form-switch mt-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="hasil_di_atas" name="hasil_di_atas" value="1"
+                        aria-describedby="hasil_di_atas-bantuan"<?= $hasilDiAtas ? ' checked' : '' ?>>
+                    <label class="form-check-label fw-semibold" for="hasil_di_atas">Tampilkan hasil di atas (hari lomba)</label>
+                </div>
+                <div id="hasil_di_atas-bantuan" class="form-text">
+                    Bila dinyalakan, bagian hasil dan juara umum pindah tepat di bawah bagian pembuka halaman depan, supaya mudah dilihat selama lomba. Hanya berlaku setelah ada nomor yang hasilnya diterbitkan.
+                </div>
             </div>
         </section>
 
@@ -155,6 +167,75 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
     </form>
 
     <?= $this->include('admin/pengaturan/_halaman_peserta') ?>
+
+    <?php // Foto carousel pembuka (F9-03): tiap tindakan formulir sendiri, langsung tersimpan. ?>
+    <section id="carousel" class="card mt-4 mb-2" aria-labelledby="judul-carousel">
+        <div class="card-body p-3 p-md-4">
+            <h2 id="judul-carousel" class="h5 mb-1">Foto carousel</h2>
+            <p class="small text-body-secondary mb-3">
+                Foto yang bergeser otomatis di bagian pembuka halaman depan, berurutan dari atas.
+                Pilih foto mendatar tanpa tulisan; JPG, PNG, atau WEBP, paling besar <?= Unggahan::ukuranTeks(Unggahan::BATAS_GAMBAR) ?>.
+                Paling banyak <?= CarouselHalamanDepan::BATAS ?> foto. Bila carousel kosong, gambar kepala yang tampil.
+            </p>
+
+            <?php if ($carousel === []) : ?>
+                <p class="text-body-secondary" data-carousel-kosong>Belum ada foto di carousel.</p>
+            <?php else : ?>
+                <ol class="list-unstyled d-grid gap-2 mb-4" data-daftar-carousel>
+                    <?php foreach ($carousel as $i => $foto) : ?>
+                        <?php $urutan = $i + 1; $alamatFoto = site_url('admin/pengaturan/halaman-depan/carousel/' . $urutan); ?>
+                        <li class="d-flex flex-wrap align-items-center gap-3 border rounded p-2" data-foto-carousel="<?= $urutan ?>">
+                            <span class="fw-semibold text-body-secondary min-w-bib text-center"><?= $urutan ?></span>
+                            <?php if ($foto['ada']) : ?>
+                                <img src="<?= esc(base_url($foto['berkas']), 'attr') ?>" alt="" class="rounded objek-cover" width="128" height="85" loading="lazy">
+                            <?php else : ?>
+                                <span class="badge text-bg-warning">Berkas hilang</span>
+                            <?php endif ?>
+                            <span class="flex-grow-1"><?= $foto['keterangan'] !== '' ? esc($foto['keterangan']) : '<span class="text-body-secondary">Tanpa keterangan</span>' ?></span>
+                            <span class="d-flex flex-wrap gap-1">
+                                <?php foreach (['naik' => ['arrow-up', 'Naikkan'], 'turun' => ['arrow-down', 'Turunkan']] as $arah => [$ikonArah, $labelArah]) : ?>
+                                    <?php if (($arah === 'naik' && $i > 0) || ($arah === 'turun' && $i < count($carousel) - 1)) : ?>
+                                        <form action="<?= $alamatFoto . '/' . $arah ?>" method="post" class="d-inline">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="berkas" value="<?= esc($foto['berkas'], 'attr') ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-<?= $ikonArah ?>" aria-hidden="true"></i><span class="visually-hidden"><?= $labelArah ?> foto <?= $urutan ?></span></button>
+                                        </form>
+                                    <?php endif ?>
+                                <?php endforeach ?>
+                                <form action="<?= $alamatFoto ?>/hapus" method="post" class="d-inline"
+                                    data-konfirmasi="Foto ini dihapus dari carousel dan dari server, dan tidak bisa dikembalikan."
+                                    data-konfirmasi-judul="Hapus foto?" data-konfirmasi-tombol="Hapus foto">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="berkas" value="<?= esc($foto['berkas'], 'attr') ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash" aria-hidden="true"></i> Hapus<span class="visually-hidden"> foto <?= $urutan ?></span></button>
+                                </form>
+                            </span>
+                        </li>
+                    <?php endforeach ?>
+                </ol>
+            <?php endif ?>
+
+            <?php if (count($carousel) < CarouselHalamanDepan::BATAS) : ?>
+                <form action="<?= site_url('admin/pengaturan/halaman-depan/carousel') ?>" method="post" enctype="multipart/form-data" class="row g-3 align-items-end" data-tambah-carousel>
+                    <?= csrf_field() ?>
+                    <div class="col-12 col-md-5">
+                        <label for="foto-carousel" class="form-label">Foto baru</label>
+                        <input type="file" class="form-control" id="foto-carousel" name="foto" accept="image/jpeg,image/png,image/webp" data-ukuran-maksimal="<?= Unggahan::BATAS_GAMBAR ?>" required>
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <label for="keterangan-carousel" class="form-label">Keterangan foto</label>
+                        <input type="text" class="form-control" id="keterangan-carousel" name="keterangan" maxlength="<?= CarouselHalamanDepan::BATAS_KETERANGAN ?>" aria-describedby="keterangan-carousel-bantuan">
+                        <div id="keterangan-carousel-bantuan" class="form-text">Isi foto dengan kalimat singkat untuk pembaca layar, misalnya "Atlet melempar lembing".</div>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah foto</button>
+                    </div>
+                </form>
+            <?php endif ?>
+        </div>
+    </section>
+
+    <?= $this->include('admin/pengaturan/_halaman_jadwal') ?>
 </div>
 <?= $this->endSection() ?>
 
