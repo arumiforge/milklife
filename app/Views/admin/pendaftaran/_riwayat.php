@@ -1,7 +1,7 @@
 <?php
 /**
  * Daftar riwayat tindakan admin (F8-01, K124), terbaru di atas. Dipakai
- * rincian pendaftaran dan halaman `admin/riwayat`.
+ * rincian pendaftaran dan halaman `admin/riwayat` (tampilan Tailwind, F9-15).
  *
  * @var list<array<string, mixed>> $riwayat     `RiwayatAdmin::untukPendaftaran()` atau `cari()`
  * @var string|null                 $idSekarang ID pendaftaran yang sedang dibuka; baris dari ID lain
@@ -13,26 +13,26 @@ $idSekarang ??= null;
 $denganId   ??= false;
 ?>
 <?php if ($riwayat === []) : ?>
-    <p class="text-body-secondary mb-0 riwayat-kosong">Belum ada tindakan admin yang tercatat.</p>
+    <p class="text-sm text-gray-600" data-riwayat-kosong>Belum ada tindakan admin yang tercatat.</p>
 <?php else : ?>
-    <ol class="list-unstyled mb-0 riwayat-admin">
+    <ol class="divide-y divide-gray-100 border-t border-gray-100" data-riwayat-admin>
         <?php foreach ($riwayat as $r) : ?>
-            <li class="border-top py-2 riwayat-baris" data-tindakan="<?= esc($r['tindakan'], 'attr') ?>">
-                <div class="d-flex flex-wrap align-items-baseline gap-2">
-                    <span class="badge rounded-pill text-bg-light border"><?= esc($r['label']) ?></span>
+            <li class="py-2.5" data-tindakan="<?= esc($r['tindakan'], 'attr') ?>">
+                <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <span class="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs font-semibold text-gray-800"><?= esc($r['label']) ?></span>
                     <?php if ($denganId) : ?>
                         <?php if (($r['pendaftaran_id'] ?? null) !== null) : ?>
-                            <a class="fw-semibold" href="<?= site_url('admin/pendaftaran/' . (int) $r['pendaftaran_id']) ?>"><?= esc($r['id_pendaftaran']) ?></a>
+                            <a class="font-semibold text-primary-700 hover:underline" href="<?= site_url('admin/pendaftaran/' . (int) $r['pendaftaran_id']) ?>"><?= esc($r['id_pendaftaran']) ?></a>
                         <?php else : ?>
-                            <span class="fw-semibold"><?= esc($r['id_pendaftaran']) ?></span>
-                            <span class="small text-body-secondary">(sudah dihapus)</span>
+                            <span class="font-semibold text-gray-900"><?= esc($r['id_pendaftaran']) ?></span>
+                            <span class="text-sm text-gray-500">(sudah dihapus)</span>
                         <?php endif ?>
                     <?php elseif ($idSekarang !== null && $r['id_pendaftaran'] !== $idSekarang) : ?>
-                        <span class="small text-body-secondary">dari <?= esc($r['id_pendaftaran']) ?></span>
+                        <span class="text-sm text-gray-500">dari <?= esc($r['id_pendaftaran']) ?></span>
                     <?php endif ?>
-                    <span class="small text-body-secondary ms-auto text-nowrap"><?= esc(tanggal_id($r['dibuat_pada'], true)) ?> · <?= esc($r['nama_admin']) ?></span>
+                    <span class="ms-auto whitespace-nowrap text-sm text-gray-500"><?= esc(tanggal_id($r['dibuat_pada'], true)) ?> · <?= esc($r['nama_admin']) ?></span>
                 </div>
-                <div class="small mt-1"><?= esc($r['ringkasan']) ?></div>
+                <div class="mt-1 text-sm text-gray-800"><?= esc($r['ringkasan']) ?></div>
             </li>
         <?php endforeach ?>
     </ol>

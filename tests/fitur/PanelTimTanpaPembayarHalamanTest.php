@@ -55,7 +55,7 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
     {
         [$a, $b] = $this->contoh();
 
-        $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id']))->query('//*[contains(@class, "tim-tanpa-pembayar")]')->length);
+        $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id']))->query('//*[@data-tim-tanpa-pembayar]')->length);
         $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'))->query('//*[@id="tim-tanpa-pembayar"]')->length);
         $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id'] . '/ubah'))->query('//input[@name="bebankan_tim[]"]')->length);
 
@@ -76,7 +76,7 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
 
         // Rincian B: peringatan di kartu tim.
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id']));
-        $tanda = $xpath->query('//*[contains(@class, "tim-tanpa-pembayar")]');
+        $tanda = $xpath->query('//*[@data-tim-tanpa-pembayar]');
         $this->assertSame(1, $tanda->length);
         $this->assertSame($this->idInduk['kanga'] . ':A', $tanda->item(0)->getAttribute('data-regu'));
         $this->assertStringContainsString('Rp 100.000', $tanda->item(0)->textContent);
@@ -142,7 +142,7 @@ final class PanelTimTanpaPembayarHalamanTest extends UjiBasisData
             'admin/pendaftaran/' . $b['id'],
             'Perubahan pendaftaran ' . $b['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 100.000. Biaya 1 regu tanpa pembayar kini dibebankan ke pendaftaran ini.',
         );
-        $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id']))->query('//*[contains(@class, "tim-tanpa-pembayar")]')->length);
+        $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/pendaftaran/' . $b['id']))->query('//*[@data-tim-tanpa-pembayar]')->length);
         $this->assertSame(0, $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'))->query('//*[@id="tim-tanpa-pembayar"]')->length);
     }
 
