@@ -84,7 +84,7 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
             <?= komponen('tombol', ['label' => 'Atur babak di Hasil lomba', 'href' => site_url('admin/hasil/nomor/' . $nomor['id']), 'varian' => 'hantu', 'ikon' => 'trophy']) ?>
         </div>
         <?php if ($bagan === []) : ?>
-            <div class="mt-3"><?= komponen('kosong', ['ikon' => 'list-ordered', 'judul' => 'Belum ada babak', 'teks' => 'Tambahkan babak (misalnya Penyisihan, lalu Final berisi "Kosong") di Hasil lomba. Final terisi sendiri dari yang lolos setelah hasil Penyisihan lengkap.']) ?></div>
+            <div class="mt-3"><?= komponen('kosong', ['gambar' => 'gambar/admin/kosong-admin.webp', 'ikon' => 'list-ordered', 'judul' => 'Belum ada babak', 'teks' => 'Tambahkan babak (misalnya Penyisihan, lalu Final berisi "Kosong") di Hasil lomba. Final terisi sendiri dari yang lolos setelah hasil Penyisihan lengkap.']) ?></div>
         <?php else : ?>
             <p class="mt-1 text-sm text-gray-600">Tekan nama babak untuk membagi, menggeser, atau mengunci daftar serinya.</p>
             <div class="mt-3">

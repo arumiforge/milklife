@@ -7,7 +7,9 @@
  * Bootstrap tidak dimuat di sini.
  *
  * Bagian yang diisi tampilan:
- * - `judul`: judul tab peramban (di-escape pemanggil).
+ * - `judul`: judul tab peramban (di-escape pemanggil); juga `og:title`.
+ * - `keterangan`: teks pendek halaman untuk `og:description` dan
+ *   `meta description` (di-escape pemanggil); bawaan kalimat umum acara.
  * - `isi`: isi halaman di dalam `<main id="isi">`. Halaman menulis `<h1>`-nya sendiri.
  * - `kepala`: tag tambahan di `<head>`.
  * - `skrip`: `<script src>` tambahan, dimuat setelah JS Flowbite. Modul ES
@@ -19,6 +21,7 @@
  * @var CodeIgniter\View\View $this
  */
 
+use App\Libraries\GambarOpsional;
 use App\Libraries\IsiHalamanDepan;
 use App\Libraries\MenuPublik;
 
@@ -41,6 +44,14 @@ try {
     $logo     = null;
     $logoKaki = null;
 }
+
+// Pratinjau tautan yang dibagikan (Open Graph, F9-19, G9-10). Gambar hanya bila berkasnya ada.
+$judulHalaman = trim((string) preg_replace('/\s+/u', ' ', $this->renderSection('judul', true)));
+$keterangan   = trim((string) preg_replace('/\s+/u', ' ', $this->renderSection('keterangan')));
+if ($keterangan === '') {
+    $keterangan = esc('Pendaftaran, jadwal, dan hasil ' . trim($acara['nama'] . ' ' . $acara['seri_tahun']) . '.');
+}
+$gambarBagikan = GambarOpsional::bagikan(uri_string());
 ?>
 <!doctype html>
 <html lang="id">
@@ -49,8 +60,23 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#021F7B">
-    <title><?= $this->renderSection('judul') ?></title>
-    <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
+    <title><?= $judulHalaman ?></title>
+    <meta name="description" content="<?= $keterangan ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:site_name" content="<?= esc($acara['nama']) ?>">
+    <meta property="og:title" content="<?= $judulHalaman ?>">
+    <meta property="og:description" content="<?= $keterangan ?>">
+    <meta property="og:url" content="<?= esc(current_url()) ?>">
+    <?php if ($gambarBagikan !== null) : ?>
+        <meta property="og:image" content="<?= esc($gambarBagikan) ?>">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta name="twitter:card" content="summary_large_image">
+    <?php else : ?>
+        <meta name="twitter:card" content="summary">
+    <?php endif ?>
+    <?= view('tata_letak/_ikon_aplikasi', [], ['saveData' => false]) ?>
     <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
     <?= $this->renderSection('kepala') ?>

@@ -30,9 +30,11 @@ $sekolah = $hasil[0] ?? null;
 
 <?= $this->section('judul') ?>Cek Pendaftaran – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
+<?= $this->section('keterangan') ?>Lihat data pendaftaran, biaya, dan status pembayaran sekolah.<?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_bilah_kemajuan_tw', [], ['saveData' => false]) ?>
-<?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Cek Pendaftaran', 'ikon' => 'search', 'teks' => 'Lihat data pendaftaran, biaya, dan status pembayaran sekolah Anda.'], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Cek Pendaftaran', 'ikon' => 'search', 'gambar' => 'judul/cek-pendaftaran.webp', 'teks' => 'Lihat data pendaftaran, biaya, dan status pembayaran sekolah Anda.'], ['saveData' => false]) ?>
 
 <div class="halaman-cek mx-auto max-w-5xl px-4 pb-12">
     <?php if (! $siap) : ?>

@@ -58,6 +58,8 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
 
 <?= $this->section('judul') ?>Peserta – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
+<?= $this->section('keterangan') ?>Daftar atlet dari sekolah yang pembayarannya sudah lunas, lengkap dengan nomor atlet.<?= $this->endSection() ?>
+
 <?= $this->section('kepala') ?>
     <meta name="robots" content="noindex">
 <?= $this->endSection() ?>
@@ -65,9 +67,16 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
 <?= $this->section('isi') ?>
 <section class="border-b border-primary-100 bg-white" aria-labelledby="judul-peserta">
     <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12">
-        <p class="text-sm font-semibold text-oranye-600"><?= esc($namaAcara) ?></p>
-        <h1 id="judul-peserta" class="mt-1 text-3xl font-extrabold text-primary-900 sm:text-4xl">Peserta</h1>
-        <p class="mt-3 max-w-2xl text-lg text-gray-700">Atlet dari sekolah yang pembayarannya sudah lunas. Cari namamu untuk melihat nomor atlet dan nomor lombamu.</p>
+        <div class="md:flex md:items-center md:gap-8">
+            <div class="min-w-0 md:flex-1">
+                <p class="text-sm font-semibold text-oranye-600"><?= esc($namaAcara) ?></p>
+                <h1 id="judul-peserta" class="mt-1 text-3xl font-extrabold text-primary-900 sm:text-4xl">Peserta</h1>
+                <p class="mt-3 max-w-2xl text-lg text-gray-700">Atlet dari sekolah yang pembayarannya sudah lunas. Cari namamu untuk melihat nomor atlet dan nomor lombamu.</p>
+            </div>
+            <?php if (ada_gambar('judul/peserta.webp')) : ?>
+                <div class="hidden shrink-0 md:block" data-judul-ilustrasi><?= gambar_opsional('judul/peserta.webp', ['class' => 'h-32 w-auto']) ?></div>
+            <?php endif ?>
+        </div>
 
         <form action="<?= site_url('peserta') ?>" method="get" class="mt-6 grid gap-4 md:grid-cols-12 md:items-end" role="search" data-saring-peserta data-alamat-data="<?= site_url('peserta/data') ?>">
             <div class="md:col-span-12 lg:col-span-5">

@@ -31,7 +31,10 @@ $tautan     = 'font-semibold text-primary-700 underline';
     <?= view('admin/hari_lomba/_tab', ['aktif' => 'admin/daftar-ulang'], ['saveData' => false]) ?>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-cari" id="kotak-pindai">
-        <h2 class="text-lg font-bold text-gray-900" id="judul-cari">Pindai kode QR bukti pendaftaran</h2>
+        <div class="flex items-start justify-between gap-4">
+            <h2 class="text-lg font-bold text-gray-900" id="judul-cari">Pindai kode QR bukti pendaftaran</h2>
+            <?= gambar_opsional('admin/daftar-ulang.webp', ['class' => 'hidden h-24 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'daftar-ulang']) ?>
+        </div>
 
         <div id="pemindai" class="mt-3 space-y-2" hidden>
             <?= komponen('tombol', ['label' => 'Pindai dengan kamera', 'ikon' => 'camera', 'ukuran' => 'besar', 'blok' => true, 'atribut' => ['id' => 'tombol-pindai']]) ?>

@@ -50,7 +50,7 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
     <meta name="robots" content="noindex, nofollow">
     <meta name="color-scheme" content="light">
     <title><?= $judulTab ?></title>
-    <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
+    <?= view('tata_letak/_ikon_aplikasi', [], ['saveData' => false]) ?>
     <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
     <?= $this->renderSection('kepala') ?>

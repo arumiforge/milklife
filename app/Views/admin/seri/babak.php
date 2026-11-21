@@ -134,7 +134,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
             </header>
 
             <?php if ($peserta === []) : ?>
-                <div class="p-5 sm:p-6"><?= komponen('kosong', ['ikon' => 'list-ordered', 'judul' => 'Belum ada peserta', 'teks' => $pertama ? 'Tekan Bagi otomatis untuk mengambil peserta Lunas nomor ini.' : 'Peserta masuk sendiri dari yang lolos setelah hasil ' . $babak['sebelum']['nama'] . ' lengkap.']) ?></div>
+                <div class="p-5 sm:p-6"><?= komponen('kosong', ['gambar' => 'gambar/admin/kosong-admin.webp', 'ikon' => 'list-ordered', 'judul' => 'Belum ada peserta', 'teks' => $pertama ? 'Tekan Bagi otomatis untuk mengambil peserta Lunas nomor ini.' : 'Peserta masuk sendiri dari yang lolos setelah hasil ' . $babak['sebelum']['nama'] . ' lengkap.']) ?></div>
             <?php endif ?>
 
             <?php foreach ($perSeri as $seri => $daftar) : ?>

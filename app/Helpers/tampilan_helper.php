@@ -2,6 +2,7 @@
 
 /**
  * Pembantu tampilan Tahap 9 (K140, K141): ikon Lucide dan komponen Flowbite Pro.
+ * Gambar opsional (F9-19): `gambar_opsional()` dan `ada_gambar()`.
  * Dimuat otomatis lewat `app/Config/Autoload.php`.
  *
  *     <?= ikon('search') ?>                         // <svg class="ikon" …><use …#search></svg>
@@ -122,5 +123,31 @@ if (! function_exists('lebar_tw')) {
         ];
 
         return $kelas[(int) round(max(0, min(100, $persen)) / 5)];
+    }
+}
+
+if (! function_exists('gambar_opsional')) {
+    /**
+     * Tag `<img>` gambar di `public/aset/gambar/` bila berkasnya ada, selain itu
+     * teks kosong (F9-19, K41). Lihat `App\Libraries\GambarOpsional::img()`.
+     *
+     *     <?= gambar_opsional('admin/masuk.webp', ['class' => 'h-full w-full object-cover', 'loading' => false]) ?>
+     *     <?= gambar_opsional('judul/jadwal.webp', ['class' => 'h-32 w-auto', 'alt' => 'Jam pasir']) ?>
+     *
+     * @param array<string, scalar|null> $atribut
+     */
+    function gambar_opsional(string $jalur, array $atribut = []): string
+    {
+        return App\Libraries\GambarOpsional::img($jalur, $atribut);
+    }
+}
+
+if (! function_exists('ada_gambar')) {
+    /**
+     * Apakah berkas `public/aset/gambar/<jalur>` sudah ada (untuk wadah yang hanya dipasang bila gambarnya ada).
+     */
+    function ada_gambar(string $jalur): bool
+    {
+        return App\Libraries\GambarOpsional::ada($jalur);
     }
 }

@@ -34,7 +34,7 @@ $judulTab  = $judul === '' ? $namaAcara : $judul . ' – ' . $namaAcara;
     <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#021F7B">
     <title><?= $judulTab ?></title>
-    <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
+    <?= view('tata_letak/_ikon_aplikasi', [], ['saveData' => false]) ?>
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap/css/bootstrap.min.css') ?>">
     <link rel="stylesheet" href="<?= aset('vendor/bootstrap-icons/bootstrap-icons.min.css') ?>">
     <link rel="stylesheet" href="<?= aset('css/tema.css') ?>">
