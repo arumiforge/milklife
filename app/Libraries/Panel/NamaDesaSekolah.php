@@ -4,6 +4,8 @@ namespace App\Libraries\Panel;
 
 use App\Models\SekolahModel;
 use CodeIgniter\Database\BaseConnection;
+use RuntimeException;
+use Throwable;
 
 /**
  * Beri nama desa ke sekolah yang namanya sama dengan sekolah lain (K114).
@@ -228,28 +230,26 @@ final class NamaDesaSekolah
 
         $waktu = date('Y-m-d H:i:s');
 
-        $this->db->transStart();
+        $tersimpan = $this->transaksi(function () use ($usulan, $waktu, &$hasil): void {
+            foreach ($usulan as $sekolah) {
+                $this->pastikan($this->db->table('sekolah')
+                    ->where('id', $sekolah['id'])->where('nama', $sekolah['nama'])
+                    ->update(['nama' => $sekolah['nama_baru'], 'disunting_pada' => $waktu, 'diubah_pada' => $waktu]));
 
-        foreach ($usulan as $sekolah) {
-            $this->db->table('sekolah')
-                ->where('id', $sekolah['id'])->where('nama', $sekolah['nama'])
-                ->update(['nama' => $sekolah['nama_baru'], 'disunting_pada' => $waktu, 'diubah_pada' => $waktu]);
+                if ($this->db->affectedRows() === 0) {
+                    continue;
+                }
 
-            if ($this->db->affectedRows() === 0) {
-                continue;
+                $hasil['sekolah']++;
+
+                $this->pastikan($this->db->table('pendaftaran')
+                    ->where('npsn', $sekolah['npsn'])->where('nama_sekolah', $sekolah['nama'])
+                    ->update(['nama_sekolah' => $sekolah['nama_baru'], 'diubah_pada' => $waktu]));
+                $hasil['pendaftaran'] += $this->db->affectedRows();
             }
+        });
 
-            $hasil['sekolah']++;
-
-            $this->db->table('pendaftaran')
-                ->where('npsn', $sekolah['npsn'])->where('nama_sekolah', $sekolah['nama'])
-                ->update(['nama_sekolah' => $sekolah['nama_baru'], 'diubah_pada' => $waktu]);
-            $hasil['pendaftaran'] += $this->db->affectedRows();
-        }
-
-        $this->db->transComplete();
-
-        if (! $this->db->transStatus()) {
+        if (! $tersimpan) {
             return [
                 'sekolah'     => 0,
                 'pendaftaran' => 0,
@@ -282,5 +282,41 @@ final class NamaDesaSekolah
     private static function memuatKata(string $nama, string $kata): bool
     {
         return preg_match('/(^|[^\p{L}\p{N}])' . preg_quote($kata, '/') . '($|[^\p{L}\p{N}])/u', $nama) === 1;
+    }
+
+    /**
+     * Jalankan `$kerja` dalam satu transaksi; `false` bila basis data gagal
+     * (semua perubahan dibatalkan).
+     *
+     * transBegin/transCommit dalam try/catch, bukan transStart/transStatus:
+     * dalam mode ketat CodeIgniter tidak mengembalikan status gagal dari
+     * transaksi sebelumnya di koneksi yang sama (lihat `FaqModel::pindah()`,
+     * #129). Di dalam transaksi kueri yang gagal mengembalikan `false`, jadi
+     * setiap tulis diperiksa dengan `pastikan()`.
+     *
+     * @param callable(): void $kerja
+     */
+    private function transaksi(callable $kerja): bool
+    {
+        $this->db->transBegin();
+
+        try {
+            $kerja();
+            $this->db->transCommit();
+
+            return true;
+        } catch (Throwable $e) {
+            $this->db->transRollback();
+            log_message('error', '{kelas}: {pesan}', ['kelas' => self::class, 'pesan' => $e->getMessage()]);
+
+            return false;
+        }
+    }
+
+    private function pastikan(bool $hasil): void
+    {
+        if (! $hasil) {
+            throw new RuntimeException('Kueri tulis gagal.');
+        }
     }
 }

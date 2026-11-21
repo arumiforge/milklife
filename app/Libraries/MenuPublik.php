@@ -42,6 +42,18 @@ final class MenuPublik
         }
         // ---------- Akhir halaman depan ----------
 
+        // ---------- Jadwal pertandingan (F9-07): hanya bila sakelar Pengaturan menyala ----------
+        try {
+            $adaJadwal = (bool) setting('HalamanDepan.tampil_jadwal');
+        } catch (Throwable) {
+            $adaJadwal = false;
+        }
+
+        if ($adaJadwal) {
+            $butir[] = ['label' => 'Jadwal', 'alamat' => site_url('jadwal'), 'aktif' => url_is('jadwal') || url_is('jadwal/*')];
+        }
+        // ---------- Akhir Jadwal pertandingan ----------
+
         $butir[] = ['label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan')];
 
         // Hasil setelah ada nomor yang diterbitkan (F8-04). Halaman galat tetap

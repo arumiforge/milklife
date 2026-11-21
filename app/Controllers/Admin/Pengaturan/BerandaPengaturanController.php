@@ -12,7 +12,7 @@ use App\Libraries\DataKelengkapan;
  * halaman ditulis sekali di `daftarHalaman()` dan dipakai juga oleh navigasi
  * pengaturan (`admin/pengaturan/_navigasi.php`). Tanda lengkap/belum (F2-09)
  * diisi di `index()` dari `KelengkapanPengaturan`, dicocokkan lewat `kunci`;
- * halaman tanpa butir kelengkapan (Halaman Depan, Jadwal, Unduhan, Kontak,
+ * halaman tanpa butir kelengkapan (Halaman Depan, Agenda, Unduhan, Kontak,
  * Bantuan, Galeri, Akun) tidak diberi tanda.
  *
  * ## Pola halaman pengaturan (rencana Tahap 2, "Pola halaman")
@@ -125,7 +125,7 @@ class BerandaPengaturanController extends BaseController
             ['nomor-lomba', 'Nomor Lomba', 'trophy', 'admin/pengaturan/nomor-lomba', 'Nomor individu dan beregu tiap kelompok umur, beserta biaya beregu.', $wajib],
             ['pembayaran', 'Pembayaran', 'bank', 'admin/pengaturan/pembayaran', 'Rekening, nomor WA konfirmasi, dan isi pesan pembayaran.', $wajib],
             ['halaman-depan', 'Halaman Depan', 'window', 'admin/pengaturan/halaman-depan', 'Gambar kepala, logo, judul, teks, dan pesan WA.', $depan],
-            ['jadwal', 'Jadwal', 'clock', 'admin/pengaturan/jadwal', 'Sosialisasi, pertemuan teknik (technical meeting), dan jadwal lain.', $depan],
+            ['jadwal', 'Agenda', 'clock', 'admin/pengaturan/jadwal', 'Sosialisasi, pertemuan teknik (technical meeting), dan agenda lain.', $depan],
             ['unduhan', 'Unduhan', 'download', 'admin/pengaturan/unduhan', 'Flyer, juknis, dan berkas lain untuk diunduh sekolah.', $depan],
             ['kontak', 'Kontak', 'telephone', 'admin/pengaturan/kontak', 'Narahubung dan media sosial.', $depan],
             ['bantuan', 'Bantuan', 'question-circle', 'admin/pengaturan/bantuan', 'Tanya-jawab di halaman Bantuan dan di formulir pendaftaran.', $depan],

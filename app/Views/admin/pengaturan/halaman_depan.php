@@ -234,6 +234,8 @@ $kotak = static function (string $nama, string $label, string $bantuan, array $i
             <?php endif ?>
         </div>
     </section>
+
+    <?= $this->include('admin/pengaturan/_halaman_jadwal') ?>
 </div>
 <?= $this->endSection() ?>
 

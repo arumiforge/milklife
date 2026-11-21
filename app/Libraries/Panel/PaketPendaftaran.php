@@ -3,6 +3,7 @@
 namespace App\Libraries\Panel;
 
 use App\Libraries\Hasil\DataTabelSkor;
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Hasil\TabelSkor;
@@ -950,6 +951,26 @@ final class PaketPendaftaran
     }
 
     /**
+     * Jadwal babak dari paket (F9-07), diperiksa seperti isian admin; isian
+     * yang tidak sah dikosongkan.
+     *
+     * @param array<string, mixed> $b
+     *
+     * @return array{tanggal: string|null, jam_mulai: string|null, lokasi: string|null}
+     */
+    private static function jadwalBabak(array $b): array
+    {
+        $kosong  = ['tanggal' => null, 'jam_mulai' => null, 'lokasi' => null];
+        $periksa = JadwalPertandingan::periksa([
+            'tanggal'   => is_string($b['tanggal'] ?? null) ? $b['tanggal'] : '',
+            'jam_mulai' => is_string($b['jam_mulai'] ?? null) ? $b['jam_mulai'] : '',
+            'lokasi'    => is_string($b['lokasi'] ?? null) ? mb_substr($b['lokasi'], 0, JadwalPertandingan::LOKASI_MAKSIMAL) : '',
+        ]);
+
+        return $periksa['galat'] === [] ? $periksa['data'] : $kosong;
+    }
+
+    /**
      * Hasil lomba per nomor (F8-04): jenis hasil, waktu terbit, dan babak
      * beserta hasilnya. Peserta individu dikenali dari NISN, regu dari ID
      * pendaftaran (tetap sama saat diimpor) dan nama regunya.
@@ -980,6 +1001,8 @@ final class PaketPendaftaran
         foreach ($this->db->table('babak')->orderBy('id')->get()->getResultArray() as $b) {
             $babak[(int) $b['nomor_lomba_id']][] = [
                 'nama' => $b['nama'], 'final' => (int) $b['final'], 'urutan' => (int) $b['urutan'], 'dibuat_pada' => $b['dibuat_pada'],
+                // Jadwal pertandingan (F9-07).
+                'tanggal' => $b['tanggal'], 'jam_mulai' => $b['jam_mulai'], 'lokasi' => $b['lokasi'],
                 'hasil' => $hasil[(int) $b['id']] ?? [],
             ];
         }
@@ -1057,7 +1080,8 @@ final class PaketPendaftaran
                 $idBabak = $tabel('babak', [
                     'nomor_lomba_id' => $idNomor, 'nama' => mb_substr($b['nama'], 0, 60), 'final' => (int) ($b['final'] ?? 0) === 1 ? 1 : 0,
                     'urutan' => (int) ($b['urutan'] ?? 0), 'dibuat_pada' => $b['dibuat_pada'] ?? null, 'diubah_pada' => $b['dibuat_pada'] ?? null,
-                ]);
+                    // Jadwal pertandingan (F9-07) menyusul; paket lama tanpa jadwal = belum dijadwalkan.
+                ] + self::jadwalBabak($b));
 
                 foreach (is_array($b['hasil'] ?? null) ? $b['hasil'] : [] as $h) {
                     $idAtlet = is_array($h) && is_string($h['nisn'] ?? null) ? ($atlet[$h['nisn']] ?? null) : null;

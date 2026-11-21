@@ -1,6 +1,7 @@
 <?php
 /**
- * Daftar jadwal (`GET /admin/pengaturan/jadwal`).
+ * Daftar agenda (`GET /admin/pengaturan/jadwal`; nama tampil "Agenda" sejak
+ * F9-07, alamat dan tabel tetap `jadwal`).
  *
  * @var CodeIgniter\View\View            $this
  * @var list<array<string, mixed>>       $daftar jadwal menurut urutan tampil (`JadwalModel::daftar()`)
@@ -11,9 +12,9 @@ use App\Models\TautanModel;
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?>Jadwal<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Agenda<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Jadwal<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Agenda<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
@@ -23,13 +24,13 @@ use App\Models\TautanModel;
         <section class="card kartu-kosong" aria-labelledby="judul-jadwal-kosong">
             <div class="card-body text-center px-3 py-5">
                 <span class="ikon-bulat mb-3"><i class="bi bi-clock" aria-hidden="true"></i></span>
-                <h2 id="judul-jadwal-kosong" class="h4">Belum ada jadwal</h2>
+                <h2 id="judul-jadwal-kosong" class="h4">Belum ada agenda</h2>
                 <p class="text-body-secondary mx-auto mb-4">
                     Tambahkan sosialisasi daring, pertemuan teknik (technical meeting), atau kegiatan lain supaya sekolah tahu
-                    kapan dan di mana harus hadir. Jadwal tampil di halaman depan.
+                    kapan dan di mana harus hadir. Agenda tampil di halaman depan.
                 </p>
                 <a class="btn btn-primary" href="<?= site_url('admin/pengaturan/jadwal/tambah') ?>">
-                    <i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah jadwal
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah agenda
                 </a>
             </div>
         </section>
@@ -44,7 +45,7 @@ use App\Models\TautanModel;
                         </p>
                     </div>
                     <a class="btn btn-primary" href="<?= site_url('admin/pengaturan/jadwal/tambah') ?>">
-                        <i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah jadwal
+                        <i class="bi bi-plus-lg" aria-hidden="true"></i> Tambah agenda
                     </a>
                 </div>
 
@@ -54,7 +55,7 @@ use App\Models\TautanModel;
                             <tr>
                                 <th scope="col" class="text-end">No</th>
                                 <th scope="col" class="text-center">Urutan</th>
-                                <th scope="col">Jadwal</th>
+                                <th scope="col">Agenda</th>
                                 <th scope="col">Tampil</th>
                                 <th scope="col"><span class="visually-hidden">Tindakan</span></th>
                             </tr>
@@ -103,9 +104,9 @@ use App\Models\TautanModel;
                                                 <i class="bi bi-pencil" aria-hidden="true"></i> Ubah<span class="visually-hidden"> <?= esc($jadwal['judul']) ?></span>
                                             </a>
                                             <form action="<?= site_url('admin/pengaturan/jadwal/' . (int) $jadwal['id'] . '/hapus') ?>" method="post"
-                                                data-konfirmasi="<?= esc('Jadwal "' . $jadwal['judul'] . '" akan dihapus dari daftar dan dari halaman depan. Tindakan ini tidak bisa dibatalkan.', 'attr') ?>"
-                                                data-konfirmasi-judul="Hapus jadwal?"
-                                                data-konfirmasi-tombol="Hapus jadwal">
+                                                data-konfirmasi="<?= esc('Agenda "' . $jadwal['judul'] . '" akan dihapus dari daftar dan dari halaman depan. Tindakan ini tidak bisa dibatalkan.', 'attr') ?>"
+                                                data-konfirmasi-judul="Hapus agenda?"
+                                                data-konfirmasi-tombol="Hapus agenda">
                                                 <?= csrf_field() ?>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger text-nowrap">
                                                     <i class="bi bi-trash" aria-hidden="true"></i> Hapus<span class="visually-hidden"> <?= esc($jadwal['judul']) ?></span>
