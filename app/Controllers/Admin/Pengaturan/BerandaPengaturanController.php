@@ -13,7 +13,7 @@ use App\Libraries\DataKelengkapan;
  * pengaturan (`admin/pengaturan/_navigasi.php`). Tanda lengkap/belum (F2-09)
  * diisi di `index()` dari `KelengkapanPengaturan`, dicocokkan lewat `kunci`;
  * halaman tanpa butir kelengkapan (Halaman Depan, Jadwal, Unduhan, Kontak,
- * Akun) tidak diberi tanda.
+ * Bantuan, Akun) tidak diberi tanda.
  *
  * ## Pola halaman pengaturan (rencana Tahap 2, "Pola halaman")
  *
@@ -128,6 +128,7 @@ class BerandaPengaturanController extends BaseController
             ['jadwal', 'Jadwal', 'clock', 'admin/pengaturan/jadwal', 'Sosialisasi, pertemuan teknik (technical meeting), dan jadwal lain.', $depan],
             ['unduhan', 'Unduhan', 'download', 'admin/pengaturan/unduhan', 'Flyer, juknis, dan berkas lain untuk diunduh sekolah.', $depan],
             ['kontak', 'Kontak', 'telephone', 'admin/pengaturan/kontak', 'Narahubung dan media sosial.', $depan],
+            ['bantuan', 'Bantuan', 'question-circle', 'admin/pengaturan/bantuan', 'Tanya-jawab di halaman Bantuan dan di formulir pendaftaran.', $depan],
             ['tabel-skor', 'Tabel Skor', 'table', 'admin/pengaturan/tabel-skor', 'Tabel prestasi ke poin untuk Trilomba dan nomor multi-lomba lain.', 'Hasil lomba'],
             ['akun', 'Akun', 'person-gear', 'admin/akun', 'Ganti nama, nama pengguna, dan kata sandi Anda.', $sendiri],
         ];

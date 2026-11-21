@@ -15,6 +15,7 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 | Hasil lomba (F8-04) | `hasil`, `hasil/(:num)[/pdf\|excel]` (hanya nomor terbit) | `HasilController` | `Hasil/HasilLomba`, `Hasil/UnduhanHasil` | `hasil/` | - | f `HasilLombaTest` |
 | Klasemen sekolah (F8-05) | `hasil/klasemen[/pdf\|excel]` (hanya nomor terbit) | `HasilController::klasemen` | `Hasil/Klasemen`, `Hasil/UnduhanKlasemen` | `hasil/klasemen.php`, `hasil/_klasemen.php` | - | f `KlasemenSekolahTest`, u `HasilKlasemenTest` |
 | Unduhan | `unduhan` | `UnduhanController` | `IsiHalamanDepan` | `unduhan.php`, `beranda/_daftar_unduhan.php` | - | f `HalamanUnduhanTest` |
+| Bantuan (F9-04) | `bantuan` (Tailwind, `publik_tw`); laci "Bantuan" di tiap langkah wizard (Bootstrap offcanvas sampai F9-05) | `BantuanController` | `Bantuan/IsiBantuan` (kategori, panduan G9-03, kontak WA), `Bantuan/JawabanFaq`, `MenuPublik` | `bantuan/index.php`, `pendaftaran/_laci_bantuan.php`, `pendaftaran/_tombol_bantuan.php` | `bantuan` | f `BantuanFaqTest` |
 
 Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 
@@ -46,6 +47,7 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 | Poin multi-lomba dan tabel skor (F9-10, K140 7b) | `pengaturan/tabel-skor[/pasang\|/(:num)/hapus]`, `pengaturan/tabel-skor/(:num)/<komponen>/(putra\|putri)[/hapus\|impor\|excel]`; isian per komponen di `hasil/babak/(:num)`; spark `tabel-skor:impor` | `Admin/Pengaturan/TabelSkorController`, `Admin/HasilController`, `Commands/ImporTabelSkor` | `Hasil/TabelSkor` (murni: cari poin, hitung, baca Excel), `Hasil/DataTabelSkor` (pasang bawaan, ubah baris, hitung ulang), `Hasil/HasilLomba` (jenis `multi`), `NomorLombaModel` (tabel dan komponen); data `data/tabel-skor/*.json` dari alat `data/alat/tabel_skor_pdf.py`; ikut `PaketPendaftaran` dan `data:awal` | `admin/pengaturan/tabel_skor/`, `admin/hasil/babak.php`, `hasil/_tabel.php`, `hasil/pdf.php`, `admin/pengaturan/nomor_lomba/formulir.php` | `admin-nomor-lomba-formulir`, `konfirmasi` | u `HasilTabelSkorTest`, f `TabelSkorTest` |
 | Sekolah, usulan nama (K99), nama desa (K114) | `sekolah[/data\|/excel\|/(:num)/ubah]`, `sekolah/usulan…`, `sekolah/nama-desa` | `Admin/SekolahController` | `Panel/UsulanNamaSekolah`, `Panel/NamaDesaSekolah` | `admin/sekolah/` | `centang-semua` | f `PanelSekolahTest`, `PanelUsulanNamaSekolahTest`, `PanelNamaDesaSekolah*Test` |
 | Pengaturan | `pengaturan/{acara,pendaftaran,pembayaran,halaman-depan}` + CRUD `{kelompok-umur,nomor-lomba,jadwal,kontak,unduhan}`, sakelar `kelompok-umur/pilihan` (K134) | `Admin/Pengaturan/*Controller` | `KelengkapanPengaturan`, `MarkdownSederhana` | `admin/pengaturan/` | `konfirmasi`, `pilih-tanggal` | f `Pengaturan*Test`, b `*ModelTest` |
+| Bantuan dan FAQ (F9-04) | `pengaturan/bantuan[/tambah\|/bawaan\|/(:num)[/ubah\|/hapus\|/aktif\|/naik\|/turun]]` | `Admin/Pengaturan/FaqController` | `Bantuan/JawabanFaq` (Markdown + isian otomatis `{tutup_pendaftaran}` …), `Bantuan/FaqBawaan` (54 bawaan, dipasang `data:awal`, `faq:awal`, tombol bawaan); tabel `faq` ikut `PaketPendaftaran` | `admin/pengaturan/faq/` | `konfirmasi` | f `PengaturanFaqTest`, b `FaqAwalTest`, u `BantuanFaqBawaanTest`, `BantuanJawabanFaqTest` |
 
 ## Tampilan baru (Tahap 9, K140, K141)
 
@@ -60,7 +62,7 @@ Ikon Lucide baru: tulis `ikon('nama')` (atau `'ikon' => 'nama'` di berkas yang m
 
 ## Perintah spark (`app/Commands/`)
 
-`admin:buat`, `cadangan:buat`, `data:awal`, `dokumen:pdf`, `pendaftaran:gabung`, `pendaftaran:impor`, `sekolah:impor`, `tabel-skor:impor` (F9-10), `aset:minify`, `pembaruan:periksa`, `nomor-dada:reset` (mis. `nomor-dada:reset` = `ResetNomorDada.php`).
+`admin:buat`, `cadangan:buat`, `data:awal`, `dokumen:pdf`, `faq:awal`, `pendaftaran:gabung`, `pendaftaran:impor`, `sekolah:impor`, `tabel-skor:impor` (F9-10), `aset:minify`, `pembaruan:periksa`, `nomor-dada:reset` (mis. `nomor-dada:reset` = `ResetNomorDada.php`).
 
 ## Invarian kritis
 
@@ -82,4 +84,4 @@ Ikon Lucide baru: tulis `ikon('nama')` (atau `'ikon' => 'nama'` di berkas yang m
 - Analisis statis: `composer analisis` (PHPStan tingkat 1, `phpstan.neon`, K123). Jalan di CI sebelum uji.
 - Semua: `composer uji` (= `phpunit`, `phpunit.dist.xml`). Suite: `vendor/bin/phpunit --testsuite unit|basisdata|fitur`.
 - Satu area: `vendor/bin/phpunit --filter '<pola>'`, pola:
-  wizard `Pendaftaran(Halaman|Kirim|Simpan|Pemeriksa|Sekolah)` · cek/bukti `CekPendaftaran|BuktiPendaftaran|UnggahBuktiBayar` · panel pendaftaran `PanelPendaftaran|PanelUbahPendaftaran|BuktiBayar|PanelRiwayatAdmin|PanelBuktiBaru` · tolak/gabung `PanelTolakAtlet|PanelGabungPendaftaran` · nomor dada `NomorDada` · rekap `PanelRekap` · sekolah `Sekolah` · pengaturan `Pengaturan` · admin `MasukAdmin|AkunAdmin` · hari lomba `HariLomba` · hasil `HasilLomba|HasilPrestasi|Klasemen` · alur Tahap 6 `PanelGabunganTest` · alur menyeluruh minify + Tahap 8 `AlurMenyeluruhTest`.
+  wizard `Pendaftaran(Halaman|Kirim|Simpan|Pemeriksa|Sekolah)` · cek/bukti `CekPendaftaran|BuktiPendaftaran|UnggahBuktiBayar` · panel pendaftaran `PanelPendaftaran|PanelUbahPendaftaran|BuktiBayar|PanelRiwayatAdmin|PanelBuktiBaru` · tolak/gabung `PanelTolakAtlet|PanelGabungPendaftaran` · nomor dada `NomorDada` · rekap `PanelRekap` · sekolah `Sekolah` · pengaturan `Pengaturan` · bantuan `Faq|Bantuan` · admin `MasukAdmin|AkunAdmin` · hari lomba `HariLomba` · hasil `HasilLomba|HasilPrestasi|Klasemen` · alur Tahap 6 `PanelGabunganTest` · alur menyeluruh minify + Tahap 8 `AlurMenyeluruhTest`.

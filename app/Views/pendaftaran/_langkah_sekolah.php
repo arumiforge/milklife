@@ -6,7 +6,10 @@
  */
 ?>
 <section class="langkah" id="langkah-1" data-langkah="1" aria-labelledby="judul-langkah-1" hidden>
-    <h2 id="judul-langkah-1" tabindex="-1">1. Data Sekolah</h2>
+    <div class="langkah-judul">
+        <h2 id="judul-langkah-1" tabindex="-1">1. Data Sekolah</h2>
+        <?= view('pendaftaran/_tombol_bantuan', ['langkah' => 1], ['saveData' => false]) ?>
+    </div>
     <p class="langkah-keterangan">Jenjang sekolah menentukan kelompok umur yang boleh diikuti atlet.</p>
 
     <div class="ringkasan-galat alert alert-danger" role="alert" hidden></div>

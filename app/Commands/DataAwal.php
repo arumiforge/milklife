@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Libraries\Bantuan\FaqBawaan;
 use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Unggahan;
@@ -20,8 +21,8 @@ use Throwable;
  * pendaftaran, lima kelompok umur beserta batas tahun lahir (K36), jenjang,
  * biaya individu, dan satu awalan nomor dada masing-masing (K33), semua nomor
  * lomba beserta aturan timnya, rekening pembayaran, isi halaman depan, jadwal,
- * narahubung, media sosial, dan berkas unduhan. Dijalankan sekali saat
- * pemasangan, setelah `php spark migrate --all`.
+ * narahubung, media sosial, berkas unduhan, dan tanya-jawab Bantuan
+ * (F9-04). Dijalankan sekali saat pemasangan, setelah `php spark migrate --all`.
  *
  * Isinya dari flyer Seri 2 – 2026 dan permintaan pemilik. Rekening, nomor WA,
  * tautan Zoom, media sosial, dan sebagian berkas unduhan masih **contoh**
@@ -419,7 +420,7 @@ class DataAwal extends BaseCommand
     /**
      * Isi semua data awal dalam satu transaksi.
      *
-     * @return array{kelompok_umur: int, nomor_individu: int, nomor_beregu: int, per_kelompok_umur: array<string, array{lahir: string, awalan: string, individu: int, beregu: int}>}
+     * @return array{kelompok_umur: int, nomor_individu: int, nomor_beregu: int, per_kelompok_umur: array<string, array{lahir: string, awalan: string, individu: int, beregu: int}>, faq?: int}
      *
      * @throws Throwable Bila gagal; tidak ada yang tersimpan.
      */
@@ -513,6 +514,11 @@ class DataAwal extends BaseCommand
                 }
             }
 
+            // ---------- Bantuan dan FAQ (F9-04) ----------
+            // Tanya-jawab bawaan, hanya bila tabel `faq` masih kosong.
+            $hasil['faq'] = FaqBawaan::pasang($db);
+            // ---------- Akhir Bantuan dan FAQ ----------
+
             $db->transCommit();
         } catch (Throwable $e) {
             $db->transRollback();
@@ -597,7 +603,7 @@ class DataAwal extends BaseCommand
     }
 
     /**
-     * @param array{kelompok_umur: int, nomor_individu: int, nomor_beregu: int, per_kelompok_umur: array<string, array{lahir: string, awalan: string, individu: int, beregu: int}>} $hasil
+     * @param array{kelompok_umur: int, nomor_individu: int, nomor_beregu: int, per_kelompok_umur: array<string, array{lahir: string, awalan: string, individu: int, beregu: int}>, faq?: int} $hasil
      */
     private function tampilkanRingkasan(array $hasil): void
     {
@@ -619,6 +625,10 @@ class DataAwal extends BaseCommand
         }
 
         CLI::write('Nomor lomba  : ' . ($hasil['nomor_individu'] + $hasil['nomor_beregu']) . ' (' . $hasil['nomor_individu'] . ' individu, ' . $hasil['nomor_beregu'] . ' beregu)');
+
+        if (($hasil['faq'] ?? 0) > 0) {
+            CLI::write('Bantuan      : ' . $hasil['faq'] . ' tanya-jawab bawaan (bisa diubah di Pengaturan > Bantuan)');
+        }
         CLI::newLine();
         CLI::write('Langkah berikutnya: masuk ke panel admin, buka menu Pengaturan, lalu ganti data contoh dengan data sebenarnya:');
         CLI::write('nomor rekening, nomor WA pembayaran dan tanya admin, tautan Zoom, media sosial, dan berkas unduhan yang masih kosong.');

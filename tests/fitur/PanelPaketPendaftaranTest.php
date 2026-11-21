@@ -156,6 +156,44 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $this->assertSame($catatan, $this->db->table('atlet_ditolak')->select($kolom)->get()->getResultArray());
     }
 
+    public function testTanyaJawabBantuanIkutPindahDanMenggantikanBawaan(): void
+    {
+        $this->buatPendaftaranPanel();
+        $this->db->table('faq')->insertBatch([
+            ['kategori' => 'sebelum', 'pertanyaan' => 'Pertanyaan admin karangan?', 'jawaban' => "Jawaban **admin**.\n\nBaris kedua.", 'urutan' => 2, 'aktif' => 1, 'dibuat_pada' => '2026-11-21 08:00:00', 'diubah_pada' => '2026-11-21 09:00:00'],
+            ['kategori' => 'hasil', 'pertanyaan' => 'Disembunyikan?', 'jawaban' => 'Ya.', 'urutan' => 1, 'aktif' => 0, 'dibuat_pada' => null, 'diubah_pada' => null],
+        ]);
+        $kolom   = 'kategori, pertanyaan, jawaban, urutan, aktif, dibuat_pada, diubah_pada';
+        $sebelum = $this->db->table('faq')->select($kolom)->orderBy('id')->get()->getResultArray();
+
+        (new PaketPendaftaran())->ekspor($this->zip);
+
+        // Server baru: tanpa pendaftaran, dengan tanya-jawab bawaan dari data:awal.
+        $this->db->query('DELETE FROM pendaftaran');
+        $this->db->query('DELETE FROM faq');
+        App\Libraries\Bantuan\FaqBawaan::pasang($this->db);
+        $this->hapusBerkas();
+
+        (new PaketPendaftaran())->impor($this->zip);
+
+        $this->assertSame($sebelum, $this->db->table('faq')->select($kolom)->orderBy('id')->get()->getResultArray());
+    }
+
+    public function testPaketTanpaTanyaJawabTidakMengubahTanyaJawabServerBaru(): void
+    {
+        $this->buatPendaftaranPanel();
+        (new PaketPendaftaran())->ekspor($this->zip);
+
+        $this->db->query('DELETE FROM pendaftaran');
+        $this->hapusBerkas();
+        $jumlah = App\Libraries\Bantuan\FaqBawaan::pasang($this->db);
+        $this->assertGreaterThan(0, $jumlah);
+
+        (new PaketPendaftaran())->impor($this->zip);
+
+        $this->seeNumRecords($jumlah, 'faq', []);
+    }
+
     public function testImporDitolakBilaNomorLombaTidakAdaDanTidakAdaYangTersimpan(): void
     {
         $this->buatPendaftaranPanel(['foto' => true]);

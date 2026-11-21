@@ -10,6 +10,7 @@ use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PeranAwalRegu;
 use App\Libraries\Pendaftaran\Regu;
 use App\Libraries\Pendaftaran\SimpanPendaftaran;
+use App\Models\FaqModel;
 use App\Models\SekolahModel;
 use App\Models\UsulanNamaSekolahModel;
 use CodeIgniter\Database\BaseConnection;
@@ -42,6 +43,9 @@ use ZipArchive;
  *   per komponen (F9-10).
  *   `tabel_skor`: semua tabel skor beserta barisnya, termasuk ubahan admin
  *   (F9-10; boleh tidak ada). Tabel berkode sama di server baru diganti.
+ *   `faq`: tanya-jawab halaman Bantuan (F9-04). Bila ada dan berisi, isinya
+ *   menggantikan tanya-jawab di server ini (biasanya bawaan `data:awal`);
+ *   bila tidak ada (paket lama) atau kosong, tanya-jawab server ini tetap.
  * - `berkas/penanggung-jawab/<acak>.jpg` dan `berkas/bukti-bayar/<acak>.jpg`.
  *
  * Kelompok umur dicocokkan menurut namanya, nomor lomba menurut nama kelompok
@@ -276,6 +280,10 @@ final class PaketPendaftaran
                 ->orderBy('id')->get()->getResultArray(),
             // Hasil lomba semua babak dan tanda terbit per nomor (F8-04).
             'hasil_lomba' => $this->eksporHasilLomba($nomor),
+            // Tanya-jawab halaman Bantuan (F9-04).
+            'faq' => $this->db->table('faq')
+                ->select('kategori, pertanyaan, jawaban, urutan, aktif, dibuat_pada, diubah_pada')
+                ->orderBy('id')->get()->getResultArray(),
             // Tabel skor multi-lomba beserta baris yang diubah admin (F9-10).
             'tabel_skor' => (new DataTabelSkor($this->db))->eksporSemua(),
             'sekolah_disunting' => $this->db->table('sekolah')
@@ -643,6 +651,48 @@ final class PaketPendaftaran
         $this->simpanHasilLomba(is_array($isi['hasil_lomba'] ?? null) ? $isi['hasil_lomba'] : [], $isi['pendaftaran'], $nomor, $tabel);
         $this->simpanSekolahDisunting(is_array($isi['sekolah_disunting'] ?? null) ? $isi['sekolah_disunting'] : [], $tabel);
         $this->simpanUsulanNama(is_array($isi['usulan_nama'] ?? null) ? $isi['usulan_nama'] : [], $isi['pendaftaran'], $tabel);
+        $this->simpanFaq(is_array($isi['faq'] ?? null) ? $isi['faq'] : [], $tabel);
+    }
+
+    /**
+     * Tanya-jawab Bantuan (F9-04) dari paket menggantikan tanya-jawab server
+     * ini. Paket tanpa tanya-jawab yang sah tidak mengubah apa pun.
+     *
+     * @param list<mixed>                                  $daftar
+     * @param callable(string, array<string, mixed>): int $tabel
+     */
+    private function simpanFaq(array $daftar, callable $tabel): void
+    {
+        $baris = [];
+
+        foreach ($daftar as $f) {
+            if (! is_array($f) || ! FaqModel::kategoriSah($f['kategori'] ?? null) || ! is_string($f['pertanyaan'] ?? null) || ! is_string($f['jawaban'] ?? null)
+                || trim($f['pertanyaan']) === '' || trim($f['jawaban']) === '') {
+                continue;
+            }
+
+            $baris[] = [
+                'kategori'    => $f['kategori'],
+                'pertanyaan'  => mb_substr($f['pertanyaan'], 0, FaqModel::PANJANG['pertanyaan']),
+                'jawaban'     => $f['jawaban'],
+                'urutan'      => min(FaqModel::URUTAN_MAKSIMAL, max(0, (int) ($f['urutan'] ?? 0))),
+                'aktif'       => (int) ($f['aktif'] ?? 1) === 1 ? 1 : 0,
+                'dibuat_pada' => is_string($f['dibuat_pada'] ?? null) ? $f['dibuat_pada'] : null,
+                'diubah_pada' => is_string($f['diubah_pada'] ?? null) ? $f['diubah_pada'] : null,
+            ];
+        }
+
+        if ($baris === []) {
+            return;
+        }
+
+        if (! $this->db->table('faq')->where('id >', 0)->delete()) {
+            throw new RuntimeException('Tanya-jawab Bantuan lama gagal dihapus.');
+        }
+
+        foreach ($baris as $b) {
+            $tabel('faq', $b);
+        }
     }
 
     /**
