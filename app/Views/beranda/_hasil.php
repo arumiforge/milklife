@@ -6,7 +6,7 @@
  * diterbitkan panitia; bagian tidak tampil sebelum ada yang terbit
  * (`IsiHalamanDepan::hasilTerbaru()` = `null`).
  *
- * @var array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{jenjang: string, label: string, baris: list<array<string, mixed>>}>}|null $hasilTerbaru
+ * @var array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{jenjang: string, label: string, baris: list<array<string, mixed>>}>, metode: string}|null $hasilTerbaru
  */
 
 if ($hasilTerbaru === null) {
@@ -39,11 +39,15 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                                 <li class="flex items-center gap-3 rounded-xl bg-white/10 p-3">
                                     <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-langit-300 text-lg font-extrabold text-primary-900"><?= (int) $b['peringkat'] ?><span class="sr-only">.</span></span>
                                     <span class="min-w-0 flex-1 font-bold break-words"><?= esc($b['sekolah']) ?></span>
-                                    <span class="shrink-0 text-sm text-primary-100"><span class="font-extrabold text-white"><?= (int) $b['emas'] ?></span><span class="sr-only"> juara I,</span> · <?= (int) $b['perak'] ?><span class="sr-only"> juara II,</span> · <?= (int) $b['perunggu'] ?><span class="sr-only"> juara III</span></span>
+                                    <?php if (($hasilTerbaru['metode'] ?? '') === 'poin') : ?>
+                                        <span class="shrink-0 text-sm text-primary-100" data-poin><span class="font-extrabold text-white"><?= (int) $b['poin'] ?></span> poin</span>
+                                    <?php else : ?>
+                                        <span class="shrink-0 text-sm text-primary-100"><span class="font-extrabold text-white"><?= (int) $b['emas'] ?></span><span class="sr-only"> juara I,</span> · <?= (int) $b['perak'] ?><span class="sr-only"> juara II,</span> · <?= (int) $b['perunggu'] ?><span class="sr-only"> juara III</span></span>
+                                    <?php endif ?>
                                 </li>
                             <?php endforeach ?>
                         </ol>
-                        <p class="mt-3 text-xs text-primary-200">Urutan juara I, II, lalu III terbanyak.</p>
+                        <p class="mt-3 text-xs text-primary-200"><?= ($hasilTerbaru['metode'] ?? '') === 'poin' ? 'Urutan poin terbanyak, lalu juara I, II, dan III.' : 'Urutan juara I, II, lalu III terbanyak.' ?></p>
                     </article>
                 <?php endforeach ?>
             </div>

@@ -82,7 +82,7 @@ final class BantuanFaqBawaanTest extends CIUnitTestCase
             $this->assertStringNotContainsString($tetap, $semua);
         }
 
-        foreach (['{tutup_pendaftaran}', '{buka_pendaftaran}', '{rekening}', '{daftar_kelompok_umur}', '{daftar_biaya}', '{tanggal_lomba}'] as $isian) {
+        foreach (['{tutup_pendaftaran}', '{buka_pendaftaran}', '{rekening}', '{daftar_kelompok_umur}', '{daftar_biaya}', '{tanggal_lomba}', '{cara_juara_umum}'] as $isian) {
             $this->assertStringContainsString($isian, $semua);
         }
     }

@@ -12,10 +12,10 @@ Admin bisa memilih klasemen juara umum berdasarkan medali (juknis) atau poin per
 
 ## Hasil
 
-- [ ] Pengaturan > Hasil: metode Medali (bawaan) atau Poin per peringkat (poin peringkat 1–8, bawaan 7-5-4-3-2-1)
-- [ ] Kolom poin tampil di klasemen admin, publik, PDF, dan Excel; pemecah seri metode poin: juara I, II, III
-- [ ] `Hasil/Klasemen` tetap murni dengan uji unit kedua metode
-- [ ] `agent/ATURAN.md` (K124 butir 5) dan rancangan final diperbarui
+- [x] Pengaturan > Hasil: metode Medali (bawaan) atau Poin per peringkat (poin peringkat 1–8, bawaan 7-5-4-3-2-1)
+- [x] Kolom poin tampil di klasemen admin, publik, PDF, dan Excel; pemecah seri metode poin: juara I, II, III
+- [x] `Hasil/Klasemen` tetap murni dengan uji unit kedua metode
+- [x] `agent/ATURAN.md` (K124 butir 5) dan rancangan final diperbarui
 
 ## Berkas dan uji
 
