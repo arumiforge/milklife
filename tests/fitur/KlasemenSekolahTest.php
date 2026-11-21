@@ -69,7 +69,7 @@ final class KlasemenSekolahTest extends UjiBasisData
         $publik->assertSee('juara I terbanyak');
         $publik->assertSee('data-kolom="poin"', null);
         $publik->assertSee('SD KARANGAN LAIN');
-        $this->get('hasil')->assertSee('Klasemen sekolah');
+        $this->get('hasil')->assertSee('Lihat klasemen sekolah');
 
         // Unduhan.
         $this->assertStringStartsWith('%PDF', $this->get('hasil/klasemen/pdf')->response()->getBody());
