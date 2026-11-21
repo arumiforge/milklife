@@ -6,7 +6,7 @@
  *
  *     komponen('kerangka', ['jenis' => 'tabel', 'baris' => 5]);
  *
- * @var string|null $jenis teks (bawaan) | kartu | tabel | gambar
+ * @var string|null $jenis teks (bawaan) | kartu | tabel | gambar | grafik (batang, untuk grafik dasbor)
  * @var int|null    $baris jumlah baris teks/tabel
  * @var string|null $label teks pembaca layar, bawaan "Memuat data…"
  */
@@ -19,6 +19,12 @@ $lebar = ['w-11/12', 'w-9/12', 'w-10/12', 'w-7/12', 'w-8/12'];
     <span class="sr-only"><?= esc($label ?? 'Memuat data…') ?></span>
     <?php if ($jenis === 'gambar') : ?>
         <div class="kerangka flex aspect-video w-full items-center justify-center text-gray-300" aria-hidden="true"><?= ikon('image', 'size-10') ?></div>
+    <?php elseif ($jenis === 'grafik') : ?>
+        <div class="flex h-56 items-end gap-2 px-2 sm:gap-3" aria-hidden="true">
+            <?php foreach (['h-2/5', 'h-3/5', 'h-1/3', 'h-4/5', 'h-1/2', 'h-2/3', 'h-1/4', 'h-3/4'] as $tinggi) : ?>
+                <div class="kerangka flex-1 rounded-b-none <?= $tinggi ?>"></div>
+            <?php endforeach ?>
+        </div>
     <?php elseif ($jenis === 'kartu') : ?>
         <div class="rounded-2xl border border-gray-200 bg-white p-5" aria-hidden="true">
             <div class="kerangka mb-4 h-32 w-full"></div>

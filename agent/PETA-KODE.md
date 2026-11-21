@@ -33,7 +33,7 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 | Fitur | Rute | Pengendali | Pustaka | View | JS | Uji |
 |---|---|---|---|---|---|---|
 | Masuk/akun | `masuk`, `keluar`, `akun`, `akun/sandi` | `Admin/MasukController`, `…/AkunController` | `SesiAdmin` | `admin/masuk.php`, `admin/akun.php` | - | f `MasukAdminTest`, `AkunAdminTest` |
-| Dasbor/pengecekan | `dasbor`, `pengecekan` | `Admin/DasborController`, `…/PengecekanController` | `Panel/RingkasanDasbor`, `DataKelengkapan` | `admin/dasbor.php`, `admin/pengecekan.php` | `dasbor` | b `RingkasanDasborTest`, f `DasborKelengkapanTest` |
+| Dasbor/pengecekan | `dasbor`, `pengecekan` | `Admin/DasborController`, `…/PengecekanController` | `Panel/RingkasanDasbor`, `DataKelengkapan` | `admin/dasbor.php`, `admin/pengecekan.php` (tata letak `admin_tw`, F9-14) | `dasbor` | b `RingkasanDasborTest`, f `DasborKelengkapanTest`, `TataLetakHalamanTest` |
 | Pendaftaran: daftar, rincian, ekspor, massal | `pendaftaran[/data\|/excel\|/ekspor\|/massal\|/(:num)]` | `Admin/PendaftaranController` | `Panel/DataPanelPendaftaran`, `Panel/TabelSisiServer`, `Panel/PaketPendaftaran`, `Panel/AsalRincian` | `admin/pendaftaran/index.php`, `rincian.php` | `admin-pendaftaran`, `tabel-admin` | f `PanelPendaftaranHalamanTest`, `PanelPaketPendaftaranTest` |
 | Lunas/menunggu, hapus | `…/(:num)/lunas\|menunggu\|hapus` | idem | `Panel/StatusPembayaran`, `Panel/HapusPendaftaran` | - | - | b `PanelPendaftaranStatusTest`, `PanelPendaftaranHapusTest` |
 | Ubah | `…/(:num)/ubah`, POST `…/(:num)` | idem `ubah`, `perbarui` | `Panel/UbahPendaftaran` (aturan di `Panel/Ubah/*`) | `admin/pendaftaran/ubah.php` | `admin-ubah-pendaftaran`, `pendaftaran` | b/f `PanelUbahPendaftaran*Test` |
@@ -62,8 +62,8 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 
 | Bagian | Letak | Uji |
 |---|---|---|
-| Tata letak | `tata_letak/publik_tw.php` (menu `Libraries/MenuPublik`; dipakai halaman depan, Unduhan, Hasil, Klasemen sejak F9-03; pita judul `tata_letak/_judul_halaman_tw.php`), `tata_letak/admin_tw.php` (menu `tata_letak/_menu_admin_tw.php`), pesan kilat `tata_letak/_pesan_tw.php`; halaman pindah dengan mengganti `extend` | f `KatalogTampilanTest` |
-| Komponen | `app/Views/komponen/` (tombol, kartu, peringatan, lencana, isian, pilihan, sakelar, modal, tabel, kerangka, kosong, langkah) lewat `komponen()`; ikon `ikon()`, atribut `atribut_html()` di `Helpers/tampilan_helper.php` | u `KomponenTampilanTest` |
+| Tata letak | `tata_letak/publik_tw.php` (menu `Libraries/MenuPublik`; dipakai halaman depan, Unduhan, Hasil, Klasemen sejak F9-03; pita judul `tata_letak/_judul_halaman_tw.php`), `tata_letak/admin_tw.php` (dipakai Dasbor dan Pengecekan sejak F9-14; bagian `tabel` memuat DataTables bergaya Tailwind dari `tabel-admin.js`), menu admin satu sumber `Libraries/Panel/MenuAdmin` untuk `tata_letak/_menu_admin_tw.php` dan `_menu_admin.php` lama (F9-14), pesan kilat `tata_letak/_pesan_tw.php`; halaman pindah dengan mengganti `extend` | f `KatalogTampilanTest` |
+| Komponen | `app/Views/komponen/` (tombol, kartu, peringatan, lencana, isian, pilihan, sakelar, modal, tabel, kerangka, kosong, langkah) lewat `komponen()`; ikon `ikon()`, atribut `atribut_html()` di `Helpers/tampilan_helper.php` | u `KomponenTampilanTest`; menu admin f `TataLetakHalamanTest` |
 | Katalog tampilan | `admin/gaya`, `Admin/GayaController`, `admin/gaya.php`; adegan Three.js `public/aset/js/adegan-merek.js` (modul ES) | f `KatalogTampilanTest`, `KepalaKeamananTest` |
 | Bangun | `package.json`, `alat/vendor.mjs`, `alat/ikon.mjs`, `public/aset/tailwind/masukan.css` → `public/aset/css/tw.css`; job CI "Hasil bangun tampilan" | CI |
 

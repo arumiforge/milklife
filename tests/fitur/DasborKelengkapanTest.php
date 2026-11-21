@@ -63,7 +63,7 @@ final class DasborKelengkapanTest extends UjiBasisData
         // Tiap butir menautkan halaman yang melengkapinya.
         $tautan = [];
 
-        foreach ($xpath->query('//ul[contains(@class, "daftar-kelengkapan")]/li//a') as $a) {
+        foreach ($xpath->query('//ul[@data-daftar-kelengkapan]/li//a') as $a) {
             $tautan[] = $a->getAttribute('href');
         }
 
@@ -234,7 +234,7 @@ final class DasborKelengkapanTest extends UjiBasisData
     {
         $hasil = [];
 
-        foreach ($xpath->query('//ul[contains(@class, "daftar-kelengkapan")]/li') as $li) {
+        foreach ($xpath->query('//ul[@data-daftar-kelengkapan]/li') as $li) {
             $hasil[$li->getAttribute('data-kunci')] = $li->getAttribute('data-lengkap');
         }
 

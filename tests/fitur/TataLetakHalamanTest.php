@@ -15,6 +15,18 @@ use Tests\Support\UjiHalaman;
  */
 final class TataLetakHalamanTest extends UjiHalaman
 {
+    /**
+     * Kelompok menu samping panel admin (rencana Tahap 9, F9-14), sama di
+     * tata letak baru dan lama (`App\Libraries\Panel\MenuAdmin`).
+     */
+    private const MENU_SAMPING = [
+        'Pendaftaran' => ['Dasbor', 'Pendaftaran', 'Atlet', 'Atlet ditolak', 'Sekolah', 'Rekap'],
+        'Hari lomba'  => ['Daftar ulang', 'Cetak BIB', 'Daftar peserta', 'Jadwal pertandingan', 'Seri dan lintasan', 'Lembar juri'],
+        'Hasil'       => ['Hasil lomba', 'Klasemen', 'Videotron'],
+        'Konten'      => ['Halaman depan', 'Bantuan', 'Galeri', 'Unduhan'],
+        'Pengaturan'  => ['Pengaturan'],
+    ];
+
     // ---------- Publik ----------
 
     public function testHalamanDepanMemakaiTataLetakPublikBaru(): void
@@ -146,7 +158,7 @@ final class TataLetakHalamanTest extends UjiHalaman
 
     // ---------- Admin ----------
 
-    public function testDasborMemakaiTataLetakAdmin(): void
+    public function testDasborMemakaiTataLetakAdminBaru(): void
     {
         $hasil = $this->withSession(self::SESI_ADMIN)->get('admin/dasbor');
         $hasil->assertOK();
@@ -155,89 +167,56 @@ final class TataLetakHalamanTest extends UjiHalaman
         $xpath = $this->xpath($html);
 
         $this->assertStringContainsString('<meta name="robots" content="noindex, nofollow">', $html);
-        $this->assertSame(1, $xpath->query('//body[@data-bs-theme="light"]')->length);
+        $this->assertSame(1, $xpath->query('//body[@data-tata="tw"]')->length, 'Dasbor memakai tata letak admin_tw (F9-14).');
+        $this->assertStringContainsString(aset('css/tw.css'), $html);
+        $this->assertStringNotContainsString('bootstrap.min.css', $html);
 
-        // Kepala halaman menempel: judul halaman, nama admin, tombol Keluar.
-        $kepala = $xpath->query('//header[contains(@class, "kepala-admin")]')->item(0);
+        // Kepala halaman: judul halaman, nama admin (ke Akun), tombol Keluar.
+        $kepala = $xpath->query('//header[@data-kepala-admin]')->item(0);
         $this->assertNotNull($kepala);
         $this->assertSame('Dasbor', $this->teks($xpath->query('.//h1', $kepala)->item(0)));
+        $this->assertSame(site_url('admin/akun'), $xpath->query('.//a[@data-nama-admin]', $kepala)->item(0)?->getAttribute('href'));
         $this->assertStringContainsString('Admin Uji', $this->teks($kepala));
         $this->assertSame(1, $xpath->query('.//form[@method="post"]//button[@type="submit"][contains(., "Keluar")]', $kepala)->length);
         $this->assertFormulirKeluarBerCsrf($xpath);
 
-        // Tautan ke halaman depan, dibuka di tab baru (K85). Di kepala halaman
-        // hanya untuk ponsel dan tablet; di layar lebar ada di bawah menu samping (K102).
-        $depan = $xpath->query('.//a[contains(@class, "tombol-halaman-depan")]', $kepala)->item(0);
-        $this->assertNotNull($depan);
-        $this->assertSame(site_url('/'), $depan->getAttribute('href'));
-        $this->assertSame('_blank', $depan->getAttribute('target'));
-        $this->assertStringContainsString('d-lg-none', $depan->getAttribute('class'));
-        $cek = $xpath->query('.//a[contains(@class, "tombol-pengecekan")]', $kepala)->item(0);
-        $this->assertNotNull($cek);
-        $this->assertSame(site_url('admin/pengecekan'), $cek->getAttribute('href'));
-        $this->assertStringContainsString('d-lg-none', $cek->getAttribute('class'));
-
-        // Menu samping dan menu bawah.
-        $samping = $xpath->query('//aside[contains(@class, "menu-samping")]//nav[@aria-label]')->item(0);
-        $bawah   = $xpath->query('//nav[contains(@class, "menu-bawah")][@aria-label]')->item(0);
+        // Di ponsel menu samping menjadi laci yang dibuka tombol menu di kepala
+        // halaman dan ditutup tombol di dalamnya (K131, K133).
+        $samping = $xpath->query('//nav[@data-menu-admin="samping"][@aria-label]')->item(0);
+        $bawah   = $xpath->query('//nav[@data-menu-admin="bawah"][@aria-label]')->item(0);
         $this->assertNotNull($samping, 'Menu samping tidak ada.');
         $this->assertNotNull($bawah, 'Menu bawah tidak ada.');
-        $this->assertStringContainsString('d-lg-none', $bawah->getAttribute('class'));
-        $this->assertStringContainsString('d-lg-flex', $samping->parentNode->getAttribute('class'));
-
-        // Di ponsel menu samping menjadi sidebar (offcanvas) yang dibuka tombol
-        // menu di kepala halaman dan ditutup tombol di dalamnya (K131, K133).
-        $laci = $samping->parentNode;
-        $this->assertSame('menu-laci', $laci->getAttribute('id'));
-        $this->assertStringContainsString('offcanvas-lg', $laci->getAttribute('class'));
-        $this->assertStringContainsString('offcanvas-start', $laci->getAttribute('class'));
-        $tombolMenu = $xpath->query('.//button[contains(@class, "tombol-menu")]', $kepala)->item(0);
+        $laci = $xpath->query('ancestor::aside[@id="menu-laci"]', $samping)->item(0);
+        $this->assertNotNull($laci);
+        $tombolMenu = $xpath->query('.//button[@data-drawer-toggle="menu-laci"]', $kepala)->item(0);
         $this->assertNotNull($tombolMenu, 'Tombol menu di kepala halaman tidak ada.');
-        $this->assertSame('offcanvas', $tombolMenu->getAttribute('data-bs-toggle'));
-        $this->assertSame('#menu-laci', $tombolMenu->getAttribute('data-bs-target'));
         $this->assertSame('menu-laci', $tombolMenu->getAttribute('aria-controls'));
-        $this->assertStringContainsString('d-lg-none', $tombolMenu->getAttribute('class'));
-        $this->assertSame('Buka menu', $this->teks($tombolMenu));
-        $this->assertSame(1, $xpath->query('.//button[@data-bs-dismiss="offcanvas"][@aria-label="Tutup menu"]', $laci)->length);
+        $this->assertSame('Buka menu', $xpath->query('.//*[@aria-label]', $tombolMenu)->item(0)?->getAttribute('aria-label'));
+        $this->assertSame(1, $xpath->query('.//button[@data-drawer-hide="menu-laci"]//*[@aria-label="Tutup menu"]', $laci)->length);
 
-        // Kedua menu berasal dari daftar yang sama. Menu bawah hanya 5 butir
-        // urusan pendaftaran dengan label pendek (K117, K132, K133); menu
-        // samping (sidebar di ponsel) memuat semua butir (K131).
-        $bawahLima = static fn (string $ditolak): array => [
+        // Menu bawah: 5 butir urusan pendaftaran, label pendek (K117, K132, K133).
+        $this->assertSame([
             ['Dasbor', site_url('admin/dasbor'), 'page'],
             ['Pendaftaran', site_url('admin/pendaftaran'), ''],
             ['Atlet', site_url('admin/atlet'), ''],
-            [$ditolak, site_url('admin/atlet-ditolak'), ''],
+            ['Ditolak', site_url('admin/atlet-ditolak'), ''],
             ['Rekap', site_url('admin/rekap'), ''],
-        ];
-        $this->assertSame($bawahLima('Ditolak'), $this->daftarMenu($xpath, $bawah));
-        $this->assertSame(0, $xpath->query('.//*[contains(@class, "menu-admin-tautan")][contains(@href, "admin/daftar-ulang")]', $bawah)->length);
+        ], $this->daftarMenu($xpath, $bawah));
+        // Butir aktif cukup ikon oranye (K133).
+        $this->assertStringContainsString('text-oranye-500', $xpath->query('.//a[@aria-current="page"]//*[name()="svg"]', $bawah)->item(0)?->getAttribute('class') ?? '');
 
-        $utama = static fn (string $ditolak, string $lomba): array => [
-            ...$bawahLima($ditolak),
-            // Hari lomba (F8-03).
-            [$lomba, site_url('admin/daftar-ulang'), ''],
-            // Hasil lomba (F8-04, K130), hanya di menu samping.
-            ['Hasil lomba', site_url('admin/hasil'), ''],
-            // Klasemen sekolah (F8-05).
-            ['Klasemen', site_url('admin/klasemen'), ''],
-            ['Sekolah', site_url('admin/sekolah'), ''],
-            ['Pengaturan', site_url('admin/pengaturan'), ''],
-        ];
-
-        // Menu samping: daftar yang sama, lalu Pengecekan dan Halaman depan di bagian bawah (K102).
-        $this->assertSame([
-            ...$utama('Atlet ditolak', 'Hari lomba'),
-            ['Pengecekan', site_url('admin/pengecekan'), ''],
-            ['Halaman depan (tab baru)', site_url('/'), ''],
-        ], $this->daftarMenu($xpath, $samping));
-        $akhir = $xpath->query('.//ul[contains(@class, "menu-admin-akhir")]', $samping)->item(0);
+        // Menu samping berkelompok (rencana Tahap 9), lalu daftar akhir (K102).
+        $this->assertSame(self::MENU_SAMPING, $this->kelompokMenu($xpath, $samping));
+        $akhir = $xpath->query('.//*[@data-menu-akhir]', $samping)->item(0);
         $this->assertNotNull($akhir);
-        $this->assertSame('_blank', $xpath->query('.//a[contains(@class, "tombol-halaman-depan")]', $akhir)->item(0)?->getAttribute('target'));
-        $this->assertSame(0, $xpath->query('.//ul[contains(@class, "menu-admin-akhir")]', $bawah)->length);
+        $this->assertSame([
+            ['Pengecekan', site_url('admin/pengecekan'), ''],
+            ['Lihat halaman depan (tab baru)', site_url('/'), ''],
+        ], $this->daftarMenu($xpath, $akhir));
+        $this->assertSame('_blank', $xpath->query('.//a[@data-menu-tautan="/"]', $akhir)->item(0)?->getAttribute('target'));
 
         // Ikon dekoratif disembunyikan dari pembaca layar.
-        foreach ($xpath->query('//nav[contains(@class, "menu-bawah")]//i[contains(@class, "bi")]') as $ikon) {
+        foreach ($xpath->query('//nav[@data-menu-admin]//*[name()="svg"]') as $ikon) {
             $this->assertSame('true', $ikon->getAttribute('aria-hidden'));
         }
 
@@ -248,18 +227,60 @@ final class TataLetakHalamanTest extends UjiHalaman
         $bilah = $xpath->query('//*[@id="bilah-kemajuan"]')->item(0);
         $this->assertNotNull($bilah);
         $this->assertTrue($bilah->hasAttribute('hidden'));
+        $this->assertSame(1, $xpath->query('.//*[contains(@class, "bilah-kemajuan-isi")]', $bilah)->length);
         $this->assertStringContainsString('"' . aset('js/kemajuan.js') . '"', $html);
 
         // Keadaan kosong yang ramah, tanpa angka karangan.
         $isi = $this->teks($xpath->query('//main[@id="isi"]')->item(0));
         $this->assertStringContainsString('Belum ada pendaftaran', $isi);
         $this->assertStringContainsString('Langkah berikutnya', $isi);
+        $this->assertSame(1, $xpath->query('//*[@data-dasbor-kosong]')->length);
 
-        // Contoh komponen tanpa gambar, kini di Pengecekan (K102).
-        $this->assertSame(0, $xpath->query('//main//*[contains(@class, "tanpa-gambar")]')->length);
+        // Grafik: setiap wadah berisi kerangka sampai dasbor.js menggambarnya.
+        $wadah = $xpath->query('//*[@data-grafik]');
+        $this->assertSame(8, $wadah->length);
+
+        foreach ($wadah as $satu) {
+            $this->assertSame(1, $xpath->query('.//*[@data-kerangka][@role="status"]', $satu)->length, $satu->getAttribute('id'));
+        }
+
+        // Kotak tanpa gambar di Pengecekan (K102), juga bertata letak baru.
+        $this->assertSame(0, $xpath->query('//main//*[@data-tanpa-gambar]')->length);
         $pengecekan = $this->xpath($this->withSession(self::SESI_ADMIN)->get('admin/pengecekan')->getBody());
-        $this->assertSame(1, $pengecekan->query('//main//*[contains(@class, "tanpa-gambar")][@role="img"]')->length);
-        $this->assertSame(1, $pengecekan->query('//aside//a[contains(@class, "menu-admin-tautan")][@aria-current="page"][contains(@href, "admin/pengecekan")]')->length);
+        $this->assertSame(1, $pengecekan->query('//body[@data-tata="tw"]')->length);
+        $this->assertSame(1, $pengecekan->query('//main//*[@data-tanpa-gambar][@role="img"]')->length);
+        $this->assertSame(1, $pengecekan->query('//nav[@data-menu-admin="samping"]//a[@aria-current="page"][@data-menu-tautan="admin/pengecekan"]')->length);
+    }
+
+    public function testTataLetakLamaMemakaiMenuYangSama(): void
+    {
+        $_SESSION = self::SESI_ADMIN;
+        $lama     = $this->xpath($this->renderDiAlamat('admin/dasbor', 'Tests\Support\Views\contoh_admin'));
+        $baru     = $this->xpath($this->withSession(self::SESI_ADMIN)->get('admin/dasbor')->getBody());
+
+        $this->assertSame(0, $lama->query('//body[@data-tata="tw"]')->length, 'Contoh memakai tata letak lama.');
+
+        foreach (['samping', 'bawah'] as $tempat) {
+            $menuLama = $lama->query('//nav[@data-menu-admin="' . $tempat . '"]')->item(0);
+            $menuBaru = $baru->query('//nav[@data-menu-admin="' . $tempat . '"]')->item(0);
+            $this->assertNotNull($menuLama, $tempat);
+            $this->assertNotNull($menuBaru, $tempat);
+            $this->assertSame($this->daftarMenu($baru, $menuBaru), $this->daftarMenu($lama, $menuLama), "Isi menu {$tempat} kedua tata letak harus sama.");
+        }
+
+        $this->assertSame(self::MENU_SAMPING, $this->kelompokMenu($lama, $lama->query('//nav[@data-menu-admin="samping"]')->item(0)));
+
+        // Bentuk tata letak lama tetap: sidebar offcanvas Bootstrap, menu bawah d-lg-none (K131, K133).
+        $laci = $lama->query('//aside[@id="menu-laci"]')->item(0);
+        $this->assertNotNull($laci);
+        $this->assertStringContainsString('offcanvas-lg', $laci->getAttribute('class'));
+        $this->assertStringContainsString('d-lg-none', $lama->query('//nav[@data-menu-admin="bawah"]')->item(0)?->getAttribute('class') ?? '');
+        $tombolMenu = $lama->query('//header[@data-kepala-admin]//button[@data-bs-toggle="offcanvas"]')->item(0);
+        $this->assertSame('#menu-laci', $tombolMenu?->getAttribute('data-bs-target'));
+
+        // Ikon Lucide (sprite) juga di tata letak lama, disembunyikan dari pembaca layar.
+        $this->assertGreaterThan(0, $lama->query('//nav[@data-menu-admin]//*[name()="svg"]')->length);
+        $this->assertSame(0, $lama->query('//nav[@data-menu-admin]//i[contains(@class, "bi")]')->length);
     }
 
     public function testPenandaMenuAktifMengikutiAlamat(): void
@@ -268,17 +289,37 @@ final class TataLetakHalamanTest extends UjiHalaman
 
         // Halaman di bawah butir menu ikut menandai butir itu.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasbor/rincian', 'Tests\Support\Views\contoh_admin'));
-        $this->assertSame(2, $xpath->query('//a[contains(@class, "menu-admin-tautan")][@aria-current="page"]')->length);
+        $this->assertSame(2, $xpath->query('//a[@data-menu-tautan][@aria-current="page"]')->length);
 
         // Halaman lain tidak menandai Dasbor.
         $xpath = $this->xpath($this->renderDiAlamat('admin/lain', 'Tests\Support\Views\contoh_admin'));
         $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
-        // Lima butir di menu bawah (K133), dua belas di menu samping (K102, K117, F8-03, F8-04, F8-05).
-        $this->assertSame(17, $xpath->query('//a[contains(@class, "menu-admin-tautan")]')->length);
+        // Lima butir di menu bawah (K133); dua puluh butir berkelompok dan dua di daftar akhir (K102) di menu samping.
+        $this->assertSame(27, $xpath->query('//a[@data-menu-tautan]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));
         $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
+
+        // Butir yang alamatnya paling cocok menang: Konten dan Videotron di bawah
+        // admin/pengaturan tidak ikut menandai Pengaturan.
+        foreach ([
+            'admin/pengaturan/galeri/3/ubah'   => 'admin/pengaturan/galeri',
+            'admin/pengaturan/bantuan'         => 'admin/pengaturan/bantuan',
+            'admin/pengaturan/videotron'       => 'admin/pengaturan/videotron',
+            'admin/pengaturan/acara'           => 'admin/pengaturan',
+            'admin/nomor-atlet/cetak/contoh'   => 'admin/nomor-atlet/cetak',
+            'admin/seri/babak/4'               => 'admin/seri',
+        ] as $alamat => $butir) {
+            $xpath = $this->xpath($this->renderDiAlamat($alamat, 'Tests\Support\Views\contoh_admin'));
+            $aktif = [];
+
+            foreach ($xpath->query('//a[@data-menu-tautan][@aria-current="page"]') as $tautan) {
+                $aktif[] = $tautan->getAttribute('data-menu-tautan');
+            }
+
+            $this->assertSame([$butir], $aktif, $alamat);
+        }
     }
 
     public function testJudulKepalaAdminMemakaiJudulBilaJudulHalamanKosong(): void
@@ -431,11 +472,27 @@ final class TataLetakHalamanTest extends UjiHalaman
     {
         $daftar = [];
 
-        foreach ($xpath->query('.//a[contains(@class, "menu-admin-tautan")]', $menu) as $tautan) {
+        foreach ($xpath->query('.//a[@data-menu-tautan]', $menu) as $tautan) {
             $daftar[] = [$this->teks($tautan), $tautan->getAttribute('href'), $tautan->getAttribute('aria-current')];
         }
 
         return $daftar;
+    }
+
+    /**
+     * @return array<string, list<string>> nama kelompok => label butir
+     */
+    private function kelompokMenu(DOMXPath $xpath, DOMNode $menu): array
+    {
+        $hasil = [];
+
+        foreach ($xpath->query('.//*[@data-menu-kelompok]', $menu) as $kelompok) {
+            foreach ($xpath->query('.//a[@data-menu-tautan]', $kelompok) as $tautan) {
+                $hasil[$kelompok->getAttribute('data-menu-kelompok')][] = $this->teks($tautan);
+            }
+        }
+
+        return $hasil;
     }
 
     private function assertFormulirKeluarBerCsrf(DOMXPath $xpath): void

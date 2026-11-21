@@ -331,7 +331,7 @@ final class PanelRekapTest extends UjiBasisData
         $angka = [];
 
         foreach ($xpath->query('//*[@id="angka-pendaftaran"]//*[@data-angka]') as $kartu) {
-            $angka[$kartu->getAttribute('data-angka')] = trim($xpath->query('.//*[contains(@class, "nilai-angka")]', $kartu)->item(0)->textContent);
+            $angka[$kartu->getAttribute('data-angka')] = trim($xpath->query('.//*[@data-nilai]', $kartu)->item(0)->textContent);
         }
 
         $lunas = $c['b']['total'] + $c['c']['total'];
@@ -353,7 +353,7 @@ final class PanelRekapTest extends UjiBasisData
         $tambahan = [];
 
         foreach ($xpath->query('//*[@id="angka-tambahan"]//*[@data-tambahan]') as $kartu) {
-            $tambahan[$kartu->getAttribute('data-tambahan')] = trim($xpath->query('.//*[contains(@class, "nilai-kecil")]', $kartu)->item(0)->textContent);
+            $tambahan[$kartu->getAttribute('data-tambahan')] = trim($xpath->query('.//*[@data-nilai]', $kartu)->item(0)->textContent);
         }
         $this->assertSame('2', $tambahan['pendaftaran_lunas']);
         $this->assertSame('2', $tambahan['pendaftaran_menunggu']);
@@ -372,8 +372,8 @@ final class PanelRekapTest extends UjiBasisData
     {
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'));
 
-        $this->assertSame('0', trim($xpath->query('//*[@data-angka="pendaftaran"]//*[contains(@class, "nilai-angka")]')->item(0)->textContent));
-        $this->assertSame(rupiah(0), trim($xpath->query('//*[@data-angka="tagihan"]//*[contains(@class, "nilai-angka")]')->item(0)->textContent));
+        $this->assertSame('0', trim($xpath->query('//*[@data-angka="pendaftaran"]//*[@data-nilai]')->item(0)->textContent));
+        $this->assertSame(rupiah(0), trim($xpath->query('//*[@data-angka="tagihan"]//*[@data-nilai]')->item(0)->textContent));
         $this->assertSame(1, $xpath->query('//*[@id="judul-kosong"]')->length);
     }
 }
