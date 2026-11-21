@@ -12,10 +12,10 @@ Pengunjung melihat album foto acara dan langsung dibawa ke Instagram atau Google
 
 ## Hasil
 
-- [ ] Tabel `galeri` (judul, keterangan, tautan, sampul unggahan, urutan, aktif), kelola di Pengaturan > Galeri, sampul dikecilkan ke WebP
-- [ ] `/galeri` kartu bersampul, tautan dibuka di tab baru dengan `rel="noopener"`; sakelar tampil (bawaan mati)
-- [ ] Album bawaan "Seri sebelumnya" bersampul foto `bahan-rombak`, tautannya diisi admin
-- [ ] Ikut Backup data/impor (K76)
+- [x] Tabel `galeri` (judul, keterangan, tautan, sampul unggahan, urutan, aktif), kelola di Pengaturan > Galeri, sampul dikecilkan ke WebP
+- [x] `/galeri` kartu bersampul, tautan dibuka di tab baru dengan `rel="noopener"`; sakelar tampil (bawaan mati)
+- [x] Album bawaan "Seri sebelumnya" bersampul foto `bahan-rombak`, tautannya diisi admin
+- [x] Ikut Backup data/impor (K76)
 
 ## Berkas dan uji
 

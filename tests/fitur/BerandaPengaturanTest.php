@@ -83,6 +83,7 @@ final class BerandaPengaturanTest extends UjiHalaman
             ['unduhan', 'Unduhan', site_url('admin/pengaturan/unduhan')],
             ['kontak', 'Kontak', site_url('admin/pengaturan/kontak')],
             ['bantuan', 'Bantuan', site_url('admin/pengaturan/bantuan')],
+            ['galeri', 'Galeri', site_url('admin/pengaturan/galeri')],
             ['tabel-skor', 'Tabel Skor', site_url('admin/pengaturan/tabel-skor')],
             ['hasil', 'Hasil', site_url('admin/pengaturan/hasil')],
             ['akun', 'Akun', site_url('admin/akun')],
@@ -147,7 +148,7 @@ final class BerandaPengaturanTest extends UjiHalaman
     {
         $halaman = BerandaPengaturanController::daftarHalaman();
 
-        $this->assertCount(13, $halaman);
+        $this->assertCount(14, $halaman);
         $this->assertSame(array_unique(array_column($halaman, 'kunci')), array_column($halaman, 'kunci'));
 
         foreach ($halaman as $butir) {
