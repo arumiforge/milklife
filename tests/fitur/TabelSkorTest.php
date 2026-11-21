@@ -38,6 +38,8 @@ final class TabelSkorTest extends UjiBasisData
 
     protected function tearDown(): void
     {
+        // Uji halaman sesudahnya (tanpa migrasi ulang) mengharapkan belum ada pendaftaran.
+        $this->db->table('pendaftaran')->where('id >', 0)->delete();
         $this->bersihkanBerkasPanel();
         parent::tearDown();
     }
