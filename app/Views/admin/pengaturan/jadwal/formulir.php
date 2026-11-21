@@ -27,9 +27,9 @@ $pesan = static fn (string $kotak): string => isset($galat[$kotak])
 ?>
 <?= $this->extend('tata_letak/admin') ?>
 
-<?= $this->section('judul') ?><?= $baru ? 'Tambah Jadwal' : 'Ubah Jadwal' ?><?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= $baru ? 'Tambah Agenda' : 'Ubah Agenda' ?><?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Jadwal<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Agenda<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="container-fluid px-3 px-lg-4">
@@ -39,7 +39,7 @@ $pesan = static fn (string $kotak): string => isset($galat[$kotak])
         <div class="col-12 col-xl-10 col-xxl-8">
             <section class="card" aria-labelledby="judul-formulir-jadwal">
                 <div class="card-body p-3 p-lg-4">
-                    <h2 id="judul-formulir-jadwal" class="h5 mb-1"><?= $baru ? 'Tambah jadwal' : 'Ubah jadwal' ?></h2>
+                    <h2 id="judul-formulir-jadwal" class="h5 mb-1"><?= $baru ? 'Tambah agenda' : 'Ubah agenda' ?></h2>
                     <p class="text-body-secondary small mb-4">
                         Hanya judul yang wajib diisi. Isi tempat untuk kegiatan tatap muka, tautan untuk kegiatan daring.
                     </p>
@@ -111,7 +111,7 @@ $pesan = static fn (string $kotak): string => isset($galat[$kotak])
 
                         <div class="d-flex flex-wrap gap-2 mt-4">
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-lg" aria-hidden="true"></i> <?= $baru ? 'Simpan jadwal' : 'Simpan perubahan' ?>
+                                <i class="bi bi-check-lg" aria-hidden="true"></i> <?= $baru ? 'Simpan agenda' : 'Simpan perubahan' ?>
                             </button>
                             <a class="btn btn-outline-secondary" href="<?= site_url('admin/pengaturan/jadwal') ?>">Batal</a>
                         </div>

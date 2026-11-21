@@ -246,6 +246,33 @@ final class TabelSkorTest extends UjiBasisData
         $this->assertGagalDialihkan($kosong, self::ALAMAT . '#tambah-tabel');
     }
 
+
+    public function testTetapTersimpanWalauKoneksiPernahMenggagalkanTransaksi(): void
+    {
+        $data = new DataTabelSkor();
+        $id   = $data->buatTabel('Dwilomba Rekaan', [['nama' => 'Lari 50 m', 'jenis' => 'waktu']])['id'];
+
+        $this->tinggalkanStatusTransaksiGagal();
+        $this->assertSame([], $data->simpanBaris($id, 'lari-50-m', 'putra', '8,5', '700'));
+        $this->assertSame([[850, 700]], $data->baris($id, 'lari-50-m', 'putra'));
+
+        $this->tinggalkanStatusTransaksiGagal();
+        $data->gantiBaris($id, 'lari-50-m', 'putra', [[800, 900], [900, 600]]);
+        $this->assertSame([[800, 900], [900, 600]], $data->baris($id, 'lari-50-m', 'putra'));
+
+        $this->tinggalkanStatusTransaksiGagal();
+        $this->assertTrue($data->hapusBaris($id, 'lari-50-m', 'putra', 900));
+        $this->assertSame([[800, 900]], $data->baris($id, 'lari-50-m', 'putra'));
+
+        $this->tinggalkanStatusTransaksiGagal();
+        $baru = $data->simpanData([
+            'kode'     => 'ekalomba-rekaan',
+            'nama'     => 'Ekalomba Rekaan',
+            'komponen' => [['kode' => 'lari-50-m', 'nama' => 'Lari 50 m', 'jenis' => 'waktu', 'baris' => ['putri' => [[850, 650]]]]],
+        ]);
+        $this->assertSame([[850, 650]], $data->baris($baru, 'lari-50-m', 'putri'));
+    }
+
     public function testPaketPindahServerMembawaTabelDanRincian(): void
     {
         $nomor = $this->nomorTrilomba();

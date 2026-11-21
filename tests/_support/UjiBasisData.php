@@ -4,6 +4,7 @@ namespace Tests\Support;
 
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
+use Throwable;
 
 /**
  * Kelas dasar uji yang memakai basis data uji (grup `tests`, MySQL).
@@ -113,5 +114,26 @@ abstract class UjiBasisData extends CIUnitTestCase
         }
 
         return $baris;
+    }
+
+    /**
+     * Tinggalkan status transaksi gagal di koneksi bersama, seperti sisa
+     * kegagalan uji lain atau permintaan sebelumnya di proses yang sama:
+     * dalam mode ketat CodeIgniter tidak mengembalikannya saat transaksi baru
+     * dimulai, sehingga `transStart()`/`transComplete()` ikut membatalkan
+     * (#129). Kode yang memakai `transBegin()`/`transCommit()` tetap menyimpan.
+     */
+    protected function tinggalkanStatusTransaksiGagal(): void
+    {
+        $this->db->transStart();
+
+        try {
+            $this->db->query('SELECT * FROM tabel_yang_tidak_ada');
+        } catch (Throwable) {
+            // Kueri gagal memang disengaja.
+        }
+
+        $this->db->transComplete();
+        $this->assertFalse($this->db->transStatus(), 'Prasyarat: status transaksi gagal tertinggal.');
     }
 }

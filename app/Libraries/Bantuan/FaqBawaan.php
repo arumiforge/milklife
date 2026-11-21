@@ -47,7 +47,7 @@ final class FaqBawaan
         ['sebelum', 'Kapan dan di mana lombanya?', <<<'MD'
             {nama_acara} berlangsung **{tanggal_lomba}** di **{tempat}**.
 
-            Jadwal per nomor lomba diumumkan saat pertemuan teknik (technical meeting). Lihat juga bagian **Jadwal** di halaman depan.
+            Jadwal per nomor lomba diumumkan saat pertemuan teknik (technical meeting). Lihat juga bagian **Agenda** di halaman depan.
             MD],
         ['sebelum', 'Kelompok umur apa saja yang dilombakan?', <<<'MD'
             Kelompok umur ditentukan dari **jenjang sekolah** lalu **tahun lahir** atlet:
@@ -232,7 +232,7 @@ final class FaqBawaan
         ['hari_lomba', 'Apa itu pertemuan teknik (technical meeting), wajib hadir?', <<<'MD'
             Pertemuan teknik membahas pelaksanaan lomba bersama ofisial sekolah, sekaligus pembagian nomor atlet (BIB). **Setiap sekolah yang mendaftarkan siswanya wajib hadir**; sekolah yang tidak hadir wajib menerima keputusan pertemuan itu.
 
-            Waktu dan tempatnya ada di bagian **Jadwal** halaman depan.
+            Waktu dan tempatnya ada di bagian **Agenda** halaman depan.
             MD],
         ['hari_lomba', 'Apa yang dibawa saat pertemuan teknik?', <<<'MD'
             1. **Bukti pendaftaran** berstatus Lunas, dicetak atau di HP.

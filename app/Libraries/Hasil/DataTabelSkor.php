@@ -5,6 +5,7 @@ namespace App\Libraries\Hasil;
 use CodeIgniter\Database\BaseConnection;
 use JsonException;
 use RuntimeException;
+use Throwable;
 
 /**
  * Tabel skor multi-lomba di basis data (F9-10, K140 butir 7b): pasang tabel
@@ -314,33 +315,32 @@ final class DataTabelSkor
             'diubah_pada' => $sekarang,
         ];
 
-        $this->db->transStart();
+        return $this->transaksi(function () use ($data, $isi, $sekarang): int {
+            $lama = $this->db->table('tabel_skor')->select('id')->where('kode', $data['kode'])->get()->getRow();
 
-        $lama = $this->db->table('tabel_skor')->select('id')->where('kode', $data['kode'])->get()->getRow();
-
-        if ($lama !== null) {
-            $id = (int) $lama->id;
-            $this->db->table('tabel_skor')->where('id', $id)->update($isi);
-            $this->db->table('tabel_skor_baris')->where('tabel_skor_id', $id)->delete();
-        } else {
-            $this->db->table('tabel_skor')->insert($isi + ['kode' => $data['kode'], 'dibuat_pada' => $sekarang]);
-            $id = (int) $this->db->insertID();
-        }
-
-        foreach ((array) $data['komponen'] as $k) {
-            if (! is_array($k) || ! TabelSkor::kodeSah($k['kode'] ?? null)) {
-                continue;
+            if ($lama !== null) {
+                $id = (int) $lama->id;
+                $this->pastikan($this->db->table('tabel_skor')->where('id', $id)->update($isi));
+                $this->pastikan($this->db->table('tabel_skor_baris')->where('tabel_skor_id', $id)->delete());
+            } else {
+                $this->pastikan($this->db->table('tabel_skor')->insert($isi + ['kode' => $data['kode'], 'dibuat_pada' => $sekarang]));
+                $id = (int) $this->db->insertID();
             }
 
-            foreach (array_keys(TabelSkor::KATEGORI) as $kategori) {
-                $this->tulisBaris($id, $k['kode'], $kategori, is_array($k['baris'][$kategori] ?? null) ? $k['baris'][$kategori] : []);
+            foreach ((array) $data['komponen'] as $k) {
+                if (! is_array($k) || ! TabelSkor::kodeSah($k['kode'] ?? null)) {
+                    continue;
+                }
+
+                foreach (array_keys(TabelSkor::KATEGORI) as $kategori) {
+                    $this->tulisBaris($id, $k['kode'], $kategori, is_array($k['baris'][$kategori] ?? null) ? $k['baris'][$kategori] : []);
+                }
             }
-        }
 
-        $this->hitungUlangTabel($id);
-        $this->db->transComplete();
+            $this->hitungUlangTabel($id);
 
-        return $id;
+            return $id;
+        });
     }
 
     /**
@@ -476,27 +476,26 @@ final class DataTabelSkor
 
         $kunci = ['tabel_skor_id' => $tabelId, 'komponen' => $komponen, 'kategori' => $kategori];
 
-        $this->db->transStart();
-
-        $this->db->table('tabel_skor_baris')->where($kunci + ['prestasi' => $prestasi['nilai']])->delete();
-        $this->db->table('tabel_skor_baris')->insert($kunci + ['prestasi' => $prestasi['nilai'], 'poin' => (int) $teksPoin]);
-        $this->sentuh($tabelId);
-        $this->hitungUlangTabel($tabelId);
-        $this->db->transComplete();
+        $this->transaksi(function () use ($kunci, $prestasi, $teksPoin, $tabelId): void {
+            $this->pastikan($this->db->table('tabel_skor_baris')->where($kunci + ['prestasi' => $prestasi['nilai']])->delete());
+            $this->pastikan($this->db->table('tabel_skor_baris')->insert($kunci + ['prestasi' => $prestasi['nilai'], 'poin' => (int) $teksPoin]));
+            $this->sentuh($tabelId);
+            $this->hitungUlangTabel($tabelId);
+        });
 
         return [];
     }
 
     public function hapusBaris(int $tabelId, string $komponen, string $kategori, int $prestasi): bool
     {
-        $this->db->transStart();
-        $this->db->table('tabel_skor_baris')->where(['tabel_skor_id' => $tabelId, 'komponen' => $komponen, 'kategori' => $kategori, 'prestasi' => $prestasi])->delete();
-        $hapus = $this->db->affectedRows() > 0;
-        $this->sentuh($tabelId);
-        $this->hitungUlangTabel($tabelId);
-        $this->db->transComplete();
+        return $this->transaksi(function () use ($tabelId, $komponen, $kategori, $prestasi): bool {
+            $this->pastikan($this->db->table('tabel_skor_baris')->where(['tabel_skor_id' => $tabelId, 'komponen' => $komponen, 'kategori' => $kategori, 'prestasi' => $prestasi])->delete());
+            $hapus = $this->db->affectedRows() > 0;
+            $this->sentuh($tabelId);
+            $this->hitungUlangTabel($tabelId);
 
-        return $hapus;
+            return $hapus;
+        });
     }
 
     /**
@@ -506,12 +505,12 @@ final class DataTabelSkor
      */
     public function gantiBaris(int $tabelId, string $komponen, string $kategori, array $baris): void
     {
-        $this->db->transStart();
-        $this->db->table('tabel_skor_baris')->where(['tabel_skor_id' => $tabelId, 'komponen' => $komponen, 'kategori' => $kategori])->delete();
-        $this->tulisBaris($tabelId, $komponen, $kategori, $baris);
-        $this->sentuh($tabelId);
-        $this->hitungUlangTabel($tabelId);
-        $this->db->transComplete();
+        $this->transaksi(function () use ($tabelId, $komponen, $kategori, $baris): void {
+            $this->pastikan($this->db->table('tabel_skor_baris')->where(['tabel_skor_id' => $tabelId, 'komponen' => $komponen, 'kategori' => $kategori])->delete());
+            $this->tulisBaris($tabelId, $komponen, $kategori, $baris);
+            $this->sentuh($tabelId);
+            $this->hitungUlangTabel($tabelId);
+        });
     }
 
     /**
@@ -577,7 +576,7 @@ final class DataTabelSkor
                     $lama  = $h['prestasi'] === null ? null : (int) $h['prestasi'];
 
                     if ($teks !== $h['rincian'] || $baru['total'] !== $lama) {
-                        $this->db->table('hasil')->where('id', $h['id'])->update(['prestasi' => $baru['total'], 'rincian' => $teks]);
+                        $this->pastikan($this->db->table('hasil')->where('id', $h['id'])->update(['prestasi' => $baru['total'], 'rincian' => $teks]));
                         $adaUbah = true;
                         $ubah++;
                     }
@@ -608,12 +607,53 @@ final class DataTabelSkor
         }
 
         foreach (array_chunk($isi, 500) as $potong) {
-            $this->db->table('tabel_skor_baris')->insertBatch($potong);
+            $this->pastikan($this->db->table('tabel_skor_baris')->insertBatch($potong));
         }
     }
 
     private function sentuh(int $tabelId): void
     {
-        $this->db->table('tabel_skor')->where('id', $tabelId)->update(['diubah_pada' => date('Y-m-d H:i:s')]);
+        $this->pastikan($this->db->table('tabel_skor')->where('id', $tabelId)->update(['diubah_pada' => date('Y-m-d H:i:s')]));
+    }
+
+    /**
+     * Jalankan `$kerja` dalam satu transaksi: semua tersimpan atau tidak ada.
+     *
+     * transBegin/transCommit dalam try/catch, bukan transStart/transComplete:
+     * dalam mode ketat status gagal transaksi lain di koneksi yang sama tidak
+     * ikut membatalkan penyimpanan ini (lihat `FaqModel::pindah()`, #129).
+     * Di dalam transaksi CodeIgniter mengembalikan `false` alih-alih melempar
+     * galat, jadi setiap tulis diperiksa dengan `pastikan()`.
+     *
+     * @template T
+     *
+     * @param callable(): T $kerja
+     *
+     * @return T
+     */
+    private function transaksi(callable $kerja): mixed
+    {
+        $this->db->transBegin();
+
+        try {
+            $hasil = $kerja();
+            $this->db->transCommit();
+
+            return $hasil;
+        } catch (Throwable $e) {
+            $this->db->transRollback();
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @param mixed $hasil Hasil `insert`, `insertBatch`, `update`, atau `delete`.
+     */
+    private function pastikan(mixed $hasil): void
+    {
+        if ($hasil === false) {
+            throw new RuntimeException('Tabel skor gagal disimpan ke basis data.');
+        }
     }
 }
