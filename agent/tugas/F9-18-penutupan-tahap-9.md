@@ -12,10 +12,10 @@ Tahap 9 terbukti berjalan di staging dan siap sepenuhnya di produksi, dokumennya
 
 ## Hasil
 
-- [ ] Uji peramban menyeluruh di staging (360, 390, 1280 piksel; videotron 1920×1080): halaman depan, bantuan, wizard, cek, jadwal, seri, lembar juri, hasil, klasemen, peserta, galeri, videotron, admin
-- [ ] Rancangan final revisi 21 (K138–K140), PDF dibuat ulang; `KONTEKS.md` (teknologi, cakupan), `PETA-KODE.md`, README
-- [ ] `bahan-rombak/` dipindah ke `sumber/foto-acara/` (asumsi 7 rencana)
-- [ ] Arsip `agent/arsip/tahap-9.md`, `PROGRES.md` diperbarui
+- [x] Uji peramban menyeluruh (staging belum diperbarui, jadi di pemasangan lokal mode produksi) (360, 390, 1280 piksel; videotron 1920×1080): halaman depan, bantuan, wizard, cek, jadwal, seri, lembar juri, hasil, klasemen, peserta, galeri, videotron, admin
+- [x] Rancangan final revisi 29 (K138–K151), PDF dibuat ulang; `KONTEKS.md` (teknologi, cakupan), `PETA-KODE.md`, README
+- [x] `bahan-rombak/` dipindah ke `sumber/foto-acara/` (asumsi 7 rencana)
+- [x] Arsip `agent/arsip/tahap-9.md`, `PROGRES.md` diperbarui
 
 ## Berkas dan uji
 

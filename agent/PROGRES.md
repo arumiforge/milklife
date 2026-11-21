@@ -1,55 +1,33 @@
 # Progres
 
-Diperbarui: 21 November 2026
+Diperbarui: 22 November 2026
 
 ## Sedang berjalan
 
-**Tahap 9 — Rombak tampilan dan fitur publik hari lomba** (K140, K141). Rencana: [`dokumen/draf/rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md), disetujui pemilik beserta delapan asumsinya (K142). Dikerjakan paralel, paling banyak 5 sub-sesi (K142, K145). Jawaban pertanyaan gelombang A: K143; F9-12: K144. Koordinator menjalankan semua tugas otomatis sampai selesai (K145). Staging: https://staging.mac2026.web.id (K139). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
+Belum ada tahap berjalan. Tahap 9 sudah ditutup (F9-18) dan diarsipkan.
 
-| Tugas | Status | Prioritas | Gelombang |
-|---|---|---|---|
-| [F9-01 Fondasi Flowbite Pro](tugas/F9-01-fondasi-flowbite-pro.md) | selesai (#122) | P1 | 0 |
-| [F9-02 Saluran Codex](tugas/F9-02-saluran-codex.md) | selesai (#121) | P1 | 0 |
-| [F9-03 Tata letak publik dan halaman depan](tugas/F9-03-tata-letak-publik-beranda.md) | selesai (#125) | P1 | A |
-| [F9-04 Bantuan dan FAQ](tugas/F9-04-bantuan-faq.md) | selesai (#123) | P1 | A |
-| [F9-07 Jadwal pertandingan](tugas/F9-07-jadwal-pertandingan.md) | selesai (#131) | P1 | A |
-| [F9-10 Kalkulator poin multi-lomba](tugas/F9-10-kalkulator-poin-multilomba.md) | selesai (#124) | P1 | A |
-| [F9-08 Seri, lintasan, dan alur babak](tugas/F9-08-seri-lintasan-bagan.md) | selesai (#137) | P1 | B |
-| [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | selesai (#140) | P1 | B |
-| [F9-12 Peserta publik](tugas/F9-12-peserta-publik.md) | selesai (#127) | P1 | B |
-| [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | selesai (#132, #138) | P1 | B |
-| [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | selesai (#136) | P2 | B |
-| [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | selesai (#135) | P2 | B |
-| [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | selesai (#144) | P2 | C |
-| [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | selesai (#145) | P2 | C |
-| [F9-15 Halaman admin pendaftaran ke Tailwind](tugas/F9-15-admin-pendaftaran-tailwind.md) | dikerjakan | P2 | C |
-| [F9-16 Halaman admin hari lomba dan pengaturan ke Tailwind](tugas/F9-16-admin-hari-lomba-pengaturan-tailwind.md) | selesai (#146) | P2 | C |
-| [F9-17 Skeleton, keadaan kosong, dan perapian](tugas/F9-17-skeleton-perapian.md) | rencana | P2 | C |
-| [F9-19 Pemasangan visual tambahan](tugas/F9-19-pemasangan-visual-tambahan.md) | dikerjakan | P2 | C |
-| [F9-18 Penutupan Tahap 9](tugas/F9-18-penutupan-tahap-9.md) | rencana | P1 | akhir |
+### Gambar Codex Tahap 9
 
-### Gambar (Codex)
-
-Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung koordinator. Semua kebutuhan gambar dan visual dipesan ke Codex tanpa batas jumlah tugas (K150).
+Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung koordinator (K150). Kode pemasangan semua gambar sudah di `main` dan halaman aman tanpa berkasnya (K41), jadi status di bawah tidak menahan apa pun.
 
 | Tugas gambar | Status |
 |---|---|
 | [G9-01 Latar BIB](../desain/tugas/G9-01-latar-bib.md) | selesai (#142) |
-| [G9-02 Ilustrasi halaman depan](../desain/tugas/G9-02-ilustrasi-halaman-depan.md) | rencana |
-| [G9-03 Panduan pendaftaran](../desain/tugas/G9-03-panduan-pendaftaran.md) | rencana |
-| [G9-04 Keadaan kosong dan galat](../desain/tugas/G9-04-keadaan-kosong-galat.md) | rencana |
-| [G9-05 Ilustrasi nomor lomba](../desain/tugas/G9-05-ikon-nomor-lomba.md) | rencana |
-| [G9-06 Videotron dan podium](../desain/tugas/G9-06-videotron-podium.md) | rencana |
-| [G9-07 Kategori Bantuan](../desain/tugas/G9-07-bantuan-kategori.md) | rencana |
-| [G9-08 Panel admin](../desain/tugas/G9-08-panel-admin.md) | rencana |
-| [G9-09 Pita judul halaman publik](../desain/tugas/G9-09-pita-judul.md) | rencana |
-| [G9-10 Gambar bagikan](../desain/tugas/G9-10-gambar-bagikan.md) | rencana |
-| [G9-11 Ikon aplikasi](../desain/tugas/G9-11-ikon-aplikasi.md) | rencana |
-| [G9-12 Pola dan hiasan latar](../desain/tugas/G9-12-pola-hiasan.md) | rencana |
+| [G9-02 Ilustrasi halaman depan](../desain/tugas/G9-02-ilustrasi-halaman-depan.md) | menunggu Codex, kode pemasangan siap |
+| [G9-03 Panduan pendaftaran](../desain/tugas/G9-03-panduan-pendaftaran.md) | menunggu Codex, kode pemasangan siap |
+| [G9-04 Keadaan kosong dan galat](../desain/tugas/G9-04-keadaan-kosong-galat.md) | menunggu Codex, kode pemasangan siap |
+| [G9-05 Ilustrasi nomor lomba](../desain/tugas/G9-05-ikon-nomor-lomba.md) | menunggu Codex, kode pemasangan siap |
+| [G9-06 Videotron dan podium](../desain/tugas/G9-06-videotron-podium.md) | menunggu Codex, kode pemasangan siap |
+| [G9-07 Kategori Bantuan](../desain/tugas/G9-07-bantuan-kategori.md) | menunggu Codex, kode pemasangan siap |
+| [G9-08 Panel admin](../desain/tugas/G9-08-panel-admin.md) | menunggu Codex, kode pemasangan siap |
+| [G9-09 Pita judul halaman publik](../desain/tugas/G9-09-pita-judul.md) | menunggu Codex, kode pemasangan siap |
+| [G9-10 Gambar bagikan](../desain/tugas/G9-10-gambar-bagikan.md) | menunggu Codex, kode pemasangan siap |
+| [G9-11 Ikon aplikasi](../desain/tugas/G9-11-ikon-aplikasi.md) | menunggu Codex, kode pemasangan siap |
+| [G9-12 Pola dan hiasan latar](../desain/tugas/G9-12-pola-hiasan.md) | menunggu Codex, kode pemasangan siap |
 
 ## Berikutnya
 
-Gelombang A dan B selesai (F9-09 lewat #140). Perbaikan kecil masuk lewat #134 (nama Agenda di Pengaturan, pola transaksi) dan #138 (uji tampilan bersih). Gelombang C: F9-05 (#144), F9-14 (#145), dan F9-16 (#146) selesai 21 November; F9-15 dan F9-19 dikerjakan; kemudian F9-17 dan F9-18. Jawaban pertanyaan gelombang C: K151. Jawaban pertanyaan gelombang A dan B: K146. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali, diurus pengembang (K138, K148). Kesiapan server ditangani pemilik (K119).
+Pembaruan server mengikuti bagian 10 panduan produksi. Server yang dipasang sebelum Tahap 9 menjalankan sekali: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Fitur publik baru (Jadwal, Seri, Peserta, Galeri, Videotron) bersakelar bawaan mati sampai dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139). Server yang dipasang sebelum repo privat perlu deploy key sekali, diurus pengembang (K138, K148). Kesiapan server (`/sehat`, pemantauan uptime, tembolok halaman depan, `client_max_body_size`, `memory_limit`, uji pulih cadangan) ditangani pemilik (K119). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
 
 ## Selesai
 
@@ -62,6 +40,7 @@ Gelombang A dan B selesai (F9-09 lewat #140). Perbaikan kecil masuk lewat #134 (
 - Tahap 6 — Panel data: [`arsip/tahap-6.md`](arsip/tahap-6.md). Selesai 12 November 2026; F6-01 sampai F6-07 (#47, #50, #49, #51, #52, #54, #53) dan penutupan F6-08.
 - Tahap 7 — Penyelesaian: [`arsip/tahap-7.md`](arsip/tahap-7.md). Selesai 18 November 2026; F7-01 sampai F7-06 dan tugas sisipan F7-08 sampai F7-33, penutupan F7-07.
 - Tahap 8 — Hari lomba dan hasil: [`arsip/tahap-8.md`](arsip/tahap-8.md). Selesai 18 November 2026; F8-01 sampai F8-05 dan F8-07 (#102, #103, #104, #113, #114, #107), penutupan F8-06 bersama F7-06.
+- Tahap 9 — Rombak tampilan dan fitur publik hari lomba: [`arsip/tahap-9.md`](arsip/tahap-9.md). Selesai 22 November 2026; F9-01 sampai F9-17 dan F9-19 (#121–#150), penutupan F9-18.
 
 ## Menunggu pemilik
 
