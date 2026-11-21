@@ -140,13 +140,17 @@ final class TabelSkorTest extends UjiBasisData
         $publik->assertOK();
         $publik->assertSee('3318 poin');
         $publik->assertSee('Lari 60 m 7,00 (882)');
+        // Komponen kosong ditandai "–" dengan 0 poin (K143).
+        $publik->assertSee('Lompat Jauh – (0)');
 
         $hasil   = new HasilLomba();
         $data    = $hasil->nomor($nomor);
         $unduhan = new UnduhanHasil($data, $hasil->semuaBabak($data));
         $this->assertStringContainsString('Lompat Jauh 8,10 (1086)', $unduhan->html(false));
+        $this->assertStringContainsString('Tolak Peluru – (0)', $unduhan->html(false));
         $lembar = $unduhan->excel()->lembar()->getActiveSheet()->toArray();
         $this->assertContains('Poin Tolak Peluru', $lembar[0]);
+        $this->assertContains('–', array_merge(...$lembar));
 
         // Klasemen tetap memakai juara dari Final.
         $this->assertSame([1, 2, 3], array_column($hasil->juara(true), 'peringkat'));

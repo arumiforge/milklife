@@ -79,7 +79,7 @@ $kolom  = $beregu ? 4 : 6;
                     <?php if (! $beregu) : ?><td><?= esc($h['sekolah']) ?></td><?php endif ?>
                     <td>
                         <?= esc($h['prestasi_teks']) ?>
-                        <?php foreach ($h['rincian'] ?? [] as $r) : ?><div class="anggota"><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '–' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></div><?php endforeach ?>
+                        <?php foreach ($h['rincian'] ?? [] as $r) : ?><div class="anggota"><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '– (0)' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></div><?php endforeach ?>
                     </td>
                     <td><?= esc((string) $h['keterangan']) ?></td>
                 </tr>

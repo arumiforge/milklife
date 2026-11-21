@@ -116,6 +116,9 @@ foreach ($calon as $kunci => $c) {
                                                     <label class="visually-hidden" for="<?= esc($idK, 'attr') ?>"><?= esc($k['nama']) ?> <?= esc($h['nama']) ?></label>
                                                     <input type="text" inputmode="decimal" class="form-control form-control-sm kotak-prestasi<?= isset($galat[$h['id']]) ? ' is-invalid' : '' ?><?= $r !== null && $r['luar'] !== null ? ' border-warning' : '' ?>" id="<?= esc($idK, 'attr') ?>"
                                                         name="hasil[<?= $h['id'] ?>][komponen][<?= esc($k['kode'], 'attr') ?>]" placeholder="<?= $k['jenis'] === JenisHasil::WAKTU ? '7,00' : '4,25' ?>" value="<?= esc($nilaiK($h, $k['kode']), 'attr') ?>">
+                                                    <?php if ($r !== null && $r['prestasi'] === '') : ?>
+                                                        <div class="small text-body-secondary" data-poin-komponen>kosong, 0 poin</div>
+                                                    <?php endif ?>
                                                     <?php if ($r !== null && $r['prestasi'] !== '') : ?>
                                                         <div class="small<?= $r['luar'] !== null ? ' text-warning-emphasis fw-semibold' : ' text-body-secondary' ?>" data-poin-komponen><?= $r['poin'] ?> poin<?= $r['luar'] !== null ? ', di luar tabel' : '' ?></div>
                                                     <?php endif ?>

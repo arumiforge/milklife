@@ -118,8 +118,9 @@ final class UnduhanHasil
         $kolom = [];
 
         foreach ($h['rincian'] ?? [] as $i => $r) {
-            $kolom['komponen_' . $i]      = $r['prestasi'];
-            $kolom['komponen_poin_' . $i] = $r['prestasi'] === '' ? null : $r['poin'];
+            // Komponen kosong ditulis "–" dengan 0 poin (K143).
+            $kolom['komponen_' . $i]      = $r['prestasi'] === '' ? '–' : $r['prestasi'];
+            $kolom['komponen_poin_' . $i] = $r['poin'];
         }
 
         return $kolom;

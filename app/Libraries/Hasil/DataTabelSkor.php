@@ -232,7 +232,24 @@ final class DataTabelSkor
             return 0;
         }
 
-        $ubah = 0;
+        $id = $this->trilombaMasihPoin();
+
+        if ($id !== []) {
+            $this->db->table('nomor_lomba')->whereIn('id', $id)->update(['jenis_hasil' => JenisHasil::MULTI, 'tabel_skor_id' => (int) $tabel->id, 'komponen_skor' => null]);
+        }
+
+        return count($id);
+    }
+
+    /**
+     * ID nomor individu bernama Trilomba yang masih berjenis hasil poin dan
+     * belum punya prestasi (yang akan dipindah `pakaiUntukTrilomba()`).
+     *
+     * @return list<int>
+     */
+    public function trilombaMasihPoin(): array
+    {
+        $id = [];
 
         foreach ($this->db->table('nomor_lomba')->select('id, nama')->where('jenis', 'individu')->where('jenis_hasil', JenisHasil::POIN)->get()->getResultArray() as $n) {
             if (JenisHasil::tebak((string) $n['nama']) !== JenisHasil::POIN) {
@@ -242,12 +259,11 @@ final class DataTabelSkor
             $adaPrestasi = $this->db->table('hasil h')->join('babak b', 'b.id = h.babak_id')->where('b.nomor_lomba_id', $n['id'])->where('h.prestasi IS NOT NULL', null, false)->countAllResults() > 0;
 
             if (! $adaPrestasi) {
-                $this->db->table('nomor_lomba')->where('id', $n['id'])->update(['jenis_hasil' => JenisHasil::MULTI, 'tabel_skor_id' => (int) $tabel->id, 'komponen_skor' => null]);
-                $ubah++;
+                $id[] = (int) $n['id'];
             }
         }
 
-        return $ubah;
+        return $id;
     }
 
     /**

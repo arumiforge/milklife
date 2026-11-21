@@ -38,7 +38,7 @@ $beregu = $nomor['jenis'] === 'beregu';
                             <?php // Poin multi-lomba (F9-10): prestasi dan poin tiap komponen. ?>
                             <ul class="list-unstyled small text-body-secondary mb-0 text-wrap" data-rincian-poin>
                                 <?php foreach ($h['rincian'] as $r) : ?>
-                                    <li><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '–' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></li>
+                                    <li><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '– (0)' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></li>
                                 <?php endforeach ?>
                             </ul>
                         <?php endif ?>
