@@ -380,7 +380,7 @@ class Unggahan
 
     /**
      * Kecilkan gambar tersimpan di `$penuh` bila sisi terpanjangnya lebih dari
-     * `SISI_GAMBAR` piksel. Format tetap sama; PNG dan WEBP tetap transparan,
+     * `$sisi` piksel (bawaan `SISI_GAMBAR`; foto carousel halaman depan 1600, F9-03). Format tetap sama; PNG dan WEBP tetap transparan,
      * dan arah foto JPG dari kamera (EXIF) diterapkan supaya tidak terbalik.
      *
      * Bila gambar tidak bisa diolah (misalnya memori tidak cukup), berkas
@@ -388,11 +388,11 @@ class Unggahan
      *
      * `true` bila gambar dikecilkan.
      */
-    public static function kecilkanGambar(string $penuh): bool
+    public static function kecilkanGambar(string $penuh, int $sisi = self::SISI_GAMBAR): bool
     {
         $info = @getimagesize($penuh);
 
-        if ($info === false || max($info[0], $info[1]) <= self::SISI_GAMBAR) {
+        if ($info === false || max($info[0], $info[1]) <= $sisi) {
             return false;
         }
 
@@ -403,7 +403,7 @@ class Unggahan
             return false;
         }
 
-        $skala      = self::SISI_GAMBAR / max($lebar, $tinggi);
+        $skala      = $sisi / max($lebar, $tinggi);
         $lebarBaru  = max(1, (int) round($lebar * $skala));
         $tinggiBaru = max(1, (int) round($tinggi * $skala));
 

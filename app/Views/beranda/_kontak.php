@@ -13,7 +13,7 @@
  *      `narahubung()`: `nomor` tampil '0812-3456-7890', `alamat` 'https://wa.me/62…'; [] bila belum ada.
  * @var list<array{label: string, alamat: string, alamat_ringkas: string, ikon: string}> $mediaSosial
  *      `mediaSosial()`: `alamat` http/https, `alamat_ringkas` 'instagram.com/contoh',
- *      `ikon` nama Bootstrap Icons tanpa "bi-"; [] bila belum ada.
+ *      `ikon` nama Bootstrap Icons tanpa "bi-" (dipetakan ke Lucide di sini); [] bila belum ada.
  * @var string|null $waTanya   `waTanya()`: 'https://wa.me/62…?text=…', atau null bila nomornya belum diisi.
  * @var string      $waBagikan `waBagikan()`: 'https://wa.me/?text=…' (selalu ada).
  *
@@ -21,76 +21,90 @@
  * - `<section id="kontak" aria-labelledby="judul-kontak">` dengan `<h2 id="judul-kontak">`.
  * - Tombol tanya admin hanya bila `$waTanya !== null`; tombol bagikan selalu tampil.
  * - Tautan keluar dibuka di tab baru dengan `rel="noopener noreferrer"`.
- * - Gaya hanya di wilayah "Bagian jadwal, unduhan, kontak (F3-03)" di `tema.css`.
+ * - Tata letak baru Tailwind (F9-03); penanda uji berupa atribut `data-*`.
  */
 
 $adaKontak = $narahubung !== [] || $waTanya !== null;
-$tabBaru   = '<span class="visually-hidden"> (di tab baru)</span>';
+$tabBaru   = '<span class="sr-only"> (di tab baru)</span>';
+
+// Nama ikon media sosial dari `TautanModel` (Bootstrap Icons) ke Lucide.
+$ikonMedia = static fn (string $nama): string => match ($nama) {
+    'instagram', 'facebook', 'youtube' => $nama,
+    'twitter-x'                        => 'twitter',
+    'tiktok'                           => 'music',
+    'whatsapp'                         => 'message-circle',
+    'telegram'                         => 'send',
+    default                            => 'globe',
+};
+// ikon-sprite: instagram facebook youtube twitter music message-circle send globe user share-2
 ?>
-<section id="kontak" class="bagian-tambahan bagian-kontak" aria-labelledby="judul-kontak">
-    <div class="container">
-        <h2 id="judul-kontak" class="bagian-tambahan-judul"><i class="bi bi-chat-dots" aria-hidden="true"></i> Kontak</h2>
-        <p class="bagian-tambahan-pengantar">
-            <?php if ($adaKontak) : ?>
-                Ada pertanyaan tentang lomba atau pendaftaran? Hubungi panitia lewat WhatsApp.
-            <?php else : ?>
-                Bantu sekolah lain mengetahui lomba ini dengan membagikan halaman ini.
+<section id="kontak" class="scroll-mt-20 bg-white" aria-labelledby="judul-kontak">
+    <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
+        <div class="relative overflow-hidden rounded-3xl border border-gray-200 latar-merek p-6 shadow-lembut sm:p-10">
+            <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Hubungi panitia</p>
+            <h2 id="judul-kontak" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Kontak</h2>
+            <p class="mt-2 max-w-2xl text-lg text-gray-600">
+                <?php if ($adaKontak) : ?>
+                    Ada pertanyaan tentang lomba atau pendaftaran? Hubungi panitia lewat WhatsApp.
+                <?php else : ?>
+                    Bantu sekolah lain mengetahui lomba ini dengan membagikan halaman ini.
+                <?php endif ?>
+            </p>
+
+            <?php if ($narahubung !== [] || $mediaSosial !== []) : ?>
+                <div class="mt-8 grid gap-6 lg:grid-cols-2">
+                    <?php if ($narahubung !== []) : ?>
+                        <div>
+                            <h3 class="text-sm font-bold uppercase tracking-wide text-gray-500">Narahubung</h3>
+                            <ul class="mt-3 space-y-3" data-daftar-narahubung>
+                                <?php foreach ($narahubung as $orang) : ?>
+                                    <li class="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4" data-narahubung-butir>
+                                        <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700"><?= ikon('user') ?></span>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="font-bold text-gray-900 break-words" data-narahubung-nama><?= esc($orang['nama']) ?></p>
+                                            <p class="text-gray-600" data-narahubung-nomor><?= esc($orang['nomor']) ?></p>
+                                        </div>
+                                        <a class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100" href="<?= esc($orang['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-narahubung-wa>
+                                            <?= ikon('message-circle', 'size-4') ?> Chat WA<span class="sr-only"> <?= esc($orang['nama']) ?> (di tab baru)</span>
+                                        </a>
+                                    </li>
+                                <?php endforeach ?>
+                            </ul>
+                        </div>
+                    <?php endif ?>
+
+                    <?php if ($mediaSosial !== []) : ?>
+                        <div>
+                            <h3 class="text-sm font-bold uppercase tracking-wide text-gray-500">Media sosial</h3>
+                            <ul class="mt-3 space-y-3" data-daftar-media-sosial>
+                                <?php foreach ($mediaSosial as $media) : ?>
+                                    <li>
+                                        <a class="flex min-h-11 items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 hover:border-primary-300 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($media['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-media-sosial-tautan>
+                                            <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-oranye-100 text-oranye-700"><?= ikon($ikonMedia($media['ikon'])) ?></span>
+                                            <span class="flex min-w-0 flex-col">
+                                                <span class="font-bold text-gray-900" data-media-sosial-label><?= esc($media['label']) ?></span>
+                                                <span class="text-sm text-gray-600 break-all" data-media-sosial-alamat><?= esc($media['alamat_ringkas']) ?></span>
+                                            </span>
+                                            <?= $tabBaru ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach ?>
+                            </ul>
+                        </div>
+                    <?php endif ?>
+                </div>
             <?php endif ?>
-        </p>
 
-        <?php if ($narahubung !== [] || $mediaSosial !== []) : ?>
-            <div class="kontak-kolom">
-                <?php if ($narahubung !== []) : ?>
-                    <div class="kontak-kelompok">
-                        <h3 class="kontak-subjudul">Narahubung</h3>
-                        <ul class="daftar-narahubung list-unstyled mb-0">
-                            <?php foreach ($narahubung as $orang) : ?>
-                                <li class="narahubung-butir">
-                                    <span class="kontak-ikon"><i class="bi bi-person" aria-hidden="true"></i></span>
-                                    <div class="narahubung-isi">
-                                        <p class="narahubung-nama"><?= esc($orang['nama']) ?></p>
-                                        <p class="narahubung-nomor"><?= esc($orang['nomor']) ?></p>
-                                    </div>
-                                    <a class="btn btn-outline-primary btn-sm narahubung-wa" href="<?= esc($orang['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer">
-                                        <i class="bi bi-whatsapp" aria-hidden="true"></i> Chat WA<span class="visually-hidden"> <?= esc($orang['nama']) ?> (di tab baru)</span>
-                                    </a>
-                                </li>
-                            <?php endforeach ?>
-                        </ul>
-                    </div>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row" data-kontak-tombol>
+                <?php if ($waTanya !== null) : ?>
+                    <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary-700 px-6 py-3 text-base font-bold text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300" href="<?= esc($waTanya, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-tanya>
+                        <?= ikon('message-circle') ?> Tanya admin lewat WA<?= $tabBaru ?>
+                    </a>
                 <?php endif ?>
-
-                <?php if ($mediaSosial !== []) : ?>
-                    <div class="kontak-kelompok">
-                        <h3 class="kontak-subjudul">Media sosial</h3>
-                        <ul class="daftar-media-sosial list-unstyled mb-0">
-                            <?php foreach ($mediaSosial as $media) : ?>
-                                <li>
-                                    <a class="media-sosial-tautan" href="<?= esc($media['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer">
-                                        <span class="kontak-ikon"><i class="bi bi-<?= esc($media['ikon'], 'attr') ?>" aria-hidden="true"></i></span>
-                                        <span class="media-sosial-isi">
-                                            <span class="media-sosial-label"><?= esc($media['label']) ?></span>
-                                            <span class="media-sosial-alamat"><?= esc($media['alamat_ringkas']) ?></span>
-                                        </span>
-                                        <?= $tabBaru ?>
-                                    </a>
-                                </li>
-                            <?php endforeach ?>
-                        </ul>
-                    </div>
-                <?php endif ?>
-            </div>
-        <?php endif ?>
-
-        <div class="kontak-tombol">
-            <?php if ($waTanya !== null) : ?>
-                <a class="btn btn-primary btn-lg kontak-tanya" href="<?= esc($waTanya, 'attr') ?>" target="_blank" rel="noopener noreferrer">
-                    <i class="bi bi-whatsapp" aria-hidden="true"></i> Tanya admin lewat WA<?= $tabBaru ?>
+                <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-primary-700 bg-white px-6 py-3 text-base font-bold text-primary-800 hover:bg-primary-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($waBagikan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-bagikan>
+                    <?= ikon('share-2') ?> Bagikan ke WA<?= $tabBaru ?>
                 </a>
-            <?php endif ?>
-            <a class="btn btn-outline-primary btn-lg kontak-bagikan" href="<?= esc($waBagikan, 'attr') ?>" target="_blank" rel="noopener noreferrer">
-                <i class="bi bi-share" aria-hidden="true"></i> Bagikan ke WA<?= $tabBaru ?>
-            </a>
+            </div>
         </div>
     </div>
 </section>
