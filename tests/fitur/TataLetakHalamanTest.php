@@ -3,18 +3,25 @@
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\SiteURI;
 use CodeIgniter\HTTP\UserAgent;
+use CodeIgniter\Test\FeatureTestTrait;
 use Config\Services;
+use Tests\Support\UjiBasisData;
 use Tests\Support\UjiHalaman;
 
 /**
  * Tata letak publik, admin, dan polos yang jadi (F1-05), beserta komponen
  * "tanpa gambar" dan bilah kemajuan. Sejak F2-02 nama dan data acara diambil
  * dari pengaturan, jadi uji yang memeriksanya mengisi pengaturan lebih dulu.
+ * Dasbor membaca tabel pendaftaran, jadi kelas ini memakai `UjiBasisData`
+ * (basis data dimigrasi ulang tiap uji) supaya keadaan kosongnya tidak
+ * bergantung pada sisa data uji lain.
  *
  * @internal
  */
-final class TataLetakHalamanTest extends UjiHalaman
+final class TataLetakHalamanTest extends UjiBasisData
 {
+    use FeatureTestTrait;
+
     /**
      * Kelompok menu samping panel admin (rencana Tahap 9, F9-14), sama di
      * tata letak baru dan lama (`App\Libraries\Panel\MenuAdmin`).
@@ -135,7 +142,7 @@ final class TataLetakHalamanTest extends UjiHalaman
 
     public function testDasborMemakaiTataLetakAdminBaru(): void
     {
-        $hasil = $this->withSession(self::SESI_ADMIN)->get('admin/dasbor');
+        $hasil = $this->withSession(UjiHalaman::SESI_ADMIN)->get('admin/dasbor');
         $hasil->assertOK();
 
         $html  = $hasil->getBody();
@@ -221,7 +228,7 @@ final class TataLetakHalamanTest extends UjiHalaman
 
         // Kotak tanpa gambar di Pengecekan (K102), juga bertata letak baru.
         $this->assertSame(0, $xpath->query('//main//*[@data-tanpa-gambar]')->length);
-        $pengecekan = $this->xpath($this->withSession(self::SESI_ADMIN)->get('admin/pengecekan')->getBody());
+        $pengecekan = $this->xpath($this->withSession(UjiHalaman::SESI_ADMIN)->get('admin/pengecekan')->getBody());
         $this->assertSame(1, $pengecekan->query('//body[@data-tata="tw"]')->length);
         $this->assertSame(1, $pengecekan->query('//main//*[@data-tanpa-gambar][@role="img"]')->length);
         $this->assertSame(1, $pengecekan->query('//nav[@data-menu-admin="samping"]//a[@aria-current="page"][@data-menu-tautan="admin/pengecekan"]')->length);
@@ -229,7 +236,7 @@ final class TataLetakHalamanTest extends UjiHalaman
 
     public function testPenandaMenuAktifMengikutiAlamat(): void
     {
-        $_SESSION = self::SESI_ADMIN;
+        $_SESSION = UjiHalaman::SESI_ADMIN;
 
         // Halaman di bawah butir menu ikut menandai butir itu.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasbor/rincian', 'Tests\Support\Views\contoh_admin'));
@@ -268,7 +275,7 @@ final class TataLetakHalamanTest extends UjiHalaman
 
     public function testJudulKepalaAdminMemakaiJudulBilaJudulHalamanKosong(): void
     {
-        $_SESSION = self::SESI_ADMIN;
+        $_SESSION = UjiHalaman::SESI_ADMIN;
         $xpath    = $this->xpath(view('Tests\Support\Views\contoh_admin'));
 
         $this->assertSame('Judul Contoh admin', $this->teks($xpath->query('//header//h1')->item(0)));
@@ -276,7 +283,7 @@ final class TataLetakHalamanTest extends UjiHalaman
 
     public function testSkripKemajuanDimuatSebelumSkripHalaman(): void
     {
-        $_SESSION = self::SESI_ADMIN;
+        $_SESSION = UjiHalaman::SESI_ADMIN;
         $html     = view('Tests\Support\Views\contoh_admin');
 
         $posisiFlowbite = strpos($html, aset('vendor/flowbite/flowbite.min.js'));
@@ -344,7 +351,7 @@ final class TataLetakHalamanTest extends UjiHalaman
     {
         $halaman = [
             $this->get('/')->getBody(),
-            $this->withSession(self::SESI_ADMIN)->get('admin/dasbor')->getBody(),
+            $this->withSession(UjiHalaman::SESI_ADMIN)->get('admin/dasbor')->getBody(),
             view('Tests\Support\Views\tata_letak_polos_formulir'),
             view('tata_letak/_tanpa_gambar_tw', [], ['saveData' => false]),
         ];
