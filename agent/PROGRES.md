@@ -20,16 +20,17 @@ Diperbarui: 21 November 2026
 | [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | selesai (#132, #138) | P1 | B |
 | [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | selesai (#136) | P2 | B |
 | [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | selesai (#135) | P2 | B |
-| [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | rencana | P2 | C (setelah 30 November) |
-| [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | rencana | P2 | C |
+| [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | dikerjakan | P2 | C |
+| [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | dikerjakan | P2 | C |
 | [F9-15 Halaman admin pendaftaran ke Tailwind](tugas/F9-15-admin-pendaftaran-tailwind.md) | rencana | P2 | C |
-| [F9-16 Halaman admin hari lomba dan pengaturan ke Tailwind](tugas/F9-16-admin-hari-lomba-pengaturan-tailwind.md) | rencana | P2 | C |
+| [F9-16 Halaman admin hari lomba dan pengaturan ke Tailwind](tugas/F9-16-admin-hari-lomba-pengaturan-tailwind.md) | dikerjakan | P2 | C |
 | [F9-17 Skeleton, keadaan kosong, dan perapian](tugas/F9-17-skeleton-perapian.md) | rencana | P2 | C |
+| [F9-19 Pemasangan visual tambahan](tugas/F9-19-pemasangan-visual-tambahan.md) | rencana | P2 | C |
 | [F9-18 Penutupan Tahap 9](tugas/F9-18-penutupan-tahap-9.md) | rencana | P1 | akhir |
 
 ### Gambar (Codex)
 
-Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung koordinator.
+Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung koordinator. Semua kebutuhan gambar dan visual dipesan ke Codex tanpa batas jumlah tugas (K150).
 
 | Tugas gambar | Status |
 |---|---|
@@ -40,10 +41,15 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 | [G9-05 Ilustrasi nomor lomba](../desain/tugas/G9-05-ikon-nomor-lomba.md) | rencana |
 | [G9-06 Videotron dan podium](../desain/tugas/G9-06-videotron-podium.md) | rencana |
 | [G9-07 Kategori Bantuan](../desain/tugas/G9-07-bantuan-kategori.md) | rencana |
+| [G9-08 Panel admin](../desain/tugas/G9-08-panel-admin.md) | rencana |
+| [G9-09 Pita judul halaman publik](../desain/tugas/G9-09-pita-judul.md) | rencana |
+| [G9-10 Gambar bagikan](../desain/tugas/G9-10-gambar-bagikan.md) | rencana |
+| [G9-11 Ikon aplikasi](../desain/tugas/G9-11-ikon-aplikasi.md) | rencana |
+| [G9-12 Pola dan hiasan latar](../desain/tugas/G9-12-pola-hiasan.md) | rencana |
 
 ## Berikutnya
 
-Gelombang A dan B selesai (F9-09 lewat #140). Perbaikan kecil masuk lewat #134 (nama Agenda di Pengaturan, pola transaksi) dan #138 (uji tampilan bersih). Gelombang C mulai 1 Desember setelah pendaftaran tutup: F9-05, F9-14 lalu F9-15, F9-16; kemudian F9-17 dan F9-18. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
+Gelombang A dan B selesai (F9-09 lewat #140). Perbaikan kecil masuk lewat #134 (nama Agenda di Pengaturan, pola transaksi) dan #138 (uji tampilan bersih). Gelombang C: F9-14 dan F9-16 dikerjakan sejak 21 November (K147), F9-15 setelah F9-14, F9-05 dikerjakan sejak 21 November dan digabung begitu CI hijau (K149); kemudian F9-17 dan F9-18. Jawaban pertanyaan gelombang A dan B: K146. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali, diurus pengembang (K138, K148). Kesiapan server ditangani pemilik (K119).
 
 ## Selesai
 
@@ -59,5 +65,4 @@ Gelombang A dan B selesai (F9-09 lewat #140). Perbaikan kecil masuk lewat #134 (
 
 ## Menunggu pemilik
 
-- Deploy key untuk server produksi dan staging (repo privat, K138; panduan produksi bagian 3 langkah 2).
-- Memastikan paket lisensi Flowbite Pro mencakup semua pengembang yang punya akses repo (K138).
+- Tidak ada. Deploy key diurus pengembang sendiri dan lisensi Flowbite Pro sudah mencakup semua pengembang (K148).
