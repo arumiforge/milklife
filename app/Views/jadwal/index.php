@@ -6,7 +6,7 @@
  *
  * - Tab hari berupa tautan `?hari=<Y-m-d>` (tanpa JavaScript).
  * - Ponsel: kartu per babak; layar lebar: tabel berkepala gradien merek.
- * - Ilustrasi nomor lomba G9-05 hanya bila berkasnya ada (`is_file()`).
+ * - Ilustrasi nomor lomba G9-05 hanya bila berkasnya ada (`IlustrasiBeranda::nomor()`, `is_file()`).
  * - Tautan daftar seri (F9-08) tampil bila baris membawa `alamat_seri`.
  *
  * @var CodeIgniter\View\View      $this
@@ -18,11 +18,11 @@
  */
 
 use App\Libraries\Hasil\JadwalPertandingan;
+use App\Libraries\IlustrasiBeranda;
 
-// Ilustrasi G9-05 lewat pemeta nama nomor milik halaman depan (F9-03, K144),
-// bila pemeta dan berkasnya sudah ada.
-$kelasIlustrasi = 'App\Libraries\IlustrasiBeranda';
-$ilustrasi      = static fn (string $nama): ?string => class_exists($kelasIlustrasi) ? call_user_func([$kelasIlustrasi, 'nomor'], $nama) : null;
+// Ilustrasi G9-05 lewat pemeta nama nomor milik halaman depan (F9-03, K144):
+// `null` bila nama tidak cocok atau berkasnya belum ada.
+$ilustrasi = static fn (string $nama): ?string => IlustrasiBeranda::nomor($nama);
 
 // ikon-sprite: clock circle-play circle-check
 $warnaStatus = ['belum' => 'abu', 'berlangsung' => 'oranye', 'selesai' => 'hijau'];

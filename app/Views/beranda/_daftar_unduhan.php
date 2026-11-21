@@ -3,8 +3,9 @@
  * Daftar berkas unduhan, dipakai bersama oleh bagian unduhan halaman depan
  * (`beranda/_unduhan.php`) dan halaman `/unduhan` (`unduhan.php`).
  *
- * Tiap berkas menjadi satu kartu: ikon jenis, judul, keterangan (baris baru
- * menjadi `<br>`), jenis dan ukuran, serta tombol unduh. Teks admin di-escape.
+ * Tiap berkas menjadi satu kartu (tata letak baru Tailwind, F9-03): ikon
+ * jenis, judul, keterangan (baris baru menjadi `<br>`), jenis dan ukuran,
+ * serta tombol unduh. Penanda uji berupa atribut `data-*`. Teks admin di-escape.
  * Tombol memakai atribut `download` dengan nama berkas dari judulnya
  * (alamat berkas sendiri berupa nama acak).
  *
@@ -15,14 +16,15 @@
 
 $tingkatJudul = ($tingkatJudul ?? 'h3') === 'h2' ? 'h2' : 'h3';
 
-// Ikon Bootstrap Icons per jenis berkas yang boleh diunggah (Unggahan, F2-07).
+// Ikon Lucide per jenis berkas yang boleh diunggah (Unggahan, F2-07).
 $ikonJenis = static fn (string $jenis): string => match ($jenis) {
-    'PDF'                => 'file-earmark-pdf',
-    'JPG', 'JPEG', 'PNG' => 'file-earmark-image',
-    'DOC', 'DOCX'        => 'file-earmark-word',
-    'XLS', 'XLSX'        => 'file-earmark-excel',
-    default              => 'file-earmark',
+    'PDF'                => 'file-text',
+    'JPG', 'JPEG', 'PNG' => 'file-image',
+    'DOC', 'DOCX'        => 'file-type',
+    'XLS', 'XLSX'        => 'file-spreadsheet',
+    default              => 'file',
 };
+// ikon-sprite: file-text file-image file-type file-spreadsheet file download
 
 // Nama berkas saat disimpan: judul tanpa tanda yang dilarang sistem berkas, ditambah ekstensinya.
 $namaSimpan = static function (string $judul, string $jenis): string {
@@ -31,22 +33,22 @@ $namaSimpan = static function (string $judul, string $jenis): string {
     return ($nama === '' ? 'unduhan' : $nama) . ($jenis === '' ? '' : '.' . strtolower($jenis));
 };
 ?>
-<ul class="daftar-unduhan list-unstyled mb-0">
+<ul class="grid gap-4 md:grid-cols-2" data-daftar-unduhan>
     <?php foreach ($unduhan as $berkas) : ?>
         <?php $rincian = trim($berkas['jenis'] . ($berkas['jenis'] !== '' && $berkas['ukuran'] !== '' ? ' · ' : '') . $berkas['ukuran']); ?>
-        <li class="unduhan-butir" data-id="<?= (int) $berkas['id'] ?>">
-            <span class="unduhan-ikon"><i class="bi bi-<?= $ikonJenis($berkas['jenis']) ?>" aria-hidden="true"></i></span>
-            <div class="unduhan-isi">
-                <<?= $tingkatJudul ?> class="unduhan-judul"><?= esc($berkas['judul']) ?></<?= $tingkatJudul ?>>
+        <li class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:flex-row sm:items-center" data-unduhan-butir data-id="<?= (int) $berkas['id'] ?>">
+            <span class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700" data-ikon-jenis="<?= esc($ikonJenis($berkas['jenis']), 'attr') ?>"><?= ikon($ikonJenis($berkas['jenis']), 'size-6') ?></span>
+            <div class="min-w-0 flex-1">
+                <<?= $tingkatJudul ?> class="text-lg font-bold text-gray-900 break-words"><?= esc($berkas['judul']) ?></<?= $tingkatJudul ?>>
                 <?php if ($berkas['keterangan'] !== '') : ?>
-                    <p class="unduhan-keterangan"><?= nl2br(esc($berkas['keterangan']), false) ?></p>
+                    <p class="mt-1 text-gray-600 break-words" data-unduhan-keterangan><?= nl2br(esc($berkas['keterangan']), false) ?></p>
                 <?php endif ?>
                 <?php if ($rincian !== '') : ?>
-                    <p class="unduhan-rincian"><?= esc($rincian) ?></p>
+                    <p class="mt-1 text-sm text-gray-500" data-unduhan-rincian><?= esc($rincian) ?></p>
                 <?php endif ?>
             </div>
-            <a class="btn btn-primary unduhan-tombol" href="<?= esc($berkas['alamat'], 'attr') ?>" download="<?= esc($namaSimpan($berkas['judul'], $berkas['jenis']), 'attr') ?>">
-                <i class="bi bi-download" aria-hidden="true"></i> Unduh<span class="visually-hidden"> <?= esc($berkas['judul']) ?><?= $rincian !== '' ? ' (' . esc($rincian) . ')' : '' ?></span>
+            <a class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary-700 px-5 text-sm font-semibold text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300" href="<?= esc($berkas['alamat'], 'attr') ?>" download="<?= esc($namaSimpan($berkas['judul'], $berkas['jenis']), 'attr') ?>" data-unduhan-tombol>
+                <?= ikon('download', 'size-4') ?> Unduh<span class="sr-only"> <?= esc($berkas['judul']) ?><?= $rincian !== '' ? ' (' . esc($rincian) . ')' : '' ?></span>
             </a>
         </li>
     <?php endforeach ?>

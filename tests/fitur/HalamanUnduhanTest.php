@@ -33,12 +33,12 @@ final class HalamanUnduhanTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//h1')->length);
         $this->assertSame('Unduhan', $this->teks($xpath, '//main//h1'));
 
-        $kosong = $xpath->query('//main//*[contains(@class, "unduhan-kosong")]')->item(0);
+        $kosong = $xpath->query('//main//*[@data-unduhan-kosong]')->item(0);
         $this->assertNotNull($kosong);
         $this->assertStringContainsString('Belum ada berkas unduhan', $this->teksSimpul($kosong));
         $this->assertStringContainsString('Silakan kembali lagi nanti.', $this->teksSimpul($kosong));
         $this->assertSame(1, $xpath->query('.//a[@href="' . site_url('/') . '"]', $kosong)->length, 'Ada jalan kembali ke beranda.');
-        $this->assertSame(0, $xpath->query('//main//*[contains(@class, "daftar-unduhan")]')->length);
+        $this->assertSame(0, $xpath->query('//main//*[@data-daftar-unduhan]')->length);
     }
 
     public function testHalamanBerisiHanyaBerkasYangTampilDanAda(): void
@@ -57,24 +57,24 @@ final class HalamanUnduhanTest extends UjiBasisData
 
         $this->assertSame('Unduhan – Lomba Lari Karangan', $this->teks($xpath, '//title'));
         $this->assertSame(1, $xpath->query('//h1')->length);
-        $this->assertSame(0, $xpath->query('//main//*[contains(@class, "unduhan-kosong")]')->length);
+        $this->assertSame(0, $xpath->query('//main//*[@data-unduhan-kosong]')->length);
 
         // Judul berkas menjadi h2 di bawah h1 halaman, berurutan.
         $this->assertSame(['Juknis', 'Flyer Seri 2'], array_map(
             fn (DOMNode $h2): string => $this->teksSimpul($h2),
-            iterator_to_array($xpath->query('//main//ul[contains(@class, "daftar-unduhan")]/li//h2')),
+            iterator_to_array($xpath->query('//main//ul[@data-daftar-unduhan]/li//h2')),
         ));
         $hasil->assertDontSee('Berkas hilang');
         $hasil->assertDontSee('Berkas tersembunyi');
 
         $tombol = [];
 
-        foreach ($xpath->query('//main//a[contains(@class, "unduhan-tombol")]') as $a) {
+        foreach ($xpath->query('//main//a[@data-unduhan-tombol]') as $a) {
             $tombol[] = [$a->getAttribute('href'), $a->getAttribute('download')];
         }
 
         $this->assertSame([[base_url($juknis), 'Juknis.pdf'], [base_url($flyer), 'Flyer Seri 2.png']], $tombol);
-        $this->assertSame(1, $xpath->query('//main//*[contains(@class, "unduhan-keterangan")]/br')->length);
+        $this->assertSame(1, $xpath->query('//main//*[@data-unduhan-keterangan]/br')->length);
     }
 
     public function testTeksAdminDiEscape(): void
@@ -89,19 +89,19 @@ final class HalamanUnduhanTest extends UjiBasisData
         $hasil->assertDontSee('<i>miring</i>');
         $hasil->assertDontSee('<b>Karangan</b>');
         $this->assertSame('Unduhan – Lomba <b>Karangan</b>', $this->teks($xpath, '//title'));
-        $this->assertSame('Juknis <script>alert(1)</script>', $this->teks($xpath, '//main//ul[contains(@class, "daftar-unduhan")]//h2'));
-        $this->assertSame(0, $xpath->query('//main//script | //main//i[not(contains(@class, "bi"))]')->length);
+        $this->assertSame('Juknis <script>alert(1)</script>', $this->teks($xpath, '//main//ul[@data-daftar-unduhan]//h2'));
+        $this->assertSame(0, $xpath->query('//main//script | //main//i')->length);
     }
 
     public function testMenuUnduhanAktifDiHalamanUnduhan(): void
     {
         $menu = $this->menu($this->xpathDari($this->get('unduhan')));
 
-        $this->assertSame(['Tentang', 'Kategori', 'Agenda', 'Unduhan', 'Bantuan'], array_keys($menu));
+        // Tata letak baru (F9-03): Kategori hanya tampil bila kelompok umur sudah ada; Bantuan selalu (F9-04).
+        $this->assertSame(['Beranda', 'Unduhan', 'Bantuan'], array_keys($menu));
         $this->assertSame(site_url('unduhan'), $menu['Unduhan']->getAttribute('href'));
         $this->assertSame('page', $menu['Unduhan']->getAttribute('aria-current'));
-        $this->assertStringContainsString('active', $menu['Unduhan']->getAttribute('class'));
-        $this->assertFalse($menu['Tentang']->hasAttribute('aria-current'));
+        $this->assertFalse($menu['Beranda']->hasAttribute('aria-current'));
 
         // Di halaman depan, Unduhan bertautan tetapi tidak aktif.
         $menu = $this->menu($this->xpathDari($this->get('/')));
@@ -118,7 +118,7 @@ final class HalamanUnduhanTest extends UjiBasisData
     {
         $butir = [];
 
-        foreach ($xpath->query('//nav[@aria-label="Menu utama"]//*[contains(@class, "nav-link")]') as $tautan) {
+        foreach ($xpath->query('//nav[@aria-label="Menu utama"]//ul/li/a') as $tautan) {
             $butir[$this->teksSimpul($tautan)] = $tautan;
         }
 

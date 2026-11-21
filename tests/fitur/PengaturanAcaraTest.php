@@ -186,13 +186,11 @@ final class PengaturanAcaraTest extends UjiBasisData
         $xpath = $this->xpathDari($beranda);
 
         $this->assertSame('Lomba Lari Karangan Seri 3 – 2027', $this->teks($xpath, '//title'));
-        $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//header//a[contains(@class, "navbar-brand")]'));
-        $this->assertSame('Lomba', $this->teks($xpath, '//header//*[contains(@class, "merek-utama")]'));
-        $this->assertSame('Lari Karangan', $this->teks($xpath, '//header//*[contains(@class, "merek-sambungan")]'));
+        $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//header//a[@data-merek]//*[@data-merek-nama]'));
         $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//h1[@id="judul-acara"]'));
-        $this->assertSame('Seri 3 – 2027', $this->teks($xpath, '//header//*[contains(@class, "kepala-seri")]'));
-        $this->assertSame('30 Januari – 1 Februari 2027 Stadion Karangan, Pati', $this->teks($xpath, '//*[contains(@class, "pembuka-waktu")]'));
-        $this->assertSame('Lomba Lari Karangan 2027', $this->teks($xpath, '//footer'));
+        $this->assertSame('Seri 3 – 2027', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
+        $this->assertSame('30 Januari – 1 Februari 2027 Stadion Karangan, Pati', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+        $this->assertSame('Lomba Lari Karangan 2027', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
         $beranda->assertDontSee('MilkLife');
 
         // Panel admin: merek di menu samping.
@@ -211,11 +209,11 @@ final class PengaturanAcaraTest extends UjiBasisData
         $xpath = $this->xpathDari($beranda);
 
         $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//title'));
-        $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//header//a[contains(@class, "navbar-brand")]'));
+        $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//header//a[@data-merek]//*[@data-merek-nama]'));
         $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//h1[@id="judul-acara"]'));
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pita-miring")]')->length, 'Seri dan tahun yang kosong tidak ditampilkan.');
-        $this->assertSame('Tanggal dan tempat acara segera diumumkan', $this->teks($xpath, '//*[contains(@class, "pembuka-waktu")]'));
-        $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//footer'));
+        $this->assertSame(0, $xpath->query('//*[@data-kepala-seri or @data-pembuka-seri]')->length, 'Seri dan tahun yang kosong tidak ditampilkan.');
+        $this->assertSame('Tanggal dan tempat acara segera diumumkan', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+        $this->assertSame('Pendaftaran Lomba', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
 
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'));
         $this->assertSame('Pendaftaran Lomba Panel admin', $this->teks($xpath, '//aside//a[contains(@class, "menu-samping-merek")]'));
@@ -234,12 +232,11 @@ final class PengaturanAcaraTest extends UjiBasisData
         $xpath   = $this->xpathDari($beranda);
 
         // Nama satu kata tanpa sambungan; yang kosong tidak ditampilkan; teks di-escape.
-        $this->assertSame('Atletik', $this->teks($xpath, '//header//a[contains(@class, "navbar-brand")]'));
-        $this->assertSame(0, $xpath->query('//header//*[contains(@class, "merek-sambungan")]')->length);
-        $this->assertSame('Seri 4', $this->teks($xpath, '//header//*[contains(@class, "kepala-seri")]'));
-        $this->assertSame('Stadion <Karangan>', $this->teks($xpath, '//*[contains(@class, "pembuka-waktu")]'));
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-waktu")]//i[contains(@class, "bi-calendar-event")]')->length);
-        $this->assertSame('Atletik', $this->teks($xpath, '//footer'));
+        $this->assertSame('Atletik', $this->teks($xpath, '//header//a[@data-merek]//*[@data-merek-nama]'));
+        $this->assertSame('Seri 4', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
+        $this->assertSame('Stadion <Karangan>', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+        $this->assertSame(0, $xpath->query('//*[@data-pembuka-waktu]//*[name()="use"][contains(@href, "#calendar-days")]')->length);
+        $this->assertSame('Atletik', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
         $beranda->assertDontSee('Stadion <Karangan>');
     }
 
