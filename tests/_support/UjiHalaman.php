@@ -24,6 +24,7 @@ abstract class UjiHalaman extends CIUnitTestCase
 {
     use FeatureTestTrait;
     use PengaturanBersih;
+    use TampilanBersih;
     use SesiAdminUji;
 
     /**
