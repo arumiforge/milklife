@@ -43,7 +43,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//img')->length);
         $this->assertSame(0, $xpath->query('//*[contains(@class, "tanpa-gambar")]')->length, 'Kotak "tanpa gambar" hanya untuk panel admin (K41).');
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-gambar") or contains(@class, "pembuka-logo")]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-foto-pembuka or @data-carousel-beranda]')->length);
         $hasil->assertDontSee('Belum ada gambar');
     }
 
@@ -60,9 +60,10 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->get('/'));
 
-        // Gambar kepala menjadi latar di belakang judul (K44), di dalam bagian pembuka.
-        $this->assertSame(1, $xpath->query('//section[@id="pembuka"][contains(@class, "pembuka-dengan-gambar")]')->length);
-        $gambar = $xpath->query('//section[@id="pembuka"]//*[contains(@class, "pembuka-gambar")]/img')->item(0);
+        // Tanpa foto carousel, gambar kepala tampil diam di bagian pembuka (F9-03).
+        $this->assertSame('1', $xpath->query('//section[@id="pembuka"]')->item(0)?->getAttribute('data-pembuka-foto'));
+        $this->assertSame(0, $xpath->query('//*[@data-carousel-beranda]')->length, 'Satu gambar tidak berputar.');
+        $gambar = $xpath->query('//section[@id="pembuka"]//*[@data-foto-pembuka]/img')->item(0);
         $this->assertNotNull($gambar);
         $this->assertSame(base_url($jalur['gambar_kepala']), $gambar->getAttribute('src'));
         $this->assertSame('Gambar kepala Lomba Lari Karangan', $gambar->getAttribute('alt'));
@@ -70,7 +71,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('1', $gambar->getAttribute('height'));
 
         // K93: logo acara di kepala halaman (persegi lebih dulu); logo Djarum di kanan kaki halaman (K84).
-        $logoKepala = $xpath->query('//header//a[contains(@class, "navbar-brand")]/img')->item(0);
+        $logoKepala = $xpath->query('//header//a[@data-merek]/img')->item(0);
         $this->assertNotNull($logoKepala);
         $this->assertSame(base_url($jalur['logo_persegi']), $logoKepala->getAttribute('src'));
         $this->assertSame('Logo Lomba Lari Karangan', $logoKepala->getAttribute('alt'));
@@ -78,9 +79,9 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $logo = [];
 
-        $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//*[contains(@class, "pembuka-logo")]')->length);
+        $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//img[contains(@alt, "Logo")]')->length);
 
-        foreach ($xpath->query('//footer//img[contains(@class, "kaki-logo")]') as $img) {
+        foreach ($xpath->query('//footer//img[@data-kaki-logo]') as $img) {
             $logo[] = [$img->getAttribute('src'), $img->getAttribute('alt'), $img->getAttribute('width')];
         }
 
@@ -89,7 +90,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // Tanpa logo persegi panjang, logo persegi yang tampil di kepala.
         setting('HalamanDepan.logo_persegi_panjang', null);
         $xpath = $this->xpathDari($this->get('/'));
-        $this->assertSame(base_url($jalur['logo_persegi']), $xpath->query('//header//a[contains(@class, "navbar-brand")]/img')->item(0)?->getAttribute('src'));
+        $this->assertSame(base_url($jalur['logo_persegi']), $xpath->query('//header//a[@data-merek]/img')->item(0)?->getAttribute('src'));
     }
 
     public function testGambarYangBerkasnyaHilangDisembunyikan(): void
@@ -101,7 +102,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->get('/'));
 
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-gambar")]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-foto-pembuka]')->length);
         $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//img')->length);
         $this->assertSame([base_url($ada)], array_map(
             static fn (DOMElement $img): string => $img->getAttribute('src'),
@@ -109,7 +110,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         ));
 
         // Logo kaki juga tampil di halaman publik lain.
-        $this->assertSame(base_url($ada), $this->xpathDari($this->get('unduhan'))->query('//footer//img[contains(@class, "kaki-logo")]')->item(0)?->getAttribute('src'));
+        $this->assertSame(base_url($ada), $this->xpathDari($this->get('unduhan'))->query('//footer//img[@data-kaki-logo]')->item(0)?->getAttribute('src'));
     }
 
     // ---------- Judul, teks, dan data acara ----------
@@ -122,14 +123,13 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $this->assertSame(1, $xpath->query('//h1')->length, 'Tepat satu h1.');
         $this->assertSame('MilkLife Athletics Challenge', $this->teks($xpath, '//h1[@id="judul-acara"]'));
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-nama")]')->length);
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-teks")]')->length, 'Teks kosong tidak ditampilkan.');
-        $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[contains(@class, "kepala-seri")]'));
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-nomor-seri")]')->length, 'Nomor seri besar dihapus (K83).');
-        $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath, '//*[contains(@class, "pembuka-waktu")]'));
+        $this->assertSame(0, $xpath->query('//*[@data-pembuka-teks]')->length, 'Teks kosong tidak ditampilkan.');
+        $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
+        $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//section[@id="pembuka"]//*[@data-pembuka-seri]'));
+        $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
 
         // Kartu info ringkas seperti konsep (K82).
-        $this->assertSame('9–12', $this->teks($xpath, '//*[contains(@class, "info-besar")]'));
+        $this->assertSame('9–12', $this->teks($xpath, '//*[@data-info-besar]'));
     }
 
     public function testJudulDanTeksDariPengaturanDiEscape(): void
@@ -143,11 +143,11 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         $this->assertSame(1, $xpath->query('//h1')->length);
         $this->assertSame('Ayo <b>ikut</b> lomba!', $this->teks($xpath, '//h1[@id="judul-acara"]'));
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-nama")]')->length, 'Nama acara ada di kepala halaman (K81).');
+        $this->assertSame('lomba!', $this->teks($xpath, '//h1//*[@data-judul-sorot]'), 'Judul pendek per kata, kata terakhir disorot (K83).');
 
-        $paragraf = $xpath->query('//*[contains(@class, "pembuka-teks")]/p');
+        $paragraf = $xpath->query('//*[@data-pembuka-teks]/p');
         $this->assertSame(2, $paragraf->length);
-        $this->assertSame(1, $xpath->query('//*[contains(@class, "pembuka-teks")]/p[1]/br')->length, 'Baris baru di dalam paragraf menjadi <br>.');
+        $this->assertSame(1, $xpath->query('//*[@data-pembuka-teks]/p[1]/br')->length, 'Baris baru di dalam paragraf menjadi <br>.');
         $this->assertSame('Paragraf <script>alert(1)</script> satu baris kedua', trim((string) preg_replace('/\s+/u', ' ', $paragraf->item(0)->textContent)));
         $this->assertSame('Paragraf dua', trim($paragraf->item(1)->textContent));
 
@@ -165,7 +165,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
             ['Berlari.', 'Bermain.', 'Berprestasi.'],
             array_map($this->teksSimpul(...), iterator_to_array($xpath->query('//h1[@id="judul-acara"]/span'))),
         );
-        $this->assertSame('Berprestasi.', $this->teks($xpath, '//h1//*[contains(@class, "pembuka-judul-sorot")]'));
+        $this->assertSame('Berprestasi.', $this->teks($xpath, '//h1//*[@data-judul-sorot]'));
 
         // Satu kalimat: tiap kata satu baris, kata terakhir disorot (K83).
         setting('HalamanDepan.judul', 'MilkLife Athletics Challenge');
@@ -174,17 +174,17 @@ final class HalamanDepanKepalaTest extends UjiBasisData
             ['MilkLife', 'Athletics', 'Challenge'],
             array_map($this->teksSimpul(...), iterator_to_array($xpath->query('//h1[@id="judul-acara"]/span'))),
         );
-        $this->assertSame('Challenge', $this->teks($xpath, '//h1//*[contains(@class, "pembuka-judul-sorot")]'));
+        $this->assertSame('Challenge', $this->teks($xpath, '//h1//*[@data-judul-sorot]'));
 
         // Satu kalimat lebih dari 4 kata mengalir biasa, tidak dipecah per kata (K86).
         setting('HalamanDepan.judul', 'Berkompetisi bersama para atlet muda dari berbagai daerah!');
         $xpath = $this->xpathDari($this->get('/'));
         $this->assertSame(1, $xpath->query('//h1[@id="judul-acara"]/span')->length);
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-judul-sorot")]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-judul-sorot]')->length);
 
         // Satu kata saja: tidak ada baris yang disorot.
         setting('HalamanDepan.judul', 'Lomba');
-        $this->assertSame(0, $this->xpathDari($this->get('/'))->query('//*[contains(@class, "pembuka-judul-sorot")]')->length);
+        $this->assertSame(0, $this->xpathDari($this->get('/'))->query('//*[@data-judul-sorot]')->length);
     }
 
     // ---------- Keadaan pendaftaran ----------
@@ -194,7 +194,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $hasil = $this->get('/');
         $xpath = $this->xpathDari($hasil);
 
-        $this->assertKeadaan($xpath, 'disiapkan', 'Sedang disiapkan', 'Pendaftaran sedang disiapkan.', 'bi-hourglass-split');
+        $this->assertKeadaan($xpath, 'disiapkan', 'Sedang disiapkan', 'Pendaftaran sedang disiapkan.', 'hourglass');
         $hasil->assertDontSee('Panitia sedang menyiapkan formulir pendaftaran untuk sekolah.');
         $this->assertSame(0, $xpath->query('//*[@id="judul-status"]')->length);
     }
@@ -203,14 +203,14 @@ final class HalamanDepanKepalaTest extends UjiBasisData
     {
         $this->lengkapiPengaturan();
 
-        $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'bi-megaphone');
-        $this->assertSame('Daftar s.d. 30 November', $this->teks($this->xpathDari($this->get('/')), '//*[contains(@class, "keadaan-ringkas")]'));
+        $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'megaphone');
+        $this->assertSame('Daftar s.d. 30 November', $this->teks($this->xpathDari($this->get('/')), '//*[@data-keadaan-ringkas]'));
 
         Time::setTestNow('2026-09-30 12:00:00', 'Asia/Jakarta');
-        $this->assertKeadaan($this->xpathDari($this->get('/')), 'belum_dibuka', 'Belum dibuka', 'Pendaftaran dibuka 1 Oktober 2026.', 'bi-calendar-event');
+        $this->assertKeadaan($this->xpathDari($this->get('/')), 'belum_dibuka', 'Belum dibuka', 'Pendaftaran dibuka 1 Oktober 2026.', 'calendar-clock');
 
         Time::setTestNow('2026-12-01 00:00:00', 'Asia/Jakarta');
-        $this->assertKeadaan($this->xpathDari($this->get('/')), 'ditutup', 'Ditutup', 'Pendaftaran sudah ditutup pada 30 November 2026 pukul 23.59.', 'bi-door-closed-fill');
+        $this->assertKeadaan($this->xpathDari($this->get('/')), 'ditutup', 'Ditutup', 'Pendaftaran sudah ditutup pada 30 November 2026 pukul 23.59.', 'door-closed');
     }
 
     // ---------- Tombol ----------
@@ -224,7 +224,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $tombol = $this->tombolKepala();
         $this->assertSame(['Daftar Sekarang', 'Cek Pendaftaran'], array_keys($tombol));
         $this->assertSame(site_url('pendaftaran'), $tombol['Daftar Sekarang']->getAttribute('href'));
-        $this->assertStringContainsString('btn-primary', $tombol['Daftar Sekarang']->getAttribute('class'));
+        $this->assertTrue($tombol['Daftar Sekarang']->hasAttribute('data-utama'));
         $this->assertSame(site_url('cek-pendaftaran'), $tombol['Cek Pendaftaran']->getAttribute('href'));
 
         // Belum dibuka dan sudah ditutup: nonaktif dengan keterangannya.
@@ -235,7 +235,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
             $this->assertArrayHasKey($label, $tombol);
             $this->assertSame('true', $tombol[$label]->getAttribute('aria-disabled'), $label);
             $this->assertFalse($tombol[$label]->hasAttribute('href'), $label . ' tidak boleh bertautan.');
-            $this->assertStringContainsString('disabled', $tombol[$label]->getAttribute('class'));
+            $this->assertSame('link', $tombol[$label]->getAttribute('role'), $label);
         }
     }
 
@@ -254,7 +254,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
     {
         $tombol = [];
 
-        foreach ($this->xpathDari($this->get('/'))->query('//*[contains(@class, "tombol-utama")]/*') as $simpul) {
+        foreach ($this->xpathDari($this->get('/'))->query('//nav[@data-tombol-utama]/*') as $simpul) {
             $tombol[$this->teksSimpul($simpul)] = $simpul;
         }
 
@@ -266,18 +266,18 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // K81: tombol ajakan ada di bagian pembuka; kartu kelompok umur hanya
         // tampil bila kelompok umur sudah ada.
         $xpath = $this->xpathDari($this->get('/'));
-        $this->assertSame(2, $xpath->query('//section[@id="pembuka"]//*[contains(@class, "tombol-utama")]/a')->length);
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "pembuka-ku")]')->length);
+        $this->assertSame(2, $xpath->query('//section[@id="pembuka"]//nav[@data-tombol-utama]/a')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-pembuka-ku]')->length);
         $this->assertSame(0, $xpath->query('//section[@id="lomba"]')->length);
 
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:awal', []));
         $xpath = $this->xpathDari($this->get('/'));
         $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/following-sibling::*[1][@id="lomba"]')->length);
         // Istilah sama dengan bagian lain: "Kelompok umur", bukan "Kelompok usia" (K112).
-        $this->assertSame('Kelompok umur', trim($xpath->query('//*[contains(@class, "pembuka-ku-label")]')->item(0)->textContent));
+        $this->assertSame('Kelompok umur', trim($xpath->query('//*[@data-pembuka-ku-label]')->item(0)->textContent));
 
         // Tiap kartu menaut ke rincian kelompok umurnya di bagian lomba.
-        $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[contains(@class, "pembuka-ku-kartu")]'));
+        $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[@data-ku-kartu]'));
         $this->assertCount(5, $kartu);
         // Nama, julukan, dan jumlah nomor; jumlah 0 tidak ditulis (K88).
         $this->assertSame('KU 8 Seneng Playon 2 nomor individu', $this->teksSimpul($kartu[0]));
@@ -294,13 +294,13 @@ final class HalamanDepanKepalaTest extends UjiBasisData
     {
         $this->isiDataAcara();
         $xpath = $this->xpathDari($this->get('/'));
-        $this->assertSame('MilkLife Athletics Challenge 2026', $this->teks($xpath, '//footer'));
+        $this->assertSame('MilkLife Athletics Challenge 2026', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
 
         setting('HalamanDepan.footer', "Panitia <i>Karangan</i>\nKudus");
         $hasil = $this->get('/');
         $xpath = $this->xpathDari($hasil);
 
-        $this->assertSame('Panitia <i>Karangan</i> Kudus', $this->teks($xpath, '//footer'));
+        $this->assertSame('Panitia <i>Karangan</i> Kudus', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
         $this->assertSame(1, $xpath->query('//footer//br')->length);
         $hasil->assertDontSee('<i>Karangan</i>');
     }
@@ -371,10 +371,9 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $kotak = $xpath->query('//section[@id="pembuka"]//*[@data-keadaan]');
         $this->assertSame(1, $kotak->length);
         $this->assertSame($keadaan, $kotak->item(0)->getAttribute('data-keadaan'));
-        $this->assertStringContainsString('keadaan-' . str_replace('_', '-', $keadaan), $kotak->item(0)->getAttribute('class'));
-        $this->assertSame($label, $this->teks($xpath, '//*[contains(@class, "keadaan-label")]'));
-        $this->assertSame($kalimat, $this->teks($xpath, '//*[contains(@class, "keadaan-kalimat")]'));
-        $this->assertSame(1, $xpath->query('//*[@data-keadaan]//i[contains(@class, "' . $ikon . '")]')->length, 'Ikon ' . $ikon);
+        $this->assertSame($label, $this->teks($xpath, '//*[@data-keadaan-label]'));
+        $this->assertSame($kalimat, $this->teks($xpath, '//*[@data-keadaan-kalimat]'));
+        $this->assertSame(1, $xpath->query('//*[@data-keadaan]//*[name()="use"][substring-after(@href, "#") = "' . $ikon . '"]')->length, 'Ikon ' . $ikon);
     }
 
     private function isiDataAcara(): void

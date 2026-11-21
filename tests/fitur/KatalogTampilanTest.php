@@ -75,6 +75,7 @@ final class KatalogTampilanTest extends UjiBasisData
         $label = array_column(MenuPublik::tombol(), 'label');
 
         $this->assertSame(['Cek Pendaftaran', 'Daftar'], $label);
-        $this->assertSame(['Beranda', 'Unduhan'], array_column(MenuPublik::butir(), 'label'), 'Hasil hanya setelah ada yang terbit.');
+        // Kategori hanya bila kelompok umur aktif sudah ada (F9-03); Hasil hanya setelah ada yang terbit.
+        $this->assertSame(['Beranda', 'Kategori', 'Unduhan'], array_column(MenuPublik::butir(), 'label'), 'Hasil hanya setelah ada yang terbit.');
     }
 }

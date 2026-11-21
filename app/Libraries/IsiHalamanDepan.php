@@ -3,6 +3,8 @@
 namespace App\Libraries;
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
+use App\Libraries\Hasil\HasilLomba;
+use App\Libraries\Hasil\Klasemen;
 use App\Libraries\Pendaftaran\KelompokUmurAtlet;
 use App\Models\JadwalModel;
 use App\Models\KelompokUmurModel;
@@ -140,6 +142,15 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  * (atau nama acara bila kosong), ditambah alamat halaman depan pada baris baru
  * bila alamat itu belum tertulis di pesan.
  *
+ * Halaman depan baru (F9-03):
+ *
+ * - `carousel()`: foto carousel pembuka yang berkasnya ada,
+ *   `[['alamat' => 'http://…/unggahan/halaman-depan/….webp', 'keterangan' => 'Atlet melempar lembing', 'ukuran' => ['lebar' => 1500, 'tinggi' => 1000]]]`.
+ * - `angkaAcara()`: `['atlet' => 2270, 'sekolah' => 196, 'kabupaten' => 4, 'kelompok_umur' => [['nama' => 'KU 8', 'atlet' => 364], …]]`
+ *   dari pendaftaran Lunas, atau `null` bila belum ada.
+ * - `hasilTerbaru()`: nomor yang paling akhir terbit beserta juaranya dan
+ *   juara umum I–III per jenjang, atau `null` bila belum ada yang terbit.
+ *
  * Tabel yang belum bisa dibaca (basis data belum dimigrasi) dianggap kosong
  * dan galatnya dicatat di log, sama seperti `DataKelengkapan`, supaya halaman
  * depan tetap terbuka.
@@ -162,6 +173,11 @@ final class IsiHalamanDepan
      * Kunci gambar di `HalamanDepan`, berurutan seperti tampil.
      */
     public const GAMBAR = ['gambar_kepala', 'logo_persegi', 'logo_persegi_panjang', 'logo_djarum'];
+
+    /**
+     * Banyak nomor yang paling akhir diterbitkan di bagian hasil halaman depan (F9-03).
+     */
+    public const JUMLAH_HASIL_TERBARU = 4;
 
     /**
      * Logo yang tampil di kepala halaman depan (K93): logo persegi, atau
@@ -543,6 +559,126 @@ final class IsiHalamanDepan
         }
 
         return 'https://wa.me/?text=' . rawurlencode($pesan);
+    }
+
+    // ---------------------------------------------------------------
+    // Halaman depan baru (F9-03)
+    // ---------------------------------------------------------------
+
+    /**
+     * Foto carousel pembuka yang berkasnya ada, berurutan seperti diatur admin.
+     *
+     * @return list<array{alamat: string, keterangan: string, ukuran: array{lebar: int, tinggi: int}|null}>
+     */
+    public function carousel(): array
+    {
+        return array_map(fn (array $foto): array => [
+            'alamat'     => base_url($foto['berkas']),
+            'keterangan' => $foto['keterangan'],
+            'ukuran'     => $this->ukuranGambar($foto['berkas']),
+        ], CarouselHalamanDepan::daftar($this->unggahan));
+    }
+
+    /**
+     * Angka acara dari pendaftaran Lunas (seperti poster "Kompetisi ini
+     * diikuti"): jumlah atlet, sekolah (kontingen = NPSN, atau pendaftaran
+     * bila tanpa NPSN), kabupaten/kota, dan atlet per kelompok umur.
+     * `null` bila belum ada atlet dari pendaftaran Lunas.
+     *
+     * @return array{atlet: int, sekolah: int, kabupaten: int, kelompok_umur: list<array{nama: string, atlet: int}>}|null
+     */
+    public function angkaAcara(): ?array
+    {
+        $db = db_connect();
+
+        $jumlah = $this->baca(static fn (): array => $db->table('pendaftaran p')
+            ->select("COUNT(a.id) AS atlet, COUNT(DISTINCT COALESCE(NULLIF(p.npsn, ''), CONCAT('p', p.id))) AS sekolah, COUNT(DISTINCT NULLIF(p.kabupaten, '')) AS kabupaten", false)
+            ->join('atlet a', 'a.pendaftaran_id = p.id')
+            ->where('p.status', 'lunas')
+            ->get()->getResultArray(), 'angka acara')[0] ?? null;
+
+        if ($jumlah === null || (int) $jumlah['atlet'] === 0) {
+            return null;
+        }
+
+        $perKu = $this->baca(static fn (): array => $db->table('atlet a')
+            ->select('ku.nama, COUNT(a.id) AS atlet')
+            ->join('pendaftaran p', 'p.id = a.pendaftaran_id')
+            ->join('kelompok_umur ku', 'ku.id = a.kelompok_umur_id')
+            ->where('p.status', 'lunas')
+            ->groupBy('ku.id, ku.nama, ku.urutan')
+            ->orderBy('ku.urutan')->orderBy('ku.id')
+            ->get()->getResultArray(), 'angka acara per kelompok umur');
+
+        return [
+            'atlet'         => (int) $jumlah['atlet'],
+            'sekolah'       => (int) $jumlah['sekolah'],
+            'kabupaten'     => (int) $jumlah['kabupaten'],
+            'kelompok_umur' => array_map(static fn (array $b): array => ['nama' => self::teks($b['nama']), 'atlet' => (int) $b['atlet']], $perKu),
+        ];
+    }
+
+    /**
+     * Hasil yang sudah terbit untuk halaman depan: `JUMLAH_HASIL_TERBARU`
+     * nomor yang paling akhir diterbitkan beserta juara I–III Final-nya, dan
+     * tiga besar juara umum per jenjang (hanya dari nomor terbit, sama dengan
+     * `hasil/klasemen`). `null` bila belum ada nomor yang terbit.
+     *
+     * @return array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{jenjang: string, label: string, baris: list<array<string, mixed>>}>}|null
+     */
+    public function hasilTerbaru(): ?array
+    {
+        try {
+            $hasil = new HasilLomba();
+
+            if (! $hasil->adaTerbit()) {
+                return null;
+            }
+
+            $semuaJuara = $hasil->juara(true);
+            $terbaru    = db_connect()->table('nomor_lomba')->select('id')
+                ->where('hasil_terbit_pada IS NOT NULL', null, false)
+                ->orderBy('hasil_terbit_pada', 'DESC')->orderBy('id', 'DESC')
+                ->limit(self::JUMLAH_HASIL_TERBARU)
+                ->get()->getResultArray();
+        } catch (DatabaseException $e) {
+            log_message('error', 'Data halaman depan (hasil) tidak terbaca: {pesan}', ['pesan' => $e->getMessage()]);
+
+            return null;
+        }
+
+        $nomor = [];
+
+        foreach ($terbaru as $baris) {
+            $n = $hasil->nomor((int) $baris['id']);
+
+            if ($n === null) {
+                continue;
+            }
+
+            $nomor[] = [
+                'id'            => $n['id'],
+                'nama'          => $n['nama'],
+                'kelompok_umur' => $n['kelompok_umur'],
+                'beregu'        => $n['jenis'] === 'beregu',
+                'juara'         => array_values(array_map(
+                    static fn (array $j): array => ['peringkat' => $j['peringkat'], 'nama' => $j['nama'], 'sekolah' => $j['sekolah']],
+                    array_filter($semuaJuara, static fn (array $j): bool => $j['nomor_id'] === $n['id']),
+                )),
+            ];
+        }
+
+        $juaraUmum = [];
+
+        foreach (Klasemen::hitung($semuaJuara) as $jenjang) {
+            $juaraUmum[] = [
+                'jenjang' => $jenjang['jenjang'],
+                'label'   => $jenjang['label'],
+                'baris'   => array_values(array_filter($jenjang['baris'], static fn (array $b): bool => $b['juara_umum'] !== null)),
+            ];
+        }
+
+        return ['nomor' => $nomor, 'juara_umum' => $juaraUmum];
     }
 
     // ---------------------------------------------------------------

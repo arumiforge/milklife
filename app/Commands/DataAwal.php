@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Libraries\CarouselHalamanDepan;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Unggahan;
 use CodeIgniter\CLI\BaseCommand;
@@ -274,6 +275,10 @@ class DataAwal extends BaseCommand
         if ($unduhan['gagal'] !== []) {
             CLI::error('Berkas unduhan gagal disalin: ' . implode(', ', $unduhan['gagal']) . '. Pastikan folder public/unggahan boleh ditulisi, lalu unggah berkasnya lewat Pengaturan > Unduhan.');
         }
+
+        // ---------- Foto carousel pembuka (F9-03) ----------
+        PasangCarousel::tulisHasil(CarouselHalamanDepan::pasangBawaan());
+        // ---------- Akhir foto carousel pembuka ----------
 
         return EXIT_SUCCESS;
     }

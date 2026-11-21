@@ -53,7 +53,7 @@ final class CekPendaftaranTest extends UjiBasisData
 
         // Tombol di halaman depan nonaktif (menu tidak memuat Cek Pendaftaran, K81).
         $xpath = $this->xpathDari($this->get('/'));
-        $this->assertSame('true', $xpath->query('//*[contains(@class, "tombol-cek")]')->item(0)->getAttribute('aria-disabled'));
+        $this->assertSame('true', $xpath->query('//*[@data-tombol="cek"]')->item(0)->getAttribute('aria-disabled'));
     }
 
     public function testFormulirKosongDanTombolAktif(): void
@@ -65,7 +65,7 @@ final class CekPendaftaranTest extends UjiBasisData
         $hasil->assertSee('NPSN atau ID pendaftaran');
         $hasil->assertDontSee('alert-warning');
 
-        $tombol = $this->xpathDari($this->get('/'))->query('//*[contains(@class, "tombol-cek")]')->item(0);
+        $tombol = $this->xpathDari($this->get('/'))->query('//*[@data-tombol="cek"]')->item(0);
         $this->assertSame(site_url('cek-pendaftaran'), $tombol->getAttribute('href'));
     }
 

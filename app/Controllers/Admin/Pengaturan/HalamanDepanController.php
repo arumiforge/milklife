@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin\Pengaturan;
 
 use App\Controllers\BaseController;
+use App\Libraries\CarouselHalamanDepan;
 use App\Libraries\NomorWa;
 use App\Libraries\Unggahan;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -40,7 +41,7 @@ class HalamanDepanController extends BaseController
         'gambar_kepala' => [
             'label' => 'Gambar kepala',
             'rasio' => '21x9',
-            'saran' => 'Foto di sisi kanan bagian atas halaman depan, memudar ke latar krem. Foto dipotong otomatis supaya memenuhi bingkainya, jadi letakkan atlet di tengah foto. Pilih foto mendatar tanpa tulisan, paling kecil 1600 × 900 piksel.',
+            'saran' => 'Tampil di bagian pembuka halaman depan hanya bila carousel belum berisi foto. Foto dipotong otomatis supaya memenuhi bingkainya, jadi letakkan atlet di tengah foto. Pilih foto mendatar tanpa tulisan, paling kecil 1600 × 900 piksel.',
         ],
         'logo_persegi' => [
             'label' => 'Logo persegi',
@@ -214,7 +215,14 @@ class HalamanDepanController extends BaseController
             $gambar[$kunci] = $keterangan + ['jalur' => $unggahan->ada($jalur) ? $jalur : ''];
         }
 
+        // Foto carousel (F9-03, `CarouselController`); foto yang berkasnya hilang tetap tampil supaya bisa dihapus.
+        $carousel = array_map(
+            static fn (array $butir): array => $butir + ['ada' => $unggahan->ada($butir['berkas'])],
+            CarouselHalamanDepan::tersimpan() ?? [],
+        );
+
         return view('admin/pengaturan/halaman_depan', [
+            'carousel'               => $carousel,
             'isian'                  => $isian,
             'galat'                  => $galat,
             'gambar'                 => $gambar,

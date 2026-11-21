@@ -23,7 +23,8 @@
  * - Bagian tidak ditampilkan bila `$kelompokUmur === []`.
  * - `<section id="lomba" aria-labelledby="judul-lomba">` dengan `<h2 id="judul-lomba">`.
  * - Uang dengan `rupiah()`; `null` → "Biaya segera diumumkan", `0` → "Gratis".
- * - Gaya hanya di wilayah "Bagian lomba (F3-02)" di `tema.css`.
+ * - Tata letak baru Tailwind (F9-03); penanda uji berupa atribut `data-*`.
+ *   Ilustrasi nomor lomba G9-05 tampil di samping nama nomor bila berkasnya ada (K41).
  *
  * Susunan: satu kartu per kelompok umur (`#lomba-ku-<id>`), paling banyak
  * dua kolom di layar lebar supaya teks yang lebih besar tetap lega (K76). Tahun lahir,
@@ -36,6 +37,8 @@
  * nomornya di panel admin.
  */
 
+use App\Libraries\IlustrasiBeranda;
+
 if ($kelompokUmur === []) {
     return;
 }
@@ -43,15 +46,14 @@ if ($kelompokUmur === []) {
 $tampilkanBiaya = (bool) ($tampilkanBiaya ?? false);
 
 /** Label kategori sebagai lencana berwarna (K76); pemisah koma tetap terbaca pembaca layar. */
-$lencanaKategori = static fn (array $kategori): string => implode('<span class="visually-hidden">, </span>', array_map(
-    static fn (string $label): string => '<span class="kategori kategori-' . esc(strtolower($label), 'attr') . '">' . esc($label) . '</span>',
+$lencanaKategori = static fn (array $kategori): string => implode('<span class="sr-only">, </span>', array_map(
+    static fn (string $label): string => '<span class="' . (match (strtolower($label)) {
+        'putra' => 'bg-primary-100 text-primary-800',
+        'putri' => 'bg-magenta-500/10 text-magenta-600',
+        default => 'bg-oranye-100 text-oranye-800',
+    }) . ' inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold" data-kategori="' . esc(strtolower($label), 'attr') . '">' . esc($label) . '</span>',
     $kategori,
 ));
-
-/** Ikon butir info; biaya memakai tanda "Rp" karena Bootstrap Icons tidak punya ikon rupiah (K80). */
-$ikon = static fn (string $nama): string => $nama === 'rupiah'
-    ? '<span class="ikon-rp" aria-hidden="true"></span>'
-    : '<i class="bi bi-' . esc($nama, 'attr') . '" aria-hidden="true"></i>';
 
 /** Teks biaya: `null` belum diisi, `0` gratis, selain itu rupiah dengan satuannya. */
 $teksBiaya = static fn (?int $biaya, string $satuan, string $belum): string => match (true) {
@@ -104,15 +106,25 @@ $keteranganTim = static function (array $nomor): array {
     };
 
     return array_values(array_filter([
-        ['ikon' => 'people', 'teks' => $anggota],
-        ['ikon' => 'gender-ambiguous', 'teks' => $komposisi],
+        ['ikon' => 'users', 'teks' => $anggota],
+        ['ikon' => 'user-round-check', 'teks' => $komposisi],
     ], static fn (array $butir): bool => $butir['teks'] !== null));
 };
+
+/** Ilustrasi kecil nomor lomba (G9-05), atau kosong bila belum ada. */
+$gambarNomor = static function (string $nama): string {
+    $alamat = IlustrasiBeranda::nomor($nama);
+
+    return $alamat === null ? '' : '<img src="' . esc($alamat, 'attr') . '" alt="" class="size-8 shrink-0" width="512" height="512" loading="lazy">';
+};
+
+// ikon-sprite: users user-round-check banknote calendar-days graduation-cap signpost hourglass chevron-down
 ?>
-<section id="lomba" class="bagian-lomba" aria-labelledby="judul-lomba">
-    <div class="container py-5">
-        <h2 id="judul-lomba" class="lomba-judul">Kelompok umur dan nomor lomba</h2>
-        <p class="lomba-pengantar">
+<section id="lomba" class="scroll-mt-20 bg-white" aria-labelledby="judul-lomba">
+    <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
+        <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Kategori dan biaya</p>
+        <h2 id="judul-lomba" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Kelompok umur dan nomor lomba</h2>
+        <p class="mt-3 max-w-3xl text-lg text-gray-600" data-lomba-pengantar>
             Kelompok umur ditentukan dari tahun lahir atlet.
             <?php if ($tampilkanBiaya) : ?>
                 Biaya individu dihitung per atlet untuk tiap nomor yang diikuti; biaya beregu dihitung per regu; satu sekolah boleh mendaftarkan beberapa regu di satu nomor beregu.
@@ -121,7 +133,7 @@ $keteranganTim = static function (array $nomor): array {
             <?php endif ?>
         </p>
 
-        <div class="row row-cols-1 row-cols-lg-2 g-4 align-items-start">
+        <div class="mt-8 grid items-start gap-5 lg:grid-cols-2">
             <?php foreach ($kelompokUmur as $ku) : ?>
                 <?php
                 $individu = $gabung($ku['nomor_individu'], static fn (array $n): string => $n['nama']);
@@ -135,95 +147,101 @@ $keteranganTim = static function (array $nomor): array {
                 $jumlahBeregu   = count($ku['nomor_beregu']);
                 $idJudul        = 'judul-lomba-ku-' . $ku['id'];
                 ?>
-                <div class="col">
-                    <article id="lomba-ku-<?= $ku['id'] ?>" class="lomba-ku" aria-labelledby="<?= $idJudul ?>">
-                        <h3 id="<?= $idJudul ?>" class="lomba-ku-nama"><?= esc($ku['nama']) ?></h3>
+                <article id="lomba-ku-<?= $ku['id'] ?>" class="scroll-mt-24 rounded-2xl border border-gray-200 bg-primary-50/60 p-5 shadow-lembut sm:p-6" aria-labelledby="<?= $idJudul ?>" data-lomba-ku>
+                    <h3 id="<?= $idJudul ?>" class="text-2xl font-extrabold text-primary-900"><?= esc($ku['nama']) ?></h3>
 
-                        <dl class="lomba-ku-info">
-                            <div>
-                                <dt><i class="bi bi-calendar3" aria-hidden="true"></i> Tahun lahir</dt>
-                                <dd class="lomba-tahun-lahir"><?= esc($ku['tahun_lahir'] !== '' ? $ku['tahun_lahir'] : 'Tahun lahir segera diumumkan') ?></dd>
+                    <dl class="mt-4 grid gap-3 sm:grid-cols-2" data-lomba-ku-info>
+                        <div class="rounded-xl bg-white p-3">
+                            <dt class="flex items-center gap-1.5 text-sm font-semibold text-gray-500"><?= ikon('calendar-days', 'size-4') ?> Tahun lahir</dt>
+                            <dd class="mt-0.5 font-bold text-gray-900" data-lomba-tahun-lahir><?= esc($ku['tahun_lahir'] !== '' ? $ku['tahun_lahir'] : 'Tahun lahir segera diumumkan') ?></dd>
+                        </div>
+                        <div class="rounded-xl bg-white p-3">
+                            <dt class="flex items-center gap-1.5 text-sm font-semibold text-gray-500"><?= ikon('graduation-cap', 'size-4') ?> Jenjang sekolah</dt>
+                            <dd class="mt-0.5 font-bold text-gray-900" data-lomba-jenjang><?= esc($ku['jenjang'] !== '' ? $ku['jenjang'] : 'Jenjang sekolah segera diumumkan') ?></dd>
+                        </div>
+                        <?php if ($tampilkanBiaya) : ?>
+                            <div class="rounded-xl bg-white p-3 sm:col-span-2">
+                                <dt class="flex items-center gap-1.5 text-sm font-semibold text-gray-500"><?= ikon('banknote', 'size-4') ?> Biaya individu</dt>
+                                <dd class="mt-0.5 font-bold text-oranye-700" data-lomba-biaya-individu><?= esc($teksBiaya($ku['biaya_individu'], 'per atlet per nomor', 'Biaya segera diumumkan')) ?></dd>
                             </div>
-                            <div>
-                                <dt><i class="bi bi-mortarboard" aria-hidden="true"></i> Jenjang sekolah</dt>
-                                <dd class="lomba-jenjang"><?= esc($ku['jenjang'] !== '' ? $ku['jenjang'] : 'Jenjang sekolah segera diumumkan') ?></dd>
-                            </div>
-                            <?php if ($tampilkanBiaya) : ?>
-                                <div>
-                                    <dt><?= $ikon('rupiah') ?> Biaya individu</dt>
-                                    <dd class="lomba-biaya-individu"><?= esc($teksBiaya($ku['biaya_individu'], 'per atlet per nomor', 'Biaya segera diumumkan')) ?></dd>
-                                </div>
-                            <?php endif ?>
-                        </dl>
+                        <?php endif ?>
+                    </dl>
 
-                        <?php foreach ($ku['pilihan'] as $teksPilihan) : ?>
-                            <p class="lomba-pilih-ku">
-                                <i class="bi bi-signpost-split" aria-hidden="true"></i>
-                                <span><?= esc($teksPilihan) ?>, dipilih saat mendaftar.</span>
-                            </p>
-                        <?php endforeach; ?>
+                    <?php foreach ($ku['pilihan'] as $teksPilihan) : ?>
+                        <p class="mt-3 flex items-start gap-2 rounded-xl bg-langit-100 p-3 text-sm text-primary-900" data-lomba-pilih-ku>
+                            <?= ikon('signpost', 'mt-0.5 size-4') ?>
+                            <span><?= esc($teksPilihan) ?>, dipilih saat mendaftar.</span>
+                        </p>
+                    <?php endforeach; ?>
 
-                        <?php if ($jumlahIndividu + $jumlahBeregu === 0) : ?>
-                            <p class="lomba-kosong"><i class="bi bi-hourglass-split" aria-hidden="true"></i> Nomor lomba segera diumumkan.</p>
-                        <?php else : ?>
-                            <details class="lomba-nomor">
-                                <summary>
-                                    <span class="lomba-nomor-ringkas">
-                                        <span class="lomba-nomor-label"><span class="lomba-nomor-buka">Lihat nomor lomba</span><span class="lomba-nomor-tutup">Sembunyikan nomor lomba</span></span>
-                                        <span class="lomba-nomor-jumlah">
-                                            <?= esc(implode(' · ', array_filter([
-                                                $jumlahIndividu > 0 ? "{$jumlahIndividu} individu" : '',
-                                                $jumlahBeregu > 0 ? "{$jumlahBeregu} beregu" : '',
-                                            ]))) ?>
-                                        </span>
+                    <?php if ($jumlahIndividu + $jumlahBeregu === 0) : ?>
+                        <p class="mt-4 flex items-center gap-2 text-gray-600" data-lomba-kosong><?= ikon('hourglass', 'size-4') ?> Nomor lomba segera diumumkan.</p>
+                    <?php else : ?>
+                        <details class="group mt-4 rounded-xl border border-gray-200 bg-white" data-lomba-nomor>
+                            <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2 font-semibold text-primary-800 [&::-webkit-details-marker]:hidden">
+                                <span class="flex flex-wrap items-baseline gap-x-2">
+                                    <span><span class="group-open:hidden">Lihat nomor lomba</span><span class="hidden group-open:inline">Sembunyikan nomor lomba</span></span>
+                                    <span class="text-sm font-normal text-gray-500" data-lomba-nomor-jumlah>
+                                        <?= esc(implode(' · ', array_filter([
+                                            $jumlahIndividu > 0 ? "{$jumlahIndividu} individu" : '',
+                                            $jumlahBeregu > 0 ? "{$jumlahBeregu} beregu" : '',
+                                        ]))) ?>
                                     </span>
-                                    <i class="bi bi-chevron-down lomba-nomor-panah" aria-hidden="true"></i>
-                                </summary>
+                                </span>
+                                <?= ikon('chevron-down', 'transition-transform group-open:rotate-180') ?>
+                            </summary>
 
+                            <div class="space-y-4 border-t border-gray-100 px-4 pb-4 pt-3">
                                 <?php if ($individu !== []) : ?>
-                                    <h4 class="lomba-nomor-judul">Nomor individu</h4>
-                                    <ul class="lomba-daftar lomba-daftar-individu">
-                                        <?php foreach ($individu as $butir) : ?>
-                                            <li>
-                                                <span class="lomba-nama-nomor"><?= esc($butir['nomor']['nama']) ?></span>
-                                                <span class="lomba-kategori"><span class="visually-hidden">— </span><?= $lencanaKategori($butir['kategori']) ?></span>
-                                            </li>
-                                        <?php endforeach ?>
-                                    </ul>
+                                    <div>
+                                        <h4 class="text-sm font-bold uppercase tracking-wide text-gray-500">Nomor individu</h4>
+                                        <ul class="mt-2 divide-y divide-gray-100" data-lomba-daftar-individu>
+                                            <?php foreach ($individu as $butir) : ?>
+                                                <li class="flex flex-wrap items-center gap-x-3 gap-y-1 py-2">
+                                                    <?= $gambarNomor($butir['nomor']['nama']) ?>
+                                                    <span class="font-semibold text-gray-900"><?= esc($butir['nomor']['nama']) ?></span>
+                                                    <span class="flex flex-wrap gap-1"><span class="sr-only">— </span><?= $lencanaKategori($butir['kategori']) ?></span>
+                                                </li>
+                                            <?php endforeach ?>
+                                        </ul>
+                                    </div>
                                 <?php endif ?>
 
                                 <?php if ($beregu !== []) : ?>
-                                    <h4 class="lomba-nomor-judul">Nomor beregu</h4>
-                                    <ul class="lomba-daftar lomba-daftar-beregu">
-                                        <?php foreach ($beregu as $butir) : ?>
-                                            <?php
-                                            $nomor = $butir['nomor'];
-                                            $info  = $keteranganTim($nomor);
+                                    <div>
+                                        <h4 class="text-sm font-bold uppercase tracking-wide text-gray-500">Nomor beregu</h4>
+                                        <ul class="mt-2 divide-y divide-gray-100" data-lomba-daftar-beregu>
+                                            <?php foreach ($beregu as $butir) : ?>
+                                                <?php
+                                                $nomor = $butir['nomor'];
+                                                $info  = $keteranganTim($nomor);
 
-                                            if ($tampilkanBiaya) {
-                                                $info[] = ['ikon' => 'rupiah', 'teks' => $teksBiaya($nomor['biaya_beregu'], 'per regu', 'Biaya regu segera diumumkan'), 'kelas' => 'lomba-biaya-beregu'];
-                                            }
-                                            ?>
-                                            <li>
-                                                <div class="lomba-beregu-kepala">
-                                                    <span class="lomba-nama-nomor"><?= esc($nomor['nama']) ?></span>
-                                                    <span class="lomba-kategori"><span class="visually-hidden">— </span><?= $lencanaKategori($butir['kategori']) ?></span>
-                                                </div>
-                                                <?php if ($info !== []) : ?>
-                                                    <ul class="lomba-beregu-info">
-                                                        <?php foreach ($info as $butirInfo) : ?>
-                                                            <li<?= isset($butirInfo['kelas']) ? ' class="' . $butirInfo['kelas'] . '"' : '' ?>><?= $ikon($butirInfo['ikon']) ?> <?= esc($butirInfo['teks']) ?></li>
-                                                        <?php endforeach ?>
-                                                    </ul>
-                                                <?php endif ?>
-                                            </li>
-                                        <?php endforeach ?>
-                                    </ul>
+                                                if ($tampilkanBiaya) {
+                                                    $info[] = ['ikon' => 'banknote', 'teks' => $teksBiaya($nomor['biaya_beregu'], 'per regu', 'Biaya regu segera diumumkan'), 'biaya' => true];
+                                                }
+                                                ?>
+                                                <li class="py-2">
+                                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1" data-lomba-beregu-kepala>
+                                                        <?= $gambarNomor($nomor['nama']) ?>
+                                                        <span class="font-semibold text-gray-900"><?= esc($nomor['nama']) ?></span>
+                                                        <span class="flex flex-wrap gap-1"><span class="sr-only">— </span><?= $lencanaKategori($butir['kategori']) ?></span>
+                                                    </div>
+                                                    <?php if ($info !== []) : ?>
+                                                        <ul class="mt-1 space-y-0.5 text-sm text-gray-600" data-lomba-beregu-info>
+                                                            <?php foreach ($info as $butirInfo) : ?>
+                                                                <li class="flex items-center gap-1.5"<?= isset($butirInfo['biaya']) ? ' data-lomba-biaya-beregu' : '' ?>><?= ikon($butirInfo['ikon'], 'size-4 text-gray-400') ?> <?= esc($butirInfo['teks']) ?></li>
+                                                            <?php endforeach ?>
+                                                        </ul>
+                                                    <?php endif ?>
+                                                </li>
+                                            <?php endforeach ?>
+                                        </ul>
+                                    </div>
                                 <?php endif ?>
-                            </details>
-                        <?php endif ?>
-                    </article>
-                </div>
+                            </div>
+                        </details>
+                    <?php endif ?>
+                </article>
             <?php endforeach ?>
         </div>
     </div>

@@ -72,4 +72,14 @@ class HalamanDepan extends BaseConfig
      * sekolah mendaftar. Nilai awal sembunyi (K74).
      */
     public bool $tampilkan_biaya = false;
+
+    /**
+     * Foto carousel pembuka (F9-03): daftar berurutan
+     * `[['berkas' => 'unggahan/halaman-depan/….webp', 'keterangan' => '…'], …]`.
+     * `null` = belum pernah diatur (foto bawaan boleh dipasang); `[]` = admin
+     * sudah menghapus semuanya. Dibaca lewat `App\Libraries\CarouselHalamanDepan`.
+     *
+     * @var list<array{berkas: string, keterangan: string}>|null
+     */
+    public ?array $carousel = null;
 }

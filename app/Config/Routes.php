@@ -194,6 +194,12 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
             $routes->post($dasar, $pengendali . '::simpan');
         }
 
+        // ---------- Foto carousel halaman depan (F9-03) ----------
+        $routes->post('halaman-depan/carousel', 'CarouselController::tambah');
+        $routes->post('halaman-depan/carousel/(:num)/(naik|turun)', 'CarouselController::geser/$1/$2');
+        $routes->post('halaman-depan/carousel/(:num)/hapus', 'CarouselController::hapus/$1');
+        // ---------- Akhir foto carousel halaman depan ----------
+
         // Sakelar "Pendaftar memilih kelompok umur" di halaman Kelompok Umur (K134).
         $routes->post('kelompok-umur/pilihan', 'KelompokUmurController::pilihan');
 

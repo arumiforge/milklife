@@ -7,14 +7,14 @@ Akar: Pengendali `app/Controllers/`, Pustaka `app/Libraries/`, View `app/Views/`
 
 | Fitur | Rute | Pengendali | Pustaka | View | JS | Uji |
 |---|---|---|---|---|---|---|
-| Halaman depan | `/` | `BerandaController` | `IsiHalamanDepan`, `BukaTutupPendaftaran` | `beranda.php`, `beranda/` | `kemajuan`, `konfirmasi` | f `HalamanDepan*`, u `BukaTutupPendaftaranTest` |
+| Halaman depan (tata letak baru, F9-03) | `/` | `BerandaController` | `IsiHalamanDepan` (+ `carousel()`, `angkaAcara()`, `hasilTerbaru()`), `CarouselHalamanDepan`, `IlustrasiBeranda`, `BukaTutupPendaftaran` | `beranda.php`, `beranda/` (`_angka`, `_hasil` baru) | `carousel-beranda`, `adegan-merek` | f `HalamanDepan*`, u `BukaTutupPendaftaranTest`, `IlustrasiBerandaTest` |
 | Wizard pendaftaran | `pendaftaran`, `pendaftaran/periksa`, `…/simpan` | `PendaftaranController` | `Pendaftaran/PemeriksaPendaftaran` (aturan di `Pendaftaran/Pemeriksa/*`), `…/SimpanPendaftaran` | `pendaftaran.php`, `pendaftaran/` | `pendaftaran`, `pendaftaran/*` | `Pendaftaran*Test` (u/b/f) |
 | Cari NPSN/sekolah | `pendaftaran/sekolah` | `PendaftaranController::sekolah` | `Pendaftaran/Kabupaten`, `Jenjang` | `pendaftaran/_langkah_sekolah.php` | `pendaftaran/sekolah` | f `PendaftaranSekolahTest` |
 | Cek pendaftaran | `cek-pendaftaran` | `CekPendaftaranController` | `DataPendaftaran` | `cek_pendaftaran.php`, `cek_pendaftaran/` | - | f `CekPendaftaranTest` |
 | Bukti PDF + unggah bayar | `bukti/<24 heksa>/<id>`, `…/bukti-bayar` | `BuktiController` | `BuktiPendaftaran`, `Panel/BerkasBuktiBayar` | `bukti/` | - | f `BuktiPendaftaranTest`, `UnggahBuktiBayarOfficialTest` |
-| Hasil lomba (F8-04) | `hasil`, `hasil/(:num)[/pdf\|excel]` (hanya nomor terbit) | `HasilController` | `Hasil/HasilLomba`, `Hasil/UnduhanHasil` | `hasil/` | - | f `HasilLombaTest` |
-| Klasemen sekolah (F8-05) | `hasil/klasemen[/pdf\|excel]` (hanya nomor terbit) | `HasilController::klasemen` | `Hasil/Klasemen`, `Hasil/UnduhanKlasemen` | `hasil/klasemen.php`, `hasil/_klasemen.php` | - | f `KlasemenSekolahTest`, u `HasilKlasemenTest` |
-| Unduhan | `unduhan` | `UnduhanController` | `IsiHalamanDepan` | `unduhan.php`, `beranda/_daftar_unduhan.php` | - | f `HalamanUnduhanTest` |
+| Hasil lomba (F8-04) | `hasil`, `hasil/(:num)[/pdf\|excel]` (hanya nomor terbit) | `HasilController` | `Hasil/HasilLomba`, `Hasil/UnduhanHasil` | `hasil/` (publik `_tabel_tw`, tata letak baru F9-03) | - | f `HasilLombaTest` |
+| Klasemen sekolah (F8-05) | `hasil/klasemen[/pdf\|excel]` (hanya nomor terbit) | `HasilController::klasemen` | `Hasil/Klasemen`, `Hasil/UnduhanKlasemen` | `hasil/klasemen.php`, `hasil/_klasemen_tw.php` (tata letak baru F9-03) | - | f `KlasemenSekolahTest`, u `HasilKlasemenTest` |
+| Unduhan | `unduhan` | `UnduhanController` | `IsiHalamanDepan` | `unduhan.php` (tata letak baru F9-03), `beranda/_daftar_unduhan.php` | - | f `HalamanUnduhanTest` |
 
 Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 
@@ -44,13 +44,13 @@ Pecahan berkas besar (F7-30), pintu masuk tetap sama:
 | Hasil lomba (F8-04): babak, prestasi, peringkat, koreksi Final, Terbitkan | `hasil`, `hasil/nomor/(:num)[/babak\|terbitkan\|tarik\|pdf\|excel]`, `hasil/babak/(:num)[/peserta\|ubah\|hapus]` | `Admin/HasilController` | `Hasil/HasilLomba`, `Hasil/Prestasi`, `Hasil/Peringkat`, `Hasil/JenisHasil`, `Hasil/UnduhanHasil`; jenis hasil di `NomorLombaModel`; ikut `PaketPendaftaran` dan `GabungPendaftaran` | `admin/hasil/`, `hasil/_tabel.php`, `hasil/pdf.php` | `konfirmasi` | f `HasilLombaTest`, u `HasilPrestasiPeringkatTest` |
 | Klasemen sekolah (F8-05): juara umum per jenjang, semua nomor | `klasemen[/pdf\|excel]` | `Admin/KlasemenController` | `Hasil/Klasemen` (murni), `Hasil/HasilLomba::juara()`, `Hasil/UnduhanKlasemen` | `admin/hasil/klasemen.php`, `hasil/_klasemen.php`, `hasil/klasemen_pdf.php` | - | f `KlasemenSekolahTest`, u `HasilKlasemenTest` |
 | Sekolah, usulan nama (K99), nama desa (K114) | `sekolah[/data\|/excel\|/(:num)/ubah]`, `sekolah/usulan…`, `sekolah/nama-desa` | `Admin/SekolahController` | `Panel/UsulanNamaSekolah`, `Panel/NamaDesaSekolah` | `admin/sekolah/` | `centang-semua` | f `PanelSekolahTest`, `PanelUsulanNamaSekolahTest`, `PanelNamaDesaSekolah*Test` |
-| Pengaturan | `pengaturan/{acara,pendaftaran,pembayaran,halaman-depan}` + CRUD `{kelompok-umur,nomor-lomba,jadwal,kontak,unduhan}`, sakelar `kelompok-umur/pilihan` (K134) | `Admin/Pengaturan/*Controller` | `KelengkapanPengaturan`, `MarkdownSederhana` | `admin/pengaturan/` | `konfirmasi`, `pilih-tanggal` | f `Pengaturan*Test`, b `*ModelTest` |
+| Pengaturan | `pengaturan/{acara,pendaftaran,pembayaran,halaman-depan}` + CRUD `{kelompok-umur,nomor-lomba,jadwal,kontak,unduhan}`, sakelar `kelompok-umur/pilihan` (K134), foto carousel `halaman-depan/carousel[/(:num)/(naik\|turun\|hapus)]` (F9-03) | `Admin/Pengaturan/*Controller` (carousel: `CarouselController`) | `KelengkapanPengaturan`, `MarkdownSederhana` | `admin/pengaturan/` | `konfirmasi`, `pilih-tanggal` | f `Pengaturan*Test`, b `*ModelTest` |
 
 ## Tampilan baru (Tahap 9, K140, K141)
 
 | Bagian | Letak | Uji |
 |---|---|---|
-| Tata letak | `tata_letak/publik_tw.php` (menu `Libraries/MenuPublik`), `tata_letak/admin_tw.php` (menu `tata_letak/_menu_admin_tw.php`), pesan kilat `tata_letak/_pesan_tw.php`; halaman pindah dengan mengganti `extend` | f `KatalogTampilanTest` |
+| Tata letak | `tata_letak/publik_tw.php` (menu `Libraries/MenuPublik`; dipakai halaman depan, Unduhan, Hasil, Klasemen sejak F9-03; pita judul `tata_letak/_judul_halaman_tw.php`), `tata_letak/admin_tw.php` (menu `tata_letak/_menu_admin_tw.php`), pesan kilat `tata_letak/_pesan_tw.php`; halaman pindah dengan mengganti `extend` | f `KatalogTampilanTest` |
 | Komponen | `app/Views/komponen/` (tombol, kartu, peringatan, lencana, isian, pilihan, sakelar, modal, tabel, kerangka, kosong, langkah) lewat `komponen()`; ikon `ikon()`, atribut `atribut_html()` di `Helpers/tampilan_helper.php` | u `KomponenTampilanTest` |
 | Katalog tampilan | `admin/gaya`, `Admin/GayaController`, `admin/gaya.php`; adegan Three.js `public/aset/js/adegan-merek.js` (modul ES) | f `KatalogTampilanTest`, `KepalaKeamananTest` |
 | Bangun | `package.json`, `alat/vendor.mjs`, `alat/ikon.mjs`, `public/aset/tailwind/masukan.css` → `public/aset/css/tw.css`; job CI "Hasil bangun tampilan" | CI |
@@ -59,7 +59,7 @@ Ikon Lucide baru: tulis `ikon('nama')` (atau `'ikon' => 'nama'` di berkas yang m
 
 ## Perintah spark (`app/Commands/`)
 
-`admin:buat`, `cadangan:buat`, `data:awal`, `dokumen:pdf`, `pendaftaran:gabung`, `pendaftaran:impor`, `sekolah:impor`, `aset:minify`, `pembaruan:periksa`, `nomor-dada:reset` (mis. `nomor-dada:reset` = `ResetNomorDada.php`).
+`admin:buat`, `cadangan:buat`, `data:awal`, `dokumen:pdf`, `halaman-depan:carousel` (`PasangCarousel.php`), `pendaftaran:gabung`, `pendaftaran:impor`, `sekolah:impor`, `aset:minify`, `pembaruan:periksa`, `nomor-dada:reset` (mis. `nomor-dada:reset` = `ResetNomorDada.php`).
 
 ## Invarian kritis
 
