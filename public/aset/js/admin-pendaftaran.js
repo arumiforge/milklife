@@ -36,7 +36,7 @@
         if (!alamat) {
             return escape(nilai);
         }
-        return '<a class="fw-semibold text-nowrap" href="' + escape(alamat) + '">' + escape(nilai) + '</a>';
+        return '<a class="font-semibold whitespace-nowrap text-primary-700 hover:underline" href="' + escape(alamat) + '">' + escape(nilai) + '</a>';
     };
 
     // F8-02: lencana status, ditambah tanda "Bukti baru" bila ada bukti bayar yang belum diperiksa.
@@ -44,7 +44,7 @@
         var html = window.TabelAdmin.bentuk.status(nilai, baris);
         var baru = parseInt(baris && baris.bukti_baru, 10) || 0;
         if (baru > 0) {
-            html += ' <span class="badge text-bg-info text-nowrap" title="' + baru + ' bukti bayar baru belum diperiksa">Bukti baru</span>';
+            html += ' <span class="inline-flex items-center rounded-md bg-primary-100 px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap text-primary-800" data-bukti-baru title="' + baru + ' bukti bayar baru belum diperiksa">Bukti baru</span>';
         }
         return html;
     };
@@ -69,7 +69,7 @@
         if (!(id > 0)) {
             return '';
         }
-        return '<input class="form-check-input pilih-baris" type="checkbox" form="form-massal" name="id[]" value="' + id + '"'
+        return '<input class="pilih-baris size-5 rounded border-gray-300 text-primary-600 focus:ring-2 focus:ring-primary-500" type="checkbox" form="form-massal" name="id[]" value="' + id + '"'
             + ' aria-label="Centang ' + escape(baris && baris.id_pendaftaran) + '">';
     };
 
@@ -153,8 +153,8 @@
         if (!alamat) {
             return '';
         }
-        return '<a class="btn btn-sm btn-outline-primary text-nowrap" href="' + escape(alamat) + '">'
-            + '<i class="bi bi-eye" aria-hidden="true"></i> Rincian'
-            + '<span class="visually-hidden"> ' + escape(baris && baris.id_pendaftaran) + '</span></a>';
+        return '<a class="inline-flex min-h-11 items-center justify-center rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold whitespace-nowrap text-gray-900 hover:bg-gray-50 hover:text-primary-700" href="' + escape(alamat) + '">'
+            + 'Rincian'
+            + '<span class="sr-only"> ' + escape(baris && baris.id_pendaftaran) + '</span></a>';
     };
 }());

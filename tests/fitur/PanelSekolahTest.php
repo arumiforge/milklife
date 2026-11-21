@@ -94,7 +94,7 @@ final class PanelSekolahTest extends UjiBasisData
         }
 
         $this->assertSame(['kabupaten', 'jenjang', 'nama', 'disunting'], $nama);
-        $this->assertStringContainsString('2 sekolah', $xpath->query('//div[contains(@class, "alert-warning")]')->item(0)->textContent);
+        $this->assertStringContainsString('2 sekolah', $xpath->query('//*[@data-peringatan-kembar]')->item(0)->textContent);
     }
 
     public function testDataMenghitungNamaSamaDanBisaDisaring(): void

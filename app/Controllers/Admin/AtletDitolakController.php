@@ -56,11 +56,10 @@ class AtletDitolakController extends BaseController
                 'alamat' => site_url('admin/pendaftaran/' . $baris['pendaftaran_id'] . '?dari=atlet-ditolak'),
                 'teks'   => $baris['id_pendaftaran'],
             ];
-            $baris['keadaan'] = $baris['ulang_id'] === null
-                ? '<span class="badge rounded-pill text-bg-warning">Belum didaftarkan ulang</span>'
-                : '<span class="badge rounded-pill text-bg-success">Sudah didaftarkan ulang</span>'
-                    . '<div class="small text-nowrap mt-1"><a href="' . esc(site_url('admin/pendaftaran/' . $baris['ulang_pendaftaran_id'] . '?dari=atlet-ditolak'), 'attr') . '">'
-                    . esc((string) $baris['ulang_id']) . '</a></div>';
+            $baris['keadaan'] = trim(view('admin/atlet_ditolak/_keadaan', [
+                'ulangId'     => $baris['ulang_id'] === null ? null : (string) $baris['ulang_id'],
+                'ulangAlamat' => $baris['ulang_id'] === null ? null : site_url('admin/pendaftaran/' . $baris['ulang_pendaftaran_id'] . '?dari=atlet-ditolak'),
+            ], ['saveData' => false, 'debug' => false]));
             $baris['alasan'] = nl2br(esc((string) $baris['alasan']));
 
             return $baris;
