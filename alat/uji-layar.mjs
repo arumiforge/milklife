@@ -11,7 +11,7 @@
 // tanpa jumlah elemen dan memori JS yang terus naik.
 //
 // Jalankan: npm run uji:layar   (atau node alat/uji-layar.mjs)
-// Butuh Chromium Playwright (di CI: npx playwright install --with-deps chromium).
+// Butuh Chromium Playwright, atau Chrome lain lewat CHROMIUM_PATH (di CI: Chrome bawaan runner).
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
