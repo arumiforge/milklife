@@ -34,7 +34,17 @@ $beregu = $nomor['jenis'] === 'beregu';
                         <?php if ($beregu && $h['anggota'] !== []) : ?><span class="block text-gray-500"><?= esc(implode(', ', $h['anggota'])) ?></span><?php endif ?>
                     </td>
                     <?php if (! $beregu) : ?><td class="hidden px-2 py-3 sm:px-3 md:table-cell"><?= esc($h['sekolah']) ?></td><?php endif ?>
-                    <td class="whitespace-nowrap px-2 py-3 sm:px-3 font-semibold text-gray-900"><?= esc($h['prestasi_teks']) ?><?= $h['keterangan'] !== null ? ' ' . komponen('lencana', ['label' => $h['keterangan'], 'warna' => 'abu']) : '' ?></td>
+                    <td class="whitespace-nowrap px-2 py-3 sm:px-3 font-semibold text-gray-900">
+                        <?= esc($h['prestasi_teks']) ?><?= $h['prestasi_teks'] !== '' && ($h['rincian'] ?? []) !== [] ? ' poin' : '' ?><?= $h['keterangan'] !== null ? ' ' . komponen('lencana', ['label' => $h['keterangan'], 'warna' => 'abu']) : '' ?>
+                        <?php if (($h['rincian'] ?? []) !== []) : ?>
+                            <?php // Poin multi-lomba (F9-10): prestasi dan poin tiap komponen. ?>
+                            <ul class="mt-1 whitespace-normal text-xs font-normal text-gray-500" data-rincian-poin>
+                                <?php foreach ($h['rincian'] as $r) : ?>
+                                    <li><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '– (0)' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></li>
+                                <?php endforeach ?>
+                            </ul>
+                        <?php endif ?>
+                    </td>
                 </tr>
             <?php endforeach ?>
             <?php if ($babak['hasil'] === []) : ?>
