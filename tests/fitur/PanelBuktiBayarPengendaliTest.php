@@ -399,7 +399,7 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
 
         $this->assertSame('0', $xpath->query('//*[@id="bukti-bayar"]/@data-jumlah-bukti')->item(0)?->nodeValue);
         // Kotak kosong berikon (K76), tanpa gambar.
-        $this->assertSame(1, $xpath->query('//*[@class="bukti-kosong"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-bukti-kosong]')->length);
         $this->assertSame(0, $xpath->query('//img')->length);
 
         $formulir = $xpath->query('//form[@id="unggah-bukti-bayar"]')->item(0);
@@ -423,7 +423,7 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
         $dasar = site_url('admin/pendaftaran/' . $p['id'] . '/bukti-bayar/');
 
         $this->assertSame('2', $xpath->query('//*[@id="bukti-bayar"]/@data-jumlah-bukti')->item(0)?->nodeValue);
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "tanpa-gambar")]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-tanpa-gambar]')->length);
 
         foreach ($id as $urutan => $buktiId) {
             $butir = $xpath->query('//li[@data-bukti-id="' . $buktiId . '"]')->item(0);
@@ -438,7 +438,7 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
                 $this->assertSame('Bukti bayar ke-' . ($urutan + 1) . ' pendaftaran ' . $p['id_pendaftaran'], $img->getAttribute('alt'));
             }
 
-            $this->assertSame(1, $xpath->query('.//button[@data-bs-toggle="modal"][@data-bs-target="#bukti-bayar-besar-' . $buktiId . '"]', $butir)->length);
+            $this->assertSame(1, $xpath->query('.//button[@data-modal-toggle="bukti-bayar-besar-' . $buktiId . '"]', $butir)->length);
             $this->assertGreaterThan(0, $xpath->query('.//a[@href="' . $dasar . $buktiId . '/unduh"]', $butir)->length);
 
             $hapus = $xpath->query('.//form[@action="' . $dasar . $buktiId . '/hapus"]', $butir)->item(0);

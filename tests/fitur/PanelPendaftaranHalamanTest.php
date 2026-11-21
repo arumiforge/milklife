@@ -216,16 +216,16 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
 
         $xpath = $this->xpathDari($hasil);
         $this->assertSame(5, $xpath->query('//table[@id="tabel-atlet"]/tbody/tr')->length);
-        $this->assertSame(1, $xpath->query('//div[contains(@class, "tim-beregu")]')->length);
-        $this->assertSame(4, $xpath->query('//div[contains(@class, "tim-beregu")]//li')->length);
+        $this->assertSame(1, $xpath->query('//div[@data-tim-beregu]')->length);
+        $this->assertSame(4, $xpath->query('//div[@data-tim-beregu]//li')->length);
 
         // Foto penanggung jawab lewat rute admin.
         $foto = site_url('admin/pendaftaran/' . $p['id'] . '/foto/' . $p['penanggung_jawab'][0]);
         // Gambar kecil dan gambar besar di jendela (K76).
         $this->assertSame(2, $xpath->query('//img[@src="' . $foto . '"]')->length);
-        $this->assertSame(1, $xpath->query('//div[contains(@class, "modal")]//img[@src="' . $foto . '"]')->length);
+        $this->assertSame(1, $xpath->query('//div[@role="dialog"]//img[@src="' . $foto . '"]')->length);
         // Kotak "tanpa gambar" bukti bayar (F6-03) tidak dihitung.
-        $this->assertSame(0, $xpath->query('//*[contains(@class, "tanpa-gambar")][not(ancestor::section[@id="bukti-bayar"])]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-tanpa-gambar][not(ancestor::section[@id="bukti-bayar"])]')->length);
 
         // Tombol tindakan dengan jendela konfirmasi.
         $lunas = $xpath->query('//form[@action="' . site_url('admin/pendaftaran/' . $p['id'] . '/lunas') . '"]')->item(0);
@@ -260,7 +260,7 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
 
         $nomor = [];
 
-        foreach ($xpath->query('//table[@id="tabel-atlet"]//td[contains(@class, "nomor-dada")]') as $sel) {
+        foreach ($xpath->query('//table[@id="tabel-atlet"]//td[@data-nomor-dada]') as $sel) {
             $nomor[] = trim($sel->textContent);
         }
 
@@ -290,7 +290,7 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
         $xpath = $this->xpathDari($hasil);
 
         // Kotak "tanpa gambar" bukti bayar (F6-03) tidak dihitung.
-        $this->assertSame(2, $xpath->query('//*[contains(@class, "tanpa-gambar ")][not(ancestor::section[@id="bukti-bayar"])]')->length);
+        $this->assertSame(2, $xpath->query('//*[@data-tanpa-gambar][not(ancestor::section[@id="bukti-bayar"])]')->length);
         $this->assertSame(0, $xpath->query('//img[contains(@src, "/foto/")]')->length);
         $hasil->assertSee('Foto Ibu Tanpa Foto');
 

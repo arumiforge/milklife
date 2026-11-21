@@ -174,6 +174,7 @@ final class PanelTolakAtletHalamanTest extends UjiBasisData
         $this->assertSame($nisn, $semua['data'][0]['nisn']);
         $this->assertSame(site_url('admin/pendaftaran/' . $p['id'] . '?dari=atlet-ditolak'), $semua['data'][0]['id_pendaftaran']['alamat']);
         $this->assertStringContainsString('Belum didaftarkan ulang', $semua['data'][0]['keadaan']);
+        $this->assertStringContainsString('data-keadaan-ulang="belum"', $semua['data'][0]['keadaan']);
         $this->assertSame(0, $data($this->bukaSebagaiAdmin('admin/atlet-ditolak/data?draw=1&keadaan=sudah')->getJSON())['recordsFiltered']);
 
         // Didaftarkan lagi: pindah ke keadaan "sudah".
@@ -181,6 +182,8 @@ final class PanelTolakAtletHalamanTest extends UjiBasisData
         $sudah = $data($this->bukaSebagaiAdmin('admin/atlet-ditolak/data?draw=1&keadaan=sudah')->getJSON());
         $this->assertSame(1, $sudah['recordsFiltered']);
         $this->assertStringContainsString($baru['id_pendaftaran'], $sudah['data'][0]['keadaan']);
+        $this->assertStringContainsString('data-keadaan-ulang="sudah"', $sudah['data'][0]['keadaan']);
+        $this->assertStringContainsString('href="' . esc(site_url('admin/pendaftaran/' . $baru['id'] . '?dari=atlet-ditolak'), 'attr') . '"', $sudah['data'][0]['keadaan']);
         $this->assertSame(0, $data($this->bukaSebagaiAdmin('admin/atlet-ditolak/data?draw=1&keadaan=belum')->getJSON())['recordsFiltered']);
 
         $excel = $this->bukaSebagaiAdmin('admin/atlet-ditolak/excel?keadaan=sudah');
@@ -200,20 +203,20 @@ final class PanelTolakAtletHalamanTest extends UjiBasisData
         // Dibuka dari menu Atlet: jejak dan menu aktif Atlet.
         $dariAtlet = $this->bukaSebagaiAdmin($rincian . '?dari=atlet');
         $dariAtlet->assertOK();
-        $this->assertStringContainsString('<li class="breadcrumb-item"><a href="' . site_url('admin/atlet') . '">Atlet</a></li>', $dariAtlet->getBody());
+        $this->assertJejakTautan($dariAtlet, site_url('admin/atlet'), 'Atlet');
         $this->assertMatchesRegularExpression($aktif('admin/atlet'), $dariAtlet->getBody());
         $this->assertDoesNotMatchRegularExpression($aktif('admin/pendaftaran'), $dariAtlet->getBody());
         $this->assertSame([$p['id'] => 'atlet'], session('asal_rincian'));
 
         // Halaman turunan memakai asal yang tersimpan di sesi.
         $tolak = $this->bukaSebagaiAdmin($rincian . '/tolak-atlet', ['asal_rincian' => [$p['id'] => 'atlet']]);
-        $this->assertStringContainsString('<li class="breadcrumb-item"><a href="' . site_url($rincian) . '">' . $p['id_pendaftaran'] . '</a></li>', $tolak->getBody());
-        $this->assertStringContainsString('<li class="breadcrumb-item active" aria-current="page">Tolak atlet</li>', $tolak->getBody());
+        $this->assertJejakTautan($tolak, site_url($rincian), $p['id_pendaftaran']);
+        $this->assertSame(1, $this->xpathDari($tolak)->query('//nav[@data-jejak]//li/*[@aria-current="page"][normalize-space()="Tolak atlet"]')->length);
         $this->assertMatchesRegularExpression($aktif('admin/atlet'), $tolak->getBody());
 
         // Tanpa asal, atau asal tidak dikenal: Pendaftaran.
         $bawaan = $this->bukaSebagaiAdmin($rincian . '?dari=lain');
-        $this->assertStringContainsString('<li class="breadcrumb-item"><a href="' . site_url('admin/pendaftaran') . '">Pendaftaran</a></li>', $bawaan->getBody());
+        $this->assertJejakTautan($bawaan, site_url('admin/pendaftaran'), 'Pendaftaran');
         $this->assertMatchesRegularExpression($aktif('admin/pendaftaran'), $bawaan->getBody());
     }
 
@@ -238,5 +241,11 @@ final class PanelTolakAtletHalamanTest extends UjiBasisData
             $this->atletPanel(),
             $this->atletPanel(['ku' => 'ku12', 'tanggal_lahir' => '2016-05-01', 'nomor' => ['lari60putraKu12']]),
         ]]);
+    }
+
+    /** Jejak navigasi (`admin/_jejak_tw`) memuat tautan berlabel itu. */
+    private function assertJejakTautan(\CodeIgniter\Test\TestResponse $hasil, string $alamat, string $label): void
+    {
+        $this->assertSame(1, $this->xpathDari($hasil)->query('//nav[@data-jejak]//li/a[@href="' . $alamat . '"][normalize-space()="' . $label . '"]')->length, 'Jejak ke ' . $label);
     }
 }
