@@ -14,12 +14,12 @@ Diperbarui: 21 November 2026
 | [F9-04 Bantuan dan FAQ](tugas/F9-04-bantuan-faq.md) | selesai (#123) | P1 | A |
 | [F9-07 Jadwal pertandingan](tugas/F9-07-jadwal-pertandingan.md) | selesai (#131) | P1 | A |
 | [F9-10 Kalkulator poin multi-lomba](tugas/F9-10-kalkulator-poin-multilomba.md) | selesai (#124) | P1 | A |
-| [F9-08 Seri, lintasan, dan alur babak](tugas/F9-08-seri-lintasan-bagan.md) | menunggu tinjauan | P1 | B |
-| [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | rencana | P1 | B |
+| [F9-08 Seri, lintasan, dan alur babak](tugas/F9-08-seri-lintasan-bagan.md) | selesai (#137) | P1 | B |
+| [F9-09 Aturan nomor dan lembar juri](tugas/F9-09-aturan-nomor-lembar-juri.md) | dikerjakan | P1 | B |
 | [F9-12 Peserta publik](tugas/F9-12-peserta-publik.md) | selesai (#127) | P1 | B |
-| [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | menunggu tinjauan (#132) | P1 | B |
-| [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | menunggu tinjauan | P2 | B |
-| [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | menunggu tinjauan | P2 | B |
+| [F9-13 Papan videotron](tugas/F9-13-papan-videotron.md) | selesai (#132, #138) | P1 | B |
+| [F9-11 Metode klasemen](tugas/F9-11-metode-klasemen.md) | selesai (#136) | P2 | B |
+| [F9-06 Galeri tautan luar](tugas/F9-06-galeri-tautan.md) | selesai (#135) | P2 | B |
 | [F9-05 Wizard, cek, dan bukti ke Tailwind](tugas/F9-05-wizard-cek-tailwind.md) | rencana | P2 | C (setelah 30 November) |
 | [F9-14 Tata letak admin dan dasbor](tugas/F9-14-tata-letak-admin-dasbor.md) | rencana | P2 | C |
 | [F9-15 Halaman admin pendaftaran ke Tailwind](tugas/F9-15-admin-pendaftaran-tailwind.md) | rencana | P2 | C |
@@ -43,7 +43,7 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 
 ## Berikutnya
 
-Berjalan: F9-06, F9-08, F9-11, F9-13 (#132), dan perbaikan kecil (nama menu Agenda di Pengaturan, pola transaksi). F9-09 dimulai setelah F9-08. Gelombang C mulai 1 Desember. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
+Gelombang A dan B selesai kecuali F9-09 (dikerjakan, PR setelah #137). Perbaikan kecil masuk lewat #134 (nama Agenda di Pengaturan, pola transaksi) dan #138 (uji tampilan bersih). Gelombang C mulai 1 Desember setelah pendaftaran tutup: F9-05, F9-14 lalu F9-15, F9-16; kemudian F9-17 dan F9-18. Setelah pembaruan server: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Pembaruan server mengikuti bagian 10 panduan produksi; server yang dipasang sebelum repo privat perlu deploy key sekali (K138). Kesiapan server ditangani pemilik (K119).
 
 ## Selesai
 
