@@ -44,6 +44,12 @@ $routes->get('peserta', 'PesertaController::index');
 $routes->get('peserta/data', 'PesertaController::data');
 // ---------- Akhir peserta publik ----------
 
+// ---------- Jadwal pertandingan publik (F9-07) ----------
+// Babak terjadwal per hari; 404 selama sakelar `HalamanDepan.tampil_jadwal` mati.
+$routes->get('jadwal', 'JadwalController::index');
+$routes->get('jadwal/(\d{4}-\d{2}-\d{2})/pdf', 'JadwalController::pdf/$1');
+// ---------- Akhir jadwal pertandingan publik ----------
+
 // ---------- Pendaftaran (Tahap 4) ----------
 // Wizard pendaftaran dan titik akhir JSON-nya (rencana Tahap 4, "Rute dan
 // pengendali"). Pengendali publik, bukan pengaturan admin yang namanya sama.
@@ -183,6 +189,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('hasil/babak/(:num)/hapus', 'HasilController::hapusBabak/$1');
     // ---------- Akhir hasil lomba (F8-04) ----------
 
+    // ---------- Jadwal pertandingan (F9-07) ----------
+    // Tanggal, jam mulai, dan lokasi semua babak; juga dari halaman babak.
+    $routes->get('jadwal-pertandingan', 'JadwalPertandinganController::index');
+    $routes->post('jadwal-pertandingan', 'JadwalPertandinganController::simpan');
+    $routes->get('jadwal-pertandingan/(\d{4}-\d{2}-\d{2})/pdf', 'JadwalPertandinganController::pdf/$1');
+    $routes->post('hasil/babak/(:num)/jadwal', 'JadwalPertandinganController::simpanBabak/$1');
+    // ---------- Akhir jadwal pertandingan ----------
+
     // Klasemen sekolah per jenjang, semua nomor termasuk yang belum terbit (F8-05).
     $routes->get('klasemen', 'KlasemenController::index');
     $routes->get('klasemen/(pdf|excel)', 'KlasemenController::unduh/$1');
@@ -244,6 +258,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         // ---------- Sakelar halaman Peserta publik (F9-12) ----------
         $routes->post('halaman-depan/peserta', 'HalamanPesertaController::simpan');
         // ---------- Akhir sakelar halaman Peserta ----------
+
+        // ---------- Sakelar halaman Jadwal pertandingan (F9-07) ----------
+        $routes->post('halaman-depan/jadwal', 'HalamanJadwalController::simpan');
+        // ---------- Akhir sakelar halaman Jadwal pertandingan ----------
 
         // ---------- Tabel skor multi-lomba (F9-10) ----------
         // Daftar tabel, pasang tabel bawaan, tambah/hapus tabel; baris per komponen dan kategori.
