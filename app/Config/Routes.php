@@ -145,6 +145,11 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     // Cetak nomor atlet (BIB) massal: `?ku=<id kelompok umur>` atau `?ku=semua`.
     $routes->get('nomor-atlet/cetak', 'CetakBibController::index');
     $routes->get('nomor-atlet/cetak/pdf', 'CetakBibController::pdf');
+    // Tampilan BIB (latar, kepala, warna), gambar contoh, unduhan per sekolah dan ZIP semua (K137).
+    $routes->post('nomor-atlet/cetak/tampilan', 'CetakBibController::simpanTampilan');
+    $routes->get('nomor-atlet/cetak/contoh', 'CetakBibController::contoh');
+    $routes->get('nomor-atlet/cetak/sekolah/(:segment)/(pdf|zip)', 'CetakBibController::sekolah/$1/$2');
+    $routes->get('nomor-atlet/cetak/zip', 'CetakBibController::zip');
     // Daftar peserta per nomor lomba (PDF, Excel), juga semua nomor satu kelompok umur.
     $routes->get('daftar-peserta', 'DaftarPesertaController::index');
     $routes->get('daftar-peserta/(:num)/(pdf|excel)', 'DaftarPesertaController::unduh/$1/$2');

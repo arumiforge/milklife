@@ -4,24 +4,41 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Libraries\HariLomba\CetakBib;
+use App\Libraries\HariLomba\GambarBib;
+use App\Libraries\HariLomba\PdfHariLomba;
+use App\Libraries\HariLomba\TampilanBib;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
+use RuntimeException;
 
 /**
- * Cetak nomor atlet (BIB) massal (F8-03): `admin/nomor-atlet/cetak`.
+ * Cetak nomor atlet (BIB) massal (F8-03, K137): `admin/nomor-atlet/cetak`.
  *
- * - `index`: pilih kelompok umur atau semua, dengan banyak atlet ber-BIB.
+ * - `index`: tampilan BIB (latar, kepala, warna tulisan) dengan contoh gambar,
+ *   unduhan per kelompok umur (PDF), per sekolah (PDF atau ZIP gambar), dan
+ *   ZIP semua sekolah.
  * - `pdf`: `?ku=<id kelompok umur>` atau `?ku=semua`; dua BIB per A4.
+ * - `simpanTampilan`: unggah atau hapus latar, kepala, dan warna tulisan.
+ * - `contoh`: gambar JPG contoh dengan tampilan yang berlaku.
+ * - `sekolah`: `<kunci sekolah>/pdf` atau `/zip` (gambar JPG per atlet dan PDF).
+ * - `zip`: semua sekolah, satu folder per sekolah.
  */
 class CetakBibController extends BaseController
 {
+    private const ALAMAT = 'admin/nomor-atlet/cetak';
+
     public function index(): string
     {
-        $kelompok = (new CetakBib())->kelompokUmur();
+        $bib      = new CetakBib();
+        $kelompok = $bib->kelompokUmur();
 
         return view('admin/hari_lomba/bib', [
             'kelompokUmur' => $kelompok,
             'jumlahSemua'  => array_sum(array_column($kelompok, 'atlet')),
+            'sekolah'      => $bib->sekolah(),
+            'tampilan'     => TampilanBib::dariPengaturan(),
+            'kepalaDipilih' => (bool) setting('Bib.tampilkan_kepala'),
+            'warnaDipilih' => (string) setting('Bib.warna_teks'),
         ]);
     }
 
@@ -38,10 +55,92 @@ class CetakBibController extends BaseController
         // Ratusan halaman bisa butuh waktu lebih lama dari batas bawaan.
         @set_time_limit(300);
 
+        return $this->unduhPdf($bib->pdf($id), $bib->namaBerkas($id));
+    }
+
+    public function simpanTampilan(): ResponseInterface
+    {
+        try {
+            TampilanBib::simpan(
+                $this->request->getFile('latar'),
+                $this->request->getPost('hapus_latar') === '1',
+                $this->request->getPost('tampilkan_kepala') === '1',
+                (string) $this->request->getPost('warna_teks'),
+            );
+        } catch (RuntimeException $e) {
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', $e->getMessage());
+        }
+
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Tampilan BIB tersimpan. Periksa gambar contoh sebelum mencetak.');
+    }
+
+    public function contoh(): ResponseInterface
+    {
+        $atlet = (new CetakBib())->atlet(null)[0] ?? ['nomor_dada' => '1001', 'nama' => 'Nama Atlet Contoh', 'sekolah' => 'SD Contoh Karesidenan Pati', 'kelompok_umur' => 'KU 10'];
+        $jpg   = (new GambarBib(TampilanBib::dariPengaturan(), PdfHariLomba::namaAcara(), PdfHariLomba::seriTahun(), PdfHariLomba::logoPng()))->jpg($atlet, 80);
+
+        return $this->response
+            ->setContentType('image/jpeg')
+            ->setHeader('Cache-Control', 'no-store')
+            ->setBody($jpg);
+    }
+
+    public function sekolah(string $kunci, string $jenis): ResponseInterface
+    {
+        $bib     = new CetakBib();
+        $sekolah = array_values(array_filter($bib->sekolah(), static fn (array $s): bool => $s['kunci'] === $kunci))[0] ?? null;
+
+        if ($sekolah === null) {
+            throw PageNotFoundException::forPageNotFound('Sekolah tidak ditemukan atau belum punya atlet dengan nomor atlet (BIB).');
+        }
+
+        @set_time_limit(300);
+
+        if ($jenis === 'pdf') {
+            return $this->unduhPdf($bib->pdfSekolah($kunci), CetakBib::namaBerkasSekolah($sekolah['nama'], 'pdf'));
+        }
+
+        return $this->unduhZip($bib, $kunci, CetakBib::namaBerkasSekolah($sekolah['nama'], 'zip'));
+    }
+
+    public function zip(): ResponseInterface
+    {
+        // Ribuan gambar bisa butuh beberapa menit.
+        @set_time_limit(0);
+
+        return $this->unduhZip(new CetakBib(), null, CetakBib::namaBerkasSemua());
+    }
+
+    private function unduhPdf(string $isi, string $namaBerkas): ResponseInterface
+    {
         return $this->response
             ->setContentType('application/pdf')
-            ->setHeader('Content-Disposition', 'attachment; filename="' . $bib->namaBerkas($id) . '"')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $namaBerkas . '"')
             ->setHeader('Cache-Control', 'no-store')
-            ->setBody($bib->pdf($id));
+            ->setBody($isi);
+    }
+
+    /**
+     * ZIP ditulis ke berkas sementara lalu dikirim dari disk, tanpa dimuat utuh
+     * ke memori; berkas sementara dihapus unduhan berikutnya setelah satu jam.
+     */
+    private function unduhZip(CetakBib $bib, ?string $kunci, string $namaBerkas): ResponseInterface
+    {
+        $sementara = null;
+
+        try {
+            $sementara = CetakBib::jalurSementara();
+            $bib->zip($sementara, $kunci);
+        } catch (RuntimeException $e) {
+            if ($sementara !== null) {
+                @unlink($sementara);
+            }
+
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', $e->getMessage());
+        }
+
+        return $this->response->download($sementara, null)
+            ->setFileName($namaBerkas)
+            ->setContentType('application/zip', '');
     }
 }
