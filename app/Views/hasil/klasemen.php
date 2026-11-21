@@ -6,7 +6,9 @@
  *
  * @var CodeIgniter\View\View               $this
  * @var string                              $namaAcara
- * @var array<string, array<string, mixed>> $klasemen `Klasemen::hitung()`
+ * @var array<string, array<string, mixed>> $klasemen   `HasilLomba::klasemen(true)`
+ * @var string                              $metode     `Klasemen::MEDALI` atau `Klasemen::POIN` (Pengaturan > Hasil, F9-11)
+ * @var string                              $keterangan `Klasemen::keterangan()`
  */
 $aksi = komponen('tombol', ['label' => 'Hasil per nomor', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']);
 
@@ -23,7 +25,7 @@ if ($klasemen !== []) {
 <?= view('tata_letak/_judul_halaman_tw', [
     'judul' => 'Klasemen Sekolah',
     'ikon'  => 'award',
-    'teks'  => 'Juara umum per jenjang ditentukan jumlah juara I terbanyak, lalu juara II, lalu juara III. Dihitung dari nomor yang hasilnya sudah diterbitkan panitia.',
+    'teks'  => 'Klasemen per jenjang sekolah. ' . $keterangan . ' Dihitung dari nomor yang hasilnya sudah diterbitkan panitia.',
     'aksi'  => $aksi,
 ], ['saveData' => false]) ?>
 
@@ -39,6 +41,6 @@ if ($klasemen !== []) {
         </div>
     <?php endif ?>
 
-    <?= view('hasil/_klasemen_tw', ['klasemen' => $klasemen], ['saveData' => false]) ?>
+    <?= view('hasil/_klasemen_tw', ['klasemen' => $klasemen, 'metode' => $metode], ['saveData' => false]) ?>
 </div>
 <?= $this->endSection() ?>
