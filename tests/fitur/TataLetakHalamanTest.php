@@ -67,7 +67,7 @@ final class TataLetakHalamanTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//main//h1')->length, 'Halaman depan punya tepat satu h1.');
         $hasil->assertSee('Pendaftaran sedang disiapkan.');
         $hasil->assertSee('Seri 2 – 2026');
-        $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath->query('//*[@data-pembuka-waktu]')->item(0)));
+        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath->query('//*[@data-pembuka-waktu]')->item(0)));
         $this->assertSame(1, $xpath->query('//main/section[@id="pembuka"]')->length);
     }
 

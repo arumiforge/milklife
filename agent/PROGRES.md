@@ -8,15 +8,15 @@ Diperbarui: 22 November 2026
 
 | Tugas | Status |
 |---|---|
-| [F10-01 Data dan pengaturan bawaan](tugas/F10-01-data-pengaturan-bawaan.md) | rencana |
-| [F10-02 Peta lokasi](tugas/F10-02-peta-lokasi.md) | rencana |
-| [F10-03 Tata letak panel admin](tugas/F10-03-tata-letak-admin.md) | rencana |
-| [F10-04 Tabel berpaginasi dan dasbor](tugas/F10-04-tabel-paginasi-dasbor.md) | rencana |
-| [F10-05 Fondasi gaya editorial](tugas/F10-05-fondasi-gaya-editorial.md) | rencana |
-| [F10-06 Hero editorial dan slideshow](tugas/F10-06-hero-editorial-slideshow.md) | rencana |
-| [F10-07 Navigasi publik](tugas/F10-07-navigasi-publik.md) | rencana |
+| [F10-01 Data dan pengaturan bawaan](tugas/F10-01-data-pengaturan-bawaan.md) | menunggu tinjauan (#174) |
+| [F10-02 Peta lokasi](tugas/F10-02-peta-lokasi.md) | selesai (#173) |
+| [F10-03 Tata letak panel admin](tugas/F10-03-tata-letak-admin.md) | dikerjakan |
+| [F10-04 Tabel berpaginasi dan dasbor](tugas/F10-04-tabel-paginasi-dasbor.md) | selesai (#175) |
+| [F10-05 Fondasi gaya editorial](tugas/F10-05-fondasi-gaya-editorial.md) | selesai (#172) |
+| [F10-06 Hero editorial dan slideshow](tugas/F10-06-hero-editorial-slideshow.md) | selesai (#176) |
+| [F10-07 Navigasi publik](tugas/F10-07-navigasi-publik.md) | menunggu tinjauan (#177) |
 | [F10-08 Kepadatan panel admin](tugas/F10-08-kepadatan-admin.md) | rencana |
-| [F10-09 Halaman publik dan unduhan](tugas/F10-09-halaman-publik-unduhan.md) | rencana |
+| [F10-09 Halaman publik dan unduhan](tugas/F10-09-halaman-publik-unduhan.md) | dikerjakan |
 | [F10-10 Pemasangan art G10](tugas/F10-10-pemasangan-art-g10.md) | rencana |
 | [F10-11 Penutupan Tahap 10](tugas/F10-11-penutupan-tahap-10.md) | rencana |
 

@@ -5,6 +5,7 @@ namespace App\Controllers\Admin\Pengaturan;
 use App\Controllers\BaseController;
 use App\Libraries\CarouselHalamanDepan;
 use App\Libraries\Unggahan;
+use App\Libraries\VarianFoto;
 use CodeIgniter\HTTP\RedirectResponse;
 use RuntimeException;
 
@@ -14,7 +15,7 @@ use RuntimeException;
  *
  * - `POST admin/pengaturan/halaman-depan/carousel`: tambah foto (`foto`, `keterangan`);
  * - `POST …/carousel/<urutan>/naik|turun`: pindah satu tempat;
- * - `POST …/carousel/<urutan>/hapus`: hapus foto beserta berkasnya.
+ * - `POST …/carousel/<urutan>/hapus`: hapus foto beserta berkasnya dan salinan kecilnya (`VarianFoto`).
  *
  * `<urutan>` mulai dari 1. Isian `berkas` wajib sama dengan foto di urutan
  * itu, supaya tindakan dari halaman yang sudah lama dibuka tidak mengenai
@@ -96,6 +97,7 @@ class CarouselController extends BaseController
         $jalur = $daftar[$indeks]['berkas'];
         array_splice($daftar, $indeks, 1);
         CarouselHalamanDepan::simpan($daftar);
+        VarianFoto::hapus($jalur);
         (new Unggahan())->hapus($jalur);
 
         return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Foto dihapus dari carousel halaman depan.');
