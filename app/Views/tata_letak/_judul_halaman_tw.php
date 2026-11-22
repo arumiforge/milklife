@@ -23,8 +23,8 @@
 $ilustrasi = empty($gambar) ? '' : gambar_opsional($gambar, ['class' => 'h-36 w-auto lg:h-44']);
 ?>
 <div class="latar-merek border-b border-gray-200/70">
-    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12<?= $ilustrasi === '' ? '' : ' md:flex md:items-center md:gap-8' ?>">
-        <?php if ($ilustrasi !== '') : ?><div class="min-w-0 md:flex-1"><?php endif ?>
+    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12<?= $ilustrasi === '' ? '' : ' md:flex md:items-center md:gap-8' ?><?= $ilustrasi === '' && ! empty($inggris) ? ' text-center' : '' ?>">
+        <?php if ($ilustrasi !== '') : ?><div class="min-w-0 md:flex-1<?= empty($inggris) ? '' : ' text-center' ?>"><?php endif ?>
         <?php if (! empty($kembali)) : ?>
             <a href="<?= esc($kembali, 'attr') ?>" class="mb-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primary-700 hover:underline" data-tautan-kembali><?= ikon('arrow-left', 'size-4') ?><?= esc($labelKembali ?? 'Kembali') ?></a>
         <?php endif ?>
@@ -33,7 +33,7 @@ $ilustrasi = empty($gambar) ? '' : gambar_opsional($gambar, ['class' => 'h-36 w-
             <p class="mt-3 max-w-3xl text-lg text-gray-600"><?= esc($teks) ?></p>
         <?php endif ?>
         <?php if (! empty($aksi)) : ?>
-            <div class="mt-5 flex flex-wrap gap-2"><?= $aksi ?></div>
+            <div class="mt-5 flex flex-wrap gap-2<?= empty($inggris) ? '' : ' justify-center' ?>"><?= $aksi ?></div>
         <?php endif ?>
         <?php if ($ilustrasi !== '') : ?>
             </div>

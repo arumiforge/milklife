@@ -364,7 +364,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
             iterator_to_array($xpath->query('//main/section')),
         );
 
-        // Bagian kontak selalu tampil karena tombol "Bagikan ke WA" selalu ada (F3-03);
+        // Bagian kontak selalu tampil karena tombol "Bagikan lewat WA" selalu ada (F3-03);
         // Lokasi tampil dengan peta bawaan dari `Config\HalamanDepan` (F10-02).
         $this->assertSame(['pembuka', 'lokasi', 'kontak'], $bagian);
         $this->assertSame('judul-acara', $xpath->query('//section[@id="pembuka"]')->item(0)?->getAttribute('aria-labelledby'));

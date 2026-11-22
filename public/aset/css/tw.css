@@ -5715,6 +5715,15 @@
     color: var(--color-primary-900);
     text-wrap: balance;
   }
+  [data-judul-inggris], [data-judul-inggris] + .judul-keterangan, [data-judul-inggris] + .judul-keterangan + p {
+    text-align: center;
+  }
+  [data-judul-inggris] + .judul-keterangan.flex, [data-judul-inggris] + .judul-keterangan + p.flex {
+    justify-content: center;
+  }
+  [data-judul-inggris] + .judul-keterangan + p {
+    margin-inline: auto;
+  }
   .pratinjau-bingkai {
     display: block;
     width: 100%;

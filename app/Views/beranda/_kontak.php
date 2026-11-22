@@ -3,7 +3,7 @@
  * Bagian kontak halaman depan (`#kontak`): narahubung, media sosial, tombol
  * tanya admin dan bagikan lewat WA.
  *
- * Bagian ini selalu tampil karena tombol "Bagikan ke WA" selalu ada;
+ * Bagian ini selalu tampil karena tombol "Bagikan lewat WA" selalu ada;
  * daftar narahubung, media sosial, dan tombol tanya admin hanya tampil bila
  * isinya ada. Semua tautan keluar dibuka di tab baru. Teks admin di-escape.
  *
@@ -102,7 +102,7 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                     </a>
                 <?php endif ?>
                 <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 text-base font-bold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($waBagikan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-bagikan>
-                    <?= ikon('share-2') ?> Bagikan ke WA<?= $tabBaru ?>
+                    <?= ikon('share-2') ?> Bagikan lewat WA<?= $tabBaru ?>
                 </a>
             </div>
         </div>

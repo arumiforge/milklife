@@ -156,7 +156,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
         $tautan = $xpath->query('//section[@id="kontak"]//a');
         $this->assertSame(1, $tautan->length);
-        $this->assertSame('Bagikan ke WA (di tab baru)', $this->teksSimpul($tautan->item(0)));
+        $this->assertSame('Bagikan lewat WA (di tab baru)', $this->teksSimpul($tautan->item(0)));
         $this->assertSame('https://wa.me/?text=' . rawurlencode("Lomba Lari Karangan\n" . site_url('/') . "\n#MilkLifeAthleticsChallengeSeri2"), $tautan->item(0)->getAttribute('href'));
         $this->assertTabBaru($tautan->item(0));
     }
@@ -297,7 +297,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
         $this->assertSame('', $isi('beranda/_jadwal', ['jadwal' => []]));
         $this->assertSame('', $isi('beranda/_unduhan', ['unduhan' => []]));
-        $this->assertStringContainsString('Bagikan ke WA', $isi('beranda/_kontak', ['narahubung' => [], 'mediaSosial' => [], 'waTanya' => null, 'waBagikan' => 'https://wa.me/?text=a']));
+        $this->assertStringContainsString('Bagikan lewat WA', $isi('beranda/_kontak', ['narahubung' => [], 'mediaSosial' => [], 'waTanya' => null, 'waBagikan' => 'https://wa.me/?text=a']));
     }
 
     // ---------- Bantuan ----------
