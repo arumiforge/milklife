@@ -91,7 +91,7 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
                 </p>
             <?php endif ?>
             <div class="mt-4">
-                <?= komponen('tombol', ['label' => 'Buka Pengecekan', 'href' => site_url('admin/pengecekan'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'clipboard-list']) ?>
+                <?= komponen('tombol', ['label' => 'Buka pengecekan', 'href' => site_url('admin/pengecekan'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'clipboard-list']) ?>
             </div>
         </div>
         <?php if ($sapaan !== '') : ?>

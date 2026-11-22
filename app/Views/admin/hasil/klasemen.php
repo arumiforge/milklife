@@ -41,7 +41,7 @@ $metodePoin = $metode === Klasemen::POIN;
     <?php if ($belumTerbit > 0) : ?>
         <div id="belum-terbit">
             <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => $belumTerbit . ' nomor yang juaranya ikut dihitung di sini belum diterbitkan. Karena itu, klasemen publik masih berbeda. '
-                . '<a href="' . site_url('admin/hasil') . '" class="font-semibold underline">Buka Hasil lomba</a> untuk menerbitkannya.']) ?>
+                . '<a href="' . site_url('admin/hasil') . '" class="font-semibold underline">Buka hasil lomba</a> untuk menerbitkannya.']) ?>
         </div>
     <?php endif ?>
 

@@ -69,7 +69,7 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
     <?php endif ?>
 
     <?php if ($peserta === []) : ?>
-        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Atur pesertanya di halaman hasil babak atau di Seri dan lintasan.', 'aksi' => komponen('tombol', ['label' => 'Buka Seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'ikon' => 'list-ordered'])]) ?>
+        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Atur pesertanya di halaman hasil babak atau di Seri dan lintasan.', 'aksi' => komponen('tombol', ['label' => 'Buka seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'ikon' => 'list-ordered'])]) ?>
     <?php else : ?>
         <h3 class="text-base font-bold tracking-wide text-oranye-700 uppercase"><?= esc($namaSeri($seri)) ?></h3>
         <ol class="space-y-3" aria-label="Peserta <?= esc($namaSeri($seri), 'attr') ?>">
