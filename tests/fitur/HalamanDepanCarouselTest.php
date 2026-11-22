@@ -169,6 +169,34 @@ final class HalamanDepanCarouselTest extends UjiBasisData
         $this->assertNull(VarianFoto::srcset('unggahan/halaman-depan/' . str_repeat('e', 32) . '.webp'), 'Foto yang tidak ada tanpa srcset.');
     }
 
+    // ---------- Logo kepala kecil (F10-07) ----------
+
+    /**
+     * Logo persegi unggahan yang besar diganti salinan 160 piksel di kepala
+     * tata letak publik, dan salinannya ikut terhapus bersama logonya.
+     */
+    public function testLogoKepalaMemakaiSalinanKecil(): void
+    {
+        $logo = $this->simpanFotoUji(600, 600);
+        setting('HalamanDepan.logo_persegi', $logo);
+
+        $src    = $this->xpathDari($this->get('unduhan'))->query('//a[@data-merek]/img')->item(0)?->getAttribute('src');
+        $varian = VarianFoto::jalurRelatif($logo, 160);
+        $this->assertSame(base_url($varian), $src);
+        $ukuran = getimagesize($this->jalurUnggahan($varian));
+        $this->assertNotFalse($ukuran);
+        $this->assertSame([160, 160], [$ukuran[0], $ukuran[1]]);
+
+        // Logo yang sudah kecil dipakai apa adanya.
+        $this->assertNull(VarianFoto::kecil($this->simpanFotoUji(100, 100), 160));
+
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT, ['hapus_logo_persegi' => '1']), self::ALAMAT);
+        $this->assertFileDoesNotExist($this->jalurUnggahan($varian));
+        $this->assertFileDoesNotExist($this->jalurUnggahan($logo));
+    }
+
+    // ---------- Akhir logo kepala kecil ----------
+
     public function testSatuFotoTampilDiamDanFotoHilangDisembunyikan(): void
     {
         $ada = $this->simpanFotoUji();

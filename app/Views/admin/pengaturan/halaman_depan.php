@@ -9,6 +9,7 @@
  * @var list<string>                                                               $gambarPerluDipilihLagi
  * @var bool                                                                       $tampilkanBiaya sakelar `HalamanDepan.tampilkan_biaya`
  * @var bool                                                                       $hasilDiAtas sakelar `HalamanDepan.hasil_di_atas` (K143)
+ * @var array<string, bool>                                                        $bilahAtas butir bilah menu atas yang dicentang (F10-07)
  * @var list<array{berkas: string, keterangan: string, ada: bool}>                  $carousel foto carousel pembuka berurutan (F9-03)
  */
 
@@ -180,6 +181,28 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
                 </p>
             </div>
         </section>
+
+        <?php // ---------- Bilah menu atas (F10-07, K154) ---------- ?>
+        <section class="<?= $kartu ?>" aria-labelledby="judul-bilah-atas" data-pengaturan-bilah-atas>
+            <h2 id="judul-bilah-atas" class="text-lg font-bold text-gray-900">Bilah menu atas</h2>
+            <p class="mb-4 mt-1 text-sm text-gray-600">
+                Tautan kecil di atas menu utama pada layar komputer, juga di menu samping ponsel.
+                Ikon media sosial ditambahkan otomatis dari Pengaturan &gt; Kontak.
+            </p>
+            <fieldset>
+                <legend class="sr-only">Butir bilah menu atas</legend>
+                <div class="grid gap-1 sm:grid-cols-2">
+                    <?php foreach (\App\Libraries\MenuPublik::BILAH_ATAS as $kunciBilah => $labelBilah) : ?>
+                        <label for="bilah_atas_<?= $kunciBilah ?>" class="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-gray-900">
+                            <input type="checkbox" id="bilah_atas_<?= $kunciBilah ?>" name="bilah_atas_<?= $kunciBilah ?>" value="1"
+                                class="size-5 shrink-0 rounded border-gray-300 text-primary-700 focus:ring-4 focus:ring-primary-300"<?= ($bilahAtas[$kunciBilah] ?? true) ? ' checked' : '' ?>>
+                            <?= esc($labelBilah) ?>
+                        </label>
+                    <?php endforeach ?>
+                </div>
+            </fieldset>
+        </section>
+        <?php // ---------- Akhir bilah menu atas ---------- ?>
 
         <div class="flex flex-wrap gap-2">
             <?= komponen('tombol', ['label' => 'Simpan isi halaman depan', 'tipe' => 'submit', 'ikon' => 'check']) ?>

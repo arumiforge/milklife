@@ -4,9 +4,11 @@ namespace App\Controllers\Admin\Pengaturan;
 
 use App\Controllers\BaseController;
 use App\Libraries\CarouselHalamanDepan;
+use App\Libraries\MenuPublik;
 use App\Libraries\NomorWa;
 use App\Libraries\PetaLokasi;
 use App\Libraries\Unggahan;
+use App\Libraries\VarianFoto;
 use CodeIgniter\HTTP\ResponseInterface;
 use RuntimeException;
 
@@ -17,7 +19,8 @@ use RuntimeException;
  * admin, pesan tanya admin, pesan bagikan (kunci `HalamanDepan.*` di
  * rencana Tahap 2), dan sakelar tampil-tidaknya biaya di bagian lomba
  * (`HalamanDepan.tampilkan_biaya`), serta alamat embed dan tautan peta lokasi
- * (`HalamanDepan.peta_embed`, `HalamanDepan.peta_tautan`, F10-02). Tampilan halaman depan publik yang memakai isi ini
+ * (`HalamanDepan.peta_embed`, `HalamanDepan.peta_tautan`, F10-02), serta butir
+ * bilah menu atas publik (`HalamanDepan.bilah_atas_<kunci>`, F10-07). Tampilan halaman depan publik yang memakai isi ini
  * dikerjakan di Tahap 3.
  *
  * - Semua isian boleh kosong; yang diisi harus benar.
@@ -86,7 +89,14 @@ class HalamanDepanController extends BaseController
         $isian['peta_embed']     = (string) setting('HalamanDepan.peta_embed');
         $isian['peta_tautan']    = (string) setting('HalamanDepan.peta_tautan');
 
-        return $this->tampilkan($isian, [], [], (bool) setting('HalamanDepan.tampilkan_biaya'), (bool) setting('HalamanDepan.hasil_di_atas'));
+        // Bilah menu atas (F10-07): nilai yang belum pernah disimpan berarti menyala.
+        $bilahAtas = [];
+        foreach (array_keys(MenuPublik::BILAH_ATAS) as $kunci) {
+            $nilai             = setting('HalamanDepan.bilah_atas_' . $kunci);
+            $bilahAtas[$kunci] = $nilai === null || (bool) $nilai;
+        }
+
+        return $this->tampilkan($isian, [], [], (bool) setting('HalamanDepan.tampilkan_biaya'), (bool) setting('HalamanDepan.hasil_di_atas'), $bilahAtas);
     }
 
     public function simpan(): ResponseInterface|string
@@ -105,6 +115,10 @@ class HalamanDepanController extends BaseController
         // Kotak centang: tidak terkirim sama sekali bila tidak dicentang.
         $tampilkanBiaya = $this->request->getPost('tampilkan_biaya') === '1';
         $hasilDiAtas    = $this->request->getPost('hasil_di_atas') === '1';
+        $bilahAtas      = [];
+        foreach (array_keys(MenuPublik::BILAH_ATAS) as $kunci) {
+            $bilahAtas[$kunci] = $this->request->getPost('bilah_atas_' . $kunci) === '1';
+        }
 
         $sebutan = [
             'judul'         => 'Judul',
@@ -163,7 +177,7 @@ class HalamanDepanController extends BaseController
         }
 
         if ($galat !== []) {
-            return $this->tampilkan($isian, $galat, $dipilihSah, $tampilkanBiaya, $hasilDiAtas);
+            return $this->tampilkan($isian, $galat, $dipilihSah, $tampilkanBiaya, $hasilDiAtas, $bilahAtas);
         }
 
         // Simpan semua gambar baru dulu. Bila satu gagal, yang sudah tersimpan
@@ -178,7 +192,7 @@ class HalamanDepanController extends BaseController
                     $unggahan->hapus($jalur);
                 }
 
-                return $this->tampilkan($isian, [$kunci => self::GAMBAR[$kunci]['label'] . ': ' . $e->getMessage()], [], $tampilkanBiaya, $hasilDiAtas);
+                return $this->tampilkan($isian, [$kunci => self::GAMBAR[$kunci]['label'] . ': ' . $e->getMessage()], [], $tampilkanBiaya, $hasilDiAtas, $bilahAtas);
             }
         }
 
@@ -192,6 +206,10 @@ class HalamanDepanController extends BaseController
         setting('HalamanDepan.peta_embed', $isian['peta_embed']);
         setting('HalamanDepan.peta_tautan', $isian['peta_tautan']);
 
+        foreach ($bilahAtas as $kunci => $nyala) {
+            setting('HalamanDepan.bilah_atas_' . $kunci, $nyala);
+        }
+
         // Berkas lama dibuang setelah yang baru tersimpan. Gambar baru
         // mengalahkan centang "Hapus gambar" pada kotak yang sama.
         foreach (array_keys(self::GAMBAR) as $kunci) {
@@ -199,9 +217,11 @@ class HalamanDepanController extends BaseController
 
             if (isset($jalurBaru[$kunci])) {
                 setting('HalamanDepan.' . $kunci, $jalurBaru[$kunci]);
+                VarianFoto::hapus($lama);
                 $unggahan->hapus($lama);
             } elseif ($this->request->getPost('hapus_' . $kunci) === '1' && $lama !== '') {
                 setting('HalamanDepan.' . $kunci, '');
+                VarianFoto::hapus($lama);
                 $unggahan->hapus($lama);
             }
         }
@@ -223,8 +243,9 @@ class HalamanDepanController extends BaseController
      * @param list<string>          $gambarPerluDipilihLagi label gambar sah yang belum tersimpan karena isian lain salah
      * @param bool                  $tampilkanBiaya         keadaan sakelar biaya di bagian lomba
      * @param bool                  $hasilDiAtas            keadaan sakelar hasil di atas (hari lomba, K143)
+     * @param array<string, bool>   $bilahAtas              butir bilah menu atas yang dicentang (F10-07)
      */
-    private function tampilkan(array $isian, array $galat = [], array $gambarPerluDipilihLagi = [], bool $tampilkanBiaya = true, bool $hasilDiAtas = false): string
+    private function tampilkan(array $isian, array $galat = [], array $gambarPerluDipilihLagi = [], bool $tampilkanBiaya = true, bool $hasilDiAtas = false, array $bilahAtas = []): string
     {
         $unggahan = new Unggahan();
         $gambar   = [];
@@ -248,6 +269,7 @@ class HalamanDepanController extends BaseController
             'gambarPerluDipilihLagi' => $gambarPerluDipilihLagi,
             'tampilkanBiaya'         => $tampilkanBiaya,
             'hasilDiAtas'            => $hasilDiAtas,
+            'bilahAtas'              => $bilahAtas,
         ]);
     }
 }

@@ -12,12 +12,12 @@ Pengunjung menemukan semua halaman dengan mudah di desktop dan ponsel (permintaa
 
 ## Hasil
 
-- [ ] Bilah submenu atas (layar `lg` ke atas, latar biru tua, teks kecil) dengan bawaan K154: Unduhan, Galeri (bila sakelar menyala), Bantuan, Tanya Panitia (WA), dan ikon media sosial dari Pengaturan > Kontak
-- [ ] Menu utama: Beranda, Jadwal, Hasil, Peserta (yang sakelarnya mati tidak tampil), tombol Cek Pendaftaran dan Daftar
-- [ ] Pengaturan > Halaman Depan: centang butir bilah atas (pengaturan baru, bawaan semua menyala); media sosial otomatis
-- [ ] Laci kiri ponsel (Flowbite drawer) menggantikan menu turun: menu utama, butir bilah atas, media sosial; tutup dengan tombol, Esc, atau ketuk latar; fokus terkunci; ikon polos
-- [ ] Menu bawah publik di bawah `lg` (K154): Beranda, Jadwal, Hasil, Daftar (setelah tutup: Cek), Menu; butir yang halamannya mati diganti Bantuan; tidak tampil di wizard dan videotron; konten diberi ruang bawah supaya tidak tertutup
-- [ ] Butir aktif jelas; target sentuh ≥ 48 px
+- [x] Bilah submenu atas (layar `lg` ke atas, latar biru tua, teks kecil) dengan bawaan K154: Unduhan, Galeri (bila sakelar menyala), Bantuan, Tanya Panitia (WA), dan ikon media sosial dari Pengaturan > Kontak
+- [x] Menu utama: Beranda, Jadwal, Hasil, Peserta (yang sakelarnya mati tidak tampil), tombol Cek Pendaftaran dan Daftar
+- [x] Pengaturan > Halaman Depan: centang butir bilah atas (pengaturan baru, bawaan semua menyala); media sosial otomatis
+- [x] Laci kiri ponsel (Flowbite drawer) menggantikan menu turun: menu utama, butir bilah atas, media sosial; tutup dengan tombol, Esc, atau ketuk latar; fokus terkunci; ikon polos
+- [x] Menu bawah publik di bawah `lg` (K154): Beranda, Jadwal, Hasil, Daftar (setelah tutup: Cek), Menu; butir yang halamannya mati diganti Bantuan; tidak tampil di wizard dan videotron; konten diberi ruang bawah supaya tidak tertutup
+- [x] Butir aktif jelas; target sentuh ≥ 48 px
 
 ## Berkas dan uji
 
