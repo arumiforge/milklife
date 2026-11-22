@@ -8,22 +8,22 @@ Belum ada tahap berjalan. Tahap 9 sudah ditutup (F9-18) dan diarsipkan.
 
 ### Gambar Codex Tahap 9
 
-Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung koordinator (K150). Kode pemasangan semua gambar sudah di `main` dan halaman aman tanpa berkasnya (K41), jadi status di bawah tidak menahan apa pun.
+Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau, digabung, dan dipasang sesi pemantau gambar (K150). Semua tugas G9 selesai 22 November 2026 dan halaman tetap aman tanpa berkasnya (K41). Pemasangan tambahan: uji tanpa gambar Codex (#164), medali dan piala juara umum (#166), hiasan beranda dan halaman masuk (#167), podium dan medali videotron (#168).
 
 | Tugas gambar | Status |
 |---|---|
 | [G9-01 Latar BIB](../desain/tugas/G9-01-latar-bib.md) | selesai (#142) |
-| [G9-02 Ilustrasi halaman depan](../desain/tugas/G9-02-ilustrasi-halaman-depan.md) | menunggu Codex, kode pemasangan siap |
-| [G9-03 Panduan pendaftaran](../desain/tugas/G9-03-panduan-pendaftaran.md) | menunggu Codex, kode pemasangan siap |
-| [G9-04 Keadaan kosong dan galat](../desain/tugas/G9-04-keadaan-kosong-galat.md) | menunggu Codex, kode pemasangan siap |
-| [G9-05 Ilustrasi nomor lomba](../desain/tugas/G9-05-ikon-nomor-lomba.md) | menunggu Codex, kode pemasangan siap |
-| [G9-06 Videotron dan podium](../desain/tugas/G9-06-videotron-podium.md) | menunggu Codex, kode pemasangan siap |
-| [G9-07 Kategori Bantuan](../desain/tugas/G9-07-bantuan-kategori.md) | menunggu Codex, kode pemasangan siap |
-| [G9-08 Panel admin](../desain/tugas/G9-08-panel-admin.md) | menunggu Codex, kode pemasangan siap |
-| [G9-09 Pita judul halaman publik](../desain/tugas/G9-09-pita-judul.md) | menunggu Codex, kode pemasangan siap |
-| [G9-10 Gambar bagikan](../desain/tugas/G9-10-gambar-bagikan.md) | menunggu Codex, kode pemasangan siap |
+| [G9-02 Ilustrasi halaman depan](../desain/tugas/G9-02-ilustrasi-halaman-depan.md) | selesai (#153, dipasang #167) |
+| [G9-03 Panduan pendaftaran](../desain/tugas/G9-03-panduan-pendaftaran.md) | selesai (#154) |
+| [G9-04 Keadaan kosong dan galat](../desain/tugas/G9-04-keadaan-kosong-galat.md) | selesai (#155) |
+| [G9-05 Ilustrasi nomor lomba](../desain/tugas/G9-05-ikon-nomor-lomba.md) | selesai (#159) |
+| [G9-06 Videotron dan podium](../desain/tugas/G9-06-videotron-podium.md) | selesai (#162, dipasang #166 dan #168) |
+| [G9-07 Kategori Bantuan](../desain/tugas/G9-07-bantuan-kategori.md) | selesai (#156) |
+| [G9-08 Panel admin](../desain/tugas/G9-08-panel-admin.md) | selesai (#160) |
+| [G9-09 Pita judul halaman publik](../desain/tugas/G9-09-pita-judul.md) | selesai (#163) |
+| [G9-10 Gambar bagikan](../desain/tugas/G9-10-gambar-bagikan.md) | selesai (#161) |
 | [G9-11 Ikon aplikasi](../desain/tugas/G9-11-ikon-aplikasi.md) | diganti logo resmi pemilik (K152), #158 ditutup |
-| [G9-12 Pola dan hiasan latar](../desain/tugas/G9-12-pola-hiasan.md) | menunggu Codex, kode pemasangan siap |
+| [G9-12 Pola dan hiasan latar](../desain/tugas/G9-12-pola-hiasan.md) | selesai (#157, dipasang #167) |
 
 ## Berikutnya
 
