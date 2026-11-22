@@ -132,7 +132,7 @@
         kepingBiaya: 'nomor-beregu-chip chip-biaya inline-block whitespace-nowrap rounded-full bg-oranye-50 px-2 py-0.5 text-xs font-semibold leading-normal text-oranye-800',
         kotakInfo: 'mb-3 rounded-xl bg-primary-100 p-3 text-sm text-primary-900',
         kotakPeringatan: 'mb-3 rounded-xl border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-900',
-        kartu: 'kartu-isian mb-4 rounded-2xl border border-gray-200 border-t-4 border-t-oranye-500 bg-white p-4 shadow-lembut sm:p-7',
+        kartu: 'kartu-isian mb-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-7',
         redup: 'text-gray-500'
     };
 

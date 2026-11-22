@@ -26,8 +26,8 @@ final class KelasTampilan
 
     public const BANTU = 'mt-1.5 text-sm text-gray-500';
 
-    /** Kartu isian bergaris oranye (K77). */
-    public const KARTU = 'kartu-isian mb-4 rounded-2xl border border-gray-200 border-t-4 border-t-oranye-500 bg-white p-4 shadow-lembut sm:p-7';
+    /** Kartu isian berbingkai abu-abu, tanpa garis atas oranye (permintaan pemilik 22 November 2026). */
+    public const KARTU = 'kartu-isian mb-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-7';
 
     /** Ringkasan galat di atas langkah. */
     public const RINGKASAN = 'ringkasan-galat mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-900 [&_ul]:list-disc [&_ul]:ps-5';

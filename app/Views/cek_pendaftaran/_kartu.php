@@ -28,9 +28,9 @@ $ditolakSemua  = (bool) ($p['ditolak_semua'] ?? false);
 $jumlahDitolak = count($p['atlet_ditolak'] ?? []);
 $keadaan       = $lunas ? 'lunas' : ($ditolakSemua ? 'ditolak' : 'menunggu');
 $gayaKeadaan   = [
-    'lunas'    => ['border-t-green-600', 'bg-green-100 text-green-800', 'circle-check'],
-    'menunggu' => ['border-t-oranye-500', 'bg-yellow-100 text-yellow-900', 'hourglass'],
-    'ditolak'  => ['border-t-red-600', 'bg-red-100 text-red-800', 'circle-x'],
+    'lunas'    => ['border-t-4 border-t-green-600', 'bg-green-100 text-green-800', 'circle-check'],
+    'menunggu' => ['', 'bg-yellow-100 text-yellow-900', 'hourglass'],
+    'ditolak'  => ['border-t-4 border-t-red-600', 'bg-red-100 text-red-800', 'circle-x'],
 ][$keadaan];
 $jumlahBukti = (int) ($p['jumlah_bukti_bayar'] ?? 0);
 // Nomor dada tampil setelah Lunas (K88); sebelumnya tanda pisah.
@@ -43,7 +43,7 @@ $jumlah     = 'cek-jumlah rounded-full bg-primary-100 px-2 py-0.5 text-xs font-s
 $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 [&_th]:px-3 [&_th]:py-2.5';
 // ikon-sprite: circle-check hourglass circle-x
 ?>
-<article class="cek-kartu cek-kartu-<?= $keadaan ?> overflow-hidden rounded-2xl border border-gray-200 border-t-4 <?= $gayaKeadaan[0] ?> bg-white shadow-lembut" aria-labelledby="<?= $idJudul ?>" data-status-kartu="<?= $keadaan ?>">
+<article class="cek-kartu cek-kartu-<?= $keadaan ?> overflow-hidden rounded-2xl border border-gray-200 <?= $gayaKeadaan[0] ?> bg-white shadow-lembut" aria-labelledby="<?= $idJudul ?>" data-status-kartu="<?= $keadaan ?>">
     <div class="cek-kartu-kepala flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 bg-primary-50/60 p-4 sm:px-6">
         <div class="min-w-0">
             <?php if ($banyak) : ?><p class="cek-kartu-urutan text-xs font-semibold uppercase tracking-wide text-oranye-700">Pendaftaran <?= $urutan ?></p><?php endif ?>
