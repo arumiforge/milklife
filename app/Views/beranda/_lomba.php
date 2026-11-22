@@ -130,9 +130,9 @@ $kartuKu = gambar_opsional('beranda/kartu-ku.webp', ['class' => 'pointer-events-
         <p class="mt-3 max-w-3xl text-lg text-gray-600" data-lomba-pengantar>
             Kelompok umur ditentukan dari tahun lahir atlet.
             <?php if ($tampilkanBiaya) : ?>
-                Biaya individu dihitung per atlet untuk tiap nomor yang diikuti; biaya beregu dihitung per regu; satu sekolah boleh mendaftarkan beberapa regu di satu nomor beregu.
+                Biaya individu dihitung per atlet untuk tiap nomor yang diikuti. Biaya beregu dihitung per regu. Satu sekolah boleh mendaftarkan lebih dari satu regu di satu nomor beregu.
             <?php else : ?>
-                Rincian biaya ditampilkan di bagian pembayaran saat mendaftar.
+                Rincian biaya tampil di langkah pembayaran saat Anda mendaftar.
             <?php endif ?>
         </p>
 
@@ -180,7 +180,7 @@ $kartuKu = gambar_opsional('beranda/kartu-ku.webp', ['class' => 'pointer-events-
                     <?php foreach ($ku['pilihan'] as $teksPilihan) : ?>
                         <p class="mt-3 flex items-start gap-2 rounded-xl bg-langit-100 p-3 text-sm text-primary-900" data-lomba-pilih-ku>
                             <?= ikon('signpost', 'mt-0.5 size-4') ?>
-                            <span><?= esc($teksPilihan) ?>, dipilih saat mendaftar.</span>
+                            <span><?= esc($teksPilihan) ?>. Pilih kelompok umurnya saat mendaftar.</span>
                         </p>
                     <?php endforeach; ?>
 

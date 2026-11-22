@@ -47,7 +47,7 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                 <?php if ($adaKontak) : ?>
                     Ada pertanyaan tentang lomba atau pendaftaran? Hubungi panitia lewat WhatsApp.
                 <?php else : ?>
-                    Bantu sekolah lain mengetahui lomba ini dengan membagikan halaman ini.
+                    Bagikan halaman ini supaya sekolah lain tahu tentang lomba ini.
                 <?php endif ?>
             </p>
 
@@ -65,7 +65,7 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                                             <p class="text-gray-600" data-narahubung-nomor><?= esc($orang['nomor']) ?></p>
                                         </div>
                                         <a class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100" href="<?= esc($orang['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-narahubung-wa>
-                                            <?= ikon('message-circle', 'size-4') ?> Chat WA<span class="sr-only"> <?= esc($orang['nama']) ?> (di tab baru)</span>
+                                            <?= ikon('message-circle', 'size-4') ?> Kirim WA<span class="sr-only"> <?= esc($orang['nama']) ?> (di tab baru)</span>
                                         </a>
                                     </li>
                                 <?php endforeach ?>
@@ -98,7 +98,7 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
             <div class="mt-8 flex flex-col gap-3 sm:flex-row" data-kontak-tombol>
                 <?php if ($waTanya !== null) : ?>
                     <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl tombol-utama-berart px-6 py-3 text-base font-bold focus:outline-none focus:ring-4 focus:ring-primary-300" href="<?= esc($waTanya, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-tanya>
-                        <?= ikon('message-circle') ?> Tanya admin lewat WA<?= $tabBaru ?>
+                        <?= ikon('message-circle') ?> Tanya panitia lewat WA<?= $tabBaru ?>
                     </a>
                 <?php endif ?>
                 <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 text-base font-bold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($waBagikan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-bagikan>

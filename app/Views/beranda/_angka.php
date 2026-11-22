@@ -28,7 +28,7 @@ $format = static fn (int $n): string => number_format($n, 0, ',', '.');
             <div class="pita-merek absolute inset-x-0 top-0 h-1.5" aria-hidden="true"></div>
 
             <div class="text-center">
-                <h2 id="judul-angka" class="text-lg font-bold text-langit-300 sm:text-xl">Kompetisi ini diikuti</h2>
+                <h2 id="judul-angka" class="text-lg font-bold text-langit-300 sm:text-xl">Sudah bergabung</h2>
                 <p class="mt-2">
                     <span class="block font-tampilan text-7xl font-extrabold tracking-tight text-oranye-400 sm:text-9xl" data-angka-atlet><?= $format($angka['atlet']) ?></span>
                     <span class="mt-2 block text-lg font-semibold sm:text-xl">
@@ -36,7 +36,7 @@ $format = static fn (int $n): string => number_format($n, 0, ',', '.');
                             di <strong class="text-oranye-300" data-angka-kabupaten><?= $format($angka['kabupaten']) ?></strong> kabupaten/kota<?php endif ?>
                     </span>
                 </p>
-                <p class="mt-1 text-sm text-primary-200">Dihitung dari pendaftaran yang sudah lunas.</p>
+                <p class="mt-1 text-sm text-primary-200">Angka ini hanya menghitung pendaftaran yang sudah Lunas.</p>
             </div>
 
             <?php if ($angka['kelompok_umur'] !== []) : ?>
