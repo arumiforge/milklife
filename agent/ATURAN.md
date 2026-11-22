@@ -75,7 +75,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Satu peran admin; halaman Akun hanya untuk akun sendiri; akun lain lewat `admin:buat` (K26).
 - Bukti bayar paling banyak sesuai Pengaturan > Pembayaran (1–200, bawaan 100), dikecilkan otomatis (K34, K83, K135, K136).
 - Rekap memuat semua pendaftaran dengan saringan status; keuangan selalu keduanya (K60); Rekap Gabungan (K85).
-- Kolom No, pilih massal (100), Backup data dan `pendaftaran:impor` (K76, K77); Backup data tanpa dimuat ke memori (K118 B4).
+- Kolom No, pilih massal (100), Backup data dan `pendaftaran:impor` (K76, K77); Backup data tanpa dimuat ke memori (K118 B4). Cadangan pindah ke Pengaturan > Cadangan: semua data, berkas, dan pengaturan; impor web mengganti semua setelah cadangan otomatis dan konfirmasi sandi (K174).
 - Antarmuka tanpa teks teknis (K79). Ubah boleh mempertahankan KU dan nomor yang sudah ditutup (K98).
 - Monitoring `arumi.php`, catatan pengunjung, menu Pengecekan, dasbor bergrafik (K102, K104).
 - `pembaruan:periksa` setelah `git pull` (K115). Cadangan harian 14 hari (K66).
@@ -92,7 +92,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Juara I–III dari babak Final; regu juara = satu piala (K124).
 - Poin multi-lomba (Trilomba): admin mengisi prestasi mentah tiap komponen, web menghitung poin dari tabel skor yang bisa diubah admin (bawaan tabel panitia Trilomba O2SN SMP dan Pancalomba SMA/SMK); di antara dua baris memakai baris yang lebih buruk, di luar tabel 0 poin dengan peringatan; total = jumlah poin komponen (K140 butir 7b, menggantikan K124 butir 3).
 - Juara umum **per kelompok umur**, kelompok umur yang digabung dalam satu klasemen diatur admin (K172, menggantikan per jenjang K124); metode pilihan admin di Pengaturan > Hasil: **Medali** (bawaan, juknis: juara I, lalu II, lalu III) atau **Poin per peringkat** 1–8 (bawaan 7-5-4-3-2-1-0-0; poin, lalu juara I, II, III); masih sama = peringkat bersama; kolom poin selalu tampil; kontingen = NPSN (K124, K140 butir 7a). Gabungan disimpan di pengaturan `Klasemen.gabungan` (JSON daftar id kelompok umur); bawaan dan pengaturan rusak = satu klasemen per kelompok umur; kelompok umur di luar gabungan punya klasemen sendiri (K172).
-- Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri (K130). Di ponsel semua butir ada di sidebar yang dibuka tombol menu di kepala halaman; menu bawah 5 butir: Dasbor, Pendaftaran, Atlet, Rekap, dan Menu yang membuka sidebar (Atlet ditolak hanya di sidebar); butir aktif ikon dan label oranye tanpa garis bawah (K131–K133, K157).
+- Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri (K130). Di ponsel semua butir ada di sidebar yang dibuka tombol menu di kepala halaman; menu bawah 5 butir: Dasbor, Pendaftaran, Atlet, Rekap, dan Pengaturan (Atlet ditolak hanya di sidebar); butir aktif ikon dan label oranye tanpa garis bawah (K131–K133, K157, K174).
 - Tandai hadir di daftar ulang hanya untuk pendaftaran Lunas (K129).
 - Cetak BIB per kelompok umur (PDF) dan per sekolah (PDF, ZIP gambar JPG 300 dpi + PDF); ZIP semua sekolah satu folder per sekolah; satu latar penuh untuk semua BIB (unggahan sendiri, atau latar bawaan G9-01 bila berkasnya ada), kepala dan warna tulisan (gelap/terang) dipilih admin (K137, F9-16).
 - Pecah berkas besar tanpa ubah perilaku setelah F7-26, F7-27, F8-01 (K121).
@@ -126,3 +126,4 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 ## Tahap 11 (pelajaran hasil Seri 1)
 
 - Semua sebelum lomba: ganti atlet oleh admin sebelum babak dikunci, tanpa atlet tak terdaftar di hasil; rekor kejuaraan mulai Seri 2 tanpa impor Seri 1; status nomor "Tidak dilombakan" dan peringatan batas peserta per nomor; cara pencatatan waktu per nomor (tangan dibulatkan ke atas 0,1 detik); bawaan urutan lintasan tetap (K172).
+- Panel admin: kepala tanpa judul menu, pencarian menu (desktop) atau kotak cari dan ikon keluar (ponsel); jejak halaman mulai Dasbor tanpa ikon rumah, seragam dengan pil navigasi; teks lebih dari dua baris dipotong dengan Selengkapnya; saringan dua per baris; tombol aksi ponsel tiga per baris; tombol unduh Excel/PDF ikon saja (K174).
