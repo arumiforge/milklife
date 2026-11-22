@@ -107,9 +107,13 @@ final class DataPanelPendaftaran
                 'jenjang'   => ['sql' => 'p.jenjang', 'nilai' => Jenjang::kode()],
                 'kabupaten' => ['sql' => 'p.kabupaten', 'nilai' => Kabupaten::semua()],
                 // F8-02: `bukti=baru` hanya pendaftaran dengan bukti bayar baru yang belum diperiksa.
+                // F10-04: `bukti=ada` pendaftaran yang sudah punya bukti bayar (tanpa "Semua atlet
+                // ditolak"); dengan `status=menunggu` sama dengan kartu dasbor "Menunggu, bukti sudah ada".
                 'bukti'     => static function (BaseBuilder $builder, string $nilai): void {
                     if ($nilai === 'baru') {
                         $builder->where(BuktiDiperiksa::SQL_ADA_BUKTI_BARU, null, false);
+                    } elseif ($nilai === 'ada') {
+                        $builder->where(BuktiDiperiksa::SQL_ADA_BUKTI . ' AND ' . BuktiDiperiksa::SQL_BUKAN_DITOLAK_SEMUA, null, false);
                     }
                 },
             ],

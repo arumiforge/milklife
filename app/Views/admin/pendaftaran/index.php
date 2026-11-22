@@ -55,6 +55,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                 <select class="<?= $pilihan ?>" id="saring-bukti" name="bukti">
                     <option value="">Semua</option>
                     <option value="baru">Bukti baru belum diperiksa</option>
+                    <option value="ada">Sudah ada bukti</option>
                 </select>
             </div>
             <div class="min-w-0 flex-[1_1_12rem]">

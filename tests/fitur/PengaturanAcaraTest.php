@@ -189,7 +189,7 @@ final class PengaturanAcaraTest extends UjiBasisData
         $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//header//a[@data-merek]//*[@data-merek-nama]'));
         $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//h1[@id="judul-acara"]'));
         $this->assertSame('Seri 3 – 2027', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
-        $this->assertSame('30 Januari – 1 Februari 2027 Stadion Karangan, Pati', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+        $this->assertSame('Hari lomba 30 Januari – 1 Februari 2027 Lokasi Stadion Karangan, Pati', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
         $this->assertSame('Lomba Lari Karangan 2027', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
         // Tagar acara di pesan WA tetap (F10-01); selain itu tidak ada nama lama.
         $this->assertStringNotContainsString('MilkLife', str_replace(ltrim(App\Libraries\IsiHalamanDepan::TAGAR, '#'), '', (string) $beranda->getBody()));
@@ -235,7 +235,7 @@ final class PengaturanAcaraTest extends UjiBasisData
         // Nama satu kata tanpa sambungan; yang kosong tidak ditampilkan; teks di-escape.
         $this->assertSame('Atletik', $this->teks($xpath, '//header//a[@data-merek]//*[@data-merek-nama]'));
         $this->assertSame('Seri 4', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
-        $this->assertSame('Stadion <Karangan>', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+        $this->assertSame('Lokasi Stadion <Karangan>', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
         $this->assertSame(0, $xpath->query('//*[@data-pembuka-waktu]//*[name()="use"][contains(@href, "#calendar-days")]')->length);
         $this->assertSame('Atletik', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
         $beranda->assertDontSee('Stadion <Karangan>');

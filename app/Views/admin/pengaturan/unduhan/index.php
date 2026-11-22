@@ -10,6 +10,8 @@
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Unduhan<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Unduhan<?= $this->endSection() ?>
@@ -39,7 +41,7 @@
         </div>
 
         <div class="relative overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut">
-            <table class="w-full text-left text-sm text-gray-700">
+            <table class="w-full text-left text-sm text-gray-700" data-tabel-klien>
                 <caption class="sr-only">Daftar berkas unduhan</caption>
                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                     <tr>
