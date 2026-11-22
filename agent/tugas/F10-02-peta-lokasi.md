@@ -12,11 +12,11 @@ Pengunjung halaman depan melihat peta Supersoccer Arena dan bisa membukanya di G
 
 ## Hasil
 
-- [ ] Pengaturan > Halaman Depan: isian "Alamat peta (embed Google Maps)" (hanya `https://www.google.com/maps/embed?…`) dan "Tautan buka peta"; bawaan alamat embed dari dokumen permintaan dan `https://maps.google.com/?q=Supersoccer+Arena+Kudus`; kosong = bagian peta tidak tampil
-- [ ] Bagian Lokasi di halaman depan (dekat Kontak): judul, alamat singkat, iframe `loading="lazy"` dengan `title`, rasio 4:3 ponsel dan 16:9 desktop lewat kelas Tailwind, tanpa gaya sebaris
-- [ ] Iframe disisipkan JS saat bagian mendekati layar (IntersectionObserver); tanpa JS atau sebelum dimuat tampil tautan "Buka di Google Maps"
-- [ ] CSP `frame-src` ditambah `https://www.google.com`; Turnstile tetap; `KepalaKeamananTest` diperbarui
-- [ ] Data awal dan `data:sesuaikan` (bila sudah ada dari F10-01) mengisi bawaan peta hanya bila kosong; bila F10-01 belum masuk, bawaan cukup dari `Config/HalamanDepan`
+- [x] Pengaturan > Halaman Depan: isian "Alamat peta (embed Google Maps)" (hanya `https://www.google.com/maps/embed?…`) dan "Tautan buka peta"; bawaan alamat embed dari dokumen permintaan dan `https://maps.google.com/?q=Supersoccer+Arena+Kudus`; kosong = bagian peta tidak tampil
+- [x] Bagian Lokasi di halaman depan (dekat Kontak): judul, alamat singkat, iframe `loading="lazy"` dengan `title`, rasio 4:3 ponsel dan 16:9 desktop lewat kelas Tailwind, tanpa gaya sebaris
+- [x] Iframe disisipkan JS saat bagian mendekati layar (IntersectionObserver); tanpa JS atau sebelum dimuat tampil tautan "Buka di Google Maps"
+- [x] CSP `frame-src` ditambah `https://www.google.com`; Turnstile tetap; `KepalaKeamananTest` diperbarui
+- [x] Data awal dan `data:sesuaikan` (bila sudah ada dari F10-01) mengisi bawaan peta hanya bila kosong; bila F10-01 belum masuk, bawaan cukup dari `Config/HalamanDepan`
 
 ## Berkas dan uji
 
