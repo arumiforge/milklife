@@ -6,7 +6,8 @@ use Tests\Support\UjiBasisData;
 /**
  * Hiasan G9-02 dan G9-12 di halaman depan dan halaman masuk (F9-19): latar
  * pita dan lintasan, perlengkapan di kartu kelompok umur, tokoh bergantian,
- * pemisah lintasan, pola titik di latar merek, dan bokeh di halaman masuk.
+ * pemisah lintasan, dan latar stadion di halaman masuk. Pola titik G9-12 tidak
+ * dipakai lagi (G10-12, F10-10).
  * Semua hanya tampil bila berkasnya ada; berkas tiruan ditaruh di folder
  * gambar uji (`GambarCodexKosong`). Nama dan isi karangan.
  *
@@ -78,18 +79,21 @@ final class HiasanBerandaTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//article[@data-lomba-ku]//img[@data-hiasan="kartu-ku"]')->length);
         $this->assertSame(1, $xpath->query('//article[@data-lomba-ku]//h3[text()="KU Karangan"]')->length, 'Judul kartu tetap ada.');
         $this->assertGreaterThanOrEqual(1, $xpath->query('//div[@data-hiasan="garis-lintasan"][@aria-hidden="true"]/img[contains(@src, "pola/garis-lintasan.webp")]')->length);
-        $this->assertStringContainsString('pola-titik', (string) $xpath->query('//body')->item(0)?->getAttribute('class'));
+        $this->assertStringNotContainsString('pola-titik', (string) $xpath->query('//body')->item(0)?->getAttribute('class'), 'Pola titik dilarang (G10-12), walaupun berkas lamanya masih ada.');
 
-        // Halaman masuk: bokeh stadion mulai lg di belakang kartu.
+        // Halaman masuk: stadion G10-12 mulai lg di belakang kartu, diredam lapisan terang (kontras nama acara).
         $xpath = $this->xpathDari($this->get('admin/masuk'));
         $this->assertStringContainsString('lg:block', (string) $xpath->query('//main/img[@data-hiasan="bintik-stadion"]')->item(0)?->getAttribute('class'));
+        $lapisan = $xpath->query('//main/img[@data-hiasan="bintik-stadion"]/following-sibling::div[1][@data-lapisan-stadion][@aria-hidden="true"]')->item(0);
+        $this->assertNotNull($lapisan);
+        $this->assertStringContainsString('bg-primary-50/80', $lapisan->getAttribute('class'));
     }
 
-    public function testCssPolaTitikHanyaLewatKelasBody(): void
+    public function testTanpaRujukanPolaTitik(): void
     {
         $css = (string) file_get_contents(FCPATH . 'aset/css/tw.css');
 
-        $this->assertMatchesRegularExpression('#\.pola-titik\s+\.latar-merek\s*\{[^}]*url\(["\']?\.\./gambar/pola/titik-halus\.webp#', $css);
-        $this->assertSame(1, substr_count($css, 'titik-halus.webp'), 'Berkas pola hanya dirujuk di bawah .pola-titik, jadi tanpa berkas tidak ada permintaan 404.');
+        $this->assertStringNotContainsString('titik-halus', $css);
+        $this->assertStringNotContainsString('pola-titik', $css);
     }
 }

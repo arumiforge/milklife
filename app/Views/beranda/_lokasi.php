@@ -30,7 +30,7 @@ $tabBaru   = '<span class="sr-only"> (di tab baru)</span>';
 ?>
 <section id="lokasi" class="scroll-mt-20 bg-white" aria-labelledby="judul-lokasi">
     <div class="mx-auto grid max-w-screen-xl gap-6 px-4 pt-12 sm:pt-16 lg:grid-cols-12 lg:items-start lg:gap-10">
-        <div class="lg:col-span-4">
+        <div class="lg:col-span-5">
             <p class="judul-tampilan ornamen-judul" lang="en" aria-hidden="true" data-judul-inggris>The Venue</p>
             <h2 id="judul-lokasi" class="judul-keterangan mt-2">Lokasi</h2>
             <?php if ($tempat !== '') : ?>
@@ -46,7 +46,7 @@ $tabBaru   = '<span class="sr-only"> (di tab baru)</span>';
             <?php endif ?>
         </div>
 
-        <div class="lg:col-span-8">
+        <div class="lg:col-span-7">
             <div class="relative aspect-[4/3] overflow-hidden rounded-lg border border-gray-200 bg-gray-100 lg:aspect-video"
                 data-peta-lokasi data-peta-src="<?= esc($embed, 'attr') ?>" data-peta-judul="<?= esc($judulPeta, 'attr') ?>">
                 <div class="flex size-full flex-col items-center justify-center gap-3 p-6 text-center text-gray-600" data-peta-pengganti>

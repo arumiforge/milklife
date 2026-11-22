@@ -32,6 +32,7 @@ final class GambarOpsional
     /**
      * Elemen berart G10-11 (`elemen/<nama>.webp`) yang dipakai kelas CSS F10-05 lewat kelas
      * penanda `ada-<nama>` di `<html>` tata letak publik (lihat `penandaElemen()`).
+     * `kuas-sorot` dan `garis-kecepatan` dipasang F10-10.
      */
     public const ELEMEN = [
         'kuas-tombol-oranye',
@@ -41,6 +42,8 @@ final class GambarOpsional
         'ornamen-judul-kanan',
         'bingkai-sudut',
         'tekstur-kertas',
+        'kuas-sorot',
+        'garis-kecepatan',
     ];
 
     /**
