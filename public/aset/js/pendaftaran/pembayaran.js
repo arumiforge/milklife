@@ -70,7 +70,9 @@
             + (t.npsn ? ' atau NPSN ' + t.npsn : '') + '.';
         $('#bayar-isi').hidden = true;
         $('#selesai').hidden = false;
-        $('#tombol-mulai-ulang').closest('.mulai-ulang').hidden = true;
+        document.querySelectorAll('[data-mulai-ulang]').forEach(function (tombol) {
+            tombol.hidden = true;
+        });
     }
 
     penyiapLangkah[5] = function () {

@@ -119,7 +119,7 @@ final class FaqBawaan
         ['mengisi', 'Isian saya hilang kalau HP terkunci atau halaman tertutup?', <<<'MD'
             Tidak. Isian tersimpan otomatis di HP atau komputer yang Anda pakai. Buka lagi halaman pendaftaran di **perangkat dan peramban yang sama**. Isian Anda akan muncul kembali.
 
-            Isian tidak pindah ke perangkat lain. Bila ingin mulai dari awal, tekan **Kosongkan isian dan mulai dari awal** di bawah formulir.
+            Isian tidak pindah ke perangkat lain. Bila ingin mulai dari awal, tekan **Kosongkan** di sebelah kanan tombol **Bantuan**.
             MD],
         ['mengisi', 'Salah ketik nama atlet sebelum mengirim, bagaimana?', <<<'MD'
             Selama belum menekan **Kirim pendaftaran**, Anda masih bisa memperbaikinya. Di langkah **Atlet**, tekan **Ubah** di baris atlet itu pada **Daftar sementara**, perbaiki, lalu tekan **Simpan perubahan**. Untuk membuang atlet dari daftar, tekan **Hapus**.
