@@ -119,6 +119,9 @@ $gambarNomor = static function (string $nama): string {
 };
 
 // ikon-sprite: users user-round-check banknote calendar-days graduation-cap signpost hourglass chevron-down
+
+// Perlengkapan lomba G9-02 kecil di kartu kelompok umur, mulai layar sm, hanya bila berkasnya ada (F9-19).
+$kartuKu = gambar_opsional('beranda/kartu-ku.webp', ['class' => 'pointer-events-none hidden h-16 w-auto shrink-0 select-none sm:block', 'data-hiasan' => 'kartu-ku']);
 ?>
 <section id="lomba" class="scroll-mt-20 bg-white" aria-labelledby="judul-lomba">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
@@ -148,7 +151,14 @@ $gambarNomor = static function (string $nama): string {
                 $idJudul        = 'judul-lomba-ku-' . $ku['id'];
                 ?>
                 <article id="lomba-ku-<?= $ku['id'] ?>" class="scroll-mt-24 rounded-2xl border border-gray-200 bg-primary-50/60 p-5 shadow-lembut sm:p-6" aria-labelledby="<?= $idJudul ?>" data-lomba-ku>
-                    <h3 id="<?= $idJudul ?>" class="text-2xl font-extrabold text-primary-900"><?= esc($ku['nama']) ?></h3>
+                    <?php if ($kartuKu !== '') : ?>
+                        <div class="flex items-start justify-between gap-3">
+                            <h3 id="<?= $idJudul ?>" class="text-2xl font-extrabold text-primary-900"><?= esc($ku['nama']) ?></h3>
+                            <?= $kartuKu ?>
+                        </div>
+                    <?php else : ?>
+                        <h3 id="<?= $idJudul ?>" class="text-2xl font-extrabold text-primary-900"><?= esc($ku['nama']) ?></h3>
+                    <?php endif ?>
 
                     <dl class="mt-4 grid gap-3 sm:grid-cols-2" data-lomba-ku-info>
                         <div class="rounded-xl bg-white p-3">

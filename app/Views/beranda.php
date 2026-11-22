@@ -56,7 +56,9 @@
 <?php if (! $hasilDiAtas) : ?>
     <?= view('beranda/_hasil', ['hasilTerbaru' => $hasilTerbaru], ['saveData' => false]) ?>
 <?php endif ?>
+<?= view('beranda/_pemisah', [], ['saveData' => false]) ?>
 <?= view('beranda/_faq', ['faq' => $faq], ['saveData' => false]) ?>
+<?= view('beranda/_pemisah', [], ['saveData' => false]) ?>
 <?= view('beranda/_unduhan', ['unduhan' => $unduhan], ['saveData' => false]) ?>
 <?= view('beranda/_kontak', ['narahubung' => $narahubung, 'mediaSosial' => $mediaSosial, 'waTanya' => $waTanya, 'waBagikan' => $waBagikan], ['saveData' => false]) ?>
 <?= $this->endSection() ?>

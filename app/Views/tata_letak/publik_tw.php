@@ -79,7 +79,7 @@ $gambarBagikan = GambarOpsional::bagikan(uri_string());
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
     <?= $this->renderSection('kepala') ?>
 </head>
-<body class="flex min-h-screen flex-col bg-primary-50">
+<body class="flex min-h-screen flex-col bg-primary-50<?= ada_gambar('pola/titik-halus.webp') ? ' pola-titik' : '' ?>">
     <a href="#isi" class="sr-only z-50 rounded-lg bg-white px-4 py-3 font-semibold text-primary-800 shadow-angkat focus:not-sr-only focus:fixed focus:start-4 focus:top-4">Lompat ke isi</a>
 
     <header class="sticky top-0 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur" data-kepala-publik>

@@ -12,7 +12,8 @@
  *
  * Gambar Codex (F9-19, hanya bila berkasnya ada): ilustrasi G9-08
  * `admin/masuk.webp` di sisi kanan layar lebar (`lg` ke atas, `data-polos-ilustrasi`)
- * dan hiasan pita G9-12 `pola/pita-sudut.webp` di sudut kanan atas (`data-hiasan`).
+ * dan hiasan pita G9-12 `pola/pita-sudut.webp` di sudut kanan atas (`data-hiasan`);
+ * mulai layar lg, bokeh G9-12 `pola/bintik-stadion.webp` di belakang kartu.
  *
  * Penanda uji: `data-polos-merek` (nama acara), `data-polos-kartu` (kartu).
  *
@@ -49,6 +50,7 @@ $ilustrasi = gambar_opsional('admin/masuk.webp', ['class' => 'size-full object-c
 <body class="min-h-screen bg-primary-50">
 <div class="<?= $ilustrasi === '' ? '' : 'lg:grid lg:grid-cols-2' ?>">
     <main id="isi" class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
+        <?= gambar_opsional('pola/bintik-stadion.webp', ['class' => 'pointer-events-none absolute inset-0 hidden size-full select-none object-cover lg:block', 'data-hiasan' => 'bintik-stadion']) ?>
         <?= gambar_opsional('pola/pita-sudut.webp', ['class' => 'pointer-events-none absolute right-0 top-0 w-40 select-none sm:w-64', 'data-hiasan' => 'pita-sudut']) ?>
         <div class="relative w-full max-w-md">
             <p class="mb-6 text-center" data-polos-merek>

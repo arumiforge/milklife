@@ -74,8 +74,20 @@ if ($foto === [] && $tampilan['gambar_kepala'] !== null) {
 $putar = count($foto) > 1;
 
 // Ilustrasi G9-02 bila belum ada foto sama sekali (K41: hanya bila berkasnya ada).
-$tokoh = $foto === [] ? IlustrasiBeranda::alamat('gambar/beranda/tokoh-lari.webp') : null;
+// Tiga tokoh bergantian per hari (lari, lompat, lempar); yang berkasnya belum ada dilewati.
+$tokoh = null;
+if ($foto === []) {
+    $calonTokoh = ['tokoh-lari', 'tokoh-lompat', 'tokoh-lempar'];
+    $mulaiTokoh = (int) date('z') % count($calonTokoh);
+    for ($i = 0; $i < count($calonTokoh) && $tokoh === null; $i++) {
+        $tokoh = IlustrasiBeranda::alamat('gambar/beranda/' . $calonTokoh[($mulaiTokoh + $i) % count($calonTokoh)] . '.webp');
+    }
+}
 $adaKanan = $foto !== [] || $tokoh !== null;
+
+// Latar G9-02 mulai layar md (ponsel tidak mengunduhnya): pita di belakang pembuka tanpa foto, lintasan samar di belakang kartu kelompok umur.
+$latarPita      = $foto === [] ? gambar_opsional('beranda/latar-pita.webp', ['class' => 'pointer-events-none absolute inset-0 hidden size-full select-none object-cover object-right opacity-70 md:block', 'data-hiasan' => 'latar-pita']) : '';
+$latarLintasan  = gambar_opsional('beranda/latar-lintasan.webp', ['class' => 'pointer-events-none absolute inset-0 -z-10 hidden size-full select-none object-cover md:block', 'data-hiasan' => 'latar-lintasan']);
 
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . (int) $ukuran['lebar'] . '" height="' . (int) $ukuran['tinggi'] . '"';
 
@@ -88,7 +100,8 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
         <div data-adegan-cadangan class="absolute inset-0 transition-opacity duration-700"></div>
     </div>
     <?php // Hiasan pita G9-12 di sudut kanan atas, hanya bila berkasnya ada (F9-19). ?>
-    <?= gambar_opsional('pola/pita-sudut.webp', ['class' => 'pointer-events-none absolute -right-8 -top-8 w-36 select-none opacity-70 sm:w-72 lg:w-96', 'loading' => false, 'data-hiasan' => 'pita-sudut']) ?>
+    <?= $latarPita ?>
+    <?= gambar_opsional('pola/pita-sudut.webp', ['class' => 'pointer-events-none absolute -right-8 -top-8 w-36 select-none opacity-70 sm:w-72 lg:w-96' . ($latarPita === '' ? '' : ' md:hidden'), 'loading' => false, 'data-hiasan' => 'pita-sudut']) ?>
 
     <div class="relative mx-auto grid max-w-screen-xl items-center gap-8 px-4 pb-10 pt-6 sm:pt-10 lg:grid-cols-12 lg:gap-12 lg:pb-14 lg:pt-14">
         <div class="<?= $adaKanan ? 'lg:col-span-6' : 'lg:col-span-10 xl:col-span-8' ?> flex flex-col gap-5 sm:gap-6">
@@ -213,7 +226,8 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
     </div>
 
     <?php if ($kelompokUmur !== []) : ?>
-        <div class="relative mx-auto max-w-screen-xl px-4 pb-10" data-pembuka-ku>
+        <div class="relative isolate mx-auto max-w-screen-xl px-4 pb-10" data-pembuka-ku>
+            <?= $latarLintasan ?>
             <p class="mb-4 text-sm font-bold uppercase tracking-wider text-primary-700" data-pembuka-ku-label>Kelompok umur</p>
             <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 <?= [3 => 'lg:grid-cols-3', 4 => 'lg:grid-cols-4', 5 => 'lg:grid-cols-5'][min(5, max(3, count($kelompokUmur)))] ?>">
                 <?php foreach ($kelompokUmur as $i => $ku) : ?>
