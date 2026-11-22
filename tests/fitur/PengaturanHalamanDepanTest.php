@@ -98,6 +98,34 @@ final class PengaturanHalamanDepanTest extends UjiBasisData
         $this->assertSame('Yuk daftar di http://contoh.test/', setting('HalamanDepan.pesan_bagikan'));
     }
 
+    /**
+     * Bilah menu atas publik (F10-07, K154): bawaan semua menyala, centang tersimpan per butir.
+     */
+    public function testBilahAtasBawaanMenyalaDanTersimpan(): void
+    {
+        $centang = static fn (DOMXPath $xpath): array => array_map(
+            static fn (DOMElement $el): string => $el->getAttribute('name'),
+            iterator_to_array($xpath->query('//section[@data-pengaturan-bilah-atas]//input[@type="checkbox"][@checked]')),
+        );
+
+        $semua = ['bilah_atas_unduhan', 'bilah_atas_galeri', 'bilah_atas_bantuan', 'bilah_atas_tanya'];
+        $this->assertSame($semua, $centang($this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT))));
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['bilah_atas_unduhan' => '1', 'bilah_atas_bantuan' => '1']));
+
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+        $this->assertTrue(setting('HalamanDepan.bilah_atas_unduhan'));
+        $this->assertFalse(setting('HalamanDepan.bilah_atas_galeri'));
+        $this->assertTrue(setting('HalamanDepan.bilah_atas_bantuan'));
+        $this->assertFalse(setting('HalamanDepan.bilah_atas_tanya'));
+        $this->assertSame(['bilah_atas_unduhan', 'bilah_atas_bantuan'], $centang($this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT))));
+
+        // Isian lain salah: centang yang dikirim tetap tampil dan belum tersimpan.
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['nomor_wa_tanya' => 'bukan nomor', 'bilah_atas_tanya' => '1']));
+        $this->assertSame(['bilah_atas_tanya'], $centang($this->xpathDari($hasil)));
+        $this->assertFalse(setting('HalamanDepan.bilah_atas_tanya'));
+    }
+
     public function testSemuaBolehKosong(): void
     {
         setting('HalamanDepan.judul', 'Judul Lama');

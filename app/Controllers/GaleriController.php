@@ -11,8 +11,8 @@ use CodeIgniter\Exceptions\PageNotFoundException;
  * yang membuka album Instagram atau Google Drive panitia di tab baru.
  *
  * - Hanya album aktif yang tautannya sudah diisi (`GaleriModel::publik()`).
- * - Selama sakelar `Galeri.tampil` mati (bawaan), halaman 404 dan butir menu
- *   Galeri tidak tampil (`App\Libraries\MenuPublik`).
+ * - Selama sakelar `Galeri.tampil` mati (bawaan), halaman 404 dan butir Galeri
+ *   di bilah menu atas dan laci tidak tampil (`App\Libraries\MenuPublik::bilahAtas()`).
  */
 class GaleriController extends BaseController
 {

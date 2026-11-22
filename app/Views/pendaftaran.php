@@ -77,6 +77,9 @@ $sprite  = base_url('aset/vendor/lucide/lucide.svg') . (($versi = @filemtime(FCP
 <?= $this->endSection() ?>
 
 <?php if ($wizard !== null) : ?>
+    <?php // Menu bawah ponsel tidak ditulis supaya tombol langkah tidak tertutup (F10-07, K154). ?>
+    <?= $this->section('tanpa_menu_bawah') ?>1<?= $this->endSection() ?>
+
     <?= $this->section('kepala') ?>
     <meta name="csrf-kepala" content="<?= esc(config('Security')->headerName, 'attr') ?>">
     <meta name="csrf-token" content="<?= esc(csrf_hash(), 'attr') ?>">

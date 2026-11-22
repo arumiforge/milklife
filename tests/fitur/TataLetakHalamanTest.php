@@ -124,18 +124,82 @@ final class TataLetakHalamanTest extends UjiBasisData
             return $hasil;
         };
 
-        // Beranda aktif di halaman depan; Unduhan aktif di halamannya (F9-03).
+        // Menu utama F10-07 (K154): Beranda, Jadwal, Hasil, Peserta (yang mati tidak tampil).
         $depan = $butir('/');
-        // Kategori bergantung pada kelompok umur di basis data (diuji di KatalogTampilanTest).
-        $this->assertSame(['Beranda', 'Unduhan', 'Bantuan'], array_values(array_diff(array_keys($depan), ['Kategori'])));
+        $this->assertSame(['Beranda'], array_keys($depan));
         $this->assertSame('page', $depan['Beranda']->getAttribute('aria-current'));
-        $this->assertFalse($depan['Unduhan']->hasAttribute('aria-current'));
-        $this->assertSame('page', $butir('unduhan')['Unduhan']->getAttribute('aria-current'));
 
-        // Menu melipat di ponsel (Flowbite).
+        setting('HalamanDepan.tampil_jadwal', true);
+        setting('HalamanDepan.tampil_peserta', true);
+        $jadwal = $butir('jadwal');
+        $this->assertSame(['Beranda', 'Jadwal', 'Peserta'], array_keys($jadwal));
+        $this->assertSame('page', $jadwal['Jadwal']->getAttribute('aria-current'));
+        $this->assertFalse($jadwal['Beranda']->hasAttribute('aria-current'));
+    }
+
+    /**
+     * Bilah submenu atas (F10-07, K154): butir pilihan admin dan media sosial dari Kontak.
+     */
+    public function testBilahAtasPublik(): void
+    {
+        setting('HalamanDepan.nomor_wa_tanya', '6281234567890');
+        setting('Galeri.tampil', true);
+        db_connect()->table('tautan')->insert(['jenis' => 'media_sosial', 'label' => 'Instagram Karangan', 'nilai' => 'https://instagram.com/lomba_karangan', 'urutan' => 1]);
+
+        $xpath = $this->xpath($this->get('unduhan')->getBody());
+        $bilah = $xpath->query('//div[@data-bilah-atas]')->item(0);
+        $this->assertNotNull($bilah);
+        $this->assertSame(['unduhan', 'galeri', 'bantuan', 'tanya'], array_map(
+            static fn (DOMElement $a): string => $a->getAttribute('data-bilah-atas-butir'),
+            iterator_to_array($xpath->query('.//a[@data-bilah-atas-butir]', $bilah)),
+        ));
+        $this->assertSame('page', $xpath->query('.//a[@data-bilah-atas-butir="unduhan"]', $bilah)->item(0)?->getAttribute('aria-current'));
+        $tanya = $xpath->query('.//a[@data-bilah-atas-butir="tanya"]', $bilah)->item(0);
+        $this->assertStringStartsWith('https://wa.me/6281234567890', (string) $tanya?->getAttribute('href'));
+        $this->assertSame('_blank', $tanya?->getAttribute('target'));
+        $this->assertSame(1, $xpath->query('.//ul[@data-bilah-atas-sosial]//a[@href="https://instagram.com/lomba_karangan"]', $bilah)->length);
+        $this->assertSame(1, $xpath->query('//ul[@data-laci-sosial]//a[@href="https://instagram.com/lomba_karangan"]')->length, 'Media sosial juga di laci.');
+
+        // Butir yang tidak dicentang admin hilang dari bilah atas dan laci.
+        setting('HalamanDepan.bilah_atas_unduhan', false);
+        setting('HalamanDepan.bilah_atas_tanya', false);
         $xpath = $this->xpath($this->get('/')->getBody());
-        $this->assertSame(1, $xpath->query('//button[@data-collapse-toggle="menu-publik"][@aria-controls="menu-publik"]')->length);
-        $this->assertSame(1, $xpath->query('//*[@id="menu-publik"]')->length);
+        $this->assertSame(0, $xpath->query('//a[@data-bilah-atas-butir="unduhan"] | //a[@data-bilah-atas-butir="tanya"]')->length);
+        $this->assertSame(1, $xpath->query('//a[@data-bilah-atas-butir="galeri"]')->length);
+        $this->assertSame(0, $xpath->query('//ul[@data-laci-tambahan]//a[@href="' . site_url('unduhan') . '"]')->length);
+    }
+
+    /**
+     * Laci kiri ponsel dan menu bawah (F10-07, K154).
+     */
+    public function testLaciDanMenuBawahPublik(): void
+    {
+        $html  = $this->get('bantuan')->getBody();
+        $xpath = $this->xpath($html);
+
+        // Laci: dialog tertutup, dibuka tombol di kepala dan butir Menu di menu bawah.
+        $laci = $xpath->query('//div[@id="laci-publik"][@role="dialog"][@aria-modal="true"][@aria-labelledby="laci-publik-judul"]')->item(0);
+        $this->assertNotNull($laci);
+        $this->assertStringContainsString('invisible', $laci->getAttribute('class'));
+        $this->assertSame(2, $xpath->query('//button[@data-buka-laci][@aria-controls="laci-publik"][@aria-expanded="false"]')->length);
+        $this->assertSame(1, $xpath->query('//div[@id="laci-publik"]//button[@data-tutup-laci]')->length);
+        $this->assertSame(1, $xpath->query('//div[@data-latar-laci]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-collapse-toggle]')->length, 'Menu turun lama diganti laci.');
+        $this->assertStringContainsString(aset('js/menu-publik.js'), $html);
+        // Laci berisi menu utama, tombol Cek Pendaftaran, dan butir bilah atas.
+        $this->assertSame(1, $xpath->query('//ul[@data-laci-utama]//a[@href="' . site_url('/') . '"]')->length);
+        $this->assertSame(1, $xpath->query('//div[@id="laci-publik"]//a[@href="' . site_url('cek-pendaftaran') . '"]')->length);
+        $this->assertSame('page', $xpath->query('//ul[@data-laci-tambahan]//a[@href="' . site_url('bantuan') . '"]')->item(0)?->getAttribute('aria-current'));
+
+        // Menu bawah: empat tautan lalu Menu; ruang bawah di body.
+        $bawah = $xpath->query('//nav[@data-menu-bawah-publik][@aria-label="Menu bawah"]')->item(0);
+        $this->assertNotNull($bawah);
+        $this->assertSame(['Beranda', 'Bantuan', 'Unduhan', 'Cek', 'Menu'], array_map(
+            fn (DOMElement $el): string => $this->teks($el),
+            iterator_to_array($xpath->query('.//li/*', $bawah)),
+        ), 'Pendaftaran belum dibuka: Cek menggantikan Daftar.');
+        $this->assertSame('page', $xpath->query('.//a[@href="' . site_url('bantuan') . '"]', $bawah)->item(0)?->getAttribute('aria-current'));
+        $this->assertSame(1, $xpath->query('//body[contains(concat(" ", @class, " "), " ada-menu-bawah ")]')->length);
     }
 
     // ---------- Admin ----------
