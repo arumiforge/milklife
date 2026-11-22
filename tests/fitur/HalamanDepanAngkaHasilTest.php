@@ -76,7 +76,7 @@ final class HalamanDepanAngkaHasilTest extends UjiBasisData
 
         // Urutan bagian: angka sesudah jadwal, sebelum unduhan.
         $urutan = array_map(static fn (DOMElement $s): string => $s->getAttribute('id'), iterator_to_array($xpath->query('//main/section')));
-        $this->assertSame(array_values(array_intersect(['pembuka', 'lomba', 'jadwal', 'angka', 'hasil', 'faq', 'unduhan', 'kontak'], $urutan)), $urutan);
+        $this->assertSame(array_values(array_intersect(['pembuka', 'lomba', 'jadwal', 'angka', 'hasil', 'faq', 'unduhan', 'lokasi', 'kontak'], $urutan)), $urutan);
     }
 
     public function testHasilTerbaruDanJuaraUmumHanyaYangTerbit(): void

@@ -133,6 +133,22 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertStringNotContainsString('2026', $this->teks($xpath, '//h1[@id="judul-acara"]'));
     }
 
+    public function testFaktaLokasiMenautKeBagianPeta(): void
+    {
+        $this->isiDataAcara();
+
+        // Peta bawaan tampil (F10-02): nama tempat di pita fakta menaut ke `#lokasi`.
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame('Supersoccer Arena', $this->teks($xpath, '//*[@data-pembuka-info]//a[@data-fakta-lokasi][@href="#lokasi"]'));
+        $this->assertSame(1, $xpath->query('//section[@id="lokasi"]')->length);
+
+        // Tanpa peta tidak ada tautan ke bagian yang tidak ada.
+        setting('HalamanDepan.peta_embed', '');
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(0, $xpath->query('//*[@data-fakta-lokasi] | //section[@id="lokasi"]')->length);
+        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+    }
+
     public function testJudulDanTeksDariPengaturanDiEscape(): void
     {
         $this->isiDataAcara();
@@ -318,8 +334,9 @@ final class HalamanDepanKepalaTest extends UjiBasisData
             iterator_to_array($xpath->query('//main/section')),
         );
 
-        // Bagian kontak selalu tampil karena tombol "Bagikan ke WA" selalu ada (F3-03).
-        $this->assertSame(['pembuka', 'kontak'], $bagian);
+        // Bagian kontak selalu tampil karena tombol "Bagikan ke WA" selalu ada (F3-03);
+        // Lokasi tampil dengan peta bawaan dari `Config\HalamanDepan` (F10-02).
+        $this->assertSame(['pembuka', 'lokasi', 'kontak'], $bagian);
         $this->assertSame('judul-acara', $xpath->query('//section[@id="pembuka"]')->item(0)?->getAttribute('aria-labelledby'));
     }
 
@@ -342,7 +359,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // Bagian yang sudah diisi tugas lain tampil sesuai urutan K42.
         $this->assertSame('pembuka', $urutan[0]);
         $this->assertSame(
-            array_values(array_intersect(['pembuka', 'lomba', 'jadwal', 'angka', 'hasil', 'faq', 'unduhan', 'kontak'], $urutan)),
+            array_values(array_intersect(['pembuka', 'lomba', 'jadwal', 'angka', 'hasil', 'faq', 'unduhan', 'lokasi', 'kontak'], $urutan)),
             $urutan,
         );
     }

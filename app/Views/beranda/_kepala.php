@@ -25,7 +25,8 @@
  *   hanya satu kalimat pendek) satu baris dan baris terakhir oranye (K83,
  *   K86). Bila kosong, nama acara menjadi judul. Tahun tidak ditulis di judul
  *   (permintaan 20). Satu-satunya `<h1>` halaman ada di sini (`#judul-acara`).
- * - Pita fakta berlatar krem: Hari lomba, Lokasi (dipisah di koma terakhir),
+ * - Pita fakta berlatar krem: Hari lomba, Lokasi (dipisah di koma terakhir,
+ *   menaut ke bagian peta `#lokasi` F10-02 bila tampil),
  *   dan keadaan pendaftaran ("Batas pendaftaran 30 November 2026", K82
  *   diperbarui). Kalimat lengkap keadaan tetap untuk pembaca layar.
  * - Hiasan sapuan kecepatan G10-02 (`beranda/hero-sapuan.webp`) mulai layar md
@@ -45,6 +46,7 @@
 
 use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\IlustrasiBeranda;
+use App\Libraries\PetaLokasi;
 
 // Slogan alis (judul editorial berbahasa Inggris, K153).
 $slogan = 'Born to Run';
@@ -65,6 +67,7 @@ $sorotKeadaan = $keadaan === BukaTutupPendaftaran::TERBUKA;
 // Hari lomba: "9–12 Desember" besar di atas "2026"; tempat dipisah di koma terakhir.
 $tanggalInfo = preg_match('/^(.+?)\s+(\d{4})$/u', $acara['tanggal'], $c) === 1 ? [$c[1], $c[2]] : [$acara['tanggal'], ''];
 $koma        = mb_strrpos($acara['tempat'], ',');
+$adaPeta     = PetaLokasi::embed() !== '';
 $tempatInfo  = $koma === false ? [$acara['tempat'], ''] : [trim(mb_substr($acara['tempat'], 0, $koma)), trim(mb_substr($acara['tempat'], $koma + 1))];
 
 // Judul per kalimat; judul satu kalimat paling banyak 4 kata per kata (K83, K86).
@@ -217,7 +220,8 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
                     <?php if ($acara['tempat'] !== '') : ?>
                         <div class="min-w-0 px-4 py-4 sm:border-r sm:border-primary-900/10 sm:py-5<?= $acara['tanggal'] === '' ? ' col-span-2' : '' ?>">
                             <p class="<?= $labelFakta ?>"><?= ikon('map-pin', 'size-4 text-oranye-600') ?>Lokasi</p>
-                            <p class="<?= $nilaiFakta ?> break-words"><?= esc($tempatInfo[0]) ?><?php if ($tempatInfo[1] !== '') : ?><span class="sr-only">,</span> <span class="mt-1.5 block font-sans text-sm font-semibold text-gray-700"><?= esc($tempatInfo[1]) ?></span><?php endif ?></p>
+                            <?php // Tautan ke bagian peta `#lokasi` (F10-02) bila bagian itu tampil. ?>
+                            <p class="<?= $nilaiFakta ?> break-words"><?php if ($adaPeta) : ?><a class="decoration-oranye-500 decoration-2 underline-offset-4 hover:underline focus:outline-none focus-visible:underline" href="#lokasi" data-fakta-lokasi><?php endif ?><?= esc($tempatInfo[0]) ?><?php if ($adaPeta) : ?></a><?php endif ?><?php if ($tempatInfo[1] !== '') : ?><span class="sr-only">,</span> <span class="mt-1.5 block font-sans text-sm font-semibold text-gray-700"><?= esc($tempatInfo[1]) ?></span><?php endif ?></p>
                         </div>
                     <?php endif ?>
                 <?php endif ?>
