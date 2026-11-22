@@ -41,6 +41,11 @@ $petunjuk = [
     JenisHasil::MULTI => 'Tulis prestasi tiap komponen: waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poinnya dihitung dari tabel skor saat tersimpan.',
 ][$jenis] ?? '';
 
+// Waktu tangan (F11-04).
+if (! empty($nomor['waktu_tangan'])) {
+    $petunjuk = 'Waktu tangan: tulis waktu stopwatch seperti 12,34 atau 12,4. Waktunya dibulatkan ke atas ke 0,1 detik saat tersimpan, jadi 12,34 menjadi 12,4.';
+}
+
 $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-white px-2 text-center text-2xl font-bold text-gray-900 tabular-nums placeholder:font-normal placeholder:text-gray-500 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 aria-[invalid=true]:border-red-500 aria-[invalid=true]:bg-red-50';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>

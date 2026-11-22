@@ -50,7 +50,7 @@ $kolom  = $beregu ? 4 : 6;
     </tr>
 </table>
 <h1>Hasil <?= esc($nomor['nama']) ?> – <?= esc($nomor['kelompok_umur']) ?></h1>
-<div class="keterangan">Jenis hasil: <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.</div>
+<div class="keterangan">Jenis hasil: <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.<?= ! empty($nomor['waktu_tangan']) ? ' ' . esc(App\Libraries\Hasil\Prestasi::TANDA_TANGAN) : '' ?></div>
 <?php if ($babak === []) : ?>
     <div class="kosong">Belum ada babak.</div>
 <?php endif ?>

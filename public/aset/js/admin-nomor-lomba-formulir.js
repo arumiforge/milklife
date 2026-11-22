@@ -87,3 +87,24 @@
     });
     perbarui();
 })();
+
+// Cara pencatatan waktu (F11-04): bagian ini hanya untuk jenis hasil waktu.
+(function () {
+    var formulir = document.getElementById('formulir-nomor-lomba');
+    var bagian = document.getElementById('bagian-cara-waktu');
+    if (!formulir || !bagian) {
+        return;
+    }
+
+    function perbarui() {
+        var jenis = formulir.querySelector('input[name="jenis_hasil"]:checked');
+        bagian.hidden = !(jenis && jenis.value === 'waktu');
+    }
+
+    formulir.addEventListener('change', function (peristiwa) {
+        if (peristiwa.target.name === 'jenis_hasil') {
+            perbarui();
+        }
+    });
+    perbarui();
+})();

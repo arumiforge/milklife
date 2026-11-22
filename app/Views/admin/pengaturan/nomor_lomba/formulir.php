@@ -220,6 +220,21 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                     <?php endif ?>
                 </fieldset>
 
+                <?php // Cara pencatatan waktu (F11-04, K172 butir 5). ?>
+                <fieldset class="<?= $bagian ?>" id="bagian-cara-waktu"<?= ($isian['jenis_hasil'] ?? '') === JenisHasil::WAKTU ? '' : ' hidden' ?> aria-describedby="cara_waktu-bantuan">
+                    <legend class="<?= $judulBagian ?>">Cara pencatatan waktu</legend>
+                    <div class="flex flex-wrap gap-x-6">
+                        <?php foreach (App\Models\NomorLombaModel::CARA_WAKTU as $kode => $teks) : ?>
+                            <label class="<?= $opsi ?>" for="cara_waktu-<?= $kode ?>">
+                                <input <?= $pilihan('cara_waktu') ?> type="radio" name="cara_waktu" id="cara_waktu-<?= $kode ?>" value="<?= $kode ?>"
+                                    <?= ($isian['cara_waktu'] ?? 'elektronik') === $kode ? 'checked' : '' ?>>
+                                <?= $teks ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <p id="cara_waktu-bantuan" class="<?= $bantuan ?>">Elektronik bila waktu diambil dari foto finis atau alat elektronik. Tangan bila juri memakai stopwatch: waktunya dibulatkan ke atas ke 0,1 detik saat disimpan (12,34 menjadi 12,4) dan hasilnya ditandai waktu tangan. Prestasi yang sudah tersimpan tidak diubah.</p>
+                </fieldset>
+
                 <?php // Aturan nomor lompat/lempar (F9-09): percobaan dan pemecah seri. ?>
                 <fieldset class="<?= $bagian ?>" id="bagian-percobaan"<?= ($isian['jenis_hasil'] ?? '') === JenisHasil::JARAK ? '' : ' hidden' ?>>
                     <legend class="<?= $judulBagian ?>">Percobaan lompat/lempar</legend>

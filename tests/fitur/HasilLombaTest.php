@@ -245,6 +245,66 @@ final class HasilLombaTest extends UjiBasisData
         $this->assertSame('jarak', $this->db->table('nomor_lomba')->where('id', $this->idInduk['frog'])->get()->getRow()->jenis_hasil);
     }
 
+    public function testWaktuTanganDibulatkanDitandaiDanPrestasiLamaTetap(): void
+    {
+        $atlet = $this->tigaAtletLunas();
+        $nomor = $this->idInduk['lari60putra'];
+        $hasil = new HasilLomba();
+        $babak = $hasil->tambahBabak($nomor, 'Final', true, 'semua')['id'];
+        $id    = $this->idHasil($babak);
+
+        // Prestasi lama dari waktu elektronik.
+        $this->assertSame([], $hasil->simpanHasil($babak, [$id[$atlet[0]] => ['prestasi' => '12,34']]));
+
+        // Formulir nomor: bawaan elektronik, admin memilih tangan (F11-04).
+        $formulir = $this->xpathDari($this->bukaSebagaiAdmin('admin/pengaturan/nomor-lomba/' . $nomor . '/ubah'));
+        $this->assertSame(1, $formulir->query('//fieldset[@id="bagian-cara-waktu"][not(@hidden)]//input[@name="cara_waktu"][@value="elektronik"][@checked]')->length);
+        $this->kirimSebagaiAdmin('admin/pengaturan/nomor-lomba/' . $nomor, [
+            'kelompok_umur_id' => (string) $this->idInduk['ku10'], 'nama' => 'Lari 60 m', 'jenis' => 'individu',
+            'kategori' => 'putra', 'jenis_hasil' => 'waktu', 'cara_waktu' => 'tangan', 'urutan' => '1', 'aktif' => '1',
+        ]);
+        $this->assertSame('tangan', $this->db->table('nomor_lomba')->where('id', $nomor)->get()->getRow()->cara_waktu);
+        $this->assertSame('1234', (string) $this->db->table('hasil')->where('id', $id[$atlet[0]])->get()->getRow()->prestasi);
+
+        // Disimpan dari halaman hasil: 12,31 dan 12,301 menjadi 12,4; 12,30 tetap 12,3.
+        // Isian lama yang tampil sama (12,4) tidak menulis ulang 12,34.
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin('admin/hasil/babak/' . $babak, ['hasil' => [
+            $id[$atlet[0]] => ['prestasi' => '12,4', 'peringkat' => ''],
+            $id[$atlet[1]] => ['prestasi' => '12,301', 'peringkat' => ''],
+            $id[$atlet[2]] => ['prestasi' => '12,30', 'peringkat' => ''],
+        ]]), 'admin/hasil/babak/' . $babak);
+
+        $tersimpan = array_column($this->db->table('hasil')->select('id, prestasi, seperseribu')->where('babak_id', $babak)->get()->getResultArray(), null, 'id');
+        $this->assertSame(['1234', '1240', '1230'], [
+            (string) $tersimpan[$id[$atlet[0]]]['prestasi'], (string) $tersimpan[$id[$atlet[1]]]['prestasi'], (string) $tersimpan[$id[$atlet[2]]]['prestasi'],
+        ]);
+        $this->assertNull($tersimpan[$id[$atlet[1]]]['seperseribu']);
+        // Dibandingkan per 0,1 detik: 12,34 lama dan 12,4 baru berperingkat sama.
+        $this->assertSame([$atlet[2] => 1, $atlet[0] => 2, $atlet[1] => 2], $this->peringkat($babak));
+
+        $data = $hasil->nomor($nomor);
+        $this->assertTrue($data['waktu_tangan']);
+        $this->assertSame(['12,3', '12,4', '12,4'], array_column($hasil->hasilBabak($babak, $data), 'prestasi_teks'));
+
+        $this->assertSame(1, $this->xpathDari($this->bukaSebagaiAdmin('admin/hasil/nomor/' . $nomor))->query('//strong[@data-waktu-tangan]')->length);
+        $this->bukaSebagaiAdmin('admin/juri/babak/' . $babak)->assertSee('dibulatkan ke atas ke 0,1 detik');
+
+        $unduhan = new UnduhanHasil($data, $hasil->semuaBabak($data));
+        $this->assertStringContainsString('Waktu tangan: dicatat dengan stopwatch', $unduhan->html(false));
+        $lembar = $this->bacaExcel($this->bukaSebagaiAdmin('admin/hasil/nomor/' . $nomor . '/excel'))->getSheet(0)->toArray();
+        $this->assertSame('Prestasi (Waktu tangan)', $lembar[0][4]);
+        $this->assertSame('12,3', $lembar[1][4]);
+
+        $hasil->terbitkan($nomor, true);
+        $publik = $this->get('hasil/' . $nomor);
+        $publik->assertSee('Waktu tangan: dicatat dengan stopwatch');
+        $publik->assertSee('12,4');
+        $publik->assertDontSee('12,34');
+
+        // Nomor lain tetap elektronik dengan dua angka desimal.
+        $this->assertSame('elektronik', $this->db->table('nomor_lomba')->where('id', $this->idInduk['frog'])->get()->getRow()->cara_waktu);
+    }
+
     public function testHapusAtletDanGabungPendaftaranMembawaHasil(): void
     {
         $a = $this->buatPendaftaranPanel(['atlet' => $this->timPanel('kanga', 4)]);
@@ -274,6 +334,8 @@ final class HasilLombaTest extends UjiBasisData
         $babak = $hasil->tambahBabak($this->idInduk['lari60putra'], 'Final', true, 'semua')['id'];
         $hasil->simpanHasil($babak, [$this->idHasil($babak)[$atlet[0]] => ['prestasi' => '9,87']]);
         $hasil->terbitkan($this->idInduk['lari60putra'], true);
+        // Cara pencatatan waktu ikut paket (F11-04).
+        $this->db->table('nomor_lomba')->where('id', $this->idInduk['lari60putra'])->update(['cara_waktu' => 'tangan']);
 
         $zip = tempnam(sys_get_temp_dir(), 'milklife-paket-') . '.zip';
 
@@ -283,7 +345,7 @@ final class HasilLombaTest extends UjiBasisData
             foreach (['hasil', 'babak', 'atlet_nomor', 'atlet', 'penanggung_jawab', 'pendaftaran'] as $tabel) {
                 $this->db->table($tabel)->where('id >', 0)->delete();
             }
-            $this->db->table('nomor_lomba')->update(['hasil_terbit_pada' => null]);
+            $this->db->table('nomor_lomba')->update(['hasil_terbit_pada' => null, 'cara_waktu' => 'elektronik']);
 
             (new PaketPendaftaran())->impor($zip);
         } finally {
@@ -295,6 +357,7 @@ final class HasilLombaTest extends UjiBasisData
         $this->assertSame(['987', '1', 'Final', '1'], [(string) $baru[0]['prestasi'], (string) $baru[0]['peringkat'], $baru[0]['nama'], (string) $baru[0]['final']]);
         $this->assertSame(3, $this->db->table('hasil')->countAllResults());
         $this->assertNotNull($this->db->table('nomor_lomba')->where('id', $this->idInduk['lari60putra'])->get()->getRow()->hasil_terbit_pada);
+        $this->assertSame('tangan', $this->db->table('nomor_lomba')->where('id', $this->idInduk['lari60putra'])->get()->getRow()->cara_waktu);
     }
 
     /**

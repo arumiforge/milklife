@@ -74,6 +74,18 @@ class NomorLombaModel extends Model
         'jumlah_putri'     => 'jumlah putri minimalnya tetap %s. Buat nomor baru bila aturan timnya berubah.',
     ];
 
+    /**
+     * Cara pencatatan waktu nomor berjenis hasil waktu (F11-04, K172 butir 5),
+     * kode => label. Waktu tangan dibulatkan ke atas ke 0,1 detik (TR 19);
+     * baca dengan `waktuTangan()`.
+     *
+     * @var array<string, string>
+     */
+    public const CARA_WAKTU = [
+        'elektronik' => 'Elektronik',
+        'tangan'     => 'Tangan',
+    ];
+
     public const INTI_MINIMAL     = 2;
     public const ANGGOTA_MAKSIMAL = 50;
     public const URUTAN_MAKSIMAL  = 9999;
@@ -91,6 +103,8 @@ class NomorLombaModel extends Model
         'jumlah_percobaan', 'pemecah_seri',
         // Status nomor dan batas peserta (F11-03).
         'tidak_dilombakan', 'alasan_tidak_dilombakan', 'peserta_minimal',
+        // Cara pencatatan waktu (F11-04).
+        'cara_waktu',
     ];
 
     protected $useTimestamps = true;
@@ -109,7 +123,7 @@ class NomorLombaModel extends Model
      *
      * @param array<string, mixed> $mentah
      *
-     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string, jumlah_percobaan: string, pemecah_seri: string, tidak_dilombakan: string, alasan_tidak_dilombakan: string, peserta_minimal: string}
+     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string, jumlah_percobaan: string, pemecah_seri: string, tidak_dilombakan: string, alasan_tidak_dilombakan: string, peserta_minimal: string, cara_waktu: string}
      */
     public static function rapikanIsian(array $mentah): array
     {
@@ -138,6 +152,8 @@ class NomorLombaModel extends Model
             'tidak_dilombakan'        => $teks('tidak_dilombakan') === '1' ? '1' : '0',
             'alasan_tidak_dilombakan' => (string) preg_replace('/\s+/u', ' ', $teks('alasan_tidak_dilombakan')),
             'peserta_minimal'         => $teks('peserta_minimal'),
+            // Cara pencatatan waktu (F11-04); bawaan elektronik.
+            'cara_waktu'       => $teks('cara_waktu') === 'tangan' ? 'tangan' : 'elektronik',
         ];
 
         if ($isian['jenis'] === 'individu') {
@@ -255,6 +271,8 @@ class NomorLombaModel extends Model
             'tidak_dilombakan'        => ($isian['tidak_dilombakan'] ?? '0') === '1' ? 1 : 0,
             'alasan_tidak_dilombakan' => ($isian['tidak_dilombakan'] ?? '0') === '1' && ($isian['alasan_tidak_dilombakan'] ?? '') !== '' ? $isian['alasan_tidak_dilombakan'] : null,
             'peserta_minimal'         => $angka($isian['peserta_minimal'] ?? ''),
+            // Cara pencatatan waktu (F11-04), hanya untuk jenis hasil waktu.
+            'cara_waktu'       => ($isian['cara_waktu'] ?? '') === 'tangan' && $jenisHasil === JenisHasil::WAKTU ? 'tangan' : 'elektronik',
         ];
     }
 
@@ -284,7 +302,21 @@ class NomorLombaModel extends Model
         $isian['alasan_tidak_dilombakan'] = (string) ($baris['alasan_tidak_dilombakan'] ?? '');
         $isian['peserta_minimal']         = (string) ($baris['peserta_minimal'] ?? '');
 
+        // Cara pencatatan waktu (F11-04).
+        $isian['cara_waktu'] = self::waktuTangan($baris) ? 'tangan' : 'elektronik';
+
         return $isian;
+    }
+
+    /**
+     * Nomor ini memakai waktu tangan? (F11-04) Hanya benar untuk jenis hasil
+     * waktu yang `cara_waktu`-nya `tangan`; baris tanpa kolom itu = elektronik.
+     *
+     * @param array<string, mixed> $baris Baris `nomor_lomba`.
+     */
+    public static function waktuTangan(array $baris): bool
+    {
+        return ($baris['cara_waktu'] ?? null) === 'tangan' && ($baris['jenis_hasil'] ?? JenisHasil::WAKTU) === JenisHasil::WAKTU;
     }
 
     /**
