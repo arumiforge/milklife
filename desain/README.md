@@ -4,6 +4,7 @@ Folder kerja aset gambar Tahap 9 (K140). Gambar dibuat **Codex** dari brief di `
 
 | Folder | Isi | Ditulis oleh |
 |---|---|---|
+| `referensi/` | Rujukan gaya dari pemilik: `gaya-anime-lintasan.webp` (gaya ilustrasi Tahap 10) dan `hero-editorial.webp` (tata hero foto editorial), K153 | Claude |
 | `tugas/` | Brief satu tugas gambar per berkas, `G<tahap>-<urut>-<slug>.md` | Claude |
 | `catatan/` | Catatan pembuatan per tugas: berkas, ukuran, ringkasan prompt | Codex |
 | `../public/aset/gambar/<folder di brief>/` | Gambar jadi yang dipakai web | Codex |

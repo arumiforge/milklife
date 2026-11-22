@@ -27,6 +27,8 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 
 ## Berikutnya
 
+**Tahap 10 — Identitas visual anime, panel admin, dan data terbaru** (K153). Permintaan dan telaahnya: [`dokumen/draf/permintaan-tahap-10.md`](../dokumen/draf/permintaan-tahap-10.md). Dijalankan koordinator Tahap 10 dengan sub-sesi paralel.
+
 Pembaruan server mengikuti bagian 10 panduan produksi. Server yang dipasang sebelum Tahap 9 menjalankan sekali: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Fitur publik baru (Jadwal, Seri, Peserta, Galeri, Videotron) bersakelar bawaan mati sampai dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139). Server yang dipasang sebelum repo privat perlu deploy key sekali, diurus pengembang (K138, K148). Kesiapan server (`/sehat`, pemantauan uptime, tembolok halaman depan, `client_max_body_size`, `memory_limit`, uji pulih cadangan) ditangani pemilik (K119). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
 
 ## Selesai

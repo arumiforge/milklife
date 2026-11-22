@@ -4,7 +4,7 @@ Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 (CodeIgniter 4.7, P
 
 ## Wajib
 
-- Semua tulisan berbahasa Indonesia: dokumen, antarmuka, URL, pesan commit, judul dan isi PR.
+- Semua tulisan berbahasa Indonesia: dokumen, antarmuka, URL, pesan commit, judul dan isi PR. Pengecualian: slogan, judul bagian bergaya editorial, dan art boleh berbahasa Inggris (K153).
 - Repo ini privat dan berlisensi hak milik (`LICENSE`, K138), tetapi data siswa, foto unggahan, cadangan, `.env`, dan rahasia tetap tidak pernah masuk git; data uji memakai nama dan NISN karangan.
 - Commit atas nama **Arumi Studios** saja (`226232558+arumiforge@users.noreply.github.com`), tanpa atribusi alat AI: tanpa `Co-Authored-By`, tautan sesi, atau "Generated with …" di commit, PR, kode, dan dokumen.
 - Keputusan pemilik dicatat di `agent/KEPUTUSAN.md` pada hari yang sama; bila mengubah aturan, baris di `agent/ATURAN.md` ikut diganti di PR yang sama.
