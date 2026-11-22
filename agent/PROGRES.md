@@ -12,7 +12,7 @@ Tidak ada tahap yang berjalan. Tahap 10 selesai 22 November 2026; semua siap seb
 
 | Tugas | Status |
 |---|---|
-| [F11-01 Ganti atlet oleh admin](tugas/F11-01-ganti-atlet.md) | rencana |
+| [F11-01 Ganti atlet oleh admin](tugas/F11-01-ganti-atlet.md) | menunggu tinjauan |
 | [F11-02 Klasemen per kelompok umur](tugas/F11-02-klasemen-kelompok-umur.md) | rencana |
 | [F11-03 Status nomor dan batas peserta](tugas/F11-03-status-nomor-batas-peserta.md) | rencana |
 | [F11-04 Cara pencatatan waktu](tugas/F11-04-cara-pencatatan-waktu.md) | rencana |

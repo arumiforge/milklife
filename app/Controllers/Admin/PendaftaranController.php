@@ -9,6 +9,7 @@ use App\Models\PendaftaranModel;
 use App\Models\UsulanNamaSekolahModel;
 use App\Libraries\Panel\DataPanelPendaftaran;
 use App\Libraries\Panel\EksporExcel;
+use App\Libraries\Panel\GantiAtlet;
 use App\Libraries\Panel\GabungPendaftaran;
 use App\Libraries\Panel\AsalRincian;
 use App\Libraries\Panel\HapusPendaftaran;
@@ -134,6 +135,8 @@ class PendaftaranController extends BaseController
             // K116: kelompok umur yang tidak cocok lagi dengan pengaturan, dan atlet yang sudah ditolak.
             'kecocokan'        => $kecocokan,
             'atletDitolak'     => (new AtletDitolak())->untukPendaftaran([$id], semua: true)[$id] ?? [],
+            // F11-01: atlet yang diganti admin di pendaftaran Lunas.
+            'atletDiganti'     => (new GantiAtlet())->riwayat($id),
             'timTanpaPembayar' => $tim->untukPendaftaran($id),
             'kalimatTimHapus'  => TimTanpaPembayar::kalimatDitinggalkan($tim->ditinggalkan($id)),
             // Usulan nama sekolah dari pendaftaran ini yang belum diputuskan (K99).

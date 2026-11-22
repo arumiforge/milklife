@@ -37,7 +37,8 @@ use ZipArchive;
  *   di server baru. Dua kunci terakhir boleh tidak ada (paket lama). Setiap
  *   pendaftaran juga membawa `gabungan_dari`: ID dan kode bukti lama yang
  *   sudah digabung ke situ (K109), supaya kode QR bukti lama tetap berlaku,
- *   dan `atlet_ditolak`: atlet yang ditolak panitia (K116; boleh tidak ada), serta
+ *   dan `atlet_ditolak`: atlet yang ditolak panitia (K116; boleh tidak ada),
+ *   `atlet_diganti`: atlet yang diganti admin (F11-01; boleh tidak ada), serta
  *   `kunci_kirim` dari wizard (K118; boleh tidak ada).
  *   `riwayat_admin`: riwayat tindakan admin (F8-01), juga milik pendaftaran
  *   yang sudah dihapus (boleh tidak ada).
@@ -191,6 +192,7 @@ final class PaketPendaftaran
         $bukti = $kelompok($this->db->table('bukti_bayar')->orderBy('id')->get()->getResultArray());
         $lama  = $kelompok($this->db->table('pendaftaran_gabungan')->orderBy('id')->get()->getResultArray());
         $tolak = $kelompok($this->db->table('atlet_ditolak')->orderBy('id')->get()->getResultArray());
+        $ganti = $kelompok($this->db->table('atlet_diganti')->orderBy('id')->get()->getResultArray());
 
         $ikutNomor = [];
 
@@ -283,6 +285,22 @@ final class PaketPendaftaran
                     'ditolak_oleh'         => $d['ditolak_oleh'],
                     'dibuat_pada'          => $d['dibuat_pada'],
                 ], $tolak[$id] ?? []),
+                // Atlet yang diganti admin (F11-01).
+                'atlet_diganti' => array_map(static fn (array $g): array => [
+                    'nama'                 => $g['nama'],
+                    'nisn'                 => $g['nisn'],
+                    'tanggal_lahir'        => $g['tanggal_lahir'],
+                    'jenis_kelamin'        => $g['jenis_kelamin'],
+                    'kelompok_umur'        => $g['kelompok_umur'],
+                    'nomor_dada'           => $g['nomor_dada'],
+                    'nomor_lomba'          => json_decode((string) $g['nomor_lomba'], true) ?? [],
+                    'pengganti_nama'       => $g['pengganti_nama'],
+                    'pengganti_nisn'       => $g['pengganti_nisn'],
+                    'pengganti_nomor_dada' => $g['pengganti_nomor_dada'],
+                    'alasan'               => $g['alasan'],
+                    'diganti_oleh'         => $g['diganti_oleh'],
+                    'dibuat_pada'          => $g['dibuat_pada'],
+                ], $ganti[$id] ?? []),
             ];
         }
 
@@ -761,6 +779,32 @@ final class PaketPendaftaran
                     'total_sesudah'           => (int) ($d['total_sesudah'] ?? 0),
                     'ditolak_oleh'            => is_string($d['ditolak_oleh'] ?? null) ? $d['ditolak_oleh'] : null,
                     'dibuat_pada'             => $d['dibuat_pada'] ?? null,
+                ]);
+            }
+
+            foreach ($p['atlet_diganti'] ?? [] as $g) {
+                if (! is_array($g) || preg_match('/^\d{10}$/D', (string) ($g['nisn'] ?? '')) !== 1 || preg_match('/^\d{10}$/D', (string) ($g['pengganti_nisn'] ?? '')) !== 1
+                    || ! in_array($g['jenis_kelamin'] ?? null, ['L', 'P'], true)) {
+                    continue;
+                }
+
+                $bib = static fn (mixed $n): ?string => is_string($n) && preg_match('/^\d{4}$/D', $n) === 1 ? $n : null;
+
+                $tabel('atlet_diganti', [
+                    'pendaftaran_id'       => $id,
+                    'nama'                 => mb_substr((string) ($g['nama'] ?? ''), 0, 100),
+                    'nisn'                 => (string) $g['nisn'],
+                    'tanggal_lahir'        => (string) ($g['tanggal_lahir'] ?? ''),
+                    'jenis_kelamin'        => (string) $g['jenis_kelamin'],
+                    'kelompok_umur'        => mb_substr((string) ($g['kelompok_umur'] ?? ''), 0, 50),
+                    'nomor_dada'           => $bib($g['nomor_dada'] ?? null),
+                    'nomor_lomba'          => json_encode(is_array($g['nomor_lomba'] ?? null) ? $g['nomor_lomba'] : [], JSON_UNESCAPED_UNICODE),
+                    'pengganti_nama'       => mb_substr((string) ($g['pengganti_nama'] ?? ''), 0, 100),
+                    'pengganti_nisn'       => (string) $g['pengganti_nisn'],
+                    'pengganti_nomor_dada' => $bib($g['pengganti_nomor_dada'] ?? null),
+                    'alasan'               => (string) ($g['alasan'] ?? ''),
+                    'diganti_oleh'         => mb_substr(is_string($g['diganti_oleh'] ?? null) ? $g['diganti_oleh'] : 'Data lama', 0, 100),
+                    'dibuat_pada'          => is_string($g['dibuat_pada'] ?? null) ? $g['dibuat_pada'] : date('Y-m-d H:i:s'),
                 ]);
             }
         }

@@ -123,6 +123,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     // Tolak atlet dari pendaftaran Menunggu; NISN-nya bisa didaftarkan lagi (K116).
     $routes->get('pendaftaran/(:num)/tolak-atlet', 'TolakAtletController::index/$1');
     $routes->post('pendaftaran/(:num)/tolak-atlet', 'TolakAtletController::tolak/$1');
+    // Ganti atlet di pendaftaran Lunas dengan atlet lain dari sekolah yang sama (F11-01, K172).
+    $routes->get('pendaftaran/(:num)/ganti-atlet/(:num)', 'GantiAtletController::index/$1/$2');
+    $routes->post('pendaftaran/(:num)/ganti-atlet/(:num)', 'GantiAtletController::ganti/$1/$2');
     $routes->get('pendaftaran/(:num)/ubah', 'PendaftaranController::ubah/$1');
     $routes->post('pendaftaran/(:num)', 'PendaftaranController::perbarui/$1');
 
