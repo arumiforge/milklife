@@ -31,6 +31,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
                 <?php endforeach ?>
             </div>
             <div class="<?= K::UMPAN ?>"></div>
+            <p class="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-gray-600" data-kunci-sekolah hidden><?= ikon('lock', 'size-4 shrink-0') ?>Terkunci, mengikuti data sekolah.</p>
         </fieldset>
 
         <div>
@@ -40,8 +41,8 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
             // dengan `<select>` di bawahnya, yang tetap menjadi sumber nilai. Tanpa JS, `<select>` yang tampil.
             ?>
             <div class="relative hidden" data-kabupaten-cari>
-                <button type="button" class="<?= K::ISIAN ?> flex items-center justify-between gap-2 text-start disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-600" id="sekolah-kabupaten-tombol" aria-expanded="false" aria-controls="sekolah-kabupaten-panel" aria-labelledby="sekolah-kabupaten-label sekolah-kabupaten-tombol">
-                    <span class="truncate" data-kabupaten-teks>Pilih kabupaten</span><?= ikon('chevron-down', 'size-5 shrink-0 text-gray-500') ?>
+                <button type="button" class="<?= K::ISIAN ?> group flex items-center justify-between gap-2 text-start" id="sekolah-kabupaten-tombol" aria-expanded="false" aria-controls="sekolah-kabupaten-panel" aria-labelledby="sekolah-kabupaten-label sekolah-kabupaten-tombol">
+                    <span class="truncate" data-kabupaten-teks>Pilih kabupaten</span><?= ikon('chevron-down', 'size-5 shrink-0 text-gray-500 group-disabled:hidden') ?><?= ikon('lock', 'hidden size-5 shrink-0 text-gray-500 group-disabled:block') ?>
                 </button>
                 <div class="mt-2 rounded-xl border border-gray-200 bg-white p-2 shadow-angkat" id="sekolah-kabupaten-panel" hidden>
                     <div class="relative">
@@ -59,6 +60,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
                 <?php endforeach ?>
             </select>
             <div class="<?= K::UMPAN ?>"></div>
+            <p class="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-gray-600" data-kunci-sekolah hidden><?= ikon('lock', 'size-4 shrink-0') ?>Terkunci, mengikuti data sekolah.</p>
         </div>
 
         <div>

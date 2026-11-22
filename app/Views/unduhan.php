@@ -18,7 +18,7 @@
 <?= $this->section('keterangan') ?>Flyer, petunjuk teknis, dan berkas lain dari panitia.<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Downloads', 'alis' => $namaAcara, 'judul' => 'Unduhan', 'ikon' => 'download', 'gambar' => 'judul/unduhan.webp', 'teks' => 'Flyer, petunjuk teknis, dan templat dari panitia. Tekan Lihat untuk membuka berkas sebelum mengunduh.'], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Downloads', 'judul' => 'Unduhan', 'ikon' => 'download', 'gambar' => 'judul/unduhan.webp', 'teks' => 'Flyer, petunjuk teknis, dan templat dari panitia. Tekan Lihat untuk membuka berkas sebelum mengunduh.'], ['saveData' => false]) ?>
 
 <div class="mx-auto max-w-screen-xl px-4 py-10">
     <?php if ($unduhan === []) : ?>

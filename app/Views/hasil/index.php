@@ -21,7 +21,6 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_judul_halaman_tw', [
     'inggris' => 'Results',
-    'alis'  => $namaAcara,
     'judul' => 'Hasil lomba',
     'ikon'  => 'trophy',
     'gambar' => 'judul/hasil.webp',

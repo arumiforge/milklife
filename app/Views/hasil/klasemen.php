@@ -26,7 +26,6 @@ if ($klasemen !== []) {
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_judul_halaman_tw', [
     'inggris' => 'Standings',
-    'alis'  => $namaAcara,
     'judul' => 'Klasemen sekolah',
     'ikon'  => 'award',
     'gambar' => 'judul/klasemen.webp',

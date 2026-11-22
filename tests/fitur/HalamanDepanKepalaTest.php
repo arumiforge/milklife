@@ -149,7 +149,8 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('MilkLife Athletics Challenge', $this->teks($xpath, '//h1[@id="judul-acara"]'));
         $this->assertSame(0, $xpath->query('//*[@data-pembuka-teks]')->length, 'Teks kosong tidak ditampilkan.');
         $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
-        $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//section[@id="pembuka"]//*[@data-pembuka-seri]'));
+        // Pembuka tanpa alis (K162): seri hanya di kepala halaman.
+        $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//*[@data-pembuka-seri or contains(concat(" ", @class, " "), " alis ")]')->length);
         $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
 
         // Pita fakta (F10-06): "9–12 Desember" besar di atas tahun; tahun tidak ada di judul (permintaan 20).
@@ -315,8 +316,8 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:awal', []));
         $xpath = $this->xpathDari($this->get('/'));
         $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/following-sibling::*[1][@id="lomba"]')->length);
-        // Istilah sama dengan bagian lain: "Kelompok umur", bukan "Kelompok usia" (K112).
-        $this->assertSame('Kelompok umur', trim($xpath->query('//*[@data-pembuka-ku-label]')->item(0)->textContent));
+        // Deret kartu kelompok umur tanpa label alis (K162).
+        $this->assertSame(0, $xpath->query('//*[@data-pembuka-ku-label]')->length);
 
         // Tiap kartu menaut ke rincian kelompok umurnya di bagian lomba.
         $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[@data-ku-kartu]'));

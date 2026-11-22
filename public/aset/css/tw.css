@@ -3762,6 +3762,12 @@
   :is(:where(.group):focus-visible .group-focus-visible\:ring-offset-primary-900) {
     --tw-ring-offset-color: var(--color-primary-900);
   }
+  :is(:where(.group):disabled .group-disabled\:block) {
+    display: block;
+  }
+  :is(:where(.group):disabled .group-disabled\:hidden) {
+    display: none;
+  }
   :is(:where(.group):has(:is(:checked)) .group-has-\[\:checked\]\:inline-flex) {
     display: inline-flex;
   }
@@ -4224,6 +4230,13 @@
   .disabled\:cursor-not-allowed:disabled {
     cursor: not-allowed;
   }
+  .disabled\:border-dashed:disabled {
+    --tw-border-style: dashed;
+    border-style: dashed;
+  }
+  .disabled\:border-gray-300:disabled {
+    border-color: var(--color-gray-300);
+  }
   .disabled\:bg-gray-100:disabled {
     background-color: var(--color-gray-100);
   }
@@ -4265,11 +4278,46 @@
   .has-focus-visible\:ring-primary-200:has(:focus-visible) {
     --tw-ring-color: var(--color-primary-200);
   }
+  .has-disabled\:cursor-not-allowed:has(:disabled) {
+    cursor: not-allowed;
+  }
+  .has-disabled\:border-dashed:has(:disabled) {
+    --tw-border-style: dashed;
+    border-style: dashed;
+  }
+  .has-disabled\:bg-gray-100:has(:disabled) {
+    background-color: var(--color-gray-100);
+  }
+  .has-disabled\:text-gray-500:has(:disabled) {
+    color: var(--color-gray-500);
+  }
+  @media (hover: hover) {
+    .has-disabled\:hover\:bg-gray-100:has(:disabled):hover {
+      background-color: var(--color-gray-100);
+    }
+  }
   .has-\[\.is-invalid\]\:border-red-500:has(:is(.is-invalid)) {
     border-color: var(--color-red-500);
   }
   .has-\[\:checked\]\:border-primary-700:has(:is(:checked)) {
     border-color: var(--color-primary-700);
+  }
+  .has-\[\:checked\:disabled\]\:border-solid:has(:is(:checked:disabled)) {
+    --tw-border-style: solid;
+    border-style: solid;
+  }
+  .has-\[\:checked\:disabled\]\:border-gray-600:has(:is(:checked:disabled)) {
+    border-color: var(--color-gray-600);
+  }
+  .has-\[\:checked\:disabled\]\:bg-gray-600:has(:is(:checked:disabled)) {
+    background-color: var(--color-gray-600);
+  }
+  .has-\[\:checked\:disabled\]\:text-white:has(:is(:checked:disabled)) {
+    color: var(--color-white);
+  }
+  .has-\[\:checked\:disabled\]\:shadow-none:has(:is(:checked:disabled)) {
+    --tw-shadow: 0 0 #0000;
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   .has-\[\:focus-visible\]\:ring-4:has(:is(:focus-visible)) {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);

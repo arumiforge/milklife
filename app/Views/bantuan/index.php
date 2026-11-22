@@ -49,7 +49,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
     <?php endif ?>
     <div class="relative mx-auto max-w-screen-xl px-4 py-10 sm:py-14 md:flex md:items-center md:justify-between md:gap-8">
         <div class="min-w-0 max-w-2xl md:flex-1">
-            <?= view('tata_letak/_judul_editorial', ['inggris' => 'Need Help?', 'alis' => $namaAcara, 'judul' => 'Bantuan', 'ikon' => 'life-buoy', 'id' => 'judul-bantuan'], ['saveData' => false]) ?>
+            <?= view('tata_letak/_judul_editorial', ['inggris' => 'Need Help?', 'judul' => 'Bantuan', 'ikon' => 'life-buoy', 'id' => 'judul-bantuan'], ['saveData' => false]) ?>
             <p class="mt-3 text-lg text-gray-700">Jawaban untuk pertanyaan yang sering ditanyakan sekolah, dari mendaftar sampai hasil lomba.</p>
 
             <?php if ($jumlah > 0) : ?>

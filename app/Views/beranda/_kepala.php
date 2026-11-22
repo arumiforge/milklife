@@ -4,7 +4,7 @@
  * seperti `desain/referensi/hero-editorial.webp`, pita tiga fakta, lalu deret
  * kartu kelompok umur.
  *
- * - Hero berlatar biru tua: alis (slogan Inggris dan seri), judul besar
+ * - Hero berlatar biru tua tanpa alis (K162): judul besar
  *   Barlow Condensed huruf besar, keterangan Indonesia, dan dua tombol yang
  *   mengikuti buka/tutup pendaftaran (K81). Tombol tanpa alamat tampil
  *   nonaktif dengan keterangannya (K39).
@@ -47,9 +47,6 @@
 use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\IlustrasiBeranda;
 use App\Libraries\PetaLokasi;
-
-// Slogan alis (judul editorial berbahasa Inggris, K153).
-$slogan = 'Born to Run';
 
 $keadaan = $bukaTutup->keadaan();
 $batas   = $bukaTutup->batas();
@@ -162,13 +159,6 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
 
         <div class="relative z-10 mx-auto max-w-screen-xl px-4 pb-10 lg:flex lg:min-h-[34rem] lg:items-center lg:py-16 xl:min-h-[38rem] <?= $foto !== [] ? 'pt-2 sm:pt-4' : 'pt-10 sm:pt-14' ?>">
             <div class="flex max-w-2xl flex-col gap-5 sm:gap-6 lg:w-1/2 xl:w-[46%]">
-                <p class="alis text-oranye-300">
-                    <span><?= esc($slogan) ?></span>
-                    <?php if ($acara['seri_tahun'] !== '') : ?>
-                        <span class="text-primary-100" data-pembuka-seri><?= esc($acara['seri_tahun']) ?></span>
-                    <?php endif ?>
-                </p>
-
                 <h1 id="judul-acara" class="font-tampilan text-[clamp(2.75rem,1.6rem+5vw,5.5rem)] font-extrabold uppercase italic leading-[0.9] tracking-tight text-white">
                     <?php foreach ($kalimatJudul as $i => $kalimat) : ?>
                         <?php $sorot = $i === count($kalimatJudul) - 1 && $i > 0; ?>
@@ -244,7 +234,6 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
     <?php if ($kelompokUmur !== []) : ?>
         <div class="relative isolate mx-auto max-w-screen-xl px-4 py-10" data-pembuka-ku>
             <?= $latarLintasan ?>
-            <p class="alis mb-4" data-pembuka-ku-label>Kelompok umur</p>
             <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 <?= [3 => 'lg:grid-cols-3', 4 => 'lg:grid-cols-4', 5 => 'lg:grid-cols-5'][min(5, max(3, count($kelompokUmur)))] ?>">
                 <?php foreach ($kelompokUmur as $i => $ku) : ?>
                     <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>

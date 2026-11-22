@@ -216,6 +216,14 @@
         L1.kabupaten.value = kabupatenSekolah() || '';
         L1.kabupaten.disabled = !!(ref && ref.kabupaten);
         kabupatenCari.perbarui();
+        // Keterangan gembok di bawah jenjang dan kabupaten yang terkunci (K162).
+        var kunci = $$('[data-kunci-sekolah]');
+        if (kunci[0]) {
+            kunci[0].hidden = !(ref && ref.jenjang);
+        }
+        if (kunci[1]) {
+            kunci[1].hidden = !(ref && ref.kabupaten);
+        }
         L1.npsn.value = s.npsn;
         L1.npsn.disabled = s.tanpaNpsn;
         L1.cari.disabled = s.tanpaNpsn;
