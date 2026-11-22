@@ -16,7 +16,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
     <div class="<?= K::KARTU ?> space-y-5">
         <fieldset data-jalur="sekolah.jenjang">
             <legend class="<?= K::LABEL ?> !text-base">Jenjang sekolah</legend>
-            <?php // Ponsel: daftar pilihan (K160); layar sm ke atas: tombol pilihan. Keduanya disamakan `pendaftaran/sekolah.js`. ?>
+            <?php // Ponsel: daftar pilihan (K161); layar sm ke atas: tombol pilihan. Keduanya disamakan `pendaftaran/sekolah.js`. ?>
             <select class="<?= K::ISIAN ?> sm:hidden [fieldset.is-invalid_&]:border-red-500 [fieldset.is-invalid_&]:bg-red-50" id="sekolah-jenjang-pilih" aria-label="Jenjang sekolah" data-jenjang-pilih>
                 <option value="">Pilih jenjang sekolah</option>
                 <?php foreach ($wizard['jenjang'] as $kode => $label) : ?>
@@ -37,7 +37,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
         <div>
             <label class="<?= K::LABEL ?>" for="sekolah-kabupaten" id="sekolah-kabupaten-label">Kabupaten</label>
             <?php
-            // Ponsel: pemilih dengan kotak cari (K161), diisi dan disamakan `pendaftaran/sekolah.js`
+            // Ponsel: pemilih dengan kotak cari (K162), diisi dan disamakan `pendaftaran/sekolah.js`
             // dengan `<select>` di bawahnya, yang tetap menjadi sumber nilai. Tanpa JS, `<select>` yang tampil.
             ?>
             <div class="relative hidden" data-kabupaten-cari>

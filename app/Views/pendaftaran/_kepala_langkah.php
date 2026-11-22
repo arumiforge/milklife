@@ -3,7 +3,7 @@
  * Kepala satu langkah wizard (F9-05): ilustrasi panduan G9-03 bila berkasnya
  * sudah ada (`IsiBantuan::gambarLangkah()`, tanpa gambar bila belum), judul
  * `<h2 id="judul-langkah-<n>">` yang difokuskan JS saat pindah langkah, dan
- * tombol Bantuan serta Kosongkan di kanannya (K159).
+ * tombol Bantuan serta Kosongkan di kanannya (K160).
  *
  * @var int    $langkah 1–5
  * @var string $judul

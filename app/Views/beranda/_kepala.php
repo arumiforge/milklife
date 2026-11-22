@@ -4,7 +4,7 @@
  * seperti `desain/referensi/hero-editorial.webp`, pita tiga fakta, lalu deret
  * kartu kelompok umur.
  *
- * - Hero berlatar biru tua tanpa alis (K162): judul besar
+ * - Hero berlatar biru tua tanpa alis (K163): judul besar
  *   Barlow Condensed huruf besar, keterangan Indonesia, dan dua tombol yang
  *   mengikuti buka/tutup pendaftaran (K81). Tombol tanpa alamat tampil
  *   nonaktif dengan keterangannya (K39).

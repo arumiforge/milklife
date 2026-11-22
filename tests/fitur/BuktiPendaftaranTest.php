@@ -30,9 +30,6 @@ final class BuktiPendaftaranTest extends UjiBasisData
 
         Services::resetSingle('throttler');
         service('cache')->clean();
-
-        // mPDF membaca SCRIPT_NAME (selalu ada di server web); uji lain bisa menghapusnya.
-        $_SERVER['SCRIPT_NAME'] ??= '/index.php';
     }
 
     public function testPdfDenganNamaBerkasDariPengaturan(): void

@@ -43,7 +43,7 @@
     };
 
     /**
-     * Pemilih kabupaten berkotak cari untuk ponsel (K161). `<select>` tetap
+     * Pemilih kabupaten berkotak cari untuk ponsel (K162). `<select>` tetap
      * menjadi sumber nilai (draf, galat, kunci); pemilih ini hanya tampilan
      * di layar di bawah sm dan mengikuti nilai, kunci, dan tanda galatnya.
      */
@@ -207,7 +207,7 @@
             r.checked = r.value === jenjangSekolah();
             r.disabled = !!(ref && ref.jenjang);
         });
-        // Daftar pilihan jenjang di ponsel (K160) mengikuti tombol pilihan.
+        // Daftar pilihan jenjang di ponsel (K161) mengikuti tombol pilihan.
         var pilihJenjang = $('#sekolah-jenjang-pilih');
         if (pilihJenjang) {
             pilihJenjang.value = jenjangSekolah() || '';
@@ -216,7 +216,7 @@
         L1.kabupaten.value = kabupatenSekolah() || '';
         L1.kabupaten.disabled = !!(ref && ref.kabupaten);
         kabupatenCari.perbarui();
-        // Keterangan gembok di bawah jenjang dan kabupaten yang terkunci (K162).
+        // Keterangan gembok di bawah jenjang dan kabupaten yang terkunci (K163).
         var kunci = $$('[data-kunci-sekolah]');
         if (kunci[0]) {
             kunci[0].hidden = !(ref && ref.jenjang);
@@ -254,7 +254,7 @@
                 isi.appendChild(buat('span', 'block text-sm', ref.lokasi));
             }
             isi.appendChild(buat('span', 'block text-sm', [ref.jenjang_label, ref.kabupaten].filter(Boolean).join(' · ') + '. Jenjang dan kabupaten mengikuti data sekolah.'));
-            // Tawaran usulan nama di dalam kotak sekolah (K99, dirapikan K161).
+            // Tawaran usulan nama di dalam kotak sekolah (K99, dirapikan K162).
             if (!kembar && L1.usulanKotak.hidden) {
                 var tawaran = buat('div', 'mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-green-200 pt-3 text-sm');
                 tawaran.appendChild(buat('span', null, 'Nama sekolah kurang lengkap?'));

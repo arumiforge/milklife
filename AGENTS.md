@@ -30,6 +30,7 @@ Berlaku untuk semua tugas **G10** (K153). Brief G9 lama bergaya 3D lembut dan su
 
   Tambahan tetap: `clean background, no text, no letters, no numbers, no logos, no watermark, modest sportswear, Indonesian school kids, original characters`.
 - **Rujukan**: `desain/referensi/gaya-anime-lintasan.webp` (lintasan sekolah, tiga pelari, salah satunya berjilbab). Ikuti gaya garis, warna, dan cahayanya, bukan menyalin gambarnya.
+- **Stadion**: lomba diadakan di Supersoccer Arena (SSA) Kudus. Stadion di gambar mana pun dibuat **dikenali sebagai SSA** dari foto `desain/referensi/stadion-ssa-*.webp`: tribun beratap putih bersirip dengan tiang miring, gedung tribun berdinding melengkung, lintasan merah bata, rumput sintetis, videotron besar di seberang tribun, Gunung Muria di cakrawala. Tulisan, sponsor, watermark, orang, dan kendaraan di foto tidak disalin (K158).
 - **Palet MilkLife**:
 
   | Warna | Kode | Pemakaian |

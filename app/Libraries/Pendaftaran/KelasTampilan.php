@@ -14,7 +14,7 @@ namespace App\Libraries\Pendaftaran;
 final class KelasTampilan
 {
     /** Kotak isian teks, pilihan, dan berkas. */
-    /** Isian; yang terkunci karena aturan (disabled) abu-abu bergaris putus (K162). */
+    /** Isian; yang terkunci karena aturan (disabled) abu-abu bergaris putus (K163). */
     public const ISIAN = 'block min-h-12 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 placeholder:text-gray-500 focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100 [&.is-invalid]:border-red-500 [&.is-invalid]:bg-red-50 [&.is-invalid]:focus:ring-red-100 disabled:cursor-not-allowed disabled:border-dashed disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-600';
 
     /** Kotak unggah berkas (tombol "Pilih berkas" bergaya merek). */
