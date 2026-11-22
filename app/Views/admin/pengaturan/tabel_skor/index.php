@@ -22,6 +22,8 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Tabel Skor<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Tabel Skor<?= $this->endSection() ?>
@@ -55,7 +57,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
                 <?= $t['nomor'] === [] ? 'Belum dipakai nomor lomba.' : 'Dipakai: ' . esc(implode(', ', $t['nomor'])) . '.' ?>
             </p>
             <div class="relative mt-4 overflow-x-auto rounded-xl border border-gray-200">
-                <table class="w-full text-left text-sm text-gray-700">
+                <table class="w-full text-left text-sm text-gray-700" data-tabel-klien>
                     <caption class="sr-only">Komponen <?= esc($t['nama']) ?></caption>
                     <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                         <tr>

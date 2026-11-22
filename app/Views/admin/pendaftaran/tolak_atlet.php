@@ -34,6 +34,8 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Tolak Atlet <?= esc($p['id_pendaftaran']) ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Tolak Atlet<?= $this->endSection() ?>
@@ -103,7 +105,7 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
                     </p>
                 </div>
                 <div class="relative overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-700" id="tabel-tolak-atlet">
+                    <table class="w-full text-left text-sm text-gray-700" id="tabel-tolak-atlet" data-tabel-klien>
                         <thead>
                             <tr>
                                 <th scope="col" class="<?= $th ?>"><span class="sr-only">Pilih</span></th>

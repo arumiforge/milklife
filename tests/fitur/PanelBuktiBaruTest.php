@@ -140,7 +140,7 @@ final class PanelBuktiBaruTest extends UjiBasisData
 
         $halaman = $this->bukaSebagaiAdmin('admin/pendaftaran');
         $xpath   = $this->xpathDari($halaman);
-        $this->assertSame(['', 'baru'], array_map(static fn (DOMElement $o): string => $o->getAttribute('value'), iterator_to_array($xpath->query('//select[@id="saring-bukti"]/option'))));
+        $this->assertSame(['', 'baru', 'ada'], array_map(static fn (DOMElement $o): string => $o->getAttribute('value'), iterator_to_array($xpath->query('//select[@id="saring-bukti"]/option'))));
         $halaman->assertSee('Bukti baru belum diperiksa');
         $this->assertSame('statusBukti', $xpath->query('//th[@data-kolom="status"]')->item(0)->getAttribute('data-bentuk'));
         $this->assertStringContainsString('bentuk.statusBukti', (string) file_get_contents(FCPATH . 'aset/js/admin-pendaftaran.js'));
@@ -167,6 +167,48 @@ final class PanelBuktiBaruTest extends UjiBasisData
         $this->assertStringContainsString('2', $kartu->textContent);
         $this->assertStringContainsString('Bukti bayar baru belum diperiksa', $kartu->textContent);
         $this->assertSame(site_url('admin/pendaftaran?bukti=baru'), $this->xpathDari($dasbor)->query('//*[@data-tambahan="bukti_baru"]//a')->item(0)->getAttribute('href'));
+    }
+
+    /**
+     * F10-04: "Menunggu, bukti sudah ada" (perlu_diperiksa) dan "Bukti bayar
+     * baru belum diperiksa" (bukti_baru) dua hitungan berbeda; kartunya
+     * menyebut bedanya dan tautannya membuka daftar dengan hitungan yang sama.
+     */
+    public function testDuaAngkaBuktiBayarDasborBedaDanCocokDenganSaringan(): void
+    {
+        $baru    = $this->buatPendaftaranPanel();
+        $sudah   = $this->buatPendaftaranPanel(['sekolah' => ['npsn' => '99999912', 'nama' => 'SD KARANGAN DUA']]);
+        $lunas   = $this->buatPendaftaranPanel(['sekolah' => ['npsn' => '99999913', 'nama' => 'SD KARANGAN TIGA'], 'status' => 'lunas']);
+        $tanpa   = $this->buatPendaftaranPanel(['sekolah' => ['npsn' => '99999914', 'nama' => 'SD KARANGAN EMPAT']]);
+        $ditolak = $this->buatPendaftaranPanel(['foto' => true, 'sekolah' => ['npsn' => '99999915', 'nama' => 'SD KARANGAN LIMA'], 'atlet' => [$this->atletPanel()]]);
+        $this->buatBuktiBayarPanel($baru['id']);
+        $this->buatBuktiBayarPanel($sudah['id']);
+        $this->buatBuktiBayarPanel($lunas['id']);     // bukti tambahan setelah Lunas
+        $this->buatBuktiBayarPanel($ditolak['id']);
+        $this->kirimSebagaiAdmin('admin/pendaftaran/' . $sudah['id'] . '/bukti-bayar/diperiksa');
+        $hasil = (new TolakAtlet())->tolak($ditolak['id'], [$ditolak['atlet'][0]], 'Tahun lahir tidak sesuai kelompok umur.', 'Admin Uji');
+        $this->assertTrue($hasil['tersimpan'] && $hasil['semua']);
+
+        $angka = (new RingkasanDasbor())->angka();
+        // Menunggu dengan bukti (sudah diperiksa atau belum): baru dan sudah.
+        $this->assertSame(2, $angka['perlu_diperiksa']);
+        // Bukti belum diperiksa di status apa pun: baru dan lunas.
+        $this->assertSame(2, $angka['bukti_baru']);
+
+        $ada = array_column($this->json(['status' => 'menunggu', 'bukti' => 'ada'])['data'], 'id');
+        sort($ada);
+        $this->assertSame([$baru['id'], $sudah['id']], $ada);
+        $this->assertNotContains($tanpa['id'], array_column($this->json(['bukti' => 'ada'])['data'], 'id'));
+        $this->assertContains($lunas['id'], array_column($this->json(['bukti' => 'ada'])['data'], 'id'));
+
+        $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'));
+        $kartu = $xpath->query('//*[@data-tambahan="perlu_diperiksa"]')->item(0);
+        $this->assertStringContainsString('Menunggu, bukti sudah ada', $kartu->textContent);
+        $this->assertStringContainsString('ditandai Lunas', $xpath->query('.//*[@data-keterangan]', $kartu)->item(0)->textContent);
+        $this->assertSame(site_url('admin/pendaftaran?status=menunggu&bukti=ada'), $xpath->query('.//a', $kartu)->item(0)->getAttribute('href'));
+        $kartuBaru = $xpath->query('//*[@data-tambahan="bukti_baru"]')->item(0);
+        $this->assertStringContainsString('termasuk di pendaftaran Lunas', $xpath->query('.//*[@data-keterangan]', $kartuBaru)->item(0)->textContent);
+        $this->assertStringNotContainsString('Bukti bayar perlu diperiksa', $xpath->document->saveHTML());
     }
 
     public function testMigrasiMenandaiBuktiPendaftaranLunasSebagaiDiperiksa(): void

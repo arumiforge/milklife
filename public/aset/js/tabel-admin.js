@@ -60,6 +60,19 @@
  * urutan kolom ditulis sebagai teks (↑ ↓ ↕) karena DataTables biasanya
  * menggambarnya dengan CSS bawaannya.
  *
+ * Tabel sisi klien (F10-04): <table data-tabel-klien> yang barisnya sudah
+ * ditulis server (tabel kecil atau sedang: Pengaturan, rekap, usulan nama
+ * sekolah, tolak atlet, …) dibagi per halaman oleh DataTables di peramban,
+ * bawaan 25 baris (`data-panjang`). Tabel dengan baris tidak lebih dari satu
+ * halaman dibiarkan apa adanya. Urutan baris tetap dari server (tanpa urut
+ * kolom), dan kotak cari ikut tampil. Baris di halaman lain tetap ikut
+ * terkirim bila tabel ada di dalam <form> (peristiwa `formdata`), dan
+ * `centang-semua.js` mencentang semua baris lewat TabelAdmin.semuaBaris().
+ *
+ * Daftar berhalaman (F10-04): <ol|ul data-daftar-berhalaman> (misalnya
+ * riwayat tindakan admin) menampilkan 25 butir per halaman (`data-panjang`)
+ * dengan tombol Sebelumnya/Berikutnya; tidak memerlukan DataTables.
+ *
  * Skeleton (F9-17): sampai data pertama tiba, badan tabel
  * berisi baris kerangka abu berdenyut (`.kerangka`) dengan teks pembaca layar
  * "Memuat data…"; pemuatan berikutnya (cari, saring, pindah halaman) cukup
@@ -68,6 +81,69 @@
  */
 (function () {
     'use strict';
+
+    // ---------- F10-04: daftar berhalaman (tanpa DataTables) ----------
+    var KELAS_TOMBOL_DAFTAR = 'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50';
+
+    function buatDaftar(daftar) {
+        if (daftar.getAttribute('data-daftar-siap') === 'ya') {
+            return;
+        }
+        var butir = Array.prototype.filter.call(daftar.children, function (el) {
+            return el.tagName === 'LI';
+        });
+        var panjang = parseInt(daftar.getAttribute('data-panjang'), 10) || 25;
+        if (butir.length <= panjang) {
+            return;
+        }
+        daftar.setAttribute('data-daftar-siap', 'ya');
+
+        var halaman = 0;
+        var jumlahHalaman = Math.ceil(butir.length / panjang);
+        var nav = document.createElement('nav');
+        nav.className = 'mt-3 flex flex-wrap items-center justify-between gap-3';
+        nav.setAttribute('aria-label', 'Halaman daftar');
+        nav.setAttribute('data-navigasi-daftar', '');
+        nav.innerHTML = '<p class="text-sm text-gray-600" aria-live="polite" data-info-daftar></p>'
+            + '<div class="flex items-center gap-1">'
+            + '<button type="button" class="' + KELAS_TOMBOL_DAFTAR + '" data-daftar-sebelumnya>Sebelumnya</button>'
+            + '<button type="button" class="' + KELAS_TOMBOL_DAFTAR + '" data-daftar-berikutnya>Berikutnya</button>'
+            + '</div>';
+        daftar.insertAdjacentElement('afterend', nav);
+
+        var info = nav.querySelector('[data-info-daftar]');
+        var sebelumnya = nav.querySelector('[data-daftar-sebelumnya]');
+        var berikutnya = nav.querySelector('[data-daftar-berikutnya]');
+
+        function tampilkan(ke, gulir) {
+            halaman = Math.max(0, Math.min(jumlahHalaman - 1, ke));
+            var awal = halaman * panjang;
+            butir.forEach(function (li, i) {
+                li.hidden = i < awal || i >= awal + panjang;
+            });
+            info.textContent = 'Butir ' + (awal + 1) + '–' + Math.min(awal + panjang, butir.length)
+                + ' dari ' + butir.length + ' (halaman ' + (halaman + 1) + ' dari ' + jumlahHalaman + ')';
+            sebelumnya.disabled = halaman === 0;
+            berikutnya.disabled = halaman === jumlahHalaman - 1;
+            if (gulir && daftar.scrollIntoView) {
+                daftar.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        sebelumnya.addEventListener('click', function () { tampilkan(halaman - 1, true); });
+        berikutnya.addEventListener('click', function () { tampilkan(halaman + 1, true); });
+        tampilkan(0, false);
+    }
+
+    function mulaiDaftar() {
+        document.querySelectorAll('[data-daftar-berhalaman]').forEach(buatDaftar);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mulaiDaftar);
+    } else {
+        mulaiDaftar();
+    }
 
     if (typeof window.DataTable !== 'function') {
         return;
@@ -464,8 +540,119 @@
         }
     }
 
+    // ---------- F10-04: tabel sisi klien ----------
+    var daftarKlien = [];
+
+    /** Nilai isian di baris yang sedang tidak tampil (halaman lain), untuk ikut dikirim. */
+    function isianTersembunyi(dt, formulir) {
+        var hasil = [];
+        dt.rows().nodes().each(function (tr) {
+            if (formulir.contains(tr)) {
+                return;
+            }
+            tr.querySelectorAll('input, select, textarea').forEach(function (isian) {
+                if (!isian.name || isian.disabled) {
+                    return;
+                }
+                var jenis = (isian.type || '').toLowerCase();
+                if (jenis === 'button' || jenis === 'submit' || jenis === 'reset' || jenis === 'file' || jenis === 'image') {
+                    return;
+                }
+                if ((jenis === 'checkbox' || jenis === 'radio') && !isian.checked) {
+                    return;
+                }
+                if (isian.tagName === 'SELECT' && isian.multiple) {
+                    Array.prototype.forEach.call(isian.selectedOptions, function (o) {
+                        hasil.push([isian.name, o.value]);
+                    });
+                    return;
+                }
+                hasil.push([isian.name, jenis === 'checkbox' || jenis === 'radio' ? (isian.value || 'on') : isian.value]);
+            });
+        });
+        return hasil;
+    }
+
+    function buatKlien(tabel) {
+        if (tabel.getAttribute('data-tabel-siap') === 'ya' || !tabel.tBodies.length) {
+            return;
+        }
+        var panjang = parseInt(tabel.getAttribute('data-panjang'), 10) || 25;
+        if (tabel.tBodies[0].rows.length <= panjang) {
+            return;
+        }
+        tabel.setAttribute('data-tabel-siap', 'ya');
+
+        // Formulir induk dicari sebelum DataTables membungkus tabel.
+        var formulir = tabel.closest('form');
+
+        // Kelas asli sel dan baris disimpan: GAYA_TW untuk tabel sisi server
+        // (jarak sel, warna kepala) tidak boleh mengubah tampilan tabel ini.
+        var kelasAsli = [];
+        tabel.querySelectorAll('thead th, tbody tr, tbody td, tbody th, tfoot td, tfoot th').forEach(function (el) {
+            kelasAsli.push([el, el.className]);
+        });
+        var kelasTabel = tabel.className;
+
+        DataTable.ext.errMode = 'none';
+        var dt = new DataTable(tabel, {
+            pageLength: panjang,
+            lengthMenu: [10, 25, 50, 100],
+            ordering: false,
+            autoWidth: false,
+            language: BAHASA,
+            layout: {
+                topStart: 'pageLength',
+                topEnd: 'search',
+                bottomStart: 'info',
+                bottomEnd: { paging: { firstLast: false, buttons: 5 } }
+            }
+        });
+
+        kelasAsli.forEach(function (pasangan) {
+            pasangan[0].className = pasangan[1];
+        });
+        tabel.className = kelasTabel + ' dataTable';
+
+        // Tabel ini sudah berada di dalam kotak bergaris; bingkai kedua dari
+        // GAYA_TW.layout.tableCell tidak diperlukan.
+        var sel = tabel.parentElement;
+        if (sel && sel.classList.contains('dt-layout-cell')) {
+            sel.className = 'dt-layout-cell dt-layout-full relative block! w-full min-w-0 overflow-x-auto';
+        }
+        var wadah = tabel.closest('.dt-container');
+        if (wadah && wadah.parentElement && wadah.parentElement.classList.contains('overflow-x-auto')) {
+            // Baris cari dan halaman diberi jarak dari tepi kotak pembungkus.
+            wadah.classList.add('py-3', '[&>.dt-layout-row:not(.dt-layout-table)]:px-3');
+        }
+
+        if (formulir) {
+            formulir.addEventListener('formdata', function (e) {
+                isianTersembunyi(dt, formulir).forEach(function (pasangan) {
+                    e.formData.append(pasangan[0], pasangan[1]);
+                });
+            });
+        }
+
+        daftarKlien.push({ tabel: tabel, dt: dt });
+        if (tabel.id) {
+            daftarTabel['#' + tabel.id] = dt;
+        }
+    }
+
+    /** Semua baris <tr> tabel klien, termasuk yang di halaman lain; null bila bukan tabel klien. */
+    function semuaBaris(tabel) {
+        for (var i = 0; i < daftarKlien.length; i++) {
+            if (daftarKlien[i].tabel === tabel) {
+                return daftarKlien[i].dt.rows().nodes().toArray();
+            }
+        }
+        return null;
+    }
+
     function mulai() {
         document.querySelectorAll('table[data-tabel-admin]').forEach(buat);
+        document.querySelectorAll('table[data-tabel-klien]').forEach(buatKlien);
     }
 
     window.TabelAdmin = {
@@ -476,7 +663,11 @@
             return daftarTabel[pemilih] || null;
         },
         /** Buat tabel yang ditambahkan ke halaman setelah halaman dimuat. */
-        buat: buat
+        buat: buat,
+        /** Buat tabel sisi klien (F10-04) yang ditambahkan setelah halaman dimuat. */
+        buatKlien: buatKlien,
+        /** Semua <tr> tabel sisi klien, termasuk halaman lain (F10-04); null bila bukan tabel klien. */
+        semuaBaris: semuaBaris
     };
 
     // Skrip ini dimuat di akhir <body>, sebelum bagian `skrip` halaman; tabel

@@ -4,7 +4,8 @@
  * tombol unduh Excel dan PDF yang membawa saringan yang sama. Data dari
  * `RekapController::index()`; angkanya dari `Rekap::susun()`. Rekap keuangan
  * ditambah tabel tim tanpa pembayar biaya tim (K68). Tata letak `admin_tw`;
- * tabelnya disusun di server, tanpa skrip halaman.
+ * tabelnya disusun di server dan dibagi per halaman di peramban
+ * (`data-tabel-klien`, F10-04); Excel dan PDF tetap memuat semua baris.
  *
  * @var CodeIgniter\View\View                                                                                                                         $this
  * @var string                                                                                                                                        $jenis
@@ -29,7 +30,7 @@ $sel      = static function (array $kolom, mixed $nilai): string {
     };
 };
 $tabel = static function (array $bagian, string $id, string $keterangan) use ($sel): string {
-    $html = '<div class="relative overflow-x-auto rounded-2xl border border-gray-200 bg-white"><table class="w-full text-left text-sm text-gray-700" id="' . esc($id, 'attr') . '">'
+    $html = '<div class="relative overflow-x-auto rounded-2xl border border-gray-200 bg-white"><table class="w-full text-left text-sm text-gray-700" id="' . esc($id, 'attr') . '" data-tabel-klien>'
         . '<caption class="sr-only">' . esc($keterangan) . '</caption>'
         . '<thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700"><tr><th scope="col" class="px-4 py-3 text-right">No</th>';
 
@@ -66,6 +67,8 @@ $tabel = static function (array $bagian, string $id, string $keterangan) use ($s
 $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
+
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
 <?= $this->section('judul') ?>Rekap <?= esc(Rekap::JENIS[$jenis]) ?><?= $this->endSection() ?>
 

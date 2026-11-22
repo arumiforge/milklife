@@ -64,6 +64,8 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Pendaftaran <?= esc($p['id_pendaftaran']) ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Rincian Pendaftaran<?= $this->endSection() ?>
@@ -229,7 +231,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
             <p class="px-4 pb-5 text-gray-600 sm:px-5">Pendaftaran ini belum punya atlet.</p>
         <?php else : ?>
             <div class="relative overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-700" id="tabel-atlet">
+                <table class="w-full text-left text-sm text-gray-700" id="tabel-atlet" data-tabel-klien>
                     <thead>
                         <tr>
                             <th scope="col" class="<?= $th ?> text-end">No</th>
@@ -298,7 +300,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                 <p class="text-sm text-gray-600">Tampil di Cek Pendaftaran sampai NISN-nya didaftarkan lagi. <a class="<?= $tautan ?>" href="<?= site_url('admin/atlet-ditolak') ?>">Lihat semua atlet ditolak</a></p>
             </div>
             <div class="relative overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-700" id="tabel-atlet-ditolak">
+                <table class="w-full text-left text-sm text-gray-700" id="tabel-atlet-ditolak" data-tabel-klien>
                     <thead>
                         <tr>
                             <th scope="col" class="<?= $th ?>">Nama</th>
