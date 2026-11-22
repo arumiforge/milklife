@@ -1,80 +1,118 @@
 /**
- * Carousel foto pembuka halaman depan (F9-03), di atas komponen carousel
- * Flowbite (`data-carousel="static"`, jadi Flowbite tidak memutar sendiri).
+ * Slideshow foto publik (F9-03, F10-06), dipakai hero halaman depan dan
+ * setiap wadah `[data-carousel-beranda]` lain. Tidak bergantung pada Flowbite.
  *
- * - Putar otomatis tiap JEDA milidetik; berhenti bila tab disembunyikan
- *   atau carousel tidak terlihat di layar.
- * - Tombol jeda (`[data-jeda-carousel]`, aria-pressed) menghentikan dan
- *   melanjutkan putaran (WCAG 2.2.2).
- * - Pengunjung yang memilih kurangi gerak (`prefers-reduced-motion`) tidak
- *   mendapat putaran otomatis dan perpindahan tanpa animasi; tombol tetap bisa dipakai.
- * - Geser ke kiri/kanan di layar sentuh pindah ke foto berikutnya/sebelumnya.
+ * Bentuk HTML (lihat `app/Views/beranda/_kepala.php`):
  *
- * Dimuat setelah `flowbite.min.js`, yang membuat objek carousel saat `load`.
+ *     <div data-carousel-beranda role="region" aria-roledescription="carousel" aria-label="…">
+ *         <figure data-carousel-item="active" class="… opacity-100">…<img fetchpriority="high"></figure>
+ *         <figure data-carousel-item class="… hidden opacity-0">…<img loading="lazy"></figure>
+ *         <div data-indikator-carousel>
+ *             <button data-carousel-slide-to="0" aria-current="true" aria-label="Foto 1 dari 2">…</button>
+ *             <button data-carousel-slide-to="1" aria-current="false" aria-label="Foto 2 dari 2">…</button>
+ *         </div>
+ *     </div>
+ *
+ * - Ganti foto tiap JEDA milidetik (5 detik) dengan memudar; hanya titik
+ *   penanda, tanpa tombol maju/mundur. Geser di layar sentuh juga berpindah.
+ * - Berhenti selama: pengunjung memilih kurangi gerak (`prefers-reduced-motion`,
+ *   juga tanpa animasi), tab tidak terlihat, wadah di luar layar, fokus papan
+ *   ketik ada di dalam wadah, atau penunjuk tetikus di atasnya.
+ * - Foto selain yang tampil tersembunyi (`hidden`), jadi `loading="lazy"`
+ *   menahannya. Foto berikutnya dibuka (masih transparan) SIAPKAN milidetik
+ *   sebelum gilirannya, jadi baru diunduh menjelang tampil dan tidak ikut
+ *   unduhan awal halaman. Foto yang dipilih lewat titik dimuat saat itu juga.
  */
 (function () {
     'use strict';
 
-    var JEDA = 6000;
+    var JEDA = 5000;
+    // Foto berikutnya mulai diunduh sekian milidetik sebelum gilirannya.
+    var SIAPKAN = 2000;
 
-    function mulai() {
-        var wadah = document.querySelector('[data-carousel-beranda]');
-        var daftar = window.FlowbiteInstances && window.FlowbiteInstances.getInstances ? window.FlowbiteInstances.getInstances('Carousel') : null;
-        var carousel = wadah && daftar ? daftar[wadah.id] : null;
+    function pasang(wadah) {
+        var butir = Array.prototype.slice.call(wadah.querySelectorAll('[data-carousel-item]'));
+        var titik = Array.prototype.slice.call(wadah.querySelectorAll('[data-carousel-slide-to]'));
 
-        if (!carousel) {
+        if (butir.length < 2) {
             return;
         }
 
         var kurangiGerak = window.matchMedia('(prefers-reduced-motion: reduce)');
-        var tombolJeda = wadah.querySelector('[data-jeda-carousel]');
-        var dijeda = kurangiGerak.matches;
+        var sekarang = Math.max(0, butir.findIndex(function (b) { return b.getAttribute('data-carousel-item') === 'active'; }));
         var terlihat = true;
+        var difokus = false;
+        var ditunjuk = false;
         var pewaktu = null;
+        var persiapan = null;
 
-        if (kurangiGerak.matches) {
-            wadah.querySelectorAll('[data-carousel-item]').forEach(function (butir) {
-                butir.classList.remove('duration-700');
-                butir.classList.add('duration-0');
+        function siapkan(i) {
+            butir[i].classList.remove('hidden');
+        }
+
+        function tampilkan(baru) {
+            baru = (baru + butir.length) % butir.length;
+            if (baru === sekarang) {
+                return;
+            }
+            siapkan(baru);
+            butir.forEach(function (b, i) {
+                var aktif = i === baru;
+                b.classList.toggle('opacity-100', aktif);
+                b.classList.toggle('opacity-0', !aktif);
+                if (aktif) {
+                    b.setAttribute('data-carousel-item', 'active');
+                    b.removeAttribute('aria-hidden');
+                } else {
+                    b.setAttribute('data-carousel-item', '');
+                    b.setAttribute('aria-hidden', 'true');
+                }
             });
+            titik.forEach(function (t, i) {
+                t.setAttribute('aria-current', i === baru ? 'true' : 'false');
+            });
+            sekarang = baru;
         }
 
         function berhenti() {
-            if (pewaktu !== null) {
-                window.clearInterval(pewaktu);
-                pewaktu = null;
-            }
+            window.clearTimeout(pewaktu);
+            window.clearTimeout(persiapan);
+            pewaktu = null;
+            persiapan = null;
         }
 
+        // Satu putaran: siapkan foto berikutnya menjelang gilirannya, lalu tampilkan.
         function jalankan() {
             berhenti();
-            if (!dijeda && terlihat && !document.hidden) {
-                pewaktu = window.setInterval(function () { carousel.next(); }, JEDA);
+            if (!kurangiGerak.matches && terlihat && !difokus && !ditunjuk && !document.hidden) {
+                persiapan = window.setTimeout(function () { siapkan((sekarang + 1) % butir.length); }, JEDA - SIAPKAN);
+                pewaktu = window.setTimeout(function () {
+                    tampilkan(sekarang + 1);
+                    jalankan();
+                }, JEDA);
             }
         }
 
-        function tampilkanJeda() {
-            if (!tombolJeda) {
-                return;
+        butir.forEach(function (b, i) {
+            if (i !== sekarang) {
+                b.setAttribute('aria-hidden', 'true');
             }
-            tombolJeda.setAttribute('aria-pressed', dijeda ? 'true' : 'false');
-            tombolJeda.setAttribute('aria-label', dijeda ? 'Putar foto bergeser' : 'Jeda foto bergeser');
-            tombolJeda.querySelector('[data-ikon-jeda]').classList.toggle('hidden', dijeda);
-            tombolJeda.querySelector('[data-ikon-putar]').classList.toggle('hidden', !dijeda);
-        }
+        });
 
-        if (tombolJeda) {
-            tombolJeda.addEventListener('click', function () {
-                dijeda = !dijeda;
-                tampilkanJeda();
+        titik.forEach(function (t) {
+            t.addEventListener('click', function () {
+                tampilkan(parseInt(t.getAttribute('data-carousel-slide-to'), 10) || 0);
                 jalankan();
             });
-        }
-
-        // Pindah manual: hitung ulang jeda supaya foto baru tidak langsung berganti.
-        wadah.querySelectorAll('[data-carousel-prev], [data-carousel-next], [data-carousel-slide-to]').forEach(function (tombol) {
-            tombol.addEventListener('click', jalankan);
         });
+
+        wadah.addEventListener('focusin', function () { difokus = true; jalankan(); });
+        wadah.addEventListener('focusout', function (e) {
+            difokus = wadah.contains(e.relatedTarget);
+            jalankan();
+        });
+        wadah.addEventListener('mouseenter', function () { ditunjuk = true; jalankan(); });
+        wadah.addEventListener('mouseleave', function () { ditunjuk = false; jalankan(); });
 
         var awalX = null;
         var awalY = null;
@@ -90,11 +128,7 @@
             var dy = e.changedTouches[0].clientY - awalY;
             awalX = null;
             if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-                if (dx < 0) {
-                    carousel.next();
-                } else {
-                    carousel.prev();
-                }
+                tampilkan(sekarang + (dx < 0 ? 1 : -1));
                 jalankan();
             }
         }, { passive: true });
@@ -106,14 +140,20 @@
             }).observe(wadah);
         }
         document.addEventListener('visibilitychange', jalankan);
+        if (kurangiGerak.addEventListener) {
+            kurangiGerak.addEventListener('change', jalankan);
+        }
 
-        tampilkanJeda();
         jalankan();
     }
 
-    if (document.readyState === 'complete') {
-        mulai();
+    function mulai() {
+        document.querySelectorAll('[data-carousel-beranda]').forEach(pasang);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', mulai);
     } else {
-        window.addEventListener('load', mulai);
+        mulai();
     }
 })();
