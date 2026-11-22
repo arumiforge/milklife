@@ -1,6 +1,6 @@
 # Desain
 
-Folder kerja aset gambar Tahap 9 (K140). Gambar dibuat **Codex** dari brief di `tugas/`, ditinjau dan digabung Claude, lalu dipakai halaman oleh tugas Claude yang disebut di tiap brief. Aturan Codex ada di [`AGENTS.md`](../AGENTS.md); rencana lengkap di [`dokumen/draf/rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md).
+Folder kerja aset gambar Tahap 9 (K140) dan Tahap 10 (K153). Gambar dibuat **Codex** dari brief di `tugas/`, ditinjau dan digabung Claude, lalu dipakai halaman oleh tugas Claude yang disebut di tiap brief. Aturan Codex ada di [`AGENTS.md`](../AGENTS.md); rencana lengkap di [`dokumen/draf/rencana-implementasi-tahap-10.md`](../dokumen/draf/rencana-implementasi-tahap-10.md) (Tahap 9: [`rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md)).
 
 | Folder | Isi | Ditulis oleh |
 |---|---|---|
@@ -11,7 +11,26 @@ Folder kerja aset gambar Tahap 9 (K140). Gambar dibuat **Codex** dari brief di `
 
 Status tugas gambar hanya dicatat di `agent/PROGRES.md` oleh koordinator.
 
-## Urutan
+## Urutan Tahap 10 (gaya anime, K153)
+
+Kerjakan **berurutan dari atas**. G10-01 menetapkan tokoh tetap yang dipakai ulang semua brief berikutnya. Brief pengganti G9 memakai nama berkas yang sama, jadi gambar langsung tampil setelah PR digabung.
+
+| Tugas | Isi | Menggantikan | Perlu sebelum |
+|---|---|---|---|
+| [G10-01](tugas/G10-01-lembar-tokoh.md) | Lembar tokoh (lima tokoh tetap) | — | 24 November |
+| [G10-11](tugas/G10-11-elemen-tombol-ornamen.md) | Latar tombol, tekstur, pemisah, ornamen judul, bingkai | — | 25 November |
+| [G10-02](tugas/G10-02-ilustrasi-halaman-depan.md) | Halaman depan dan sapuan hero | G9-02 | 26 November |
+| [G10-09](tugas/G10-09-pita-judul.md) | Pita judul halaman publik | G9-09 | 27 November |
+| [G10-05](tugas/G10-05-ikon-nomor-lomba.md) | Nomor lomba | G9-05 | 28 November |
+| [G10-04](tugas/G10-04-keadaan-kosong-galat.md) | Keadaan kosong, galat, berhasil | G9-04 | 29 November |
+| [G10-03](tugas/G10-03-panduan-pendaftaran.md) | Panduan pendaftaran | G9-03 | 29 November |
+| [G10-07](tugas/G10-07-bantuan-kategori.md) | Kategori Bantuan | G9-07 | 30 November |
+| [G10-06](tugas/G10-06-videotron-podium.md) | Videotron dan podium | G9-06 | 2 Desember |
+| [G10-08](tugas/G10-08-panel-admin.md) | Panel admin | G9-08 | 2 Desember |
+| [G10-12](tugas/G10-12-pola-hiasan.md) | Pola dan hiasan latar (tanpa titik) | G9-12 | 2 Desember |
+| [G10-10](tugas/G10-10-gambar-bagikan.md) | Gambar bagikan | G9-10 | 3 Desember |
+
+## Urutan Tahap 9 (selesai, digantikan G10)
 
 | Tugas | Isi | Dipakai oleh | Perlu sebelum |
 |---|---|---|---|
@@ -32,6 +51,7 @@ Status tugas gambar hanya dicatat di `agent/PROGRES.md` oleh koordinator.
 
 1. Hanya berkas di folder keluaran brief dan `desain/catatan/<ID>.md` yang berubah.
 2. Nama, ukuran piksel, format, dan besar berkas sesuai brief (`python3 -c "from PIL import Image; …"` atau `identify`).
-3. Tidak ada teks, angka, logo, merek, atau wajah realistis; gaya 3D lembut dan palet sesuai.
-4. Commit atas nama Arumi Studios tanpa atribusi alat AI.
-5. CI hijau, lalu digabung *squash* (K126). Gambar yang tidak sesuai diminta ulang lewat komentar PR, menyebut berkas dan alasannya.
+3. Tidak ada teks, angka, merek, atau wajah realistis yang digambar model; logo hanya hasil tempel berkas resmi bila brief memintanya (K153).
+4. Gaya anime 2D cel-shaded dan palet sesuai `AGENTS.md`; tokoh konsisten dengan G10-01; tidak meniru tokoh atau adegan anime lain; tanpa latar ikon kotak/lingkaran, bingkai penuh berwarna, dan titik hiasan.
+5. Commit atas nama Arumi Studios tanpa atribusi alat AI.
+6. CI hijau, lalu digabung *squash* (K126). Gambar yang tidak sesuai diminta ulang lewat komentar PR, menyebut berkas dan alasannya.
