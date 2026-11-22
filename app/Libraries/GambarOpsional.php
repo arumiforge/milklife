@@ -32,8 +32,8 @@ final class GambarOpsional
     /**
      * Elemen berart G10-11 (`elemen/<nama>.webp`) yang dipakai kelas CSS F10-05 lewat kelas
      * penanda `ada-<nama>` di `<html>` tata letak publik (lihat `penandaElemen()`).
-     * Ornamen judul (`ornamen-judul-kiri/kanan`) tidak dipakai lagi sejak F10-08:
-     * pemilik meminta tanpa hiasan sebelum tulisan.
+     * Ornamen judul (`ornamen-judul-kiri/kanan`) tidak dipakai lagi sejak F10-08
+     * (pemilik meminta tanpa hiasan sebelum tulisan, K168) dan berkasnya sudah dihapus.
      * `kuas-sorot` dan `garis-kecepatan` dipasang F10-10.
      */
     public const ELEMEN = [
