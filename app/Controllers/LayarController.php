@@ -46,9 +46,31 @@ class LayarController extends BaseController
         'kanan-bawah' => 'hiasan-kanan-bawah.webp',
     ];
 
+    /**
+     * Gambar juara umum G9-06: kunci atribut `data-gambar-*` => berkas di `public/aset/gambar/layar/`.
+     *
+     * @var array<string, string>
+     */
+    public const GAMBAR_JUARA = [
+        'podium'          => 'podium.webp',
+        'medali-emas'     => 'medali-emas.webp',
+        'medali-perak'    => 'medali-perak.webp',
+        'medali-perunggu' => 'medali-perunggu.webp',
+    ];
+
     public function index(): ResponseInterface
     {
         $this->pastikanTampil();
+
+        $gambar = [];
+
+        foreach (self::GAMBAR_JUARA as $kunci => $berkas) {
+            $alamat = GambarOpsional::alamat('layar/' . $berkas);
+
+            if ($alamat !== null) {
+                $gambar[$kunci] = $alamat;
+            }
+        }
 
         $latar = [];
 
@@ -63,9 +85,10 @@ class LayarController extends BaseController
         return $this->response
             ->setHeader('X-Robots-Tag', 'noindex')
             ->setBody(view('layar/index', [
-                'data'  => $this->dataTembolok(),
-                'latar' => $latar,
-                'segar' => self::SEGAR_DETIK,
+                'data'   => $this->dataTembolok(),
+                'latar'  => $latar,
+                'gambar' => $gambar,
+                'segar'  => self::SEGAR_DETIK,
             ]));
     }
 
