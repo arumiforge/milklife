@@ -4,7 +4,7 @@ use Tests\Support\KirimFormulir;
 use Tests\Support\UjiBasisData;
 
 /**
- * Pemasangan art G10 di halaman depan (F10-10): bagian "Meet the Athletes" dari
+ * Pemasangan art G10 di halaman depan (F10-10): bagian "Our Athletes" dari
  * tokoh G10-01, garis kecepatan G10-11 di hero, sorot kuas di judul, dan pemisah
  * lintasan G10-11. Semua hanya tampil bila berkasnya ada; berkas tiruan ditaruh
  * di folder gambar uji (`GambarCodexKosong`).
@@ -59,7 +59,7 @@ final class HalamanDepanTokohTest extends UjiBasisData
         $this->assertNotNull($bagian);
 
         // Judul Inggris editorial (hiasan) dengan sorot kuas, judul Indonesia yang dibaca.
-        $this->assertSame('Meet the Athletes', trim((string) $xpath->query('.//*[@data-judul-inggris][@lang="en"][@aria-hidden="true"]', $bagian)->item(0)?->textContent));
+        $this->assertSame('Our Athletes', trim((string) $xpath->query('.//*[@data-judul-inggris][@lang="en"][@aria-hidden="true"]', $bagian)->item(0)?->textContent));
         $this->assertSame(1, $xpath->query('.//*[@data-judul-inggris]/span[contains(@class, "sorot-kuas")]', $bagian)->length);
         $this->assertSame('Kenalan dengan para atlet', trim((string) $xpath->query('.//h2[@id="judul-atlet"]', $bagian)->item(0)?->textContent));
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Bagian "Meet the Athletes" halaman depan (`#atlet`, F10-10): tokoh anime G10-01
+ * Bagian "Our Athletes" halaman depan (`#atlet`, F10-10): tokoh anime G10-01
  * di `public/aset/gambar/tokoh/`, judul editorial Inggris dengan sorot kuas G10-11
  * dan keterangan Indonesia (K153).
  *
@@ -47,7 +47,7 @@ $kelasBingkai = $adaLembar ? 'md:mx-auto md:max-w-4xl' : 'mx-auto max-w-2xl';
 ?>
 <section id="atlet" class="tekstur-kertas scroll-mt-20" aria-labelledby="judul-atlet" data-bagian-tokoh>
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
-        <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Meet the <span class="sorot-kuas">Athletes</span></p>
+        <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Our <span class="sorot-kuas">Athletes</span></p>
         <h2 id="judul-atlet" class="judul-keterangan mt-2">Kenalan dengan para atlet</h2>
         <p class="mt-3 max-w-3xl text-lg text-gray-700">Dari SD sampai SMA, setiap anak punya nomor lomba yang pas: lari, lompat, dan lempar. Panitia siap mendampingi di lintasan.</p>
 

@@ -9,7 +9,7 @@
  * | `_kepala.php`  | Pembuka (K81): judul, info acara, keadaan, dua tombol,     | `pembuka`    |
  * |                | carousel foto, dan deret kartu kelompok umur               |              |
  * | `_lomba.php`   | Kelompok umur, nomor lomba, biaya                          | `lomba`      |
- * | `_tokoh.php`   | "Meet the Athletes": tokoh G10-01 (bila berkasnya ada)     | `atlet`      |
+ * | `_tokoh.php`   | "Our Athletes": tokoh G10-01 (bila berkasnya ada)          | `atlet`      |
  * | `_jadwal.php`  | Jadwal                                                     | `jadwal`     |
  * | `_angka.php`   | Angka acara dari pendaftaran Lunas (bila sudah ada)        | `angka`      |
  * | `_hasil.php`   | Hasil terbaru dan juara umum (bila sudah ada yang terbit)  | `hasil`      |
