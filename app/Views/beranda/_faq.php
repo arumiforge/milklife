@@ -15,8 +15,8 @@ if ($faq === []) {
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
         <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-                <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Bantuan</p>
-                <h2 id="judul-faq" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Pertanyaan yang sering ditanyakan</h2>
+                <p class="alis">Bantuan</p>
+                <h2 id="judul-faq" class="judul-tampilan ornamen-judul mt-2">Pertanyaan yang sering ditanyakan</h2>
             </div>
             <?= komponen('tombol', ['label' => 'Lihat semua bantuan', 'href' => site_url('bantuan'), 'varian' => 'kedua', 'ikon' => 'circle-help']) ?>
         </div>

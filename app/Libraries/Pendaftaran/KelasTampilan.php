@@ -36,7 +36,7 @@ final class KelasTampilan
     public const CENTANG = 'size-5 shrink-0 rounded border-gray-300 text-primary-700 focus:ring-4 focus:ring-primary-200 [&.is-invalid]:border-red-500';
 
     /** Pilihan berupa tombol besar: `<label class="PILIHAN"><input type="radio" class="sr-only">Teks</label>`. */
-    public const PILIHAN = 'flex flex-auto cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-primary-700 bg-white px-4 py-3 text-center font-bold text-primary-700 transition hover:bg-primary-50 has-checked:bg-primary-700 has-checked:text-white has-checked:shadow-lembut has-focus-visible:ring-4 has-focus-visible:ring-primary-200 [fieldset.is-invalid_&]:border-red-500';
+    public const PILIHAN = 'flex flex-auto cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-center font-bold text-primary-700 transition hover:bg-primary-50 has-checked:border-primary-700 has-checked:bg-primary-700 has-checked:text-white has-checked:shadow-lembut has-focus-visible:ring-4 has-focus-visible:ring-primary-200 [fieldset.is-invalid_&]:border-red-500';
 
     public const TOMBOL = 'inline-flex items-center justify-center gap-2 rounded-lg text-center font-semibold transition-colors focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-60';
 
@@ -46,9 +46,9 @@ final class KelasTampilan
 
     public const KEDUA = self::TOMBOL . ' min-h-11 border border-gray-300 bg-white px-5 py-2.5 text-sm text-gray-900 hover:bg-gray-50 hover:text-primary-700 focus:ring-gray-100';
 
-    public const GARIS = self::TOMBOL . ' min-h-11 border border-primary-700 bg-white px-4 py-2 text-sm text-primary-700 hover:bg-primary-50 focus:ring-primary-200';
+    public const GARIS = self::TOMBOL . ' min-h-11 border border-gray-300 bg-white px-4 py-2 text-sm text-primary-700 hover:bg-primary-50 focus:ring-primary-200';
 
-    public const GARIS_KECIL = self::TOMBOL . ' min-h-9 border border-primary-700 bg-white px-3 py-1.5 text-sm text-primary-700 hover:bg-primary-50 focus:ring-primary-200';
+    public const GARIS_KECIL = self::TOMBOL . ' min-h-9 border border-gray-300 bg-white px-3 py-1.5 text-sm text-primary-700 hover:bg-primary-50 focus:ring-primary-200';
 
     public const HAPUS_KECIL = self::TOMBOL . ' min-h-9 border border-red-600 bg-white px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 focus:ring-red-200';
 

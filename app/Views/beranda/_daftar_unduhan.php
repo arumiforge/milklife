@@ -37,7 +37,7 @@ $namaSimpan = static function (string $judul, string $jenis): string {
     <?php foreach ($unduhan as $berkas) : ?>
         <?php $rincian = trim($berkas['jenis'] . ($berkas['jenis'] !== '' && $berkas['ukuran'] !== '' ? ' · ' : '') . $berkas['ukuran']); ?>
         <li class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:flex-row sm:items-center" data-unduhan-butir data-id="<?= (int) $berkas['id'] ?>">
-            <span class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700" data-ikon-jenis="<?= esc($ikonJenis($berkas['jenis']), 'attr') ?>"><?= ikon($ikonJenis($berkas['jenis']), 'size-6') ?></span>
+            <span class="flex shrink-0 text-primary-700" data-ikon-jenis="<?= esc($ikonJenis($berkas['jenis']), 'attr') ?>"><?= ikon($ikonJenis($berkas['jenis']), 'size-9') ?></span>
             <div class="min-w-0 flex-1">
                 <<?= $tingkatJudul ?> class="text-lg font-bold text-gray-900 break-words"><?= esc($berkas['judul']) ?></<?= $tingkatJudul ?>>
                 <?php if ($berkas['keterangan'] !== '') : ?>
@@ -47,7 +47,7 @@ $namaSimpan = static function (string $judul, string $jenis): string {
                     <p class="mt-1 text-sm text-gray-500" data-unduhan-rincian><?= esc($rincian) ?></p>
                 <?php endif ?>
             </div>
-            <a class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-primary-700 bg-white px-5 text-sm font-semibold text-primary-700 hover:bg-primary-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($berkas['alamat'], 'attr') ?>" download="<?= esc($namaSimpan($berkas['judul'], $berkas['jenis']), 'attr') ?>" data-unduhan-tombol>
+            <a class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 text-sm font-semibold text-primary-700 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($berkas['alamat'], 'attr') ?>" download="<?= esc($namaSimpan($berkas['judul'], $berkas['jenis']), 'attr') ?>" data-unduhan-tombol>
                 <?= ikon('download', 'size-4') ?> Unduh<span class="sr-only"> <?= esc($berkas['judul']) ?><?= $rincian !== '' ? ' (' . esc($rincian) . ')' : '' ?></span>
             </a>
         </li>

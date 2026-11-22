@@ -24,9 +24,9 @@ $ilustrasi = empty($gambar) ? '' : gambar_opsional($gambar, ['class' => 'h-36 w-
         <?php if (! empty($kembali)) : ?>
             <a href="<?= esc($kembali, 'attr') ?>" class="mb-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primary-700 hover:underline" data-tautan-kembali><?= ikon('arrow-left', 'size-4') ?><?= esc($labelKembali ?? 'Kembali') ?></a>
         <?php endif ?>
-        <div class="flex flex-wrap items-center gap-4">
-            <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white text-oranye-600 shadow-lembut sm:size-14"><?= ikon($ikon, 'size-6 sm:size-7') ?></span>
-            <h1 class="min-w-0 text-3xl font-extrabold tracking-tight text-primary-900 break-words sm:text-4xl"><?= esc($judul) ?></h1>
+        <div class="flex flex-wrap items-center gap-3">
+            <?= ikon($ikon, 'size-9 text-oranye-600 sm:size-11') ?>
+            <h1 class="judul-tampilan min-w-0 break-words"><?= esc($judul) ?></h1>
         </div>
         <?php if (! empty($teks)) : ?>
             <p class="mt-3 max-w-3xl text-lg text-gray-600"><?= esc($teks) ?></p>

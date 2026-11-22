@@ -62,14 +62,14 @@ $sekolah = $hasil[0] ?? null;
                 <div class="mt-3 flex gap-3 rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900" id="kode-galat" role="alert"><?= ikon('triangle-alert', 'mt-0.5') ?><div><?= esc($galat) ?></div></div>
             <?php endif ?>
             <?php if (($info ?? null) !== null) : ?>
-                <div class="mt-3 flex gap-3 rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" id="kode-info" role="status"><?= ikon('info', 'mt-0.5') ?><div><?= esc($info) ?></div></div>
+                <div class="mt-3 flex gap-3 rounded-xl bg-primary-100 p-4 text-sm text-primary-900" id="kode-info" role="status"><?= ikon('info', 'mt-0.5') ?><div><?= esc($info) ?></div></div>
             <?php endif ?>
         </form>
 
         <?php if ($sekolah !== null) : ?>
             <section class="cek-hasil mt-8 space-y-6" aria-labelledby="cek-sekolah">
                 <div class="cek-sekolah flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6">
-                    <span class="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-primary-700" aria-hidden="true"><?= ikon('school', 'size-6') ?></span>
+                    <span class="inline-flex shrink-0 text-primary-700" aria-hidden="true"><?= ikon('school', 'size-10') ?></span>
                     <div class="min-w-0 flex-1">
                         <p class="text-sm font-semibold text-oranye-700">Sekolah</p>
                         <h2 class="text-2xl font-extrabold break-words text-primary-900" id="cek-sekolah"><?= esc($sekolah['nama_sekolah']) ?></h2>

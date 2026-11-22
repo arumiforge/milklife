@@ -86,7 +86,7 @@ $berhasil  = gambar_opsional('keadaan/berhasil.webp', ['class' => 'mx-auto mb-4 
         <?php if ($berhasil !== '') : ?>
             <?= $berhasil ?>
         <?php else : ?>
-            <span class="mx-auto mb-4 inline-flex size-16 items-center justify-center rounded-2xl bg-green-100 text-green-700"><?= ikon('trophy', 'size-8') ?></span>
+            <?= ikon('trophy', 'mx-auto mb-4 block size-14 text-green-700') ?>
         <?php endif ?>
         <h3 class="text-2xl font-extrabold text-primary-900">Pendaftaran terkirim</h3>
         <p class="mt-3 text-gray-700">Pendaftaran <strong id="selesai-sekolah"></strong> tersimpan dengan ID
