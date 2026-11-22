@@ -108,6 +108,19 @@ final class HalamanDepanAngkaHasilTest extends UjiBasisData
         $this->assertCount(2, $umum);
         $this->assertStringStartsWith('1. SD KARANGAN SATU 1', $umum[0]);
         $this->assertStringStartsWith('2. SD KARANGAN DUA 0', $umum[1]);
+        $this->assertSame(0, $xpath->query('//*[@data-hasil-juara-umum]//img')->length, 'Tanpa berkas G9-06 tanpa gambar.');
+
+        // Dengan berkas G9-06: piala di judul dan medali menggantikan kotak peringkat, teksnya tetap.
+        foreach (['piala', 'medali-emas', 'medali-perak', 'medali-perunggu'] as $berkas) {
+            $this->taruhGambarUji('layar/' . $berkas . '.webp');
+        }
+
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(1, $xpath->query('//*[@data-hasil-juara-umum]//h3/img[@data-piala-juara-umum][contains(@src, "aset/gambar/layar/piala.webp")]')->length);
+        $this->assertStringContainsString('medali-emas.webp', (string) $xpath->query('//*[@data-hasil-juara-umum]//li[1]/img[@data-medali-juara-umum="1"]')->item(0)?->getAttribute('src'));
+        $this->assertStringContainsString('medali-perak.webp', (string) $xpath->query('//*[@data-hasil-juara-umum]//li[2]/img[@data-medali-juara-umum="2"]')->item(0)?->getAttribute('src'));
+        $umum = array_map($this->teksSimpul(...), iterator_to_array($xpath->query('//*[@data-hasil-juara-umum]//li')));
+        $this->assertStringStartsWith('1. SD KARANGAN SATU 1', $umum[0]);
     }
 
     public function testSakelarHasilDiAtasSaatHariLomba(): void

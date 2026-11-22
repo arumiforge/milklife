@@ -69,7 +69,18 @@ final class KlasemenSekolahTest extends UjiBasisData
         $publik->assertSee('juara I terbanyak');
         $publik->assertSee('data-kolom="poin"', null);
         $publik->assertSee('SD KARANGAN LAIN');
+        $publik->assertDontSee('data-medali-juara-umum');
         $this->get('hasil')->assertSee('Lihat klasemen sekolah');
+
+        // Dengan berkas G9-06: piala di judul jenjang dan medali di samping lencana juara umum.
+        foreach (['piala', 'medali-emas', 'medali-perak', 'medali-perunggu'] as $berkas) {
+            $this->taruhGambarUji('layar/' . $berkas . '.webp');
+        }
+
+        $xpath = $this->xpathDari($this->get('hasil/klasemen'));
+        $this->assertSame(1, $xpath->query('//section//h2/img[@data-piala-klasemen][contains(@src, "aset/gambar/layar/piala.webp")]')->length);
+        $this->assertStringContainsString('medali-emas.webp', (string) $xpath->query('//tr[@data-juara-umum="1"]//img[@data-medali-juara-umum="1"]')->item(0)?->getAttribute('src'));
+        $this->assertStringContainsString('medali-perak.webp', (string) $xpath->query('//tr[@data-juara-umum="2"]//img[@data-medali-juara-umum="2"]')->item(0)?->getAttribute('src'));
 
         // Unduhan.
         $this->assertStringStartsWith('%PDF', $this->get('hasil/klasemen/pdf')->response()->getBody());
