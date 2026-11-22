@@ -10,7 +10,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Sesi cloud disiapkan Setup script; agen tidak memasang ulang (K62). Isi skrip: `agent/SETUP-CLOUD.md`.
 - Koordinator membuat sub-sesi sendiri, paling banyak 3 sekaligus (K38, K65), di Tahap 9 paling banyak 5 (K145), dan menggabung PR (*squash*) setelah CI hijau; sub-sesi tidak menggabung PR sendiri (K126).
 - Dokumen boleh diubah langsung sesuai kondisi terbaru, PDF dibuat ulang (K100, K101).
-- Bahasa Inggris hanya untuk slogan, judul bagian bergaya editorial, dan art; tombol, formulir, pesan, menu fungsional, dan panel admin tetap berbahasa Indonesia (K153).
+- Bahasa Inggris hanya untuk slogan, judul bagian bergaya editorial, dan art; tombol, formulir, pesan, menu fungsional, dan panel admin tetap berbahasa Indonesia, kecuali judul editorial "Admin Area" di halaman masuk admin (K153, K171).
 - Backup pendaftaran (data siswa asli) tidak masuk git; diuji di basis data lokal dan diimpor pemilik di server (K138, K153).
 - Laragon untuk pengembangan dan produksi, PHP 8.2+ (K08, K18); web lewat Cloudflare Tunnel, IP dari `CF-Connecting-IP` (K31).
 - Tidak menambah pustaka kecuali yang disetujui: Turnstile tanpa pustaka PHP (K122), PHPStan `require-dev` (K123), Lucide dan Three.js lokal tanpa CDN (K140), huruf judul Barlow Condensed lokal (K155), dan rantai bangun Flowbite Pro (Tailwind 4, plugin dan JS Flowbite) dengan Node hanya di komputer pengembang dan CI (K141).
