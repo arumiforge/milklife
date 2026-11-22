@@ -9,19 +9,22 @@ Diperbarui: 22 November 2026
 | Tugas | Status |
 |---|---|
 | [F11-01 Ganti atlet oleh admin](tugas/F11-01-ganti-atlet.md) | selesai (#211) |
-| [F11-02 Klasemen per kelompok umur](tugas/F11-02-klasemen-kelompok-umur.md) | dikerjakan |
+| [F11-02 Klasemen per kelompok umur](tugas/F11-02-klasemen-kelompok-umur.md) | selesai (#212) |
 | [F11-03 Status nomor dan batas peserta](tugas/F11-03-status-nomor-batas-peserta.md) | dikerjakan |
 | [F11-04 Cara pencatatan waktu](tugas/F11-04-cara-pencatatan-waktu.md) | dikerjakan |
 | [F11-05 Kode NM dan r](tugas/F11-05-kode-nm-r.md) | dikerjakan |
 | [F11-06 Rekor kejuaraan](tugas/F11-06-rekor-kejuaraan.md) | rencana |
 | [F11-07 Nomor acara](tugas/F11-07-nomor-acara.md) | dikerjakan |
+| [F11-10 Panel admin ringkas](tugas/F11-10-panel-admin-ringkas.md) | rencana |
+| [F11-11 Cadangan di Pengaturan](tugas/F11-11-cadangan-pengaturan.md) | rencana |
+| [F11-12 Halaman depan dan publik dirapikan](tugas/F11-12-halaman-depan-publik.md) | rencana |
 | [F11-08 Penutupan Tahap 11](tugas/F11-08-penutupan-tahap-11.md) | rencana |
 
 Pembaruan server mengikuti bagian 10 panduan produksi. Server yang dipasang sebelum Tahap 9 menjalankan sekali, berurutan: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `data:sesuaikan`, `aset:minify`, lalu `pendaftaran:impor <berkas.zip>` bila memindah data. Server yang sudah menjalankan perintah Tahap 9 cukup `migrate --all`, `data:sesuaikan`, dan `aset:minify`. Tanya-jawab dan pesan WA yang sudah tersimpan tidak berubah otomatis; admin menyuntingnya di Pengaturan > Bantuan dan Pengaturan > Halaman depan. Fitur publik bersakelar (Jadwal, Seri, Peserta, Galeri, Videotron) dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139). Kesiapan server (`/sehat`, pemantauan uptime, tembolok halaman depan, `client_max_body_size`, `memory_limit`, uji pulih cadangan) ditangani pemilik (K119). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
 
 ## Berikutnya
 
-F11-06 setelah F11-04 dan F11-05 digabung, lalu penutupan F11-08. Semua sebelum lomba 9 Desember.
+F11-06 setelah F11-04 dan F11-05 digabung; F11-10 dan F11-11 (K174) serta F11-12 dengan gambar G11-01 dan G11-02 (K175) setelah gelombang 1; terakhir penutupan F11-08. Semua sebelum lomba 9 Desember.
 
 ## Selesai
 

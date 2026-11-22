@@ -75,7 +75,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Satu peran admin; halaman Akun hanya untuk akun sendiri; akun lain lewat `admin:buat` (K26).
 - Bukti bayar paling banyak sesuai Pengaturan > Pembayaran (1–200, bawaan 100), dikecilkan otomatis (K34, K83, K135, K136).
 - Rekap memuat semua pendaftaran dengan saringan status; keuangan selalu keduanya (K60); Rekap Gabungan (K85).
-- Kolom No, pilih massal (100), Backup data dan `pendaftaran:impor` (K76, K77); Backup data tanpa dimuat ke memori (K118 B4).
+- Kolom No, pilih massal (100), Backup data dan `pendaftaran:impor` (K76, K77); Backup data tanpa dimuat ke memori (K118 B4). Cadangan pindah ke Pengaturan > Cadangan: semua data, berkas, dan pengaturan; impor web mengganti semua setelah cadangan otomatis dan konfirmasi sandi (K174).
 - Antarmuka tanpa teks teknis (K79). Ubah boleh mempertahankan KU dan nomor yang sudah ditutup (K98).
 - Monitoring `arumi.php`, catatan pengunjung, menu Pengecekan, dasbor bergrafik (K102, K104).
 - `pembaruan:periksa` setelah `git pull` (K115). Cadangan harian 14 hari (K66).
@@ -92,7 +92,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Juara I–III dari babak Final; regu juara = satu piala (K124).
 - Poin multi-lomba (Trilomba): admin mengisi prestasi mentah tiap komponen, web menghitung poin dari tabel skor yang bisa diubah admin (bawaan tabel panitia Trilomba O2SN SMP dan Pancalomba SMA/SMK); di antara dua baris memakai baris yang lebih buruk, di luar tabel 0 poin dengan peringatan; total = jumlah poin komponen (K140 butir 7b, menggantikan K124 butir 3).
 - Juara umum **per kelompok umur**, kelompok umur yang digabung dalam satu klasemen diatur admin (K172, menggantikan per jenjang K124); metode pilihan admin di Pengaturan > Hasil: **Medali** (bawaan, juknis: juara I, lalu II, lalu III) atau **Poin per peringkat** 1–8 (bawaan 7-5-4-3-2-1-0-0; poin, lalu juara I, II, III); masih sama = peringkat bersama; kolom poin selalu tampil; kontingen = NPSN (K124, K140 butir 7a). Gabungan disimpan di pengaturan `Klasemen.gabungan` (JSON daftar id kelompok umur); bawaan dan pengaturan rusak = satu klasemen per kelompok umur; kelompok umur di luar gabungan punya klasemen sendiri (K172).
-- Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri (K130). Di ponsel semua butir ada di sidebar yang dibuka tombol menu di kepala halaman; menu bawah 5 butir: Dasbor, Pendaftaran, Atlet, Rekap, dan Menu yang membuka sidebar (Atlet ditolak hanya di sidebar); butir aktif ikon dan label oranye tanpa garis bawah (K131–K133, K157).
+- Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri (K130). Di ponsel semua butir ada di sidebar yang dibuka tombol menu di kepala halaman; menu bawah 5 butir: Dasbor, Pendaftaran, Atlet, Rekap, dan Pengaturan (Atlet ditolak hanya di sidebar); butir aktif ikon dan label oranye tanpa garis bawah (K131–K133, K157, K174).
 - Tandai hadir di daftar ulang hanya untuk pendaftaran Lunas (K129).
 - Cetak BIB per kelompok umur (PDF) dan per sekolah (PDF, ZIP gambar JPG 300 dpi + PDF); ZIP semua sekolah satu folder per sekolah; satu latar penuh untuk semua BIB (unggahan sendiri, atau latar bawaan G9-01 bila berkasnya ada), kepala dan warna tulisan (gelap/terang) dipilih admin (K137, F9-16).
 - Pecah berkas besar tanpa ubah perilaku setelah F7-26, F7-27, F8-01 (K121).
@@ -114,7 +114,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 
 - Rilis langsung aktif tanpa sakelar tampilan; selama pendaftaran buka, perilaku wizard, Cek Pendaftaran, dan unggah bukti tetap sama dan diuji di peramban (K153).
 - Logo di kaus tokoh gambar Codex ditempel dari berkas resmi saat pasca-proses, tidak digambar model (K153).
-- Bilah submenu atas publik diatur admin dan memuat Masuk panitia; menu bawah publik ponsel tanpa Menu dengan Cek paling kanan (yang mati diganti Bantuan lalu Unduhan); tombol menu publik ponsel di kanan, laci dari kanan; menu utama tanpa Kategori; sidebar admin `#021F7B`, pojok kiri atas `#234987` dengan logo tanpa wadah putih, submenu Pengaturan tanpa mengulang halaman kelompok lain (K154, K157, K168).
+- Bilah submenu atas publik diatur admin dan memuat Masuk panitia; menu bawah publik ponsel Beranda, Bantuan, Daftar (tengah, menonjol; setelah pendaftaran tutup menjadi Hasil), Cek, Jadwal (bila mati diganti Unduhan) (K175); tombol menu publik ponsel di kanan, laci dari kanan; menu utama tanpa Kategori; sidebar admin `#021F7B`, pojok kiri atas `#234987` dengan logo tanpa wadah putih, submenu Pengaturan tanpa mengulang halaman kelompok lain (K154, K157, K168).
 - Tanpa garis kiri berwarna dan tanpa garis pendek atau latar hiasan sebelum tulisan, di panel admin maupun halaman publik; tautan kembali yang sudah ada di jejak halaman tidak diulang; nomor pendaftaran di halaman publik bisa disalin sekali klik (K168).
 - Judul editorial Inggris di pita judul dan bagian halaman depan hanya hiasan; `<h1>`/`<h2>` tetap Indonesia (K153, K157).
 - Server yang sudah terisi disamakan dengan `php spark data:sesuaikan` (KU 8, WA, media sosial; hanya nilai bawaan lama) (K154).
@@ -126,3 +126,5 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 ## Tahap 11 (pelajaran hasil Seri 1)
 
 - Semua sebelum lomba: ganti atlet oleh admin sebelum babak dikunci, tanpa atlet tak terdaftar di hasil; rekor kejuaraan mulai Seri 2 tanpa impor Seri 1; status nomor "Tidak dilombakan" dan peringatan batas peserta per nomor; cara pencatatan waktu per nomor (tangan dibulatkan ke atas 0,1 detik); bawaan urutan lintasan tetap (K172).
+- Panel admin: kepala tanpa judul menu, pencarian menu (desktop) atau kotak cari dan ikon keluar (ponsel); jejak halaman mulai Dasbor tanpa ikon rumah, seragam dengan pil navigasi; teks lebih dari dua baris dipotong dengan Selengkapnya; saringan dua per baris; tombol aksi ponsel tiga per baris; tombol unduh Excel/PDF ikon saja (K174).
+- Halaman depan: nomor lomba satu KU satu baris di desktop, isi KU bisa disembunyikan, kolom Putra dan Putri terpisah, ikon lebih besar; kartu KU berart khas dengan isian huruf bertekstur; tanpa ikon tanggal/lokasi/pengeras suara di bawah hero; titik slide ponsel disembunyikan; tombol unduh hasil ikon saja; tombol sejenis di ponsel satu baris dengan satu tombol berteks (K175).
