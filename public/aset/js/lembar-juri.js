@@ -9,6 +9,8 @@
  * - Keadaan ditulis di `data-keadaan` formulir (kosong, belum, menyimpan,
  *   tersimpan, galat, bentrok); warnanya diatur kelas Tailwind di view.
  * - Tombol X mengisi atau mengosongkan percobaan gagal (nomor lompat/lempar).
+ * - Keterangan mengikuti server setelah tersimpan: NM terisi sendiri bila
+ *   semua percobaan X dan hilang bila ada percobaan sah (F11-05).
  * - Sambungan putus: dicoba lagi saat tersambung kembali atau 5 detik kemudian.
  * - Tanpa skrip, tombol Simpan di tiap kartu mengirim formulir biasa.
  */
@@ -173,6 +175,10 @@
         var prestasi = this.form.querySelector('input[name="prestasi"]');
         if (prestasi && document.activeElement !== prestasi) {
             prestasi.value = baris.isian;
+        }
+        var keterangan = this.form.querySelector('select[name="keterangan"]');
+        if (keterangan && document.activeElement !== keterangan) {
+            keterangan.value = baris.keterangan || '';
         }
         (baris.rincian || []).forEach(function (r, i) {
             var poin = this.form.querySelector('[data-poin-komponen="' + i + '"]');

@@ -135,6 +135,61 @@ final class HasilPrestasiPeringkatTest extends CIUnitTestCase
         $this->assertNull(Peringkat::keterangan(null));
     }
 
+    // ---------- Kode NM, r, dan pasal DQ (F11-05) ----------
+
+    public function testPeringkatNmTanpaPeringkatDanMundurTetapDinilai(): void
+    {
+        $hasil = Peringkat::hitung([
+            1 => ['prestasi' => 345, 'keterangan' => null],
+            2 => ['prestasi' => 410, 'keterangan' => 'r'],
+            3 => ['prestasi' => null, 'keterangan' => 'NM'],
+            4 => ['prestasi' => 380, 'keterangan' => null],
+            5 => ['prestasi' => null, 'keterangan' => 'r'],
+            6 => ['prestasi' => 500, 'keterangan' => 'DQ'],
+        ], JenisHasil::JARAK);
+
+        $this->assertSame([2 => 1, 4 => 2, 1 => 3, 3 => null, 5 => null, 6 => null], $hasil);
+    }
+
+    public function testKeteranganNmDanMundur(): void
+    {
+        $this->assertSame('NM', Peringkat::keterangan(' nm '));
+        $this->assertSame('r', Peringkat::keterangan('R'));
+        $this->assertSame('r', Peringkat::keterangan('r'));
+        $this->assertTrue(Peringkat::tanpaPeringkat('NM'));
+        $this->assertTrue(Peringkat::tanpaPeringkat('DQ'));
+        $this->assertFalse(Peringkat::tanpaPeringkat('r'));
+        $this->assertFalse(Peringkat::tanpaPeringkat(null));
+        $this->assertArrayHasKey('NM', Peringkat::pilihan(JenisHasil::JARAK));
+        $this->assertSame(['DNS', 'DNF', 'DQ'], array_keys(Peringkat::pilihan(JenisHasil::WAKTU)));
+        $this->assertStringContainsString('NM = tanpa lompatan', Peringkat::legenda(JenisHasil::JARAK));
+        $this->assertSame('DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.', Peringkat::legenda(JenisHasil::WAKTU));
+    }
+
+    public function testPasalDiskualifikasi(): void
+    {
+        $this->assertSame('TR16.8', Peringkat::pasal(' TR16.8 '));
+        $this->assertSame('TR 17.3.1', Peringkat::pasal('TR  17.3.1'));
+        $this->assertNull(Peringkat::pasal(''));
+        $this->assertNull(Peringkat::pasal(null));
+        $this->assertFalse(Peringkat::pasal('TR16.8 dan TR17.3'));
+        $this->assertFalse(Peringkat::pasal('<b>TR</b>'));
+        $this->assertSame('DQ (TR16.8)', Peringkat::teks('DQ', 'TR16.8'));
+        $this->assertSame('DQ', Peringkat::teks('DQ', null));
+        $this->assertSame('r', Peringkat::teks('r', 'TR16.8'));
+        $this->assertSame('', Peringkat::teks(null));
+    }
+
+    public function testSemuaPercobaanGagal(): void
+    {
+        $this->assertTrue(Percobaan::semuaGagal(['X', 'X', 'X'], 3));
+        $this->assertTrue(Percobaan::semuaGagal(['X', '-', 'X'], 3));
+        $this->assertFalse(Percobaan::semuaGagal(['X', 'X', null], 3));
+        $this->assertFalse(Percobaan::semuaGagal(['X', 345, 'X'], 3));
+        $this->assertFalse(Percobaan::semuaGagal(['-', '-', '-'], 3));
+        $this->assertFalse(Percobaan::semuaGagal(null, 3));
+    }
+
     // ---------- Aturan nomor (F9-09) ----------
 
     public function testWaktuSeperseribuDibulatkanKeAtas(): void

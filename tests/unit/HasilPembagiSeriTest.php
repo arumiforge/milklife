@@ -236,6 +236,15 @@ final class HasilPembagiSeriTest extends CIUnitTestCase
             ['kunci' => 'a:3', 'seri' => 1, 'prestasi' => 320, 'keterangan' => null],
         ];
         $this->assertSame(['a:2' => 'Q', 'a:3' => 'Q'], PembagiSeri::lolos($jarak, 1, 0, JenisHasil::JARAK));
+
+        // F11-05: r (mundur) dinilai dari prestasinya, NM tidak lolos.
+        $kode = [
+            ['kunci' => 'a:1', 'seri' => 1, 'prestasi' => 300, 'keterangan' => null],
+            ['kunci' => 'a:2', 'seri' => 1, 'prestasi' => 350, 'keterangan' => 'r'],
+            ['kunci' => 'a:3', 'seri' => 2, 'prestasi' => null, 'keterangan' => 'NM'],
+            ['kunci' => 'a:4', 'seri' => 2, 'prestasi' => 310, 'keterangan' => null],
+        ];
+        $this->assertSame(['a:2' => 'Q', 'a:4' => 'Q', 'a:1' => 'q'], PembagiSeri::lolos($kode, 1, 1, JenisHasil::JARAK));
     }
 
     public function testAturanOtomatisMengisiPenuh(): void

@@ -13,6 +13,8 @@ namespace App\Libraries\Hasil;
  *   dipisah dengan prestasi terbaik kedua, lalu ketiga, dan seterusnya
  *   (`Peringkat::pemecah()`).
  *
+ * - Semua percobaan X = keterangan NM otomatis (`semuaGagal()`, F11-05).
+ *
  * Disimpan di `hasil.percobaan` sebagai JSON, misalnya `[345,"X",350]`.
  *
  *     Percobaan::urai(['3,45', 'x', '3,50'], 3);
@@ -109,6 +111,22 @@ final class Percobaan
     public static function terbaik(array $percobaan): ?int
     {
         return self::sah($percobaan)[0] ?? null;
+    }
+
+    /**
+     * Semua percobaan sudah diisi dan tidak ada yang sah (setidaknya satu X,
+     * sisanya X atau dilewati)? Bila ya, keterangan NM dipilih otomatis
+     * (F11-05, CR 25).
+     *
+     * @param list<int|string|null>|null $percobaan
+     */
+    public static function semuaGagal(?array $percobaan, int $jumlah): bool
+    {
+        if ($percobaan === null || self::sah($percobaan) !== [] || ! in_array(self::GAGAL, $percobaan, true)) {
+            return false;
+        }
+
+        return count(array_filter($percobaan, static fn ($p): bool => $p !== null)) >= $jumlah;
     }
 
     /**

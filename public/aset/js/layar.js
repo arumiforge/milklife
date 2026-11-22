@@ -205,7 +205,7 @@ if (akar) {
             kolom.push({
                 judul: butir.satuan ? 'Prestasi (' + butir.satuan + ')' : 'Prestasi',
                 kelas: 'w-[calc(var(--u)*5.2)] text-end',
-                isi: (b) => el('td', kelasSel + ' whitespace-nowrap text-end font-extrabold tabular-nums text-amber-200', b.prestasi || b.keterangan || '–'),
+                isi: (b) => el('td', kelasSel + ' whitespace-nowrap text-end font-extrabold tabular-nums text-amber-200', b.prestasi ? b.prestasi + (b.keterangan === 'r' ? ' r' : '') : (b.keterangan || '–')),
             });
             return kolom;
         }

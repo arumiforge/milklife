@@ -1,7 +1,8 @@
 <?php
 /**
  * Isi hasil satu babak (F8-04, K124), tata letak Tailwind `admin_tw`:
- * prestasi, keterangan DNS/DNF/DQ, dan (khusus Final) koreksi peringkat; atur
+ * prestasi, keterangan DNS/DNF/DQ (NM dan r untuk lompat dan lempar, pasal
+ * untuk DQ, F11-05), dan (khusus Final) koreksi peringkat; atur
  * peserta; jadwal babak; ubah nama atau tanda Final; hapus babak. Data dari
  * `HasilController::babak()`.
  *
@@ -85,7 +86,8 @@ foreach ($calon as $kunci => $c) {
         Prestasi <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>: <?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>.
         <?php if ($multi) : ?>Tulis waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poin tiap komponen dicari di tabel skor. Prestasi yang berada di antara dua baris memakai baris yang lebih buruk. Komponen kosong bernilai 0.<?php endif ?>
         Peringkat dihitung otomatis setelah disimpan. Prestasi yang sama mendapat peringkat yang sama<?php if ($nomor['jenis_hasil'] === JenisHasil::JARAK && $nomor['pemecah_seri']) : ?>, kecuali bila percobaannya diisi di Lembar juri. Bila begitu, peserta yang prestasi terbaik keduanya lebih jauh berada di atas<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU && ! empty($nomor['waktu_tangan'])) : ?>. Waktu tangan dibulatkan ke atas ke 0,1 detik saat disimpan (12,34 menjadi 12,4)<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU) : ?>, kecuali bila waktunya ditulis sampai seperseribu detik (misalnya 12,345 dari foto finis)<?php endif ?>.
-        Pilih DNS (tidak start), DNF (tidak finis), atau DQ (diskualifikasi) untuk peserta tanpa peringkat.
+        Pilih DNS (tidak start), DNF (tidak finis), atau DQ (diskualifikasi) untuk peserta tanpa peringkat. Untuk DQ, tulis pasalnya bila ada, misalnya TR16.8.
+        <?php if ($nomor['jenis_hasil'] === JenisHasil::JARAK) : ?>Pilih NM bila tidak ada lompatan atau lemparan sah; NM terisi sendiri bila semua percobaan di Lembar juri gagal (X). Pilih r bila peserta mundur: prestasi sebelum mundur tetap mendapat peringkat.<?php endif ?>
         <?php if ($final) : ?>Di Final, peringkat boleh dikoreksi (misalnya dari foto finis). Kosongkan kotak koreksi supaya peringkat dihitung otomatis.<?php endif ?>
     </p>
     <div class="flex flex-wrap gap-2">
@@ -167,10 +169,14 @@ foreach ($calon as $kunci => $c) {
                                         <label class="sr-only" for="<?= $id ?>-keterangan">Keterangan <?= esc($h['nama']) ?></label>
                                         <select class="<?= $kelasKotak(false) ?>" id="<?= $id ?>-keterangan" name="hasil[<?= $h['id'] ?>][keterangan]">
                                             <option value="">–</option>
-                                            <?php foreach (Peringkat::KETERANGAN as $kode => $arti) : ?>
+                                            <?php foreach (Peringkat::pilihan($nomor['jenis_hasil']) as $kode => $arti) : ?>
                                                 <option value="<?= $kode ?>" title="<?= esc($arti, 'attr') ?>"<?= $nilai($h, 'keterangan', (string) $h['keterangan']) === $kode ? ' selected' : '' ?>><?= $kode ?></option>
                                             <?php endforeach ?>
                                         </select>
+                                        <?php // Pasal diskualifikasi (F11-05), disimpan bila keterangan DQ. ?>
+                                        <label class="sr-only" for="<?= $id ?>-pasal">Pasal DQ <?= esc($h['nama']) ?></label>
+                                        <input type="text" class="mt-1 <?= $kelasKotak(false) ?>" id="<?= $id ?>-pasal" name="hasil[<?= $h['id'] ?>][pasal]" maxlength="<?= Peringkat::PANJANG_PASAL ?>" placeholder="Pasal DQ" autocomplete="off"
+                                            value="<?= esc($nilai($h, 'pasal', (string) $h['pasal']), 'attr') ?>">
                                     </td>
                                     <?php if ($final) : ?>
                                         <td class="px-3 py-3">

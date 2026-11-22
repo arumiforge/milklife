@@ -11,6 +11,7 @@
  */
 
 use App\Libraries\Hasil\JenisHasil;
+use App\Libraries\Hasil\Peringkat;
 
 $beregu = $nomor['jenis'] === 'beregu';
 $kolom  = $beregu ? 4 : 6;
@@ -50,7 +51,7 @@ $kolom  = $beregu ? 4 : 6;
     </tr>
 </table>
 <h1>Hasil <?= esc($nomor['nama']) ?> – <?= esc($nomor['kelompok_umur']) ?></h1>
-<div class="keterangan">Jenis hasil: <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.<?= ! empty($nomor['waktu_tangan']) ? ' ' . esc(App\Libraries\Hasil\Prestasi::TANDA_TANGAN) : '' ?></div>
+<div class="keterangan">Jenis hasil: <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>. <?= esc(Peringkat::legenda($nomor['jenis_hasil'])) ?><?= ! empty($nomor['waktu_tangan']) ? ' ' . esc(App\Libraries\Hasil\Prestasi::TANDA_TANGAN) : '' ?></div>
 <?php if ($babak === []) : ?>
     <div class="kosong">Belum ada babak.</div>
 <?php endif ?>
@@ -81,7 +82,7 @@ $kolom  = $beregu ? 4 : 6;
                         <?= esc($h['prestasi_teks']) ?>
                         <?php foreach ($h['rincian'] ?? [] as $r) : ?><div class="anggota"><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '– (0)' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></div><?php endforeach ?>
                     </td>
-                    <td><?= esc((string) $h['keterangan']) ?></td>
+                    <td><?= esc(Peringkat::teks($h['keterangan'], $h['pasal'] ?? null)) ?></td>
                 </tr>
             <?php endforeach ?>
             <?php if ($b['hasil'] === []) : ?>

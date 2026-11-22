@@ -3,6 +3,7 @@
 use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\Hasil\SeriLintasan;
+use App\Libraries\Hasil\UnduhanHasil;
 use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Panel\StatusPembayaran;
 use CodeIgniter\Config\Services;
@@ -208,6 +209,83 @@ final class LembarJuriTest extends UjiBasisData
         $this->assertSame(4, $x->query('//form[@data-baris-juri="' . $d . '"]//input[@name="percobaan[]"]')->length);
     }
 
+    public function testKodeNmMundurDanPasalDiskualifikasi(): void
+    {
+        $babak = $this->babakJarak(4);
+        [$a, $b, $c, $d] = $babak['hasil'];
+
+        $x = $this->xpathDari($this->bukaSebagaiAdmin('admin/juri/babak/' . $babak['id']));
+        $this->assertSame(1, $x->query('//form[@data-baris-juri="' . $a . '"]//select[@name="keterangan"]/option[@value="NM"]')->length);
+        $this->assertSame(1, $x->query('//form[@data-baris-juri="' . $a . '"]//select[@name="keterangan"]/option[@value="r"]')->length);
+        $this->assertSame(1, $x->query('//form[@data-baris-juri="' . $a . '"]//input[@name="pasal"][@maxlength="12"]')->length);
+
+        $this->simpanJuri($babak['id'], $a, ['percobaan' => ['5,00', 'X', 'X'], 'keterangan' => '', 'versi' => '0']);
+
+        // r: prestasi sebelum mundur tetap dinilai.
+        $mundur = $this->simpanJuri($babak['id'], $b, ['percobaan' => ['5,20', '', ''], 'keterangan' => 'r', 'versi' => '0']);
+        $this->assertSame(['r', 'Terbaik 5,20, mundur'], [$mundur['isi']['baris']['keterangan'], $mundur['isi']['baris']['ringkasan']]);
+
+        // Semua percobaan X: NM terisi sendiri.
+        $nm = $this->simpanJuri($babak['id'], $c, ['percobaan' => ['X', 'X', 'X'], 'keterangan' => '', 'versi' => '0']);
+        $this->assertSame(['NM', 'Tanpa lompatan atau lemparan sah'], [$nm['isi']['baris']['keterangan'], $nm['isi']['baris']['ringkasan']]);
+
+        // DQ dengan pasal.
+        $dq = $this->simpanJuri($babak['id'], $d, ['percobaan' => ['5,50', 'X', 'X'], 'keterangan' => 'DQ', 'pasal' => ' TR16.8 ', 'versi' => '0']);
+        $this->assertSame(['DQ', 'TR16.8', 'Diskualifikasi (TR16.8)'], [$dq['isi']['baris']['keterangan'], $dq['isi']['baris']['pasal'], $dq['isi']['baris']['ringkasan']]);
+
+        $baris = $this->baris($babak['id']);
+        $this->assertSame(['NM', 'TR16.8', null], [$baris[$c]['keterangan'], $baris[$d]['pasal'], $baris[$b]['pasal']]);
+        $this->assertSame([2, 1, null, null], $this->peringkat($babak['id'], [$a, $b, $c, $d]));
+
+        // Juara: r boleh juara, NM dan DQ tidak.
+        $juara = array_column(array_filter((new HasilLomba())->juara(false, 8), static fn (array $j): bool => $j['nomor_id'] === $babak['nomor']), 'peringkat');
+        $this->assertSame([1, 2], $juara);
+
+        // Percobaan sah ditambahkan: NM dibuang walau masih terkirim.
+        $this->simpanJuri($babak['id'], $c, ['percobaan' => ['X', 'X', '4,10'], 'keterangan' => 'NM', 'versi' => '1']);
+        $this->assertNull($this->baris($babak['id'])[$c]['keterangan']);
+        $this->assertSame([2, 1, 3, null], $this->peringkat($babak['id'], [$a, $b, $c, $d]));
+
+        // Pasal salah, NM dengan prestasi di halaman hasil, dan NM di nomor lari ditolak.
+        $salah = $this->simpanJuri($babak['id'], $d, ['percobaan' => ['5,50', 'X', 'X'], 'keterangan' => 'DQ', 'pasal' => 'TR16.8 dan TR17.3', 'versi' => '1']);
+        $this->assertSame('galat', $salah['isi']['status']);
+        $this->assertStringContainsString('misalnya TR16.8', $salah['isi']['pesan']);
+        $galat = (new HasilLomba())->simpanHasil($babak['id'], [$a => ['prestasi' => '5,00', 'keterangan' => 'NM']]);
+        $this->assertStringContainsString('NM berarti tidak ada lompatan atau lemparan sah', $galat[$a]);
+        $lari = $this->babakLari(1, 'Final', $this->idInduk['lari60putri'], 'P');
+        $x    = $this->xpathDari($this->bukaSebagaiAdmin('admin/juri/babak/' . $lari['id']));
+        $this->assertSame(0, $x->query('//select[@name="keterangan"]/option[@value="NM" or @value="r"]')->length);
+        $nmLari = $this->simpanJuri($lari['id'], $lari['hasil'][0], ['prestasi' => '', 'keterangan' => 'NM', 'versi' => '0']);
+        $this->assertStringContainsString('hanya untuk nomor lompat dan lempar', $nmLari['isi']['pesan']);
+
+        // Bukan DQ: pasal tidak disimpan.
+        $this->simpanJuri($babak['id'], $d, ['percobaan' => ['5,50', 'X', 'X'], 'keterangan' => '', 'pasal' => 'TR16.8', 'versi' => '1']);
+        $this->assertNull($this->baris($babak['id'])[$d]['pasal']);
+        $this->simpanJuri($babak['id'], $d, ['percobaan' => ['5,50', 'X', 'X'], 'keterangan' => 'DQ', 'pasal' => 'TR16.8', 'versi' => '2']);
+
+        // Halaman hasil admin: isian pasal; simpan ulang tanpa pasal mengosongkannya.
+        $halaman = $this->xpathDari($this->bukaSebagaiAdmin('admin/hasil/babak/' . $babak['id']));
+        $this->assertSame(1, $halaman->query('//input[@name="hasil[' . $d . '][pasal]"][@value="TR16.8"]')->length);
+
+        // Hasil publik, PDF, dan Excel.
+        $hasil = new HasilLomba();
+        $hasil->terbitkan($babak['nomor'], true);
+        $publik = $this->get('hasil/' . $babak['nomor']);
+        $publik->assertOK();
+        $this->assertStringContainsString('DQ (TR16.8)', $publik->getBody());
+        $this->assertStringContainsString('r = mundur', $publik->getBody());
+
+        $nomor   = $hasil->nomor($babak['nomor']);
+        $unduhan = new UnduhanHasil($nomor, $hasil->semuaBabak($nomor));
+        $html    = $unduhan->html(false);
+        $this->assertStringContainsString('<td>DQ (TR16.8)</td>', $html);
+        $this->assertStringContainsString('<td>r</td>', $html);
+        $this->assertStringContainsString('NM = tanpa lompatan atau lemparan sah', $html);
+        $ket = array_column($unduhan->excel()->lembar()->getSheet(0)->toArray(), 5);
+        $this->assertContains('DQ (Diskualifikasi, TR16.8)', $ket);
+        $this->assertContains('r (Mundur)', $ket);
+    }
+
     public function testHalamanHasilMempertahankanPercobaan(): void
     {
         $babak = $this->babakJarak(2);
@@ -287,6 +365,8 @@ final class LembarJuriTest extends UjiBasisData
         $babak = $this->babakJarak(2);
         [$a] = $babak['hasil'];
         $this->simpanJuri($babak['id'], $a, ['percobaan' => ['5,00', '4,80', 'X'], 'versi' => '0']);
+        // Pasal DQ (F11-05).
+        $this->simpanJuri($babak['id'], $babak['hasil'][1], ['percobaan' => ['4,00', 'X', 'X'], 'keterangan' => 'DQ', 'pasal' => 'TR16.8', 'versi' => '0']);
         $this->db->table('nomor_lomba')->where('id', $babak['nomor'])->update(['jumlah_percobaan' => 4, 'pemecah_seri' => 0]);
 
         $lari = $this->babakLari(1, 'Final', $this->idInduk['lari60putri'], 'P');
@@ -311,6 +391,7 @@ final class LembarJuriTest extends UjiBasisData
         $this->assertSame(['4', '0'], [(string) $n->jumlah_percobaan, (string) $n->pemecah_seri]);
         $this->assertSame('[500,480,"X"]', $this->db->table('hasil')->where('percobaan IS NOT NULL', null, false)->get()->getRow()->percobaan);
         $this->assertSame('10123', (string) $this->db->table('hasil')->where('seperseribu IS NOT NULL', null, false)->get()->getRow()->seperseribu);
+        $this->assertSame(['DQ', 'TR16.8'], array_values((array) $this->db->table('hasil')->select('keterangan, pasal')->where('pasal IS NOT NULL', null, false)->get()->getRowArray()));
     }
 
     // ---------- Pembantu ----------

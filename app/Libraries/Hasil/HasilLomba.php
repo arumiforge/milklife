@@ -256,7 +256,7 @@ final class HasilLomba
      * teks untuk kotak isian (dengan seperseribu bila ada), `pemecah` untuk
      * `Peringkat::hitung()`, `versi` penanda perubahan baris.
      *
-     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, peringkat: int|null, manual: bool, seri: int|null, lintasan: int|null, percobaan: list<int|string|null>|null, percobaan_teks: list<string>, seperseribu: int|null, prestasi_isian: string, pemecah: list<int>|null, versi: int}>
+     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, pasal: string|null, peringkat: int|null, manual: bool, seri: int|null, lintasan: int|null, percobaan: list<int|string|null>|null, percobaan_teks: list<string>, seperseribu: int|null, prestasi_isian: string, pemecah: list<int>|null, versi: int}>
      */
     public function hasilBabak(int $babakId, array $nomor): array
     {
@@ -323,6 +323,8 @@ final class HasilLomba
                 'rincian'        => $komponen === [] || $rincian === [] ? [] : TabelSkor::rincianTampil($komponen, $rincian),
                 'rincian_isian'  => $isianK,
                 'keterangan'     => Peringkat::keterangan($b['keterangan']),
+                // Pasal diskualifikasi (F11-05), hanya untuk DQ.
+                'pasal'          => Peringkat::keterangan($b['keterangan']) === 'DQ' && ($b['pasal'] ?? null) !== null ? (string) $b['pasal'] : null,
                 'peringkat'      => $b['peringkat'] === null ? null : (int) $b['peringkat'],
                 'manual'         => (int) $b['peringkat_manual'] === 1,
                 // Seri dan lintasan (F9-08).
@@ -539,7 +541,12 @@ final class HasilLomba
      *   `percobaan`, percobaan tersimpan dipertahankan selama prestasinya
      *   tidak diubah.
      * - `komponen`: kode komponen => teks prestasi (poin multi-lomba, F9-10).
-     * - `keterangan`: DNS, DNF, DQ, atau kosong.
+     * - `keterangan`: DNS, DNF, DQ, NM, r, atau kosong. NM dan r hanya untuk
+     *   nomor jarak (F11-05). NM dipilih otomatis bila semua percobaan X dan
+     *   dibuang bila ada percobaan sah; NM dengan prestasi tanpa percobaan
+     *   ditolak. r tetap diberi peringkat dari prestasinya.
+     * - `pasal`: pasal diskualifikasi, misalnya TR16.8 (F11-05); disimpan
+     *   hanya bila keterangan DQ.
      * - `peringkat`: koreksi peringkat (khusus Final); bila kunci ini tidak
      *   ada (lembar juri), koreksi yang tersimpan dipertahankan.
      * - `versi`: `hasilBabak()['versi']` saat isian dibuka; bila baris sudah
@@ -590,7 +597,7 @@ final class HasilLomba
             }
 
             $peringkat = is_string($baris['peringkat'] ?? null) ? trim($baris['peringkat']) : '';
-            $manual    = $babak['final'] && $peringkat !== '' && $urai['data']['keterangan'] === null;
+            $manual    = $babak['final'] && $peringkat !== '' && ! Peringkat::tanpaPeringkat($urai['data']['keterangan']);
 
             if ($manual && preg_match('/^[1-9]\d{0,2}$/D', $peringkat) !== 1) {
                 $galat[$id] = 'Peringkat "' . $peringkat . '" belum benar. Tulis angka 1 atau lebih, atau kosongkan supaya dihitung otomatis dari prestasi.';
@@ -621,7 +628,7 @@ final class HasilLomba
             $ubah    = [];
             $bentrok = [];
 
-            foreach ($this->db->table('hasil')->select('id, prestasi, rincian, percobaan, seperseribu, keterangan, peringkat, peringkat_manual, versi')->where('babak_id', $babakId)->get()->getResultArray() as $h) {
+            foreach ($this->db->table('hasil')->select('id, prestasi, rincian, percobaan, seperseribu, keterangan, pasal, peringkat, peringkat_manual, versi')->where('babak_id', $babakId)->get()->getResultArray() as $h) {
                 $kini[(int) $h['id']] = $h;
             }
 
@@ -635,13 +642,16 @@ final class HasilLomba
 
                 // Lembar juri tidak mengirim koreksi peringkat: koreksi yang ada tetap.
                 if (! $s['koreksi']) {
-                    $tetap                    = (int) $lama['peringkat_manual'] === 1 && $data['keterangan'] === null;
+                    $tetap                    = (int) $lama['peringkat_manual'] === 1 && ! Peringkat::tanpaPeringkat($data['keterangan']);
                     $data['peringkat']        = $tetap ? (int) $lama['peringkat'] : null;
                     $data['peringkat_manual'] = $tetap ? 1 : 0;
                 }
 
-                // Prestasi tidak diubah di halaman hasil: percobaan tersimpan tetap.
-                if (! $s['percobaan'] && $lama['percobaan'] !== null && $data['prestasi'] !== null && (int) $lama['prestasi'] === $data['prestasi']) {
+                // Prestasi tidak diubah di halaman hasil: percobaan tersimpan tetap,
+                // juga percobaan tanpa lompatan sah (NM, F11-05).
+                $sama = $data['prestasi'] === null ? $lama['prestasi'] === null : $lama['prestasi'] !== null && (int) $lama['prestasi'] === $data['prestasi'];
+
+                if (! $s['percobaan'] && $lama['percobaan'] !== null && $sama) {
                     $data['percobaan'] = $lama['percobaan'];
                 }
 
@@ -810,7 +820,7 @@ final class HasilLomba
      * @param array<string, list<array{0: int, 1: int}>> $barisSkor baris tabel skor (multi)
      * @param array<string, mixed>                      $baris     isian baris
      *
-     * @return array{data: array{prestasi: int|null, rincian: string|null, percobaan: string|null, seperseribu: int|null, keterangan: string|null}, percobaan: bool}|array{galat: string}
+     * @return array{data: array{prestasi: int|null, rincian: string|null, percobaan: string|null, seperseribu: int|null, keterangan: string|null, pasal: string|null}, percobaan: bool}|array{galat: string}
      */
     private function uraiBaris(array $nomor, array $barisSkor, array $baris): array
     {
@@ -819,6 +829,7 @@ final class HasilLomba
         $percobaan = null;
         $ribu      = null;
         $adaCoba   = $jenis === JenisHasil::JARAK && is_array($baris['percobaan'] ?? null);
+        $nm        = false;
 
         if ($jenis === JenisHasil::MULTI) {
             $hitung   = TabelSkor::hitung($nomor['komponen'], $barisSkor, is_array($baris['komponen'] ?? null) ? $baris['komponen'] : []);
@@ -828,6 +839,7 @@ final class HasilLomba
             $coba      = Percobaan::urai($baris['percobaan'], (int) $nomor['jumlah_percobaan']);
             $prestasi  = ['nilai' => $coba['percobaan'] === null ? null : Percobaan::terbaik($coba['percobaan']), 'galat' => $coba['galat']];
             $percobaan = Percobaan::tulis($coba['percobaan']);
+            $nm        = Percobaan::semuaGagal($coba['percobaan'], (int) $nomor['jumlah_percobaan']);
         } elseif ($jenis === JenisHasil::WAKTU) {
             $prestasi = Prestasi::uraiWaktuRinci(is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '');
             $ribu     = $prestasi['seperseribu'];
@@ -845,13 +857,39 @@ final class HasilLomba
             return ['galat' => $prestasi['galat']];
         }
 
+        // NM, r, dan pasal DQ (F11-05, CR 25).
+        $keterangan = Peringkat::keterangan($baris['keterangan'] ?? null);
+        $pasal      = Peringkat::pasal($baris['pasal'] ?? null);
+
+        if ($keterangan !== null && $jenis !== JenisHasil::JARAK && in_array($keterangan, Peringkat::HANYA_JARAK, true)) {
+            return ['galat' => 'Keterangan ' . $keterangan . ' hanya untuk nomor lompat dan lempar. Pilih DNS, DNF, atau DQ.'];
+        }
+
+        if ($keterangan === 'NM' && $prestasi['nilai'] !== null) {
+            if (! $adaCoba) {
+                return ['galat' => 'NM berarti tidak ada lompatan atau lemparan sah. Kosongkan prestasinya, atau pilih keterangan lain.'];
+            }
+
+            // Ada percobaan sah: NM tidak berlaku lagi.
+            $keterangan = null;
+        }
+
+        if ($keterangan === null && $nm) {
+            $keterangan = 'NM';
+        }
+
+        if ($keterangan === 'DQ' && $pasal === false) {
+            return ['galat' => 'Pasal "' . trim((string) $baris['pasal']) . '" belum benar. Tulis pendek, paling banyak ' . Peringkat::PANJANG_PASAL . ' huruf, misalnya TR16.8.'];
+        }
+
         return [
             'data' => [
                 'prestasi'    => $prestasi['nilai'],
                 'rincian'     => $rincian,
                 'percobaan'   => $percobaan,
                 'seperseribu' => $ribu,
-                'keterangan'  => Peringkat::keterangan($baris['keterangan'] ?? null),
+                'keterangan'  => $keterangan,
+                'pasal'       => $keterangan === 'DQ' && is_string($pasal) ? $pasal : null,
             ],
             'percobaan' => $adaCoba,
         ];
