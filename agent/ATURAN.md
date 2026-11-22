@@ -117,3 +117,4 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Bilah submenu atas publik diatur admin; menu bawah publik ponsel Beranda, Jadwal, Hasil, Daftar/Cek, Menu (yang mati diganti Bantuan lalu Unduhan); menu utama tanpa Kategori; sidebar admin `#021F7B`, pojok kiri atas `#234987`, submenu Pengaturan tanpa mengulang halaman kelompok lain (K154, K157).
 - Judul editorial Inggris di pita judul dan bagian halaman depan hanya hiasan; `<h1>`/`<h2>` tetap Indonesia (K153, K157).
 - Server yang sudah terisi disamakan dengan `php spark data:sesuaikan` (KU 8, WA, media sosial; hanya nilai bawaan lama) (K154).
+- Teks antarmuka, pesan, dan panduan mengikuti skill `.claude/skills/bahasa-indonesia-plain/SKILL.md` dengan sapaan "Anda"; bila bertentangan, keputusan yang ada menang (`Rp 150.000` K80, FAQ, istilah K113, judul editorial Inggris) (K159).
