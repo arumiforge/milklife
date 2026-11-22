@@ -18,7 +18,7 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Pengaturan > Tabel Skor (F9-10, K140 butir 7b): tabel prestasi → poin untuk
+ * Pengaturan > Tabel skor (F9-10, K140 butir 7b): tabel prestasi → poin untuk
  * nomor berjenis hasil poin multi-lomba.
  *
  * - `index`: daftar tabel, jumlah baris per komponen dan kategori, nomor yang
@@ -77,7 +77,7 @@ class TabelSkorController extends BaseController
             return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Semua tabel bawaan sudah terpasang.');
         }
 
-        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Tabel bawaan dipasang: ' . implode(', ', $hasil['dipasang']) . '. Pilih tabelnya di Pengaturan > Nomor Lomba untuk nomor Trilomba.');
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Tabel bawaan dipasang: ' . implode(', ', $hasil['dipasang']) . '. Pilih tabelnya di Pengaturan > Nomor lomba untuk nomor Trilomba.');
     }
 
     public function buat(): RedirectResponse
@@ -109,7 +109,7 @@ class TabelSkorController extends BaseController
         $tabel = $this->cariTabel($id);
 
         if (! $this->data->hapusTabel($id)) {
-            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Tabel ' . $tabel['nama'] . ' masih dipakai nomor lomba, jadi tidak bisa dihapus. Ganti tabel skor nomor itu dulu di Pengaturan > Nomor Lomba.');
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Tabel ' . $tabel['nama'] . ' masih dipakai nomor lomba, jadi tidak bisa dihapus. Ganti tabel skor nomor itu dulu di Pengaturan > Nomor lomba.');
         }
 
         return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Tabel ' . $tabel['nama'] . ' dihapus.');
@@ -155,7 +155,7 @@ class TabelSkorController extends BaseController
         $kembali  = site_url(self::ALAMAT . '/' . $id . '/' . $komponen . '/' . $kategori);
 
         if (! ctype_digit($prestasi) || ! $this->data->hapusBaris($id, $komponen, $kategori, (int) $prestasi)) {
-            return redirect()->to($kembali)->with('pesan_galat', 'Baris itu tidak ditemukan; mungkin sudah dihapus.');
+            return redirect()->to($kembali)->with('pesan_galat', 'Baris itu tidak ditemukan, mungkin sudah dihapus.');
         }
 
         return redirect()->to($kembali)->with('pesan_sukses', 'Baris ' . Prestasi::tulis((int) $prestasi, $k['jenis']) . ' dihapus. Poin hasil lomba yang memakai tabel ini dihitung ulang.');

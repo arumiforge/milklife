@@ -54,9 +54,9 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Halaman Depan<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Halaman depan<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Halaman Depan<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Halaman depan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -64,7 +64,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 
     <p class="text-gray-700">
         Isi yang tampil di halaman depan web pendaftaran. Semua boleh diisi bertahap.
-        Nama, seri, tahun, tempat, dan tanggal acara diatur di <a href="<?= site_url('admin/pengaturan/acara') ?>" class="font-semibold text-primary-700 underline">Data Acara</a>.
+        Nama, seri, tahun, tempat, dan tanggal acara diatur di <a href="<?= site_url('admin/pengaturan/acara') ?>" class="font-semibold text-primary-700 underline">Data acara</a>.
     </p>
 
     <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
@@ -147,11 +147,11 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
         <section class="<?= $kartu ?>" aria-labelledby="judul-peta" data-pengaturan-peta>
             <h2 id="judul-peta" class="text-lg font-bold text-gray-900">Peta lokasi</h2>
             <p class="mb-4 mt-1 text-sm text-gray-600">
-                Peta tampil di bagian Lokasi halaman depan, di atas Kontak, dengan alamat dari Tempat di Data Acara.
+                Peta tampil di bagian Lokasi halaman depan, di atas Kontak, dengan alamat dari Tempat di Data acara.
                 Kosongkan alamat peta bila bagian Lokasi tidak ingin ditampilkan.
             </p>
             <div class="grid gap-4 xl:grid-cols-2">
-                <?= $kotak('peta_embed', 'Alamat peta (embed Google Maps)', 'Di Google Maps buka tempatnya, pilih Bagikan > Sematkan peta, lalu salin kodenya ke sini. Kode <iframe> utuh juga boleh; yang disimpan hanya alamat yang diawali https://www.google.com/maps/embed?.', $isian, $galat, 4, ['maxlength' => '2000', 'spellcheck' => 'false', 'autocomplete' => 'off']) ?>
+                <?= $kotak('peta_embed', 'Alamat peta (embed Google Maps)', 'Di Google Maps buka tempatnya, pilih Bagikan > Sematkan peta, lalu salin kodenya ke sini. Kode <iframe> utuh juga boleh. Yang disimpan hanya alamat yang diawali https://www.google.com/maps/embed?.', $isian, $galat, 4, ['maxlength' => '2000', 'spellcheck' => 'false', 'autocomplete' => 'off']) ?>
                 <?= $kotak('peta_tautan', 'Tautan buka peta', 'Tautan tombol "Buka di Google Maps", misalnya https://maps.google.com/?q=Supersoccer+Arena+Kudus. Kosongkan bila tombolnya tidak perlu.', $isian, $galat, 0, ['maxlength' => '2000', 'inputmode' => 'url', 'spellcheck' => 'false', 'autocomplete' => 'off']) ?>
             </div>
         </section>
@@ -166,7 +166,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                     <span class="text-sm font-semibold text-gray-900">Tampilkan biaya di halaman depan</span>
                 </label>
                 <p id="tampilkan_biaya-bantuan" class="text-sm text-gray-600">
-                    Biaya individu tiap kelompok umur dan biaya tiap tim beregu. Bila dimatikan, biaya tidak tampil di halaman depan; rinciannya tetap muncul di bagian pembayaran saat sekolah mendaftar.
+                    Biaya individu tiap kelompok umur dan biaya tiap tim beregu. Bila dimatikan, biaya tidak tampil di halaman depan. Rinciannya tetap muncul di bagian pembayaran saat sekolah mendaftar.
                 </p>
             </div>
             <div>
@@ -216,7 +216,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
         <h2 id="judul-carousel" class="text-lg font-bold text-gray-900">Foto carousel</h2>
         <p class="mb-4 mt-1 text-sm text-gray-600">
             Foto yang bergeser otomatis di bagian pembuka halaman depan, berurutan dari atas.
-            Pilih foto mendatar tanpa tulisan; JPG, PNG, atau WEBP, paling besar <?= Unggahan::ukuranTeks(Unggahan::BATAS_GAMBAR) ?>.
+            Pilih foto mendatar tanpa tulisan. Format JPG, PNG, atau WEBP, paling besar <?= Unggahan::ukuranTeks(Unggahan::BATAS_GAMBAR) ?>.
             Paling banyak <?= CarouselHalamanDepan::BATAS ?> foto. Bila carousel kosong, gambar kepala yang tampil.
         </p>
 
@@ -267,7 +267,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                 <div class="min-w-0 md:col-span-5">
                     <label for="keterangan-carousel" class="mb-1.5 block text-sm font-semibold text-gray-900">Keterangan foto</label>
                     <input type="text" class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 sm:text-sm" id="keterangan-carousel" name="keterangan" maxlength="<?= CarouselHalamanDepan::BATAS_KETERANGAN ?>" aria-describedby="keterangan-carousel-bantuan">
-                    <p id="keterangan-carousel-bantuan" class="mt-1.5 text-sm text-gray-600">Isi foto dengan kalimat singkat untuk pembaca layar, misalnya "Atlet melempar lembing".</p>
+                    <p id="keterangan-carousel-bantuan" class="mt-1.5 text-sm text-gray-600">Gambarkan isi foto dalam kalimat singkat untuk pembaca layar, misalnya "Atlet melempar lembing".</p>
                 </div>
                 <div class="md:col-span-2 md:pt-7">
                     <?= komponen('tombol', ['label' => 'Tambah foto', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'plus', 'blok' => true]) ?>

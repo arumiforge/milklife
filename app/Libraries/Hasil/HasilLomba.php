@@ -536,7 +536,7 @@ final class HasilLomba
         $multi = $jenis === JenisHasil::MULTI;
 
         if ($multi && $nomor['komponen'] === []) {
-            return [0 => 'Nomor ini belum punya tabel skor. Pilih tabel skor dan komponennya di Pengaturan > Nomor Lomba.'];
+            return [0 => 'Nomor ini belum punya tabel skor. Pilih tabel skor dan komponennya di Pengaturan > Nomor lomba.'];
         }
 
         $barisSkor = $multi ? (new DataTabelSkor($this->db))->barisKomponen((int) $nomor['tabel_skor_id'], $nomor['komponen'], $nomor['kategori']) : [];
@@ -894,7 +894,7 @@ final class HasilLomba
             }
 
             if ($ada->countAllResults() > 0) {
-                $galat['final'] = 'Nomor ini sudah punya babak Final. Satu nomor hanya satu Final; hapus tanda Final di babak lain dulu.';
+                $galat['final'] = 'Nomor ini sudah punya babak Final. Satu nomor hanya boleh punya satu Final. Hapus dulu tanda Final di babak lain.';
             }
         }
 

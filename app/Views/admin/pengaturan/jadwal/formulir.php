@@ -37,7 +37,7 @@ $pilihan = '<span class="font-normal text-gray-500">(boleh kosong)</span>';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?><?= $baru ? 'Tambah Agenda' : 'Ubah Agenda' ?><?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= $baru ? 'Tambah agenda' : 'Ubah agenda' ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Agenda<?= $this->endSection() ?>
 

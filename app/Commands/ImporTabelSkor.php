@@ -19,7 +19,7 @@ use Throwable;
  *   belum punya prestasi dipindah ke poin multi-lomba dengan tabel Trilomba.
  *
  * `data:awal` melakukan keduanya untuk pemasangan baru. Admin juga bisa
- * memasang tabel bawaan dari Pengaturan > Tabel Skor.
+ * memasang tabel bawaan dari Pengaturan > Tabel skor.
  */
 class ImporTabelSkor extends BaseCommand
 {
@@ -56,7 +56,7 @@ class ImporTabelSkor extends BaseCommand
         if (array_key_exists('trilomba', $params) || CLI::getOption('trilomba') !== null) {
             CLI::write($data->pakaiUntukTrilomba() . ' nomor Trilomba sekarang memakai poin multi-lomba dengan tabel Trilomba O2SN SMP.');
         } else {
-            CLI::write('Pilih jenis hasil "Poin multi-lomba" untuk nomor Trilomba di Pengaturan > Nomor Lomba, atau jalankan lagi dengan --trilomba.');
+            CLI::write('Pilih jenis hasil "Poin multi-lomba" untuk nomor Trilomba di Pengaturan > Nomor lomba, atau jalankan lagi dengan --trilomba.');
         }
 
         return EXIT_SUCCESS;

@@ -368,7 +368,7 @@ final class KelengkapanPengaturan
             'Nomor lomba',
             'admin/pengaturan/nomor-lomba',
             $kalimat,
-            count($dinilai) . ' nomor lomba aktif; nomor beregu sudah lengkap.',
+            count($dinilai) . ' nomor lomba aktif. Nomor beregu sudah lengkap.',
         );
     }
 

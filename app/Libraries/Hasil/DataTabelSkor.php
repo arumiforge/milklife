@@ -402,7 +402,7 @@ final class DataTabelSkor
             }
 
             if (mb_strlen($namaK) > TabelSkor::NAMA_KOMPONEN_MAKSIMAL || ! isset(TabelSkor::JENIS_KOMPONEN[$k['jenis']])) {
-                $galat['komponen'] = 'Nama komponen paling banyak ' . TabelSkor::NAMA_KOMPONEN_MAKSIMAL . ' huruf, dan jenisnya waktu atau jarak.';
+                $galat['komponen'] = 'Nama komponen paling banyak ' . TabelSkor::NAMA_KOMPONEN_MAKSIMAL . ' huruf. Jenisnya harus waktu atau jarak.';
 
                 continue;
             }

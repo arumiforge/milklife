@@ -202,7 +202,7 @@ class NomorLombaModel extends Model
         }
 
         if ($isian['urutan'] !== '' && self::angka($isian['urutan'], 0, self::URUTAN_MAKSIMAL) === null) {
-            $galat['urutan'] = 'Urutan harus angka bulat 0 sampai ' . self::URUTAN_MAKSIMAL . '. Angka kecil tampil lebih dulu; kosongkan untuk menaruhnya paling akhir.';
+            $galat['urutan'] = 'Urutan harus angka bulat 0 sampai ' . self::URUTAN_MAKSIMAL . '. Angka kecil tampil lebih dulu. Kosongkan untuk menaruhnya paling akhir.';
         }
 
         return $galat;
@@ -431,7 +431,7 @@ class NomorLombaModel extends Model
         if ($id === '') {
             $galat['tabel_skor_id'] = 'Tabel skor belum dipilih. Pilih tabel skor untuk menghitung poin, misalnya Trilomba O2SN SMP.';
         } elseif (! ctype_digit($id) || ! isset($tabelSkor[(int) $id])) {
-            $galat['tabel_skor_id'] = 'Tabel skor yang dipilih tidak ditemukan. Pilih lagi dari daftar, atau pasang tabelnya di Pengaturan > Tabel Skor.';
+            $galat['tabel_skor_id'] = 'Tabel skor yang dipilih tidak ditemukan. Pilih lagi dari daftar, atau pasang tabelnya di Pengaturan > Tabel skor.';
         } else {
             $kode   = array_filter(explode(',', $isian['komponen_skor'] ?? ''), static fn (string $k): bool => $k !== '');
             $asing  = array_diff($kode, $tabelSkor[(int) $id]);
@@ -465,7 +465,7 @@ class NomorLombaModel extends Model
         $anggota = self::angka($isian['batas_anggota'], self::INTI_MINIMAL, self::ANGGOTA_MAKSIMAL);
 
         if ($isian['batas_anggota'] === '') {
-            $galat['batas_anggota'] = 'Batas anggota belum diisi. Tulis jumlah anggota paling banyak satu tim termasuk cadangan; samakan dengan jumlah inti bila tanpa cadangan.';
+            $galat['batas_anggota'] = 'Batas anggota belum diisi. Tulis jumlah anggota paling banyak satu tim termasuk cadangan. Samakan dengan jumlah inti bila tanpa cadangan.';
         } elseif ($anggota === null) {
             $galat['batas_anggota'] = "Batas anggota harus angka {$batas}, misalnya 6.";
         } elseif ($inti !== null && $anggota < $inti) {

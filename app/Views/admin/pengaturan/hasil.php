@@ -13,8 +13,8 @@ use App\Libraries\Hasil\Klasemen;
 use App\Libraries\Hasil\MetodeKlasemen;
 
 $keteranganMetode = [
-    Klasemen::MEDALI => 'Sesuai petunjuk teknis bagian 11: sekolah dengan juara I terbanyak menjadi juara umum; bila sama, dibandingkan juara II, lalu juara III.',
-    Klasemen::POIN   => 'Setiap atlet atau regu di peringkat 1–' . Klasemen::PERINGKAT_POIN . ' babak Final menyumbang poin untuk sekolahnya. Sekolah dengan poin terbanyak menjadi juara umum; bila sama, dibandingkan juara I, lalu II, lalu III.',
+    Klasemen::MEDALI => 'Sesuai petunjuk teknis bagian 11: sekolah dengan juara I terbanyak menjadi juara umum. Bila sama, yang dibandingkan juara II, lalu juara III.',
+    Klasemen::POIN   => 'Setiap atlet atau regu di peringkat 1 sampai ' . Klasemen::PERINGKAT_POIN . ' babak Final menyumbang poin untuk sekolahnya. Sekolah dengan poin terbanyak menjadi juara umum. Bila sama, yang dibandingkan juara I, lalu II, lalu III.',
 ];
 $poinGalat = array_filter($galat, static fn (string $kunci): bool => str_starts_with($kunci, 'poin'), ARRAY_FILTER_USE_KEY);
 $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border p-2.5 text-base focus:ring-4 sm:text-sm '
@@ -67,7 +67,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                     <?php endif ?>
                 </fieldset>
                 <p class="mt-4 text-sm text-gray-600">
-                    Bila masih sama, sekolah-sekolah itu berbagi peringkat yang sama. Peringkat 1–3 di setiap jenjang adalah juara umum I–III.
+                    Bila masih sama, sekolah-sekolah itu berbagi peringkat yang sama. Peringkat 1 sampai 3 di setiap jenjang menjadi juara umum I sampai III.
                 </p>
             </section>
 

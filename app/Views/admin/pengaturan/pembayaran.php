@@ -72,7 +72,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 
                 <div class="space-y-4">
                     <?= $kotakTeks('bank', 'Nama bank', 'Contoh: BRI, BCA, atau Bank Jateng.', $isian, $galat, ['maxlength' => '50', 'autocomplete' => 'off']) ?>
-                    <?= $kotakTeks('nomor_rekening', 'Nomor rekening', 'Boleh diketik dengan spasi atau tanda hubung; yang disimpan hanya angkanya.', $isian, $galat, ['inputmode' => 'numeric', 'autocomplete' => 'off']) ?>
+                    <?= $kotakTeks('nomor_rekening', 'Nomor rekening', 'Boleh diketik dengan spasi atau tanda hubung. Yang disimpan hanya angkanya.', $isian, $galat, ['inputmode' => 'numeric', 'autocomplete' => 'off']) ?>
                     <?= $kotakTeks('pemilik_rekening', 'Nama pemilik rekening', 'Tulis persis seperti di buku tabungan, supaya ofisial yakin rekeningnya benar.', $isian, $galat, ['maxlength' => '100', 'autocomplete' => 'off']) ?>
 
                     <div>
@@ -180,8 +180,8 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
             </div>
             <p id="batas_bukti_bayar-bantuan" class="mt-1.5 max-w-3xl text-sm text-gray-600">
                 Berlaku untuk foto bukti transfer yang diunggah ofisial lewat Cek Pendaftaran maupun yang diunggah admin di rincian pendaftaran.
-                Isi <?= $batasTerkecil ?> sampai <?= $batasTerbesar ?>. Bila batas diturunkan, gambar yang sudah terunggah tetap tersimpan;
-                pendaftaran itu hanya tidak bisa menambah gambar lagi.
+                Isi <?= $batasTerkecil ?> sampai <?= $batasTerbesar ?>. Bila batas diturunkan, gambar yang sudah terunggah tetap tersimpan.
+                Pendaftaran itu hanya tidak bisa menambah gambar lagi.
             </p>
         </section>
 

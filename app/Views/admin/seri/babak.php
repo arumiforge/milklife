@@ -78,16 +78,16 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
         <h2 id="judul-bagi-otomatis" class="text-lg font-bold text-gray-900">Bagi otomatis</h2>
         <p class="mt-1 text-sm text-gray-600">
             <?php if ($pertama) : ?>
-                Peserta diambil dari pendaftaran Lunas nomor ini, dibagi rata ke seri, peserta satu sekolah dipisah ke seri berbeda sebisanya, lalu <?= $lintasan ? 'lintasannya' : 'urutan tampilnya' ?> diacak.
+                Peserta diambil dari pendaftaran Lunas nomor ini, lalu dibagi rata ke seri. Peserta dari satu sekolah sebisa mungkin dipisah ke seri berbeda. Setelah itu, <?= $lintasan ? 'lintasannya' : 'urutan tampilnya' ?> diacak.
             <?php else : ?>
                 Bila hasil <?= esc($babak['sebelum']['nama']) ?> sudah lengkap, peserta diambil dari yang lolos (Q/q) dan diunggulkan dari prestasinya<?= $lintasan ? ' memakai urutan lintasan ' . esc($aturan['urutan']) : '' ?>. Bila belum, peserta yang ada diacak.
             <?php endif ?>
-            Pembagian memakai benih acak yang disimpan, jadi bisa diulang persis.
+            Pembagian memakai benih acak yang disimpan. Karena itu, pembagian yang sama bisa diulang persis.
         </p>
         <?php if ($babak['dikunci']) : ?>
             <p class="mt-3 text-sm font-semibold text-gray-800">Daftar seri sudah dikunci. Buka kuncinya di bawah bila perlu dibagi ulang.</p>
         <?php elseif ($babak['ada_hasil']) : ?>
-            <p class="mt-3 text-sm font-semibold text-gray-800">Babak ini sudah berisi prestasi, jadi tidak bisa dibagi ulang. Geser peserta satu per satu bila perlu.</p>
+            <p class="mt-3 text-sm font-semibold text-gray-800">Babak ini sudah berisi prestasi. Pesertanya tidak bisa dibagi ulang. Geser peserta satu per satu bila perlu.</p>
         <?php else : ?>
             <form action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/bagi') ?>" method="post" class="mt-4 space-y-4"<?= $babak['dibagi'] > 0 ? ' data-konfirmasi="' . esc('Pembagian seri ' . $babak['nama'] . ' sekarang akan diganti dengan pembagian baru.', 'attr') . '" data-konfirmasi-tombol="Bagi ulang" data-konfirmasi-jenis="utama"' : '' ?>>
                 <?= csrf_field() ?>
@@ -100,8 +100,8 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
                 <details class="rounded-lg border border-gray-200 p-3">
                     <summary class="min-h-11 cursor-pointer content-center text-sm font-semibold text-gray-900">Pilihan lanjutan</summary>
                     <div class="mt-3 grid gap-4 sm:grid-cols-2">
-                        <?= komponen('isian', ['label' => 'Banyak seri', 'nama' => 'jumlah_seri', 'tipe' => 'number', 'bantuan' => 'Kosong = paling sedikit yang muat (' . ($lintasan ? $aturan['tempat'] . ' lintasan per seri' : ($aturan['tempat'] > 0 ? $aturan['tempat'] . ' per kelompok' : 'satu kelompok')) . ').', 'atribut' => ['min' => 1, 'max' => PembagiSeri::SERI_MAKSIMAL, 'inputmode' => 'numeric']]) ?>
-                        <?= komponen('isian', ['label' => 'Benih acak', 'nama' => 'benih', 'tipe' => 'number', 'nilai' => '', 'bantuan' => 'Kosong = benih baru.' . ($babak['benih'] === null ? '' : ' Benih terakhir: ' . $babak['benih'] . ' (isi untuk mengulang pembagian yang sama).'), 'atribut' => ['min' => 1, 'inputmode' => 'numeric']]) ?>
+                        <?= komponen('isian', ['label' => 'Banyak seri', 'nama' => 'jumlah_seri', 'tipe' => 'number', 'bantuan' => 'Bila kosong, dipakai jumlah seri paling sedikit yang muat (' . ($lintasan ? $aturan['tempat'] . ' lintasan per seri' : ($aturan['tempat'] > 0 ? $aturan['tempat'] . ' per kelompok' : 'satu kelompok')) . ').', 'atribut' => ['min' => 1, 'max' => PembagiSeri::SERI_MAKSIMAL, 'inputmode' => 'numeric']]) ?>
+                        <?= komponen('isian', ['label' => 'Benih acak', 'nama' => 'benih', 'tipe' => 'number', 'nilai' => '', 'bantuan' => 'Bila kosong, dipakai benih baru.' . ($babak['benih'] === null ? '' : ' Benih terakhir: ' . $babak['benih'] . ' (isi untuk mengulang pembagian yang sama).'), 'atribut' => ['min' => 1, 'inputmode' => 'numeric']]) ?>
                     </div>
                 </details>
                 <?= komponen('tombol', ['label' => $babak['dibagi'] > 0 ? 'Bagi ulang' : 'Bagi otomatis', 'tipe' => 'submit', 'ikon' => 'shuffle']) ?>
@@ -113,7 +113,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
         <section id="aturan-lolos" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-aturan-lolos">
             <h2 id="judul-aturan-lolos" class="text-lg font-bold text-gray-900">Aturan lolos ke <?= esc($babak['berikut']['nama']) ?></h2>
             <p class="mt-1 text-sm text-gray-600">
-                Q = sekian terbaik tiap seri, q = sekian prestasi terbaik berikutnya dari semua seri. Kosongkan keduanya supaya dihitung otomatis untuk mengisi penuh <?= esc($babak['berikut']['nama']) ?> (<?= $lolos['kapasitas'] ?> tempat).
+                Q adalah sekian peserta terbaik tiap seri. q adalah sekian prestasi terbaik berikutnya dari semua seri. Kosongkan keduanya supaya dihitung otomatis untuk mengisi penuh <?= esc($babak['berikut']['nama']) ?> (<?= $lolos['kapasitas'] ?> tempat).
                 Sekarang: <strong data-lolos-berlaku><?= $teksLolos === '' ? 'tidak ada yang lolos' : esc($teksLolos) ?></strong><?= $lolos['otomatis'] ? ' (otomatis)' : '' ?>.
             </p>
             <form action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/lolos') ?>" method="post" class="mt-4 grid grid-cols-2 gap-4 sm:max-w-md">
@@ -132,7 +132,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
                 <h2 id="judul-daftar-seri" class="text-lg font-bold text-gray-900"><?= $lintasan ? 'Seri dan lintasan' : 'Kelompok dan urutan tampil' ?></h2>
                 <p class="text-sm text-gray-600">
                     <?= $babak['dikunci'] ? 'Daftar ini sudah dikunci.' : 'Geser peserta dengan mengubah angka seri dan ' . mb_strtolower($sebutan) . ', lalu simpan. Kosongkan keduanya untuk mengeluarkan peserta dari seri.' ?>
-                    <?php if ($tanda !== []) : ?> Tanda Q/q = lolos ke <?= esc($babak['berikut']['nama']) ?>.<?php endif ?>
+                    <?php if ($tanda !== []) : ?> Tanda Q/q berarti lolos ke <?= esc($babak['berikut']['nama']) ?>.<?php endif ?>
                 </p>
             </header>
 
@@ -183,13 +183,13 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
         <h2 id="judul-kunci-seri" class="text-lg font-bold text-gray-900">Kunci daftar seri</h2>
         <?php if ($babak['dikunci']) : ?>
             <p class="mt-1 text-sm text-gray-600">Dikunci sejak <?= esc(tanggal_id(new DateTimeImmutable((string) $babak['dikunci_pada'])) . ' ' . substr((string) $babak['dikunci_pada'], 11, 5)) ?>. Daftar ini yang dicetak untuk juri dan tampil untuk umum bila sakelarnya menyala. Buka kunci hanya bila ada perubahan dari panitia.</p>
-            <form action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/buka') ?>" method="post" class="mt-3" data-konfirmasi="<?= esc('Kunci daftar seri ' . $babak['nama'] . ' dibuka. Daftar bisa diubah lagi dan sementara tidak tampil untuk umum.', 'attr') ?>" data-konfirmasi-tombol="Buka kunci" data-konfirmasi-jenis="utama">
+            <form action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/buka') ?>" method="post" class="mt-3" data-konfirmasi="<?= esc('Kunci daftar seri ' . $babak['nama'] . ' akan dibuka. Daftar bisa diubah lagi dan sementara tidak tampil untuk umum.', 'attr') ?>" data-konfirmasi-tombol="Buka kunci" data-konfirmasi-jenis="utama">
                 <?= csrf_field() ?>
                 <?= komponen('tombol', ['label' => 'Buka kunci', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'lock-open']) ?>
             </form>
         <?php else : ?>
             <p class="mt-1 text-sm text-gray-600">Setelah diperiksa, kunci daftarnya supaya tidak berubah lagi. Daftar yang dikunci tampil untuk umum (bila sakelarnya menyala) dan dipakai juri.</p>
-            <form action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/kunci') ?>" method="post" class="mt-3" data-konfirmasi="<?= esc('Daftar seri ' . $babak['nama'] . ' dikunci: tidak bisa diubah lagi sebelum kuncinya dibuka, dipakai juri, dan tampil untuk umum bila sakelarnya menyala.', 'attr') ?>" data-konfirmasi-judul="Kunci daftar seri?" data-konfirmasi-tombol="Kunci daftar seri" data-konfirmasi-jenis="utama">
+            <form action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/kunci') ?>" method="post" class="mt-3" data-konfirmasi="<?= esc('Daftar seri ' . $babak['nama'] . ' akan dikunci dan tidak bisa diubah sebelum kuncinya dibuka. Daftar ini dipakai juri dan tampil untuk umum bila sakelarnya menyala.', 'attr') ?>" data-konfirmasi-judul="Kunci daftar seri?" data-konfirmasi-tombol="Kunci daftar seri" data-konfirmasi-jenis="utama">
                 <?= csrf_field() ?>
                 <?= komponen('tombol', ['label' => 'Kunci daftar seri', 'tipe' => 'submit', 'ikon' => 'lock', 'nonaktif' => $babak['peserta'] === 0]) ?>
             </form>

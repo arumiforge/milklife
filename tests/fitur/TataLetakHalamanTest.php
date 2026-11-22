@@ -425,7 +425,7 @@ final class TataLetakHalamanTest extends UjiBasisData
         $this->assertSame(site_url('admin/pengaturan/jadwal'), $xpath->query('//nav[@data-jejak]//ol//a[normalize-space()="Agenda"]')->item(0)?->getAttribute('href'));
 
         // Judul yang sama dengan butir menu tidak diulang.
-        $this->assertSame([['label' => 'Pengaturan', 'alamat' => 'admin/pengaturan'], ['label' => 'Data Acara']], $this->jejakDiAlamat('admin/pengaturan/acara', 'Data Acara'));
+        $this->assertSame([['label' => 'Pengaturan', 'alamat' => 'admin/pengaturan'], ['label' => 'Data acara']], $this->jejakDiAlamat('admin/pengaturan/acara', 'Data acara'));
         $this->assertSame([['label' => 'Sekolah', 'alamat' => 'admin/sekolah'], ['label' => 'Usulan Nama Sekolah']], $this->jejakDiAlamat('admin/sekolah/usulan', 'Usulan Nama Sekolah'));
         $this->assertSame([['label' => 'pendaftaran']], $this->jejakDiAlamat('admin/pendaftaran', 'pendaftaran'));
     }

@@ -260,7 +260,7 @@ class DataAwal extends BaseCommand
 
         foreach (self::pasangGambarBawaan() as $kunci => $terpasang) {
             $nama    = self::GAMBAR_BAWAAN[$kunci][1];
-            $halaman = str_starts_with($kunci, 'Pembayaran.') ? 'Pengaturan > Pembayaran' : 'Pengaturan > Halaman Depan';
+            $halaman = str_starts_with($kunci, 'Pembayaran.') ? 'Pengaturan > Pembayaran' : 'Pengaturan > Halaman depan';
 
             if ($terpasang) {
                 CLI::write($nama . ' bawaan dipasang (bisa diganti di ' . $halaman . ').');
@@ -273,9 +273,9 @@ class DataAwal extends BaseCommand
         try {
             $tabelSkor = (new DataTabelSkor($db))->pasangBawaan();
             $trilomba  = (new DataTabelSkor($db))->pakaiUntukTrilomba();
-            CLI::write('Tabel skor dipasang: ' . implode(', ', $tabelSkor['dipasang']) . '; ' . $trilomba . ' nomor Trilomba memakai poin multi-lomba (tabelnya bisa diubah di Pengaturan > Tabel Skor).');
+            CLI::write('Tabel skor dipasang: ' . implode(', ', $tabelSkor['dipasang']) . '; ' . $trilomba . ' nomor Trilomba memakai poin multi-lomba (tabelnya bisa diubah di Pengaturan > Tabel skor).');
         } catch (Throwable $e) {
-            CLI::error('Tabel skor bawaan gagal dipasang: ' . $e->getMessage() . ' Pasang lewat Pengaturan > Tabel Skor.');
+            CLI::error('Tabel skor bawaan gagal dipasang: ' . $e->getMessage() . ' Pasang lewat Pengaturan > Tabel skor.');
         }
 
         $unduhan = self::pasangUnduhanBawaan($db);

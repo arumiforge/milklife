@@ -16,7 +16,7 @@ use Tests\Support\UnggahanSementara;
 
 /**
  * Kalkulator poin multi-lomba (F9-10, K140 butir 7b): pasang tabel bawaan,
- * jenis hasil Poin multi-lomba di Pengaturan > Nomor Lomba, isian prestasi
+ * jenis hasil Poin multi-lomba di Pengaturan > Nomor lomba, isian prestasi
  * per komponen, total dan peringkat, ubah baris dan impor Excel menghitung
  * ulang, halaman publik, unduhan, dan paket pindah server.
  *
@@ -59,7 +59,7 @@ final class TabelSkorTest extends UjiBasisData
         $halaman->assertOK();
         $halaman->assertSee('Belum terpasang: Pancalomba SMA/SMK, Trilomba O2SN SMP.');
 
-        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/pasang'), self::ALAMAT, 'Tabel bawaan dipasang: Pancalomba SMA/SMK, Trilomba O2SN SMP. Pilih tabelnya di Pengaturan > Nomor Lomba untuk nomor Trilomba.');
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/pasang'), self::ALAMAT, 'Tabel bawaan dipasang: Pancalomba SMA/SMK, Trilomba O2SN SMP. Pilih tabelnya di Pengaturan > Nomor lomba untuk nomor Trilomba.');
         $this->assertSame(2, $this->db->table('tabel_skor')->countAllResults());
         $this->assertGreaterThan(15000, $this->db->table('tabel_skor_baris')->countAllResults());
 
@@ -314,7 +314,7 @@ final class TabelSkorTest extends UjiBasisData
 
     /**
      * Pasang tabel bawaan dan jadikan Lari 60 m putra KU 12 nomor Trilomba
-     * berjenis poin multi-lomba lewat Pengaturan > Nomor Lomba.
+     * berjenis poin multi-lomba lewat Pengaturan > Nomor lomba.
      */
     private function nomorTrilomba(): int
     {

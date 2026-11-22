@@ -305,7 +305,7 @@ final class PanelGabunganTest extends UjiBasisData
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $a['pid'], $isian + ['setuju_menunggu' => '1']),
             'admin/pendaftaran/' . $a['pid'],
             'Perubahan pendaftaran ' . $a['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 550.000. '
-            . 'Status kembali menjadi Menunggu Konfirmasi Pembayaran; tandai Lunas lagi setelah selisihnya diurus.',
+            . 'Status kembali menjadi Menunggu Konfirmasi Pembayaran. Tandai Lunas lagi setelah selisihnya diurus.',
         );
         $this->assertSame('menunggu', $this->statusPendaftaran($a['pid']));
         $this->assertSame(['2001', '2002', '2003', '2004', '2005', '2006'], $this->nomorDada($a['pid']), 'Nomor atlet (BIB) tetap.');

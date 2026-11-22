@@ -18,7 +18,7 @@ namespace App\Libraries\Hasil;
  * `tebak()` dipakai data awal dan migrasi untuk nomor yang sudah ada:
  * Trilomba = poin; lompat, lempar, tolak, Frog Jump, dan Turbo Throw = jarak;
  * selain itu (lari, jalan cepat, estafet, Kanga's Escape, Formula 1) = waktu.
- * Admin bisa menggantinya di Pengaturan > Nomor Lomba.
+ * Admin bisa menggantinya di Pengaturan > Nomor lomba.
  */
 final class JenisHasil
 {

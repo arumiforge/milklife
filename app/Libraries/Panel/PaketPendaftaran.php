@@ -545,7 +545,7 @@ final class PaketPendaftaran
                 'Nama kelompok umur di zip tidak ditemukan di server ini: ' . implode(', ', array_keys($kuHilang))
                 . ' (yang ada: ' . (array_keys($ku) === [] ? 'belum ada kelompok umur' : implode(', ', array_keys($ku))) . ').'
                 . ($nomorLain === [] ? '' : ' Nomor lomba yang juga tidak ditemukan: ' . implode(', ', $nomorLain) . '.')
-                . ' Samakan nama kelompok umur di Pengaturan > Kelompok Umur, atau jalankan "php spark data:sesuaikan" bila server ini diisi data awal versi lama, lalu impor lagi. Tidak ada yang diimpor.',
+                . ' Samakan nama kelompok umur di Pengaturan > Kelompok umur, atau jalankan "php spark data:sesuaikan" bila server ini diisi data awal versi lama, lalu impor lagi. Tidak ada yang diimpor.',
             );
         }
 

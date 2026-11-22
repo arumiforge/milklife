@@ -19,7 +19,7 @@ use App\Models\KelompokUmurModel;
 
 $baru   = $ku === null;
 $aksi   = $baru ? site_url('admin/pengaturan/kelompok-umur') : site_url('admin/pengaturan/kelompok-umur/' . (int) $ku['id']);
-$judul  = $baru ? 'Tambah Kelompok Umur' : 'Ubah ' . $ku['nama'];
+$judul  = $baru ? 'Tambah kelompok umur' : 'Ubah ' . $ku['nama'];
 
 // Kelas dan atribut kotak; kotak yang salah ditandai merah dan `aria-invalid`.
 $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border p-2.5 text-base focus:ring-4 sm:text-sm '
@@ -46,7 +46,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
 
 <?= $this->section('judul') ?><?= esc($judul) ?><?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Kelompok Umur<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Kelompok umur<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -75,8 +75,8 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                         Atlet masuk kelompok umur ini bila tahun lahirnya ada di antara kedua tahun, termasuk kedua tahun itu.
                         Kosongkan salah satu bila tidak dibatasi, misalnya KU 8 "lahir 2019 ke atas": isi 2019 lalu kosongkan kotak kedua.
                         <?php if (KelompokUmurModel::bolehPilih()) : ?>
-                            Rentang boleh beririsan dengan kelompok umur lain di jenjang yang sama; atlet yang lahir di tahun irisan
-                            dipilihkan kelompok umurnya oleh pendaftar.
+                            Rentang boleh beririsan dengan kelompok umur lain di jenjang yang sama.
+                            Untuk atlet yang lahir di tahun irisan, pendaftar memilih kelompok umurnya.
                         <?php else : ?>
                             Dalam satu jenjang, rentang tidak boleh beririsan dengan kelompok umur aktif lain.
                         <?php endif ?>
@@ -130,7 +130,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                     </div>
                     <?= $pesan('biaya_individu') ?>
                     <p id="biaya-bantuan" class="<?= $bantuan ?>">
-                        Dibayar per atlet untuk setiap nomor individu. Tulis angka tanpa titik. Biaya nomor beregu diatur di halaman Nomor Lomba.
+                        Dibayar per atlet untuk setiap nomor individu. Tulis angka tanpa titik. Biaya nomor beregu diatur di halaman Nomor lomba.
                     </p>
                 </div>
 
@@ -141,7 +141,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                         value="<?= esc((string) $isian['awalan'], 'attr') ?>" placeholder="Contoh: 2"<?= $jelaskan('awalan', 'awalan-bantuan') ?>>
                     <?= $pesan('awalan') ?>
                     <div id="awalan-bantuan" class="<?= $bantuan ?>">
-                        Angka pertama nomor atlet (BIB), satu angka 1 sampai 9. Satu awalan cukup untuk 999 atlet; bila perlu lebih,
+                        Angka pertama nomor atlet (BIB), satu angka 1 sampai 9. Satu awalan cukup untuk 999 atlet. Bila perlu lebih,
                         tulis beberapa awalan dipisah koma, misalnya <strong>2, 6</strong>. Awalan dipakai berurutan seperti ditulis.
                         <?php if ($awalanLain !== []) : ?>
                             <span class="mt-1 block">

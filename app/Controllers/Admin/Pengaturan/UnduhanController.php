@@ -109,7 +109,7 @@ class UnduhanController extends BaseController
 
             return redirect()->to(self::ALAMAT)->with(
                 'pesan_galat',
-                'Berkas "' . $isian['judul'] . '" belum tersimpan karena ada gangguan di server. Coba tambahkan sekali lagi; bila masih gagal, hubungi pengelola server.',
+                'Berkas "' . $isian['judul'] . '" belum tersimpan karena ada gangguan di server. Coba tambahkan sekali lagi. Bila masih gagal, hubungi pengelola server.',
             );
         }
 
@@ -235,7 +235,7 @@ class UnduhanController extends BaseController
         $baris = $this->model->find($id);
 
         if (! is_array($baris)) {
-            throw PageNotFoundException::forPageNotFound('Berkas unduhan ini tidak ditemukan. Mungkin sudah dihapus; kembali ke daftar unduhan.');
+            throw PageNotFoundException::forPageNotFound('Berkas unduhan ini tidak ditemukan. Mungkin sudah dihapus. Kembali ke daftar unduhan.');
         }
 
         return $baris;
@@ -283,7 +283,7 @@ class UnduhanController extends BaseController
             'urutan' => [
                 'rules'  => 'required|is_natural|less_than_equal_to[' . UnduhanModel::URUTAN_TERBESAR . ']',
                 'errors' => [
-                    'required'              => 'Urutan belum diisi. Tulis angka, misalnya 1; angka kecil tampil lebih dulu.',
+                    'required'              => 'Urutan belum diisi. Tulis angka, misalnya 1. Angka kecil tampil lebih dulu.',
                     'is_natural'            => 'Urutan harus angka bulat tanpa tanda, misalnya 1 atau 2.',
                     'less_than_equal_to'    => 'Urutan terlalu besar. Pakai angka 0 sampai ' . UnduhanModel::URUTAN_TERBESAR . '.',
                 ],

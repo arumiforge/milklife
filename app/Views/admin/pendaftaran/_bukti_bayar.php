@@ -90,7 +90,7 @@ $jumlahBaru   = count(array_filter($daftarBukti, static fn (array $b): bool => (
                     <p class="font-semibold text-gray-900">Belum ada bukti bayar</p>
                     <p class="mt-1 max-w-md text-sm text-gray-600">
                         Ofisial bisa mengunggah bukti transfer sendiri saat mendaftar atau lewat Cek Pendaftaran.
-                        Bila bukti dikirim lewat WA, simpan di sini, paling banyak <?= $batasBukti ?> gambar.
+                        Bila bukti dikirim lewat WA, unggah di sini. Batasnya <?= $batasBukti ?> gambar.
                     </p>
                 </div>
             <?php else : ?>

@@ -81,7 +81,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
             <h2 class="flex items-center gap-2 text-lg font-bold text-gray-900" id="judul-rekap-gabungan"><?= ikon('layers', 'size-5 text-primary-700') ?> Rekap gabungan</h2>
             <p class="mt-1 text-sm text-gray-600">Semua data dalam satu file Excel, dipisah per sheet: Pendaftaran, Atlet, dan semua rekap di bawah (termasuk Tim Tanpa Pembayar).</p>
         </div>
-        <?= komponen('tombol', ['label' => 'Unduh Rekap Gabungan', 'href' => site_url('admin/rekap/gabungan/excel'), 'ikon' => 'file-spreadsheet', 'atribut' => ['id' => 'excel-gabungan']]) ?>
+        <?= komponen('tombol', ['label' => 'Unduh rekap gabungan', 'href' => site_url('admin/rekap/gabungan/excel'), 'ikon' => 'file-spreadsheet', 'atribut' => ['id' => 'excel-gabungan']]) ?>
     </section>
 
     <nav aria-label="Jenis rekap" class="min-w-0">
@@ -135,7 +135,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                 <p class="mt-1 text-gray-600" id="tim-tanpa-pembayar-kosong">Semua regu beregu sudah punya pembayar biaya regu.</p>
             <?php else : ?>
                 <p class="mb-4 mt-1 text-sm text-gray-600">
-                    Pendaftaran yang membayar biaya regu ini sudah dihapus atau diubah, dan biayanya tidak dipindah otomatis.
+                    Pendaftaran yang membayar biaya regu ini sudah dihapus atau diubah. Biayanya tidak dipindah otomatis.
                     Tagihkan lewat Ubah di salah satu pendaftaran anggotanya dengan mencentang "Bebankan biaya regu ke pendaftaran ini".
                 </p>
                 <?= $tabel($rekap['tim_tanpa_pembayar'], 'tabel-tim-tanpa-pembayar', 'Regu tanpa pembayar biaya regu') ?>

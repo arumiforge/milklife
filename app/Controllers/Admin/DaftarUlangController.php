@@ -54,13 +54,13 @@ class DaftarUlangController extends BaseController
         $pendaftaran = $this->pendaftaran($id);
 
         if ($pendaftaran === null) {
-            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Pendaftaran tidak ditemukan. Mungkin sudah dihapus atau digabung; pindai lagi kode QR-nya.');
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Pendaftaran tidak ditemukan. Mungkin pendaftaran itu sudah dihapus atau digabung. Pindai lagi kode QR-nya.');
         }
 
         $kembali = $this->kembali($pendaftaran['id_pendaftaran']);
 
         if ($pendaftaran['status'] !== 'lunas') {
-            return redirect()->to($kembali)->with('pesan_galat', 'Pendaftaran ' . $pendaftaran['id_pendaftaran'] . ' belum Lunas, jadi atletnya belum bisa ditandai hadir. Periksa pembayarannya dulu di menu Pendaftaran.');
+            return redirect()->to($kembali)->with('pesan_galat', 'Pendaftaran ' . $pendaftaran['id_pendaftaran'] . ' belum Lunas. Atletnya belum bisa ditandai hadir. Periksa pembayarannya dulu di menu Pendaftaran.');
         }
 
         $semua = $this->request->getPost('semua') === '1';
@@ -82,7 +82,7 @@ class DaftarUlangController extends BaseController
         $pendaftaran = $this->pendaftaran($id);
 
         if ($pendaftaran === null) {
-            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Pendaftaran tidak ditemukan. Mungkin sudah dihapus atau digabung; pindai lagi kode QR-nya.');
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Pendaftaran tidak ditemukan. Mungkin pendaftaran itu sudah dihapus atau digabung. Pindai lagi kode QR-nya.');
         }
 
         $berhasil = (new DaftarUlang())->batalHadir($id, (int) $this->request->getPost('atlet'));

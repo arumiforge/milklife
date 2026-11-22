@@ -15,9 +15,9 @@
 
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
-<?= $this->section('judul') ?>Riwayat Pendaftaran<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Riwayat pendaftaran<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Riwayat Pendaftaran<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Riwayat pendaftaran<?= $this->endSection() ?>
 
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [
     ['label' => 'Pendaftaran', 'alamat' => 'admin/pendaftaran'],
@@ -48,7 +48,7 @@
             <p class="mb-2 text-sm text-gray-600">
                 <?= count($riwayat) ?> catatan, terbaru di atas.
                 <?php if (count($riwayat) >= $batas) : ?>
-                    Hanya <?= $batas ?> catatan terbaru yang ditampilkan; ketik ID lebih lengkap untuk mempersempit.
+                    Hanya <?= $batas ?> catatan terbaru yang ditampilkan. Ketik ID lebih lengkap untuk mempersempit hasilnya.
                 <?php endif ?>
             </p>
             <?= view('admin/pendaftaran/_riwayat', ['riwayat' => $riwayat, 'denganId' => true], ['saveData' => false]) ?>

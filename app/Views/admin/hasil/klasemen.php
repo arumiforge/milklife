@@ -21,14 +21,14 @@ $metodePoin = $metode === Klasemen::POIN;
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Klasemen Sekolah<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Klasemen sekolah<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <div class="flex flex-wrap items-start gap-4">
         <p class="min-w-0 flex-1 basis-72 text-gray-700">
             <?= esc($keterangan) ?>
-            Klasemen dihitung per jenjang dari babak Final semua nomor<?= $metodePoin ? ' (poin dari peringkat 1–' . Klasemen::PERINGKAT_POIN . ')' : '' ?>; satu regu juara = satu piala untuk sekolahnya, sekolah dikenali dari NPSN.
+            Klasemen dihitung per jenjang dari babak Final semua nomor<?= $metodePoin ? ' (poin dari peringkat 1 sampai ' . Klasemen::PERINGKAT_POIN . ')' : '' ?>. Satu regu juara dihitung satu piala untuk sekolahnya. Sekolah dikenali dari NPSN.
             Metode diatur di <a href="<?= site_url('admin/pengaturan/hasil') ?>" class="font-semibold text-primary-700 underline">Pengaturan &gt; Hasil</a>.
             Halaman publik hanya menghitung nomor yang sudah diterbitkan.
         </p>
@@ -40,8 +40,8 @@ $metodePoin = $metode === Klasemen::POIN;
 
     <?php if ($belumTerbit > 0) : ?>
         <div id="belum-terbit">
-            <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => $belumTerbit . ' nomor yang juaranya ikut dihitung di sini belum diterbitkan, jadi klasemen publik masih berbeda. '
-                . '<a href="' . site_url('admin/hasil') . '" class="font-semibold underline">Buka Hasil lomba</a> untuk menerbitkannya.']) ?>
+            <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => $belumTerbit . ' nomor yang juaranya ikut dihitung di sini belum diterbitkan. Karena itu, klasemen publik masih berbeda. '
+                . '<a href="' . site_url('admin/hasil') . '" class="font-semibold underline">Buka hasil lomba</a> untuk menerbitkannya.']) ?>
         </div>
     <?php endif ?>
 

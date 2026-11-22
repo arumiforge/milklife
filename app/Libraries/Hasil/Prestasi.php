@@ -142,7 +142,7 @@ final class Prestasi
     public static function pesanGalat(string $teks, string $jenis): string
     {
         $contoh = match ($jenis) {
-            JenisHasil::WAKTU => 'Tulis detik dan perseratus detik, misalnya 12,34, atau menit:detik,perseratus untuk lari jauh, misalnya 2:05,10.',
+            JenisHasil::WAKTU => 'Tulis detik dan perseratus detik, misalnya 12,34. Untuk lari jauh, tulis menit:detik,perseratus, misalnya 2:05,10.',
             JenisHasil::JARAK => 'Tulis meter dengan koma, misalnya 3,45 untuk 3 meter 45 sentimeter.',
             default           => 'Tulis poin akhir berupa angka bulat tanpa titik, misalnya 1250.',
         };

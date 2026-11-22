@@ -180,7 +180,7 @@ class JadwalController extends BaseController
         $urutan = $this->bacaUrutan($isian['urutan'], $id);
 
         if ($urutan === null) {
-            $galat['urutan'] = 'Urutan belum benar. Tulis angka 0 sampai ' . JadwalModel::URUTAN_MAKSIMAL . '; angka kecil tampil lebih dulu.';
+            $galat['urutan'] = 'Urutan belum benar. Tulis angka 0 sampai ' . JadwalModel::URUTAN_MAKSIMAL . '. Angka kecil tampil lebih dulu.';
         }
 
         $data = [

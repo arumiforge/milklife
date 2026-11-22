@@ -127,7 +127,7 @@ final class KelompokUmurModelTest extends UjiBasisData
 
         [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 12', 'awalan' => '3, 2']));
 
-        $this->assertSame('Awalan 2 sudah dipakai KU 10. Satu awalan hanya untuk satu kelompok umur; pilih angka lain yang belum dipakai.', $galat['awalan']);
+        $this->assertSame('Awalan 2 sudah dipakai KU 10. Satu awalan hanya untuk satu kelompok umur. Pilih angka lain yang belum dipakai.', $galat['awalan']);
     }
 
     public function testAwalanTerpakaiTidakBolehDihapus(): void
@@ -178,7 +178,7 @@ final class KelompokUmurModelTest extends UjiBasisData
         ]));
 
         $this->assertSame(
-            'Tahun lahir ini bertabrakan dengan KU 10 (lahir 2016–2018) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, hapus centang jenjang yang sama, matikan salah satu kelompok umur, atau nyalakan "Pendaftar memilih kelompok umur" di halaman Kelompok Umur.',
+            'Tahun lahir ini bertabrakan dengan KU 10 (lahir 2016–2018) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, hapus centang jenjang yang sama, matikan salah satu kelompok umur, atau nyalakan "Pendaftar memilih kelompok umur" di halaman Kelompok umur.',
             $galat['tahun_lahir_awal'],
         );
 
@@ -363,7 +363,7 @@ final class KelompokUmurModelTest extends UjiBasisData
         $ku = $this->model->where('nama', 'KU 10')->first();
 
         $this->assertSame(
-            'KU 10 masih punya 11 nomor lomba, jadi tidak bisa dihapus. Hapus dulu nomor lombanya di halaman Nomor Lomba, atau matikan kelompok umur ini supaya tidak muncul di pendaftaran.',
+            'KU 10 masih punya 11 nomor lomba, jadi tidak bisa dihapus. Hapus dulu nomor lombanya di halaman Nomor lomba, atau matikan kelompok umur ini supaya tidak muncul di pendaftaran.',
             $this->model->alasanTidakBisaDihapus($ku),
         );
     }

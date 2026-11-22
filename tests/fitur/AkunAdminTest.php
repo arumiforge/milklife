@@ -119,7 +119,7 @@ final class AkunAdminTest extends UjiBasisData
     {
         $hasil = $this->kirimSebagaiAdmin('admin/akun', ['nama' => '  Bu Karangan Baru ', 'nama_pengguna' => 'admin.uji'], $this->sesi());
 
-        $this->assertBerhasilDialihkan($hasil, 'admin/akun', 'Data akun tersimpan.');
+        $this->assertBerhasilDialihkan($hasil, 'admin/akun', 'Nama dan nama pengguna tersimpan.');
         $hasil->assertSessionHas('admin_nama', 'Bu Karangan Baru');
         $this->assertSame('Bu Karangan Baru', $this->baris($this->idAdmin)['nama']);
         $this->assertSame('Admin Karangan Lain', $this->baris($this->idAdminLain)['nama']);
@@ -140,7 +140,7 @@ final class AkunAdminTest extends UjiBasisData
             'sandi_akun'    => self::SANDI_UJI,
         ], $this->sesi());
 
-        $this->assertBerhasilDialihkan($hasil, 'admin/akun', 'Data akun tersimpan.');
+        $this->assertBerhasilDialihkan($hasil, 'admin/akun', 'Nama dan nama pengguna tersimpan.');
         $this->assertSame('panitia.kudus', $this->baris($this->idAdmin)['nama_pengguna']);
         $this->assertSame((int) $this->idAdmin, (int) $this->model->cariNamaPengguna('panitia.kudus')['id']);
         $this->assertNull($this->model->cariNamaPengguna('admin.uji'));
@@ -184,7 +184,7 @@ final class AkunAdminTest extends UjiBasisData
         // miliknya sendiri, jadi tidak dianggap diganti dan tidak perlu kata sandi.
         $hasil = $this->kirimSebagaiAdmin('admin/akun', ['nama' => 'Admin Karangan', 'nama_pengguna' => 'ADMIN.Uji'], $this->sesi());
 
-        $this->assertBerhasilDialihkan($hasil, 'admin/akun', 'Data akun tersimpan.');
+        $this->assertBerhasilDialihkan($hasil, 'admin/akun', 'Nama dan nama pengguna tersimpan.');
         $this->assertSame('admin.uji', $this->baris($this->idAdmin)['nama_pengguna']);
     }
 
@@ -266,7 +266,7 @@ final class AkunAdminTest extends UjiBasisData
         $this->assertIsianSalahDitampilkanUlang($hasil, ['sandi_saat_ini', 'sandi_baru', 'ulangi_sandi']);
         $hasil->assertSee('Kata sandi saat ini belum diisi.');
         $hasil->assertSee('Kata sandi baru belum diisi.');
-        $hasil->assertSee('Ulangi kata sandi baru belum diisi.');
+        $hasil->assertSee('Kotak Ulangi kata sandi baru belum diisi.');
     }
 
     public function testKataSandiBaruTerlaluPendekDitolak(): void
@@ -292,7 +292,7 @@ final class AkunAdminTest extends UjiBasisData
         $hasil = $this->kirimSandi(self::SANDI_UJI, self::SANDI_BARU, self::SANDI_BARU . 'x');
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['ulangi_sandi']);
-        $hasil->assertSee('Ulangan kata sandi tidak sama dengan kata sandi baru.');
+        $hasil->assertSee('Kata sandi yang diulang tidak sama dengan kata sandi baru.');
         $this->assertTrue(password_verify(self::SANDI_UJI, $this->baris($this->idAdmin)['sandi']));
     }
 
@@ -319,7 +319,7 @@ final class AkunAdminTest extends UjiBasisData
 
         $hasil->assertStatus(429);
         $hasil->assertHeader('Retry-After', '12');
-        $hasil->assertSee('Terlalu banyak percobaan kata sandi. Tunggu 12 detik lagi');
+        $hasil->assertSee('Terlalu banyak percobaan kata sandi. Tunggu 12 detik, lalu coba lagi.');
         $this->assertSame(1, $this->xpathDari($hasil)->query('//*[@name="sandi_saat_ini" and @aria-invalid="true"]')->length);
         $this->assertTrue(password_verify(self::SANDI_UJI, $this->baris($this->idAdmin)['sandi']));
     }

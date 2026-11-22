@@ -28,7 +28,7 @@ class JadwalController extends BaseController
     public const BATAS_UNDUHAN = 20;
 
     /**
-     * Sakelar tampil halaman Jadwal pertandingan dari Pengaturan > Halaman Depan.
+     * Sakelar tampil halaman Jadwal pertandingan dari Pengaturan > Halaman depan.
      */
     public static function tampil(): bool
     {

@@ -8,7 +8,7 @@ use CodeIgniter\HTTP\RedirectResponse;
 /**
  * Sakelar halaman Jadwal pertandingan publik (F9-07): `POST
  * /admin/pengaturan/halaman-depan/jadwal`, dari kartu "Halaman Jadwal
- * pertandingan" di Pengaturan > Halaman Depan (`admin/pengaturan/_halaman_jadwal.php`).
+ * pertandingan" di Pengaturan > Halaman depan (`admin/pengaturan/_halaman_jadwal.php`).
  *
  * Menyimpan `HalamanDepan.tampil_jadwal`. Dipisah dari formulir isi halaman
  * depan supaya menyalakan atau mematikan halaman tidak ikut menyimpan isian lain.

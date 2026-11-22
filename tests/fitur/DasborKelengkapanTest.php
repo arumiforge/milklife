@@ -148,7 +148,7 @@ final class DasborKelengkapanTest extends UjiBasisData
         $hasil = $this->bukaSebagaiAdmin('admin/pengecekan');
 
         $hasil->assertSee('Pendaftaran dibuka sampai 3 Desember 2026 pukul 12.00.');
-        $hasil->assertSee('Pendaftaran terbuka karena dibuka manual oleh admin, di luar jadwal.');
+        $hasil->assertSee('Pendaftaran terbuka karena admin membukanya secara manual, di luar jadwal.');
         $hasil->assertSee('Menyala sampai 3 Desember 2026 pukul 12.00');
     }
 

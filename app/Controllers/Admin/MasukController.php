@@ -29,7 +29,7 @@ class MasukController extends BaseController
      */
     public const JENDELA_DETIK = 60;
 
-    public const PESAN_GAGAL = 'Nama pengguna atau kata sandi salah. Periksa lagi lalu coba sekali lagi.';
+    public const PESAN_GAGAL = 'Nama pengguna atau kata sandi salah. Periksa lagi, lalu coba sekali lagi.';
 
     /**
      * Hash bcrypt dari nilai acak yang tidak diketahui siapa pun. Dipakai saat
@@ -68,7 +68,7 @@ class MasukController extends BaseController
             $this->response->setHeader('Retry-After', (string) $detik);
 
             return $this->tampilkan(
-                galat: 'Terlalu banyak percobaan masuk. Tunggu ' . $detik . ' detik lagi, lalu coba masuk kembali.',
+                galat: 'Terlalu banyak percobaan masuk. Tunggu ' . $detik . ' detik, lalu coba masuk lagi.',
                 namaPengguna: $namaPengguna,
             );
         }

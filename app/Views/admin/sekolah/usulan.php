@@ -80,10 +80,10 @@ $kelasTd    = 'px-4 py-3 align-top';
                     </form>
 
                     <form action="<?= site_url('admin/sekolah/usulan/' . $id . '/tolak') ?>" method="post"
-                        data-konfirmasi="Usulan ditolak. Pendaftaran pengusul kembali memakai nama dari data sekolah."
+                        data-konfirmasi="Usulan akan ditolak. Pendaftaran pengusul kembali memakai nama dari data sekolah."
                         data-konfirmasi-judul="Tolak usulan nama?" data-konfirmasi-tombol="Tolak">
                         <?= csrf_field() ?>
-                        <label class="<?= $kelasLabel ?>" for="usulan-<?= $id ?>-alasan">Alasan menolak (pilihan)</label>
+                        <label class="<?= $kelasLabel ?>" for="usulan-<?= $id ?>-alasan">Alasan menolak (tidak wajib)</label>
                         <div class="flex flex-wrap gap-2 sm:flex-nowrap">
                             <input type="text" class="<?= $kelasKotak ?>" id="usulan-<?= $id ?>-alasan" name="alasan" maxlength="<?= UsulanNamaSekolahModel::ALASAN_MAKSIMAL ?>">
                             <?= komponen('tombol', ['label' => 'Tolak', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'x', 'kelas' => 'shrink-0 text-red-700!']) ?>

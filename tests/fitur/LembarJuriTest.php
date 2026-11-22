@@ -193,7 +193,7 @@ final class LembarJuriTest extends UjiBasisData
         $this->assertSame('galat', $salah['isi']['status']);
         $this->assertStringContainsString('Percobaan 2', $salah['isi']['pesan']);
 
-        // Pemecah seri dimatikan di Pengaturan > Nomor Lomba: ketiganya sama.
+        // Pemecah seri dimatikan di Pengaturan > Nomor lomba: ketiganya sama.
         $this->kirimSebagaiAdmin('admin/pengaturan/nomor-lomba/' . $babak['nomor'], $this->isianNomor($babak['nomor'], ['jumlah_percobaan' => '4', 'pemecah_seri' => '0']));
         $n = $this->db->table('nomor_lomba')->where('id', $babak['nomor'])->get()->getRow();
         $this->assertSame(['4', '0'], [(string) $n->jumlah_percobaan, (string) $n->pemecah_seri]);
@@ -397,7 +397,7 @@ final class LembarJuriTest extends UjiBasisData
     }
 
     /**
-     * Isian formulir Pengaturan > Nomor Lomba untuk nomor jarak.
+     * Isian formulir Pengaturan > Nomor lomba untuk nomor jarak.
      *
      * @param array<string, string> $ubah
      *

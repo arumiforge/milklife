@@ -176,7 +176,7 @@ class NomorLombaController extends BaseController
         $nomor = $this->model->find($id);
 
         if ($nomor === null) {
-            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Nomor lomba itu tidak ditemukan; mungkin sudah dihapus. Periksa daftar di bawah.');
+            return redirect()->to(self::ALAMAT)->with('pesan_galat', 'Nomor lomba itu tidak ditemukan, mungkin sudah dihapus. Periksa daftar di bawah.');
         }
 
         $nama = $this->namaDiKu($nomor);
@@ -276,7 +276,7 @@ class NomorLombaController extends BaseController
         if ($lama !== null && $galat === [] && $isian['jenis_hasil'] === JenisHasil::MULTI && (string) $lama['jenis_hasil'] === JenisHasil::MULTI
             && ((string) $lama['tabel_skor_id'] !== $isian['tabel_skor_id'] || (string) $lama['komponen_skor'] !== $isian['komponen_skor'])
             && $this->model->adaPrestasi((int) $lama['id'])) {
-            $galat['tabel_skor_id'] = 'Nomor ini sudah punya prestasi di hasil lomba, jadi tabel skor dan komponennya tidak bisa diganti. Baris tabelnya tetap bisa diubah di Pengaturan > Tabel Skor.';
+            $galat['tabel_skor_id'] = 'Nomor ini sudah punya prestasi di hasil lomba, jadi tabel skor dan komponennya tidak bisa diganti. Baris tabelnya tetap bisa diubah di Pengaturan > Tabel skor.';
         }
 
         if (array_intersect_key($galat, array_flip(['kelompok_umur_id', 'nama', 'kategori'])) === []

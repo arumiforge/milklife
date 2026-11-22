@@ -260,7 +260,7 @@ class KontakController extends BaseController
         } elseif (preg_match('/^\d{1,4}$/', $isian['urutan']) === 1) {
             $urutan = (int) $isian['urutan'];
         } else {
-            $galat['urutan'] = 'Urutan belum benar. Tulis angka 0 sampai ' . TautanModel::URUTAN_MAKSIMAL . '; angka kecil tampil lebih dulu.';
+            $galat['urutan'] = 'Urutan belum benar. Tulis angka 0 sampai ' . TautanModel::URUTAN_MAKSIMAL . '. Angka kecil tampil lebih dulu.';
         }
 
         return [['label' => $isian['label'], 'nilai' => $nilai, 'urutan' => $urutan], $galat];

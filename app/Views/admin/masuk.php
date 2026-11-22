@@ -17,10 +17,10 @@ $kelasIsian = 'block w-full rounded-lg border border-gray-300 bg-white p-3 text-
 ?>
 <?= $this->extend('tata_letak/polos_tw') ?>
 
-<?= $this->section('judul') ?>Masuk Admin<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Masuk admin<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<h1 class="text-2xl font-bold text-gray-900">Masuk Admin</h1>
+<h1 class="text-2xl font-bold text-gray-900">Masuk admin</h1>
 <p class="mb-6 mt-1 text-sm text-gray-600">Panel panitia <?= esc(AcaraController::namaTampil()) ?></p>
 
 <?php if (! empty($galat)) : ?>

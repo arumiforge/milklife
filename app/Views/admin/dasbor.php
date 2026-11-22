@@ -91,7 +91,7 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
                 </p>
             <?php endif ?>
             <div class="mt-4">
-                <?= komponen('tombol', ['label' => 'Buka Pengecekan', 'href' => site_url('admin/pengecekan'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'clipboard-list']) ?>
+                <?= komponen('tombol', ['label' => 'Buka pengecekan', 'href' => site_url('admin/pengecekan'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'clipboard-list']) ?>
             </div>
         </div>
         <?php if ($sapaan !== '') : ?>
@@ -214,7 +214,7 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
                 . '<button type="button" class="min-h-11 rounded-md px-3 text-sm font-semibold text-gray-700 hover:bg-gray-100 aria-pressed:bg-primary-700 aria-pressed:text-white" data-tren="jumlah" aria-pressed="true">Jumlah</button>'
                 . '<button type="button" class="min-h-11 rounded-md px-3 text-sm font-semibold text-gray-700 hover:bg-gray-100 aria-pressed:bg-primary-700 aria-pressed:text-white" data-tren="tagihan" aria-pressed="false">Tagihan</button>'
                 . '</div>') ?>
-            <?= $kartuGrafik('grafik-status', 'Status pembayaran', 'Jumlah pendaftaran; arahkan ke potongan untuk melihat rupiahnya', '2xl:col-span-4') ?>
+            <?= $kartuGrafik('grafik-status', 'Status pembayaran', 'Jumlah pendaftaran. Arahkan penunjuk ke potongan untuk melihat rupiahnya.', '2xl:col-span-4') ?>
             <?= $kartuGrafik('grafik-kabupaten', 'Atlet per kabupaten', 'Putra dan putri', '2xl:col-span-6') ?>
             <?= $kartuGrafik('grafik-kelompok-umur', 'Atlet per kelompok umur', 'Putra dan putri', '2xl:col-span-6') ?>
             <?= $kartuGrafik('grafik-jenjang', 'Jenjang sekolah', 'Atlet per jenjang', '2xl:col-span-4') ?>

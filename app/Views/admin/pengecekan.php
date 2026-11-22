@@ -58,7 +58,7 @@ $kelasKartu  = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm
                 </p>
             <?php elseif ($lewatManual) : ?>
                 <p class="mb-3 text-gray-600">
-                    Pendaftaran terbuka karena dibuka manual oleh admin, di luar jadwal.
+                    Pendaftaran terbuka karena admin membukanya secara manual, di luar jadwal.
                 </p>
             <?php endif ?>
 
@@ -83,7 +83,7 @@ $kelasKartu  = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm
             </p>
             <?php if (! $semuaLengkap) : ?>
                 <p class="mb-2 text-sm text-gray-700">
-                    <strong>Langkah berikutnya:</strong> buka butir yang belum bercentang dan lengkapi isinya supaya pendaftaran bisa dibuka.
+                    Buka butir yang belum bercentang, lalu lengkapi isinya. Pendaftaran bisa dibuka setelah semua butir lengkap.
                 </p>
             <?php endif ?>
             <div class="mb-3 h-2.5 w-full overflow-hidden rounded-full bg-gray-200" role="progressbar" aria-label="Kelengkapan pengaturan" aria-valuenow="<?= $persen ?>" aria-valuemin="0" aria-valuemax="100">
@@ -112,8 +112,8 @@ $kelasKartu  = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm
                 <?= view('tata_letak/_tanpa_gambar_tw', ['rasio' => '21x9', 'label' => 'Gambar kepala halaman depan', 'kelas' => 'w-full'], ['saveData' => false]) ?>
             <?php endif ?>
             <p class="mt-3 text-sm text-gray-600">
-                Gambar kepala dan logo diatur di
-                <a class="font-semibold text-primary-700 underline hover:no-underline" href="<?= site_url('admin/pengaturan/halaman-depan') ?>">Pengaturan Halaman Depan</a>.
+                Atur gambar kepala dan logo di halaman
+                <a class="font-semibold text-primary-700 underline hover:no-underline" href="<?= site_url('admin/pengaturan/halaman-depan') ?>">Halaman depan</a>.
             </p>
         </section>
     </div>

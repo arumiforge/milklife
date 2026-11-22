@@ -1,6 +1,6 @@
 <?php
 /**
- * Sakelar halaman Peserta publik (F9-12) di Pengaturan > Halaman Depan.
+ * Sakelar halaman Peserta publik (F9-12) di Pengaturan > Halaman depan.
  *
  * Formulir sendiri (bukan bagian formulir isi halaman depan), langsung
  * tersimpan ke `HalamanDepan.tampil_peserta` lewat
@@ -17,7 +17,7 @@ $tampilPeserta = PesertaController::tampil();
     <h2 id="judul-halaman-peserta" class="text-lg font-bold text-gray-900">Halaman Peserta</h2>
     <p class="mb-3 mt-1 text-sm text-gray-600">
         Daftar atlet dari pendaftaran Lunas yang bisa dicari siapa saja: nama, sekolah, nomor atlet, dan nomor lomba.
-        NISN, tanggal lahir, foto, dan data official tidak pernah tampil.
+        NISN, tanggal lahir, foto, dan data ofisial tidak pernah tampil.
         <?php if ($tampilPeserta) : ?>
             Lihat di <a href="<?= site_url('peserta') ?>" target="_blank" rel="noopener" class="font-semibold text-primary-700 underline">halaman Peserta</a>.
         <?php endif ?>

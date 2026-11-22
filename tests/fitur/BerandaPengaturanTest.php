@@ -73,18 +73,18 @@ final class BerandaPengaturanTest extends UjiHalaman
         }
 
         $this->assertSame([
-            ['acara', 'Data Acara', site_url('admin/pengaturan/acara')],
+            ['acara', 'Data acara', site_url('admin/pengaturan/acara')],
             ['pendaftaran', 'Pendaftaran', site_url('admin/pengaturan/pendaftaran')],
-            ['kelompok-umur', 'Kelompok Umur', site_url('admin/pengaturan/kelompok-umur')],
-            ['nomor-lomba', 'Nomor Lomba', site_url('admin/pengaturan/nomor-lomba')],
+            ['kelompok-umur', 'Kelompok umur', site_url('admin/pengaturan/kelompok-umur')],
+            ['nomor-lomba', 'Nomor lomba', site_url('admin/pengaturan/nomor-lomba')],
             ['pembayaran', 'Pembayaran', site_url('admin/pengaturan/pembayaran')],
-            ['halaman-depan', 'Halaman Depan', site_url('admin/pengaturan/halaman-depan')],
+            ['halaman-depan', 'Halaman depan', site_url('admin/pengaturan/halaman-depan')],
             ['jadwal', 'Agenda', site_url('admin/pengaturan/jadwal')],
             ['unduhan', 'Unduhan', site_url('admin/pengaturan/unduhan')],
             ['kontak', 'Kontak', site_url('admin/pengaturan/kontak')],
             ['bantuan', 'Bantuan', site_url('admin/pengaturan/bantuan')],
             ['galeri', 'Galeri', site_url('admin/pengaturan/galeri')],
-            ['tabel-skor', 'Tabel Skor', site_url('admin/pengaturan/tabel-skor')],
+            ['tabel-skor', 'Tabel skor', site_url('admin/pengaturan/tabel-skor')],
             ['hasil', 'Hasil', site_url('admin/pengaturan/hasil')],
             ['videotron', 'Videotron', site_url('admin/pengaturan/videotron')],
             ['akun', 'Akun', site_url('admin/akun')],
@@ -169,8 +169,8 @@ final class BerandaPengaturanTest extends UjiHalaman
         // Halaman pengaturan menandai anak submenu Pengaturan (F10-03).
         foreach ([
             'admin/pengaturan'                      => 'Pengaturan',
-            'admin/pengaturan/acara'                => 'Data Acara',
-            'admin/pengaturan/kelompok-umur/3/ubah' => 'Kelompok Umur',
+            'admin/pengaturan/acara'                => 'Data acara',
+            'admin/pengaturan/kelompok-umur/3/ubah' => 'Kelompok umur',
             'admin/akun'                            => 'Akun',
         ] as $alamat => $label) {
             $xpath = $this->xpathHtml($this->renderDiAlamat($alamat, 'Tests\Support\Views\contoh_admin'));

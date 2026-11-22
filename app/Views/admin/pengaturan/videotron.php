@@ -14,7 +14,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Pengaturan Videotron<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Pengaturan videotron<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Videotron<?= $this->endSection() ?>
 
@@ -83,7 +83,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                 <?php if (isset($galat['lama'])) : ?>
                     <p id="lama-galat" class="mt-1.5 text-sm font-medium text-red-700"><?= esc($galat['lama']) ?></p>
                 <?php endif ?>
-                <p id="lama-keterangan" class="mt-1.5 text-sm text-gray-600">5 sampai 120 detik. Tabel yang panjang dibagi beberapa halaman; tiap halaman tampil selama ini.</p>
+                <p id="lama-keterangan" class="mt-1.5 text-sm text-gray-600">5 sampai 120 detik. Tabel yang panjang dibagi beberapa halaman. Tiap halaman tampil selama ini.</p>
             </section>
 
             <?= komponen('tombol', ['label' => 'Simpan pengaturan videotron', 'tipe' => 'submit', 'ikon' => 'check']) ?>

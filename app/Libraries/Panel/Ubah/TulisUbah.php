@@ -91,9 +91,9 @@ final class TulisUbah
                     $this->db->transRollback();
                     $this->hapusFoto($fotoBaru);
 
-                    return self::batal('Perubahan belum disimpan. Pendaftaran ini sudah Lunas, jadi atlet baru langsung mendapat nomor atlet (BIB), '
-                        . 'tetapi awalan nomor atlet (BIB) ' . implode(', ', $beri['penuh']) . ' sudah penuh atau belum ada. '
-                        . 'Tambahkan awalan baru di Pengaturan, Kelompok Umur, lalu simpan lagi.');
+                    return self::batal('Perubahan belum disimpan. Pendaftaran ini sudah Lunas. Atlet barunya langsung mendapat nomor atlet (BIB), '
+                        . 'tetapi awalan nomor atlet ' . implode(', ', $beri['penuh']) . ' sudah penuh atau belum ada. '
+                        . 'Tambahkan awalan baru di Pengaturan > Kelompok umur, lalu simpan lagi.');
                 }
 
                 $nomorDada = $beri['nomor'];

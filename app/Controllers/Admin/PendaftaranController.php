@@ -438,7 +438,7 @@ class PendaftaranController extends BaseController
         $pesan = 'Perubahan pendaftaran ' . $idPendaftaran . ' tersimpan. Total sekarang ' . rupiah($hasil['total']) . '.';
 
         if ($hasil['kembali_menunggu']) {
-            $pesan .= ' Status kembali menjadi Menunggu Konfirmasi Pembayaran; tandai Lunas lagi setelah selisihnya diurus.';
+            $pesan .= ' Status kembali menjadi Menunggu Konfirmasi Pembayaran. Tandai Lunas lagi setelah selisihnya diurus.';
         }
 
         if ($hasil['nomor_dada'] !== []) {

@@ -278,7 +278,7 @@ final class PanelRiwayatAdminTest extends UjiBasisData
 
         $this->assertSame([RiwayatAdmin::GABUNG, RiwayatAdmin::LUNAS, RiwayatAdmin::LUNAS], array_column($riwayat, 'tindakan'));
         $this->assertSame([$awal['id_pendaftaran'], $susul['id_pendaftaran'], $awal['id_pendaftaran']], array_column($riwayat, 'id_pendaftaran'));
-        $this->assertSame('Digabung dari ' . $susul['id_pendaftaran'] . ' karena NPSN-nya sama. Atlet, ofisial, regu, dan bukti bayarnya pindah ke sini; total ditambah Rp 150.000.', $riwayat[0]['ringkasan']);
+        $this->assertSame('Digabung dari ' . $susul['id_pendaftaran'] . ' karena NPSN-nya sama. Atlet, ofisial, regu, dan bukti bayarnya pindah ke sini. Total ditambah Rp 150.000.', $riwayat[0]['ringkasan']);
 
         // Baris dari pendaftaran yang digabung diberi keterangan asalnya.
         $this->bukaSebagaiAdmin('admin/pendaftaran/' . $awal['id'])->assertSee('dari ' . $susul['id_pendaftaran']);

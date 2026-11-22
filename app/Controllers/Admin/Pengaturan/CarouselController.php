@@ -11,7 +11,7 @@ use RuntimeException;
 
 /**
  * Foto carousel pembuka halaman depan (F9-03), dikelola di bagian
- * "Foto carousel" halaman Pengaturan > Halaman Depan:
+ * "Foto carousel" halaman Pengaturan > Halaman depan:
  *
  * - `POST admin/pengaturan/halaman-depan/carousel`: tambah foto (`foto`, `keterangan`);
  * - `POST …/carousel/<urutan>/naik|turun`: pindah satu tempat;

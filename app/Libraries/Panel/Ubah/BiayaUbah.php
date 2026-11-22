@@ -80,7 +80,7 @@ final class BiayaUbah
 
                 if ($tarif === null) {
                     $galat[] = ['jalur' => UbahPendaftaran::KUNCI_BEBANKAN . '.' . $kunci, 'pesan' => $timTanpa->namaNomor($nomorId, (string) $tim['regu'])
-                        . ': regu ini sudah punya pembayar biaya regu atau tarifnya Rp 0, jadi tidak perlu dibebankan. Hapus centang "Bebankan biaya regu", lalu simpan lagi.'];
+                        . ': regu ini sudah punya pembayar biaya regu atau tarifnya Rp 0. Biayanya tidak perlu dibebankan. Hapus centang "Bebankan biaya regu", lalu simpan lagi.'];
                 } else {
                     $tim['biaya_tim'] = $tarif;
                     $timDibebankan[]  = $kunci;

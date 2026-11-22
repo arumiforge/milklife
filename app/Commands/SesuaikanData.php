@@ -52,7 +52,7 @@ class SesuaikanData extends BaseCommand
      */
     public const KUNCI_WA = [
         'Pembayaran.nomor_wa'         => 'Nomor WA konfirmasi pembayaran (Pengaturan > Pembayaran)',
-        'HalamanDepan.nomor_wa_tanya' => 'Nomor WA tanya admin (Pengaturan > Halaman Depan)',
+        'HalamanDepan.nomor_wa_tanya' => 'Nomor WA tanya admin (Pengaturan > Halaman depan)',
     ];
 
     /**

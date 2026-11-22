@@ -182,7 +182,7 @@ $pilihanRegu = static function (string $nameDasar, string $idDasar, int $nomorId
             <label class="mb-0.5 block text-xs font-semibold text-gray-700" for="<?= $idDasar ?>-regu-<?= $nomorId ?>"><?= esc(Regu::awalan()) ?></label>
             <?php if ($bebas) : ?>
                 <input type="text" class="<?= $kotakKecil ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]"
-                    value="<?= esc($regu, 'attr') ?>" maxlength="<?= Regu::PANJANG_MAKSIMAL ?>" placeholder="mis. A atau Merah" data-isian="regu"<?= $tanda ?>>
+                    value="<?= esc($regu, 'attr') ?>" maxlength="<?= Regu::PANJANG_MAKSIMAL ?>" placeholder="misalnya A atau Merah" data-isian="regu"<?= $tanda ?>>
             <?php else : ?>
                 <select class="<?= $kotakKecil ?>" id="<?= $idDasar ?>-regu-<?= $nomorId ?>" name="<?= $nameDasar ?>[regu][<?= $nomorId ?>][regu]" data-isian="regu"<?= $tanda ?>>
                     <option value="">Pilih <?= esc(mb_strtolower(Regu::awalan())) ?></option>
@@ -272,9 +272,9 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
             <select class="<?= $kotak ?> sm:max-w-sm" id="<?= $idDasar ?>-kelompok-umur" name="<?= $nameDasar ?>[kelompok_umur_id]"
                 data-isian="kelompok_umur_id" data-awal="<?= $kuPilihan === null ? '' : (int) $kuPilihan ?>" disabled<?= $pilihKu['aria'] ?>></select>
             <p class="<?= $bantuan ?>">
-                Tahun lahir atlet ini masuk lebih dari satu kelompok umur untuk jenjang sekolahnya, jadi kelompok umurnya dipilih.
-                Bila diganti, nomor lomba dipilih ulang dari kelompok umur baru. Nomor atlet (BIB) yang sudah ada tidak berubah;
-                awalannya ikut kelompok umur baru setelah <strong>Urutkan nomor atlet</strong> di halaman Atlet.
+                Tahun lahir atlet ini masuk lebih dari satu kelompok umur untuk jenjang sekolahnya. Pilih kelompok umurnya.
+                Bila diganti, pilih ulang nomor lombanya dari kelompok umur baru. Nomor atlet (BIB) yang sudah ada tidak berubah.
+                Awalannya ikut kelompok umur baru setelah <strong>Urutkan nomor atlet</strong> di halaman Atlet.
             </p>
             <?= $pilihKu['pesan'] ?>
         </div>
@@ -355,9 +355,9 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Ubah Pendaftaran <?= esc($p['id_pendaftaran']) ?><?= $this->endSection() ?>
+<?= $this->section('judul') ?>Ubah pendaftaran <?= esc($p['id_pendaftaran']) ?><?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Ubah Pendaftaran<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Ubah pendaftaran<?= $this->endSection() ?>
 
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [
     App\Libraries\Panel\AsalRincian::untuk((int) $p['id']),
@@ -381,8 +381,8 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
     <div class="flex items-start gap-3 rounded-xl border border-primary-200 bg-primary-50 p-4 text-sm text-primary-900" id="keterangan-ubah">
         <?= ikon('info', 'mt-0.5 shrink-0') ?>
         <ul class="list-disc space-y-1 ps-4">
-            <li>Aturan pendaftaran tetap berlaku: NISN tidak boleh dipakai pendaftaran lain, kelompok umur mengikuti tahun lahir dan jenjang sekolah, dan regu beregu baru harus lengkap (tepat sejumlah inti). Regu yang sudah terdaftar boleh kurang inti, tetapi tidak lebih; regu yang kurang inti ditandai di rincian.</li>
-            <li>Biaya nomor lomba dan regu yang tidak berubah tetap seperti saat mendaftar; nomor lomba dan regu baru memakai tarif sekarang (biaya beregu dihitung per regu).</li>
+            <li>Aturan pendaftaran tetap berlaku: NISN tidak boleh dipakai pendaftaran lain, kelompok umur mengikuti tahun lahir dan jenjang sekolah, dan regu beregu baru harus lengkap (tepat sejumlah inti). Regu yang sudah terdaftar boleh kurang inti, tetapi tidak boleh lebih. Regu yang kurang inti ditandai di rincian.</li>
+            <li>Biaya nomor lomba dan regu yang tidak berubah tetap seperti saat mendaftar. Nomor lomba dan regu baru memakai tarif sekarang (biaya beregu dihitung per regu).</li>
             <?php if ($lunas) : ?>
                 <li>Pendaftaran ini sudah Lunas. Bila totalnya berubah, status kembali menjadi Menunggu Konfirmasi Pembayaran. Bila totalnya tetap, atlet baru langsung mendapat nomor atlet (BIB).</li>
             <?php endif ?>
@@ -470,7 +470,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                 <h2 id="judul-tim-tanpa-pembayar" class="text-lg font-bold text-gray-900">Regu tanpa pembayar biaya regu</h2>
                 <p class="mb-3 text-sm text-gray-600">
                     Pendaftaran yang membayar biaya regu ini sudah dihapus atau diubah. Biayanya tidak dipindah otomatis.
-                    Centang untuk menagihkannya ke pendaftaran ini dengan tarif saat ini; total dihitung ulang saat disimpan.
+                    Centang untuk menagihkannya ke pendaftaran ini dengan tarif saat ini. Total dihitung ulang saat disimpan.
                 </p>
                 <?php foreach ($isian['tim_tanpa_pembayar'] as $kunci => $tim) : ?>
                     <?php $idKotak = 'bebankan-tim-' . Regu::idAman((string) $kunci) ?>

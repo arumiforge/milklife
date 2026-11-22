@@ -29,19 +29,19 @@ final class JudulTabAdminTest extends UjiBasisData
         'admin/dasbor'                         => 'Dasbor',
         'admin/akun'                           => 'Akun',
         'admin/pengaturan'                     => 'Pengaturan',
-        'admin/pengaturan/acara'               => 'Data Acara',
-        'admin/pengaturan/pendaftaran'         => 'Pengaturan Pendaftaran',
+        'admin/pengaturan/acara'               => 'Data acara',
+        'admin/pengaturan/pendaftaran'         => 'Pengaturan pendaftaran',
         'admin/pengaturan/pembayaran'          => 'Pembayaran',
-        'admin/pengaturan/halaman-depan'       => 'Halaman Depan',
-        'admin/pengaturan/kelompok-umur'       => 'Kelompok Umur',
-        'admin/pengaturan/nomor-lomba'         => 'Nomor Lomba',
+        'admin/pengaturan/halaman-depan'       => 'Halaman depan',
+        'admin/pengaturan/kelompok-umur'       => 'Kelompok umur',
+        'admin/pengaturan/nomor-lomba'         => 'Nomor lomba',
         'admin/pengaturan/jadwal'              => 'Agenda',
-        'admin/pengaturan/jadwal/tambah'       => 'Tambah Agenda',
+        'admin/pengaturan/jadwal/tambah'       => 'Tambah agenda',
         'admin/pengaturan/kontak'              => 'Kontak',
         'admin/pengaturan/unduhan'             => 'Unduhan',
-        'admin/pengaturan/unduhan/tambah'      => 'Tambah Unduhan',
-        'admin/pengaturan/kelompok-umur/tambah' => 'Tambah Kelompok Umur',
-        'admin/pengaturan/nomor-lomba/tambah'  => 'Tambah Nomor Lomba',
+        'admin/pengaturan/unduhan/tambah'      => 'Tambah unduhan',
+        'admin/pengaturan/kelompok-umur/tambah' => 'Tambah kelompok umur',
+        'admin/pengaturan/nomor-lomba/tambah'  => 'Tambah nomor lomba',
     ];
 
     public function testJudulTabAdminMemakaiNamaAcara(): void
@@ -71,7 +71,7 @@ final class JudulTabAdminTest extends UjiBasisData
 
         $hasil = $this->withSession([])->get('admin/masuk');
 
-        $this->assertSame('Masuk Admin – ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil));
+        $this->assertSame('Masuk admin – ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil));
         $hasil->assertSee('Panel panitia ' . AcaraController::NAMA_PENGGANTI);
     }
 
@@ -82,7 +82,7 @@ final class JudulTabAdminTest extends UjiBasisData
         $hasil = $this->withSession([])->get('admin/masuk');
         $hasil->assertOK();
 
-        $this->assertSame('Masuk Admin – ' . self::NAMA, $this->judulTab($hasil));
+        $this->assertSame('Masuk admin – ' . self::NAMA, $this->judulTab($hasil));
         $hasil->assertSee('Panel panitia ' . self::NAMA);
         $hasil->assertDontSee('MilkLife');
     }
@@ -106,7 +106,7 @@ final class JudulTabAdminTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/pengaturan/acara'));
 
-        $this->assertSame('Data Acara', trim($xpath->query('//header//h1')->item(0)?->textContent ?? ''));
+        $this->assertSame('Data acara', trim($xpath->query('//header//h1')->item(0)?->textContent ?? ''));
     }
 
     public function testTampilanAdminTidakMenulisNamaAcaraDiJudul(): void

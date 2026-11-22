@@ -49,7 +49,7 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
         $hasil = $this->bukaSebagaiAdmin('admin/pendaftaran/' . $p['id'] . '/ubah');
 
         $hasil->assertOK();
-        $hasil->assertSee('Ubah Pendaftaran');
+        $hasil->assertSee('Ubah pendaftaran');
         $hasil->assertSee('status kembali menjadi Menunggu Konfirmasi Pembayaran');
         $this->assertStringContainsString(aset('js/admin-ubah-pendaftaran.js'), (string) $hasil->getBody());
         $this->assertFileExists(FCPATH . 'aset/js/admin-ubah-pendaftaran.js');
@@ -183,7 +183,7 @@ final class PanelUbahPendaftaranHalamanTest extends UjiBasisData
             $hasil,
             'admin/pendaftaran/' . $p['id'],
             'Perubahan pendaftaran ' . $p['id_pendaftaran'] . ' tersimpan. Total sekarang Rp 600.000. '
-            . 'Status kembali menjadi Menunggu Konfirmasi Pembayaran; tandai Lunas lagi setelah selisihnya diurus.',
+            . 'Status kembali menjadi Menunggu Konfirmasi Pembayaran. Tandai Lunas lagi setelah selisihnya diurus.',
         );
         $this->assertSame('menunggu', $this->db->table('pendaftaran')->where('id', $p['id'])->get()->getRow()->status);
     }

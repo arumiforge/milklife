@@ -53,7 +53,7 @@ final class MasukAdminTest extends UjiBasisData
         $hasil = $this->get('admin/masuk');
 
         $hasil->assertOK();
-        $hasil->assertSee('Masuk Admin');
+        $hasil->assertSee('Masuk admin');
         $hasil->assertSee('autocomplete="username"');
         $hasil->assertSee('autocomplete="current-password"');
         $this->assertNotSame('', $this->tokenDariFormulir($hasil->getBody()));
@@ -166,7 +166,7 @@ final class MasukAdminTest extends UjiBasisData
         $hasil = $this->kirimMasuk(['nama_pengguna' => self::NAMA_PENGGUNA, 'sandi' => self::SANDI_UJI]);
 
         $hasil->assertStatus(429);
-        $hasil->assertSee('Terlalu banyak percobaan masuk. Tunggu 12 detik lagi');
+        $hasil->assertSee('Terlalu banyak percobaan masuk. Tunggu 12 detik, lalu coba masuk lagi.');
         $hasil->assertHeader('Retry-After', '12');
         $hasil->assertSessionMissing('admin_id');
     }

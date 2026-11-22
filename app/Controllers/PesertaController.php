@@ -32,7 +32,7 @@ class PesertaController extends BaseController
     public const PESAN_BATAS = 'Terlalu banyak pencarian dalam satu menit. Tunggu sebentar, lalu coba lagi.';
 
     /**
-     * Sakelar tampil halaman Peserta dari Pengaturan > Halaman Depan.
+     * Sakelar tampil halaman Peserta dari Pengaturan > Halaman depan.
      */
     public static function tampil(): bool
     {

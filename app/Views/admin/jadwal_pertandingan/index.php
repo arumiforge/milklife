@@ -8,7 +8,7 @@
  *   jam mulai, dan lokasi. Urutan baris = urutan jadwal; babak yang belum dijadwalkan di akhir.
  * - "Isi berurutan" (`aset/js/admin-jadwal-pertandingan.js`) mengisi jam
  *   baris yang dicentang mulai jam tertentu dengan jeda tetap, tanpa menyimpan.
- * - Sakelar tampil untuk umum memakai pengendali Pengaturan > Halaman Depan.
+ * - Sakelar tampil untuk umum memakai pengendali Pengaturan > Halaman depan.
  *
  * @var CodeIgniter\View\View                    $this
  * @var list<array<string, mixed>>               $babak  `JadwalPertandingan::semua()`
@@ -38,7 +38,7 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
-        Satu baris = satu babak di <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>, jadi jadwal selalu sama dengan babak yang diisi juri.
+        Satu baris berisi satu babak di <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>. Karena itu, jadwal selalu sama dengan babak yang diisi juri.
         Babak tanpa tanggal belum tampil di halaman Jadwal. Status Selesai muncul sendiri setelah hasil nomornya diterbitkan.
     </p>
 
@@ -61,7 +61,7 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
     </section>
 
     <?php if ($babak === []) : ?>
-        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Jadwal disusun dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini untuk mengisi tanggal dan jamnya.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
+        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Jadwal disusun dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini untuk mengisi tanggal dan jamnya.', 'aksi' => komponen('tombol', ['label' => 'Buka hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
     <?php else : ?>
         <?php if ($hari !== []) : ?>
             <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-unduh-jadwal">
@@ -77,7 +77,7 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
 
         <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-isi-berurutan" data-isi-berurutan hidden>
             <h2 id="judul-isi-berurutan" class="text-lg font-bold text-gray-900">Isi berurutan</h2>
-            <p class="mt-1 text-sm text-gray-600">Centang babak di tabel, lalu isi jam mulai pertama dan jeda antarbabak. Jam diisi dari atas ke bawah; tanggal dan lokasi ikut diisi bila ditulis. Periksa hasilnya, lalu tekan Simpan jadwal.</p>
+            <p class="mt-1 text-sm text-gray-600">Centang babak di tabel, lalu isi jam mulai pertama dan jeda antarbabak. Jam diisi dari atas ke bawah. Tanggal dan lokasi ikut diisi bila Anda menuliskannya. Periksa hasilnya, lalu tekan Simpan jadwal.</p>
             <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-6 xl:items-end">
                 <div class="sm:col-span-2">
                     <label for="urut-tanggal" class="mb-1.5 block text-sm font-semibold text-gray-900">Tanggal</label>

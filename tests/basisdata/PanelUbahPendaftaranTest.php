@@ -470,7 +470,7 @@ final class PanelUbahPendaftaranTest extends UjiBasisData
         $hasil = (new UbahPendaftaran())->simpan($p['id'], $kiriman);
 
         $this->assertFalse($hasil['tersimpan']);
-        $this->assertStringContainsString('awalan nomor atlet (BIB) KU 10 sudah penuh', $hasil['galat'][0]['pesan']);
+        $this->assertStringContainsString('awalan nomor atlet KU 10 sudah penuh', $hasil['galat'][0]['pesan']);
         $this->assertSame($p['atlet'], $this->idAtlet($p['id']));
         $this->assertSame('SD KARANGAN MAJU', $this->pendaftaran($p['id'])['nama_sekolah']);
         $this->assertSame($fotoAwal, $this->berkasFoto(), 'Foto baru dihapus lagi dan foto lama tetap.');

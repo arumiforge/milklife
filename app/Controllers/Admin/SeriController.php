@@ -123,7 +123,7 @@ class SeriController extends BaseController
 
         if (($jumlah !== '' && preg_match('/^\d{1,2}$/D', $jumlah) !== 1) || ($benih !== '' && preg_match('/^\d{1,10}$/D', $benih) !== 1)) {
             return redirect()->to(site_url('admin/seri/babak/' . $id) . '#bagi-otomatis')
-                ->with('pesan_galat', 'Banyak seri dan benih acak harus angka, atau kosongkan supaya dipilih otomatis.');
+                ->with('pesan_galat', 'Banyak seri dan benih acak harus berupa angka. Kosongkan bila ingin dipilih otomatis.');
         }
 
         $hasil = (new SeriLintasan())->bagiOtomatis($id, [

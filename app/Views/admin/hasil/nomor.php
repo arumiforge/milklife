@@ -41,7 +41,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
             <p class="text-gray-700">
                 <?= esc($nomor['kelompok_umur']) ?> · <?= $beregu ? 'Beregu' : 'Individu' ?> · Jenis hasil <strong><?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?></strong> (<?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>)
             </p>
-            <p class="text-sm text-gray-600"><?= $calon ?> <?= $beregu ? 'regu' : 'atlet' ?> dari pendaftaran Lunas. Jenis hasil diubah di Pengaturan, Nomor Lomba.</p>
+            <p class="text-sm text-gray-600"><?= $calon ?> <?= $beregu ? 'regu' : 'atlet' ?> dari pendaftaran Lunas. Jenis hasil diubah di Pengaturan > Nomor lomba.</p>
         </div>
         <div class="flex flex-wrap gap-2" role="group" aria-label="Unduh hasil">
             <?= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('admin/hasil/nomor/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-text', 'kelas' => 'min-h-11']) ?>
@@ -76,7 +76,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
     </section>
 
     <?php if ($babak === []) : ?>
-        <p class="text-gray-600" id="babak-kosong">Belum ada babak. Tambahkan di bawah; nomor yang langsung final cukup satu babak Final.</p>
+        <p class="text-gray-600" id="babak-kosong">Belum ada babak. Tambahkan di bawah. Nomor yang langsung final cukup punya satu babak Final.</p>
     <?php endif ?>
 
     <?php foreach ($babak as $b) : ?>

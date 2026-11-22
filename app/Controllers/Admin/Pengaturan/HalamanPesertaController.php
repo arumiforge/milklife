@@ -8,7 +8,7 @@ use CodeIgniter\HTTP\RedirectResponse;
 /**
  * Sakelar halaman Peserta publik (F9-12): `POST
  * /admin/pengaturan/halaman-depan/peserta`, dari kartu "Halaman Peserta" di
- * Pengaturan > Halaman Depan (`admin/pengaturan/_halaman_peserta.php`).
+ * Pengaturan > Halaman depan (`admin/pengaturan/_halaman_peserta.php`).
  *
  * Menyimpan `HalamanDepan.tampil_peserta`. Dipisah dari formulir isi halaman
  * depan supaya menyalakan atau mematikan halaman tidak ikut menyimpan isian

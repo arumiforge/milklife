@@ -46,8 +46,8 @@ final class PengaturanAcaraTest extends UjiBasisData
         $hasil->assertOK();
 
         $xpath = $this->xpathDari($hasil);
-        $this->assertSame('Data Acara', trim($xpath->query('//header//h1')->item(0)?->textContent ?? ''));
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Data Acara")]')->length);
+        $this->assertSame('Data acara', trim($xpath->query('//header//h1')->item(0)?->textContent ?? ''));
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Data acara")]')->length);
         $this->assertSame(0, $xpath->query('//*[@id="galat-isian"]')->length);
 
         foreach (array_keys(self::isianBenar()) as $kotak) {

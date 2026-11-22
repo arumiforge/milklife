@@ -140,8 +140,8 @@ final class PengaturanNomorLombaTest extends UjiBasisData
         $hasil->assertOK();
         $hasil->assertSee('Belum ada kelompok umur');
         $xpath = $this->xpathDari($hasil);
-        $this->assertSame(1, $xpath->query('//main//a[@href="' . site_url('admin/pengaturan/kelompok-umur') . '"][contains(., "Buka Kelompok Umur")]')->length);
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Nomor Lomba")]')->length);
+        $this->assertSame(1, $xpath->query('//main//a[@href="' . site_url('admin/pengaturan/kelompok-umur') . '"][contains(., "Buka kelompok umur")]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page"][contains(., "Nomor lomba")]')->length);
     }
 
     public function testKosongTanpaNomorLomba(): void

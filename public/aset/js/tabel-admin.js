@@ -308,7 +308,7 @@
         thousands: '.',
         decimal: ',',
         loadingRecords: 'Memuat data…',
-        zeroRecords: 'Tidak ada data yang cocok.',
+        zeroRecords: 'Tidak ada data yang cocok. Coba kata pencarian lain.',
         emptyTable: 'Belum ada data.',
         paginate: {
             first: 'Pertama',
