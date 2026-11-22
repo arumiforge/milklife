@@ -126,8 +126,11 @@ final class GaleriTest extends UjiBasisData
         $hasil->assertSee('Belum ada album foto');
 
         // Ilustrasi G9-04 hanya bila berkasnya ada (K41).
-        $adaIlustrasi = is_file(FCPATH . 'aset/gambar/keadaan/kosong-data.webp');
-        $this->assertSame($adaIlustrasi ? 1 : 0, $xpath->query('//*[@data-galeri-kosong]//img[contains(@src, "gambar/keadaan/kosong-data.webp")]')->length);
+        $ilustrasi = '//*[@data-galeri-kosong]//img[contains(@src, "gambar/keadaan/kosong-data.webp")]';
+        $this->assertSame(0, $xpath->query($ilustrasi)->length);
+
+        $this->taruhGambarUji('keadaan/kosong-data.webp');
+        $this->assertSame(1, $this->xpathDari($this->get('galeri'))->query($ilustrasi)->length);
     }
 
     // ---------- Pengaturan > Galeri ----------
