@@ -8,6 +8,7 @@ use CodeIgniter\HTTP\UserAgent;
 use CodeIgniter\Security\Exceptions\SecurityException;
 use CodeIgniter\Test\TestResponse;
 use Tests\Support\KirimFormulir;
+use Tests\Support\PulihkanServer;
 use Tests\Support\UjiBasisData;
 use Tests\Support\UjiHalaman;
 
@@ -27,12 +28,19 @@ use Tests\Support\UjiHalaman;
 final class BatasUnggahTest extends UjiBasisData
 {
     use KirimFormulir;
+    use PulihkanServer;
 
     private const HALAMAN = 'admin/pengaturan/halaman-depan';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->simpanServer();
+    }
+
     protected function tearDown(): void
     {
-        service('superglobals')->unsetServer('CONTENT_LENGTH');
+        $this->pulihkanServer();
 
         parent::tearDown();
     }

@@ -28,7 +28,6 @@ final class PanelGabungPendaftaranHalamanTest extends UjiBasisData
 
         Services::resetSingle('throttler');
         service('cache')->clean();
-        $_SERVER['SCRIPT_NAME'] ??= '/index.php';
     }
 
     protected function tearDown(): void

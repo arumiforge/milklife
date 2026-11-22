@@ -8,6 +8,7 @@ use CodeIgniter\HTTP\UserAgent;
 use CodeIgniter\Test\FeatureTestTrait;
 use CodeIgniter\Test\TestResponse;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\Support\PulihkanServer;
 use Tests\Support\UjiBasisData;
 
 /**
@@ -30,12 +31,14 @@ use Tests\Support\UjiBasisData;
 final class AlamatPengunjungTest extends UjiBasisData
 {
     use FeatureTestTrait;
+    use PulihkanServer;
 
     private const KEPALA = 'CF-Connecting-IP';
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->simpanServer();
 
         Services::resetSingle('security');
         Services::resetSingle('throttler');
@@ -44,7 +47,7 @@ final class AlamatPengunjungTest extends UjiBasisData
 
     protected function tearDown(): void
     {
-        service('superglobals')->unsetServer('REMOTE_ADDR');
+        $this->pulihkanServer();
 
         parent::tearDown();
     }
