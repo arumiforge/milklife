@@ -686,7 +686,7 @@ final class HasilLomba
      * nomor (atau yang terbit saja), untuk klasemen (F8-05); metode poin (F9-11)
      * memakai `$sampai` 8.
      *
-     * @return list<array{nomor_id: int, nomor: string, kelompok_umur: string, terbit: bool, peringkat: int, nama: string, sekolah: string, npsn: string|null, pendaftaran_id: int, jenjang: string}>
+     * @return list<array{nomor_id: int, nomor: string, kelompok_umur_id: int, kelompok_umur: string, terbit: bool, peringkat: int, nama: string, sekolah: string, npsn: string|null, pendaftaran_id: int, jenjang: string}>
      */
     public function juara(bool $hanyaTerbit = false, int $sampai = 3): array
     {
@@ -710,6 +710,7 @@ final class HasilLomba
                         $juara[] = [
                             'nomor_id'       => $n['id'],
                             'nomor'          => $n['nama'],
+                            'kelompok_umur_id' => $ku['id'],
                             'kelompok_umur'  => $ku['nama'],
                             'terbit'         => $n['terbit_pada'] !== null,
                             'peringkat'      => $h['peringkat'],
@@ -728,15 +729,16 @@ final class HasilLomba
     }
 
     /**
-     * Klasemen sekolah per jenjang memakai metode dan poin dari Pengaturan >
-     * Hasil (F9-11): `Klasemen::hitung()` atas peringkat 1–8 babak Final.
+     * Klasemen sekolah per kelompok umur memakai metode, poin, dan gabungan
+     * kelompok umur dari Pengaturan > Hasil (F9-11, F11-02): `Klasemen::hitung()`
+     * atas peringkat 1–8 babak Final.
      * Dipakai halaman klasemen admin dan publik, unduhan, dan videotron.
      *
      * @return array<string, array<string, mixed>>
      */
     public function klasemen(bool $hanyaTerbit = false): array
     {
-        return Klasemen::hitung($this->juara($hanyaTerbit, Klasemen::PERINGKAT_POIN), MetodeKlasemen::metode(), MetodeKlasemen::poin());
+        return Klasemen::hitung($this->juara($hanyaTerbit, Klasemen::PERINGKAT_POIN), MetodeKlasemen::metode(), MetodeKlasemen::poin(), MetodeKlasemen::susunan($this->db));
     }
 
     /**

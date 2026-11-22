@@ -3,7 +3,7 @@
  * Klasemen sekolah di panel admin (F8-05, K124), tata letak Tailwind
  * `admin_tw`. Data dari `KlasemenController::index()`.
  *
- * Tabel per jenjang dari `hasil/_klasemen_tw.php` (sama dengan halaman
+ * Tabel per klasemen kelompok umur dari `hasil/_klasemen_tw.php` (sama dengan halaman
  * publik) dengan tanda "belum terbit" pada piala dari nomor yang belum diterbitkan.
  * Kolom poin selalu tampil (F9-11): pada metode poin ditebalkan dan tampil di
  * ponsel, pada metode medali disembunyikan di ponsel.
@@ -12,7 +12,7 @@
  * @var array<string, array<string, mixed>> $klasemen    `Klasemen::hitung()`, semua nomor
  * @var int                                 $belumTerbit nomor ber-juara yang belum terbit
  * @var string                              $metode      `Klasemen::MEDALI` atau `Klasemen::POIN` (Pengaturan > Hasil)
- * @var string                              $keterangan  `Klasemen::keterangan()`
+ * @var string                              $keterangan  `Klasemen::teksSusunan()` dan `Klasemen::keterangan()`
  */
 
 use App\Libraries\Hasil\Klasemen;
@@ -28,8 +28,8 @@ $metodePoin = $metode === Klasemen::POIN;
     <div class="flex flex-wrap items-start gap-4">
         <p class="min-w-0 flex-1 basis-72 text-gray-700">
             <?= esc($keterangan) ?>
-            Klasemen dihitung per jenjang dari babak Final semua nomor<?= $metodePoin ? ' (poin dari peringkat 1 sampai ' . Klasemen::PERINGKAT_POIN . ')' : '' ?>. Satu regu juara dihitung satu piala untuk sekolahnya. Sekolah dikenali dari NPSN.
-            Metode diatur di <a href="<?= site_url('admin/pengaturan/hasil') ?>" class="font-semibold text-primary-700 underline">Pengaturan &gt; Hasil</a>.
+            Juara diambil dari babak Final semua nomor<?= $metodePoin ? ' (poin dari peringkat 1 sampai ' . Klasemen::PERINGKAT_POIN . ')' : '' ?>. Satu regu juara dihitung satu piala untuk sekolahnya. Sekolah dikenali dari NPSN.
+            Metode dan gabungan kelompok umur diatur di <a href="<?= site_url('admin/pengaturan/hasil') ?>" class="font-semibold text-primary-700 underline">Pengaturan &gt; Hasil</a>.
             Halaman publik hanya menghitung nomor yang sudah diterbitkan.
         </p>
         <div class="flex flex-wrap gap-2" role="group" aria-label="Unduh klasemen">

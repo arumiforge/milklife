@@ -5,7 +5,7 @@
  *   `data-segar` detik. Bila jaringan putus atau server menolak, data
  *   terakhir tetap tampil dengan tanda "Sambungan terputus".
  * - Isi diputar per `pengaturan.lama` detik: hasil nomor yang baru terbit,
- *   juara umum per jenjang, sedang berlangsung, jadwal berikutnya (urutan dan
+ *   juara umum per kelompok umur, sedang berlangsung, jadwal berikutnya (urutan dan
  *   pilihan dari Pengaturan > Videotron). Isi kosong dilewati.
  * - Tata letak cair untuk ukuran apa pun: satuan huruf `--u` memakai
  *   `clamp()` dari ukuran layar (kelas di `#layar`), dikali `?skala=`.
@@ -383,7 +383,7 @@ if (akar) {
         }
         if (jenis === 'juara_umum') {
             return (data.juara_umum || []).filter((j) => j.baris?.length).map((j) => ({
-                jenis, kunci: 'juara:' + j.jenjang, judul: j.label, sub: '', metode: j.metode, baris: j.baris,
+                jenis, kunci: 'juara:' + j.kunci, judul: j.label, sub: '', metode: j.metode, baris: j.baris,
             }));
         }
         const daftar = data[jenis];

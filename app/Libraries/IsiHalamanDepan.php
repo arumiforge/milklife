@@ -714,10 +714,10 @@ final class IsiHalamanDepan
     /**
      * Hasil yang sudah terbit untuk halaman depan: `JUMLAH_HASIL_TERBARU`
      * nomor yang paling akhir diterbitkan beserta juara I–III Final-nya, dan
-     * tiga besar juara umum per jenjang (hanya dari nomor terbit, sama dengan
+     * tiga besar juara umum per kelompok umur (hanya dari nomor terbit, sama dengan
      * `hasil/klasemen`). `null` bila belum ada nomor yang terbit.
      *
-     * @return array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{jenjang: string, label: string, baris: list<array<string, mixed>>}>, metode: string}|null
+     * @return array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{kunci: string, label: string, baris: list<array<string, mixed>>}>, metode: string}|null
      */
     public function hasilTerbaru(): ?array
     {
@@ -765,11 +765,11 @@ final class IsiHalamanDepan
 
         $juaraUmum = [];
 
-        foreach (Klasemen::hitung($peringkat, MetodeKlasemen::metode(), MetodeKlasemen::poin()) as $jenjang) {
+        foreach (Klasemen::hitung($peringkat, MetodeKlasemen::metode(), MetodeKlasemen::poin(), MetodeKlasemen::susunan()) as $klasemen) {
             $juaraUmum[] = [
-                'jenjang' => $jenjang['jenjang'],
-                'label'   => $jenjang['label'],
-                'baris'   => array_values(array_filter($jenjang['baris'], static fn (array $b): bool => $b['juara_umum'] !== null)),
+                'kunci' => $klasemen['kunci'],
+                'label' => $klasemen['label'],
+                'baris' => array_values(array_filter($klasemen['baris'], static fn (array $b): bool => $b['juara_umum'] !== null)),
             ];
         }
 

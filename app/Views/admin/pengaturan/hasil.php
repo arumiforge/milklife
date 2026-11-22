@@ -1,12 +1,17 @@
 <?php
 /**
- * Pengaturan > Hasil (F9-11): metode klasemen juara umum dan poin per
- * peringkat, tata letak `admin_tw`. Data dari `MetodeKlasemenController`.
+ * Pengaturan > Hasil (F9-11, F11-02): metode klasemen juara umum, poin per
+ * peringkat, dan susunan klasemen per kelompok umur (nomor klasemen per
+ * kelompok umur; nomor sama = digabung), tata letak `admin_tw`. Data dari
+ * `MetodeKlasemenController`.
  *
  * @var CodeIgniter\View\View $this
  * @var string                $metode `Klasemen::MEDALI` atau `Klasemen::POIN` (tersimpan atau yang baru dipilih)
  * @var list<string>          $poin   poin peringkat 1–8 (tersimpan atau yang baru diketik)
- * @var array<string, string> $galat  `metode`, `poin`, atau `poin_<n>` => pesan
+ * @var array<int, string>    $kelompokUmur id => nama kelompok umur, urut
+ * @var array<int, string>    $nomor        id kelompok umur => nomor klasemen (tersimpan atau yang baru dipilih)
+ * @var list<array{kunci: string, label: string, kelompok_umur_id: list<int>}> $susunan susunan tersimpan
+ * @var array<string, string> $galat  `metode`, `poin`, `poin_<n>`, atau `klasemen_<id>` => pesan
  */
 
 use App\Libraries\Hasil\Klasemen;
@@ -34,8 +39,8 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="text-gray-700">
-        Pilih cara menentukan juara umum di klasemen sekolah. Klasemen tetap dihitung terpisah per jenjang sekolah,
-        dan kolom poin tampil di klasemen apa pun metodenya. Perubahan langsung berlaku di klasemen panel, halaman Hasil, PDF, Excel, dan videotron.
+        Pilih cara menentukan juara umum di klasemen sekolah dan kelompok umur mana yang digabung dalam satu klasemen.
+        Kolom poin tampil di klasemen apa pun metodenya. Perubahan langsung berlaku di klasemen panel, halaman Hasil, PDF, Excel, dan videotron.
     </p>
 
     <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
@@ -67,7 +72,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                     <?php endif ?>
                 </fieldset>
                 <p class="mt-4 text-sm text-gray-600">
-                    Bila masih sama, sekolah-sekolah itu berbagi peringkat yang sama. Peringkat 1 sampai 3 di setiap jenjang menjadi juara umum I sampai III.
+                    Bila masih sama, sekolah-sekolah itu berbagi peringkat yang sama. Peringkat 1 sampai 3 di setiap klasemen menjadi juara umum I sampai III.
                 </p>
             </section>
 
@@ -100,8 +105,42 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
             </section>
         </div>
 
+        <section class="<?= $kartu ?>" aria-labelledby="judul-susunan">
+            <h2 id="judul-susunan" class="text-lg font-bold text-gray-900">Susunan klasemen</h2>
+            <p class="mb-4 mt-1 text-sm text-gray-600" id="susunan-bantuan">
+                Setiap kelompok umur punya klasemen sendiri. Untuk menggabung beberapa kelompok umur dalam satu klasemen, pilih nomor klasemen yang sama,
+                misalnya KU 8 dan KU 10 sama-sama Klasemen 1. Kontingen tetap dihitung per sekolah (NPSN).
+            </p>
+            <?php if ($kelompokUmur === []) : ?>
+                <p class="text-sm text-gray-700" id="susunan-kosong">
+                    Belum ada kelompok umur. Tambahkan dulu di <a href="<?= site_url('admin/pengaturan/kelompok-umur') ?>" class="font-semibold text-primary-700 underline">Pengaturan &gt; Kelompok umur</a>.
+                </p>
+            <?php else : ?>
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <?php foreach ($kelompokUmur as $id => $nama) : ?>
+                        <?php $kotak = 'klasemen_' . $id; ?>
+                        <div class="min-w-0">
+                            <label for="<?= $kotak ?>" class="mb-1 block text-sm font-semibold text-gray-900"><?= esc($nama) ?></label>
+                            <select class="<?= $kelasKotak(isset($galat[$kotak])) ?>" id="<?= $kotak ?>" name="klasemen[<?= (int) $id ?>]"
+                                aria-describedby="susunan-bantuan<?= isset($galat[$kotak]) ? ' ' . $kotak . '-galat' : '' ?>"<?= isset($galat[$kotak]) ? ' aria-invalid="true"' : '' ?>>
+                                <?php for ($n = 1; $n <= count($kelompokUmur); $n++) : ?>
+                                    <option value="<?= $n ?>"<?= ($nomor[$id] ?? '') === (string) $n ? ' selected' : '' ?>>Klasemen <?= $n ?></option>
+                                <?php endfor ?>
+                            </select>
+                            <?php if (isset($galat[$kotak])) : ?>
+                                <p id="<?= $kotak ?>-galat" class="mt-1.5 text-sm font-medium text-red-700"><?= esc($galat[$kotak]) ?></p>
+                            <?php endif ?>
+                        </div>
+                    <?php endforeach ?>
+                </div>
+                <p class="mt-4 text-sm text-gray-900" data-ringkasan-susunan>
+                    Berlaku sekarang (<?= count($susunan) ?> klasemen): <?= esc(implode('; ', array_column($susunan, 'label'))) ?>.
+                </p>
+            <?php endif ?>
+        </section>
+
         <div class="flex flex-wrap gap-2">
-            <?= komponen('tombol', ['label' => 'Simpan metode klasemen', 'tipe' => 'submit', 'ikon' => 'check']) ?>
+            <?= komponen('tombol', ['label' => 'Simpan pengaturan hasil', 'tipe' => 'submit', 'ikon' => 'check']) ?>
             <?= komponen('tombol', ['label' => 'Lihat klasemen', 'href' => site_url('admin/klasemen'), 'varian' => 'kedua', 'ikon' => 'trophy']) ?>
         </div>
     </form>

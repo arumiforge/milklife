@@ -55,9 +55,9 @@ export function dataUji(versi = 'uji-1') {
             })),
         });
     });
-    const jenjang = [['A', 'SD/MI', 14], ['B', 'SMP/MTs', 6], ['C', 'SMA/SMK/MA', 3]];
-    const juara_umum = jenjang.map(([kode, label, n]) => ({
-        jenjang: kode, label,
+    const klasemen = [['ku-1-2', 'KU 8 dan KU 10', 14], ['ku-3', 'KU 12', 6], ['ku-4', 'KU 15', 3]];
+    const juara_umum = klasemen.map(([kunci, label, n]) => ({
+        kunci, label,
         baris: Array.from({ length: n }, (_, j) => ({
             peringkat: j + 1, juara_umum: j < 3 ? j + 1 : null, sekolah: sekolah[j % sekolah.length] + (j > 5 ? ' ' + j : ''),
             emas: Math.max(0, 9 - j), perak: (j * 3) % 7, perunggu: (j * 5) % 6, jumlah: 20 - j,

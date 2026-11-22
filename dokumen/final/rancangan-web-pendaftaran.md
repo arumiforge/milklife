@@ -105,7 +105,7 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/bukti/{kode-acak}/{id-pendaftaran}` | Bukti pendaftaran PDF; kode acak 24 huruf supaya alamatnya tidak bisa ditebak (K77) |
 | `/bantuan` | Bantuan dan tanya-jawab per kategori, bisa dicari, panduan bergambar langkah pendaftaran, tautan WA panitia; selalu tampil (Tahap 9, F9-04) |
 | `/hasil` | Hasil lomba per nomor yang sudah diterbitkan admin (Tahap 8, K124) |
-| `/hasil/klasemen` | Klasemen sekolah per jenjang dari nomor yang sudah terbit (Tahap 8, K124) |
+| `/hasil/klasemen` | Klasemen sekolah per kelompok umur dari nomor yang sudah terbit (Tahap 8, K124, K172) |
 | `/jadwal` | Jadwal pertandingan per hari dari babak yang diberi tanggal dan jam, status otomatis, PDF per hari; bersakelar, bawaan mati (Tahap 9, F9-07) |
 | `/peserta` | Peserta publik: cari nama, sekolah, nomor atlet; saring kelompok umur, nomor lomba, putra/putri; hanya pendaftaran Lunas; bersakelar, bawaan mati (Tahap 9, F9-12, K144) |
 | `/galeri` | Album foto bersampul yang menaut ke Instagram atau Google Drive; bersakelar, bawaan mati (Tahap 9, F9-06) |
@@ -131,7 +131,7 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/admin/juri` | Lembar juri ponsel: pilih babak dan seri, isi prestasi per peserta, simpan otomatis (Tahap 9, K140 butir 7d) |
 | `/admin/hasil` | Babak, prestasi, peringkat, dan Terbitkan per nomor lomba (Tahap 8, K124) |
 | `/admin/seri` | Seri dan lintasan: aturan seri per nomor, bagi otomatis, geser, aturan lolos Q/q, kunci, unduhan daftar seri per nomor dan per hari (Tahap 9, K140 butir 8) |
-| `/admin/klasemen` | Klasemen sekolah per jenjang, termasuk nomor yang belum terbit (Tahap 8, K124) |
+| `/admin/klasemen` | Klasemen sekolah per kelompok umur, termasuk nomor yang belum terbit (Tahap 8, K124, K172) |
 | `/admin/rekap` | Rekap per nomor lomba, tim beregu, per sekolah, per kelompok umur, keuangan |
 | `/admin/sekolah` | Data sekolah: daftar dengan saringan nama kembar, ubah nama dan data lain (K97) |
 | `/admin/sekolah/nama-desa` | Tambahkan nama desa ke semua sekolah bernama sama sekaligus (K114) |
@@ -402,7 +402,7 @@ Semua isi diatur dari panel admin. Tampilan baru Flowbite Pro sejak Tahap 9 (K14
 - **Atlet** ("Our Athletes", K168 butir 13): tokoh anime G10-01, lembar lima tokoh di layar md ke atas dan dua tokoh berdampingan di ponsel; tidak ditulis bila berkasnya belum ada (K41).
 - Agenda ("Key Dates"): sosialisasi daring, pertemuan teknik, dan jadwal lain yang ditambahkan admin.
 - **Angka acara**: jumlah atlet, sekolah, kabupaten/kota, dan atlet per kelompok umur, hanya dari pendaftaran Lunas; tampil setelah ada datanya.
-- **Hasil dan juara umum terbaru** ("Results"): juara umum I–III per jenjang dan nomor yang paling akhir diterbitkan beserta juaranya, hanya dari nomor yang sudah terbit dan mengikuti metode klasemen di Pengaturan > Hasil (18, K124, K140 butir 7a), dengan tautan ke halaman hasil dan klasemen. Selama hari lomba admin bisa menyalakan sakelar "Tampilkan hasil di atas (hari lomba)" di Pengaturan > Halaman Depan (bawaan mati) supaya bagian ini pindah tepat di bawah pembuka (K143).
+- **Hasil dan juara umum terbaru** ("Results"): juara umum I–III per klasemen kelompok umur dan nomor yang paling akhir diterbitkan beserta juaranya, hanya dari nomor yang sudah terbit dan mengikuti metode klasemen di Pengaturan > Hasil (18, K124, K140 butir 7a), dengan tautan ke halaman hasil dan klasemen. Selama hari lomba admin bisa menyalakan sakelar "Tampilkan hasil di atas (hari lomba)" di Pengaturan > Halaman Depan (bawaan mati) supaya bagian ini pindah tepat di bawah pembuka (K143).
 - **Pertanyaan yang sering ditanyakan** ("Got Questions?"): pertanyaan pertama tiap kategori Bantuan, paling banyak enam, dengan tautan ke halaman Bantuan (F9-04).
 - **Unduhan** ("Downloads"). Tiap berkas punya tombol **Unduh**; PDF dan gambar juga punya tombol **Lihat** yang membuka berkas di **modal di semua lebar layar** tanpa mengubah alamat unduh. Di ponsel modal PDF berisi tombol **Buka di tab baru** dan **Unduh**; tanpa JavaScript Lihat membuka tab baru. Jenis dan ukuran berkas tidak ditampilkan (F10-09, K168 butir 6).
 - **Lokasi** ("The Venue", F10-02): alamat dan peta Google Maps Supersoccer Arena tepat di atas Kontak, dengan tombol **Buka di Google Maps** di bawah alamat (layar lebar) atau di bawah peta (ponsel) (K156 butir 2). Iframe peta baru disisipkan saat bagiannya mendekati layar, rasio 4:3 di ponsel dan 16:9 di layar lebar; tanpa JavaScript hanya tautannya. Alamat embed (hanya `https://www.google.com/maps/embed?…`; kode `<iframe>` utuh dari Google Maps juga diterima) dan tautan buka peta diatur di Pengaturan > Halaman Depan, bawaannya Supersoccer Arena. Bila alamat embed kosong, bagian ini tidak tampil.
@@ -605,13 +605,13 @@ Ketentuan Tahap 8 (K124, K125). Bagian ini menjadi aturan saat dibangun; rincian
 - **Nomor beregu**: juara per regu; satu regu juara = satu piala untuk sekolahnya.
 - **Terbitkan** (K124 butir 7): hasil satu nomor tampil di halaman publik `hasil` setelah admin menekan "Terbitkan" untuk nomor itu, dan bisa ditarik kembali.
 
-**Klasemen sekolah** (K124 butir 5–6, K140 butir 7a):
+**Klasemen sekolah** (K124 butir 5–6, K140 butir 7a, K172 butir 2):
 
-- **Kontingen = sekolah per NPSN** (sejalan K109); pendaftaran tanpa NPSN dihitung sebagai kontingen sendiri. Jenjang kontingen mengikuti jenjang pendaftaran.
-- **Klasemen dihitung terpisah per jenjang sekolah.** Juara umum I–III per jenjang ditandai. Metodenya dipilih admin di **Pengaturan > Hasil** (K140 butir 7a):
+- **Kontingen = sekolah per NPSN** (sejalan K109); pendaftaran tanpa NPSN dihitung sebagai kontingen sendiri.
+- **Klasemen dihitung per kelompok umur** (K172, menggantikan per jenjang K124). Di **Pengaturan > Hasil** admin memberi setiap kelompok umur nomor klasemen; kelompok umur bernomor sama digabung dalam satu klasemen (misalnya KU 8 dan KU 10 seperti Seri 1). Bawaannya satu klasemen per kelompok umur, dan kelompok umur yang tidak masuk gabungan mana pun (termasuk yang baru ditambah) tetap punya klasemen sendiri. Juara umum I–III per klasemen ditandai. Metodenya juga dipilih admin di Pengaturan > Hasil (K140 butir 7a):
   - **Medali** (bawaan, juknis bagian 11): juara I terbanyak; bila sama, juara II, lalu juara III; bila masih sama, peringkat bersama. Hanya sekolah yang punya piala yang tampil.
   - **Poin per peringkat**: setiap atlet atau regu di peringkat 1–8 babak Final menyumbang poin untuk sekolahnya menurut daftar poin peringkat 1–8 yang bisa diubah (bawaan 7-5-4-3-2-1-0-0; angka bulat 0–999, tidak boleh naik untuk peringkat berikutnya, peringkat 1 lebih dari 0). Poin terbanyak menang; bila sama, juara I, lalu II, lalu III; bila masih sama, peringkat bersama. Sekolah yang punya piala atau poin tampil. Peringkat sama di Final memberi poin yang sama kepada masing-masing.
-  - **Kolom poin** tampil di klasemen admin, publik, PDF, dan Excel apa pun metodenya, dan kalimat cara penentuan di halaman, PDF, serta tanya-jawab (`{cara_juara_umum}`) mengikuti metode yang berlaku. Perubahan metode langsung berlaku tanpa menghitung ulang data.
+  - **Kolom poin** tampil di klasemen admin, publik, PDF, dan Excel apa pun metodenya, dan kalimat susunan klasemen dan cara penentuan di halaman, PDF, serta tanya-jawab (`{cara_juara_umum}`) mengikuti pengaturan yang berlaku. Perubahan metode langsung berlaku tanpa menghitung ulang data.
 - Perhitungannya kelas tersendiri tanpa ketergantungan pada permintaan HTTP, dengan uji unit.
 - Halaman admin menghitung semua nomor (yang belum terbit diberi tanda); halaman publik `hasil/klasemen` hanya menghitung nomor yang sudah terbit.
 
@@ -629,7 +629,7 @@ Ketentuan Tahap 8 (K124, K125). Bagian ini menjadi aturan saat dibangun; rincian
 
 **Unduhan** (K124 butir 8): hasil per nomor dan klasemen tersedia sebagai PDF dan Excel. Piagam tidak dibuat web.
 
-**Papan videotron** (Tahap 9, K141): `/layar` tanpa masuk, layar penuh, berganti sendiri antara hasil nomor yang baru terbit (babak Final atau babak terakhir), juara umum per jenjang (dari klasemen publik), babak yang sedang berlangsung, dan jadwal berikutnya (dari jam mulai babak). Hanya data terbit. Data diambil ulang setiap 30 detik; bila jaringan putus, data terakhir tetap tampil dengan tanda. Tata letak cair untuk ukuran layar apa pun: mendatar lebar (pita LED), mendatar, tegak, dan sangat kecil, dengan huruf mengikuti ukuran layar dan parameter `?skala=`, `?susunan=`, `?baris=` untuk memaksa. Sakelar, isi yang diputar, dan lama tiap tampilan di Pengaturan > Videotron (bawaan mati). Tata letak menyesuaikan ukuran layar apa pun: mendatar lebar (pita LED, hasil dan juara umum berdampingan), mendatar, tegak, dan sangat kecil (hanya peringkat, nama, prestasi); tabel panjang dibagi halaman menurut tinggi layar. Pengaturan > Videotron: sakelar tampil (bawaan mati, `/layar` tidak ditemukan selama mati), isi yang tampil, dan lama tiap tampilan (5–120 detik).
+**Papan videotron** (Tahap 9, K141): `/layar` tanpa masuk, layar penuh, berganti sendiri antara hasil nomor yang baru terbit (babak Final atau babak terakhir), juara umum per klasemen kelompok umur (dari klasemen publik), babak yang sedang berlangsung, dan jadwal berikutnya (dari jam mulai babak). Hanya data terbit. Data diambil ulang setiap 30 detik; bila jaringan putus, data terakhir tetap tampil dengan tanda. Tata letak cair untuk ukuran layar apa pun: mendatar lebar (pita LED), mendatar, tegak, dan sangat kecil, dengan huruf mengikuti ukuran layar dan parameter `?skala=`, `?susunan=`, `?baris=` untuk memaksa. Sakelar, isi yang diputar, dan lama tiap tampilan di Pengaturan > Videotron (bawaan mati). Tata letak menyesuaikan ukuran layar apa pun: mendatar lebar (pita LED, hasil dan juara umum berdampingan), mendatar, tegak, dan sangat kecil (hanya peringkat, nama, prestasi); tabel panjang dibagi halaman menurut tinggi layar. Pengaturan > Videotron: sakelar tampil (bawaan mati, `/layar` tidak ditemukan selama mati), isi yang tampil, dan lama tiap tampilan (5–120 detik).
 
 **Data ikut terbawa**: tabel baru (11) ikut di Backup data dan pindah server (K76) serta cadangan; penggabungan pendaftaran (K109) memindahkan baris yang menunjuk pendaftaran; hapus pendaftaran menangani baris yang menunjuknya.
 

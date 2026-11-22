@@ -111,6 +111,29 @@ final class SesuaikanDataTest extends UjiBasisData
         $this->assertStringContainsString('tidak ada; data sudah sesuai.', $this->getStreamFilterBuffer());
     }
 
+    public function testKalimatJuaraUmumPerJenjangDiTanyaJawabDihapus(): void
+    {
+        // Jawaban bawaan lama (sebelum F11-02) dan jawaban yang sudah diubah admin.
+        $waktu = date('Y-m-d H:i:s');
+        $lama  = SesuaikanData::FAQ_JUARA_UMUM_LAMA . ' Satu sekolah (satu NPSN) dihitung satu kontingen.';
+        $this->db->table('faq')->insertBatch([
+            ['kategori' => 'hasil', 'pertanyaan' => 'Bagaimana juara umum dihitung?', 'jawaban' => $lama, 'urutan' => 1, 'aktif' => 1, 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu],
+            ['kategori' => 'hasil', 'pertanyaan' => 'Pertanyaan karangan', 'jawaban' => 'Jawaban karangan admin.', 'urutan' => 2, 'aktif' => 1, 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu],
+        ]);
+
+        $this->assertSame(EXIT_SUCCESS, $this->jalankan());
+
+        $this->assertSame(
+            ['{cara_juara_umum} Satu sekolah (satu NPSN) dihitung satu kontingen.', 'Jawaban karangan admin.'],
+            array_column($this->db->table('faq')->orderBy('urutan')->get()->getResultArray(), 'jawaban'),
+        );
+        $this->assertStringContainsString('Tanya-jawab juara umum: kalimat "per jenjang sekolah" dihapus dari 1 jawaban', $this->getStreamFilterBuffer());
+
+        $this->resetStreamFilterBuffer();
+        $this->assertSame(EXIT_SUCCESS, $this->jalankan());
+        $this->assertStringContainsString('Tanya-jawab juara umum: tidak ada kalimat bawaan lama', $this->getStreamFilterBuffer());
+    }
+
     public function testZipBackupKu8BisaDiimporSetelahDisesuaikan(): void
     {
         // Server lama yang membuat backup sudah memakai nama KU 8.

@@ -1,11 +1,11 @@
 <?php
 /**
- * Klasemen sekolah untuk mPDF (F8-05), A4 tegak, satu tabel per jenjang
+ * Klasemen sekolah untuk mPDF (F8-05), A4 tegak, satu tabel per klasemen kelompok umur
  * (`App\Libraries\Hasil\UnduhanKlasemen`).
  *
  * @var array<string, array<string, mixed>> $klasemen   `Klasemen::hitung()`
  * @var bool                                $publik     hanya nomor terbit
- * @var string                              $keterangan `Klasemen::keterangan()` sesuai metode
+ * @var string                              $keterangan `Klasemen::teksSusunan()` dan `Klasemen::keterangan()`
  * @var string                              $namaAcara nama acara berhuruf besar
  * @var string                              $seriTahun 'Seri 2 Tahun 2026'
  * @var bool                                $logo      logo persegi ada (`var:logo`)

@@ -6,7 +6,7 @@
  * diterbitkan panitia; bagian tidak tampil sebelum ada yang terbit
  * (`IsiHalamanDepan::hasilTerbaru()` = `null`).
  *
- * @var array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{jenjang: string, label: string, baris: list<array<string, mixed>>}>, metode: string}|null $hasilTerbaru
+ * @var array{nomor: list<array{id: int, nama: string, kelompok_umur: string, beregu: bool, juara: list<array{peringkat: int, nama: string, sekolah: string}>}>, juara_umum: list<array{kunci: string, label: string, baris: list<array<string, mixed>>}>, metode: string}|null $hasilTerbaru
  */
 
 if ($hasilTerbaru === null) {
@@ -37,8 +37,8 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                 $medali = [1 => 'emas', 2 => 'perak', 3 => 'perunggu'];
                 ?>
                 <?php foreach ($hasilTerbaru['juara_umum'] as $jenjang) : ?>
-                    <article class="rounded-2xl bg-primary-900 p-5 text-white shadow-angkat" aria-labelledby="hasil-umum-<?= esc($jenjang['jenjang'], 'attr') ?>">
-                        <h3 id="hasil-umum-<?= esc($jenjang['jenjang'], 'attr') ?>" class="flex items-center gap-2 text-lg font-extrabold"><?= $piala !== '' ? $piala : ikon('medal', 'text-oranye-400') ?>Juara umum <?= esc($jenjang['label']) ?></h3>
+                    <article class="rounded-2xl bg-primary-900 p-5 text-white shadow-angkat" aria-labelledby="hasil-umum-<?= esc($jenjang['kunci'], 'attr') ?>">
+                        <h3 id="hasil-umum-<?= esc($jenjang['kunci'], 'attr') ?>" class="flex items-center gap-2 text-lg font-extrabold"><?= $piala !== '' ? $piala : ikon('medal', 'text-oranye-400') ?>Juara umum <?= esc($jenjang['label']) ?></h3>
                         <ol class="mt-4 space-y-2">
                             <?php foreach ($jenjang['baris'] as $b) : ?>
                                 <li class="flex items-center gap-3 rounded-xl bg-white/10 p-3">

@@ -59,7 +59,7 @@ class HasilController extends BaseController
             'namaAcara' => (new IsiHalamanDepan())->acara()['nama'],
             'klasemen'   => (new HasilLomba())->klasemen(true),
             'metode'     => MetodeKlasemen::metode(),
-            'keterangan' => Klasemen::keterangan(MetodeKlasemen::metode(), MetodeKlasemen::poin()),
+            'keterangan' => Klasemen::teksSusunan(MetodeKlasemen::susunan()) . ' ' . Klasemen::keterangan(MetodeKlasemen::metode(), MetodeKlasemen::poin()),
         ]);
     }
 

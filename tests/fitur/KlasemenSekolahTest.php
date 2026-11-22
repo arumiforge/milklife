@@ -14,8 +14,9 @@ use Tests\Support\PanelDataContoh;
 use Tests\Support\UjiBasisData;
 
 /**
- * Klasemen sekolah per jenjang dari babak Final (F8-05, K124): halaman admin
- * (semua nomor), halaman publik (hanya nomor terbit), unduhan PDF dan Excel.
+ * Klasemen sekolah per kelompok umur dari babak Final (F8-05, K124; F11-02,
+ * K172 butir 2): halaman admin (semua nomor), halaman publik (hanya nomor
+ * terbit), unduhan PDF dan Excel, gabungan kelompok umur di Pengaturan > Hasil.
  *
  * @internal
  */
@@ -50,21 +51,22 @@ final class KlasemenSekolahTest extends UjiBasisData
         // Admin: kedua nomor dihitung; SD KARANGAN MAJU dua juara I.
         $admin = $this->bukaSebagaiAdmin('admin/klasemen');
         $admin->assertOK();
-        $admin->assertSee('SD/MI');
+        $admin->assertSee('KU 10');
+        $admin->assertSee('Klasemen dihitung per kelompok umur.');
         $admin->assertSee('Juara umum I');
         $admin->assertSee('belum terbit');
         $admin->assertSeeElement('#belum-terbit');
 
         $semua = (new HasilLomba())->klasemen();
         $this->assertSame(Klasemen::hitung((new HasilLomba())->juara(false, 8)), $semua, 'Bawaan: metode medali, poin 7-5-4-3-2-1.');
-        $this->assertSame(['SD KARANGAN MAJU', 'SD KARANGAN LAIN'], array_column($semua['A']['baris'], 'sekolah'));
-        $this->assertSame([2, 0], array_column($semua['A']['baris'], 'emas'));
+        $this->assertSame(['SD KARANGAN MAJU', 'SD KARANGAN LAIN'], array_column($semua[$this->kunciKu10()]['baris'], 'sekolah'));
+        $this->assertSame([2, 0], array_column($semua[$this->kunciKu10()]['baris'], 'emas'));
 
         // Publik: hanya Lari 60 m putra yang terbit.
         $publik = $this->get('hasil/klasemen');
         $publik->assertOK();
         $terbit = (new HasilLomba())->klasemen(true);
-        $this->assertSame([1, 1], [$terbit['A']['baris'][0]['emas'], $terbit['A']['baris'][1]['perak']]);
+        $this->assertSame([1, 1], [$terbit[$this->kunciKu10()]['baris'][0]['emas'], $terbit[$this->kunciKu10()]['baris'][1]['perak']]);
         $publik->assertDontSee('belum terbit');
         $publik->assertSee('juara I terbanyak');
         $publik->assertSee('data-kolom="poin"', null);
@@ -72,7 +74,7 @@ final class KlasemenSekolahTest extends UjiBasisData
         $publik->assertDontSee('data-medali-juara-umum');
         $this->get('hasil')->assertSee('Lihat klasemen sekolah');
 
-        // Dengan berkas G9-06: piala di judul jenjang dan medali di samping lencana juara umum.
+        // Dengan berkas G9-06: piala di judul klasemen dan medali di samping lencana juara umum.
         foreach (['piala', 'medali-emas', 'medali-perak', 'medali-perunggu'] as $berkas) {
             $this->taruhGambarUji('layar/' . $berkas . '.webp');
         }
@@ -103,7 +105,7 @@ final class KlasemenSekolahTest extends UjiBasisData
         $this->assertSame('poin', setting('Klasemen.metode'));
         $this->assertSame('7,7,4,3,2,1,0,0', setting('Klasemen.poin'));
 
-        $baris = (new HasilLomba())->klasemen()['A']['baris'];
+        $baris = (new HasilLomba())->klasemen()[$this->kunciKu10()]['baris'];
         $this->assertSame(['SD KARANGAN MAJU', 'SD KARANGAN LAIN'], array_column($baris, 'sekolah'));
         $this->assertSame([14, 14], array_column($baris, 'poin'));
         $this->assertSame([1, 2], array_column($baris, 'peringkat'), 'Poin sama: juara I memecah seri.');
@@ -140,10 +142,79 @@ final class KlasemenSekolahTest extends UjiBasisData
         $this->assertTokenCsrfWajib('admin/pengaturan/hasil', ['metode' => 'medali', 'poin' => ['7', '5', '4', '3', '2', '1', '0', '0']]);
     }
 
+    public function testGabunganKelompokUmurDiPengaturanHasil(): void
+    {
+        $this->siapkanJuara();
+        $ku10 = $this->idInduk['ku10'];
+        $ku12 = $this->idInduk['ku12'];
+
+        // Juara I KU 12 dari sekolah ketiga (Lari 60 m putra KU 12 dibuat langsung, data karangan).
+        $c = $this->buatPendaftaranPanel(['sekolah' => ['npsn' => '99999916', 'nama' => 'SD KARANGAN KETIGA'], 'atlet' => [$this->atletPanel(['ku' => 'ku12', 'tanggal_lahir' => '2015-05-01', 'nomor' => ['lari60putraKu12']])]]);
+        (new StatusPembayaran())->tandaiLunas($c['id']);
+        $hasil = new HasilLomba();
+        $babak = $hasil->tambahBabak($this->idInduk['lari60putraKu12'], 'Final', true, 'semua')['id'];
+        $id    = (int) $this->db->table('hasil')->where('babak_id', $babak)->get()->getRow()->id;
+        $this->assertSame([], $hasil->simpanHasil($babak, [$id => ['prestasi' => '9,10']]));
+        $hasil->terbitkan($this->idInduk['lari60putraKu12'], true);
+
+        // Bawaan: satu klasemen per kelompok umur.
+        $this->assertSame(['ku-' . $ku10, 'ku-' . $ku12], array_keys($hasil->klasemen(true)));
+        $halaman = $this->bukaSebagaiAdmin('admin/pengaturan/hasil');
+        $halaman->assertOK();
+        $this->assertMatchesRegularExpression('/id="klasemen_' . $ku12 . '" name="klasemen\[' . $ku12 . '\]"/', $halaman->getBody());
+
+        // Admin menggabung KU 10 dan KU 12 (nomor klasemen sama); KU 15 tetap sendiri.
+        $nomor = [];
+        $lain  = 2;
+
+        foreach ($this->db->table('kelompok_umur')->select('id')->get()->getResultArray() as $ku) {
+            $nomor[(int) $ku['id']] = in_array((int) $ku['id'], [$ku10, $ku12], true) ? '1' : (string) $lain++;
+        }
+
+        $simpan = $this->kirimSebagaiAdmin('admin/pengaturan/hasil', ['metode' => 'medali', 'poin' => ['7', '5', '4', '3', '2', '1', '0', '0'], 'klasemen' => $nomor]);
+        $simpan->assertRedirectTo(site_url('admin/pengaturan/hasil'));
+        $this->assertSame([[$ku10, $ku12]], json_decode((string) setting('Klasemen.gabungan'), true));
+
+        $gabung   = 'ku-' . $ku10 . '-' . $ku12;
+        $klasemen = $hasil->klasemen(true);
+        $this->assertSame([$gabung], array_keys($klasemen));
+        $this->assertSame('KU 10 dan KU 12', $klasemen[$gabung]['label']);
+        $this->assertSame(['SD KARANGAN KETIGA', 'SD KARANGAN MAJU', 'SD KARANGAN LAIN'], array_column($klasemen[$gabung]['baris'], 'sekolah'));
+        $this->assertSame([1, 1, 3], array_column($klasemen[$gabung]['baris'], 'peringkat'));
+
+        $teks = 'KU 10 dan KU 12 digabung dalam satu klasemen.';
+        $this->get('hasil/klasemen')->assertSee($teks);
+        $this->bukaSebagaiAdmin('admin/klasemen')->assertSee($teks);
+        $this->bukaSebagaiAdmin('admin/pengaturan/hasil')->assertSee('KU 10 dan KU 12');
+        $this->assertStringContainsString($teks, (new UnduhanKlasemen($klasemen, true))->html(false));
+        $this->assertStringContainsString($teks, (new JawabanFaq())->teks('{cara_juara_umum}'));
+        $this->assertSame('KU 10 dan KU 12', (new IsiHalamanDepan())->hasilTerbaru()['juara_umum'][0]['label']);
+
+        // Isian salah ditolak dan gabungan lama tetap.
+        $salah = $this->kirimSebagaiAdmin('admin/pengaturan/hasil', ['metode' => 'medali', 'poin' => ['7', '5', '4', '3', '2', '1', '0', '0'], 'klasemen' => [$ku10 => '99'] + $nomor]);
+        $salah->assertOK();
+        $salah->assertSee('Pilih klasemen 1 sampai');
+        $this->assertSame([[$ku10, $ku12]], json_decode((string) setting('Klasemen.gabungan'), true));
+
+        // Pengaturan rusak atau bentuk lama tidak membuat galat: kembali ke satu klasemen per kelompok umur.
+        foreach (['bukan json', '{"A":"SD/MI"}', '[["A","B"]]', ''] as $rusak) {
+            setting('Klasemen.gabungan', $rusak);
+            $this->assertSame(['ku-' . $ku10, 'ku-' . $ku12], array_keys($hasil->klasemen(true)), $rusak);
+        }
+
+        $this->get('hasil/klasemen')->assertOK();
+        $this->bukaSebagaiAdmin('admin/pengaturan/hasil')->assertOK();
+    }
+
     public function testKlasemenKosong(): void
     {
         $this->get('hasil/klasemen')->assertSeeElement('#klasemen-kosong');
         $this->bukaSebagaiAdmin('admin/klasemen')->assertSeeElement('#klasemen-kosong');
+    }
+
+    private function kunciKu10(): string
+    {
+        return 'ku-' . $this->idInduk['ku10'];
     }
 
     /**
