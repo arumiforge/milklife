@@ -18,12 +18,17 @@
  *
  * @var array<string, mixed>  $data  hasil `PapanVideotron::data()`
  * @var array<string, string> $latar kunci (`dasar`, `pita`, `kiri-atas`, `kanan-bawah`) => alamat gambar
+ * @var array<string, string> $gambar kunci (`podium`, `medali-emas`, `medali-perak`, `medali-perunggu`) => alamat gambar juara umum G9-06
  * @var int                   $segar detik antarpengambilan data
  */
 $atributLatar = '';
 
 foreach ($latar as $kunci => $alamat) {
     $atributLatar .= ' data-latar-' . esc($kunci, 'attr') . '="' . esc($alamat, 'attr') . '"';
+}
+
+foreach ($gambar ?? [] as $kunci => $alamat) {
+    $atributLatar .= ' data-gambar-' . esc($kunci, 'attr') . '="' . esc($alamat, 'attr') . '"';
 }
 ?>
 <!doctype html>

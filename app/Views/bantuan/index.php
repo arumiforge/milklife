@@ -45,7 +45,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
 <?= $this->section('isi') ?>
 <section class="relative overflow-hidden border-b border-primary-100 bg-white" aria-labelledby="judul-bantuan">
     <?php if ($kepala !== null) : ?>
-        <img src="<?= esc($kepala) ?>" alt="" class="pointer-events-none absolute inset-y-0 end-0 hidden h-full w-auto max-w-none object-cover opacity-90 md:block" width="1920" height="480">
+        <img src="<?= esc($kepala) ?>" alt="" class="pointer-events-none absolute inset-y-0 end-0 hidden h-full w-auto max-w-none object-cover opacity-90 md:block" width="1920" height="480" loading="lazy" decoding="async" data-kepala-bantuan>
     <?php endif ?>
     <div class="relative mx-auto max-w-screen-xl px-4 py-10 sm:py-14 md:flex md:items-center md:justify-between md:gap-8">
         <div class="min-w-0 max-w-2xl md:flex-1">
