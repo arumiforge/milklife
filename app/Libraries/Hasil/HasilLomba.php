@@ -24,6 +24,9 @@ use Throwable;
  *   prestasi = jarak sah terbaik, prestasi sama dipisah jarak terbaik kedua
  *   bila `pemecah_seri` menyala. Lari: waktu seperseribu detik bila diisi
  *   memisah waktu yang sama (`Peringkat::pemecah()`).
+ * - Waktu tangan (F11-04, `waktu_tangan` di `nomor()`): prestasi dibulatkan ke
+ *   atas ke 0,1 detik saat disimpan dan ditulis satu angka desimal; data lama
+ *   yang belum bulat dibaca bulat tanpa ditulis ulang.
  * - Penyimpanan (halaman hasil dan lembar juri) mengunci baris babaknya
  *   (`SELECT … FOR UPDATE`), jadi beberapa admin bisa mengisi babak berbeda
  *   bersamaan; baris yang sudah diubah admin lain sejak dibuka (`versi`)
@@ -144,12 +147,14 @@ final class HasilLomba
      *
      * `dilombakan`, `keterangan`, `peserta_minimal` (F11-03): status nomor dan batas peserta.
      *
-     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string, tabel_skor_id: int|null, komponen: list<array{kode: string, nama: string, jenis: string}>, jumlah_percobaan: int, pemecah_seri: bool, dilombakan: bool, keterangan: string, peserta_minimal: int|null}|null
+     * `waktu_tangan` (F11-04): cara pencatatan waktu tangan.
+     *
+     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string, tabel_skor_id: int|null, komponen: list<array{kode: string, nama: string, jenis: string}>, jumlah_percobaan: int, pemecah_seri: bool, dilombakan: bool, keterangan: string, peserta_minimal: int|null, waktu_tangan: bool}|null
      */
     public function nomor(int $id): ?array
     {
         $n = $this->db->table('nomor_lomba nl')
-            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.tabel_skor_id, nl.komponen_skor, nl.hasil_terbit_pada, nl.kelompok_umur_id, nl.jumlah_percobaan, nl.pemecah_seri, nl.tidak_dilombakan, nl.alasan_tidak_dilombakan, nl.peserta_minimal, ku.nama AS kelompok_umur')
+            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.tabel_skor_id, nl.komponen_skor, nl.hasil_terbit_pada, nl.kelompok_umur_id, nl.jumlah_percobaan, nl.pemecah_seri, nl.tidak_dilombakan, nl.alasan_tidak_dilombakan, nl.peserta_minimal, nl.cara_waktu, ku.nama AS kelompok_umur')
             ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
             ->where('nl.id', $id)
             ->get()->getRowArray();
@@ -175,6 +180,8 @@ final class HasilLomba
             // Aturan nomor (F9-09).
             'jumlah_percobaan' => Percobaan::jumlah($n['jumlah_percobaan']),
             'pemecah_seri'     => (int) ($n['pemecah_seri'] ?? 1) === 1,
+            // Cara pencatatan waktu (F11-04).
+            'waktu_tangan'     => NomorLombaModel::waktuTangan(['cara_waktu' => $n['cara_waktu'], 'jenis_hasil' => $jenisHasil]),
         ] + self::status($n);
     }
 
@@ -274,12 +281,15 @@ final class HasilLomba
         $jenisHasil = (string) $nomor['jenis_hasil'];
         $jarak      = $jenisHasil === JenisHasil::JARAK;
         $jumlahP    = (int) ($nomor['jumlah_percobaan'] ?? Percobaan::BAWAAN);
+        $tangan     = $jenisHasil === JenisHasil::WAKTU && ($nomor['waktu_tangan'] ?? false) === true;
 
         foreach ($baris as $b) {
             $prestasi  = $b['prestasi'] === null ? null : (int) $b['prestasi'];
             $percobaan = $jarak ? Percobaan::baca($b['percobaan'] ?? null) : null;
-            $ribu      = $jenisHasil === JenisHasil::WAKTU && isset($b['seperseribu']) ? (int) $b['seperseribu'] : null;
-            $teks      = Prestasi::tulis($prestasi, $jenisHasil);
+            $ribu      = $jenisHasil === JenisHasil::WAKTU && ! $tangan && isset($b['seperseribu']) ? (int) $b['seperseribu'] : null;
+            // Waktu tangan (F11-04): data lama yang belum bulat dibaca sebagai 0,1 detik ke atas.
+            $prestasi  = $tangan && $prestasi !== null ? Prestasi::bulatTangan($prestasi) : $prestasi;
+            $teks      = Prestasi::tulis($prestasi, $jenisHasil, $tangan);
             $rincian  = $komponen === [] ? [] : TabelSkor::bacaRincian($b['rincian'] ?? null);
             $isianK   = [];
 
@@ -602,7 +612,9 @@ final class HasilLomba
 
         $sekarang = date('Y-m-d H:i:s');
 
-        $galat = $this->transaksi(function () use ($siap, $sekarang, $babakId, $jenis): array {
+        $tangan = $jenis === JenisHasil::WAKTU && $nomor['waktu_tangan'];
+
+        $galat = $this->transaksi(function () use ($siap, $sekarang, $babakId, $jenis, $tangan): array {
             $this->kunciBabak($babakId);
 
             $kini    = [];
@@ -631,6 +643,12 @@ final class HasilLomba
                 // Prestasi tidak diubah di halaman hasil: percobaan tersimpan tetap.
                 if (! $s['percobaan'] && $lama['percobaan'] !== null && $data['prestasi'] !== null && (int) $lama['prestasi'] === $data['prestasi']) {
                     $data['percobaan'] = $lama['percobaan'];
+                }
+
+                // Waktu tangan (F11-04): prestasi lama yang tampil sama tidak ditulis ulang.
+                if ($tangan && $lama['prestasi'] !== null && $data['prestasi'] === Prestasi::bulatTangan((int) $lama['prestasi'])) {
+                    $data['prestasi']    = (int) $lama['prestasi'];
+                    $data['seperseribu'] = $lama['seperseribu'] === null ? null : (int) $lama['seperseribu'];
                 }
 
                 if (! self::berubah($lama, $data)) {
@@ -684,16 +702,22 @@ final class HasilLomba
      */
     public function hitungUlang(int $babakId, string $jenis): void
     {
-        $aktif   = (int) ($this->db->table('babak b')->select('nl.pemecah_seri')->join('nomor_lomba nl', 'nl.id = b.nomor_lomba_id')->where('b.id', $babakId)->get()->getRow()->pemecah_seri ?? 1) === 1;
+        $aturan  = $this->db->table('babak b')->select('nl.pemecah_seri, nl.cara_waktu')->join('nomor_lomba nl', 'nl.id = b.nomor_lomba_id')->where('b.id', $babakId)->get()->getRowArray() ?? [];
+        $aktif   = (int) ($aturan['pemecah_seri'] ?? 1) === 1;
+        $tangan  = NomorLombaModel::waktuTangan(['cara_waktu' => $aturan['cara_waktu'] ?? null, 'jenis_hasil' => $jenis]);
         $peserta = [];
 
         foreach ($this->db->table('hasil')->select('id, prestasi, percobaan, seperseribu, keterangan, peringkat, peringkat_manual')->where('babak_id', $babakId)->get()->getResultArray() as $h) {
+            // Waktu tangan (F11-04): dibandingkan per 0,1 detik, tanpa seperseribu.
+            $prestasi = $h['prestasi'] === null ? null : (int) $h['prestasi'];
+            $ribu     = $tangan || $h['seperseribu'] === null ? null : (int) $h['seperseribu'];
+
             $peserta[(int) $h['id']] = [
-                'prestasi'   => $h['prestasi'] === null ? null : (int) $h['prestasi'],
+                'prestasi'   => $tangan && $prestasi !== null ? Prestasi::bulatTangan($prestasi) : $prestasi,
                 'keterangan' => $h['keterangan'],
                 'peringkat'  => $h['peringkat'] === null ? null : (int) $h['peringkat'],
                 'manual'     => (int) $h['peringkat_manual'] === 1,
-                'pemecah'    => Peringkat::pemecah($jenis, Percobaan::baca($h['percobaan']), $h['seperseribu'] === null ? null : (int) $h['seperseribu'], $aktif),
+                'pemecah'    => Peringkat::pemecah($jenis, Percobaan::baca($h['percobaan']), $ribu, $aktif),
             ];
         }
 
@@ -807,6 +831,12 @@ final class HasilLomba
         } elseif ($jenis === JenisHasil::WAKTU) {
             $prestasi = Prestasi::uraiWaktuRinci(is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '');
             $ribu     = $prestasi['seperseribu'];
+
+            // Waktu tangan (F11-04, TR 19): ke atas ke 0,1 detik, tanpa seperseribu.
+            if (($nomor['waktu_tangan'] ?? false) === true && $prestasi['nilai'] !== null) {
+                $prestasi['nilai'] = Prestasi::bulatTangan($prestasi['nilai']);
+                $ribu              = null;
+            }
         } else {
             $prestasi = Prestasi::urai(is_string($baris['prestasi'] ?? null) ? $baris['prestasi'] : '', $jenis);
         }

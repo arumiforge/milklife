@@ -68,7 +68,7 @@ final class UnduhanHasil
             'nama'       => $beregu ? 'Regu' : 'Nama',
             'anggota'    => 'Anggota',
             'sekolah'    => 'Sekolah',
-            'prestasi'   => 'Prestasi (' . JenisHasil::LABEL[$this->nomor['jenis_hasil']] . ')',
+            'prestasi'   => 'Prestasi (' . JenisHasil::LABEL[$this->nomor['jenis_hasil']] . (! empty($this->nomor['waktu_tangan']) ? ' tangan' : '') . ')',
             'keterangan' => 'Keterangan',
         ];
 

@@ -29,7 +29,7 @@ use App\Libraries\Hasil\Peringkat;
 $nomor  = $babak['nomor'];
 $beregu = $nomor['jenis'] === 'beregu';
 $final  = $babak['final'];
-$contoh = ['waktu' => '12,34', 'jarak' => '3,45', 'poin' => '1250'][$nomor['jenis_hasil']] ?? '';
+$contoh = ['waktu' => empty($nomor['waktu_tangan']) ? '12,34' : '12,4', 'jarak' => '3,45', 'poin' => '1250'][$nomor['jenis_hasil']] ?? '';
 $nilai  = static fn (array $h, string $kotak, string $asal): string => (string) ($isian[$h['id']][$kotak] ?? $asal);
 
 // Poin multi-lomba (F9-10): satu kotak prestasi per komponen, poin dihitung saat disimpan.
@@ -84,7 +84,7 @@ foreach ($calon as $kunci => $c) {
     <p class="text-gray-700">
         Prestasi <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>: <?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>.
         <?php if ($multi) : ?>Tulis waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poin tiap komponen dicari di tabel skor. Prestasi yang berada di antara dua baris memakai baris yang lebih buruk. Komponen kosong bernilai 0.<?php endif ?>
-        Peringkat dihitung otomatis setelah disimpan. Prestasi yang sama mendapat peringkat yang sama<?php if ($nomor['jenis_hasil'] === JenisHasil::JARAK && $nomor['pemecah_seri']) : ?>, kecuali bila percobaannya diisi di Lembar juri. Bila begitu, peserta yang prestasi terbaik keduanya lebih jauh berada di atas<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU) : ?>, kecuali bila waktunya ditulis sampai seperseribu detik (misalnya 12,345 dari foto finis)<?php endif ?>.
+        Peringkat dihitung otomatis setelah disimpan. Prestasi yang sama mendapat peringkat yang sama<?php if ($nomor['jenis_hasil'] === JenisHasil::JARAK && $nomor['pemecah_seri']) : ?>, kecuali bila percobaannya diisi di Lembar juri. Bila begitu, peserta yang prestasi terbaik keduanya lebih jauh berada di atas<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU && ! empty($nomor['waktu_tangan'])) : ?>. Waktu tangan dibulatkan ke atas ke 0,1 detik saat disimpan (12,34 menjadi 12,4)<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU) : ?>, kecuali bila waktunya ditulis sampai seperseribu detik (misalnya 12,345 dari foto finis)<?php endif ?>.
         Pilih DNS (tidak start), DNF (tidak finis), atau DQ (diskualifikasi) untuk peserta tanpa peringkat.
         <?php if ($final) : ?>Di Final, peringkat boleh dikoreksi (misalnya dari foto finis). Kosongkan kotak koreksi supaya peringkat dihitung otomatis.<?php endif ?>
     </p>

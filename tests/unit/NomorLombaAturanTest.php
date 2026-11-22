@@ -287,6 +287,24 @@ final class NomorLombaAturanTest extends CIUnitTestCase
         $this->assertSame([null, 1], [$data['jumlah_percobaan'], $data['pemecah_seri']]);
     }
 
+    public function testCaraPencatatanWaktu(): void
+    {
+        // Bawaan elektronik; isian lain dianggap elektronik.
+        $this->assertSame('elektronik', NomorLombaModel::rapikanIsian([])['cara_waktu']);
+        $this->assertSame('elektronik', NomorLombaModel::rapikanIsian(['cara_waktu' => 'jam'])['cara_waktu']);
+        $this->assertSame('tangan', NomorLombaModel::rapikanIsian(['cara_waktu' => 'tangan'])['cara_waktu']);
+
+        $this->assertSame('tangan', NomorLombaModel::untukDisimpan(self::individu(['jenis_hasil' => 'waktu', 'cara_waktu' => 'tangan']))['cara_waktu']);
+        // Hanya untuk jenis hasil waktu.
+        $this->assertSame('elektronik', NomorLombaModel::untukDisimpan(self::individu(['nama' => 'Lompat Jauh', 'jenis_hasil' => 'jarak', 'cara_waktu' => 'tangan']))['cara_waktu']);
+
+        $this->assertSame('tangan', NomorLombaModel::isianDariBaris(['cara_waktu' => 'tangan', 'jenis_hasil' => 'waktu'])['cara_waktu']);
+        $this->assertTrue(NomorLombaModel::waktuTangan(['cara_waktu' => 'tangan', 'jenis_hasil' => 'waktu']));
+        $this->assertFalse(NomorLombaModel::waktuTangan(['cara_waktu' => 'tangan', 'jenis_hasil' => 'jarak']));
+        $this->assertFalse(NomorLombaModel::waktuTangan(['cara_waktu' => 'elektronik', 'jenis_hasil' => 'waktu']));
+        $this->assertFalse(NomorLombaModel::waktuTangan(['jenis_hasil' => 'waktu']));
+    }
+
     public function testUntukDisimpan(): void
     {
         $this->assertSame([
@@ -313,6 +331,8 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             'tidak_dilombakan'        => 0,
             'alasan_tidak_dilombakan' => null,
             'peserta_minimal'         => null,
+            // F11-04: bawaan elektronik.
+            'cara_waktu'       => 'elektronik',
         ], NomorLombaModel::untukDisimpan(self::beregu(['biaya_beregu' => 'Rp 150.000'])));
 
         $data = NomorLombaModel::untukDisimpan(self::individu(['aktif' => '0']));
@@ -336,7 +356,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri', 'jenis_hasil' => '',
             'tabel_skor_id' => '', 'komponen_skor' => '', 'jumlah_inti' => '4', 'batas_anggota' => '', 'regu_maksimal' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
             'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1', 'jumlah_percobaan' => '', 'pemecah_seri' => '1',
-            'tidak_dilombakan' => '0', 'alasan_tidak_dilombakan' => '', 'peserta_minimal' => '',
+            'tidak_dilombakan' => '0', 'alasan_tidak_dilombakan' => '', 'peserta_minimal' => '', 'cara_waktu' => 'elektronik',
         ], $isian);
 
         $this->assertSame('0', NomorLombaModel::isianDariBaris(['aktif' => '0'])['aktif']);

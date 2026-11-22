@@ -19,6 +19,12 @@ namespace App\Libraries\Hasil;
  *     Prestasi::urai('3 m', 'jarak');      // ['nilai' => null, 'galat' => 'Jarak … misalnya 3,45.']
  *     Prestasi::tulis(12510, 'waktu');     // '2:05,10'
  *     Prestasi::tulis(345, 'jarak');       // '3,45'
+ *
+ * Waktu tangan (F11-04, TR 19): dibulatkan ke atas ke 0,1 detik dan ditulis
+ * dengan satu angka desimal. Hitungannya bilangan bulat, tanpa titik mengambang.
+ *
+ *     Prestasi::bulatTangan(1234);         // 1240 (12,34 → 12,4)
+ *     Prestasi::tulis(1234, 'waktu', true); // '12,4'
  */
 final class Prestasi
 {
@@ -33,6 +39,11 @@ final class Prestasi
         JenisHasil::JARAK => 10000,
         JenisHasil::POIN  => 100000,
     ];
+
+    /**
+     * Tanda di lembar hasil nomor yang memakai waktu tangan (F11-04).
+     */
+    public const TANDA_TANGAN = 'Waktu tangan: dicatat dengan stopwatch dan dibulatkan ke atas ke 0,1 detik.';
 
     /**
      * @return array{nilai: int|null, galat: string|null} `nilai` null dan `galat` null = isian kosong
@@ -63,10 +74,14 @@ final class Prestasi
     /**
      * Teks prestasi untuk ditampilkan dan dicetak; kosong bila belum diisi.
      */
-    public static function tulis(?int $nilai, string $jenis): string
+    public static function tulis(?int $nilai, string $jenis, bool $tangan = false): string
     {
         if ($nilai === null) {
             return '';
+        }
+
+        if ($tangan && $jenis === JenisHasil::WAKTU) {
+            return self::tulisTangan($nilai);
         }
 
         if ($jenis === JenisHasil::POIN || $jenis === JenisHasil::MULTI) {
@@ -122,6 +137,32 @@ final class Prestasi
             'seperseribu' => null,
             'galat'       => $hasil['galat'] === null ? null : $hasil['galat'] . ' Seperseribu detik dari foto finis boleh ditulis tiga angka, misalnya 12,345.',
         ];
+    }
+
+    /**
+     * Waktu tangan (TR 19): perseratus detik dibulatkan ke atas ke 0,1 detik.
+     * `1234` → `1240`, `1230` → `1230`, `1201` → `1210`.
+     */
+    public static function bulatTangan(int $nilai): int
+    {
+        return intdiv($nilai + 9, 10) * 10;
+    }
+
+    /**
+     * Teks waktu tangan dengan satu angka desimal; nilai yang belum bulat
+     * (data lama) ikut dibulatkan ke atas. `1234` → `12,4`, `12510` → `2:05,1`.
+     */
+    public static function tulisTangan(int $nilai): string
+    {
+        $persepuluh = intdiv(self::bulatTangan($nilai), 10);
+        $detik      = intdiv($persepuluh, 10);
+        $sisa       = (string) ($persepuluh % 10);
+
+        if ($detik < 60) {
+            return $detik . ',' . $sisa;
+        }
+
+        return intdiv($detik, 60) . ':' . sprintf('%02d', $detik % 60) . ',' . $sisa;
     }
 
     /**

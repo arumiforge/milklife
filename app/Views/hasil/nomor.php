@@ -22,7 +22,7 @@ $dilombakan = $nomor['dilombakan'] ?? true;
     'judul'        => trim($nomor['nama'] . ' ' . $nomor['kelompok_umur']),
     'ikon'         => 'trophy',
     'gambar'       => 'judul/hasil.webp',
-    'teks'         => $dilombakan ? 'Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.' : $nomor['keterangan'],
+    'teks'         => $dilombakan ? 'Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.' . (! empty($nomor['waktu_tangan']) ? ' ' . App\Libraries\Hasil\Prestasi::TANDA_TANGAN : '') : $nomor['keterangan'],
     'kembali'      => site_url('hasil'),
     'labelKembali' => 'Semua hasil',
     'aksi'         => ! $dilombakan ? null : komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('hasil/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ikon' => 'file-text'])

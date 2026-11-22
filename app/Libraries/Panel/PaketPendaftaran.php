@@ -51,7 +51,8 @@ use ZipArchive;
  *   per komponen (F9-10). Babak membawa jadwal (F9-07) dan keadaan seri,
  *   hasil membawa seri dan lintasan, nomor membawa aturan seri (F9-08).
  *   Nomor membawa aturan percobaan dan pemecah seri, hasil membawa
- *   percobaan dan seperseribu detik (F9-09).
+ *   percobaan dan seperseribu detik (F9-09). Nomor membawa cara pencatatan
+ *   waktu (F11-04; paket lama = elektronik).
  *   `tabel_skor`: semua tabel skor beserta barisnya, termasuk ubahan admin
  *   (F9-10; boleh tidak ada). Tabel berkode sama di server baru diganti.
  *   `faq`: tanya-jawab halaman Bantuan (F9-04). Bila ada dan berisi, isinya
@@ -1141,12 +1142,12 @@ final class PaketPendaftaran
 
         $kodeTabel = array_column($this->db->table('tabel_skor')->select('id, kode')->get()->getResultArray(), 'kode', 'id');
 
-        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, jumlah_percobaan, pemecah_seri, tidak_dilombakan, alasan_tidak_dilombakan, peserta_minimal, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
+        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, jumlah_percobaan, pemecah_seri, tidak_dilombakan, alasan_tidak_dilombakan, peserta_minimal, cara_waktu, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
             $id = (int) $n['id'];
 
             if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null || $n['tabel_skor_id'] !== null || $n['tempat_per_seri'] !== null || $n['urutan_lintasan'] !== null
                 || $n['jumlah_percobaan'] !== null || (int) $n['pemecah_seri'] === 0
-                || (int) $n['tidak_dilombakan'] === 1 || $n['peserta_minimal'] !== null)) {
+                || (int) $n['tidak_dilombakan'] === 1 || $n['peserta_minimal'] !== null || $n['cara_waktu'] === 'tangan')) {
                 $daftar[] = $nomor[$id] + [
                     'jenis_hasil'   => $n['jenis_hasil'],
                     'tabel_skor'    => $kodeTabel[$n['tabel_skor_id']] ?? null,
@@ -1162,6 +1163,8 @@ final class PaketPendaftaran
                     'tidak_dilombakan'        => (int) $n['tidak_dilombakan'],
                     'alasan_tidak_dilombakan' => $n['alasan_tidak_dilombakan'],
                     'peserta_minimal'         => $n['peserta_minimal'] === null ? null : (int) $n['peserta_minimal'],
+                    // Cara pencatatan waktu (F11-04).
+                    'cara_waktu'       => $n['cara_waktu'],
                     'babak'         => $babak[$id] ?? [],
                 ];
             }
@@ -1224,6 +1227,9 @@ final class PaketPendaftaran
             $ubah['alasan_tidak_dilombakan'] = $ubah['tidak_dilombakan'] === 1 && is_string($n['alasan_tidak_dilombakan'] ?? null) && $n['alasan_tidak_dilombakan'] !== ''
                 ? mb_substr($n['alasan_tidak_dilombakan'], 0, StatusNomor::ALASAN_MAKSIMAL) : null;
             $ubah['peserta_minimal']         = is_int($n['peserta_minimal'] ?? null) && $n['peserta_minimal'] >= 1 && $n['peserta_minimal'] <= StatusNomor::BATAS_MAKSIMAL ? $n['peserta_minimal'] : null;
+
+            // Cara pencatatan waktu (F11-04); paket lama = elektronik.
+            $ubah['cara_waktu'] = ($n['cara_waktu'] ?? null) === 'tangan' ? 'tangan' : 'elektronik';
 
             $this->db->table('nomor_lomba')->where('id', $idNomor)->update($ubah);
 

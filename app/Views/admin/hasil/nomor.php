@@ -40,7 +40,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
     <div class="flex flex-wrap items-start gap-4">
         <div class="min-w-0 flex-1 basis-72">
             <p class="text-gray-700">
-                <?= esc($nomor['kelompok_umur']) ?> · <?= $beregu ? 'Beregu' : 'Individu' ?> · Jenis hasil <strong><?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?></strong> (<?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>)
+                <?= esc($nomor['kelompok_umur']) ?> · <?= $beregu ? 'Beregu' : 'Individu' ?> · Jenis hasil <strong><?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?></strong> (<?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>)<?= ! empty($nomor['waktu_tangan']) ? ' · <strong data-waktu-tangan>Waktu tangan</strong>' : '' ?>
             </p>
             <p class="text-sm text-gray-600"><?= $calon ?> <?= $beregu ? 'regu' : 'atlet' ?> dari pendaftaran Lunas. Jenis hasil diubah di Pengaturan > Nomor lomba.</p>
         </div>

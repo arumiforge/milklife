@@ -153,6 +153,36 @@ final class HasilPrestasiPeringkatTest extends CIUnitTestCase
         $this->assertNull(Prestasi::urai('12,341', 'waktu')['nilai']);
     }
 
+    // ---------- Cara pencatatan waktu (F11-04) ----------
+
+    public function testWaktuTanganDibulatkanKeAtasKePersepuluh(): void
+    {
+        // TR 19: 12,34 menjadi 12,4; 12,30 tetap 12,3. Hitungan bilangan bulat.
+        $this->assertSame(1240, Prestasi::bulatTangan(1234));
+        $this->assertSame(1230, Prestasi::bulatTangan(1230));
+        $this->assertSame(1210, Prestasi::bulatTangan(1201));
+        $this->assertSame(1300, Prestasi::bulatTangan(1291));
+        $this->assertSame(6000, Prestasi::bulatTangan(5991));
+        $this->assertSame(12510, Prestasi::bulatTangan(12501));
+
+        // Seperseribu dari isian dibulatkan dua kali ke atas = sekali ke 0,1 detik.
+        $this->assertSame(1240, Prestasi::bulatTangan((int) Prestasi::uraiWaktuRinci('12,301')['nilai']));
+        $this->assertSame(1230, Prestasi::bulatTangan((int) Prestasi::uraiWaktuRinci('12,300')['nilai']));
+    }
+
+    public function testWaktuTanganDitulisSatuDesimal(): void
+    {
+        $this->assertSame('12,4', Prestasi::tulis(1234, 'waktu', true));
+        $this->assertSame('12,3', Prestasi::tulis(1230, 'waktu', true));
+        $this->assertSame('9,1', Prestasi::tulis(901, 'waktu', true));
+        $this->assertSame('1:00,0', Prestasi::tulisTangan(5991));
+        $this->assertSame('2:05,1', Prestasi::tulisTangan(12501));
+
+        // Elektronik dan jenis lain tetap dua angka desimal.
+        $this->assertSame('12,34', Prestasi::tulis(1234, 'waktu'));
+        $this->assertSame('3,45', Prestasi::tulis(345, 'jarak', true));
+    }
+
     public function testPercobaanDiuraiDanTerbaikDipakai(): void
     {
         $this->assertSame(['percobaan' => [345, 'X', 350], 'galat' => null], Percobaan::urai(['3,45', 'x', '3.5'], 3));
