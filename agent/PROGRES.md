@@ -4,24 +4,24 @@ Diperbarui: 22 November 2026
 
 ## Sedang berjalan
 
-Tidak ada tahap yang berjalan. Tahap 10 selesai 22 November 2026; semua siap sebelum pertemuan teknik 6 Desember.
-
-## Berikutnya
-
 **Tahap 11 — Pelajaran hasil Seri 1** (K172). Telaah dan rekomendasi: [`dokumen/draf/telaah-hasil-seri-1.md`](../dokumen/draf/telaah-hasil-seri-1.md). Semua sebelum lomba 9 Desember; P1 (F11-01 sampai F11-05) lebih dulu, sebelum pertemuan teknik 6 Desember.
 
 | Tugas | Status |
 |---|---|
-| [F11-01 Ganti atlet oleh admin](tugas/F11-01-ganti-atlet.md) | menunggu tinjauan |
-| [F11-02 Klasemen per kelompok umur](tugas/F11-02-klasemen-kelompok-umur.md) | rencana |
-| [F11-03 Status nomor dan batas peserta](tugas/F11-03-status-nomor-batas-peserta.md) | rencana |
-| [F11-04 Cara pencatatan waktu](tugas/F11-04-cara-pencatatan-waktu.md) | rencana |
-| [F11-05 Kode NM dan r](tugas/F11-05-kode-nm-r.md) | rencana |
+| [F11-01 Ganti atlet oleh admin](tugas/F11-01-ganti-atlet.md) | selesai (#211) |
+| [F11-02 Klasemen per kelompok umur](tugas/F11-02-klasemen-kelompok-umur.md) | dikerjakan |
+| [F11-03 Status nomor dan batas peserta](tugas/F11-03-status-nomor-batas-peserta.md) | dikerjakan |
+| [F11-04 Cara pencatatan waktu](tugas/F11-04-cara-pencatatan-waktu.md) | dikerjakan |
+| [F11-05 Kode NM dan r](tugas/F11-05-kode-nm-r.md) | dikerjakan |
 | [F11-06 Rekor kejuaraan](tugas/F11-06-rekor-kejuaraan.md) | rencana |
-| [F11-07 Nomor acara](tugas/F11-07-nomor-acara.md) | rencana |
+| [F11-07 Nomor acara](tugas/F11-07-nomor-acara.md) | dikerjakan |
 | [F11-08 Penutupan Tahap 11](tugas/F11-08-penutupan-tahap-11.md) | rencana |
 
 Pembaruan server mengikuti bagian 10 panduan produksi. Server yang dipasang sebelum Tahap 9 menjalankan sekali, berurutan: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `data:sesuaikan`, `aset:minify`, lalu `pendaftaran:impor <berkas.zip>` bila memindah data. Server yang sudah menjalankan perintah Tahap 9 cukup `migrate --all`, `data:sesuaikan`, dan `aset:minify`. Tanya-jawab dan pesan WA yang sudah tersimpan tidak berubah otomatis; admin menyuntingnya di Pengaturan > Bantuan dan Pengaturan > Halaman depan. Fitur publik bersakelar (Jadwal, Seri, Peserta, Galeri, Videotron) dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139). Kesiapan server (`/sehat`, pemantauan uptime, tembolok halaman depan, `client_max_body_size`, `memory_limit`, uji pulih cadangan) ditangani pemilik (K119). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
+
+## Berikutnya
+
+F11-06 setelah F11-04 dan F11-05 digabung, lalu penutupan F11-08. Semua sebelum lomba 9 Desember.
 
 ## Selesai
 
