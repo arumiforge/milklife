@@ -23,6 +23,7 @@
  * @var string                               $kalimatTimHapus  `TimTanpaPembayar::kalimatDitinggalkan()`, boleh kosong
  * @var array<int, array<string, mixed>>     $kecocokan        K116: per id atlet, `TolakAtlet::formulir()` (`cocok`, `sesuai_id`, `sesuai`)
  * @var list<array<string, mixed>>           $atletDitolak     K116: `AtletDitolak::untukPendaftaran(semua: true)`
+ * @var list<array<string, mixed>>           $atletDiganti     F11-01: `GantiAtlet::riwayat()`
  * @var array{label: string, alamat: string} $asal             K117: menu asal halaman ini (`AsalRincian`), untuk jejak navigasi
  * @var list<array<string, mixed>>           $riwayat          F8-01: `RiwayatAdmin::untukPendaftaran()`, terbaru di atas
  *
@@ -242,6 +243,9 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                             <th scope="col" class="<?= $th ?>">Kelompok umur</th>
                             <th scope="col" class="<?= $th ?>">Nomor lomba</th>
                             <th scope="col" class="<?= $th ?>">Nomor atlet (BIB)</th>
+                            <?php if ($lunas) : ?>
+                                <th scope="col" class="<?= $th ?>"><span class="sr-only">Tindakan</span></th>
+                            <?php endif ?>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -285,6 +289,11 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                                         <span class="text-lg font-bold text-gray-900"><?= esc($atlet['nomor_dada']) ?></span>
                                     <?php endif ?>
                                 </td>
+                                <?php if ($lunas) : ?>
+                                    <td class="<?= $td ?> whitespace-nowrap text-end">
+                                        <a class="<?= $tautan ?>" data-ganti-atlet href="<?= site_url($alamat . '/ganti-atlet/' . (int) $atlet['id']) ?>">Ganti<span class="sr-only"> <?= esc($atlet['nama']) ?></span></a>
+                                    </td>
+                                <?php endif ?>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -292,6 +301,39 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
             </div>
         <?php endif ?>
     </section>
+
+    <?php if ($atletDiganti !== []) : ?>
+        <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lembut" aria-labelledby="judul-atlet-diganti" id="atlet-diganti">
+            <div class="px-4 pb-3 pt-4 sm:px-5">
+                <h2 id="judul-atlet-diganti" class="<?= $judulKartu ?>">Atlet diganti <span class="font-normal text-gray-500">(<?= count($atletDiganti) ?>)</span></h2>
+                <p class="text-sm text-gray-600">Atlet yang diganti admin. Nomor atlet (BIB) lamanya tidak dipakai lagi.</p>
+            </div>
+            <div class="relative overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-700" id="tabel-atlet-diganti" data-tabel-klien>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="<?= $th ?>">Atlet lama</th>
+                            <th scope="col" class="<?= $th ?>">Pengganti</th>
+                            <th scope="col" class="<?= $th ?>">Nomor lomba</th>
+                            <th scope="col" class="<?= $th ?> min-w-48">Alasan</th>
+                            <th scope="col" class="<?= $th ?>">Diganti</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <?php foreach ($atletDiganti as $g) : ?>
+                            <tr data-id="<?= (int) $g['id'] ?>">
+                                <th scope="row" class="<?= $td ?> font-semibold text-gray-900"><?= esc($g['nama']) ?><div class="font-normal text-gray-500"><?= esc($g['nisn']) ?><?= $g['nomor_dada'] === null ? '' : ' · BIB ' . esc($g['nomor_dada']) ?></div></th>
+                                <td class="<?= $td ?>"><?= esc($g['pengganti_nama']) ?><div class="text-gray-500"><?= esc($g['pengganti_nisn']) ?><?= $g['pengganti_nomor_dada'] === null ? '' : ' · BIB ' . esc($g['pengganti_nomor_dada']) ?></div></td>
+                                <td class="<?= $td ?> min-w-36"><?= esc(implode(', ', array_column($g['nomor_lomba'], 'nama'))) ?: $strip ?></td>
+                                <td class="<?= $td ?>"><?= nl2br(esc($g['alasan'])) ?></td>
+                                <td class="<?= $td ?> whitespace-nowrap"><?= esc(tanggal_id($g['dibuat_pada'], true)) ?><br><span class="text-gray-500"><?= esc($g['diganti_oleh']) ?></span></td>
+                            </tr>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    <?php endif ?>
 
     <?php if ($atletDitolak !== []) : ?>
         <section class="overflow-hidden rounded-2xl border border-red-200 bg-white shadow-lembut" aria-labelledby="judul-atlet-ditolak" id="atlet-ditolak">

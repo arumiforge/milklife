@@ -181,6 +181,7 @@ final class JejakHalamanAdminTest extends UjiBasisData
 
         $this->contoh = [
             'pendaftaran ([0-9]+)'                   => $pendaftaran['id'],
+            'ganti-atlet ([0-9]+)'                   => $pendaftaran['atlet'][0],
             'sekolah ([0-9]+)'                       => $sekolah,
             'nomor ([0-9]+)'                         => $nomor,
             'babak ([0-9]+)'                         => $babak,

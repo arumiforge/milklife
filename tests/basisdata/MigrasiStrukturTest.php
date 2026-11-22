@@ -200,6 +200,24 @@ final class MigrasiStrukturTest extends UjiBasisData
             'ditolak_oleh'            => ['varchar(100)', true, null],
             'dibuat_pada'             => ['datetime', true, null],
         ],
+        // F11-01 (K172): atlet yang diganti admin di pendaftaran Lunas.
+        'atlet_diganti' => [
+            'id'                   => ['int unsigned', false, null],
+            'pendaftaran_id'       => ['int unsigned', false, null],
+            'nama'                 => ['varchar(100)', false, null],
+            'nisn'                 => ['char(10)', false, null],
+            'tanggal_lahir'        => ['date', false, null],
+            'jenis_kelamin'        => ["enum('L','P')", false, null],
+            'kelompok_umur'        => ['varchar(50)', false, null],
+            'nomor_dada'           => ['char(4)', true, null],
+            'nomor_lomba'          => ['text', false, null],
+            'pengganti_nama'       => ['varchar(100)', false, null],
+            'pengganti_nisn'       => ['char(10)', false, null],
+            'pengganti_nomor_dada' => ['char(4)', true, null],
+            'alasan'               => ['text', false, null],
+            'diganti_oleh'         => ['varchar(100)', false, null],
+            'dibuat_pada'          => ['datetime', false, null],
+        ],
         // F8-01 (K124): riwayat tindakan admin per pendaftaran.
         'riwayat_admin' => [
             'id'             => ['int unsigned', false, null],
@@ -308,6 +326,8 @@ final class MigrasiStrukturTest extends UjiBasisData
         'pendaftaran_gabungan.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
         // K116: catatan atlet ditolak ikut terhapus bersama pendaftarannya.
         'atlet_ditolak.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
+        // F11-01: catatan atlet diganti ikut terhapus bersama pendaftarannya.
+        'atlet_diganti.pendaftaran_id' => ['pendaftaran', 'CASCADE'],
         // F8-01: riwayat tetap ada (tanpa pendaftaran_id) setelah pendaftarannya dihapus.
         'riwayat_admin.pendaftaran_id' => ['pendaftaran', 'SET NULL'],
         // F8-04: babak ikut nomornya, hasil ikut babak, atlet, atau pendaftarannya.
@@ -447,7 +467,7 @@ final class MigrasiStrukturTest extends UjiBasisData
             $this->assertContains($harapan, $unik, "Kunci unik {$harapan}.");
         }
 
-        foreach (['pendaftaran:npsn', 'pendaftaran:status', 'atlet:nama', 'atlet_ditolak:nisn', 'riwayat_admin:id_pendaftaran'] as $harapan) {
+        foreach (['pendaftaran:npsn', 'pendaftaran:status', 'atlet:nama', 'atlet_ditolak:nisn', 'atlet_diganti:nisn', 'riwayat_admin:id_pendaftaran'] as $harapan) {
             $this->assertContains($harapan, $tidakUnik, "Indeks {$harapan}.");
         }
     }

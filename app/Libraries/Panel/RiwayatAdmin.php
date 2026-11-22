@@ -39,6 +39,7 @@ final class RiwayatAdmin
     public const URUTKAN      = 'urutkan_nomor';
     public const GABUNG       = 'gabung';
     public const PERIKSA_BUKTI = 'periksa_bukti';
+    public const GANTI_ATLET  = 'ganti_atlet';
 
     /**
      * Nama tindakan untuk tampilan.
@@ -56,6 +57,7 @@ final class RiwayatAdmin
         self::URUTKAN      => 'Urutkan nomor atlet',
         self::GABUNG       => 'Gabung',
         self::PERIKSA_BUKTI => 'Bukti bayar diperiksa',
+        self::GANTI_ATLET  => 'Ganti atlet',
     ];
 
     /**
