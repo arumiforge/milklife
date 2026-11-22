@@ -87,12 +87,12 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
 <?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<section class="border-b border-primary-100 bg-white" aria-labelledby="judul-peserta">
+<section class="border-b border-gray-200 bg-white" aria-labelledby="judul-peserta">
     <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12">
         <div class="md:flex md:items-center md:gap-8">
             <div class="min-w-0 md:flex-1">
                 <p class="text-sm font-semibold text-oranye-600"><?= esc($namaAcara) ?></p>
-                <h1 id="judul-peserta" class="mt-1 text-3xl font-extrabold text-primary-900 sm:text-4xl">Peserta</h1>
+                <h1 id="judul-peserta" class="judul-tampilan mt-1">Peserta</h1>
                 <p class="mt-3 max-w-2xl text-lg text-gray-700">Atlet dari sekolah yang pembayarannya sudah lunas. Cari namamu untuk melihat nomor atlet dan nomor lombamu.</p>
             </div>
             <?php if (ada_gambar('judul/peserta.webp')) : ?>
@@ -150,7 +150,7 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
         </form>
 
         <?php if ($gambarNomor !== []) : ?>
-            <div class="mt-5 flex items-center gap-4 rounded-2xl border border-primary-100 bg-primary-50 p-3 pe-5<?= $gambarTerpilih === null ? ' hidden' : '' ?>" data-ilustrasi-nomor>
+            <div class="mt-5 flex items-center gap-4 rounded-2xl bg-primary-50 p-3 pe-5<?= $gambarTerpilih === null ? ' hidden' : '' ?>" data-ilustrasi-nomor>
                 <img<?= $gambarTerpilih === null ? '' : ' src="' . esc($gambarTerpilih, 'attr') . '"' ?> alt="" width="512" height="512" class="size-16 shrink-0 sm:size-20" data-gambar-nomor>
                 <p class="min-w-0">
                     <span class="block text-xs font-semibold tracking-wide text-primary-700 uppercase">Nomor lomba</span>

@@ -43,14 +43,14 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
 <?= $this->section('keterangan') ?>Jawaban untuk pertanyaan yang sering ditanyakan sekolah, dari mendaftar sampai hasil lomba.<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<section class="relative overflow-hidden border-b border-primary-100 bg-white" aria-labelledby="judul-bantuan">
+<section class="relative overflow-hidden border-b border-gray-200 bg-white" aria-labelledby="judul-bantuan">
     <?php if ($kepala !== null) : ?>
         <img src="<?= esc($kepala) ?>" alt="" class="pointer-events-none absolute inset-y-0 end-0 hidden h-full w-auto max-w-none object-cover opacity-90 md:block" width="1920" height="480">
     <?php endif ?>
     <div class="relative mx-auto max-w-screen-xl px-4 py-10 sm:py-14 md:flex md:items-center md:justify-between md:gap-8">
         <div class="min-w-0 max-w-2xl md:flex-1">
             <p class="text-sm font-semibold text-oranye-600"><?= esc($namaAcara) ?></p>
-            <h1 id="judul-bantuan" class="mt-1 text-3xl font-extrabold text-primary-900 sm:text-4xl">Bantuan</h1>
+            <h1 id="judul-bantuan" class="judul-tampilan mt-1">Bantuan</h1>
             <p class="mt-3 text-lg text-gray-700">Jawaban untuk pertanyaan yang sering ditanyakan sekolah, dari mendaftar sampai hasil lomba.</p>
 
             <?php if ($jumlah > 0) : ?>
@@ -76,11 +76,11 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
             <ul class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
                 <?php foreach ($kategori as $k) : ?>
                     <li>
-                        <a href="#<?= esc($k['id'], 'attr') ?>" class="flex h-full min-h-11 flex-col gap-2 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut transition hover:border-primary-300 hover:shadow-angkat focus:outline-none focus:ring-4 focus:ring-primary-200 sm:flex-row sm:items-center sm:gap-4">
+                        <a href="#<?= esc($k['id'], 'attr') ?>" class="flex h-full min-h-11 flex-col gap-2 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut transition hover:border-gray-300 hover:shadow-angkat focus:outline-none focus:ring-4 focus:ring-primary-200 sm:flex-row sm:items-center sm:gap-4">
                             <?php if ($k['gambar'] !== null) : ?>
                                 <img src="<?= esc($k['gambar']) ?>" alt="" class="size-16 shrink-0 sm:size-20" width="480" height="480" loading="lazy">
                             <?php else : ?>
-                                <span class="inline-flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700"><?= $ikonKategori[$k['kunci']] ?? ikon('circle-help', 'size-7') ?></span>
+                                <span class="inline-flex shrink-0 text-primary-700 [&_.ikon]:size-10"><?= $ikonKategori[$k['kunci']] ?? ikon('circle-help', 'size-10') ?></span>
                             <?php endif ?>
                             <span>
                                 <span class="block font-bold text-gray-900"><?= esc($k['label']) ?></span>
@@ -106,7 +106,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
                         <span class="flex aspect-[4/3] w-full items-center justify-center bg-primary-50 text-primary-700"><?= $ikonPanduan[$i] ?? ikon('circle-help', 'size-8') ?></span>
                     <?php endif ?>
                     <div class="flex gap-3 p-4">
-                        <span class="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-oranye-600 text-sm font-bold text-white" aria-hidden="true"><?= (int) $p['nomor'] ?></span>
+                        <span class="w-6 shrink-0 font-tampilan text-3xl font-extrabold leading-none text-oranye-600" aria-hidden="true"><?= (int) $p['nomor'] ?></span>
                         <div>
                             <h3 class="font-bold text-gray-900"><span class="sr-only">Langkah <?= (int) $p['nomor'] ?>: </span><?= esc($p['judul']) ?></h3>
                             <p class="mt-1 text-sm text-gray-700"><?= esc($p['keterangan']) ?></p>
@@ -125,7 +125,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
         <?php foreach ($kategori as $k) : ?>
             <section id="<?= esc($k['id'], 'attr') ?>" class="scroll-mt-24" aria-labelledby="judul-<?= esc($k['id'], 'attr') ?>" data-kategori-faq>
                 <h2 id="judul-<?= esc($k['id'], 'attr') ?>" class="mb-4 flex items-center gap-3 text-xl font-bold text-primary-900">
-                    <span class="inline-flex size-10 items-center justify-center rounded-xl bg-primary-100 text-primary-700 [&_.ikon]:size-5"><?= $ikonKategori[$k['kunci']] ?? ikon('circle-help', 'size-5') ?></span>
+                    <span class="inline-flex text-primary-700 [&_.ikon]:size-7"><?= $ikonKategori[$k['kunci']] ?? ikon('circle-help', 'size-7') ?></span>
                     <?= esc($k['label']) ?>
                 </h2>
                 <div id="akordeon-<?= esc($k['id'], 'attr') ?>" data-accordion="collapse" data-active-classes="bg-primary-50 text-primary-900" data-inactive-classes="text-gray-900" class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lembut">
@@ -153,11 +153,11 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
         </div>
     </div>
 
-    <section class="mt-12 flex flex-col items-center gap-6 rounded-2xl border border-green-200 bg-green-50 p-6 text-center sm:flex-row sm:text-start" aria-labelledby="judul-tanya-panitia" id="tanya-panitia">
+    <section class="mt-12 flex flex-col items-center gap-6 rounded-2xl bg-green-50 p-6 text-center sm:flex-row sm:text-start" aria-labelledby="judul-tanya-panitia" id="tanya-panitia">
         <?php if ($gambarWa !== null) : ?>
             <img src="<?= esc($gambarWa) ?>" alt="" class="size-28 shrink-0" width="480" height="480" loading="lazy">
         <?php else : ?>
-            <span class="inline-flex size-16 shrink-0 items-center justify-center rounded-2xl bg-green-100 text-green-800"><?= ikon('message-circle', 'size-8') ?></span>
+            <?= ikon('message-circle', 'size-14 shrink-0 text-green-700') ?>
         <?php endif ?>
         <div class="flex-1">
             <h2 id="judul-tanya-panitia" class="text-xl font-bold text-gray-900">Masih bingung? Tanya panitia</h2>

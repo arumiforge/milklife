@@ -37,9 +37,9 @@ $teksLolos = SeriLintasan::teksLolos($lolos, (string) $nomor['jenis_hasil']);
             <a href="<?= site_url('jadwal') . ($babak['tanggal'] === null ? '' : '?hari=' . $babak['tanggal']) ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?>Jadwal pertandingan</a>
         <?php endif ?>
         <p class="text-sm font-semibold text-oranye-700"><?= esc($nomor['kelompok_umur']) ?> · <?= esc($nomor['nama']) ?></p>
-        <div class="mt-1 flex flex-wrap items-center gap-4">
-            <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white text-oranye-600 shadow-lembut sm:size-14"><?= ikon('list-ordered', 'size-6 sm:size-7') ?></span>
-            <h1 id="judul-daftar-seri" class="min-w-0 text-3xl font-extrabold tracking-tight break-words text-primary-900 sm:text-4xl"><?= esc($babak['nama']) ?></h1>
+        <div class="mt-1 flex flex-wrap items-center gap-3">
+            <?= ikon('list-ordered', 'size-9 text-oranye-600 sm:size-11') ?>
+            <h1 id="judul-daftar-seri" class="judul-tampilan min-w-0 break-words"><?= esc($babak['nama']) ?></h1>
         </div>
         <p class="mt-3 max-w-3xl text-lg text-gray-700">
             <?= $jadwal === '' ? 'Jadwal menyusul.' : esc($jadwal) . '.' ?>
@@ -62,8 +62,8 @@ $teksLolos = SeriLintasan::teksLolos($lolos, (string) $nomor['jenis_hasil']);
                     <?php foreach ($peserta as $p) : ?>
                         <?php $t = $tanda[$p['kunci']] ?? null; ?>
                         <li class="flex items-center gap-3 px-4 py-2.5" data-peserta="<?= esc($p['kunci'], 'attr') ?>">
-                            <span class="flex size-10 shrink-0 flex-col items-center justify-center rounded-lg bg-primary-50 text-primary-900">
-                                <span class="text-lg leading-none font-extrabold"><?= $p['lintasan'] ?? '–' ?></span>
+                            <span class="flex w-10 shrink-0 flex-col items-center justify-center text-primary-900">
+                                <span class="font-tampilan text-3xl leading-none font-extrabold"><?= $p['lintasan'] ?? '–' ?></span>
                                 <span class="sr-only"><?= $lintasan ? 'lintasan' : 'urutan' ?></span>
                             </span>
                             <span class="min-w-0 flex-1">

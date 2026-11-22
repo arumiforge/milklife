@@ -81,7 +81,7 @@ $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 
         <h4 class="<?= $subjudul ?>"><?= ikon('users', 'size-5 text-primary-700') ?> Atlet <span class="<?= $jumlah ?>"><?= count($p['atlet']) ?></span></h4>
         <?php $keteranganNomorDada = App\Libraries\Panel\UrutkanNomorDada::keterangan((string) $p['status']); ?>
         <?php if ($keteranganNomorDada !== null) : ?>
-            <p class="keterangan-nomor-dada mb-3 flex gap-2 rounded-lg border border-primary-200 bg-primary-100 px-3 py-2 text-sm text-primary-900" role="note"><?= ikon('info', 'size-4 mt-0.5') ?> <?= esc($keteranganNomorDada) ?></p>
+            <p class="keterangan-nomor-dada mb-3 flex gap-2 rounded-lg bg-primary-100 px-3 py-2 text-sm text-primary-900" role="note"><?= ikon('info', 'size-4 mt-0.5') ?> <?= esc($keteranganNomorDada) ?></p>
         <?php endif ?>
         <div class="overflow-x-auto rounded-xl border border-gray-200">
             <table class="cek-tabel <?= $tabel ?>">
@@ -161,7 +161,7 @@ $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 
         <?php endif ?>
 
         <?php if (! $lunas && ! $ditolakSemua) : ?>
-            <div class="cek-unggah-bukti mt-6 rounded-xl border border-dashed border-oranye-300 bg-oranye-50/50 p-4">
+            <div class="cek-unggah-bukti mt-6 rounded-xl border border-dashed border-gray-300 bg-oranye-50/50 p-4">
                 <h4 class="<?= $subjudul ?> !mt-0"><?= ikon('receipt', 'size-5 text-primary-700') ?> Bukti bayar <span class="<?= $jumlah ?>"><?= $jumlahBukti ?></span></h4>
                 <?php if ($jumlahBukti >= $batasBukti) : ?>
                     <p class="text-gray-800">Sudah <?= $jumlahBukti ?> gambar terkirim, batas paling banyak <?= $batasBukti ?> gambar. Panitia akan memeriksanya.</p>
