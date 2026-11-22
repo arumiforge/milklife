@@ -30,7 +30,8 @@
  *   dan keadaan pendaftaran ("Batas pendaftaran 30 November 2026", K82
  *   diperbarui). Kalimat lengkap keadaan tetap untuk pembaca layar.
  * - Hiasan sapuan kecepatan G10-02 (`beranda/hero-sapuan.webp`) mulai layar md
- *   bila berkasnya ada; adegan Three.js, pita G9-02, dan pita sudut G9-12
+ *   bila berkasnya ada, dan garis kecepatan G10-11 samar di tepi bawah hero mulai lg
+ *   (`data-garis-kecepatan`, F10-10); adegan Three.js, pita G9-02, dan pita sudut G9-12
  *   hanya untuk pembuka tanpa foto.
  * - Teks admin di-escape; baris baru di dalam paragraf menjadi `<br>`.
  *
@@ -156,6 +157,11 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
         <?php endif ?>
 
         <?= $sapuan ?>
+
+        <?php if (ada_gambar('elemen/garis-kecepatan.webp')) : ?>
+            <?php // Garis kecepatan G10-11 samar di tepi bawah hero, di bawah tombol (mulai lg; di ponsel akan memotong tombol garis tepi), latar CSS lewat penanda `ada-garis-kecepatan` (F10-10). ?>
+            <div class="garis-kecepatan pointer-events-none absolute bottom-0 left-0 hidden h-24 w-[55%] opacity-40 lg:block" aria-hidden="true" data-garis-kecepatan></div>
+        <?php endif ?>
 
         <div class="relative z-10 mx-auto max-w-screen-xl px-4 pb-10 lg:flex lg:min-h-[34rem] lg:items-center lg:py-16 xl:min-h-[38rem] <?= $foto !== [] ? 'pt-2 sm:pt-4' : 'pt-10 sm:pt-14' ?>">
             <div class="flex max-w-2xl flex-col gap-5 sm:gap-6 lg:w-1/2 xl:w-[46%]">

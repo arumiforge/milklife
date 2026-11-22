@@ -34,6 +34,7 @@ final class GambarOpsional
      * penanda `ada-<nama>` di `<html>` tata letak publik (lihat `penandaElemen()`).
      * Ornamen judul (`ornamen-judul-kiri/kanan`) tidak dipakai lagi sejak F10-08:
      * pemilik meminta tanpa hiasan sebelum tulisan.
+     * `kuas-sorot` dan `garis-kecepatan` dipasang F10-10.
      */
     public const ELEMEN = [
         'kuas-tombol-oranye',
@@ -41,6 +42,8 @@ final class GambarOpsional
         'pemisah-lintasan',
         'bingkai-sudut',
         'tekstur-kertas',
+        'kuas-sorot',
+        'garis-kecepatan',
     ];
 
     /**
