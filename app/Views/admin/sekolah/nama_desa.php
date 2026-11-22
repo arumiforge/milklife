@@ -33,7 +33,7 @@ $kelasBaris   = 'border-b border-gray-100 last:border-b-0 hover:bg-gray-50';
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Sekolah', 'alamat' => 'admin/sekolah'], ['label' => 'Tambahkan nama desa']]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <div class="space-y-3 text-gray-700">
         <p>
             Sekolah yang namanya sama dengan sekolah lain diberi nama baru dengan menambahkan nama desanya, misalnya

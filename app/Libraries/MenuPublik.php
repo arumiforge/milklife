@@ -15,11 +15,11 @@ use Throwable;
  * - `butir()`: menu utama (Beranda, Jadwal, Hasil, Peserta);
  * - `tombol()`: Cek Pendaftaran dan Daftar di kanan menu utama;
  * - `bilahAtas()`: bilah submenu atas di layar `lg` (Unduhan, Galeri, Bantuan,
- *   Tanya panitia), dipilih admin di Pengaturan > Halaman Depan;
+ *   Tanya panitia), dipilih admin di Pengaturan > Halaman Depan, lalu Masuk panitia;
  * - `mediaSosial()`: ikon media sosial dari Pengaturan > Kontak;
- * - `bawah()`: empat butir menu bawah ponsel (butir kelima, Menu, membuka laci).
+ * - `bawah()`: butir menu bawah ponsel, Cek Pendaftaran paling kanan (F10-08).
  *
- * ikon-sprite: house calendar-days trophy users download images circle-help message-circle pencil-line search
+ * ikon-sprite: house calendar-days trophy users download images circle-help message-circle pencil-line search lock
  */
 final class MenuPublik
 {
@@ -79,7 +79,8 @@ final class MenuPublik
     }
 
     /**
-     * Butir bilah submenu atas (K154) yang dicentang admin dan halamannya hidup.
+     * Butir bilah submenu atas (K154) yang dicentang admin dan halamannya hidup,
+     * ditambah Masuk panitia yang selalu ada di akhir (F10-08).
      * `luar` = tautan ke situs lain (WA), dibuka di tab baru.
      *
      * @return list<array{kunci: string, label: string, alamat: string, aktif: bool, ikon: string, luar: bool}>
@@ -113,6 +114,9 @@ final class MenuPublik
             }
         }
 
+        // Masuk panitia selalu ada, paling akhir (F10-08, permintaan pemilik; dulu di kaki halaman).
+        $butir[] = ['kunci' => 'masuk', 'label' => 'Masuk panitia', 'alamat' => site_url('admin/masuk'), 'aktif' => false, 'ikon' => 'lock', 'luar' => false];
+
         return $butir;
     }
 
@@ -145,10 +149,11 @@ final class MenuPublik
     }
 
     /**
-     * Empat butir pertama menu bawah ponsel (K154): Beranda, Jadwal, Hasil,
-     * Daftar (setelah pendaftaran tutup: Cek). Jadwal atau Hasil yang
-     * halamannya mati diganti Bantuan, lalu Unduhan supaya tidak ada butir
-     * kembar. Butir kelima (Menu) ditulis tata letak karena membuka laci.
+     * Butir menu bawah ponsel (K154, F10-08): Beranda, Jadwal, Hasil, Daftar,
+     * Cek. Jadwal atau Hasil yang halamannya mati diganti Bantuan, lalu
+     * Unduhan supaya tidak ada butir kembar. Setelah pendaftaran tutup, Daftar
+     * diganti pengganti berikutnya (bila masih ada). Butir Menu dihapus atas
+     * permintaan pemilik; laci tetap dibuka tombol menu di kepala halaman.
      *
      * @return list<array{label: string, alamat: string, aktif: bool, ikon: string}>
      */
@@ -165,9 +170,13 @@ final class MenuPublik
             $butir[] = $tengah ?? array_shift($pengganti);
         }
 
-        $butir[] = self::terbuka()
-            ? ['label' => 'Daftar', 'alamat' => site_url('pendaftaran'), 'aktif' => url_is('pendaftaran'), 'ikon' => 'pencil-line']
-            : ['label' => 'Cek', 'alamat' => site_url('cek-pendaftaran'), 'aktif' => url_is('cek-pendaftaran') || url_is('cek-pendaftaran/*'), 'ikon' => 'search'];
+        if (self::terbuka()) {
+            $butir[] = ['label' => 'Daftar', 'alamat' => site_url('pendaftaran'), 'aktif' => url_is('pendaftaran'), 'ikon' => 'pencil-line'];
+        } elseif ($pengganti !== []) {
+            $butir[] = array_shift($pengganti);
+        }
+
+        $butir[] = ['label' => 'Cek', 'alamat' => site_url('cek-pendaftaran'), 'aktif' => url_is('cek-pendaftaran') || url_is('cek-pendaftaran/*'), 'ikon' => 'search'];
 
         return array_map(static fn (array $b): array => [
             'label'  => $b['label'],

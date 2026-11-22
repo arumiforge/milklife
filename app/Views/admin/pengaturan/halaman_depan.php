@@ -50,7 +50,7 @@ $kelasRasio = static fn (string $rasio): string => [
     '21x9' => 'aspect-[21/9]',
 ][$rasio] ?? 'aspect-video';
 
-$kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
+$kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -59,7 +59,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 <?= $this->section('judul_halaman') ?>Halaman Depan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="text-gray-700">
@@ -73,7 +73,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
         <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => esc(implode(', ', $gambarPerluDipilihLagi)) . ' yang tadi dipilih belum tersimpan karena ada isian yang perlu diperbaiki. Pilih gambarnya lagi sebelum menyimpan.']) ?>
     <?php endif ?>
 
-    <form action="<?= site_url('admin/pengaturan/halaman-depan') ?>" method="post" enctype="multipart/form-data" novalidate class="space-y-6">
+    <form action="<?= site_url('admin/pengaturan/halaman-depan') ?>" method="post" enctype="multipart/form-data" novalidate class="space-y-4">
         <?= csrf_field() ?>
 
         <section class="<?= $kartu ?>" aria-labelledby="judul-gambar">
@@ -123,7 +123,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
             </div>
         </section>
 
-        <div class="grid gap-6 xl:grid-cols-2">
+        <div class="grid gap-4 xl:grid-cols-2">
             <section class="<?= $kartu ?> min-w-0" aria-labelledby="judul-teks">
                 <h2 id="judul-teks" class="mb-4 text-lg font-bold text-gray-900">Teks</h2>
                 <div class="space-y-4">

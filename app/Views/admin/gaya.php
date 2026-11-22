@@ -67,12 +67,12 @@ $bagian = static fn (string $id, string $judul, string $keterangan): string => '
     </section>
 
     <section aria-labelledby="editorial" data-katalog-editorial>
-        <?= $bagian('editorial', 'Gaya editorial (F10-05)', 'Barlow Condensed (OFL) untuk judul, alis oranye, tombol utama berart, pemisah lintasan, ornamen judul, bingkai foto, dan tekstur kertas. Art G10-11 tampil bila berkasnya sudah ada; tanpa berkas memakai warna padat.') ?>
+        <?= $bagian('editorial', 'Gaya editorial (F10-05)', 'Barlow Condensed (OFL) untuk judul, alis oranye tanpa garis (F10-08), tombol utama berart, pemisah lintasan, bingkai foto, dan tekstur kertas. Art G10-11 tampil bila berkasnya sudah ada; tanpa berkas memakai warna padat.') ?>
         <?php // Kelas penanda `ada-*` di pembungkus supaya contoh art tampil walaupun tata letak admin tidak memasangnya. ?>
         <div class="<?= esc(trim('space-y-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-lembut ' . App\Libraries\GambarOpsional::penandaElemen())) ?>">
             <div>
                 <p class="alis">Alis · alis</p>
-                <p class="judul-tampilan ornamen-judul mt-2">Judul tampilan · judul-tampilan</p>
+                <p class="judul-tampilan mt-2">Judul tampilan · judul-tampilan</p>
                 <p class="mt-1 text-gray-600">Judul Inggris (slogan, judul editorial) selalu diberi keterangan berbahasa Indonesia; tombol dan menu tetap Indonesia.</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">

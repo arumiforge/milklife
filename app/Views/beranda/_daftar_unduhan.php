@@ -9,10 +9,11 @@
  * di label tombol Unduh. Penanda uji berupa atribut `data-*`. Teks admin di-escape.
  *
  * F10-09: PDF dan gambar punya tombol "Lihat" (rute `unduhan/<id>/lihat`,
- * `inline`). Di layar `md` ke atas `unduhan-pratinjau.js` (dimuat halaman
- * pemanggil di bagian `skrip` bila `BerkasUnduhan::adaPratinjau()`) membukanya di modal
- * Flowbite (`<iframe>` untuk PDF, `<img>` untuk gambar, dari berkas sendiri);
- * di ponsel atau tanpa JavaScript tautannya membuka tab baru. Berkas lain
+ * `inline`). `unduhan-pratinjau.js` (dimuat halaman pemanggil di bagian
+ * `skrip` bila `BerkasUnduhan::adaPratinjau()`) membukanya di modal Flowbite
+ * di semua ukuran layar (`<img>` untuk gambar, `<iframe>` untuk PDF dari
+ * berkas sendiri; di ponsel modal PDF berisi keterangan dengan tombol Buka di
+ * tab baru dan Unduh, F10-08); tanpa JavaScript tautannya membuka tab baru. Berkas lain
  * hanya "Unduh". Tombol Unduh tetap ke alamat berkas lama dengan atribut
  * `download` bernama judulnya (`BerkasUnduhan::namaSimpan()`).
  *

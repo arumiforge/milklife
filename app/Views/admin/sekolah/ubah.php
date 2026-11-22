@@ -55,9 +55,9 @@ $teks = static function (string $kotak, string $label, int $panjang, string $ban
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Sekolah', 'alamat' => 'admin/sekolah'], ['label' => 'Ubah ' . (string) ($sekolah['npsn'] ?? 'sekolah')]]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="p-4 sm:p-6">
-    <div class="grid gap-6 lg:grid-cols-12 lg:items-start">
-        <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6 lg:col-span-8 xl:col-span-7" aria-labelledby="judul-formulir-sekolah">
+<div class="p-4 sm:px-6 sm:py-4">
+    <div class="grid gap-4 lg:grid-cols-12 lg:items-start">
+        <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5 lg:col-span-8 xl:col-span-7" aria-labelledby="judul-formulir-sekolah">
             <div>
                 <h2 id="judul-formulir-sekolah" class="flex items-center gap-2 text-lg font-bold text-gray-900">
                     <?= ikon('school', 'text-primary-700') ?>
@@ -141,7 +141,7 @@ $teks = static function (string $kotak, string $label, int $panjang, string $ban
             </form>
         </section>
 
-        <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6 lg:col-span-4 xl:col-span-5" aria-labelledby="judul-nama-sama">
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5 lg:col-span-4 xl:col-span-5" aria-labelledby="judul-nama-sama">
             <h2 id="judul-nama-sama" class="mb-2 text-base font-bold text-gray-900">Sekolah lain bernama <?= esc($sekolah['nama']) ?></h2>
             <?php if ($namaSama === []) : ?>
                 <p class="text-sm text-gray-600">Tidak ada. Nama sekolah ini sudah berbeda dari sekolah lain.</p>

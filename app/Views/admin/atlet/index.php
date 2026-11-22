@@ -28,7 +28,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <div class="flex flex-wrap items-start justify-between gap-3">
         <p class="min-w-0 flex-1 basis-72 text-gray-700">
             Semua atlet dari setiap pendaftaran. Untuk mengubah data atlet, buka rincian pendaftarannya lewat ID pendaftaran.

@@ -12,10 +12,10 @@ Panitia melihat lebih banyak isi di satu layar tanpa kesan sesak (permintaan A7)
 
 ## Hasil
 
-- [ ] Analisis ruang kosong tiap halaman admin (tangkapan 1280 px sebelum dan sesudah) dengan daftar temuan di deskripsi PR
-- [ ] Kurangi yang berlebihan: jarak antarkartu, padding kartu, kepala halaman, ruang kosong ilustrasi, ukuran huruf judul halaman, isian formulir dalam kisi dua/tiga kolom di desktop
-- [ ] Tidak mengubah perilaku, nama tombol, atau urutan isian
-- [ ] Ponsel tetap nyaman (target sentuh ≥ 44 px)
+- [x] Analisis ruang kosong tiap halaman admin (tangkapan 1280 px sebelum dan sesudah) dengan daftar temuan di deskripsi PR
+- [x] Kurangi yang berlebihan: jarak antarkartu, padding kartu, kepala halaman, ruang kosong ilustrasi, ukuran huruf judul halaman, isian formulir dalam kisi dua/tiga kolom di desktop
+- [x] Tidak mengubah perilaku, nama tombol, atau urutan isian
+- [x] Ponsel tetap nyaman (target sentuh ≥ 44 px)
 
 ## Berkas dan uji
 

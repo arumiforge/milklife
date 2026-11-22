@@ -49,18 +49,18 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
 <?= $this->section('judul_halaman') ?>Kelompok Umur<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <div class="space-y-6">
-        <h2 class="text-xl font-bold break-words text-gray-900"><?= esc($judul) ?></h2>
+    <div class="space-y-4">
+        <h2 class="text-lg font-bold break-words text-gray-900"><?= esc($judul) ?></h2>
 
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
-        <form action="<?= $aksi ?>" method="post" id="formulir-kelompok-umur" class="space-y-6" novalidate>
+        <form action="<?= $aksi ?>" method="post" id="formulir-kelompok-umur" class="space-y-4" novalidate>
             <?= csrf_field() ?>
 
-            <section class="space-y-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6">
+            <section class="grid gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5 lg:grid-cols-2 lg:items-start lg:gap-x-6">
                 <div>
                     <label for="nama" class="<?= $label ?>">Nama kelompok umur</label>
                     <input type="text" <?= $kotak('nama') ?> id="nama" name="nama"
@@ -69,7 +69,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                     <?= $pesan('nama') ?>
                 </div>
 
-                <fieldset>
+                <fieldset class="lg:row-span-2">
                     <legend class="mb-1 text-sm font-semibold text-gray-900">Tahun lahir atlet</legend>
                     <p id="tahun-lahir-bantuan" class="mb-3 text-sm text-gray-600">
                         Atlet masuk kelompok umur ini bila tahun lahirnya ada di antara kedua tahun, termasuk kedua tahun itu.
@@ -134,7 +134,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                     </p>
                 </div>
 
-                <div>
+                <div class="lg:row-span-2">
                     <label for="awalan" class="<?= $label ?>">Awalan nomor atlet (BIB)</label>
                     <input type="text" inputmode="numeric" autocomplete="off"
                         <?= $kotak('awalan') ?> id="awalan" name="awalan"

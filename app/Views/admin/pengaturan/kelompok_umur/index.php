@@ -35,7 +35,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
 <?= $this->section('judul_halaman') ?>Kelompok Umur<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -49,7 +49,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
         <?php endif ?>
     </div>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-pilih-ku">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-pilih-ku">
         <h2 id="judul-pilih-ku" class="text-lg font-bold text-gray-900">Tahun lahir di dua kelompok umur</h2>
         <p class="mt-1 text-sm text-gray-600">
             Panitia bisa membuat rentang tahun lahir dua kelompok umur dalam satu jenjang beririsan, misalnya KU 10 lahir 2016–2018
@@ -101,7 +101,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
     </section>
 
     <?php if ($daftar === []) : ?>
-        <?= komponen('kosong', [
+        <?= komponen('kosong', ['padat' => true,
             'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'],
             'ikon'   => 'users',
             'judul'  => 'Belum ada kelompok umur',

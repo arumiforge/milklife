@@ -240,7 +240,7 @@
         color: var(--color-primary-900);
     }
 
-    /* Alis (eyebrow): label kecil huruf besar berjarak lebar dengan garis pendek oranye di depannya. */
+    /* Alis (eyebrow): label kecil huruf besar berjarak lebar, tanpa garis atau hiasan di depannya (F10-08). */
     .alis {
         display: inline-flex;
         align-items: center;
@@ -251,14 +251,6 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--color-oranye-700);
-    }
-
-    .alis::before {
-        content: "";
-        flex: none;
-        width: 1.5rem;
-        height: 2px;
-        background-color: var(--color-oranye-500);
     }
 
     /* Tombol utama berart: warna padat (biru; `tombol-berart-oranye` untuk oranye), latar sapuan kuas
@@ -319,29 +311,6 @@
         background-repeat: repeat-x;
         background-position: center;
         background-size: auto 100%;
-    }
-
-    /* Ornamen judul: garis kecepatan G10-11 di kiri (dan kanan) judul; tanpa berkas tidak tampil apa pun. */
-    .ada-ornamen-judul-kiri .ornamen-judul::before,
-    .ada-ornamen-judul-kanan .ornamen-judul::after {
-        content: "";
-        display: inline-block;
-        width: 2em;
-        height: 1em;
-        vertical-align: -0.05em;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-    }
-
-    .ada-ornamen-judul-kiri .ornamen-judul::before {
-        margin-inline-end: 0.3em;
-        background-image: url("../gambar/elemen/ornamen-judul-kiri.webp");
-    }
-
-    .ada-ornamen-judul-kanan .ornamen-judul::after {
-        margin-inline-start: 0.3em;
-        background-image: url("../gambar/elemen/ornamen-judul-kanan.webp");
     }
 
     /* Bingkai foto: sudut potong miring pada anak langsung; sudut sapuan tinta G10-11 di dua sudut berlawanan. */
@@ -457,4 +426,61 @@
         overflow: hidden;
     }
     /* ===== akhir F10-07 ================================================ */
+
+    /* ===== F10-08: salin ID pendaftaran ================================ */
+    /* Tombol dari `aset/js/salin-id.js`: teks ID dengan garis bawah putus-putus dan ikon salin
+       sebagai tanda bisa disalin sekali klik; berubah hijau sebentar setelah tersalin. */
+    .salin-id {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3em;
+        padding: 0.05em 0.3em;
+        margin-inline: -0.3em;
+        border-radius: var(--radius-md);
+        font: inherit;
+        color: inherit;
+        letter-spacing: inherit;
+        text-decoration: underline dashed;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.2em;
+        cursor: copy;
+        overflow-wrap: anywhere;
+        text-align: start;
+    }
+
+    /* ID yang berdiri sendiri (judul kartu Cek, ID di panel selesai): target sentuh 44 piksel.
+       ID di tengah kalimat (misalnya isi modal) tetap sebaris seperti tautan dalam teks. */
+    :is(h1, h2, h3, h4, .id-pendaftaran) > .salin-id {
+        min-height: 2.75rem;
+    }
+
+    .salin-id:hover {
+        background-color: var(--color-primary-50);
+    }
+
+    .salin-id:focus-visible {
+        outline: 2px solid var(--color-primary-600);
+        outline-offset: 2px;
+    }
+
+    .salin-id .salin-id-ikon {
+        flex: none;
+        width: 1em;
+        height: 1em;
+        color: var(--color-primary-600);
+    }
+
+    .salin-id .salin-id-ikon-ok {
+        display: none;
+        color: var(--color-green-700);
+    }
+
+    .salin-id-tersalin .salin-id-ikon-salin {
+        display: none;
+    }
+
+    .salin-id-tersalin .salin-id-ikon-ok {
+        display: inline-block;
+    }
+    /* ===== akhir F10-08 ================================================ */
 }

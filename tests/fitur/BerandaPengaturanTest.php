@@ -256,7 +256,8 @@ final class BerandaPengaturanTest extends UjiHalaman
 
         $nav = $xpath->query('//nav[@aria-label="Navigasi pengaturan"]')->item(0);
         $this->assertNotNull($nav);
-        $this->assertSame(site_url('admin/pengaturan'), $xpath->query('.//a[contains(@class, "navigasi-pengaturan-kembali")]', $nav)->item(0)?->getAttribute('href'));
+        // Jalan kembali ke daftar pengaturan lewat jejak navigasi, bukan tautan tersendiri (F10-08).
+        $this->assertSame(0, $xpath->query('.//a[contains(@class, "navigasi-pengaturan-kembali")]', $nav)->length);
 
         $tautan = [];
 

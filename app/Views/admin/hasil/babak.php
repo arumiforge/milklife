@@ -69,7 +69,7 @@ foreach ($calon as $kunci => $c) {
 ]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?php if ($multi && $komponen === []) : ?>
         <div id="tabel-skor-belum">
             <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => 'Nomor ini berjenis hasil poin multi-lomba tetapi belum punya tabel skor. Pilih tabel skor dan komponennya di '
@@ -95,7 +95,7 @@ foreach ($calon as $kunci => $c) {
         <?= komponen('tombol', ['label' => 'Buka lembar juri', 'href' => site_url('admin/juri/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'smartphone', 'atribut' => ['id' => 'tautan-lembar-juri']]) ?>
     </div>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-hasil">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-hasil">
         <h2 class="flex flex-wrap items-center gap-2 text-lg font-bold break-words text-gray-900" id="judul-hasil"><?= esc($babak['nama']) ?><?php if ($final) : ?> <?= komponen('lencana', ['label' => 'Final', 'warna' => 'biru']) ?><?php endif ?></h2>
         <?php if ($hasil === []) : ?>
             <p class="mt-2 text-gray-600" id="peserta-kosong">Babak ini belum punya peserta. Pilih peserta di bagian bawah.</p>
@@ -192,7 +192,7 @@ foreach ($calon as $kunci => $c) {
         <?php endif ?>
     </section>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="peserta" aria-labelledby="judul-peserta">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="peserta" aria-labelledby="judul-peserta">
         <h2 class="text-lg font-bold text-gray-900" id="judul-peserta">Peserta babak</h2>
         <p class="mt-1 text-sm text-gray-600">Centang <?= $beregu ? 'regu' : 'atlet' ?> yang ikut babak ini. Calon peserta: <?= $beregu ? 'regu' : 'atlet' ?> dari pendaftaran Lunas di nomor ini. Peserta yang dikeluarkan kehilangan prestasinya di babak ini.</p>
         <?php if ($pilihan === []) : ?>
@@ -226,7 +226,7 @@ foreach ($calon as $kunci => $c) {
     $tandaJadwal = static fn (string $kotak, string $id): string => isset($galatJadwal[$kotak]) ? ' aria-invalid="true" aria-describedby="' . $id . '-galat"' : '';
     $pesanJadwal = static fn (string $kotak, string $id): string => isset($galatJadwal[$kotak]) ? '<p id="' . $id . '-galat" class="mt-1.5 text-sm font-medium text-red-700">' . esc($galatJadwal[$kotak]) . '</p>' : '';
     ?>
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="jadwal-babak" aria-labelledby="judul-jadwal-babak">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="jadwal-babak" aria-labelledby="judul-jadwal-babak">
         <h2 class="text-lg font-bold text-gray-900" id="judul-jadwal-babak">Jadwal babak</h2>
         <p class="mt-1 text-sm text-gray-600">
             Tanggal, jam mulai (WIB), dan lokasi babak ini di halaman Jadwal. Semua babak bisa diisi sekaligus di
@@ -255,7 +255,7 @@ foreach ($calon as $kunci => $c) {
         </form>
     </section>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="ubah-babak" aria-labelledby="judul-ubah-babak">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="ubah-babak" aria-labelledby="judul-ubah-babak">
         <h2 class="text-lg font-bold text-gray-900" id="judul-ubah-babak">Ubah babak</h2>
         <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/ubah') ?>" method="post" class="mt-4 space-y-4" novalidate>
             <?= csrf_field() ?>

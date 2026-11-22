@@ -29,22 +29,22 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
 <?= $this->section('judul') ?>Cetak Nomor Atlet (BIB)<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= view('admin/hari_lomba/_tab', ['aktif' => 'admin/nomor-atlet/cetak'], ['saveData' => false]) ?>
 
-    <div class="flex items-center gap-6">
+    <div class="flex items-center gap-4">
         <p class="flex-1 text-gray-700">
             Satu nomor atlet (BIB) seukuran setengah A4 mendatar (210 × 148,5 mm). PDF memuat dua BIB per halaman A4; potong di garis putus-putus.
             Gambar JPG berukuran 2480 × 1754 piksel (300 dpi), satu berkas per atlet, untuk dikirim ke percetakan.
             Isinya nomor atlet, nama atlet, sekolah, dan kelompok umur. Hanya atlet dari pendaftaran Lunas.
             Urutkan nomor atlet lebih dulu bila perlu (<a class="font-semibold text-primary-700 underline" href="<?= site_url('admin/atlet/nomor-dada') ?>">Urutkan nomor atlet</a>).
         </p>
-        <?= gambar_opsional('admin/cetak-bib.webp', ['class' => 'hidden h-28 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'cetak-bib']) ?>
+        <?= gambar_opsional('admin/cetak-bib.webp', ['class' => 'hidden h-20 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'cetak-bib']) ?>
     </div>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-tampilan">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-tampilan">
         <h2 class="text-lg font-bold text-gray-900" id="judul-tampilan">Tampilan BIB</h2>
-        <div class="mt-4 grid gap-6 lg:grid-cols-2">
+        <div class="mt-4 grid gap-4 lg:grid-cols-2">
             <div class="min-w-0">
                 <p class="mb-2 text-sm text-gray-600">Contoh hasil cetak<?= $jumlahSemua > 0 ? ' (atlet pertama)' : '' ?>:</p>
                 <img src="<?= site_url('admin/nomor-atlet/cetak/contoh') ?>?v=<?= esc(md5((string) $tampilanBib->latar . (int) $tampilanBib->kepala . $tampilanBib->namaWarna), 'attr') ?>"
@@ -123,7 +123,7 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
         </div>
     </section>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-sekolah-bib">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-sekolah-bib">
         <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-lg font-bold text-gray-900" id="judul-sekolah-bib">Per sekolah</h2>
             <?php if ($sekolahBib !== []) : ?>
@@ -154,7 +154,7 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
         <?php endif ?>
     </section>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-bib">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-bib">
         <h2 class="mb-3 text-lg font-bold text-gray-900" id="judul-bib">Per kelompok umur (PDF)</h2>
         <?php if ($jumlahSemua === 0) : ?>
             <p class="text-gray-600" id="bib-kosong">Belum ada atlet dengan nomor atlet (BIB). Nomor atlet dibuat saat pendaftaran ditandai Lunas.</p>

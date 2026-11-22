@@ -51,13 +51,13 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
 <?= $this->section('judul_halaman') ?><?= esc($judulForm) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-label="<?= esc($judulForm, 'attr') ?>">
+    <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-label="<?= esc($judulForm, 'attr') ?>">
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
-        <form action="<?= $aksi ?>" method="post" enctype="multipart/form-data" novalidate class="space-y-5">
+        <form action="<?= $aksi ?>" method="post" enctype="multipart/form-data" novalidate class="grid gap-5 lg:grid-cols-2 lg:items-start lg:gap-x-6">
             <?= csrf_field() ?>
 
             <div>
@@ -135,7 +135,7 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
                 <p id="tampil-bantuan" class="text-sm text-gray-600">Hilangkan centang untuk menyembunyikan berkas tanpa menghapusnya.</p>
             </div>
 
-            <div class="flex flex-wrap gap-2 pt-2">
+            <div class="flex flex-wrap gap-2 pt-2 lg:col-span-2">
                 <?= komponen('tombol', ['label' => $menambah ? 'Simpan berkas' : 'Simpan perubahan', 'tipe' => 'submit', 'ikon' => 'check']) ?>
                 <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/unduhan'), 'varian' => 'kedua', 'ikon' => 'x']) ?>
             </div>

@@ -1,9 +1,9 @@
 <?php
 /**
- * Laci kiri ponsel tata letak publik (F10-07, K154), di bawah layar `lg`.
+ * Laci kanan ponsel tata letak publik (F10-07, K154; dari kanan sejak F10-08), di bawah layar `lg`.
  *
- * Dibuka tombol `[data-buka-laci]` (tombol menu di kepala dan butir Menu di
- * menu bawah), ditutup tombol `[data-tutup-laci]`, Esc, atau ketuk latar.
+ * Dibuka tombol `[data-buka-laci]` (tombol menu di kanan kepala halaman),
+ * ditutup tombol `[data-tutup-laci]`, Esc, atau ketuk latar.
  * Fokus terkunci di dalam laci selama terbuka dan kembali ke tombol pembuka
  * saat ditutup (`aset/js/menu-publik.js`). Laci tertutup tidak terlihat dan
  * tidak bisa difokus (`invisible`); keadaan terbuka ditandai `data-terbuka`.
@@ -24,7 +24,7 @@ $kelasButir = static fn (bool $aktif): string => ($aktif ? 'bg-primary-100 text-
     . ' flex min-h-12 items-center gap-3 rounded-lg px-3 font-semibold';
 ?>
 <div class="fixed inset-0 z-50 hidden bg-primary-950/60 lg:hidden" data-latar-laci aria-hidden="true"></div>
-<div id="laci-publik" class="invisible fixed inset-y-0 start-0 z-50 flex w-80 max-w-[85vw] -translate-x-full flex-col bg-white shadow-angkat transition-[transform,visibility] duration-200 motion-reduce:transition-none data-terbuka:visible data-terbuka:translate-x-0 data-terbuka:transition-transform lg:hidden" role="dialog" aria-modal="true" aria-labelledby="laci-publik-judul" tabindex="-1" data-laci-publik>
+<div id="laci-publik" class="invisible fixed inset-y-0 end-0 z-50 flex w-80 max-w-[85vw] translate-x-full flex-col bg-white shadow-angkat transition-[transform,visibility] duration-200 motion-reduce:transition-none data-terbuka:visible data-terbuka:translate-x-0 data-terbuka:transition-transform lg:hidden" role="dialog" aria-modal="true" aria-labelledby="laci-publik-judul" tabindex="-1" data-laci-publik>
     <div class="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-2">
         <h2 id="laci-publik-judul" class="min-w-0 truncate text-base font-extrabold text-primary-900"><?= esc($namaAcara) ?></h2>
         <button type="button" class="-me-2 inline-flex size-12 shrink-0 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300" aria-controls="laci-publik" data-tutup-laci>

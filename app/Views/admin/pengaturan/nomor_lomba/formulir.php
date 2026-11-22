@@ -69,14 +69,13 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
 <?= $this->section('judul_halaman') ?>Nomor Lomba<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <div class="space-y-6">
-        <section class="space-y-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6">
+    <div class="space-y-4">
+        <section class="space-y-5 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5">
             <div>
-                <h2 class="text-xl font-bold break-words text-gray-900"><?= $baru ? 'Tambah nomor lomba' : 'Ubah ' . esc(NomorLombaModel::namaLengkap($nomor)) ?></h2>
-                <a class="tautan-kembali mt-1 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline" href="<?= $kembali ?>"><?= ikon('arrow-left', 'size-4') ?> Kembali ke daftar nomor lomba</a>
+                <h2 class="text-lg font-bold break-words text-gray-900"><?= $baru ? 'Tambah nomor lomba' : 'Ubah ' . esc(NomorLombaModel::namaLengkap($nomor)) ?></h2>
             </div>
 
             <?php if ($dipakai) : ?>
@@ -105,6 +104,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
             <form action="<?= $aksi ?>" method="post" novalidate id="formulir-nomor-lomba" class="space-y-5" data-terkunci="<?= $dipakai ? '1' : '0' ?>">
                 <?= csrf_field() ?>
 
+                <div class="grid gap-5 lg:grid-cols-2">
                 <div>
                     <label for="kelompok_umur_id" class="<?= $label ?>">Kelompok umur</label>
                     <select <?= $kotak('kelompok_umur_id', 'min-h-11') ?> id="kelompok_umur_id" name="kelompok_umur_id"<?= $kunci ?>
@@ -129,7 +129,9 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                     <p id="nama-bantuan" class="<?= $bantuan ?>">Tanpa putra/putri; kategorinya dipilih di bawah. Contoh: Lari 60 m.</p>
                     <?= $pesan('nama') ?>
                 </div>
+                </div>
 
+                <div class="grid gap-5 lg:grid-cols-2">
                 <fieldset id="jenis" tabindex="-1"<?= $jelas('jenis') !== '' ? ' aria-describedby="' . $jelas('jenis') . '"' : '' ?>>
                     <legend class="<?= $legenda ?>">Jenis</legend>
                     <div class="flex flex-wrap gap-x-6">
@@ -164,6 +166,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                     <p id="kategori-bantuan" class="<?= $bantuan ?>">Mixed hanya untuk nomor beregu: satu tim berisi putra dan putri.</p>
                     <?= $pesan('kategori') ?>
                 </fieldset>
+                </div>
 
                 <fieldset id="jenis_hasil" tabindex="-1" aria-describedby="<?= $jelas('jenis_hasil', 'jenis_hasil-bantuan') ?>">
                     <legend class="<?= $legenda ?>">Jenis hasil</legend>
@@ -332,7 +335,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
         </section>
 
         <?php if (! $baru && ! $dipakai) : ?>
-            <section class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200 bg-white p-5 shadow-lembut sm:p-6" id="bagian-hapus" aria-labelledby="judul-bagian-hapus">
+            <section class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200 bg-white p-4 shadow-lembut sm:p-5" id="bagian-hapus" aria-labelledby="judul-bagian-hapus">
                 <div>
                     <h2 id="judul-bagian-hapus" class="text-base font-bold text-gray-900">Hapus nomor ini</h2>
                     <p class="mt-0.5 text-sm text-gray-600">Bisa dihapus karena belum dipakai atlet atau tim.</p>

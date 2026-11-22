@@ -27,13 +27,13 @@ $tautan     = 'font-semibold text-primary-700 underline';
 <?= $this->section('judul') ?>Daftar Ulang<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= view('admin/hari_lomba/_tab', ['aktif' => 'admin/daftar-ulang'], ['saveData' => false]) ?>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-cari" id="kotak-pindai">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-cari" id="kotak-pindai">
         <div class="flex items-start justify-between gap-4">
             <h2 class="text-lg font-bold text-gray-900" id="judul-cari">Pindai kode QR bukti pendaftaran</h2>
-            <?= gambar_opsional('admin/daftar-ulang.webp', ['class' => 'hidden h-24 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'daftar-ulang']) ?>
+            <?= gambar_opsional('admin/daftar-ulang.webp', ['class' => 'hidden h-20 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'daftar-ulang']) ?>
         </div>
 
         <div id="pemindai" class="mt-3 space-y-2" hidden>
@@ -66,7 +66,7 @@ $tautan     = 'font-semibold text-primary-700 underline';
     <?php endif ?>
 
     <?php if ($p !== null) : ?>
-        <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-sekolah" id="hasil-daftar-ulang">
+        <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-sekolah" id="hasil-daftar-ulang">
             <?php if ($hasil['digabung_dari'] !== null) : ?>
                 <div class="rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" id="keterangan-gabung">
                     ID <?= esc($hasil['digabung_dari']) ?> sudah digabung ke <?= esc($p['id_pendaftaran']) ?> (pendaftaran sekolah yang sama). Yang tampil di bawah ini pendaftaran gabungannya.
@@ -74,7 +74,7 @@ $tautan     = 'font-semibold text-primary-700 underline';
             <?php endif ?>
 
             <div>
-                <h2 class="text-xl font-bold break-words text-gray-900" id="judul-sekolah"><?= esc($p['nama_sekolah']) ?></h2>
+                <h2 class="text-lg font-bold break-words text-gray-900" id="judul-sekolah"><?= esc($p['nama_sekolah']) ?></h2>
                 <p class="mt-1 text-gray-600">
                     <a href="<?= site_url('admin/pendaftaran/' . $hasil['id']) ?>" class="<?= $tautan ?>"><?= esc($p['id_pendaftaran']) ?></a>
                     <?php if ($p['kabupaten'] !== null && $p['kabupaten'] !== '') : ?> · <?= esc($p['kabupaten']) ?><?php endif ?>

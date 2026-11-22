@@ -54,7 +54,7 @@ $sekolah = $hasil[0] ?? null;
                 <input class="<?= K::ISIAN ?><?= $galat !== null ? ' is-invalid' : '' ?> !w-auto min-w-0 flex-1 text-lg" type="text" id="kode" name="kode" value="<?= esc($kode) ?>" maxlength="30" autocomplete="off" required aria-describedby="kode-keterangan<?= $galat !== null ? ' kode-galat' : '' ?>">
                 <button class="<?= K::UTAMA_BESAR ?>" type="submit"><?= ikon('search', 'size-5') ?> Cari</button>
             </div>
-            <div class="<?= K::BANTU ?>" id="kode-keterangan">NPSN menampilkan semua pendaftaran sekolah itu. ID pendaftaran (contoh MAC2A0000126) menampilkan satu pendaftaran.</div>
+            <div class="<?= K::BANTU ?>" id="kode-keterangan" data-tanpa-salin>NPSN menampilkan semua pendaftaran sekolah itu. ID pendaftaran (contoh MAC2A0000126) menampilkan satu pendaftaran.</div>
             <?php if ($turnstile !== null) : ?>
                 <div class="cf-turnstile mt-3" data-sitekey="<?= esc($turnstile['kunci_situs'], 'attr') ?>" data-action="<?= esc($turnstile['aksi'], 'attr') ?>" data-language="id"></div>
             <?php endif ?>

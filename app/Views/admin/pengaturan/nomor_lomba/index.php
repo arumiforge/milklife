@@ -56,11 +56,11 @@ $ringkasTim = static function (array $nomor): string {
 <?= $this->section('judul_halaman') ?>Nomor Lomba<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <?php if ($kelompokUmur === []) : ?>
-        <?= komponen('kosong', [
+        <?= komponen('kosong', ['padat' => true,
             'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'],
             'ikon'   => 'users',
             'judul'  => 'Belum ada kelompok umur',
@@ -68,7 +68,7 @@ $ringkasTim = static function (array $nomor): string {
             'aksi'   => komponen('tombol', ['label' => 'Buka Kelompok Umur', 'href' => site_url('admin/pengaturan/kelompok-umur'), 'ikon' => 'users']),
         ]) ?>
     <?php elseif ($jumlahSemua === 0) : ?>
-        <?= komponen('kosong', [
+        <?= komponen('kosong', ['padat' => true,
             'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'],
             'ikon'   => 'trophy',
             'judul'  => 'Belum ada nomor lomba',
@@ -97,7 +97,7 @@ $ringkasTim = static function (array $nomor): string {
             </div>
         <?php endif ?>
 
-        <form class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6 md:flex-row md:flex-wrap md:items-end" method="get" action="<?= site_url($alamat) ?>" id="saringan" role="search" aria-label="Saring nomor lomba">
+        <form class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5 md:flex-row md:flex-wrap md:items-end" method="get" action="<?= site_url($alamat) ?>" id="saringan" role="search" aria-label="Saring nomor lomba">
             <div class="w-full md:w-80">
                 <label for="saring-kelompok-umur" class="mb-1.5 block text-sm font-semibold text-gray-900">Kelompok umur</label>
                 <select class="block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 sm:text-sm" id="saring-kelompok-umur" name="kelompok-umur">
@@ -122,7 +122,7 @@ $ringkasTim = static function (array $nomor): string {
         </form>
 
         <?php if ($jumlahTampil === 0 && $saringBelumLengkap) : ?>
-            <?= komponen('kosong', [
+            <?= komponen('kosong', ['padat' => true,
                 'gambar' => 'gambar/keadaan/berhasil.webp',
                 'ikon'   => 'circle-check',
                 'judul'  => 'Semua nomor sudah lengkap',
@@ -133,7 +133,7 @@ $ringkasTim = static function (array $nomor): string {
 
         <?php foreach ($kelompok as $kuId => $ku) : ?>
             <section class="kelompok-nomor-lomba rounded-2xl border border-gray-200 bg-white shadow-lembut" id="ku-<?= $kuId ?>" aria-labelledby="judul-ku-<?= $kuId ?>">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-5 py-4 sm:px-6">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-4 py-3 sm:px-5">
                     <h2 id="judul-ku-<?= $kuId ?>" class="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-900">
                         <?= esc($ku['nama']) ?>
                         <?= komponen('lencana', ['label' => ($jumlahPerKu[$kuId] ?? 0) . ' nomor', 'warna' => 'abu']) ?>
@@ -147,7 +147,7 @@ $ringkasTim = static function (array $nomor): string {
                 </div>
 
                 <?php if ($ku['nomor'] === []) : ?>
-                    <p class="px-5 py-4 text-gray-600 sm:px-6">
+                    <p class="px-4 py-3 text-gray-600 sm:px-5">
                         Belum ada nomor lomba di kelompok umur ini.
                     </p>
                 <?php else : ?>

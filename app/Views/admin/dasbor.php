@@ -68,7 +68,7 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
 <?= $this->section('judul_halaman') ?>Dasbor<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <section class="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-label="Keadaan pendaftaran">
         <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-3">
@@ -84,7 +84,7 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
                 </p>
             <?php endif ?>
         </div>
-        <?= gambar_opsional('admin/dasbor-sapaan.webp', ['class' => 'hidden h-28 w-auto shrink-0 md:block', 'data-gambar-admin' => 'dasbor-sapaan']) ?>
+        <?= gambar_opsional('admin/dasbor-sapaan.webp', ['class' => 'hidden h-20 w-auto shrink-0 md:block', 'data-gambar-admin' => 'dasbor-sapaan']) ?>
     </section>
 
     <section aria-labelledby="judul-angka" id="angka-pendaftaran">
@@ -142,7 +142,7 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
 
     <section aria-labelledby="judul-tambahan" id="angka-tambahan">
         <h2 id="judul-tambahan" class="mb-3 text-lg font-bold text-gray-900">Angka lain</h2>
-        <div class="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-6">
+        <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6">
             <?php foreach ([
                 // F10-04: dua angka bukti bayar berbeda; keterangannya menyebut bedanya.
                 'perlu_diperiksa'      => ['Menunggu, bukti sudah ada', 'file-search', 'admin/pendaftaran?status=menunggu&bukti=ada', 'Tinggal diperiksa lalu ditandai Lunas'],
@@ -162,9 +162,9 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
             ] as $kunci => $kartuTambahan) : ?>
                 <?php [$label, $ikon, $alamat] = $kartuTambahan; $keterangan = $kartuTambahan[3] ?? ''; ?>
                 <?php $sorot = in_array($kunci, ['perlu_diperiksa', 'bukti_baru'], true) && $tambahan[$kunci] > 0; ?>
-                <div class="relative rounded-2xl border p-4 <?= $sorot ? 'border-oranye-300 bg-oranye-50' : 'border-gray-200 bg-white' ?>" data-tambahan="<?= $kunci ?>"<?= $sorot ? ' data-sorot' : '' ?>>
+                <div class="relative rounded-2xl border p-3 sm:px-4 <?= $sorot ? 'border-oranye-300 bg-oranye-50' : 'border-gray-200 bg-white' ?>" data-tambahan="<?= $kunci ?>"<?= $sorot ? ' data-sorot' : '' ?>>
                     <?= ikon($ikon, $sorot ? 'text-oranye-600' : 'text-gray-400') ?>
-                    <p class="mt-2 text-2xl font-extrabold text-gray-900" data-nilai><?= $angkaBiasa($tambahan[$kunci]) ?></p>
+                    <p class="mt-1 text-2xl font-extrabold text-gray-900" data-nilai><?= $angkaBiasa($tambahan[$kunci]) ?></p>
                     <p class="text-sm font-medium text-gray-600">
                         <?php if ($alamat !== '') : ?>
                             <a class="text-primary-800 underline after:absolute after:inset-0 hover:no-underline" href="<?= site_url($alamat) ?>"><?= $label ?></a>
@@ -182,7 +182,7 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
 
     <?php if ($angka['pendaftaran'] === 0) : ?>
     <section aria-labelledby="judul-kosong" data-dasbor-kosong>
-        <div class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
+        <div class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-6 text-center">
             <span class="mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-700"><?= ikon('inbox', 'size-7') ?></span>
             <h2 id="judul-kosong" class="text-lg font-bold text-gray-900">Belum ada pendaftaran</h2>
             <p class="mt-1 text-gray-600">

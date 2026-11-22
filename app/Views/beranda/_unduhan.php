@@ -25,7 +25,7 @@ if ($unduhan === []) {
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
         <div class="flex flex-col items-center gap-4 text-center">
             <div>
-                <p class="judul-tampilan ornamen-judul" lang="en" aria-hidden="true" data-judul-inggris>Downloads</p>
+                <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Downloads</p>
                 <h2 id="judul-unduhan" class="judul-keterangan mt-2">Unduhan</h2>
                 <p class="mt-2 text-lg text-gray-600">Flyer, petunjuk teknis, dan berkas lain dari panitia.</p>
             </div>
