@@ -37,7 +37,7 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Satu baris = satu babak di <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>, jadi jadwal selalu sama dengan babak yang diisi juri.
         Babak tanpa tanggal belum tampil di halaman Jadwal. Status Selesai muncul sendiri setelah hasil nomornya diterbitkan.
     </p>

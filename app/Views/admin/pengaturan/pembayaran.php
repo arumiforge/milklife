@@ -52,7 +52,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Rekening ini tampil di langkah terakhir pendaftaran. Ofisial sekolah mentransfer ke rekening ini,
         lalu menekan tombol WA untuk mengirim pesan konfirmasi ke nomor di bawah.
     </p>

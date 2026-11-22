@@ -49,14 +49,15 @@ final class KatalogTampilanTest extends UjiBasisData
     public function testMenuBawahPonselLimaButirPendaftaran(): void
     {
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/gaya'));
-        $butir = $xpath->query('//nav[@aria-label="Menu pendaftaran"]//a');
+        $butir = $xpath->query('//nav[@aria-label="Menu pendaftaran"]//li/*[self::a or self::button]');
 
         $label = [];
         foreach ($butir as $a) {
             $label[] = trim($a->textContent);
         }
 
-        $this->assertSame(['Dasbor', 'Pendaftaran', 'Atlet', 'Ditolak', 'Rekap'], $label, 'K133.');
+        // K133, dengan butir Menu yang membuka sidebar sebagai butir kelima (F10-03, permintaan A9).
+        $this->assertSame(['Dasbor', 'Pendaftaran', 'Atlet', 'Rekap', 'Menu'], $label);
     }
 
     public function testTataLetakPublikBaruDanMenunya(): void

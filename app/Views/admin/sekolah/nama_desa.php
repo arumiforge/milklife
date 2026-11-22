@@ -34,7 +34,7 @@ $kelasBaris   = 'border-b border-gray-100 last:border-b-0 hover:bg-gray-50';
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <div class="max-w-3xl space-y-3 text-gray-700">
+    <div class="space-y-3 text-gray-700">
         <p>
             Sekolah yang namanya sama dengan sekolah lain diberi nama baru dengan menambahkan nama desanya, misalnya
             MIS MUHAMMADIYAH di desa Jati menjadi MIS MUHAMMADIYAH JATI. Bila desanya sudah tertulis di nama atau sama dengan

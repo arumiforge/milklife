@@ -12,14 +12,14 @@ Panitia bekerja di panel yang jelas berwarna merek, mudah dijelajah, dan memakai
 
 ## Hasil
 
-- [ ] Logo resmi (`IsiHalamanDepan::logoMerek()`) di pojok kiri atas; pojok kiri atas biru `#234987`, sidebar biru tua `#021F7B`, area konten terang (K154); kontras teks menu AA
-- [ ] Sidebar desktop lebih lebar (`lg:w-72`), konten menyesuaikan
-- [ ] Menu dan submenu bisa dilipat; keadaan terakhir diingat (`localStorage` dalam `try/catch`); kelompok yang memuat halaman aktif selalu terbuka; tanpa skrip sebaris
-- [ ] Submenu lebih lengkap dari `Panel/MenuAdmin` (misalnya semua halaman Pengaturan, Hari lomba, Hasil)
-- [ ] Jejak navigasi rinci di **setiap** halaman admin termasuk rincian dan formulir (`admin/_jejak_tw.php`); uji memeriksa semua rute admin GET punya jejak
-- [ ] Isi kanan sidebar lebar penuh: hapus `max-w-*` pembatas di tata letak dan halaman (formulir panjang boleh dibatasi di dalam kartu)
-- [ ] Jarak dalam tata letak dirapatkan (padding kepala, sidebar, area isi) sebagai dasar F10-08
-- [ ] Menu bawah ponsel: target sentuh ≥ 48 px, label terbaca, butir aktif jelas (K133), butir "Menu" membuka sidebar
+- [x] Logo resmi (`IsiHalamanDepan::logoMerek()`) di pojok kiri atas; pojok kiri atas biru `#234987`, sidebar biru tua `#021F7B`, area konten terang (K154); kontras teks menu AA
+- [x] Sidebar desktop lebih lebar (`lg:w-72`), konten menyesuaikan
+- [x] Menu dan submenu bisa dilipat; keadaan terakhir diingat (`localStorage` dalam `try/catch`); kelompok yang memuat halaman aktif selalu terbuka; tanpa skrip sebaris
+- [x] Submenu lebih lengkap dari `Panel/MenuAdmin` (misalnya semua halaman Pengaturan, Hari lomba, Hasil)
+- [x] Jejak navigasi rinci di **setiap** halaman admin termasuk rincian dan formulir (`admin/_jejak_tw.php`); uji memeriksa semua rute admin GET punya jejak
+- [x] Isi kanan sidebar lebar penuh: hapus `max-w-*` pembatas di tata letak dan halaman (formulir panjang boleh dibatasi di dalam kartu)
+- [x] Jarak dalam tata letak dirapatkan (padding kepala, sidebar, area isi) sebagai dasar F10-08
+- [x] Menu bawah ponsel: target sentuh ≥ 48 px, label terbaca, butir aktif jelas (K133), butir "Menu" membuka sidebar
 
 ## Berkas dan uji
 

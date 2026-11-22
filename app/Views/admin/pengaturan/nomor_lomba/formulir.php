@@ -72,7 +72,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <div class="max-w-4xl space-y-6">
+    <div class="space-y-6">
         <section class="space-y-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6">
             <div>
                 <h2 class="text-xl font-bold break-words text-gray-900"><?= $baru ? 'Tambah nomor lomba' : 'Ubah ' . esc(NomorLombaModel::namaLengkap($nomor)) ?></h2>

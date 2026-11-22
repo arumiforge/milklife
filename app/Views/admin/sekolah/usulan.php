@@ -35,7 +35,7 @@ $kelasTd    = 'px-4 py-3 align-top';
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Pendaftar bisa mengusulkan nama sekolah yang lebih lengkap saat mendaftar. Pendaftarannya langsung memakai nama usulan.
         Bila disetujui, nama di data sekolah dan semua pendaftaran dari sekolah itu ikut berganti. Bila ditolak, pendaftaran pengusul
         kembali memakai nama dari data sekolah.

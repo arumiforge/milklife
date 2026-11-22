@@ -185,7 +185,7 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
         <div class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
             <span class="mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-700"><?= ikon('inbox', 'size-7') ?></span>
             <h2 id="judul-kosong" class="text-lg font-bold text-gray-900">Belum ada pendaftaran</h2>
-            <p class="mt-1 max-w-xl text-gray-600">
+            <p class="mt-1 text-gray-600">
                 Pendaftaran dari sekolah akan muncul di sini setelah formulir pendaftaran dibuka.
                 <strong>Langkah berikutnya:</strong> pastikan semua butir di
                 <a class="font-semibold text-primary-700 underline hover:no-underline" href="<?= site_url('admin/pengecekan') ?>">Pengecekan</a> sudah bercentang.

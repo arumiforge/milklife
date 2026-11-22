@@ -47,12 +47,12 @@ $kotak = static function (string $nama, string $label, string $jenis, string $ke
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Nama, seri, tahun, tempat, dan tanggal ini tampil di halaman depan, di bagian atas setiap halaman,
         dan di bukti pendaftaran. Semua kotak wajib diisi.
     </p>
 
-    <div class="max-w-3xl space-y-6">
+    <div class="space-y-6">
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
         <form action="<?= site_url('admin/pengaturan/acara') ?>" method="post" novalidate class="space-y-6">

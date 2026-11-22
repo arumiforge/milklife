@@ -26,7 +26,7 @@
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Riwayat tindakan admin tetap disimpan walau pendaftarannya sudah dihapus atau digabung.
         Ketik ID pendaftarannya (contoh MAC2A0000126, boleh sebagian), lalu tekan Cari.
     </p>

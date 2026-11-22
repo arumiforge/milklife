@@ -32,7 +32,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Tabel skor mengubah prestasi (waktu atau jarak) menjadi poin untuk nomor berjenis hasil poin multi-lomba, misalnya Trilomba.
         Prestasi di antara dua baris memakai baris yang lebih buruk; prestasi di luar tabel mendapat 0 poin dan ditandai.
         Setiap perubahan baris langsung menghitung ulang poin dan peringkat hasil lomba yang memakai tabel itu.

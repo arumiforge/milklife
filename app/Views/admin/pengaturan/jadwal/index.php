@@ -26,7 +26,7 @@ use App\Models\TautanModel;
         <section class="kartu-kosong flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center" aria-labelledby="judul-jadwal-kosong" data-jadwal-kosong>
             <span class="mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-700"><?= ikon('clock', 'size-7') ?></span>
             <h2 id="judul-jadwal-kosong" class="text-lg font-bold text-gray-900">Belum ada agenda</h2>
-            <p class="mt-1 max-w-xl text-gray-600">
+            <p class="mt-1 text-gray-600">
                 Tambahkan sosialisasi daring, pertemuan teknik (technical meeting), atau kegiatan lain supaya sekolah tahu
                 kapan dan di mana harus hadir. Agenda tampil di halaman depan.
             </p>

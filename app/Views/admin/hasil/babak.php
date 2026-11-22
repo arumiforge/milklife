@@ -81,7 +81,7 @@ foreach ($calon as $kunci => $c) {
             <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => $luarTabel . ' prestasi di luar tabel skor sehingga poinnya 0 (ditandai kuning di bawah). Periksa lagi apakah ada salah ketik, misalnya 0,70 untuk 7,00.']) ?>
         </div>
     <?php endif ?>
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Prestasi <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>: <?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>.
         <?php if ($multi) : ?>Tulis waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poin tiap komponen dicari di tabel skor; prestasi di antara dua baris memakai baris yang lebih buruk. Komponen kosong bernilai 0.<?php endif ?>
         Peringkat dihitung otomatis setelah disimpan; prestasi sama mendapat peringkat sama<?php if ($nomor['jenis_hasil'] === JenisHasil::JARAK && $nomor['pemecah_seri']) : ?>, kecuali bila percobaannya diisi di Lembar juri: yang prestasi terbaik keduanya lebih jauh di atas<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU) : ?>, kecuali bila waktunya ditulis sampai seperseribu detik (misalnya 12,345 dari foto finis)<?php endif ?>.

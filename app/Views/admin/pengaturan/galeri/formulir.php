@@ -42,7 +42,7 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <section class="max-w-3xl rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-formulir-album">
+    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-formulir-album">
         <h2 id="judul-formulir-album" class="flex items-center gap-2 text-lg font-bold text-gray-900">
             <?= ikon('images', 'text-primary-700') ?> <?= esc($judul) ?>
         </h2>
