@@ -31,6 +31,13 @@ final class BuktiDiperiksa
     public const SQL_ADA_BUKTI_BARU = 'EXISTS (SELECT 1 FROM bukti_bayar bb WHERE bb.pendaftaran_id = p.id AND bb.diperiksa_pada IS NULL)';
 
     /**
+     * Kondisi SQL "pendaftaran `p` punya bukti bayar", sudah diperiksa atau
+     * belum (F10-04: kartu dasbor "Menunggu, bukti sudah ada" dan saringan
+     * `bukti=ada` di daftar pendaftaran).
+     */
+    public const SQL_ADA_BUKTI = 'EXISTS (SELECT 1 FROM bukti_bayar bx WHERE bx.pendaftaran_id = p.id)';
+
+    /**
      * Kondisi SQL "pendaftaran `p` bukan 'Semua atlet ditolak'" (K117,
      * sama dengan `DataPanelPendaftaran::ditolakSemua()`).
      */

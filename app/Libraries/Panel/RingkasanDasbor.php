@@ -62,15 +62,20 @@ final class RingkasanDasbor
             [$this->hariIni . ' 00:00:00', Pengunjung::geser($this->hariIni, 1) . ' 00:00:00'],
         )[0];
 
-        // Menunggu dan sudah punya bukti bayar: tinggal diperiksa lalu ditandai Lunas.
-        // Pendaftaran tanpa atlet (semua atletnya ditolak, K117) tidak perlu diperiksa.
+        // "Menunggu, bukti sudah ada": Menunggu dan sudah punya bukti bayar (sudah
+        // ditandai diperiksa atau belum), tinggal diperiksa lalu ditandai Lunas.
+        // Pendaftaran "Semua atlet ditolak" (K117) tidak perlu diperiksa. Sama
+        // dengan daftar `admin/pendaftaran?status=menunggu&bukti=ada` (F10-04).
         $periksa = $this->baca(
-            "SELECT COUNT(DISTINCT p.id) AS n FROM {pendaftaran} p JOIN {bukti_bayar} b ON b.pendaftaran_id = p.id WHERE p.status = 'menunggu'"
-            . ' AND EXISTS (SELECT 1 FROM {atlet} pa WHERE pa.pendaftaran_id = p.id)',
+            "SELECT COUNT(*) AS n FROM {pendaftaran} p WHERE p.status = 'menunggu' AND " . BuktiDiperiksa::SQL_ADA_BUKTI
+            . ' AND ' . BuktiDiperiksa::SQL_BUKAN_DITOLAK_SEMUA,
         )[0]['n'];
 
-        // F8-02: pendaftaran dengan bukti bayar baru yang belum diperiksa, tanpa
-        // pendaftaran "Semua atlet ditolak" (K117).
+        // F8-02 "Bukti bayar baru belum diperiksa": pendaftaran berstatus apa pun
+        // (juga Lunas) dengan bukti yang belum ditandai diperiksa, tanpa
+        // pendaftaran "Semua atlet ditolak" (K117). Beda dengan angka di atas:
+        // bukti Menunggu yang sudah ditandai "Sudah diperiksa" tidak dihitung,
+        // bukti tambahan di pendaftaran Lunas dihitung (F10-04).
         $buktiBaru = $this->baca(
             'SELECT COUNT(*) AS n FROM {pendaftaran} p WHERE ' . BuktiDiperiksa::SQL_ADA_BUKTI_BARU . ' AND ' . BuktiDiperiksa::SQL_BUKAN_DITOLAK_SEMUA,
         )[0]['n'];

@@ -12,10 +12,10 @@ Tidak ada tabel admin yang menampilkan semua baris sekaligus, dan angka dasbor t
 
 ## Hasil
 
-- [ ] Audit semua tabel di view admin (`grep -rn "<table\|komponen('tabel'" app/Views/admin`); daftar tabel dan cara paginasinya ditulis di deskripsi PR
-- [ ] Semua tabel berpaginasi, bawaan 25 baris: rekap, daftar peserta, nomor dada, sekolah (termasuk usulan nama dan nama desa), riwayat, tabel di Pengaturan (kelompok umur, nomor lomba, jadwal, kontak, unduhan, bantuan, galeri, tabel skor), hari lomba, dan tabel lain dari audit. Pakai DataTables sisi server (`Panel/TabelSisiServer`, `tabel-admin.js`) untuk tabel besar, paginasi CodeIgniter atau DataTables sisi klien untuk tabel kecil; tombol per baris dan pilih massal tetap bekerja
-- [ ] Ekspor Excel/PDF tetap memuat semua baris
-- [ ] Dasbor "Angka lain": definisi "Bukti bayar perlu diperiksa" dan "Bukti bayar baru belum diperiksa" di `Panel/RingkasanDasbor` diperiksa; satukan bila sama, atau label yang menyebut bedanya; penjelasan ditulis di PR
+- [x] Audit semua tabel di view admin (`grep -rn "<table\|komponen('tabel'" app/Views/admin`); daftar tabel dan cara paginasinya ditulis di deskripsi PR
+- [x] Semua tabel berpaginasi, bawaan 25 baris: rekap, daftar peserta, nomor dada, sekolah (termasuk usulan nama dan nama desa), riwayat, tabel di Pengaturan (kelompok umur, nomor lomba, jadwal, kontak, unduhan, bantuan, galeri, tabel skor), hari lomba, dan tabel lain dari audit. Pakai DataTables sisi server (`Panel/TabelSisiServer`, `tabel-admin.js`) untuk tabel besar, paginasi CodeIgniter atau DataTables sisi klien untuk tabel kecil; tombol per baris dan pilih massal tetap bekerja
+- [x] Ekspor Excel/PDF tetap memuat semua baris
+- [x] Dasbor "Angka lain": definisi "Bukti bayar perlu diperiksa" dan "Bukti bayar baru belum diperiksa" di `Panel/RingkasanDasbor` diperiksa; satukan bila sama, atau label yang menyebut bedanya; penjelasan ditulis di PR
 
 ## Berkas dan uji
 

@@ -5053,6 +5053,9 @@
   .\[\&\:disabled\:not\(\.pil-selesai\)\]\:text-gray-400:disabled:not(.pil-selesai) {
     color: var(--color-gray-400);
   }
+  .\[\&\>\.dt-layout-row\:not\(\.dt-layout-table\)\]\:px-3 > .dt-layout-row:not(.dt-layout-table) {
+    padding-inline: calc(var(--spacing) * 3);
+  }
   .\[\&\>a\]\:flex-\[1_1_15rem\] > a {
     flex: 1 1 15rem;
   }

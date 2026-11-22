@@ -7,7 +7,8 @@
  *
  *     <input type="checkbox" checked data-centang-semua="#tabel-nama-baru" aria-label="Centang semua sekolah">
  *
- * Dipakai admin/sekolah/nama_desa.php (K114). Tanpa JavaScript, setiap kotak
+ * Dipakai admin/sekolah/nama_desa.php (K114); bila tabelnya berhalaman
+ * (`data-tabel-klien`, F10-04), semua halaman ikut. Tanpa JavaScript, setiap kotak
  * tetap bisa dicentang sendiri.
  */
 (function () {
@@ -20,10 +21,19 @@
         }
 
         function anak() {
-            return Array.prototype.filter.call(
-                tabel.querySelectorAll('input[type="checkbox"]'),
-                function (kotak) { return kotak !== induk; }
-            );
+            // Tabel berhalaman (F10-04): baris di halaman lain ikut dicentang.
+            var baris = window.TabelAdmin && window.TabelAdmin.semuaBaris
+                ? window.TabelAdmin.semuaBaris(tabel)
+                : null;
+            var kotak = [];
+            if (baris) {
+                baris.forEach(function (tr) {
+                    Array.prototype.push.apply(kotak, tr.querySelectorAll('input[type="checkbox"]'));
+                });
+            } else {
+                kotak = tabel.querySelectorAll('input[type="checkbox"]');
+            }
+            return Array.prototype.filter.call(kotak, function (k) { return k !== induk; });
         }
 
         function perbarui() {
