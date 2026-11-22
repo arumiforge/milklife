@@ -103,7 +103,7 @@ $keadaan = static function (array $b): array {
                             <?php foreach ($n['babak_seri'] as $b) : ?>
                                 <?php [$label, $warna, $ikon] = $keadaan($b); ?>
                                 <a href="<?= site_url('admin/seri/babak/' . $b['id']) ?>" class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-200 px-3 text-sm hover:bg-gray-50" data-babak-seri="<?= $b['id'] ?>">
-                                    <span class="font-semibold text-gray-900"><?= esc($b['nama']) ?></span>
+                                    <span class="font-semibold text-gray-900"><?= ($b['nomor_acara'] ?? null) === null ? '' : '<span class="text-gray-600">' . $b['nomor_acara'] . '</span> ' ?><?= esc($b['nama']) ?></span>
                                     <?= komponen('lencana', ['label' => $label, 'warna' => $warna, 'ikon' => $ikon]) ?>
                                 </a>
                             <?php endforeach ?>

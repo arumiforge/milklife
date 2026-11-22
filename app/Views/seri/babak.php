@@ -16,6 +16,7 @@
  * @var bool                                   $tampilJadwal halaman Jadwal terbuka
  */
 
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\SeriLintasan;
 use App\Libraries\Hasil\UnduhanSeri;
 
@@ -36,7 +37,7 @@ $teksLolos = SeriLintasan::teksLolos($lolos, (string) $nomor['jenis_hasil']);
         <?php if ($tampilJadwal) : ?>
             <a href="<?= site_url('jadwal') . ($babak['tanggal'] === null ? '' : '?hari=' . $babak['tanggal']) ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?>Jadwal pertandingan</a>
         <?php endif ?>
-        <p class="text-sm font-semibold text-oranye-700"><?= esc($nomor['kelompok_umur']) ?> · <?= esc($nomor['nama']) ?></p>
+        <p class="text-sm font-semibold text-oranye-700"><?= esc(JadwalPertandingan::awalanAcara($babak['nomor_acara'])) ?><?= esc($nomor['kelompok_umur']) ?> · <?= esc($nomor['nama']) ?></p>
         <div class="mt-1 flex flex-wrap items-center gap-3">
             <?= ikon('list-ordered', 'size-9 text-oranye-600 sm:size-11') ?>
             <h1 id="judul-daftar-seri" class="judul-tampilan min-w-0 break-words"><?= esc($babak['nama']) ?></h1>

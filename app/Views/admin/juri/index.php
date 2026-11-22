@@ -46,7 +46,7 @@ $pertama = array_key_first($hari);
                             <span class="w-14 shrink-0 text-base font-bold text-gray-900"><?= $b['jam'] === null ? '–' : esc($b['jam']) ?></span>
                             <span class="min-w-0 flex-1">
                                 <span class="block font-semibold break-words text-gray-900"><?= esc($b['nomor_lengkap']) ?> <span class="font-normal text-gray-600"><?= esc($b['kelompok_umur']) ?></span></span>
-                                <span class="block text-sm text-gray-600"><?= esc($b['babak']) ?><?= $b['lokasi'] === '' ? '' : ' · ' . esc($b['lokasi']) ?> · <?= $b['terisi'] ?>/<?= $b['peserta'] ?> terisi</span>
+                                <span class="block text-sm text-gray-600"><?= esc(JadwalPertandingan::awalanAcara($b['nomor_acara'])) ?><?= esc($b['babak']) ?><?= $b['lokasi'] === '' ? '' : ' · ' . esc($b['lokasi']) ?> · <?= $b['terisi'] ?>/<?= $b['peserta'] ?> terisi</span>
                             </span>
                             <?php if ($b['terbit']) : ?>
                                 <?= komponen('lencana', ['label' => 'Terbit', 'warna' => 'hijau']) ?>

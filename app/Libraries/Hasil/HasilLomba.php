@@ -206,7 +206,9 @@ final class HasilLomba
     /**
      * Satu babak beserta nomornya, atau `null`.
      *
-     * @return array{id: int, nama: string, final: bool, urutan: int, nomor: array<string, mixed>}|null
+     * `nomor_acara` (F11-07): nomor acara babak, `null` bila belum diberi.
+     *
+     * @return array{id: int, nama: string, final: bool, urutan: int, nomor_acara: int|null, nomor: array<string, mixed>}|null
      */
     public function babak(int $id): ?array
     {
@@ -218,7 +220,7 @@ final class HasilLomba
 
         $nomor = $this->nomor((int) $b['nomor_lomba_id']);
 
-        return $nomor === null ? null : ['id' => (int) $b['id'], 'nama' => (string) $b['nama'], 'final' => (int) $b['final'] === 1, 'urutan' => (int) $b['urutan'], 'nomor' => $nomor];
+        return $nomor === null ? null : ['id' => (int) $b['id'], 'nama' => (string) $b['nama'], 'final' => (int) $b['final'] === 1, 'urutan' => (int) $b['urutan'], 'nomor_acara' => self::nomorAcara($b), 'nomor' => $nomor];
     }
 
     /**
@@ -226,17 +228,27 @@ final class HasilLomba
      *
      * @param array<string, mixed> $nomor hasil `nomor()`
      *
-     * @return list<array{id: int, nama: string, final: bool, urutan: int, hasil: list<array<string, mixed>>}>
+     * @return list<array{id: int, nama: string, final: bool, urutan: int, nomor_acara: int|null, hasil: list<array<string, mixed>>}>
      */
     public function semuaBabak(array $nomor): array
     {
         $daftar = [];
 
         foreach ($this->db->table('babak')->where('nomor_lomba_id', $nomor['id'])->orderBy('final')->orderBy('urutan')->orderBy('id')->get()->getResultArray() as $b) {
-            $daftar[] = ['id' => (int) $b['id'], 'nama' => (string) $b['nama'], 'final' => (int) $b['final'] === 1, 'urutan' => (int) $b['urutan'], 'hasil' => $this->hasilBabak((int) $b['id'], $nomor)];
+            $daftar[] = ['id' => (int) $b['id'], 'nama' => (string) $b['nama'], 'final' => (int) $b['final'] === 1, 'urutan' => (int) $b['urutan'], 'nomor_acara' => self::nomorAcara($b), 'hasil' => $this->hasilBabak((int) $b['id'], $nomor)];
         }
 
         return $daftar;
+    }
+
+    /**
+     * Nomor acara satu baris `babak` (F11-07); `null` bila belum diberi.
+     *
+     * @param array<string, mixed> $b
+     */
+    private static function nomorAcara(array $b): ?int
+    {
+        return isset($b['nomor_acara']) ? (int) $b['nomor_acara'] : null;
     }
 
     /**

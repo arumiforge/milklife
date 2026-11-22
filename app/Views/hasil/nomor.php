@@ -10,6 +10,9 @@
  *
  * Nomor yang tidak dilombakan (F11-03) hanya menampilkan keterangannya, tanpa babak dan unduhan.
  */
+
+use App\Libraries\Hasil\JadwalPertandingan;
+
 $dilombakan = $nomor['dilombakan'] ?? true;
 ?>
 <?= $this->extend('tata_letak/publik_tw') ?>
@@ -39,6 +42,7 @@ $dilombakan = $nomor['dilombakan'] ?? true;
     <?php foreach ($babak as $b) : ?>
         <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6" aria-labelledby="babak-<?= $b['id'] ?>">
             <h2 class="flex flex-wrap items-center gap-2 text-xl font-extrabold text-primary-900" id="babak-<?= $b['id'] ?>">
+                <?php if (($b['nomor_acara'] ?? null) !== null) : ?><span class="text-base font-bold text-oranye-700" data-nomor-acara><?= esc(JadwalPertandingan::labelAcara($b['nomor_acara'])) ?></span><?php endif ?>
                 <?= esc($b['nama']) ?>
                 <?php if ($b['final'] && mb_strtolower(trim($b['nama'])) !== 'final') : ?><?= komponen('lencana', ['label' => 'Final', 'warna' => 'oranye']) ?><?php endif ?>
             </h2>

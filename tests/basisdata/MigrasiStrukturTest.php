@@ -246,6 +246,8 @@ final class MigrasiStrukturTest extends UjiBasisData
             'tanggal'        => ['date', true, null],
             'jam_mulai'      => ['time', true, null],
             'lokasi'         => ['varchar(100)', true, null],
+            // Nomor acara (F11-07).
+            'nomor_acara'    => ['smallint unsigned', true, null],
             // Seri dan lintasan (F9-08).
             'jumlah_seri'       => ['tinyint unsigned', true, null],
             'lolos_q'           => ['tinyint unsigned', true, null],

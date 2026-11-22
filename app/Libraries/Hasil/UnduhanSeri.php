@@ -15,6 +15,7 @@ use App\Libraries\Panel\EksporExcel;
  *   nomor atlet, nama, sekolah) dengan kolom Prestasi kosong untuk juri.
  *   Babak yang belum dikunci diberi tanda "Belum dikunci".
  * - Excel: satu lembar per babak, kolom seri dan lintasan.
+ * - Nomor acara babak (F11-07) di kepala tiap babak dan kolom Acara Excel.
  *
  *     $unduhan = new UnduhanSeri('Lari 60 m putra – KU 10', $seri->untukUnduhan([12, 13]));
  *     $unduhan->pdf();
@@ -77,6 +78,11 @@ final class UnduhanSeri
             'prestasi'   => 'Prestasi',
         ];
 
+        // Nomor acara babak (F11-07), hanya bila ada babak yang punya nomor.
+        if (array_filter(array_map(static fn (array $d): ?int => $d['babak']['nomor_acara'] ?? null, $this->daftar)) !== []) {
+            $kolom = ['acara' => ['judul' => 'Acara', 'jenis' => 'angka']] + $kolom;
+        }
+
         $pakai = [];
         $utama = null;
 
@@ -88,6 +94,7 @@ final class UnduhanSeri
             foreach ($d['seri'] as $seri => $peserta) {
                 foreach ($peserta as $p) {
                     $baris[] = [
+                        'acara'      => $b['nomor_acara'] ?? null,
                         'nomor'      => $b['nomor']['nama'] . ' – ' . $b['nomor']['kelompok_umur'],
                         'babak'      => $b['nama'],
                         'jadwal'     => $jadwal,

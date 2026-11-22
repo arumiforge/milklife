@@ -19,6 +19,7 @@
  * @var array<string, string>                  $galatLolos  kotak => pesan
  */
 
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\PembagiSeri;
 use App\Libraries\Hasil\SeriLintasan;
 use App\Libraries\Hasil\UnduhanSeri;
@@ -52,7 +53,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-ringkas-babak">
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div class="min-w-0">
-                <h2 id="judul-ringkas-babak" class="text-lg font-bold break-words text-gray-900"><?= esc($babak['nama']) ?></h2>
+                <h2 id="judul-ringkas-babak" class="text-lg font-bold break-words text-gray-900"><?= esc(JadwalPertandingan::awalanAcara($babak['nomor_acara'])) ?><?= esc($babak['nama']) ?></h2>
                 <p class="text-sm text-gray-600"><?= $jadwal === '' ? 'Jadwal menyusul' : esc($jadwal) ?> · <?= $babak['peserta'] ?> <?= $beregu ? 'regu' : 'peserta' ?><?= $babak['jumlah_seri'] === null ? '' : ' · ' . $babak['jumlah_seri'] . ($lintasan ? ' seri' : ' kelompok') ?></p>
             </div>
             <?= $babak['dikunci']

@@ -9,6 +9,8 @@
  * - "Isi berurutan" (`aset/js/admin-jadwal-pertandingan.js`) mengisi jam
  *   baris yang dicentang mulai jam tertentu dengan jeda tetap, tanpa menyimpan.
  * - Sakelar tampil untuk umum memakai pengendali Pengaturan > Halaman depan.
+ * - Nomor acara (F11-07): "Beri nomor acara" memberi nomor berurutan menurut
+ *   jadwal mulai nomor awal; kotak Nomor acara per babak untuk mengubahnya.
  *
  * @var CodeIgniter\View\View                    $this
  * @var list<array<string, mixed>>               $babak  `JadwalPertandingan::semua()`
@@ -17,6 +19,7 @@
  * @var DateTimeInterface                        $kini
  * @var array<int|string, array<string, string>> $galat  id babak => kotak => pesan
  * @var array<int|string, mixed>                 $isian  isian yang dikembalikan saat ada galat
+ * @var string                                   $acaraAwal nomor awal isian Beri nomor acara
  */
 
 use App\Libraries\Hasil\JadwalPertandingan;
@@ -75,6 +78,20 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
             </section>
         <?php endif ?>
 
+        <section id="nomor-acara" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-nomor-acara">
+            <h2 id="judul-nomor-acara" class="text-lg font-bold text-gray-900">Nomor acara</h2>
+            <p class="mt-1 text-sm text-gray-600">Nomor acara dipakai pembawa acara, juri, dan lembar hasil, misalnya Acara 101. Nomor diberi berurutan menurut tanggal dan jam di bawah. Babak tanpa tanggal tidak diberi nomor. Nomor yang sudah ada akan diganti. Setelah itu, Anda masih bisa mengubah nomor tiap babak.</p>
+            <form action="<?= site_url('admin/jadwal-pertandingan/nomor-acara') ?>" method="post" class="mt-3 flex flex-wrap items-end gap-3"
+                data-konfirmasi="<?= esc('Semua ' . $terjadwal . ' babak yang punya tanggal akan diberi nomor acara baru berurutan menurut jadwal. Nomor acara yang sudah ada diganti.', 'attr') ?>" data-konfirmasi-judul="Beri nomor acara?" data-konfirmasi-tombol="Beri nomor acara" data-konfirmasi-jenis="utama">
+                <?= csrf_field() ?>
+                <div class="w-40">
+                    <label for="acara-awal" class="mb-1.5 block text-sm font-semibold text-gray-900">Nomor awal</label>
+                    <input type="number" id="acara-awal" name="awal" class="<?= $kelasIsian(false) ?>" value="<?= esc($acaraAwal, 'attr') ?>" min="1" max="<?= JadwalPertandingan::NOMOR_ACARA_MAKSIMAL ?>" inputmode="numeric" required>
+                </div>
+                <?= komponen('tombol', ['label' => 'Beri nomor acara', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'list-ordered']) ?>
+            </form>
+        </section>
+
         <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-isi-berurutan" data-isi-berurutan hidden>
             <h2 id="judul-isi-berurutan" class="text-lg font-bold text-gray-900">Isi berurutan</h2>
             <p class="mt-1 text-sm text-gray-600">Centang babak di tabel, lalu isi jam mulai pertama dan jeda antarbabak. Jam diisi dari atas ke bawah. Tanggal dan lokasi ikut diisi bila Anda menuliskannya. Periksa hasilnya, lalu tekan Simpan jadwal.</p>
@@ -132,8 +149,8 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
                                     <p class="mt-1"><?= komponen('lencana', ['label' => JadwalPertandingan::STATUS[$status], 'warna' => $warnaStatus[$status], 'ikon' => $ikonStatus[$status]]) ?></p>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-3 lg:col-span-8">
-                                <div class="col-span-2">
+                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:col-span-8">
+                                <div class="col-span-2 sm:col-span-3">
                                     <label for="<?= $awal ?>-tanggal" class="mb-1 block text-sm font-semibold text-gray-900">Tanggal</label>
                                     <input type="date" id="<?= $awal ?>-tanggal" name="babak[<?= $b['id'] ?>][tanggal]" class="<?= $kelasIsian(isset($g['tanggal'])) ?>"
                                         value="<?= esc($nilai($b, 'tanggal', (string) $b['tanggal']), 'attr') ?>"<?= $rentangTanggal ?> data-kotak="tanggal"<?= isset($g['tanggal']) ? ' aria-invalid="true" aria-describedby="' . $awal . '-tanggal-galat"' : '' ?>>
@@ -146,6 +163,12 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
                                     <?php if (isset($g['jam_mulai'])) : ?><p id="<?= $awal ?>-jam-galat" class="mt-1 text-sm text-red-700"><?= esc($g['jam_mulai']) ?></p><?php endif ?>
                                 </div>
                                 <div>
+                                    <label for="<?= $awal ?>-acara" class="mb-1 block text-sm font-semibold text-gray-900">Nomor acara</label>
+                                    <input type="text" id="<?= $awal ?>-acara" name="babak[<?= $b['id'] ?>][nomor_acara]" class="<?= $kelasIsian(isset($g['nomor_acara'])) ?>"
+                                        value="<?= esc($nilai($b, 'nomor_acara', (string) $b['nomor_acara']), 'attr') ?>" inputmode="numeric" maxlength="4" placeholder="Boleh kosong"<?= isset($g['nomor_acara']) ? ' aria-invalid="true" aria-describedby="' . $awal . '-acara-galat"' : '' ?>>
+                                    <?php if (isset($g['nomor_acara'])) : ?><p id="<?= $awal ?>-acara-galat" class="mt-1 text-sm text-red-700"><?= esc($g['nomor_acara']) ?></p><?php endif ?>
+                                </div>
+                                <div class="col-span-2 sm:col-span-1">
                                     <label for="<?= $awal ?>-lokasi" class="mb-1 block text-sm font-semibold text-gray-900">Lokasi</label>
                                     <input type="text" id="<?= $awal ?>-lokasi" name="babak[<?= $b['id'] ?>][lokasi]" class="<?= $kelasIsian(isset($g['lokasi'])) ?>"
                                         value="<?= esc($nilai($b, 'lokasi', $b['lokasi']), 'attr') ?>" maxlength="<?= JadwalPertandingan::LOKASI_MAKSIMAL ?>" placeholder="Boleh kosong" data-kotak="lokasi"<?= isset($g['lokasi']) ? ' aria-invalid="true" aria-describedby="' . $awal . '-lokasi-galat"' : '' ?>>
@@ -171,4 +194,5 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
 <?= $this->section('skrip') ?>
 <script src="<?= aset('js/pilih-tanggal.js') ?>"></script>
 <script src="<?= aset('js/admin-jadwal-pertandingan.js') ?>"></script>
+<script src="<?= aset('js/konfirmasi.js') ?>"></script>
 <?= $this->endSection() ?>

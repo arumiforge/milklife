@@ -20,6 +20,8 @@ use DateTimeImmutable;
  *   Indonesia), jam mulai, dan lokasi; alat "Isi berurutan"; sakelar tampil
  *   untuk umum; unduhan PDF per hari.
  * - `simpan`: simpan semua baris sekaligus; bila ada yang salah tidak ada yang tersimpan.
+ * - `nomorAcara`: beri nomor acara semua babak terjadwal berurutan mulai
+ *   nomor awal (F11-07).
  * - `simpanBabak`: isian jadwal satu babak dari halaman hasil babak.
  * - `pdf`: jadwal satu hari, juga selama halaman publik belum dibuka.
  */
@@ -36,6 +38,8 @@ class JadwalPertandinganController extends BaseController
             'kini'   => new DateTimeImmutable('now'),
             'galat'  => (array) (session('galat_jadwal') ?? []),
             'isian'  => (array) (session('isian_jadwal') ?? []),
+            // Nomor acara (F11-07).
+            'acaraAwal' => (string) (session('isian_acara_awal') ?? setting('NomorAcara.awal') ?? 101),
         ]);
     }
 
@@ -55,6 +59,30 @@ class JadwalPertandinganController extends BaseController
         return redirect()->to('admin/jadwal-pertandingan')->with('pesan_sukses', 'Jadwal pertandingan tersimpan.');
     }
 
+    public function nomorAcara(): RedirectResponse
+    {
+        $jadwal    = new JadwalPertandingan();
+        $terjadwal = count(array_filter($jadwal->semua(), static fn (array $b): bool => $b['tanggal'] !== null));
+        $isian     = $this->request->getPost('awal');
+        $periksa   = JadwalPertandingan::periksaAwal($isian, $terjadwal);
+
+        if ($periksa['awal'] === null) {
+            return redirect()->to(site_url('admin/jadwal-pertandingan') . '#nomor-acara')
+                ->with('isian_acara_awal', is_string($isian) ? $isian : '')
+                ->with('pesan_galat', 'Nomor acara belum diberi. ' . $periksa['galat']);
+        }
+
+        if ($terjadwal === 0) {
+            return redirect()->to(site_url('admin/jadwal-pertandingan') . '#nomor-acara')
+                ->with('pesan_galat', 'Belum ada babak yang punya tanggal. Isi tanggal babak dan simpan jadwal dulu, lalu beri nomor acara.');
+        }
+
+        $jumlah = $jadwal->beriNomorAcara($periksa['awal']);
+
+        return redirect()->to(site_url('admin/jadwal-pertandingan') . '#nomor-acara')
+            ->with('pesan_sukses', $jumlah . ' babak terjadwal diberi nomor acara ' . $periksa['awal'] . ' sampai ' . ($periksa['awal'] + $jumlah - 1) . '.');
+    }
+
     public function simpanBabak(int $id): RedirectResponse
     {
         if ((new HasilLomba())->babak($id) === null) {
@@ -66,6 +94,11 @@ class JadwalPertandinganController extends BaseController
             'jam_mulai' => $this->request->getPost('jam_mulai'),
             'lokasi'    => $this->request->getPost('lokasi'),
         ];
+
+        // Isian nomor acara (F11-07); formulir lama tanpa kotak ini tidak mengubahnya.
+        if ($this->request->getPost('nomor_acara') !== null) {
+            $isian['nomor_acara'] = $this->request->getPost('nomor_acara');
+        }
         $galat = (new JadwalPertandingan())->simpan($id, $isian);
 
         if ($galat !== []) {

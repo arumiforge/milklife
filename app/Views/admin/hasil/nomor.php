@@ -17,6 +17,7 @@
  */
 
 use App\Libraries\Hasil\HasilLomba;
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\JenisHasil;
 
 $beregu   = $nomor['jenis'] === 'beregu';
@@ -86,6 +87,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
         <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-babak-<?= $b['id'] ?>">
             <div class="flex flex-wrap items-center gap-3">
                 <h2 class="me-auto flex min-w-0 flex-wrap items-center gap-2 text-lg font-bold break-words text-gray-900" id="judul-babak-<?= $b['id'] ?>">
+                    <?php if (($b['nomor_acara'] ?? null) !== null) : ?><span class="text-gray-600"><?= esc(JadwalPertandingan::labelAcara($b['nomor_acara'])) ?></span><?php endif ?>
                     <?= esc($b['nama']) ?>
                     <?php if ($b['final']) : ?><?= komponen('lencana', ['label' => 'Final', 'warna' => 'biru']) ?><?php endif ?>
                 </h2>

@@ -1028,22 +1028,24 @@ final class PaketPendaftaran
 
     /**
      * Jadwal babak dari paket (F9-07), diperiksa seperti isian admin; isian
-     * yang tidak sah dikosongkan.
+     * yang tidak sah dikosongkan. Nomor acara (F11-07) tidak sah atau paket
+     * lama = tanpa nomor acara.
      *
      * @param array<string, mixed> $b
      *
-     * @return array{tanggal: string|null, jam_mulai: string|null, lokasi: string|null}
+     * @return array{tanggal: string|null, jam_mulai: string|null, lokasi: string|null, nomor_acara: int|null}
      */
     private static function jadwalBabak(array $b): array
     {
-        $kosong  = ['tanggal' => null, 'jam_mulai' => null, 'lokasi' => null];
+        $acara   = is_numeric($b['nomor_acara'] ?? null) && (int) $b['nomor_acara'] >= 1 && (int) $b['nomor_acara'] <= JadwalPertandingan::NOMOR_ACARA_MAKSIMAL ? (int) $b['nomor_acara'] : null;
+        $kosong  = ['tanggal' => null, 'jam_mulai' => null, 'lokasi' => null, 'nomor_acara' => $acara];
         $periksa = JadwalPertandingan::periksa([
             'tanggal'   => is_string($b['tanggal'] ?? null) ? $b['tanggal'] : '',
             'jam_mulai' => is_string($b['jam_mulai'] ?? null) ? $b['jam_mulai'] : '',
             'lokasi'    => is_string($b['lokasi'] ?? null) ? mb_substr($b['lokasi'], 0, JadwalPertandingan::LOKASI_MAKSIMAL) : '',
         ]);
 
-        return $periksa['galat'] === [] ? $periksa['data'] : $kosong;
+        return $periksa['galat'] === [] ? $periksa['data'] + ['nomor_acara' => $acara] : $kosong;
     }
 
     /**
@@ -1134,6 +1136,8 @@ final class PaketPendaftaran
                 'nama' => $b['nama'], 'final' => (int) $b['final'], 'urutan' => (int) $b['urutan'], 'dibuat_pada' => $b['dibuat_pada'],
                 // Jadwal pertandingan (F9-07).
                 'tanggal' => $b['tanggal'], 'jam_mulai' => $b['jam_mulai'], 'lokasi' => $b['lokasi'],
+                // Nomor acara (F11-07).
+                'nomor_acara' => $b['nomor_acara'],
                 // Seri dan lintasan (F9-08).
                 'jumlah_seri' => $b['jumlah_seri'], 'lolos_q' => $b['lolos_q'], 'lolos_q_kecil' => $b['lolos_q_kecil'],
                 'benih' => $b['benih'], 'seri_dikunci_pada' => $b['seri_dikunci_pada'],

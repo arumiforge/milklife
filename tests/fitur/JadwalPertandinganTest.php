@@ -233,6 +233,135 @@ final class JadwalPertandinganTest extends UjiBasisData
         $this->kirimSebagaiAdmin('admin/hasil/babak/999999/jadwal', ['tanggal' => self::HARI_NANTI]);
     }
 
+    // ---------- Nomor acara (F11-07) ----------
+
+    public function testNomorAcaraOtomatisDariUrutanJadwal(): void
+    {
+        $babak  = $this->babakContoh();
+        $jadwal = new JadwalPertandingan();
+        // Final disimpan lebih dulu, tetapi Penyisihan lebih pagi, jadi Penyisihan nomor pertama.
+        $jadwal->simpan($babak['final'], ['tanggal' => self::HARI_NANTI, 'jam_mulai' => '10:00']);
+        $jadwal->simpan($babak['penyisihan'], ['tanggal' => self::HARI_NANTI, 'jam_mulai' => '07:30']);
+        $tambahan = (new HasilLomba())->tambahBabak($this->idInduk['lari60putri'], 'Penyisihan', false, 'kosong')['id'];
+
+        // Sebelum diberi nomor: babak tampil wajar tanpa kolom Acara (K139).
+        setting('HalamanDepan.tampil_jadwal', true);
+        $xpath = $this->xpathDari($this->get('jadwal'));
+        $this->assertSame(0, $xpath->query('//table[@data-tabel-jadwal]//th[normalize-space()="Acara"]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-nomor-acara]')->length);
+
+        $admin = $this->xpathDari($this->bukaSebagaiAdmin('admin/jadwal-pertandingan'));
+        $this->assertSame('101', $admin->query('//form[@action="' . site_url('admin/jadwal-pertandingan/nomor-acara') . '"]//input[@name="awal"]')->item(0)->getAttribute('value'));
+
+        $this->kirimSebagaiAdmin('admin/hasil/babak/' . $babak['putri'] . '/jadwal', ['tanggal' => self::HARI_NANTI2, 'jam_mulai' => '', 'lokasi' => '']);
+
+        $beri = $this->kirimSebagaiAdmin('admin/jadwal-pertandingan/nomor-acara', ['awal' => '201']);
+        $beri->assertRedirectTo(site_url('admin/jadwal-pertandingan') . '#nomor-acara');
+        $beri->assertSessionHas('pesan_sukses', '3 babak terjadwal diberi nomor acara 201 sampai 203.');
+
+        $this->assertSame(201, $this->acaraDb($babak['penyisihan']));
+        $this->assertSame(202, $this->acaraDb($babak['final']));
+        $this->assertSame(203, $this->acaraDb($babak['putri']));
+        $this->assertNull($this->acaraDb($tambahan));
+        $this->assertSame(201, (int) setting('NomorAcara.awal'));
+
+        // Tampil di jadwal publik (tabel dan kartu), PDF jadwal, lembar juri, dan isian admin.
+        $xpath = $this->xpathDari($this->get('jadwal'));
+        $this->assertSame(1, $xpath->query('//table[@data-tabel-jadwal]//th[normalize-space()="Acara"]')->length);
+        $this->assertSame('201', trim($xpath->query('//table[@data-tabel-jadwal]/tbody/tr[@data-babak="' . $babak['penyisihan'] . '"]/td[1]')->item(0)->textContent));
+        $this->assertSame('Acara 202', trim($xpath->query('//li[@data-babak="' . $babak['final'] . '"]//*[@data-nomor-acara]')->item(0)->textContent));
+
+        $html = (new App\Libraries\Hasil\UnduhanJadwal(self::HARI_NANTI, (new JadwalPertandingan())->perHari()[self::HARI_NANTI]))->html(false);
+        $this->assertStringContainsString('<th width="15mm">Acara</th>', $html);
+
+        $juri = $this->bukaSebagaiAdmin('admin/juri');
+        $this->assertStringContainsString('Acara 201 · Penyisihan', html_entity_decode((string) $juri->getBody()));
+        $this->assertStringContainsString('Acara 202 · ', html_entity_decode((string) $this->bukaSebagaiAdmin('admin/juri/babak/' . $babak['final'])->getBody()));
+
+        $admin = $this->xpathDari($this->bukaSebagaiAdmin('admin/jadwal-pertandingan'));
+        $this->assertSame('203', $admin->query('//input[@name="babak[' . $babak['putri'] . '][nomor_acara]"]')->item(0)->getAttribute('value'));
+        $this->assertSame('', $admin->query('//input[@name="babak[' . $tambahan . '][nomor_acara]"]')->item(0)->getAttribute('value'));
+        $this->assertSame('201', $admin->query('//input[@name="awal"]')->item(0)->getAttribute('value'));
+
+        // Diberi ulang: nomor lama diganti, tidak bertabrakan.
+        $this->kirimSebagaiAdmin('admin/jadwal-pertandingan/nomor-acara', ['awal' => '202']);
+        $this->assertSame([202, 203, 204], [$this->acaraDb($babak['penyisihan']), $this->acaraDb($babak['final']), $this->acaraDb($babak['putri'])]);
+    }
+
+    public function testNomorAcaraDiubahPerBabakDanTidakBolehKembar(): void
+    {
+        $babak = $this->babakContoh();
+        $isi   = static fn (string $acara): array => ['tanggal' => self::HARI_NANTI, 'jam_mulai' => '', 'lokasi' => '', 'nomor_acara' => $acara];
+
+        $simpan = $this->kirimSebagaiAdmin('admin/jadwal-pertandingan', ['babak' => [
+            $babak['penyisihan'] => $isi('105'),
+            $babak['final']      => $isi(' 110 '),
+            $babak['putri']      => $isi(''),
+        ]]);
+        $this->assertBerhasilDialihkan($simpan, 'admin/jadwal-pertandingan', 'Jadwal pertandingan tersimpan.');
+        $this->assertSame([105, 110, null], [$this->acaraDb($babak['penyisihan']), $this->acaraDb($babak['final']), $this->acaraDb($babak['putri'])]);
+
+        // Kembar dengan babak lain atau bukan angka: tidak ada yang tersimpan.
+        $kembar = $this->kirimSebagaiAdmin('admin/jadwal-pertandingan', ['babak' => [
+            $babak['putri'] => $isi('110'),
+        ]]);
+        $kembar->assertSessionHas('galat_jadwal');
+        $this->assertStringContainsString('Nomor acara 110 sudah dipakai Lari 60 m putra KU 10 Final', session('galat_jadwal')[$babak['putri']]['nomor_acara']);
+        $this->assertNull($this->acaraDb($babak['putri']));
+
+        $this->assertArrayHasKey('nomor_acara', (new JadwalPertandingan())->simpanBanyak([$babak['putri'] => $isi('A1')])[$babak['putri']]);
+        $this->assertArrayHasKey('nomor_acara', (new JadwalPertandingan())->simpanBanyak([$babak['putri'] => $isi('0')])[$babak['putri']]);
+
+        // Bertukar nomor dalam satu simpanan boleh.
+        $this->assertSame([], (new JadwalPertandingan())->simpanBanyak([$babak['penyisihan'] => $isi('110'), $babak['final'] => $isi('105')]));
+        $this->assertSame([110, 105], [$this->acaraDb($babak['penyisihan']), $this->acaraDb($babak['final'])]);
+
+        // Dari halaman babak; formulir tanpa kotak nomor acara tidak mengubahnya.
+        $this->kirimSebagaiAdmin('admin/hasil/babak/' . $babak['putri'] . '/jadwal', ['tanggal' => self::HARI_NANTI2, 'jam_mulai' => '', 'lokasi' => '', 'nomor_acara' => '120']);
+        $this->assertSame(120, $this->acaraDb($babak['putri']));
+        $this->assertSame('120', $this->xpathDari($this->bukaSebagaiAdmin('admin/hasil/babak/' . $babak['putri']))->query('//input[@name="nomor_acara"]')->item(0)->getAttribute('value'));
+        $this->kirimSebagaiAdmin('admin/hasil/babak/' . $babak['putri'] . '/jadwal', ['tanggal' => self::HARI_NANTI2, 'jam_mulai' => '08:00', 'lokasi' => '']);
+        $this->assertSame(120, $this->acaraDb($babak['putri']));
+
+        // Nomor awal salah atau belum ada babak terjadwal.
+        $salah = $this->kirimSebagaiAdmin('admin/jadwal-pertandingan/nomor-acara', ['awal' => 'seratus']);
+        $salah->assertSessionHas('pesan_galat');
+        $this->assertSame(['awal' => null, 'galat' => 'Nomor awal terlalu besar untuk 3 babak. Nomor acara paling besar 9999.'], JadwalPertandingan::periksaAwal('9998', 3));
+        $this->assertSame(['awal' => 9997, 'galat' => null], JadwalPertandingan::periksaAwal('9997', 3));
+        $this->assertSame(110, $this->acaraDb($babak['penyisihan']));
+    }
+
+    public function testNomorAcaraDiHasilDaftarSeriDanUnduhan(): void
+    {
+        $babak = $this->babakContoh();
+        (new JadwalPertandingan())->simpan($babak['final'], ['tanggal' => self::HARI_NANTI, 'jam_mulai' => '10:00', 'lokasi' => '', 'nomor_acara' => '107']);
+
+        $hasil = new HasilLomba();
+        $nomor = $hasil->nomor($this->idInduk['lari60putra']);
+        $semua = $hasil->semuaBabak($nomor);
+        $this->assertSame([null, 107], array_column($semua, 'nomor_acara'));
+        $this->assertSame(107, $hasil->babak($babak['final'])['nomor_acara']);
+
+        // Halaman hasil admin dan PDF hasil.
+        $this->assertStringContainsString('Acara 107', (string) $this->bukaSebagaiAdmin('admin/hasil/nomor/' . $this->idInduk['lari60putra'])->getBody());
+        $this->assertStringContainsString('Acara 107 · Final', (new App\Libraries\Hasil\UnduhanHasil($nomor, $semua))->html(false));
+
+        // Excel hasil: kolom Acara hanya bila ada babak bernomor.
+        $lembar = (new App\Libraries\Hasil\UnduhanHasil($nomor, $semua))->excel()->lembar();
+        $this->assertSame('Acara', $lembar->getSheet(1)->getCell('A1')->getValue());
+        $this->assertSame(107, (int) $lembar->getSheet(1)->getCell('A2')->getValue());
+        $tanpa = (new App\Libraries\Hasil\UnduhanHasil($nomor, [$semua[0]]))->excel()->lembar();
+        $this->assertSame('Peringkat', $tanpa->getSheet(0)->getCell('A1')->getValue());
+
+        // Daftar seri: bagan, halaman admin, PDF, dan Excel.
+        $seri = new App\Libraries\Hasil\SeriLintasan();
+        $this->assertSame(107, $seri->babak($babak['final'])['nomor_acara']);
+        $this->assertSame([null, 107], array_column($seri->bagan($this->idInduk['lari60putra'], false), 'nomor_acara'));
+        $this->assertStringContainsString('Acara 107 · Final', html_entity_decode((string) $this->bukaSebagaiAdmin('admin/seri/babak/' . $babak['final'])->getBody()));
+        $daftar = [['babak' => $seri->babak($babak['final']), 'seri' => [0 => []], 'lolos' => ['q' => 0, 'q_kecil' => 0]]];
+        $this->assertStringContainsString('Acara 107 · Lari 60 m', (new App\Libraries\Hasil\UnduhanSeri('Lari 60 m', $daftar))->html(false));
+    }
+
     // ---------- Status ----------
 
     public function testStatusOtomatisDanPilihHari(): void
@@ -333,7 +462,7 @@ final class JadwalPertandinganTest extends UjiBasisData
     public function testPaketPindahServerMembawaJadwal(): void
     {
         $babak = $this->babakContoh();
-        (new JadwalPertandingan())->simpan($babak['final'], ['tanggal' => self::HARI_NANTI, 'jam_mulai' => '10:00', 'lokasi' => 'Lintasan utama']);
+        (new JadwalPertandingan())->simpan($babak['final'], ['tanggal' => self::HARI_NANTI, 'jam_mulai' => '10:00', 'lokasi' => 'Lintasan utama', 'nomor_acara' => '112']);
         $zip = tempnam(sys_get_temp_dir(), 'milklife-paket-') . '.zip';
 
         try {
@@ -350,6 +479,8 @@ final class JadwalPertandinganTest extends UjiBasisData
 
         $baru = $this->db->table('babak')->where('nama', 'Final')->where('nomor_lomba_id', $this->idInduk['lari60putra'])->get()->getRow();
         $this->assertSame([self::HARI_NANTI, '10:00:00', 'Lintasan utama'], [$baru->tanggal, $baru->jam_mulai, $baru->lokasi]);
+        // Nomor acara (F11-07) ikut paket.
+        $this->assertSame('112', (string) $baru->nomor_acara);
         $this->assertSame(1, $this->db->table('babak')->where('tanggal IS NULL', null, false)->where('nama', 'Penyisihan')->countAllResults());
     }
 
@@ -392,6 +523,13 @@ final class JadwalPertandinganTest extends UjiBasisData
             'final'      => $hasil->tambahBabak($this->idInduk['lari60putra'], 'Final', true, 'semua')['id'],
             'putri'      => $hasil->tambahBabak($this->idInduk['lari60putri'], 'Final', true, 'kosong')['id'],
         ];
+    }
+
+    private function acaraDb(int $babak): ?int
+    {
+        $nomor = $this->db->table('babak')->select('nomor_acara')->where('id', $babak)->get()->getRow()->nomor_acara;
+
+        return $nomor === null ? null : (int) $nomor;
     }
 
     /**

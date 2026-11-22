@@ -2,7 +2,8 @@
 /**
  * Jadwal pertandingan satu hari untuk mPDF (F9-07), A4 tegak
  * (`App\Libraries\Hasil\UnduhanJadwal`). Kolom seperti `sumber/foto-acara/contohjadwal1.jpg`:
- * waktu, nomor, putra/putri, kelompok umur, babak; ditambah lokasi.
+ * waktu, nomor, putra/putri, kelompok umur, babak; ditambah lokasi, dan nomor
+ * acara (F11-07) bila ada babak hari itu yang punya nomor.
  *
  * @var string                     $hari      "Rabu, 15 Juli 2026"
  * @var list<array<string, mixed>> $babak     `JadwalPertandingan::perHari()` satu hari
@@ -12,6 +13,7 @@
  */
 
 $adaLokasi = in_array(true, array_map(static fn (array $b): bool => $b['lokasi'] !== '', $babak), true);
+$adaAcara  = in_array(true, array_map(static fn (array $b): bool => ($b['nomor_acara'] ?? null) !== null, $babak), true);
 ?>
 <!doctype html>
 <html lang="id">
@@ -51,6 +53,7 @@ $adaLokasi = in_array(true, array_map(static fn (array $b): bool => $b['lokasi']
 <table class="data">
     <thead>
         <tr>
+            <?php if ($adaAcara) : ?><th width="15mm">Acara</th><?php endif ?>
             <th width="22mm">Waktu</th>
             <th>Nomor</th>
             <th width="22mm">Putra/Putri</th>
@@ -62,6 +65,7 @@ $adaLokasi = in_array(true, array_map(static fn (array $b): bool => $b['lokasi']
     <tbody>
         <?php foreach ($babak as $i => $b) : ?>
             <tr<?= $i % 2 === 1 ? ' class="genap"' : '' ?>>
+                <?php if ($adaAcara) : ?><td class="tebal"><?= $b['nomor_acara'] ?? '–' ?></td><?php endif ?>
                 <td class="waktu"><?= $b['jam'] === null ? '–' : esc($b['jam']) . ' WIB' ?></td>
                 <td class="tebal"><?= esc($b['nomor']) ?></td>
                 <td><?= esc($b['jenis_kelamin']) ?></td>
@@ -71,7 +75,7 @@ $adaLokasi = in_array(true, array_map(static fn (array $b): bool => $b['lokasi']
             </tr>
         <?php endforeach ?>
         <?php if ($babak === []) : ?>
-            <tr><td colspan="<?= $adaLokasi ? 6 : 5 ?>" class="kosong">Belum ada babak di hari ini.</td></tr>
+            <tr><td colspan="<?= 5 + ($adaLokasi ? 1 : 0) + ($adaAcara ? 1 : 0) ?>" class="kosong">Belum ada babak di hari ini.</td></tr>
         <?php endif ?>
     </tbody>
 </table>
