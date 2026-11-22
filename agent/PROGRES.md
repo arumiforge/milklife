@@ -10,11 +10,12 @@ Diperbarui: 22 November 2026
 |---|---|
 | [F11-01 Ganti atlet oleh admin](tugas/F11-01-ganti-atlet.md) | selesai (#211) |
 | [F11-02 Klasemen per kelompok umur](tugas/F11-02-klasemen-kelompok-umur.md) | selesai (#212) |
-| [F11-03 Status nomor dan batas peserta](tugas/F11-03-status-nomor-batas-peserta.md) | dikerjakan |
-| [F11-04 Cara pencatatan waktu](tugas/F11-04-cara-pencatatan-waktu.md) | dikerjakan |
-| [F11-05 Kode NM dan r](tugas/F11-05-kode-nm-r.md) | dikerjakan |
+| [F11-03 Status nomor dan batas peserta](tugas/F11-03-status-nomor-batas-peserta.md) | selesai (#213) |
+| [F11-04 Cara pencatatan waktu](tugas/F11-04-cara-pencatatan-waktu.md) | selesai (#214) |
+| [F11-05 Kode NM dan r](tugas/F11-05-kode-nm-r.md) | selesai (#215) |
 | [F11-06 Rekor kejuaraan](tugas/F11-06-rekor-kejuaraan.md) | rencana |
-| [F11-07 Nomor acara](tugas/F11-07-nomor-acara.md) | dikerjakan |
+| [F11-07 Nomor acara](tugas/F11-07-nomor-acara.md) | selesai (#216) |
+| [F11-09 Daftar tampilan videotron](tugas/F11-09-daftar-tampilan-videotron.md) | selesai (#218) |
 | [F11-10 Panel admin ringkas](tugas/F11-10-panel-admin-ringkas.md) | rencana |
 | [F11-11 Cadangan di Pengaturan](tugas/F11-11-cadangan-pengaturan.md) | rencana |
 | [F11-12 Halaman depan dan publik dirapikan](tugas/F11-12-halaman-depan-publik.md) | rencana |

@@ -69,7 +69,13 @@ $routes->get('galeri', 'GaleriController::index');
 // ---------- Papan videotron (F9-13) ----------
 // Hanya data terbit; 404 selama sakelar `Videotron.tampil` mati.
 $routes->get('layar', 'LayarController::index');
+$routes->get('layar/putar', 'LayarController::putar');
 $routes->get('layar/data', 'LayarController::data');
+// Tampilan tetap videotron (F11-09, K173) dan datanya.
+$routes->get('layar/data/(seri|sesi)/(:segment)/(:segment)', 'LayarController::dataTampilan/$1/$2/$3');
+$routes->get('layar/data/(klasemen|kelompok-umur|nomor)/(:segment)', 'LayarController::dataTampilan/$1/$2');
+$routes->get('layar/(seri|sesi)/(:segment)/(:segment)', 'LayarController::tampil/$1/$2/$3');
+$routes->get('layar/(klasemen|kelompok-umur|nomor)/(:segment)', 'LayarController::tampil/$1/$2');
 // ---------- Akhir papan videotron ----------
 
 // ---------- Pendaftaran (Tahap 4) ----------

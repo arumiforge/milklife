@@ -12,10 +12,12 @@ use Tests\Support\PanelDataContoh;
 use Tests\Support\UjiBasisData;
 
 /**
- * Papan videotron `/layar` (F9-13, K141): sakelar bawaan mati, hanya data
+ * Papan putar videotron `/layar/putar` (F9-13, K141; pindah dari `/layar` di
+ * F11-09, K173): sakelar bawaan mati, hanya data
  * terbit, JSON yang bisa ditembolok, jadwal dan status dari `JadwalPertandingan` (F9-07), latar
  * G9-06 hanya bila berkasnya ada, dan Pengaturan > Videotron.
  *
+ * Daftar dan tampilan tetap `/layar/<jenis>/…` diuji `TampilanVideotronTest`.
  * Tampilan di berbagai ukuran layar diuji terpisah dengan Playwright
  * (`npm run uji:layar`, `alat/uji-layar.mjs`).
  *
@@ -46,7 +48,7 @@ final class PapanVideotronTest extends UjiBasisData
     {
         $this->assertFalse(PapanVideotron::tampil());
 
-        foreach (['layar', 'layar/data'] as $alamat) {
+        foreach (['layar', 'layar/putar', 'layar/data'] as $alamat) {
             try {
                 $this->get($alamat);
                 $this->fail($alamat . ' seharusnya 404 selama sakelar mati.');
@@ -61,7 +63,7 @@ final class PapanVideotronTest extends UjiBasisData
         [$terbit, $belum] = $this->duaNomorBerhasil();
         setting('Videotron.tampil', true);
 
-        $halaman = $this->get('layar');
+        $halaman = $this->get('layar/putar');
         $halaman->assertOK();
         $halaman->assertHeader('X-Robots-Tag', 'noindex');
         $layar = $this->xpathDari($halaman)->query('//*[@data-layar]')->item(0);
@@ -151,14 +153,14 @@ final class PapanVideotronTest extends UjiBasisData
     {
         setting('Videotron.tampil', true);
 
-        $layar = $this->xpathDari($this->get('layar'))->query('//*[@data-layar]')->item(0);
+        $layar = $this->xpathDari($this->get('layar/putar'))->query('//*[@data-layar]')->item(0);
         $this->assertInstanceOf(DOMElement::class, $layar);
         $this->assertFalse($layar->hasAttribute('data-latar-dasar'));
 
         $this->taruhGambarUji('layar/' . LayarController::GAMBAR_LATAR['dasar']);
         service('cache')->clean();
 
-        $layar = $this->xpathDari($this->get('layar'))->query('//*[@data-layar]')->item(0);
+        $layar = $this->xpathDari($this->get('layar/putar'))->query('//*[@data-layar]')->item(0);
         $this->assertInstanceOf(DOMElement::class, $layar);
         $this->assertStringContainsString('gambar/layar/latar-dasar.webp', $layar->getAttribute('data-latar-dasar'));
         $this->assertFalse($layar->hasAttribute('data-gambar-podium'));
@@ -168,7 +170,7 @@ final class PapanVideotronTest extends UjiBasisData
         $this->taruhGambarUji('layar/medali-emas.webp');
         service('cache')->clean();
 
-        $layar = $this->xpathDari($this->get('layar'))->query('//*[@data-layar]')->item(0);
+        $layar = $this->xpathDari($this->get('layar/putar'))->query('//*[@data-layar]')->item(0);
         $this->assertInstanceOf(DOMElement::class, $layar);
         $this->assertStringContainsString('gambar/layar/podium.webp', $layar->getAttribute('data-gambar-podium'));
         $this->assertStringContainsString('gambar/layar/medali-emas.webp', $layar->getAttribute('data-gambar-medali-emas'));
@@ -187,7 +189,7 @@ final class PapanVideotronTest extends UjiBasisData
 
         $halaman = $this->bukaSebagaiAdmin('admin/pengaturan/videotron');
         $halaman->assertOK();
-        $halaman->assertSee('Tampilkan papan hasil di /layar');
+        $halaman->assertSee('Tampilkan videotron di /layar');
         $this->assertSame(0, $this->xpathDari($halaman)->query('//input[@id="tampil"][@checked]')->length);
 
         $salah = $this->kirimSebagaiAdmin('admin/pengaturan/videotron', ['tampil' => '1', 'lama' => '2', 'isi' => []]);
