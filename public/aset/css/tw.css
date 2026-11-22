@@ -2211,10 +2211,6 @@
     border-inline-start-style: var(--tw-border-style);
     border-inline-start-width: 0px;
   }
-  .border-s-4 {
-    border-inline-start-style: var(--tw-border-style);
-    border-inline-start-width: 4px;
-  }
   .border-e {
     border-inline-end-style: var(--tw-border-style);
     border-inline-end-width: 1px;
@@ -2246,10 +2242,6 @@
   .border-b-2 {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 2px;
-  }
-  .border-l-2 {
-    border-left-style: var(--tw-border-style);
-    border-left-width: 2px;
   }
   .border-dashed {
     --tw-border-style: dashed;
@@ -2432,9 +2424,6 @@
   .border-oranye-300 {
     border-color: var(--color-oranye-300);
   }
-  .border-oranye-400 {
-    border-color: var(--color-oranye-400);
-  }
   .border-primary-50 {
     border-color: var(--color-primary-50);
   }
@@ -2497,9 +2486,6 @@
   }
   .border-yellow-500 {
     border-color: var(--color-yellow-500);
-  }
-  .border-s-oranye-500 {
-    border-inline-start-color: var(--color-oranye-500);
   }
   .border-t-green-600 {
     border-top-color: var(--color-green-600);
@@ -3113,9 +3099,6 @@
   }
   .pb-\[env\(safe-area-inset-bottom\)\] {
     padding-bottom: env(safe-area-inset-bottom);
-  }
-  .pl-2 {
-    padding-left: calc(var(--spacing) * 2);
   }
   .text-center {
     text-align: center;
