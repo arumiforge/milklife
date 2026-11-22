@@ -12,6 +12,7 @@
 //
 // Jalankan: npm run uji:layar   (atau node alat/uji-layar.mjs)
 // Butuh Chromium Playwright, atau Chrome lain lewat CHROMIUM_PATH (di CI: Chrome bawaan runner).
+import { existsSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
@@ -77,15 +78,21 @@ export function dataUji(versi = 'uji-1') {
     };
 }
 
+// Gambar juara umum G9-06 yang berkasnya ada, seperti LayarController::GAMBAR_JUARA.
+const GAMBAR_JUARA = { podium: 'podium.webp', 'medali-emas': 'medali-emas.webp', 'medali-perak': 'medali-perak.webp', 'medali-perunggu': 'medali-perunggu.webp' };
+
 function halamanUji(data) {
     const attr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const gambar = Object.entries(GAMBAR_JUARA)
+        .filter(([, berkas]) => existsSync(join(publik, 'aset/gambar/layar', berkas)))
+        .map(([kunci, berkas]) => ` data-gambar-${kunci}="/aset/gambar/layar/${berkas}"`).join('');
     // Sama dengan app/Views/layar/index.php, ditambah data-uji dan tanpa sumber jaringan.
     return `<!doctype html>
 <html lang="id" class="h-full bg-primary-950">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Uji papan hasil</title><link rel="stylesheet" href="/aset/css/tw.css"></head>
 <body class="h-full overflow-hidden bg-primary-950 font-sans text-white antialiased">
-<div id="layar" class="fixed inset-0 overflow-hidden" data-layar data-uji data-sumber="/layar/data" data-segar="30" data-awal="${attr(JSON.stringify(data))}"><h1 class="sr-only">Papan hasil</h1></div>
+<div id="layar" class="fixed inset-0 overflow-hidden" data-layar data-uji data-sumber="/layar/data" data-segar="30" data-awal="${attr(JSON.stringify(data))}"${gambar}><h1 class="sr-only">Papan hasil</h1></div>
 <button type="button" data-layar-penuh class="fixed end-3 top-3 z-30 hidden size-11 items-center justify-center rounded-lg bg-primary-900/80 text-white ring-1 ring-white/30 transition-opacity hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-white/60" aria-label="Layar penuh"><svg class="ikon size-6"></svg><svg class="ikon hidden size-6"></svg></button>
 <script type="module" src="/aset/js/layar.js"></script>
 </body></html>`;
