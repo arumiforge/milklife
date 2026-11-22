@@ -191,7 +191,8 @@ final class PengaturanAcaraTest extends UjiBasisData
         $this->assertSame('Seri 3 – 2027', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
         $this->assertSame('30 Januari – 1 Februari 2027 Stadion Karangan, Pati', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
         $this->assertSame('Lomba Lari Karangan 2027', $this->teks($xpath, '//footer//*[@data-kaki-teks]'));
-        $beranda->assertDontSee('MilkLife');
+        // Tagar acara di pesan WA tetap (F10-01); selain itu tidak ada nama lama.
+        $this->assertStringNotContainsString('MilkLife', str_replace(ltrim(App\Libraries\IsiHalamanDepan::TAGAR, '#'), '', (string) $beranda->getBody()));
 
         // Panel admin: merek di menu samping.
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/dasbor'));
