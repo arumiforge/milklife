@@ -132,7 +132,7 @@ final class PanelRuteTest extends UjiHalaman
             'admin/sekolah/12/ubah'            => 'Sekolah',
             'admin/sekolah/nama-desa'          => 'Tambahkan nama desa',
             'admin/sekolah/usulan'             => 'Usulan nama sekolah',
-            'admin/riwayat'                    => 'Riwayat perubahan',
+            'admin/riwayat'                    => 'Riwayat pendaftaran',
             'admin/atlet/nomor-dada'           => 'Urutkan nomor atlet (BIB)',
             // Pengaturan pendaftaran tetap menandai Pengaturan, bukan Pendaftaran.
             'admin/pengaturan/pendaftaran'     => 'Pendaftaran',

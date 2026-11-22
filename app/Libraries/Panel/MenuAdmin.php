@@ -43,7 +43,7 @@ final class MenuAdmin
             'Pendaftaran' => [
                 ['label' => 'Dasbor', 'ikon' => 'layout-dashboard', 'alamat' => 'admin/dasbor', 'bawah' => true],
                 ['label' => 'Pendaftaran', 'ikon' => 'clipboard-check', 'alamat' => 'admin/pendaftaran', 'bawah' => true, 'anak' => [
-                    ['label' => 'Riwayat perubahan', 'alamat' => 'admin/riwayat'],
+                    ['label' => 'Riwayat pendaftaran', 'alamat' => 'admin/riwayat'],
                 ]],
                 ['label' => 'Atlet', 'ikon' => 'users', 'alamat' => 'admin/atlet', 'bawah' => true, 'anak' => [
                     ['label' => 'Urutkan nomor atlet (BIB)', 'alamat' => 'admin/atlet/nomor-dada'],
