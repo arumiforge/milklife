@@ -82,7 +82,7 @@ $jumlahBaru   = count(array_filter($daftarBukti, static fn (array $b): bool => (
         </div>
     <?php endif ?>
 
-    <div class="grid gap-6 lg:grid-cols-3">
+    <div class="grid gap-4 lg:grid-cols-3">
         <div class="lg:col-span-2">
             <?php if ($daftarBukti === []) : ?>
                 <div class="flex flex-col items-center rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-center" data-bukti-kosong>

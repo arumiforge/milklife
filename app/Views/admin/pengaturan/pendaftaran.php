@@ -42,7 +42,7 @@ $kotak = static function (string $nama, string $label, string $jenis, string $ke
         . ($keterangan !== '' ? '<p id="' . $nama . '-keterangan" class="mt-1.5 text-sm text-gray-600">' . esc($keterangan) . '</p>' : '');
 };
 
-$kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
+$kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 $radio = 'size-4 border-gray-300 text-primary-700 focus:ring-primary-300';
 $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
 ?>
@@ -53,17 +53,17 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
 <?= $this->section('judul_halaman') ?>Pendaftaran<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="text-gray-700">
         Atur kapan sekolah bisa mendaftar dan batas-batas isian pendaftaran. Semua waktu dalam WIB.
     </p>
 
-    <div class="space-y-6">
+    <div class="space-y-4">
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
-        <form action="<?= site_url('admin/pengaturan/pendaftaran') ?>" method="post" novalidate class="space-y-6">
+        <form action="<?= site_url('admin/pengaturan/pendaftaran') ?>" method="post" novalidate class="space-y-4">
             <?= csrf_field() ?>
 
             <section class="<?= $kartu ?>" aria-labelledby="judul-jadwal-pendaftaran">

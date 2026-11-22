@@ -31,7 +31,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Semua pendaftaran yang masuk lewat halaman Pendaftaran. Buka rinciannya untuk melihat atlet,
         menandai Lunas setelah transfer diperiksa, atau menghapus pendaftaran yang batal.

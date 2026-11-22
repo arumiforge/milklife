@@ -64,7 +64,7 @@ $tabel = static function (array $bagian, string $id, string $keterangan) use ($s
 
     return $html . '</table></div>';
 };
-$kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
+$kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -75,7 +75,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 <?= $this->section('judul_halaman') ?>Rekap<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <section class="<?= $kartu ?> flex flex-wrap items-center justify-between gap-4" id="rekap-gabungan" aria-labelledby="judul-rekap-gabungan">
         <div class="min-w-0 flex-1 basis-64">
             <h2 class="flex items-center gap-2 text-lg font-bold text-gray-900" id="judul-rekap-gabungan"><?= ikon('layers', 'size-5 text-primary-700') ?> Rekap gabungan</h2>

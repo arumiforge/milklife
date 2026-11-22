@@ -1086,6 +1086,9 @@
   .-mt-6 {
     margin-top: calc(var(--spacing) * -6);
   }
+  .-mt-px {
+    margin-top: -1px;
+  }
   .mt-0\.5 {
     margin-top: calc(var(--spacing) * 0.5);
   }
@@ -1352,6 +1355,9 @@
   .h-18 {
     height: calc(var(--spacing) * 18);
   }
+  .h-20 {
+    height: calc(var(--spacing) * 20);
+  }
   .h-24 {
     height: calc(var(--spacing) * 24);
   }
@@ -1447,9 +1453,6 @@
   }
   .min-h-14 {
     min-height: calc(var(--spacing) * 14);
-  }
-  .min-h-16 {
-    min-height: calc(var(--spacing) * 16);
   }
   .min-h-24 {
     min-height: calc(var(--spacing) * 24);
@@ -4620,6 +4623,9 @@
     .sm\:px-10 {
       padding-inline: calc(var(--spacing) * 10);
     }
+    .sm\:py-4 {
+      padding-block: calc(var(--spacing) * 4);
+    }
     .sm\:py-5 {
       padding-block: calc(var(--spacing) * 5);
     }
@@ -4930,11 +4936,17 @@
     .lg\:gap-0 {
       gap: 0px;
     }
+    .lg\:gap-1\.5 {
+      gap: calc(var(--spacing) * 1.5);
+    }
     .lg\:gap-6 {
       gap: calc(var(--spacing) * 6);
     }
     .lg\:gap-10 {
       gap: calc(var(--spacing) * 10);
+    }
+    .lg\:gap-x-6 {
+      column-gap: calc(var(--spacing) * 6);
     }
     :where(.lg\:divide-x > :not(:last-child)) {
       --tw-divide-x-reverse: 0;
@@ -4974,9 +4986,6 @@
     .xl\:col-span-3 {
       grid-column: span 3 / span 3;
     }
-    .xl\:col-span-4 {
-      grid-column: span 4 / span 4;
-    }
     .xl\:col-span-5 {
       grid-column: span 5 / span 5;
     }
@@ -4997,6 +5006,9 @@
     }
     .xl\:grid-cols-4 {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .xl\:grid-cols-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
     }
     .xl\:grid-cols-6 {
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -5130,6 +5142,27 @@
     }
     .dark\:hover\:text-white:where(.dark, .dark *):hover {
       color: var(--color-white);
+    }
+  }
+  @media (width >= 64rem) {
+    @media (pointer: fine) {
+      .lg\:pointer-fine\:min-h-8 {
+        min-height: calc(var(--spacing) * 8);
+      }
+      .lg\:pointer-fine\:min-h-9 {
+        min-height: calc(var(--spacing) * 9);
+      }
+      .lg\:pointer-fine\:gap-1\.5 {
+        gap: calc(var(--spacing) * 1.5);
+      }
+      :where(.lg\:pointer-fine\:space-y-1 > :not(:last-child)) {
+        --tw-space-y-reverse: 0;
+        margin-block-start: calc(var(--spacing) * var(--tw-space-y-reverse));
+        margin-block-end: calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)));
+      }
+      .lg\:pointer-fine\:px-2\.5 {
+        padding-inline: calc(var(--spacing) * 2.5);
+      }
     }
   }
   .\[\&_\.ikon\]\:size-7 .ikon {

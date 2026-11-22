@@ -36,13 +36,13 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
 <?= $this->section('judul') ?>Jadwal pertandingan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Satu baris = satu babak di <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>, jadi jadwal selalu sama dengan babak yang diisi juri.
         Babak tanpa tanggal belum tampil di halaman Jadwal. Status Selesai muncul sendiri setelah hasil nomornya diterbitkan.
     </p>
 
-    <section id="sakelar-jadwal" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-sakelar-jadwal">
+    <section id="sakelar-jadwal" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-sakelar-jadwal">
         <h2 id="judul-sakelar-jadwal" class="text-lg font-bold text-gray-900">Tampil untuk umum</h2>
         <p class="mt-1 text-sm text-gray-600">
             <?php if ($tampil) : ?>
@@ -61,10 +61,10 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
     </section>
 
     <?php if ($babak === []) : ?>
-        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Jadwal disusun dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini untuk mengisi tanggal dan jamnya.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
+        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Jadwal disusun dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini untuk mengisi tanggal dan jamnya.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
     <?php else : ?>
         <?php if ($hari !== []) : ?>
-            <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-unduh-jadwal">
+            <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-unduh-jadwal">
                 <h2 id="judul-unduh-jadwal" class="text-lg font-bold text-gray-900">Unduh jadwal per hari</h2>
                 <p class="mt-1 text-sm text-gray-600">PDF untuk dicetak atau dibagikan ke grup ofisial. Simpan jadwal dulu supaya perubahan ikut tercetak.</p>
                 <div class="mt-3 flex flex-wrap gap-2" data-unduh-hari>
@@ -75,7 +75,7 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
             </section>
         <?php endif ?>
 
-        <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-isi-berurutan" data-isi-berurutan hidden>
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-isi-berurutan" data-isi-berurutan hidden>
             <h2 id="judul-isi-berurutan" class="text-lg font-bold text-gray-900">Isi berurutan</h2>
             <p class="mt-1 text-sm text-gray-600">Centang babak di tabel, lalu isi jam mulai pertama dan jeda antarbabak. Jam diisi dari atas ke bawah; tanggal dan lokasi ikut diisi bila ditulis. Periksa hasilnya, lalu tekan Simpan jadwal.</p>
             <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-6 xl:items-end">
@@ -105,7 +105,7 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
         <form action="<?= site_url('admin/jadwal-pertandingan') ?>" method="post" novalidate data-formulir-jadwal>
             <?= csrf_field() ?>
             <section class="rounded-2xl border border-gray-200 bg-white shadow-lembut" aria-labelledby="judul-semua-babak">
-                <header class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 p-5 sm:p-6">
+                <header class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 p-4 sm:p-5">
                     <div>
                         <h2 id="judul-semua-babak" class="text-lg font-bold text-gray-900">Semua babak</h2>
                         <p class="text-sm text-gray-600"><?= $terjadwal ?> dari <?= count($babak) ?> babak sudah punya tanggal. Waktu dalam WIB.</p>

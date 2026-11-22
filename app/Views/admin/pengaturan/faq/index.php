@@ -36,7 +36,7 @@ $ikonKategori = [
 <?= $this->section('judul_halaman') ?>Bantuan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <div class="flex items-start gap-3 rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" role="note">
@@ -49,7 +49,7 @@ $ikonKategori = [
     </div>
 
     <?php if ($jumlah === 0) : ?>
-        <section class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center" aria-labelledby="judul-bawaan">
+        <section class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-6 text-center" aria-labelledby="judul-bawaan">
             <span class="mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-700"><?= ikon('circle-help', 'size-7') ?></span>
             <h2 id="judul-bawaan" class="text-lg font-bold text-gray-900">Belum ada tanya-jawab</h2>
             <p class="mt-1 text-gray-600">
@@ -69,7 +69,7 @@ $ikonKategori = [
         $idBagian = 'kategori-' . str_replace('_', '-', (string) $kunci);
         $terakhir = count($daftar) - 1;
         ?>
-        <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="<?= esc($idBagian, 'attr') ?>" aria-labelledby="judul-<?= esc($idBagian, 'attr') ?>">
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="<?= esc($idBagian, 'attr') ?>" aria-labelledby="judul-<?= esc($idBagian, 'attr') ?>">
             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div class="min-w-0">
                     <h2 id="judul-<?= esc($idBagian, 'attr') ?>" class="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-900">

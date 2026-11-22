@@ -173,7 +173,7 @@
         },
         table: 'dataTable w-full text-left text-sm text-gray-700',
         thead: { row: '', cell: 'border-b border-gray-200 bg-gray-50 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap text-gray-600' },
-        tbody: { row: 'border-b border-gray-100 last:border-b-0 hover:bg-gray-50', cell: 'px-4 py-3 align-top' },
+        tbody: { row: 'border-b border-gray-100 last:border-b-0 hover:bg-gray-50', cell: 'px-4 py-2.5 align-top' },
         empty: { row: 'dt-empty px-4 py-8 text-center text-gray-500' },
         paging: {
             container: 'dt-paging',
@@ -423,7 +423,7 @@
 
         var gambarKosong = tabel.getAttribute('data-kosong-gambar');
         var htmlKosong = gambarKosong
-            ? '<span class="flex flex-col items-center gap-3 py-4"><img src="' + escape(gambarKosong) + '" alt="" class="h-32 w-auto" loading="lazy">'
+            ? '<span class="flex flex-col items-center gap-3 py-4"><img src="' + escape(gambarKosong) + '" alt="" class="h-24 w-auto" loading="lazy">'
                 + '<span class="max-w-md text-base font-semibold text-gray-700">' + escape(pesanKosong) + '</span></span>'
             : pesanKosong;
         var bahasa = Object.assign({}, BAHASA, { emptyTable: htmlKosong, zeroRecords: pesanKosongSaring });

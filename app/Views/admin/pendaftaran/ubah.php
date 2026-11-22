@@ -238,19 +238,19 @@ $kartuAtlet = static function (string $k, ?int $urut, array $atlet) use ($tandai
         </div>
         <input type="hidden" name="<?= $nameDasar ?>[id]" value="<?= $atlet['id'] === null ? '' : (int) $atlet['id'] ?>">
         <div class="grid grid-cols-2 gap-4 xl:grid-cols-12">
-            <div class="col-span-2 xl:col-span-4">
+            <div class="col-span-2 xl:col-span-3">
                 <label class="<?= $label ?>" for="<?= $idDasar ?>-nama">Nama lengkap</label>
                 <input type="text" class="<?= $kotak ?> uppercase" id="<?= $idDasar ?>-nama" name="<?= $nameDasar ?>[nama]"
                     value="<?= esc($atlet['nama'], 'attr') ?>" maxlength="100" required data-isian="nama"<?= $nama['aria'] ?>>
                 <?= $nama['pesan'] ?>
             </div>
-            <div class="col-span-2 xl:col-span-3">
+            <div class="col-span-2 xl:col-span-2">
                 <label class="<?= $label ?>" for="<?= $idDasar ?>-nisn">NISN</label>
                 <input type="text" class="<?= $kotak ?>" id="<?= $idDasar ?>-nisn" name="<?= $nameDasar ?>[nisn]"
                     value="<?= esc($atlet['nisn'], 'attr') ?>" inputmode="numeric" pattern="\d{10}" maxlength="10" required data-isian="nisn"<?= $nisn['aria'] ?>>
                 <?= $nisn['pesan'] ?>
             </div>
-            <div class="col-span-2 sm:col-span-1 xl:col-span-3">
+            <div class="col-span-2 sm:col-span-1 xl:col-span-5">
                 <label class="<?= $label ?>" for="<?= $idDasar ?>-tanggal-lahir">Tanggal lahir</label>
                 <input type="date" class="<?= $kotak ?>" id="<?= $idDasar ?>-tanggal-lahir" name="<?= $nameDasar ?>[tanggal_lahir]"
                     value="<?= esc($atlet['tanggal_lahir'], 'attr') ?>" required data-isian="tanggal_lahir"<?= $lahir['aria'] ?>>
@@ -366,10 +366,10 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6" id="ubah-pendaftaran" data-status="<?= esc($p['status'], 'attr') ?>">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4" id="ubah-pendaftaran" data-status="<?= esc($p['status'], 'attr') ?>">
 
     <div class="flex flex-wrap items-center gap-2">
-        <h2 class="text-xl font-bold text-gray-900"><?= esc($p['id_pendaftaran']) ?></h2>
+        <h2 class="text-lg font-bold text-gray-900"><?= esc($p['id_pendaftaran']) ?></h2>
         <?php if ($lunas) : ?>
             <?= komponen('lencana', ['label' => 'Lunas', 'warna' => 'hijau', 'ikon' => 'circle-check']) ?>
         <?php else : ?>
@@ -393,7 +393,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
     <?= view('admin/_galat_isian_tw', ['galat' => $ringkasan], ['saveData' => false]) ?>
     <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-900" role="alert" tabindex="-1" id="galat-pratinjau" hidden></div>
 
-    <form action="<?= site_url($alamat) ?>" method="post" id="formulir-ubah" class="space-y-6" novalidate>
+    <form action="<?= site_url($alamat) ?>" method="post" id="formulir-ubah" class="space-y-4" novalidate>
         <?= csrf_field('csrf-ubah') ?>
         <input type="hidden" name="setuju_menunggu" value="0">
 
@@ -441,7 +441,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
             <p class="mb-3 text-sm text-gray-600">
                 Minimal <?= (int) $aturan['penanggung_jawab_minimal'] ?>, paling banyak <?= (int) $aturan['penanggung_jawab_maksimal'] ?> orang. Setiap ofisial wajib berfoto.
             </p>
-            <ul class="mb-4 grid gap-4 lg:grid-cols-2" id="daftar-pj">
+            <ul class="mb-4 grid gap-4 lg:grid-cols-2 2xl:grid-cols-3" id="daftar-pj">
                 <?php foreach ($isian['penanggung_jawab'] as $i => $orang) : ?>
                     <?= $kartuPj((string) $i, $i + 1, $orang) ?>
                 <?php endforeach; ?>

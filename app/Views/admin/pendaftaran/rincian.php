@@ -73,7 +73,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [$asal, ['label' => $p['id_pendaftaran']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6" id="rincian-pendaftaran" data-id="<?= (int) $p['id'] ?>" data-status="<?= esc($p['status'], 'attr') ?>">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4" id="rincian-pendaftaran" data-id="<?= (int) $p['id'] ?>" data-status="<?= esc($p['status'], 'attr') ?>">
     <?php if (! $lunas && $p['atlet'] === [] && $atletDitolak !== []) : ?>
         <?php // Semua atlet ditolak (K117): sekolah melihat "Semua atlet ditolak" tanpa tagihan. ?>
         <div class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-900" role="status" id="peringatan-ditolak-semua">
@@ -89,7 +89,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
     <section class="<?= $kartu ?>" aria-labelledby="judul-pendaftaran">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div class="min-w-0 space-y-2">
-                <h2 id="judul-pendaftaran" class="text-xl font-bold text-gray-900"><?= esc($p['id_pendaftaran']) ?></h2>
+                <h2 id="judul-pendaftaran" class="text-lg font-bold text-gray-900"><?= esc($p['id_pendaftaran']) ?></h2>
                 <p class="text-lg text-gray-900"><?= esc($p['nama_sekolah']) ?></p>
                 <?php if (! empty($usulanNama)) : ?>
                     <p class="text-sm text-gray-700" id="usulan-nama-pendaftaran">
@@ -156,7 +156,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
         </dl>
     </section>
 
-    <div class="grid gap-6 xl:grid-cols-12">
+    <div class="grid gap-4 xl:grid-cols-12">
         <section class="<?= $kartu ?> xl:col-span-5" aria-labelledby="judul-sekolah">
             <h2 id="judul-sekolah" class="<?= $judulKartu ?> mb-3">Sekolah</h2>
             <dl class="grid gap-x-4 sm:grid-cols-[9rem_1fr] sm:gap-y-1">

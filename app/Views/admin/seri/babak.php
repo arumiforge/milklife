@@ -41,10 +41,10 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
 <?= $this->section('judul') ?>Seri <?= esc($babak['nama']) ?> <?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <a href="<?= site_url('admin/seri/nomor/' . $nomor['id']) ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?><?= esc($nomor['nama'] . ' – ' . $nomor['kelompok_umur']) ?></a>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-ringkas-babak">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-ringkas-babak">
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div class="min-w-0">
                 <h2 id="judul-ringkas-babak" class="text-lg font-bold break-words text-gray-900"><?= esc($babak['nama']) ?></h2>
@@ -71,7 +71,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
         </div>
     <?php endif ?>
 
-    <section id="bagi-otomatis" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-bagi-otomatis">
+    <section id="bagi-otomatis" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-bagi-otomatis">
         <h2 id="judul-bagi-otomatis" class="text-lg font-bold text-gray-900">Bagi otomatis</h2>
         <p class="mt-1 text-sm text-gray-600">
             <?php if ($pertama) : ?>
@@ -107,7 +107,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
     </section>
 
     <?php if ($babak['berikut'] !== null) : ?>
-        <section id="aturan-lolos" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-aturan-lolos">
+        <section id="aturan-lolos" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-aturan-lolos">
             <h2 id="judul-aturan-lolos" class="text-lg font-bold text-gray-900">Aturan lolos ke <?= esc($babak['berikut']['nama']) ?></h2>
             <p class="mt-1 text-sm text-gray-600">
                 Q = sekian terbaik tiap seri, q = sekian prestasi terbaik berikutnya dari semua seri. Kosongkan keduanya supaya dihitung otomatis untuk mengisi penuh <?= esc($babak['berikut']['nama']) ?> (<?= $lolos['kapasitas'] ?> tempat).
@@ -125,7 +125,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
     <form id="daftar-seri" action="<?= site_url('admin/seri/babak/' . $babak['id'] . '/geser') ?>" method="post" novalidate>
         <?= csrf_field() ?>
         <section class="rounded-2xl border border-gray-200 bg-white shadow-lembut" aria-labelledby="judul-daftar-seri">
-            <header class="border-b border-gray-200 p-5 sm:p-6">
+            <header class="border-b border-gray-200 p-4 sm:p-5">
                 <h2 id="judul-daftar-seri" class="text-lg font-bold text-gray-900"><?= $lintasan ? 'Seri dan lintasan' : 'Kelompok dan urutan tampil' ?></h2>
                 <p class="text-sm text-gray-600">
                     <?= $babak['dikunci'] ? 'Daftar ini sudah dikunci.' : 'Geser peserta dengan mengubah angka seri dan ' . mb_strtolower($sebutan) . ', lalu simpan. Kosongkan keduanya untuk mengeluarkan peserta dari seri.' ?>
@@ -134,16 +134,16 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
             </header>
 
             <?php if ($peserta === []) : ?>
-                <div class="p-5 sm:p-6"><?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'list-ordered', 'judul' => 'Belum ada peserta', 'teks' => $pertama ? 'Tekan Bagi otomatis untuk mengambil peserta Lunas nomor ini.' : 'Peserta masuk sendiri dari yang lolos setelah hasil ' . $babak['sebelum']['nama'] . ' lengkap.']) ?></div>
+                <div class="p-4 sm:p-5"><?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'list-ordered', 'judul' => 'Belum ada peserta', 'teks' => $pertama ? 'Tekan Bagi otomatis untuk mengambil peserta Lunas nomor ini.' : 'Peserta masuk sendiri dari yang lolos setelah hasil ' . $babak['sebelum']['nama'] . ' lengkap.']) ?></div>
             <?php endif ?>
 
             <?php foreach ($perSeri as $seri => $daftar) : ?>
                 <div class="border-b border-gray-100 last:border-b-0" data-seri-admin="<?= $seri ?>">
-                    <h3 class="bg-gray-50 px-5 py-2 text-sm font-bold tracking-wide text-oranye-700 uppercase sm:px-6"><?= $seri === 0 ? 'Belum dibagi' : ($lintasan ? 'Seri ' . $seri : 'Kelompok ' . $seri) ?> <span class="font-semibold text-gray-600 normal-case">(<?= count($daftar) ?>)</span></h3>
+                    <h3 class="bg-gray-50 px-4 py-2 text-sm font-bold tracking-wide text-oranye-700 uppercase sm:px-5"><?= $seri === 0 ? 'Belum dibagi' : ($lintasan ? 'Seri ' . $seri : 'Kelompok ' . $seri) ?> <span class="font-semibold text-gray-600 normal-case">(<?= count($daftar) ?>)</span></h3>
                     <ul class="divide-y divide-gray-100">
                         <?php foreach ($daftar as $p) : ?>
                             <?php $g = $galat[$p['id']] ?? null; $t = $tanda[$p['kunci']] ?? null; $awal = 'posisi-' . $p['id']; ?>
-                            <li class="flex flex-wrap items-center gap-3 px-5 py-3 sm:px-6<?= $t !== null ? ' bg-green-50' : '' ?>" data-baris-seri="<?= $p['id'] ?>">
+                            <li class="flex flex-wrap items-center gap-3 px-4 py-2.5 sm:px-5<?= $t !== null ? ' bg-green-50' : '' ?>" data-baris-seri="<?= $p['id'] ?>">
                                 <div class="min-w-0 flex-1 basis-48">
                                     <p class="font-semibold break-words text-gray-900">
                                         <?php if (! $beregu && ($p['nomor_dada'] ?? '') !== '') : ?><span class="text-gray-600"><?= esc($p['nomor_dada']) ?></span> · <?php endif ?><?= esc($p['nama']) ?>
@@ -176,7 +176,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
         </section>
     </form>
 
-    <section id="kunci-seri" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-kunci-seri">
+    <section id="kunci-seri" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-kunci-seri">
         <h2 id="judul-kunci-seri" class="text-lg font-bold text-gray-900">Kunci daftar seri</h2>
         <?php if ($babak['dikunci']) : ?>
             <p class="mt-1 text-sm text-gray-600">Dikunci sejak <?= esc(tanggal_id(new DateTimeImmutable((string) $babak['dikunci_pada'])) . ' ' . substr((string) $babak['dikunci_pada'], 11, 5)) ?>. Daftar ini yang dicetak untuk juri dan tampil untuk umum bila sakelarnya menyala. Buka kunci hanya bila ada perubahan dari panitia.</p>

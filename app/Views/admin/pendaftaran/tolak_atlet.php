@@ -47,11 +47,11 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
 ]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6" id="tolak-atlet" data-id="<?= (int) $p['id'] ?>">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4" id="tolak-atlet" data-id="<?= (int) $p['id'] ?>">
 
     <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-tolak">
         <div>
-            <h2 id="judul-tolak" class="text-xl font-bold text-gray-900"><?= esc($p['id_pendaftaran']) ?></h2>
+            <h2 id="judul-tolak" class="text-lg font-bold text-gray-900"><?= esc($p['id_pendaftaran']) ?></h2>
             <p class="text-lg text-gray-900"><?= esc($p['nama_sekolah']) ?> <span class="text-base text-gray-500">· <?= esc($p['jenjang_label']) ?></span></p>
         </div>
 
@@ -87,7 +87,7 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
     <?php elseif ($kosong) : ?>
         <p class="text-gray-600">Pendaftaran ini tidak punya atlet.</p>
     <?php else : ?>
-        <form action="<?= site_url($alamat . '/tolak-atlet') ?>" method="post" class="space-y-6"
+        <form action="<?= site_url($alamat . '/tolak-atlet') ?>" method="post" class="space-y-4"
             data-konfirmasi="<?= esc($kalimatKonfirmasi, 'attr') ?>"
             data-konfirmasi-judul="Tolak atlet?"
             data-konfirmasi-tombol="Tolak atlet">

@@ -19,11 +19,11 @@ use App\Models\TautanModel;
 <?= $this->section('judul_halaman') ?>Agenda<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <?php if ($daftar === []) : ?>
-        <section class="kartu-kosong flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center" aria-labelledby="judul-jadwal-kosong" data-jadwal-kosong>
+        <section class="kartu-kosong flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-6 text-center" aria-labelledby="judul-jadwal-kosong" data-jadwal-kosong>
             <span class="mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-700"><?= ikon('clock', 'size-7') ?></span>
             <h2 id="judul-jadwal-kosong" class="text-lg font-bold text-gray-900">Belum ada agenda</h2>
             <p class="mt-1 text-gray-600">
@@ -35,7 +35,7 @@ use App\Models\TautanModel;
             </div>
         </section>
     <?php else : ?>
-        <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-daftar-jadwal">
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-daftar-jadwal">
             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div class="min-w-0">
                     <h2 id="judul-daftar-jadwal" class="text-lg font-bold text-gray-900">Daftar jadwal</h2>

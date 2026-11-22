@@ -25,7 +25,7 @@ $angka   = 'text-2xl leading-tight font-extrabold text-primary-900';
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Atlet yang dikeluarkan panitia dari pendaftarannya. Sekolah melihat alasannya di Cek Pendaftaran sampai atletnya didaftarkan lagi.
         Untuk menolak atlet, buka rincian pendaftaran yang masih Menunggu lalu pilih <strong>Tolak atlet</strong>.

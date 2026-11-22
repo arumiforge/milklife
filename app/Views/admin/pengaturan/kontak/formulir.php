@@ -41,10 +41,10 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
 <?= $this->section('judul_halaman') ?>Kontak<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-formulir-kontak">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-formulir-kontak">
         <h2 id="judul-formulir-kontak" class="flex items-center gap-2 text-lg font-bold text-gray-900">
             <?= ikon($narahubung ? 'contact' : 'share-2', 'text-primary-700') ?>
             <?= esc(ucfirst($judul)) ?>
@@ -59,7 +59,7 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
             <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
         </div>
 
-        <form action="<?= $tujuan ?>" method="post" novalidate class="mt-4 space-y-5">
+        <form action="<?= $tujuan ?>" method="post" novalidate class="mt-4 grid gap-5 lg:grid-cols-2 lg:items-start lg:gap-x-6">
             <?= csrf_field() ?>
             <?php if ($baru) : ?>
                 <input type="hidden" name="jenis" value="<?= esc($jenisAlamat, 'attr') ?>">
@@ -95,7 +95,7 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
                 <?= $pesan('urutan') ?>
             </div>
 
-            <div class="flex flex-wrap gap-2 pt-2">
+            <div class="flex flex-wrap gap-2 pt-2 lg:col-span-2">
                 <?= komponen('tombol', ['label' => $baru ? 'Simpan ' . $teks['nama'] : 'Simpan perubahan', 'tipe' => 'submit', 'ikon' => 'check']) ?>
                 <?= komponen('tombol', ['label' => 'Batal', 'href' => site_url('admin/pengaturan/kontak'), 'varian' => 'kedua', 'ikon' => 'x']) ?>
             </div>

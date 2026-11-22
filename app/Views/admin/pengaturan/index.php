@@ -22,7 +22,7 @@
 <?= $this->section('judul_halaman') ?>Pengaturan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Pilih bagian yang ingin diisi atau diubah. Bagian pertama wajib lengkap sebelum pendaftaran bisa dibuka.
     </p>

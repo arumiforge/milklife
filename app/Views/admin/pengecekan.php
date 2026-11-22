@@ -33,7 +33,7 @@ use App\Libraries\BukaTutupPendaftaran;
 ][$keadaan];
 $jumlahButir = count($butir);
 $persen      = $jumlahButir > 0 ? (int) round($jumlahLengkap / $jumlahButir * 100) : 0;
-$kelasKartu  = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
+$kelasKartu  = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -42,7 +42,7 @@ $kelasKartu  = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm
 <?= $this->section('judul_halaman') ?>Pengecekan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="p-4 sm:p-6">
+<div class="p-4 sm:px-6 sm:py-4">
     <p class="mb-5 text-gray-600">Periksa di sini apakah pendaftaran sudah terbuka, pengaturan wajib sudah lengkap, dan halaman depan sudah siap dilihat sekolah.</p>
 
     <div class="grid grid-cols-1 items-start gap-5 xl:grid-cols-12">
