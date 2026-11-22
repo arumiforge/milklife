@@ -12,13 +12,13 @@ Halaman publik punya karakter editorial yang konsisten: huruf judul tegas, ikon 
 
 ## Hasil
 
-- [ ] Barlow Condensed (OFL, K155) berat 600 dan 800, tegak dan miring, latin dan latin-ext, dari paket `@fontsource/barlow-condensed` lewat `alat/vendor.mjs` ke `public/aset/vendor/barlow-condensed/` beserta lisensi; dicatat di `public/aset/vendor/README.md`
-- [ ] Token `--font-tampilan` dan `--color-krem` (`#F5EFE6`) di `@theme`; kelas di blok F10-05 `masukan.css`: `judul-tampilan`, `alis`, `tombol-utama-berart`, `pemisah-lintasan`, `ornamen-judul`, `bingkai-foto`, `tekstur-kertas`
-- [ ] Kelas berart memakai gambar G10-11 (`public/aset/gambar/elemen/`) hanya bila kelas penanda `ada-<nama>` terpasang dari `ada_gambar()` di tata letak; tanpa berkas, tampilan tetap rapi tanpa permintaan 404
-- [ ] `komponen('tombol')` varian utama memakai `tombol-utama-berart`; teks tetap HTML; fokus dan kontras AA
-- [ ] Sapu view publik dan `app/Views/komponen/`: ikon berlatar kotak/lingkaran menjadi ikon polos, border penuh berwarna diganti (latar, garis tipis abu-abu, atau aksen satu sisi), titik hiasan dihapus (`grep -rn "rounded-full.*bg-\|border-2 border-primary\|border-orange" app/Views`)
-- [ ] Judul bagian halaman depan memakai `judul-tampilan` dan `alis`; judul Inggris (slogan dan editorial) selalu dengan keterangan Indonesia, tombol dan menu tetap Indonesia (K153)
-- [ ] `AGENTS.md`/`desain/` tidak disentuh; katalog `admin/gaya` menampilkan kelas baru
+- [x] Barlow Condensed (OFL, K155) berat 600 dan 800, tegak dan miring, latin dan latin-ext, dari paket `@fontsource/barlow-condensed` lewat `alat/vendor.mjs` ke `public/aset/vendor/barlow-condensed/` beserta lisensi; dicatat di `public/aset/vendor/README.md`
+- [x] Token `--font-tampilan` dan `--color-krem` (`#F5EFE6`) di `@theme`; kelas di blok F10-05 `masukan.css`: `judul-tampilan`, `alis`, `tombol-utama-berart`, `pemisah-lintasan`, `ornamen-judul`, `bingkai-foto`, `tekstur-kertas`
+- [x] Kelas berart memakai gambar G10-11 (`public/aset/gambar/elemen/`) hanya bila kelas penanda `ada-<nama>` terpasang dari `ada_gambar()` di tata letak; tanpa berkas, tampilan tetap rapi tanpa permintaan 404
+- [x] `komponen('tombol')` varian utama memakai `tombol-utama-berart`; teks tetap HTML; fokus dan kontras AA
+- [x] Sapu view publik dan `app/Views/komponen/`: ikon berlatar kotak/lingkaran menjadi ikon polos, border penuh berwarna diganti (latar, garis tipis abu-abu, atau aksen satu sisi), titik hiasan dihapus (`grep -rn "rounded-full.*bg-\|border-2 border-primary\|border-orange" app/Views`)
+- [x] Judul bagian halaman depan memakai `judul-tampilan` dan `alis`; judul Inggris (slogan dan editorial) selalu dengan keterangan Indonesia, tombol dan menu tetap Indonesia (K153)
+- [x] `AGENTS.md`/`desain/` tidak disentuh; katalog `admin/gaya` menampilkan kelas baru
 
 ## Berkas dan uji
 

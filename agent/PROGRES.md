@@ -39,7 +39,7 @@ Gaya anime 2D cel-shaded (K153); dikerjakan Codex berurutan dari [`desain/README
 | [G10-12 Pola dan hiasan](../desain/tugas/G10-12-pola-hiasan.md) | menunggu Codex |
 | [G10-10 Gambar bagikan](../desain/tugas/G10-10-gambar-bagikan.md) | menunggu Codex |
 
-Gambar Tahap 9 (G9-01 sampai G9-12) sudah di `main` dan akan tertimpa G10; sisa PR pemasangan G9 (#168) diselesaikan sesi pemantau G9 dan digabung koordinator Tahap 10.
+Gambar Tahap 9 (G9-01 sampai G9-12) selesai dan sudah di `main` (#142, #153 sampai #163; G9-11 diganti logo resmi pemilik, K152, #158 ditutup), dipasang lewat #164, #166, #167, dan #168, dan akan tertimpa G10.
 
 ## Berikutnya
 

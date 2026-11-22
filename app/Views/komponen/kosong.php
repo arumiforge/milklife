@@ -29,7 +29,7 @@ foreach ((array) ($gambar ?? []) as $calon) {
     <?php if ($ilustrasi !== '') : ?>
         <?= $ilustrasi ?>
     <?php else : ?>
-        <span class="mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-700"><?= ikon($ikon ?? 'info', 'size-7') ?></span>
+        <?= ikon($ikon ?? 'info', 'mb-4 size-12 text-primary-700') ?>
     <?php endif ?>
     <h2 class="text-lg font-bold text-gray-900"><?= esc($judul) ?></h2>
     <?php if (! empty($teks)) : ?>

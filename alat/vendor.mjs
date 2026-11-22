@@ -24,9 +24,15 @@ const salinan = [
     ['@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2', 'inter/inter-latin-ext-wght-normal.woff2'],
     ['@fontsource-variable/inter/LICENSE', 'inter/LICENSE'],
     ['lucide-static/LICENSE', 'lucide/LICENSE'],
+    // Huruf judul Barlow Condensed (OFL, K155, F10-05): berat 600 dan 800, tegak dan miring, latin dan latin-ext.
+    ...['latin', 'latin-ext'].flatMap((subset) => ['600', '800'].flatMap((berat) => ['normal', 'italic'].map((gaya) => {
+        const nama = `barlow-condensed-${subset}-${berat}-${gaya}.woff2`;
+        return [`@fontsource/barlow-condensed/files/${nama}`, `barlow-condensed/${nama}`];
+    }))),
+    ['@fontsource/barlow-condensed/LICENSE', 'barlow-condensed/LICENSE'],
 ];
 
-for (const folder of ['three', 'inter']) {
+for (const folder of ['three', 'inter', 'barlow-condensed']) {
     rmSync(tujuan(folder), { recursive: true, force: true });
 }
 
@@ -38,7 +44,7 @@ for (const [dari, ke] of salinan) {
 const versi = (p) => JSON.parse(readFileSync(nm(p + '/package.json'), 'utf8')).version;
 writeFileSync(
     tujuan('VERSI-TAMPILAN.txt'),
-    ['flowbite', 'flowbite-datepicker', 'three', '@fontsource-variable/inter', 'lucide-static', 'tailwindcss']
+    ['flowbite', 'flowbite-datepicker', 'three', '@fontsource-variable/inter', '@fontsource/barlow-condensed', 'lucide-static', 'tailwindcss']
         .map((p) => `${p} ${versi(p)}`)
         .join('\n') + '\n',
 );

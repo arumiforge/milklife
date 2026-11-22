@@ -32,7 +32,7 @@ $jumlah      = count($bagan);
         $ini       = $aktif === $b['id'];
         ?>
         <li class="flex min-w-0 flex-col lg:flex-row" data-bagan-babak="<?= $b['id'] ?>" data-status="<?= esc($b['status'], 'attr') ?>">
-            <section class="min-w-0 flex-1 rounded-2xl border <?= $ini ? 'border-primary-600 ring-2 ring-primary-200' : 'border-gray-200' ?> bg-white p-4 shadow-lembut" aria-label="<?= esc($b['nama'], 'attr') ?>">
+            <section class="min-w-0 flex-1 rounded-2xl border <?= $ini ? 'border-gray-200 border-s-4 border-s-oranye-500' : 'border-gray-200' ?> bg-white p-4 shadow-lembut" aria-label="<?= esc($b['nama'], 'attr') ?>">
                 <header class="flex flex-wrap items-start justify-between gap-2">
                     <h3 class="min-w-0 text-base font-bold break-words text-primary-900">
                         <?php if ($alamat !== null && ! $ini) : ?>
