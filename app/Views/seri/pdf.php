@@ -3,7 +3,7 @@
  * Daftar seri dan lintasan (*start list*) untuk mPDF (F9-08), A4 tegak
  * (`App\Libraries\Hasil\UnduhanSeri`). Tiap babak satu bagian, tiap seri satu
  * tabel: lintasan (atau urutan), nomor atlet, nama, sekolah, dan kolom
- * prestasi kosong untuk juri.
+ * prestasi kosong untuk juri. Nomor acara (F11-07) di depan judul babak.
  *
  * @var string                     $judul     nomor atau hari
  * @var list<array<string, mixed>> $daftar    `SeriLintasan::untukUnduhan()`
@@ -12,6 +12,7 @@
  * @var bool                       $logo      logo persegi ada (`var:logo`)
  */
 
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\SeriLintasan;
 use App\Libraries\Hasil\UnduhanSeri;
 ?>
@@ -69,7 +70,7 @@ use App\Libraries\Hasil\UnduhanSeri;
     $lolos    = SeriLintasan::teksLolos($d['lolos'], (string) $b['nomor']['jenis_hasil']);
     $beregu   = $b['nomor']['jenis'] === 'beregu';
     ?>
-    <h2><?= esc($b['nomor']['nama']) ?> – <?= esc($b['nomor']['kelompok_umur']) ?> · <?= esc($b['nama']) ?></h2>
+    <h2><?= esc(JadwalPertandingan::awalanAcara($b['nomor_acara'] ?? null)) ?><?= esc($b['nomor']['nama']) ?> – <?= esc($b['nomor']['kelompok_umur']) ?> · <?= esc($b['nama']) ?></h2>
     <div class="info">
         <?= $jadwal === '' ? 'Jadwal menyusul' : esc($jadwal) ?>
         <?php if ($lolos !== '') : ?> · Lolos ke <?= esc($b['berikut']['nama'] ?? 'babak berikutnya') ?>: <?= esc($lolos) ?><?php endif ?>

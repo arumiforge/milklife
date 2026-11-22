@@ -8,6 +8,7 @@
  * - Ponsel: kartu per babak; layar lebar: tabel berkepala gradien merek.
  * - Ilustrasi nomor lomba G9-05 hanya bila berkasnya ada (`IlustrasiBeranda::nomor()`, `is_file()`).
  * - Tautan daftar seri (F9-08) tampil bila baris membawa `alamat_seri`.
+ * - Nomor acara (F11-07) tampil bila ada babak hari itu yang punya nomor.
  *
  * @var CodeIgniter\View\View      $this
  * @var string                     $namaAcara
@@ -28,6 +29,7 @@ $ilustrasi = static fn (string $nama): ?string => IlustrasiBeranda::nomor($nama)
 $warnaStatus = ['belum' => 'abu', 'berlangsung' => 'oranye', 'selesai' => 'hijau'];
 $ikonStatus  = ['belum' => 'clock', 'berlangsung' => 'circle-play', 'selesai' => 'circle-check'];
 $adaLokasi   = in_array(true, array_map(static fn (array $b): bool => $b['lokasi'] !== '', $babak), true);
+$adaAcara    = in_array(true, array_map(static fn (array $b): bool => ($b['nomor_acara'] ?? null) !== null, $babak), true);
 
 // Label tab pendek: "Sab, 5 Des".
 $labelTab = static function (string $tanggal): string {
@@ -101,6 +103,7 @@ $tindakan = static function (array $b, string $status): string {
                     <div class="flex items-start gap-3">
                         <div class="w-16 shrink-0 text-lg font-extrabold leading-tight text-oranye-700"><?= $b['jam'] === null ? '–' : esc($b['jam']) ?><span class="block text-xs font-semibold text-gray-600"><?= $b['jam'] === null ? 'Jam menyusul' : 'WIB' ?></span></div>
                         <div class="min-w-0 flex-1">
+                            <?php if ($b['nomor_acara'] !== null) : ?><p class="text-xs font-bold tracking-wide text-primary-700 uppercase" data-nomor-acara><?= esc(JadwalPertandingan::labelAcara($b['nomor_acara'])) ?></p><?php endif ?>
                             <p class="font-bold break-words text-gray-900"><?= esc($b['nomor']) ?></p>
                             <p class="text-sm text-gray-700"><?= esc($b['jenis_kelamin']) ?> · <?= esc($b['kelompok_umur']) ?> · <?= esc($b['babak']) ?></p>
                             <?php if ($b['lokasi'] !== '') : ?><p class="mt-0.5 flex items-center gap-1 text-sm text-gray-600"><?= ikon('map-pin', 'size-4 shrink-0') ?><span class="break-words"><?= esc($b['lokasi']) ?></span></p><?php endif ?>
@@ -120,6 +123,7 @@ $tindakan = static function (array $b, string $status): string {
                 <caption class="sr-only">Jadwal pertandingan <?= esc(JadwalPertandingan::namaHari($dipilih)) ?></caption>
                 <thead class="bg-linear-to-r from-oranye-600 to-magenta-600 text-white">
                     <tr>
+                        <?php if ($adaAcara) : ?><th scope="col" class="px-4 py-3 font-bold">Acara</th><?php endif ?>
                         <th scope="col" class="px-4 py-3 font-bold whitespace-nowrap">Waktu</th>
                         <th scope="col" class="px-4 py-3 font-bold">Nomor</th>
                         <th scope="col" class="px-4 py-3 font-bold whitespace-nowrap">Putra/Putri</th>
@@ -133,6 +137,7 @@ $tindakan = static function (array $b, string $status): string {
                     <?php foreach ($babak as $b) : ?>
                         <?php $status = JadwalPertandingan::status($b, $kini); $gambar = $ilustrasi($b['nomor']); ?>
                         <tr class="<?= $status === 'berlangsung' ? 'bg-oranye-50' : 'odd:bg-white even:bg-primary-50' ?>" data-babak="<?= $b['id'] ?>" data-status="<?= $status ?>">
+                            <?php if ($adaAcara) : ?><td class="px-4 py-3 font-bold whitespace-nowrap text-gray-900"><?= $b['nomor_acara'] ?? '–' ?></td><?php endif ?>
                             <td class="px-4 py-3 text-base font-extrabold whitespace-nowrap text-oranye-700"><?= $b['jam'] === null ? '<span class="text-sm font-semibold text-gray-600">Menyusul</span>' : esc($b['jam']) . ' <span class="text-xs font-semibold text-gray-600">WIB</span>' ?></td>
                             <td class="px-4 py-3">
                                 <span class="flex items-center gap-3">

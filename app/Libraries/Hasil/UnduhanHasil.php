@@ -78,6 +78,11 @@ final class UnduhanHasil
             $kolom['komponen_poin_' . $i] = ['judul' => 'Poin ' . $k['nama'], 'jenis' => 'angka'];
         }
 
+        // Nomor acara babak (F11-07), hanya bila ada babak yang punya nomor.
+        if (array_filter(array_column($this->babak, 'nomor_acara')) !== []) {
+            $kolom = ['acara' => ['judul' => 'Acara', 'jenis' => 'angka']] + $kolom;
+        }
+
         if ($beregu) {
             unset($kolom['nomor_dada']);
         } else {
@@ -89,6 +94,7 @@ final class UnduhanHasil
 
         foreach ($this->babak as $b) {
             $lembar = (new EksporExcel(DaftarPeserta::judulLembar($b['nama'], $pakai), $kolom))->tambahBaris(array_map(static fn (array $h): array => self::kolomRincian($h) + [
+                'acara'      => $b['nomor_acara'] ?? null,
                 'peringkat'  => $h['peringkat'],
                 'nomor_dada' => $h['nomor_dada'],
                 'nama'       => $h['nama'],

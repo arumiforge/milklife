@@ -218,6 +218,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     // Tanggal, jam mulai, dan lokasi semua babak; juga dari halaman babak.
     $routes->get('jadwal-pertandingan', 'JadwalPertandinganController::index');
     $routes->post('jadwal-pertandingan', 'JadwalPertandinganController::simpan');
+    $routes->post('jadwal-pertandingan/nomor-acara', 'JadwalPertandinganController::nomorAcara');
     $routes->get('jadwal-pertandingan/(\d{4}-\d{2}-\d{2})/pdf', 'JadwalPertandinganController::pdf/$1');
     $routes->post('hasil/babak/(:num)/jadwal', 'JadwalPertandinganController::simpanBabak/$1');
     // ---------- Akhir jadwal pertandingan ----------

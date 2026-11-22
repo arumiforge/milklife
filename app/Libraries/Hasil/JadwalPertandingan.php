@@ -32,10 +32,25 @@ use Throwable;
  *     $hari   = $jadwal->perHari();                     // ['2026-12-05' => [babak, …], …]
  *     JadwalPertandingan::status($babak, new DateTimeImmutable());   // 'berlangsung'
  *     $jadwal->simpan(12, ['tanggal' => '05/12/2026', 'jam_mulai' => '07.30', 'lokasi' => 'Lintasan utama']);
+ *
+ * Nomor acara (F11-07, K172 butir 7): `babak.nomor_acara` untuk pembawa
+ * acara, juri, dan lembar hasil. `beriNomorAcara()` memberi nomor berurutan
+ * menurut jadwal mulai nomor awal pengaturan `NomorAcara.awal`; admin bisa
+ * mengubahnya per babak lewat isian `nomor_acara`. Babak tanpa nomor tetap
+ * tampil, hanya tanpa label (`labelAcara()` kosong).
+ *
+ *     $jadwal->beriNomorAcara(101);                    // 24 babak terjadwal diberi nomor 101–124
+ *     JadwalPertandingan::labelAcara(101);             // 'Acara 101'
+ *     JadwalPertandingan::awalanAcara(101) . 'Final';  // 'Acara 101 · Final'
  */
 final class JadwalPertandingan
 {
     public const LOKASI_MAKSIMAL = 100;
+
+    /**
+     * Nomor acara terbesar (kolom SMALLINT UNSIGNED).
+     */
+    public const NOMOR_ACARA_MAKSIMAL = 9999;
 
     /**
      * Kode status => label.
@@ -63,7 +78,7 @@ final class JadwalPertandingan
      * waktu yang sama menurut kelompok umur, nomor lomba, lalu babak (Final
      * paling akhir).
      *
-     * @return list<array{id: int, nomor_id: int, nomor: string, nomor_lengkap: string, kategori: string, jenis_kelamin: string, kelompok_umur_id: int, kelompok_umur: string, babak: string, final: bool, tanggal: string|null, jam: string|null, lokasi: string, terbit: bool, ada_hasil: bool, seri_dikunci: bool}>
+     * @return list<array{id: int, nomor_id: int, nomor: string, nomor_lengkap: string, kategori: string, jenis_kelamin: string, kelompok_umur_id: int, kelompok_umur: string, babak: string, final: bool, tanggal: string|null, jam: string|null, lokasi: string, nomor_acara: int|null, terbit: bool, ada_hasil: bool, seri_dikunci: bool}>
      */
     public function semua(): array
     {
@@ -74,7 +89,7 @@ final class JadwalPertandingan
             ->get()->getResultArray(), 'babak_id')));
 
         $baris = $this->db->table('babak b')
-            ->select('b.id, b.nama AS babak, b.final, b.tanggal, b.jam_mulai, b.lokasi, b.seri_dikunci_pada, nl.id AS nomor_id, nl.nama, nl.kategori, nl.hasil_terbit_pada, ku.id AS kelompok_umur_id, ku.nama AS kelompok_umur')
+            ->select('b.id, b.nama AS babak, b.final, b.tanggal, b.jam_mulai, b.lokasi, b.nomor_acara, b.seri_dikunci_pada, nl.id AS nomor_id, nl.nama, nl.kategori, nl.hasil_terbit_pada, ku.id AS kelompok_umur_id, ku.nama AS kelompok_umur')
             ->join('nomor_lomba nl', 'nl.id = b.nomor_lomba_id')
             ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
             // Nomor yang tidak dilombakan keluar dari jadwal, lembar juri, dan videotron (F11-03).
@@ -100,6 +115,7 @@ final class JadwalPertandingan
             'tanggal'          => $b['tanggal'] === null ? null : (string) $b['tanggal'],
             'jam'              => $b['jam_mulai'] === null ? null : substr((string) $b['jam_mulai'], 0, 5),
             'lokasi'           => (string) ($b['lokasi'] ?? ''),
+            'nomor_acara'      => $b['nomor_acara'] === null ? null : (int) $b['nomor_acara'],
             'terbit'           => $b['hasil_terbit_pada'] !== null,
             'ada_hasil'        => isset($adaHasil[(int) $b['id']]),
             // Daftar seri sudah dikunci (F9-08): tautan Daftar seri di halaman publik.
@@ -128,16 +144,17 @@ final class JadwalPertandingan
     /**
      * Jadwal satu babak, atau `null` bila babak tidak ada.
      *
-     * @return array{tanggal: string|null, jam: string|null, lokasi: string}|null
+     * @return array{tanggal: string|null, jam: string|null, lokasi: string, nomor_acara: int|null}|null
      */
     public function babak(int $id): ?array
     {
-        $b = $this->db->table('babak')->select('tanggal, jam_mulai, lokasi')->where('id', $id)->get()->getRowArray();
+        $b = $this->db->table('babak')->select('tanggal, jam_mulai, lokasi, nomor_acara')->where('id', $id)->get()->getRowArray();
 
         return is_array($b) ? [
-            'tanggal' => $b['tanggal'] === null ? null : (string) $b['tanggal'],
-            'jam'     => $b['jam_mulai'] === null ? null : substr((string) $b['jam_mulai'], 0, 5),
-            'lokasi'  => (string) ($b['lokasi'] ?? ''),
+            'tanggal'     => $b['tanggal'] === null ? null : (string) $b['tanggal'],
+            'jam'         => $b['jam_mulai'] === null ? null : substr((string) $b['jam_mulai'], 0, 5),
+            'lokasi'      => (string) ($b['lokasi'] ?? ''),
+            'nomor_acara' => $b['nomor_acara'] === null ? null : (int) $b['nomor_acara'],
         ] : null;
     }
 
@@ -215,11 +232,12 @@ final class JadwalPertandingan
     /**
      * Periksa isian jadwal satu babak (murni). Tanggal boleh `05/12/2026`,
      * `5-12-2026`, atau `2026-12-05`; jam `07:30` atau `7.30`. Semua kosong =
-     * belum dijadwalkan.
+     * belum dijadwalkan. `nomor_acara` (F11-07) hanya diperiksa bila kuncinya
+     * ada di isian; kosong = tanpa nomor acara.
      *
-     * @param array<string, mixed> $isian ['tanggal' => …, 'jam_mulai' => …, 'lokasi' => …]
+     * @param array<string, mixed> $isian ['tanggal' => …, 'jam_mulai' => …, 'lokasi' => …, 'nomor_acara' => …]
      *
-     * @return array{data: array{tanggal: string|null, jam_mulai: string|null, lokasi: string|null}, galat: array<string, string>}
+     * @return array{data: array{tanggal: string|null, jam_mulai: string|null, lokasi: string|null, nomor_acara?: int|null}, galat: array<string, string>}
      */
     public static function periksa(array $isian): array
     {
@@ -254,6 +272,19 @@ final class JadwalPertandingan
             $galat['lokasi'] = 'Lokasi terlalu panjang. Persingkat menjadi paling banyak ' . self::LOKASI_MAKSIMAL . ' huruf.';
         }
 
+        if (array_key_exists('nomor_acara', $isian)) {
+            $acara               = $teks('nomor_acara');
+            $data['nomor_acara'] = null;
+
+            if ($acara !== '') {
+                if (preg_match('/^\d{1,4}$/D', $acara) === 1 && (int) $acara >= 1) {
+                    $data['nomor_acara'] = (int) $acara;
+                } else {
+                    $galat['nomor_acara'] = 'Nomor acara "' . $acara . '" belum benar. Tulis angka 1 sampai ' . self::NOMOR_ACARA_MAKSIMAL . ', misalnya 101.';
+                }
+            }
+        }
+
         return ['data' => $data, 'galat' => $galat];
     }
 
@@ -276,7 +307,9 @@ final class JadwalPertandingan
      * Bila ada isian yang salah tidak ada yang tersimpan. Babak yang tidak ada
      * diabaikan.
      *
-     * @param array<int|string, mixed> $isian id babak => ['tanggal' => …, 'jam_mulai' => …, 'lokasi' => …]
+     * Nomor acara (F11-07) tidak boleh kembar dengan babak lain.
+     *
+     * @param array<int|string, mixed> $isian id babak => ['tanggal' => …, 'jam_mulai' => …, 'lokasi' => …, 'nomor_acara' => …]
      *
      * @return array<int, array<string, string>> id babak => galat per kotak; kosong bila tersimpan
      *
@@ -294,7 +327,7 @@ final class JadwalPertandingan
         $galat = [];
         $ubah  = [];
 
-        foreach ($this->db->table('babak')->select('id, tanggal, jam_mulai, lokasi')->whereIn('id', $id)->get()->getResultArray() as $b) {
+        foreach ($this->db->table('babak')->select('id, tanggal, jam_mulai, lokasi, nomor_acara')->whereIn('id', $id)->get()->getResultArray() as $b) {
             $ada[(int) $b['id']] = $b;
         }
 
@@ -314,11 +347,18 @@ final class JadwalPertandingan
             }
 
             $lama = $ada[$babakId];
+            $sama = ['tanggal' => $lama['tanggal'], 'jam_mulai' => $lama['jam_mulai'], 'lokasi' => $lama['lokasi']];
 
-            if ($periksa['data'] !== ['tanggal' => $lama['tanggal'], 'jam_mulai' => $lama['jam_mulai'], 'lokasi' => $lama['lokasi']]) {
+            if (array_key_exists('nomor_acara', $periksa['data'])) {
+                $sama['nomor_acara'] = $lama['nomor_acara'] === null ? null : (int) $lama['nomor_acara'];
+            }
+
+            if ($periksa['data'] !== $sama) {
                 $ubah[$babakId] = $periksa['data'];
             }
         }
+
+        $galat += $this->periksaAcaraKembar($ubah);
 
         if ($galat !== [] || $ubah === []) {
             return $galat;
@@ -349,11 +389,150 @@ final class JadwalPertandingan
     }
 
     /**
+     * Beri nomor acara semua babak terjadwal berurutan menurut jadwal
+     * (`semua()`: tanggal, jam, kelompok umur, nomor, babak) mulai `$awal`.
+     * Babak yang belum punya tanggal dikosongkan nomornya. Nomor awal
+     * disimpan di pengaturan `NomorAcara.awal`.
+     *
+     * @return int jumlah babak yang diberi nomor
+     *
+     * @throws RuntimeException bila basis data gagal menyimpan; tidak ada yang berubah
+     */
+    public function beriNomorAcara(int $awal): int
+    {
+        $nomor    = $awal;
+        $sekarang = date('Y-m-d H:i:s');
+        $jumlah   = 0;
+
+        $this->db->transBegin();
+
+        try {
+            // Kosongkan dulu supaya nomor lama tidak bertabrakan selama diisi ulang.
+            $this->db->table('babak')->set('nomor_acara', null)->where('nomor_acara IS NOT NULL', null, false)->update();
+
+            foreach ($this->semua() as $b) {
+                if ($b['tanggal'] === null) {
+                    continue;
+                }
+
+                if (! $this->db->table('babak')->where('id', $b['id'])->update(['nomor_acara' => $nomor, 'diubah_pada' => $sekarang])) {
+                    throw new RuntimeException('Nomor acara gagal disimpan.');
+                }
+
+                $nomor++;
+                $jumlah++;
+            }
+
+            $this->db->transCommit();
+        } catch (Throwable $e) {
+            $this->db->transRollback();
+
+            throw $e;
+        }
+
+        setting('NomorAcara.awal', $awal);
+
+        return $jumlah;
+    }
+
+    /**
+     * Periksa nomor awal isian "Beri nomor acara" (murni): bilangan 1 sampai
+     * batas, dan cukup untuk `$jumlah` babak.
+     *
+     * @return array{awal: int|null, galat: string|null}
+     */
+    public static function periksaAwal(mixed $isian, int $jumlah): array
+    {
+        $teks = is_string($isian) ? trim($isian) : '';
+
+        if (preg_match('/^\d{1,4}$/D', $teks) !== 1 || (int) $teks < 1) {
+            return ['awal' => null, 'galat' => 'Nomor awal "' . $teks . '" belum benar. Tulis angka, misalnya 101.'];
+        }
+
+        if ((int) $teks + max(0, $jumlah - 1) > self::NOMOR_ACARA_MAKSIMAL) {
+            return ['awal' => null, 'galat' => 'Nomor awal terlalu besar untuk ' . $jumlah . ' babak. Nomor acara paling besar ' . self::NOMOR_ACARA_MAKSIMAL . '.'];
+        }
+
+        return ['awal' => (int) $teks, 'galat' => null];
+    }
+
+    /**
+     * "Acara 101", atau kosong bila babak belum diberi nomor acara.
+     */
+    public static function labelAcara(?int $nomor): string
+    {
+        return $nomor === null ? '' : 'Acara ' . $nomor;
+    }
+
+    /**
+     * "Acara 101 · " untuk diletakkan di depan nama babak, atau kosong.
+     */
+    public static function awalanAcara(?int $nomor): string
+    {
+        return $nomor === null ? '' : self::labelAcara($nomor) . ' · ';
+    }
+
+    /**
      * Ada babak yang sudah punya tanggal?
      */
     public function adaTerjadwal(): bool
     {
         return $this->db->table('babak')->where('tanggal IS NOT NULL', null, false)->countAllResults() > 0;
+    }
+
+    /**
+     * Galat nomor acara yang kembar setelah `$ubah` diterapkan: sesama isian
+     * atau dengan babak lain yang tidak ikut diubah.
+     *
+     * @param array<int, array<string, mixed>> $ubah id babak => data
+     *
+     * @return array<int, array<string, string>>
+     */
+    private function periksaAcaraKembar(array $ubah): array
+    {
+        $baru = [];
+
+        foreach ($ubah as $babakId => $data) {
+            if (array_key_exists('nomor_acara', $data)) {
+                $baru[$babakId] = $data['nomor_acara'];
+            }
+        }
+
+        if (array_filter($baru, static fn (?int $n): bool => $n !== null) === []) {
+            return [];
+        }
+
+        $pemilik = [];
+        $nama    = [];
+
+        foreach ($this->db->table('babak b')
+            ->select('b.id, b.nama AS babak, b.nomor_acara, nl.nama, nl.kategori, ku.nama AS kelompok_umur')
+            ->join('nomor_lomba nl', 'nl.id = b.nomor_lomba_id')
+            ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
+            ->orderBy('b.id')
+            ->get()->getResultArray() as $b) {
+            $id        = (int) $b['id'];
+            $nama[$id] = NomorLombaModel::namaLengkap($b) . ' ' . $b['kelompok_umur'] . ' ' . $b['babak'];
+            $nomor     = array_key_exists($id, $baru) ? $baru[$id] : ($b['nomor_acara'] === null ? null : (int) $b['nomor_acara']);
+
+            if ($nomor !== null) {
+                $pemilik[$nomor][] = $id;
+            }
+        }
+
+        $galat = [];
+
+        foreach ($baru as $babakId => $nomor) {
+            if ($nomor === null || count($pemilik[$nomor] ?? []) < 2) {
+                continue;
+            }
+
+            $lain = array_values(array_diff($pemilik[$nomor], [$babakId]));
+
+            $galat[$babakId]['nomor_acara'] = 'Nomor acara ' . $nomor . ' sudah dipakai ' . $nama[$lain[0]] . '. Pilih nomor lain.';
+        }
+
+        return $galat;
     }
 
     private static function uraiTanggal(string $teks): ?string

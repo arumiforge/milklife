@@ -19,6 +19,7 @@
  * @var int                                    $seri    seri yang dibuka
  */
 
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\LembarJuri;
 use App\Libraries\Hasil\Peringkat;
@@ -56,7 +57,7 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
 <div class="space-y-4 p-4 sm:px-6 sm:py-4" data-lembar-juri>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-babak-juri">
-        <h2 id="judul-babak-juri" class="text-lg font-bold break-words text-gray-900"><?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?> · <?= esc($babak['nama']) ?></h2>
+        <h2 id="judul-babak-juri" class="text-lg font-bold break-words text-gray-900"><?= esc(JadwalPertandingan::awalanAcara($babak['nomor_acara'])) ?><?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?> · <?= esc($babak['nama']) ?></h2>
         <p class="text-sm text-gray-600"><?= $jadwal === '' ? 'Jadwal menyusul' : esc($jadwal) ?> · <?= $babak['peserta'] ?> <?= $beregu ? 'regu' : 'peserta' ?></p>
         <p class="mt-2 text-sm text-gray-700"><?= esc($petunjuk) ?> Pilih DNS, DNF, atau DQ untuk peserta yang tidak start, tidak finis, atau didiskualifikasi. Untuk DQ, tulis pasalnya bila ada, misalnya TR16.8.<?php if ($jenis === JenisHasil::JARAK) : ?> Bila semua percobaan X, keterangan NM (tanpa lompatan atau lemparan sah) terisi sendiri. Pilih r bila peserta mundur: prestasi sebelum mundur tetap dinilai.<?php endif ?></p>
         <p class="mt-2 text-sm text-gray-700">Peringkat dan tombol Terbitkan ada di <a href="<?= site_url('admin/hasil/babak/' . $babak['id']) ?>" class="font-semibold text-primary-700 underline">halaman hasil babak ini</a>.</p>

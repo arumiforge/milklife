@@ -10,6 +10,7 @@
  * @var bool                       $logo      logo persegi ada (`var:logo`)
  */
 
+use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\Peringkat;
 
@@ -56,7 +57,7 @@ $kolom  = $beregu ? 4 : 6;
     <div class="kosong">Belum ada babak.</div>
 <?php endif ?>
 <?php foreach ($babak as $b) : ?>
-    <h2><?= esc($b['nama']) ?><?= $b['final'] ? ' (Final)' : '' ?></h2>
+    <h2><?= esc(JadwalPertandingan::awalanAcara($b['nomor_acara'] ?? null)) ?><?= esc($b['nama']) ?><?= $b['final'] ? ' (Final)' : '' ?></h2>
     <table class="data">
         <thead>
             <tr>

@@ -159,7 +159,7 @@ final class SeriLintasan
     /**
      * Babak satu nomor berurutan (Final paling akhir) dengan keadaan seri.
      *
-     * @return list<array{id: int, nama: string, final: bool, jumlah_seri: int|null, dikunci: bool, peserta: int, dibagi: int, ada_hasil: bool, tanggal: string|null, jam: string|null}>
+     * @return list<array{id: int, nama: string, final: bool, jumlah_seri: int|null, dikunci: bool, peserta: int, dibagi: int, ada_hasil: bool, tanggal: string|null, jam: string|null, nomor_acara: int|null}>
      */
     public function daftarBabak(int $nomorId): array
     {
@@ -189,6 +189,7 @@ final class SeriLintasan
                 'ada_hasil'   => (int) ($hitung[$id]['berhasil'] ?? 0) > 0,
                 'tanggal'     => $b['tanggal'] === null ? null : (string) $b['tanggal'],
                 'jam'         => $b['jam_mulai'] === null ? null : substr((string) $b['jam_mulai'], 0, 5),
+                'nomor_acara' => $b['nomor_acara'] === null ? null : (int) $b['nomor_acara'],
             ];
         }
 
@@ -698,7 +699,7 @@ final class SeriLintasan
      * Untuk publik (`$publik = true`) peserta hanya tampil bila daftar
      * serinya dikunci; tanda Q/q dan prestasi hanya bila hasil nomornya terbit.
      *
-     * @return list<array{id: int, nama: string, final: bool, dikunci: bool, status: string, tanggal: string|null, jam: string|null, jumlah_seri: int, peserta: int, seri: array<int, list<array<string, mixed>>>, tanda: array<string, string>, aturan: array{q: int, q_kecil: int, otomatis: bool, kapasitas: int}}>
+     * @return list<array{id: int, nama: string, final: bool, dikunci: bool, status: string, tanggal: string|null, jam: string|null, nomor_acara: int|null, jumlah_seri: int, peserta: int, seri: array<int, list<array<string, mixed>>>, tanda: array<string, string>, aturan: array{q: int, q_kecil: int, otomatis: bool, kapasitas: int}}>
      */
     public function bagan(int $nomorId, bool $publik, ?DateTimeInterface $kini = null): array
     {
@@ -729,6 +730,7 @@ final class SeriLintasan
                 'status'      => JadwalPertandingan::status(['tanggal' => $ringkas['tanggal'], 'jam' => $ringkas['jam'], 'terbit' => $terbit, 'ada_hasil' => $ringkas['ada_hasil']], $kini ?? new DateTimeImmutable('now')),
                 'tanggal'     => $ringkas['tanggal'],
                 'jam'         => $ringkas['jam'],
+                'nomor_acara' => $ringkas['nomor_acara'],
                 'jumlah_seri' => (int) ($ringkas['jumlah_seri'] ?? 0),
                 'peserta'     => $ringkas['peserta'],
                 'seri'        => $tampil ? self::perSeri($peserta) : [],

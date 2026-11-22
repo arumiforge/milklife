@@ -98,7 +98,7 @@ foreach ($calon as $kunci => $c) {
     </div>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-hasil">
-        <h2 class="flex flex-wrap items-center gap-2 text-lg font-bold break-words text-gray-900" id="judul-hasil"><?= esc($babak['nama']) ?><?php if ($final) : ?> <?= komponen('lencana', ['label' => 'Final', 'warna' => 'biru']) ?><?php endif ?></h2>
+        <h2 class="flex flex-wrap items-center gap-2 text-lg font-bold break-words text-gray-900" id="judul-hasil"><?= esc(JadwalPertandingan::awalanAcara($babak['nomor_acara'])) ?><?= esc($babak['nama']) ?><?php if ($final) : ?> <?= komponen('lencana', ['label' => 'Final', 'warna' => 'biru']) ?><?php endif ?></h2>
         <?php if ($hasil === []) : ?>
             <p class="mt-2 text-gray-600" id="peserta-kosong">Babak ini belum punya peserta. Pilih peserta di bagian bawah.</p>
         <?php else : ?>
@@ -235,7 +235,7 @@ foreach ($calon as $kunci => $c) {
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="jadwal-babak" aria-labelledby="judul-jadwal-babak">
         <h2 class="text-lg font-bold text-gray-900" id="judul-jadwal-babak">Jadwal babak</h2>
         <p class="mt-1 text-sm text-gray-600">
-            Tanggal, jam mulai (WIB), dan lokasi babak ini di halaman Jadwal. Semua babak bisa diisi sekaligus di
+            Tanggal, jam mulai (WIB), lokasi, dan nomor acara babak ini di halaman Jadwal. Semua babak bisa diisi sekaligus di
             <a href="<?= site_url('admin/jadwal-pertandingan') ?>" class="font-semibold text-primary-700 underline">Jadwal pertandingan</a>.
         </p>
         <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/jadwal') ?>" method="post" class="mt-4 space-y-4" novalidate>
@@ -246,12 +246,17 @@ foreach ($calon as $kunci => $c) {
                     <input type="date" class="<?= $kelasIsian(isset($galatJadwal['tanggal'])) ?>" id="jadwal-tanggal" name="tanggal" value="<?= esc($nilaiJadwal('tanggal', (string) $jadwal['tanggal']), 'attr') ?>"<?= JadwalPertandingan::rentangIsian() ?><?= $tandaJadwal('tanggal', 'jadwal-tanggal') ?>>
                     <?= $pesanJadwal('tanggal', 'jadwal-tanggal') ?>
                 </div>
-                <div class="lg:col-span-3">
+                <div class="lg:col-span-2">
                     <label for="jadwal-jam" class="mb-1.5 block text-sm font-semibold text-gray-900">Jam mulai</label>
                     <input type="time" class="<?= $kelasIsian(isset($galatJadwal['jam_mulai'])) ?>" id="jadwal-jam" name="jam_mulai" value="<?= esc($nilaiJadwal('jam_mulai', (string) $jadwal['jam']), 'attr') ?>"<?= $tandaJadwal('jam_mulai', 'jadwal-jam') ?>>
                     <?= $pesanJadwal('jam_mulai', 'jadwal-jam') ?>
                 </div>
-                <div class="lg:col-span-4">
+                <div class="lg:col-span-2">
+                    <label for="jadwal-acara" class="mb-1.5 block text-sm font-semibold text-gray-900">Nomor acara</label>
+                    <input type="text" class="<?= $kelasIsian(isset($galatJadwal['nomor_acara'])) ?>" id="jadwal-acara" name="nomor_acara" inputmode="numeric" maxlength="4" placeholder="Boleh kosong" value="<?= esc($nilaiJadwal('nomor_acara', (string) $jadwal['nomor_acara']), 'attr') ?>"<?= $tandaJadwal('nomor_acara', 'jadwal-acara') ?>>
+                    <?= $pesanJadwal('nomor_acara', 'jadwal-acara') ?>
+                </div>
+                <div class="sm:col-span-2 lg:col-span-3">
                     <label for="jadwal-lokasi" class="mb-1.5 block text-sm font-semibold text-gray-900">Lokasi</label>
                     <input type="text" class="<?= $kelasIsian(isset($galatJadwal['lokasi'])) ?>" id="jadwal-lokasi" name="lokasi" maxlength="<?= JadwalPertandingan::LOKASI_MAKSIMAL ?>" placeholder="Boleh kosong, misalnya Lintasan utama" value="<?= esc($nilaiJadwal('lokasi', $jadwal['lokasi']), 'attr') ?>"<?= $tandaJadwal('lokasi', 'jadwal-lokasi') ?>>
                     <?= $pesanJadwal('lokasi', 'jadwal-lokasi') ?>

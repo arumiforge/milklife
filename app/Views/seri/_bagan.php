@@ -44,7 +44,7 @@ $jumlah      = count($bagan);
                     <?= komponen('lencana', ['label' => JadwalPertandingan::STATUS[$b['status']], 'warna' => $warnaStatus[$b['status']], 'ikon' => $ikonStatus[$b['status']]]) ?>
                 </header>
                 <p class="mt-1 text-sm text-gray-600">
-                    <?= $b['tanggal'] === null ? 'Jadwal menyusul' : esc(JadwalPertandingan::namaHari($b['tanggal']) . ($b['jam'] === null ? '' : ', ' . $b['jam'] . ' WIB')) ?>
+                    <?= esc(JadwalPertandingan::awalanAcara($b['nomor_acara'] ?? null)) ?><?= $b['tanggal'] === null ? 'Jadwal menyusul' : esc(JadwalPertandingan::namaHari($b['tanggal']) . ($b['jam'] === null ? '' : ', ' . $b['jam'] . ' WIB')) ?>
                     <?php if ($b['jumlah_seri'] > 1) : ?> · <?= $b['jumlah_seri'] ?> <?= $lintasan ? 'seri' : 'kelompok' ?><?php endif ?>
                 </p>
                 <?php if ($teksLolos !== '') : ?>
