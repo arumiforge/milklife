@@ -17,7 +17,7 @@ use App\Controllers\Admin\Pengaturan\BerandaPengaturanController;
  *   `aset/js/menu-admin.js`). Di ponsel sidebar menjadi laci yang dibuka
  *   tombol menu di kepala halaman (K131, K133) atau butir Menu di menu bawah;
  * - menu bawah ponsel: butir urusan pendaftaran bertanda `bawah`, lalu butir
- *   Menu yang membuka sidebar, tepat 5 butir (K132, K133, F10-03).
+ *   Menu yang membuka sidebar, tepat 5 butir: Dasbor, Pendaftaran, Atlet, Rekap, Menu (K132, K157, F10-03).
  *
  * Butir: `label`, `ikon` (nama ikon Lucide), `alamat`, pilihan `label_pendek`
  * (menu bawah), `bawah`, `aktif_juga` (alamat lain yang ikut menandai
@@ -127,7 +127,7 @@ final class MenuAdmin
     }
 
     /**
-     * Butir menu bawah ponsel bertanda `bawah` (K133). Tata letak
+     * Butir menu bawah ponsel bertanda `bawah` (susunan K157, gaya butir aktif K133). Tata letak
      * menambahkan butir Menu yang membuka sidebar sebagai butir kelima
      * (F10-03, permintaan A9).
      *

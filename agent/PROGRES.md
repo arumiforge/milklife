@@ -4,51 +4,13 @@ Diperbarui: 22 November 2026
 
 ## Sedang berjalan
 
-**Tahap 10 — Identitas visual anime, panel admin, dan data terbaru** (K153–K155). Permintaan: [`dokumen/draf/permintaan-tahap-10.md`](../dokumen/draf/permintaan-tahap-10.md). Rencana: [`dokumen/draf/rencana-implementasi-tahap-10.md`](../dokumen/draf/rencana-implementasi-tahap-10.md). Semua siap sebelum pertemuan teknik 6 Desember.
-
-| Tugas | Status |
-|---|---|
-| [F10-01 Data dan pengaturan bawaan](tugas/F10-01-data-pengaturan-bawaan.md) | selesai (#174) |
-| [F10-02 Peta lokasi](tugas/F10-02-peta-lokasi.md) | selesai (#173) |
-| [F10-03 Tata letak panel admin](tugas/F10-03-tata-letak-admin.md) | selesai (#180) |
-| [F10-04 Tabel berpaginasi dan dasbor](tugas/F10-04-tabel-paginasi-dasbor.md) | selesai (#175) |
-| [F10-05 Fondasi gaya editorial](tugas/F10-05-fondasi-gaya-editorial.md) | selesai (#172) |
-| [F10-06 Hero editorial dan slideshow](tugas/F10-06-hero-editorial-slideshow.md) | selesai (#176) |
-| [F10-07 Navigasi publik](tugas/F10-07-navigasi-publik.md) | selesai (#177) |
-| [F10-08 Kepadatan panel admin](tugas/F10-08-kepadatan-admin.md) | selesai (#190, masukan pemilik K168) |
-| [F10-09 Halaman publik dan unduhan](tugas/F10-09-halaman-publik-unduhan.md) | selesai (#179) |
-| [F10-10 Pemasangan art G10](tugas/F10-10-pemasangan-art-g10.md) | selesai (#198, masukan pemilik K168) |
-| [F10-12 Tata bahasa halaman publik](tugas/F10-12-tata-bahasa-publik.md) | selesai (#200, K159–K167) |
-| [F10-13 Tata bahasa panel admin](tugas/F10-13-tata-bahasa-admin.md) | dikerjakan |
-| [F10-11 Penutupan Tahap 10](tugas/F10-11-penutupan-tahap-10.md) | rencana |
-
-### Gambar Codex Tahap 10
-
-Gaya anime 2D cel-shaded (K153); dikerjakan Codex berurutan dari [`desain/README.md`](../desain/README.md), ditinjau dan digabung koordinator. Pengganti G9 memakai nama berkas sama, jadi langsung tampil setelah digabung.
-
-| Tugas gambar | Status |
-|---|---|
-| [G10-01 Lembar tokoh](../desain/tugas/G10-01-lembar-tokoh.md) | selesai (#182) |
-| [G10-11 Elemen tombol dan ornamen](../desain/tugas/G10-11-elemen-tombol-ornamen.md) | selesai (#183) |
-| [G10-02 Ilustrasi halaman depan](../desain/tugas/G10-02-ilustrasi-halaman-depan.md) | selesai (#184) |
-| [G10-09 Pita judul](../desain/tugas/G10-09-pita-judul.md) | selesai (#186) |
-| [G10-05 Nomor lomba](../desain/tugas/G10-05-ikon-nomor-lomba.md) | selesai (#187) |
-| [G10-04 Keadaan kosong dan galat](../desain/tugas/G10-04-keadaan-kosong-galat.md) | selesai (#188) |
-| [G10-03 Panduan pendaftaran](../desain/tugas/G10-03-panduan-pendaftaran.md) | selesai (#189) |
-| [G10-07 Kategori Bantuan](../desain/tugas/G10-07-bantuan-kategori.md) | selesai (#191) |
-| [G10-06 Videotron dan podium](../desain/tugas/G10-06-videotron-podium.md) | selesai (#192) |
-| [G10-08 Panel admin](../desain/tugas/G10-08-panel-admin.md) | selesai (#193) |
-| [G10-12 Pola dan hiasan](../desain/tugas/G10-12-pola-hiasan.md) | selesai (#194) |
-| [G10-10 Gambar bagikan](../desain/tugas/G10-10-gambar-bagikan.md) | selesai (#196) |
-| [G10-13 Stadion SSA](../desain/tugas/G10-13-stadion-ssa.md) | selesai (#201, K158) |
-
-Gambar Tahap 9 (G9-01 sampai G9-12) selesai dan sudah di `main` (#142, #153 sampai #163; G9-11 diganti logo resmi pemilik, K152, #158 ditutup), dipasang lewat #164, #166, #167, dan #168, dan akan tertimpa G10.
+Tidak ada tahap yang berjalan. Tahap 10 selesai 22 November 2026; semua siap sebelum pertemuan teknik 6 Desember.
 
 ## Berikutnya
 
-**Tahap 10 — Identitas visual anime, panel admin, dan data terbaru** (K153). Permintaan dan telaahnya: [`dokumen/draf/permintaan-tahap-10.md`](../dokumen/draf/permintaan-tahap-10.md). Dijalankan koordinator Tahap 10 dengan sub-sesi paralel.
+Belum ada tahap baru. Menunggu permintaan pemilik.
 
-Pembaruan server mengikuti bagian 10 panduan produksi. Server yang dipasang sebelum Tahap 9 menjalankan sekali: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, lalu `aset:minify`. Fitur publik baru (Jadwal, Seri, Peserta, Galeri, Videotron) bersakelar bawaan mati sampai dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139). Server yang dipasang sebelum repo privat perlu deploy key sekali, diurus pengembang (K138, K148). Kesiapan server (`/sehat`, pemantauan uptime, tembolok halaman depan, `client_max_body_size`, `memory_limit`, uji pulih cadangan) ditangani pemilik (K119). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
+Pembaruan server mengikuti bagian 10 panduan produksi. Server yang dipasang sebelum Tahap 9 menjalankan sekali, berurutan: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `data:sesuaikan`, `aset:minify`, lalu `pendaftaran:impor <berkas.zip>` bila memindah data. Server yang sudah menjalankan perintah Tahap 9 cukup `migrate --all`, `data:sesuaikan`, dan `aset:minify`. Tanya-jawab dan pesan WA yang sudah tersimpan tidak berubah otomatis; admin menyuntingnya di Pengaturan > Bantuan dan Pengaturan > Halaman depan. Fitur publik bersakelar (Jadwal, Seri, Peserta, Galeri, Videotron) dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139). Kesiapan server (`/sehat`, pemantauan uptime, tembolok halaman depan, `client_max_body_size`, `memory_limit`, uji pulih cadangan) ditangani pemilik (K119). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
 
 ## Selesai
 
@@ -62,6 +24,7 @@ Pembaruan server mengikuti bagian 10 panduan produksi. Server yang dipasang sebe
 - Tahap 7 — Penyelesaian: [`arsip/tahap-7.md`](arsip/tahap-7.md). Selesai 18 November 2026; F7-01 sampai F7-06 dan tugas sisipan F7-08 sampai F7-33, penutupan F7-07.
 - Tahap 8 — Hari lomba dan hasil: [`arsip/tahap-8.md`](arsip/tahap-8.md). Selesai 18 November 2026; F8-01 sampai F8-05 dan F8-07 (#102, #103, #104, #113, #114, #107), penutupan F8-06 bersama F7-06.
 - Tahap 9 — Rombak tampilan dan fitur publik hari lomba: [`arsip/tahap-9.md`](arsip/tahap-9.md). Selesai 22 November 2026; F9-01 sampai F9-17 dan F9-19 (#121–#150), penutupan F9-18 (#151).
+- Tahap 10 — Identitas visual anime, panel admin, dan data terbaru: [`arsip/tahap-10.md`](arsip/tahap-10.md). Selesai 22 November 2026; F10-01 sampai F10-10, F10-12, F10-13 (#172–#203) dan gambar G10-01 sampai G10-13, penutupan F10-11.
 
 ## Menunggu pemilik
 
