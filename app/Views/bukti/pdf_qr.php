@@ -18,7 +18,7 @@
                 <div class="keterangan-nomor-dada" style="font-style: normal; color: #021F7B; margin-bottom: 2mm; padding-right: 4mm;"><?= esc($keteranganNomorDada) ?></div>
             <?php endif ?>
             Bukti ini dibuat otomatis dan sah tanpa tanda tangan.<br>
-            Keasliannya dapat diperiksa dengan memindai kode QR di sebelah kanan.
+            Pindai kode QR di sebelah kanan untuk memeriksa keasliannya.
         </td>
         <td width="40mm" style="text-align: right; vertical-align: bottom;">
             <img src="var:qr" width="38mm" height="38mm">

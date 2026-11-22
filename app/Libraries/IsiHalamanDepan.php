@@ -74,7 +74,7 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  * `tombol()`: tombol utama di kepala halaman depan.
  *
  *     [
- *         ['kunci' => 'pendaftaran', 'label' => 'Daftar Sekarang', 'alamat' => 'pendaftaran', 'utama' => true, 'keterangan' => null],
+ *         ['kunci' => 'pendaftaran', 'label' => 'Daftar sekarang', 'alamat' => 'pendaftaran', 'utama' => true, 'keterangan' => null],
  *         ['kunci' => 'cek',         'label' => 'Cek Pendaftaran', 'alamat' => null, 'utama' => false],
  *     ]
  *
@@ -396,8 +396,8 @@ final class IsiHalamanDepan
 
         return [
             // Pendaftaran hanya bisa dipakai saat terbuka (rancangan 6.1); selain itu nonaktif dengan keterangan keadaannya.
-            // Saat terbuka berbunyi "Daftar Sekarang" seperti konsep visual (K81).
-            ['kunci' => 'pendaftaran', 'label' => $terbuka ? 'Daftar Sekarang' : 'Pendaftaran', 'alamat' => $terbuka ? self::ALAMAT_PENDAFTARAN : null, 'utama' => true, 'keterangan' => self::keteranganPendaftaran($this->bukaTutup())],
+            // Saat terbuka berbunyi "Daftar sekarang" seperti konsep visual (K81), huruf kecil di kata kedua (K165).
+            ['kunci' => 'pendaftaran', 'label' => $terbuka ? 'Daftar sekarang' : 'Pendaftaran', 'alamat' => $terbuka ? self::ALAMAT_PENDAFTARAN : null, 'utama' => true, 'keterangan' => self::keteranganPendaftaran($this->bukaTutup())],
             // Cek hanya bisa dipakai bila pengaturan lengkap (rancangan 6.1).
             ['kunci' => 'cek', 'label' => 'Cek Pendaftaran', 'alamat' => $this->bukaTutup()->keadaan() === BukaTutupPendaftaran::DISIAPKAN ? null : self::ALAMAT_CEK_PENDAFTARAN, 'utama' => false],
         ];

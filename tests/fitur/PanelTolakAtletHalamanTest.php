@@ -103,7 +103,7 @@ final class PanelTolakAtletHalamanTest extends UjiBasisData
 
         // Bukti PDF mencatat atlet yang ditolak beserta keterangannya.
         $html = (new App\Libraries\BuktiPendaftaran((new App\Libraries\DataPendaftaran())->cariId($p['id_pendaftaran'])))->html();
-        $this->assertStringContainsString('Atlet Ditolak Panitia', $html);
+        $this->assertStringContainsString('Atlet ditolak panitia', $html);
         $this->assertStringContainsString('Daftarkan ulang di KU 10 (lahir 2016–2018)', $html);
         $this->assertStringContainsString('BUKTI PENDAFTARAN', $html);
 
@@ -133,7 +133,7 @@ final class PanelTolakAtletHalamanTest extends UjiBasisData
         $cek->assertSee('Semua atlet ditolak');
         $cek->assertSee('cek-kartu-ditolak');
         $cek->assertSee('Semua atlet di pendaftaran ini ditolak panitia');
-        $cek->assertSee('Tidak ada tagihan untuk pendaftaran ini');
+        $cek->assertSee('Pendaftaran ini tidak perlu dibayar');
         $cek->assertSee('Cetak keterangan');
         $cek->assertDontSee('Menunggu Konfirmasi Pembayaran');
         $cek->assertDontSee('cek-unggah-bukti');
@@ -145,7 +145,7 @@ final class PanelTolakAtletHalamanTest extends UjiBasisData
         $this->assertTrue($data['ditolak_semua']);
         $this->assertStringContainsString('KETERANGAN PENOLAKAN ATLET', $bukti->html());
         $this->assertStringContainsString('Tidak ada tagihan', $bukti->html());
-        $this->assertStringNotContainsString('Nomor Lomba Individu', $bukti->html());
+        $this->assertStringNotContainsString('Nomor lomba individu', $bukti->html());
         $this->assertStringEndsWith('_Ditolak.pdf', $bukti->namaBerkas());
 
         // Panel: peringatan di rincian dan lencana di daftar pendaftaran.

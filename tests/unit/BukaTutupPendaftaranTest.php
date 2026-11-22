@@ -89,7 +89,7 @@ final class BukaTutupPendaftaranTest extends CIUnitTestCase
         $this->assertFalse($hasil->lewatManual());
         $this->assertSame('Terbuka', $hasil->label());
         $this->assertSame('Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', $hasil->kalimat());
-        $this->assertSame(['Daftar s.d.', '30 November 2026'], $hasil->ringkas());
+        $this->assertSame(['Daftar sampai', '30 November 2026'], $hasil->ringkas());
         $this->assertSame('2026-11-30 23:59:59', $hasil->batas()?->format('Y-m-d H:i:s'));
     }
 

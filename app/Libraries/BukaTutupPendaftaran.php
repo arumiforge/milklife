@@ -204,7 +204,7 @@ final class BukaTutupPendaftaran
      *
      * - disiapkan:    ["Pendaftaran", "Segera dibuka"]
      * - belum_dibuka: ["Dibuka", "1 Oktober 2026"]
-     * - terbuka:      ["Daftar s.d.", "30 November 2026"]
+     * - terbuka:      ["Daftar sampai", "30 November 2026"]
      * - ditutup:      ["Pendaftaran", "Ditutup"]
      *
      * Kalimat lengkapnya tetap dari `kalimat()`.
@@ -218,7 +218,7 @@ final class BukaTutupPendaftaran
         return match ($this->keadaan) {
             self::DISIAPKAN    => ['Pendaftaran', 'Segera dibuka'],
             self::BELUM_DIBUKA => ['Dibuka', $tanggal],
-            self::TERBUKA      => ['Daftar s.d.', $tanggal],
+            self::TERBUKA      => ['Daftar sampai', $tanggal],
             default            => ['Pendaftaran', 'Ditutup'],
         };
     }

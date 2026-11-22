@@ -148,7 +148,7 @@ class PendaftaranController extends BaseController
         if ($sekolah === null) {
             return $this->json(404, [
                 'status'  => 'tidak_ditemukan',
-                'pesan'   => 'NPSN ini tidak ada di data sekolah kami. Tulis nama sekolah secara lengkap.',
+                'pesan'   => 'NPSN ini belum ada di data sekolah. Tulis nama sekolah secara lengkap.',
                 'susulan' => $susulan,
             ]);
         }
@@ -330,7 +330,7 @@ class PendaftaranController extends BaseController
     {
         return $this->json(400, [
             'status' => 'tidak_sah',
-            'pesan'  => 'Isian tidak terbaca. Muat ulang halaman (isian tetap tersimpan), lalu coba lagi.',
+            'pesan'  => 'Isian belum terbaca. Muat ulang halaman, lalu coba lagi. Isian Anda tetap tersimpan.',
         ]);
     }
 
@@ -375,7 +375,7 @@ class PendaftaranController extends BaseController
 
         return $this->json(429, [
             'status' => 'terlalu_sering',
-            'pesan'  => "Terlalu banyak permintaan dalam waktu singkat. Tunggu {$tunggu} detik, lalu coba lagi.",
+            'pesan'  => "Permintaan terlalu sering. Tunggu {$tunggu} detik, lalu coba lagi.",
         ]);
     }
 

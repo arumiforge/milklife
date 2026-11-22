@@ -52,7 +52,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
     <?php endif ?>
     <div class="relative mx-auto max-w-screen-xl px-4 py-10 sm:py-14 md:flex md:items-center md:justify-between md:gap-8">
         <div class="min-w-0 max-w-2xl md:flex-1<?= $kepala !== null ? ' md:max-w-[48%]' : '' ?>">
-            <?= view('tata_letak/_judul_editorial', ['inggris' => 'Need Help?', 'alis' => $namaAcara, 'judul' => 'Bantuan', 'ikon' => 'life-buoy', 'id' => 'judul-bantuan'], ['saveData' => false]) ?>
+            <?= view('tata_letak/_judul_editorial', ['inggris' => 'Need Help?', 'judul' => 'Bantuan', 'ikon' => 'life-buoy', 'id' => 'judul-bantuan'], ['saveData' => false]) ?>
             <p class="mt-3 text-lg text-gray-700">Jawaban untuk pertanyaan yang sering ditanyakan sekolah, dari mendaftar sampai hasil lomba.</p>
 
             <?php if ($jumlah > 0) : ?>
@@ -121,7 +121,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
 
     <div class="mt-12 space-y-10" data-daftar-faq>
         <?php if ($kategori === []) : ?>
-            <?= komponen('kosong', ['gambar' => 'gambar/bantuan/tanya-panitia.webp', 'ikon' => 'message-circle', 'judul' => 'Tanya-jawab belum tersedia', 'teks' => 'Panitia sedang menyiapkan jawaban. Untuk sementara, tanyakan langsung lewat WA di bawah.']) ?>
+            <?= komponen('kosong', ['gambar' => 'gambar/bantuan/tanya-panitia.webp', 'ikon' => 'message-circle', 'judul' => 'Tanya-jawab belum tersedia', 'teks' => 'Panitia sedang menyiapkan jawaban. Untuk sementara, tanyakan langsung lewat WhatsApp di bawah.']) ?>
         <?php endif ?>
 
         <?php foreach ($kategori as $k) : ?>
@@ -151,7 +151,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
         <?php endforeach ?>
 
         <div class="hidden" data-cari-kosong>
-            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/tidak-ketemu.webp', 'ikon' => 'search', 'judul' => 'Belum ada jawaban yang cocok', 'teks' => 'Coba kata lain yang lebih pendek, misalnya "foto", "transfer", atau "NISN". Atau tanyakan langsung ke panitia lewat WA di bawah.']) ?>
+            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/tidak-ketemu.webp', 'ikon' => 'search', 'judul' => 'Belum ada jawaban yang cocok', 'teks' => 'Coba kata lain yang lebih pendek, misalnya "foto", "transfer", atau "NISN". Atau tanyakan langsung ke panitia lewat WhatsApp di bawah.']) ?>
         </div>
     </div>
 
@@ -164,7 +164,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
         <div class="flex-1">
             <h2 id="judul-tanya-panitia" class="text-xl font-bold text-gray-900">Masih bingung? Tanya panitia</h2>
             <p class="mt-1 text-gray-700">
-                <?= $adaWa ? 'Kirim pesan WA dan sebutkan nama sekolah serta ID pendaftaran bila sudah mendaftar.' : 'Nomor WA panitia belum diumumkan. Lihat petunjuk teknis di halaman Unduhan.' ?>
+                <?= $adaWa ? 'Kirim pesan WhatsApp. Sebutkan nama sekolah, dan ID pendaftaran bila sudah mendaftar.' : 'Nomor WhatsApp panitia belum diumumkan. Lihat petunjuk teknis di halaman Unduhan.' ?>
             </p>
             <?php if ($adaWa) : ?>
                 <div class="mt-4 flex flex-wrap justify-center gap-3 sm:justify-start">

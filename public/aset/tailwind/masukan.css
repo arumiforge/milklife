@@ -360,6 +360,24 @@
         text-wrap: balance;
     }
 
+    /* ===== F10-12: judul editorial rata tengah (K167) ================== */
+    /* Judul Inggris, keterangan Indonesia di bawahnya, dan kalimat pengantar langsung sesudahnya. */
+    [data-judul-inggris],
+    [data-judul-inggris] + .judul-keterangan,
+    [data-judul-inggris] + .judul-keterangan + p {
+        text-align: center;
+    }
+
+    [data-judul-inggris] + .judul-keterangan.flex,
+    [data-judul-inggris] + .judul-keterangan + p.flex {
+        justify-content: center;
+    }
+
+    [data-judul-inggris] + .judul-keterangan + p {
+        margin-inline: auto;
+    }
+    /* ===== akhir F10-12 ================================================ */
+
     /* Pratinjau unduhan: bingkai PDF setinggi layar dan gambar yang muat di modal. */
     .pratinjau-bingkai {
         display: block;

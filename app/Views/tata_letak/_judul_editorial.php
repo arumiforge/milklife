@@ -1,6 +1,6 @@
 <?php
 /**
- * Judul editorial halaman publik (F10-09, K153): alis opsional, judul Inggris
+ * Judul editorial halaman publik (F10-09, K153): judul Inggris
  * besar bergaya tampilan, lalu judul Indonesia sebagai `<h1>`/`<h2>`.
  *
  * Judul Inggris hanya hiasan editorial (`aria-hidden`, `lang="en"`); judul
@@ -12,7 +12,6 @@
  * @var string      $judul   judul Indonesia (di-escape)
  * @var string|null $inggris judul editorial Inggris (di-escape)
  * @var string|null $ikon    nama ikon Lucide, polos tanpa latar
- * @var string|null $alis    label kecil di atas judul, misalnya nama acara
  * @var string|null $id      atribut `id` judul Indonesia
  * @var string|null $tingkat 'h1' (bawaan) atau 'h2'
  */
@@ -20,9 +19,6 @@
 $tingkat = ($tingkat ?? 'h1') === 'h2' ? 'h2' : 'h1';
 $atribut = empty($id) ? '' : ' id="' . esc($id, 'attr') . '"';
 ?>
-<?php if (! empty($alis)) : ?>
-    <p class="alis mb-2" data-judul-alis><?= esc($alis) ?></p>
-<?php endif ?>
 <?php if (! empty($inggris)) : ?>
     <p class="judul-tampilan min-w-0 break-words" lang="en" aria-hidden="true" data-judul-inggris><?= esc($inggris) ?></p>
     <<?= $tingkat . $atribut ?> class="judul-keterangan mt-2 flex min-w-0 items-center gap-2 break-words">

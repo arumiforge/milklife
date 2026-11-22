@@ -156,7 +156,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
         $tautan = $xpath->query('//section[@id="kontak"]//a');
         $this->assertSame(1, $tautan->length);
-        $this->assertSame('Bagikan ke WA (di tab baru)', $this->teksSimpul($tautan->item(0)));
+        $this->assertSame('Bagikan lewat WA (di tab baru)', $this->teksSimpul($tautan->item(0)));
         $this->assertSame('https://wa.me/?text=' . rawurlencode("Lomba Lari Karangan\n" . site_url('/') . "\n#MilkLifeAthleticsChallengeSeri2"), $tautan->item(0)->getAttribute('href'));
         $this->assertTabBaru($tautan->item(0));
     }
@@ -219,7 +219,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         // Tombol tanya admin dan bagikan dengan pesan yang diatur (rawurlencode).
         $tanya = $xpath->query('//section[@id="kontak"]//a[@data-kontak-tanya]')->item(0);
         $this->assertNotNull($tanya);
-        $this->assertSame('Tanya admin lewat WA (di tab baru)', $this->teksSimpul($tanya));
+        $this->assertSame('Tanya panitia lewat WA (di tab baru)', $this->teksSimpul($tanya));
         $this->assertSame('https://wa.me/6281299998888?text=' . rawurlencode("Halo admin, saya mau tanya & daftar?\n#MilkLifeAthleticsChallengeSeri2"), $tanya->getAttribute('href'));
         $this->assertStringContainsString('?text=Halo%20admin%2C%20saya%20mau%20tanya%20%26%20daftar%3F', $tanya->getAttribute('href'));
         $this->assertTabBaru($tanya);
@@ -297,7 +297,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
         $this->assertSame('', $isi('beranda/_jadwal', ['jadwal' => []]));
         $this->assertSame('', $isi('beranda/_unduhan', ['unduhan' => []]));
-        $this->assertStringContainsString('Bagikan ke WA', $isi('beranda/_kontak', ['narahubung' => [], 'mediaSosial' => [], 'waTanya' => null, 'waBagikan' => 'https://wa.me/?text=a']));
+        $this->assertStringContainsString('Bagikan lewat WA', $isi('beranda/_kontak', ['narahubung' => [], 'mediaSosial' => [], 'waTanya' => null, 'waBagikan' => 'https://wa.me/?text=a']));
     }
 
     // ---------- Bantuan ----------

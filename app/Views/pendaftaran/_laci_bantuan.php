@@ -18,7 +18,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
 
 $isiBantuan = new IsiBantuan();
 $kontak     = IsiBantuan::kontak();
-$judul      = [1 => 'Data Sekolah', 2 => 'Ofisial', 3 => 'Atlet', 4 => 'Biaya', 5 => 'Pembayaran'];
+$judul      = [1 => 'Data sekolah', 2 => 'Ofisial', 3 => 'Atlet', 4 => 'Biaya', 5 => 'Pembayaran'];
 ?>
 <div id="laci-bantuan" class="laci-bantuan fixed top-0 right-0 z-50 flex h-screen w-full max-w-md translate-x-full flex-col bg-white shadow-angkat transition-transform aria-hidden:invisible" tabindex="-1" aria-labelledby="laci-bantuan-judul" aria-hidden="true">
     <div class="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3">
@@ -41,7 +41,7 @@ $judul      = [1 => 'Data Sekolah', 2 => 'Ofisial', 3 => 'Atlet', 4 => 'Biaya', 
                     <img src="<?= esc($gambar) ?>" alt="" class="gambar-panduan mb-3 h-auto w-full rounded-xl bg-primary-50" width="1200" height="900" loading="lazy">
                 <?php endif ?>
                 <?php if ($butir === []) : ?>
-                    <p class="text-gray-500">Belum ada tanya-jawab untuk langkah ini.</p>
+                    <p class="text-gray-500">Belum ada tanya-jawab untuk langkah ini. Buka semua bantuan atau tanya panitia.</p>
                 <?php else : ?>
                     <div id="laci-akordeon-<?= $langkah ?>" data-accordion="collapse" data-active-classes="bg-primary-50 text-primary-900" data-inactive-classes="text-gray-900" class="overflow-hidden rounded-xl border border-gray-200">
                         <?php foreach ($butir as $b) : ?>

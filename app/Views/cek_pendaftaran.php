@@ -34,7 +34,7 @@ $sekolah = $hasil[0] ?? null;
 
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_bilah_kemajuan_tw', [], ['saveData' => false]) ?>
-<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Check Your Entry', 'alis' => $namaAcara, 'judul' => 'Cek Pendaftaran', 'ikon' => 'search', 'gambar' => 'judul/cek-pendaftaran.webp', 'teks' => 'Masukkan NPSN atau ID pendaftaran untuk melihat data atlet, biaya, dan status pembayaran sekolah Anda.'], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Check Your Entry', 'judul' => 'Cek Pendaftaran', 'ikon' => 'search', 'gambar' => 'judul/cek-pendaftaran.webp', 'teks' => 'Masukkan NPSN atau ID pendaftaran untuk melihat data atlet, biaya, dan status pembayaran sekolah Anda.'], ['saveData' => false]) ?>
 
 <div class="halaman-cek mx-auto max-w-5xl px-4 pb-12">
     <?php if (! $siap) : ?>
@@ -43,7 +43,7 @@ $sekolah = $hasil[0] ?? null;
                 'gambar' => 'gambar/keadaan/pendaftaran-tutup.webp',
                 'ikon'   => 'hourglass',
                 'judul'  => 'Cek pendaftaran belum bisa dipakai',
-                'teks'   => 'Panitia masih menyiapkan pengaturan pendaftaran. Silakan kembali lagi nanti.',
+                'teks'   => 'Panitia masih menyiapkan pendaftaran. Coba buka halaman ini lagi nanti.',
                 'aksi'   => komponen('tombol', ['label' => 'Kembali ke beranda', 'href' => site_url('/'), 'varian' => 'kedua', 'ikon' => 'arrow-left']),
             ]) ?>
         </div>
@@ -89,7 +89,7 @@ $sekolah = $hasil[0] ?? null;
                         <?= ikon('octagon-alert', 'mt-0.5') ?>
                         <div>
                             <strong><?= array_sum($perluUlang) ?> atlet ditolak panitia dan perlu didaftarkan ulang.</strong>
-                            Lihat alasannya dan kelompok umur yang disarankan di
+                            Alasan dan kelompok umur yang disarankan ada di
                             <?php $tautan = []; ?>
                             <?php foreach (array_keys($perluUlang) as $i) : ?>
                                 <?php $tautan[] = '<a class="font-semibold underline" href="#atlet-ditolak-' . ($i + 1) . '">' . esc($hasil[$i]['id_pendaftaran']) . '</a>'; ?>

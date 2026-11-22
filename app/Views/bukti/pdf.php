@@ -165,20 +165,20 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
 </table>
 </htmlpagefooter>
 
-<h2 class="pertama">Data Pendaftaran</h2>
+<h2 class="pertama">Data pendaftaran</h2>
 <?php // Nama sekolah dipisah di atas karena bisa panjang; data lain berukuran tetap di bawahnya (K108). ?>
 <table class="sekolah">
     <tr>
-        <td class="sekolah-label">Nama Sekolah</td>
+        <td class="sekolah-label">Nama sekolah</td>
         <td class="sekolah-nama"><?= esc($p['nama_sekolah']) ?></td>
     </tr>
 </table>
 <table class="info">
     <tr>
-        <td class="info-label">ID Pendaftaran</td>
+        <td class="info-label">ID pendaftaran</td>
         <?php // ID lama yang sudah digabung ke pendaftaran ini (K109); gaya langsung karena mPDF tidak menerapkan pemilih bersarang di sel. ?>
         <td class="info-id" width="58mm"><?= esc($p['id_pendaftaran']) ?><?php if (($p['gabungan_dari'] ?? []) !== []) : ?><div class="gabungan" style="font-family: dejavusans; font-size: 6.5pt; font-weight: normal; color: #5B6475; letter-spacing: 0;">Gabungan dari <?= esc(implode(', ', $p['gabungan_dari'])) ?></div><?php endif ?></td>
-        <td class="info-label">Tanggal Pendaftaran</td>
+        <td class="info-label">Tanggal pendaftaran</td>
         <td class="info-isi"><?= esc(tanggal_id($p['dibuat_pada'])) ?></td>
     </tr>
     <tr>
@@ -190,7 +190,7 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
     <tr>
         <td class="info-label">Kabupaten / Kota</td>
         <td class="info-isi"><?= esc($p['kabupaten']) ?></td>
-        <td class="info-label">Status Pembayaran</td>
+        <td class="info-label">Status pembayaran</td>
         <td class="status-<?= $lunas ? 'lunas' : ($ditolakSemua ? 'ditolak' : 'menunggu') ?>"><?= esc($p['status_label']) ?></td>
     </tr>
     <tr>
@@ -200,13 +200,13 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
 </table>
 
 <?php if (! $ditolakSemua) : ?>
-<h2>Nomor Lomba Individu <span class="kecil">(<?= count($perAtlet) ?> atlet)</span></h2>
+<h2>Nomor lomba individu <span class="kecil">(<?= count($perAtlet) ?> atlet)</span></h2>
 <?php if ($perAtlet === []) : ?>
-    <p class="kosong">Tidak ada nomor individu pada pendaftaran ini.</p>
+    <p class="kosong">Pendaftaran ini tidak memuat nomor individu.</p>
 <?php else : ?>
     <table class="data">
         <thead>
-            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Atlet</th><th width="27mm" style="white-space: nowrap;">Kelompok Umur</th><th>Nomor Lomba</th><th class="uang" width="22mm">Biaya</th></tr>
+            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Atlet</th><th width="27mm" style="white-space: nowrap;">Kelompok umur</th><th>Nomor lomba</th><th class="uang" width="22mm">Biaya</th></tr>
         </thead>
         <tbody>
             <?php foreach (array_values($perAtlet) as $i => $atlet) : ?>
@@ -225,13 +225,13 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
     </table>
 <?php endif ?>
 
-<h2>Nomor Lomba Beregu <span class="kecil">(<?= count($p['beregu']) ?> regu, <?= array_sum(array_map(static fn (array $t): int => count($t['anggota']), $p['beregu'])) ?> anggota)</span></h2>
+<h2>Nomor lomba beregu <span class="kecil">(<?= count($p['beregu']) ?> regu, <?= array_sum(array_map(static fn (array $t): int => count($t['anggota']), $p['beregu'])) ?> anggota)</span></h2>
 <?php if ($p['beregu'] === []) : ?>
-    <p class="kosong">Tidak ada nomor beregu pada pendaftaran ini.</p>
+    <p class="kosong">Pendaftaran ini tidak memuat nomor beregu.</p>
 <?php else : ?>
     <table class="data beregu">
         <thead>
-            <tr><th width="7mm" style="text-align: right;">No</th><th width="36mm">Nomor Lomba</th><?php if ($kolomRegu) : ?><th width="12mm" style="text-align: center;"><?= esc(Regu::awalan()) ?></th><?php endif ?><th>Nama Atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Atlet</th><th width="16mm">Peran</th><th class="uang" width="22mm">Biaya</th></tr>
+            <tr><th width="7mm" style="text-align: right;">No</th><th width="36mm">Nomor lomba</th><?php if ($kolomRegu) : ?><th width="12mm" style="text-align: center;"><?= esc(Regu::awalan()) ?></th><?php endif ?><th>Nama atlet</th><th width="22mm">NISN</th><th width="17mm" style="white-space: nowrap;">No. Atlet</th><th width="16mm">Peran</th><th class="uang" width="22mm">Biaya</th></tr>
         </thead>
         <tbody>
             <?php foreach ($p['beregu'] as $i => $tim) : ?>
@@ -263,10 +263,10 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
 
 <?php // Atlet ditolak panitia (K117): tetap dicatat di bukti, dengan alasan dan kelompok umur yang disarankan. ?>
 <?php if ($semuaDitolak !== []) : ?>
-    <h2 class="ditolak">Atlet Ditolak Panitia <span class="kecil">(<?= count($semuaDitolak) ?> atlet, tidak termasuk tagihan)</span></h2>
+    <h2 class="ditolak">Atlet ditolak panitia <span class="kecil">(<?= count($semuaDitolak) ?> atlet, tidak termasuk tagihan)</span></h2>
     <table class="data ditolak">
         <thead>
-            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama Atlet</th><th width="22mm">NISN</th><th width="42mm">Didaftarkan di</th><th>Alasan</th><th width="34mm">Keterangan</th></tr>
+            <tr><th width="7mm" style="text-align: right;">No</th><th>Nama atlet</th><th width="22mm">NISN</th><th width="42mm">Didaftarkan di</th><th>Alasan</th><th width="34mm">Keterangan</th></tr>
         </thead>
         <tbody>
             <?php foreach ($semuaDitolak as $i => $d) : ?>
@@ -288,9 +288,9 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
         </tbody>
     </table>
     <div class="catatan-ditolak">
-        <?= $ditolakSemua ? 'Semua atlet pada pendaftaran ini ditolak panitia, jadi pendaftaran ini tidak perlu dibayar.' : 'Atlet di atas tidak termasuk pendaftaran ini dan tidak ditagih.' ?>
-        Daftarkan ulang atletnya lewat menu Pendaftaran; NISN yang sama boleh dipakai.
-        Bila biaya untuk atlet ini sudah terlanjur ditransfer, hubungi panitia untuk penyelesaiannya.
+        <?= $ditolakSemua ? 'Panitia menolak semua atlet di pendaftaran ini, jadi pendaftaran ini tidak perlu dibayar.' : 'Atlet di atas dikeluarkan dari pendaftaran ini dan tidak ditagih.' ?>
+        Daftarkan ulang atletnya lewat menu Pendaftaran. NISN yang sama boleh dipakai.
+        Bila Anda sudah mentransfer biaya untuk atlet ini, hubungi panitia untuk mengurusnya.
     </div>
 <?php endif ?>
 
@@ -302,12 +302,12 @@ $kolomRegu = array_filter($p['beregu'], static fn (array $t): bool => ! ($t['reg
         <td width="45%">
             <table class="total">
                 <?php if ($ditolakSemua) : ?>
-                <tr class="akhir"><td>Total Pembayaran</td><td style="text-align: right;"><?= esc(rupiah($p['total'])) ?></td></tr>
+                <tr class="akhir"><td>Total pembayaran</td><td style="text-align: right;"><?= esc(rupiah($p['total'])) ?></td></tr>
                 <tr><td colspan="2" class="kecil" style="text-align: right;">Tidak ada tagihan</td></tr>
                 <?php else : ?>
                 <tr><td>Subtotal individu</td><td style="text-align: right;"><?= esc(rupiah($p['subtotal_individu'])) ?></td></tr>
                 <tr><td>Subtotal beregu</td><td style="text-align: right;"><?= esc(rupiah($p['subtotal_beregu'])) ?></td></tr>
-                <tr class="akhir"><td>Total Pembayaran</td><td style="text-align: right;"><?= esc(rupiah($p['total'])) ?></td></tr>
+                <tr class="akhir"><td>Total pembayaran</td><td style="text-align: right;"><?= esc(rupiah($p['total'])) ?></td></tr>
                 <?php endif ?>
             </table>
         </td>

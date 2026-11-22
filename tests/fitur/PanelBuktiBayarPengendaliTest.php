@@ -187,7 +187,7 @@ final class PanelBuktiBayarPengendaliTest extends UjiBasisData
         $this->assertGagalDialihkan(
             $this->unggah($p['id'], '', 'besar.jpg', UPLOAD_ERR_INI_SIZE),
             'admin/pendaftaran/' . $p['id'],
-            'Bukti bayar belum tersimpan. Gambar terlalu besar. Paling besar 10 MB; perkecil dulu, lalu unggah lagi.',
+            'Bukti bayar belum tersimpan. Gambar terlalu besar. Ukuran paling besar 10 MB. Perkecil dulu, lalu unggah lagi.',
         );
         $this->assertSame(0, $this->jumlahBukti($p['id']));
     }

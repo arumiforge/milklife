@@ -55,7 +55,7 @@ $maksimal = (int) $wizard['aturan']['penanggung_jawab_maksimal'];
                                 <?= ikon('camera', 'size-4') ?> <span data-teks-foto>Ambil atau pilih foto</span>
                                 <input type="file" accept="image/*" class="sr-only" data-isian="foto">
                             </label>
-                            <div class="<?= K::BANTU ?>">Foto wajah yang jelas. Diperkecil otomatis sebelum dikirim.</div>
+                            <div class="<?= K::BANTU ?>">Pakai foto wajah yang jelas. Ukurannya diperkecil otomatis sebelum dikirim.</div>
                         </div>
                     </div>
                     <div class="<?= K::UMPAN ?>" data-galat-foto></div>

@@ -427,7 +427,7 @@ if (akar) {
         if (!kiri.length && !kanan.length) {
             kiri.push(...pecah(slotKiri, {
                 jenis: 'hasil', kunci: 'kosong', judul: data?.acara?.nama || 'Papan hasil', sub: '',
-                kosong: 'Hasil lomba akan tampil di sini setelah diterbitkan panitia.',
+                kosong: 'Hasil lomba tampil di sini setelah panitia menerbitkannya.',
             }));
         }
 

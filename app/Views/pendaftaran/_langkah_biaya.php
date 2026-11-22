@@ -18,7 +18,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
 
     <div class="langkah-tombol mt-6 flex flex-wrap items-center justify-between gap-3">
         <button type="button" class="<?= K::KEDUA ?>" data-kembali><?= ikon('arrow-left', 'size-5') ?> Kembali</button>
-        <button type="button" class="<?= K::UTAMA_BESAR ?>" data-lanjut>Lanjut ke Pembayaran <?= ikon('arrow-right', 'size-5') ?></button>
+        <button type="button" class="<?= K::UTAMA_BESAR ?>" data-lanjut>Lanjut ke pembayaran <?= ikon('arrow-right', 'size-5') ?></button>
     </div>
 
 </section>

@@ -52,10 +52,10 @@ final class KelengkapanTim
                 $sisa    = max(0, $batas - $jLama);
                 $pesan[] = "{$nama} sudah punya {$jLama} atlet dari pendaftaran sebelumnya, dan paling banyak {$batas} atlet. "
                     . ($sisa === 0
-                        ? 'Regu ini sudah penuh; pilih regu lain untuk atlet tambahan.'
-                        : "Atlet tambahan paling banyak {$sisa}; pindahkan " . ($jumlah - $batas) . ' atlet ke regu lain atau hapus dari nomor ini.');
+                        ? 'Regu ini sudah penuh. Pilih regu lain untuk atlet tambahan.'
+                        : "Atlet tambahan paling banyak {$sisa}. Pindahkan " . ($jumlah - $batas) . ' atlet ke regu lain atau hapus dari nomor ini.');
             } else {
-                $pesan[] = "{$nama} punya {$jumlah} atlet, padahal paling banyak {$batas}. Pindahkan " . ($jumlah - $batas) . ' atlet ke regu lain atau hapus dari nomor ini.';
+                $pesan[] = "{$nama} punya {$jumlah} atlet. Batasnya {$batas} atlet. Pindahkan " . ($jumlah - $batas) . ' atlet ke regu lain atau hapus dari nomor ini.';
             }
         }
 
@@ -68,15 +68,15 @@ final class KelengkapanTim
 
         if ($adaInti > $inti) {
             // Admin (longgar) mengubah inti pendaftaran lain lewat Ubah pendaftaran itu.
-            $pesan[] = "{$nama} punya {$adaInti} atlet inti{$keterangan}, padahal satu regu tepat {$inti} atlet inti. "
+            $pesan[] = "{$nama} punya {$adaInti} atlet inti{$keterangan}. Satu regu harus tepat {$inti} atlet inti. "
                 . 'Jadikan ' . ($adaInti - $inti) . ' atlet cadangan'
                 . ($lama !== null && $intiLama > 0
                     ? ($longgar ? ' di pendaftaran ini, atau ubah dulu pendaftaran lain itu.' : ', atau pilih inti lama yang menjadi cadangan.')
                     : '.');
         } elseif ($adaInti < $inti && ! $longgar) {
             $pesan[] = $jumlah < $inti
-                ? "{$nama} baru punya {$jumlah} atlet. Tambah " . ($inti - $jumlah) . " atlet lagi; satu regu tepat {$inti} atlet inti."
-                : "{$nama} baru punya {$adaInti} atlet inti{$keterangan}. Tandai " . ($inti - $adaInti) . " atlet lagi sebagai Inti; satu regu tepat {$inti} atlet inti.";
+                ? "{$nama} baru punya {$jumlah} atlet. Tambah " . ($inti - $jumlah) . " atlet lagi. Satu regu harus tepat {$inti} atlet inti."
+                : "{$nama} baru punya {$adaInti} atlet inti{$keterangan}. Tandai " . ($inti - $adaInti) . " atlet lagi sebagai Inti. Satu regu harus tepat {$inti} atlet inti.";
         }
 
         if (($nomor['kategori'] ?? '') === 'mix' && $adaInti === $inti) {
@@ -100,7 +100,7 @@ final class KelengkapanTim
             }
 
             if ($kurang !== []) {
-                $pesan[] = "{$nama}: atlet inti minimal {$perlu['L']} putra dan {$perlu['P']} putri; sekarang {$ada['L']} putra dan {$ada['P']} putri. "
+                $pesan[] = "{$nama}: atlet inti minimal {$perlu['L']} putra dan {$perlu['P']} putri. Sekarang {$ada['L']} putra dan {$ada['P']} putri. "
                     . 'Jadikan ' . implode(' dan ', $kurang) . ' sebagai inti.';
             }
         }

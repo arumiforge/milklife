@@ -126,7 +126,7 @@ final class PendaftaranGabunganTest extends UjiBasisData
 
         // Terbuka: menaut ke wizard.
         $this->assertSame(site_url('pendaftaran'), $tombol()->getAttribute('href'));
-        $this->assertSame('Daftar Sekarang', trim($tombol()->textContent));
+        $this->assertSame('Daftar sekarang', trim($tombol()->textContent));
 
         // Ditutup: nonaktif dengan keterangan.
         setting('Pendaftaran.akhir', '2026-01-02 00:00:00');

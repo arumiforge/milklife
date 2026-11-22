@@ -21,9 +21,8 @@
  * @var array<string, mixed>|null             $wizard    null bila pendaftaran belum terbuka
  */
 
-use App\Libraries\Pendaftaran\KelasTampilan as K;
 
-$langkah = ['Data Sekolah', 'Ofisial', 'Atlet', 'Biaya', 'Pembayaran'];
+$langkah = ['Data sekolah', 'Ofisial', 'Atlet', 'Biaya', 'Pembayaran'];
 $sprite  = base_url('aset/vendor/lucide/lucide.svg') . (($versi = @filemtime(FCPATH . 'aset/vendor/lucide/lucide.svg')) === false ? '' : '?v=' . $versi);
 ?>
 <?= $this->extend('tata_letak/publik_tw') ?>
@@ -33,7 +32,7 @@ $sprite  = base_url('aset/vendor/lucide/lucide.svg') . (($versi = @filemtime(FCP
 <?= $this->section('keterangan') ?>Daftarkan sekolah dan atlet secara daring.<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Join the Race', 'alis' => $namaAcara, 'judul' => 'Pendaftaran', 'ikon' => 'pencil-line', 'teks' => $bukaTutup->kalimat()], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Join the Race', 'judul' => 'Pendaftaran', 'ikon' => 'pencil-line', 'teks' => $bukaTutup->kalimat()], ['saveData' => false]) ?>
 
 <div class="halaman-pendaftaran mx-auto max-w-4xl px-4 pb-12">
     <?php if ($wizard === null) : ?>
@@ -61,12 +60,6 @@ $sprite  = base_url('aset/vendor/lucide/lucide.svg') . (($versi = @filemtime(FCP
             <?= $this->include('pendaftaran/_langkah_atlet') ?>
             <?= $this->include('pendaftaran/_langkah_biaya') ?>
             <?= $this->include('pendaftaran/_langkah_pembayaran') ?>
-
-            <p class="mulai-ulang mt-8 text-center">
-                <button type="button" class="<?= K::TAUTAN ?> text-sm" id="tombol-mulai-ulang">
-                    <?= ikon('rotate-ccw', 'size-4') ?> Kosongkan isian dan mulai dari awal
-                </button>
-            </p>
         </div>
 
         <?= $this->include('pendaftaran/_laci_bantuan') ?>
