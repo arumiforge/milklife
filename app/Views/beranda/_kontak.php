@@ -65,7 +65,7 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                                             <p class="text-gray-600" data-narahubung-nomor><?= esc($orang['nomor']) ?></p>
                                         </div>
                                         <a class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100" href="<?= esc($orang['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-narahubung-wa>
-                                            <?= ikon('message-circle', 'size-4') ?> Kirim WA<span class="sr-only"> <?= esc($orang['nama']) ?> (di tab baru)</span>
+                                            <?= ikon('message-circle', 'size-4') ?> Kirim pesan WA<span class="sr-only"> <?= esc($orang['nama']) ?> (di tab baru)</span>
                                         </a>
                                     </li>
                                 <?php endforeach ?>
