@@ -8,6 +8,7 @@ use CodeIgniter\Superglobals;
 use CodeIgniter\Test\CIUnitTestCase;
 use Config\App;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\Support\PulihkanServer;
 
 /**
  * HTTPS di balik Cloudflare Tunnel (asumsi 3 rencana Tahap 7, F7-02).
@@ -24,9 +25,17 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 final class HttpsTerowonganTest extends CIUnitTestCase
 {
+    use PulihkanServer;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->simpanServer();
+    }
+
     protected function tearDown(): void
     {
-        Services::resetSingle('superglobals');
+        $this->pulihkanServer();
         parent::tearDown();
     }
 

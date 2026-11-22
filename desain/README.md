@@ -4,7 +4,7 @@ Folder kerja aset gambar Tahap 9 (K140) dan Tahap 10 (K153). Gambar dibuat **Cod
 
 | Folder | Isi | Ditulis oleh |
 |---|---|---|
-| `referensi/` | Rujukan gaya dari pemilik: `gaya-anime-lintasan.webp` (gaya ilustrasi Tahap 10) dan `hero-editorial.webp` (tata hero foto editorial), K153 | Claude |
+| `referensi/` | Rujukan gaya dari pemilik: `gaya-anime-lintasan.webp` (gaya ilustrasi Tahap 10) dan `hero-editorial.webp` (tata hero foto editorial), K153; `stadion-ssa-*.webp` (foto Supersoccer Arena Kudus, rujukan bentuk stadion), K158 | Claude |
 | `tugas/` | Brief satu tugas gambar per berkas, `G<tahap>-<urut>-<slug>.md` | Claude |
 | `catatan/` | Catatan pembuatan per tugas: berkas, ukuran, ringkasan prompt | Codex |
 | `../public/aset/gambar/<folder di brief>/` | Gambar jadi yang dipakai web | Codex |
@@ -29,6 +29,7 @@ Kerjakan **berurutan dari atas**. G10-01 menetapkan tokoh tetap yang dipakai ula
 | [G10-08](tugas/G10-08-panel-admin.md) | Panel admin | G9-08 | 2 Desember |
 | [G10-12](tugas/G10-12-pola-hiasan.md) | Pola dan hiasan latar (tanpa titik) | G9-12 | 2 Desember |
 | [G10-10](tugas/G10-10-gambar-bagikan.md) | Gambar bagikan | G9-10 | 3 Desember |
+| [G10-13](tugas/G10-13-stadion-ssa.md) | Stadion Supersoccer Arena (enam gambar berlatar stadion digambar ulang) | berkas G10-02, G10-04, G10-09, G10-10, G10-12 | 3 Desember |
 
 ## Urutan Tahap 9 (selesai, digantikan G10)
 
