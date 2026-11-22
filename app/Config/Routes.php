@@ -34,7 +34,7 @@ $routes->post('bukti/([0-9a-f]{24})/(:segment)/bukti-bayar', 'BuktiController::u
 $routes->get('hasil', 'HasilController::index');
 $routes->get('hasil/(:num)', 'HasilController::nomor/$1');
 $routes->get('hasil/(:num)/(pdf|excel)', 'HasilController::unduh/$1/$2');
-// Klasemen sekolah per jenjang dari nomor yang terbit (F8-05).
+// Klasemen sekolah per kelompok umur dari nomor yang terbit (F8-05).
 $routes->get('hasil/klasemen', 'HasilController::klasemen');
 $routes->get('hasil/klasemen/(pdf|excel)', 'HasilController::unduhKlasemen/$1');
 // ---------- Akhir hasil lomba publik (F8-04, F8-05) ----------
@@ -244,7 +244,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('juri/babak/(:num)/(:num)', 'JuriController::simpan/$1/$2');
     // ---------- Akhir lembar juri ----------
 
-    // Klasemen sekolah per jenjang, semua nomor termasuk yang belum terbit (F8-05).
+    // Klasemen sekolah per kelompok umur, semua nomor termasuk yang belum terbit (F8-05).
     $routes->get('klasemen', 'KlasemenController::index');
     $routes->get('klasemen/(pdf|excel)', 'KlasemenController::unduh/$1');
 

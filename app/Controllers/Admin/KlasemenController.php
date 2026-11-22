@@ -12,7 +12,8 @@ use CodeIgniter\HTTP\ResponseInterface;
 /**
  * Klasemen sekolah di panel admin (F8-05, K124): `admin/klasemen`. Menghitung
  * juara Final semua nomor, termasuk yang belum terbit (diberi tanda), per
- * jenjang, dengan metode dari Pengaturan > Hasil (F9-11); unduh PDF dan Excel.
+ * kelompok umur (F11-02), dengan metode dan gabungan kelompok umur dari
+ * Pengaturan > Hasil (F9-11); unduh PDF dan Excel.
  */
 class KlasemenController extends BaseController
 {
@@ -21,12 +22,13 @@ class KlasemenController extends BaseController
         // Sekali baca peringkat 1–8 Final (sama dengan `HasilLomba::klasemen()`).
         $juara  = (new HasilLomba())->juara(false, Klasemen::PERINGKAT_POIN);
         $metode = MetodeKlasemen::metode();
-        $poin   = MetodeKlasemen::poin();
+        $poin    = MetodeKlasemen::poin();
+        $susunan = MetodeKlasemen::susunan();
 
         return view('admin/hasil/klasemen', [
-            'klasemen'    => Klasemen::hitung($juara, $metode, $poin),
+            'klasemen'    => Klasemen::hitung($juara, $metode, $poin, $susunan),
             'metode'      => $metode,
-            'keterangan'  => Klasemen::keterangan($metode, $poin),
+            'keterangan'  => Klasemen::teksSusunan($susunan) . ' ' . Klasemen::keterangan($metode, $poin),
             'belumTerbit' => count(array_unique(array_column(array_filter($juara, static fn (array $j): bool => ! $j['terbit'] && ($metode === Klasemen::POIN || $j['peringkat'] <= 3)), 'nomor_id'))),
         ]);
     }

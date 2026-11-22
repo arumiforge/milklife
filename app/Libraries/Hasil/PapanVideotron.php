@@ -19,7 +19,7 @@ use CodeIgniter\I18n\Time;
  *     //  'pengaturan' => ['isi' => ['hasil', 'juara_umum', …], 'lama' => 12],
  *     //  'hasil' => [['id' => 10, 'nomor' => 'Lari 60 m putra', 'kelompok_umur' => 'KU 10', 'babak' => 'Final',
  *     //               'satuan' => '', 'baris' => [['peringkat' => 1, 'nama' => …, 'sekolah' => …, 'nomor_dada' => …, 'prestasi' => '9,87', 'keterangan' => null], …]], …],
- *     //  'juara_umum' => [['jenjang' => 'A', 'label' => 'SD/MI', 'metode' => 'medali', 'baris' => [['peringkat' => 1, 'sekolah' => …, 'emas' => 3, …], …]], …],
+ *     //  'juara_umum' => [['kunci' => 'ku-1-2', 'label' => 'KU 8 dan KU 10', 'metode' => 'medali', 'baris' => [['peringkat' => 1, 'sekolah' => …, 'emas' => 3, …], …]], …],
  *     //  'jadwal' => [['nomor' => …, 'kelompok_umur' => …, 'babak' => …, 'hari' => 'Rabu, 9 Desember', 'jam' => '08.30', 'lokasi' => …], …],
  *     //  'berlangsung' => [… sama dengan jadwal …]]
  *
@@ -39,7 +39,7 @@ final class PapanVideotron
      */
     public const ISI = [
         'hasil'       => 'Hasil nomor yang baru terbit',
-        'juara_umum'  => 'Juara umum per jenjang',
+        'juara_umum'  => 'Juara umum per kelompok umur',
         'berlangsung' => 'Sedang berlangsung',
         'jadwal'      => 'Jadwal berikutnya',
     ];
@@ -56,7 +56,7 @@ final class PapanVideotron
     public const JUMLAH_HASIL = 6;
 
     /**
-     * Peringkat klasemen paling bawah yang tampil per jenjang.
+     * Peringkat klasemen paling bawah yang tampil per klasemen.
      */
     public const BATAS_KLASEMEN = 10;
 
@@ -216,10 +216,10 @@ final class PapanVideotron
     }
 
     /**
-     * Klasemen nomor terbit per jenjang, sampai peringkat `BATAS_KLASEMEN`,
+     * Klasemen nomor terbit per kelompok umur (F11-02), sampai peringkat `BATAS_KLASEMEN`,
      * tanpa NPSN dan rincian piala.
      *
-     * @return list<array{jenjang: string, label: string, metode: string, baris: list<array<string, mixed>>}>
+     * @return list<array{kunci: string, label: string, metode: string, baris: list<array<string, mixed>>}>
      */
     private function juaraUmum(): array
     {
@@ -227,10 +227,10 @@ final class PapanVideotron
         $metode = MetodeKlasemen::metode();
 
         // Metode dan poin dari Pengaturan > Hasil (F9-11), sama dengan `hasil/klasemen`.
-        foreach ((new HasilLomba($this->db))->klasemen(true) as $jenjang) {
+        foreach ((new HasilLomba($this->db))->klasemen(true) as $klasemen) {
             $baris = [];
 
-            foreach ($jenjang['baris'] as $b) {
+            foreach ($klasemen['baris'] as $b) {
                 if ((int) $b['peringkat'] > self::BATAS_KLASEMEN) {
                     continue;
                 }
@@ -239,7 +239,7 @@ final class PapanVideotron
                 $baris[] = array_filter($b, static fn (mixed $nilai): bool => is_scalar($nilai) || $nilai === null);
             }
 
-            $daftar[] = ['jenjang' => (string) $jenjang['jenjang'], 'label' => (string) $jenjang['label'], 'metode' => $metode, 'baris' => $baris];
+            $daftar[] = ['kunci' => (string) $klasemen['kunci'], 'label' => (string) $klasemen['label'], 'metode' => $metode, 'baris' => $baris];
         }
 
         return $daftar;

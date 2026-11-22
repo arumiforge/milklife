@@ -8,7 +8,7 @@
  * @var string                              $namaAcara
  * @var array<string, array<string, mixed>> $klasemen   `HasilLomba::klasemen(true)`
  * @var string                              $metode     `Klasemen::MEDALI` atau `Klasemen::POIN` (Pengaturan > Hasil, F9-11)
- * @var string                              $keterangan `Klasemen::keterangan()`
+ * @var string                              $keterangan `Klasemen::teksSusunan()` dan `Klasemen::keterangan()`
  */
 $aksi = komponen('tombol', ['label' => 'Lihat hasil per nomor', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']);
 
@@ -21,7 +21,7 @@ if ($klasemen !== []) {
 
 <?= $this->section('judul') ?>Klasemen Sekolah – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
-<?= $this->section('keterangan') ?>Klasemen sekolah per jenjang dari nomor lomba yang hasilnya sudah diterbitkan.<?= $this->endSection() ?>
+<?= $this->section('keterangan') ?>Klasemen sekolah per kelompok umur dari nomor lomba yang hasilnya sudah diterbitkan.<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_judul_halaman_tw', [
@@ -29,7 +29,7 @@ if ($klasemen !== []) {
     'judul' => 'Klasemen sekolah',
     'ikon'  => 'award',
     'gambar' => 'judul/klasemen.webp',
-    'teks'  => 'Klasemen per jenjang sekolah. ' . $keterangan . ' Klasemen dihitung dari nomor yang hasilnya sudah diterbitkan panitia.',
+    'teks'  => $keterangan . ' Klasemen dihitung dari nomor yang hasilnya sudah diterbitkan panitia.',
     'aksi'  => $aksi,
 ], ['saveData' => false]) ?>
 

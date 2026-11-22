@@ -46,7 +46,7 @@ final class JawabanFaq
         'ofisial_maksimal'        => 'Ofisial paling banyak',
         'daftar_kelompok_umur'    => 'Daftar kelompok umur aktif: jenjang dan tahun lahir',
         'daftar_biaya'            => 'Daftar biaya individu dan beregu per kelompok umur. Bila "Tampilkan biaya di halaman depan" mati, yang tampil kalimat bahwa rincian biaya ada di langkah Biaya (K143)',
-        'cara_juara_umum'         => 'Kalimat cara juara umum ditentukan, sesuai metode klasemen di Pengaturan > Hasil (F9-11)',
+        'cara_juara_umum'         => 'Kalimat susunan klasemen per kelompok umur dan cara juara umum ditentukan, sesuai Pengaturan > Hasil (F9-11, F11-02)',
     ];
 
     /**
@@ -160,7 +160,7 @@ final class JawabanFaq
             'daftar_kelompok_umur'    => self::daftarKelompokUmur($isiKu),
             // Biaya hanya dirinci bila panitia menampilkannya di halaman depan (K74, K143).
             'daftar_biaya'            => (bool) setting('HalamanDepan.tampilkan_biaya') ? self::daftarBiaya($isiKu) : self::BIAYA_TERSEMBUNYI,
-            'cara_juara_umum'         => Klasemen::keterangan(MetodeKlasemen::metode(), MetodeKlasemen::poin()),
+            'cara_juara_umum'         => Klasemen::teksSusunan(MetodeKlasemen::susunan()) . ' ' . Klasemen::keterangan(MetodeKlasemen::metode(), MetodeKlasemen::poin()),
         ];
     }
 

@@ -22,7 +22,10 @@ use Throwable;
  * - `Pembayaran.nomor_wa` dan `HalamanDepan.nomor_wa_tanya` yang masih nomor
  *   contoh `628123456789` menjadi `6288215277227`;
  * - media sosial bawaan lama (`milklife.athletics`, `@milklife.athletics`,
- *   `@milklifeathletics`) menjadi alamat resmi MilkLife di `DataAwal::TAUTAN`.
+ *   `@milklifeathletics`) menjadi alamat resmi MilkLife di `DataAwal::TAUTAN`;
+ * - kalimat bawaan lama "Juara umum dihitung per jenjang sekolah." di
+ *   tanya-jawab dihapus, karena klasemen kini per kelompok umur dan
+ *   `{cara_juara_umum}` sudah menyebut susunannya (F11-02, K172 butir 2).
  *
  * Setiap langkah hanya mengubah nilai bawaan lama; isian yang sudah diubah
  * admin dan data pendaftaran tidak disentuh, jadi aman dijalankan berkali-kali.
@@ -32,7 +35,7 @@ class SesuaikanData extends BaseCommand
 {
     protected $group       = 'Aplikasi';
     protected $name        = 'data:sesuaikan';
-    protected $description = 'Menyamakan data bawaan lama (nama KU 8, nomor WA contoh, media sosial lama) dengan data bawaan terbaru. Isian admin tidak ditimpa; aman dijalankan lagi.';
+    protected $description = 'Menyamakan data bawaan lama (nama KU 8, nomor WA contoh, media sosial lama, kalimat juara umum per jenjang di tanya-jawab) dengan data bawaan terbaru. Isian admin tidak ditimpa; aman dijalankan lagi.';
     protected $usage       = 'data:sesuaikan';
 
     /**
@@ -65,6 +68,13 @@ class SesuaikanData extends BaseCommand
         'https://www.tiktok.com/@milklife.athletics'   => ['TikTok', 'https://www.tiktok.com/@milklife_id'],
         'https://www.youtube.com/@milklifeathletics'   => ['YouTube', 'https://www.youtube.com/@milklife_id'],
     ];
+
+    /**
+     * Kalimat tanya-jawab bawaan lama (klasemen per jenjang) => pengganti.
+     */
+    public const FAQ_JUARA_UMUM_LAMA = 'Juara umum dihitung **per jenjang sekolah**. {cara_juara_umum}';
+
+    public const FAQ_JUARA_UMUM_BARU = '{cara_juara_umum}';
 
     /**
      * @param array<int|string, string|null> $params
@@ -118,6 +128,7 @@ class SesuaikanData extends BaseCommand
             self::namaKelompokUmur($db, $waktu, $hasil, false);
             self::nomorWa($hasil, false);
             self::mediaSosial($db, $waktu, $hasil, false);
+            self::faqJuaraUmum($db, $waktu, $hasil, false);
 
             return $hasil;
         }
@@ -128,6 +139,7 @@ class SesuaikanData extends BaseCommand
             self::namaKelompokUmur($db, $waktu, $hasil);
             self::nomorWa($hasil);
             self::mediaSosial($db, $waktu, $hasil);
+            self::faqJuaraUmum($db, $waktu, $hasil);
 
             $db->transCommit();
         } catch (Throwable $e) {
@@ -217,5 +229,30 @@ class SesuaikanData extends BaseCommand
         if (! $ada) {
             $hasil['dilewati'][] = 'Media sosial: tidak ada alamat bawaan lama.';
         }
+    }
+
+    /**
+     * @param array{diubah: list<string>, dilewati: list<string>} $hasil
+     */
+    private static function faqJuaraUmum(BaseConnection $db, string $waktu, array &$hasil, bool $ubah = true): void
+    {
+        $baris = $db->table('faq')->select('id, jawaban')->like('jawaban', self::FAQ_JUARA_UMUM_LAMA, 'both', null, true)->orderBy('id')->get()->getResultArray();
+
+        if ($baris === []) {
+            $hasil['dilewati'][] = 'Tanya-jawab juara umum: tidak ada kalimat bawaan lama "per jenjang sekolah".';
+
+            return;
+        }
+
+        foreach ($baris as $b) {
+            if ($ubah) {
+                $db->table('faq')->where('id', (int) $b['id'])->update([
+                    'jawaban'     => str_replace(self::FAQ_JUARA_UMUM_LAMA, self::FAQ_JUARA_UMUM_BARU, (string) $b['jawaban']),
+                    'diubah_pada' => $waktu,
+                ]);
+            }
+        }
+
+        $hasil['diubah'][] = 'Tanya-jawab juara umum: kalimat "per jenjang sekolah" dihapus dari ' . count($baris) . ' jawaban; susunan klasemen per kelompok umur kini disebut otomatis.';
     }
 }

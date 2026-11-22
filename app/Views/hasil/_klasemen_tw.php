@@ -1,12 +1,12 @@
 <?php
 /**
- * Tabel klasemen sekolah per jenjang untuk halaman publik (F9-03) dan panel
+ * Tabel klasemen sekolah per kelompok umur (F11-02) untuk halaman publik (F9-03) dan panel
  * admin (F9-16, `admin` = tanda "belum terbit" pada piala dari nomor yang
  * belum diterbitkan). Rincian piala tiap sekolah bisa dibuka
  * (`<details>`); juara umum I–III diberi latar kuning dan `data-juara-umum`.
  *
  * Gambar G9-06 hanya bila berkasnya ada (F9-19): piala kecil di judul tiap
- * jenjang (`layar/piala.webp`) dan medali emas, perak, atau perunggu di
+ * klasemen (`layar/piala.webp`) dan medali emas, perak, atau perunggu di
  * samping lencana juara umum (`layar/medali-*.webp`).
  *
  * Kolom poin selalu tampil (F9-11): pada metode poin ditebalkan dan tampil di
@@ -26,8 +26,8 @@ $metodePoin = ($metode ?? Klasemen::MEDALI) === Klasemen::POIN;
 $admin ??= false;
 ?>
 <?php foreach ($klasemen as $jenjang) : ?>
-    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6" aria-labelledby="klasemen-<?= esc($jenjang['jenjang'], 'attr') ?>">
-        <h2 class="<?= $piala === '' ? '' : 'flex items-center gap-2 ' ?>text-xl font-extrabold text-primary-900" id="klasemen-<?= esc($jenjang['jenjang'], 'attr') ?>"><?= $piala ?><?= esc($jenjang['label']) ?></h2>
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6" aria-labelledby="klasemen-<?= esc($jenjang['kunci'], 'attr') ?>">
+        <h2 class="<?= $piala === '' ? '' : 'flex items-center gap-2 ' ?>text-xl font-extrabold text-primary-900" id="klasemen-<?= esc($jenjang['kunci'], 'attr') ?>"><?= $piala ?><?= esc($jenjang['label']) ?></h2>
         <div class="relative mt-4 overflow-x-auto rounded-xl border border-gray-200">
             <table class="w-full text-left text-sm text-gray-700">
                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">

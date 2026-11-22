@@ -132,8 +132,8 @@ final class AlurMenyeluruhTest extends UjiBasisData
 
         // ---------- 7. Klasemen: satu sekolah, tiga piala, juara umum I ----------
         $klasemen = Klasemen::hitung((new HasilLomba())->juara(true));
-        $this->assertSame(['SD KARANGAN MAJU'], array_column($klasemen['A']['baris'], 'sekolah'));
-        $this->assertSame([1, 1, 1, 1], [$klasemen['A']['baris'][0]['emas'], $klasemen['A']['baris'][0]['perak'], $klasemen['A']['baris'][0]['perunggu'], $klasemen['A']['baris'][0]['juara_umum']]);
+        $this->assertSame(['SD KARANGAN MAJU'], array_column(array_values($klasemen)[0]['baris'], 'sekolah'));
+        $this->assertSame([1, 1, 1, 1], [array_values($klasemen)[0]['baris'][0]['emas'], array_values($klasemen)[0]['baris'][0]['perak'], array_values($klasemen)[0]['baris'][0]['perunggu'], array_values($klasemen)[0]['baris'][0]['juara_umum']]);
         $this->assertDiperkecil($this->halaman('hasil/klasemen'));
         $this->halaman('hasil/klasemen')->assertSee('Juara umum I');
         $this->assertStringStartsWith('%PDF', (string) $this->get('hasil/klasemen/pdf')->response()->getBody());

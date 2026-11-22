@@ -90,6 +90,8 @@ final class PapanVideotronTest extends UjiBasisData
         // Juara umum dari klasemen nomor terbit saja, tanpa NPSN dan rincian piala.
         $this->assertCount(1, $data['juara_umum']);
         $this->assertSame('medali', $data['juara_umum'][0]['metode'], 'Metode ikut terkirim untuk layar sempit.');
+        $this->assertSame(['kunci', 'label'], [array_key_first($data['juara_umum'][0]), array_keys($data['juara_umum'][0])[1]], 'Klasemen per kelompok umur (F11-02).');
+        $this->assertStringStartsWith('KU ', $data['juara_umum'][0]['label']);
         $baris = $data['juara_umum'][0]['baris'];
         $this->assertSame('SD KARANGAN MAJU', $baris[0]['sekolah']);
         $this->assertSame([1, 1, 1], [$baris[0]['emas'], $baris[0]['perak'], $baris[0]['perunggu']]);

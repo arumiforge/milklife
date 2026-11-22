@@ -7,9 +7,9 @@ use App\Libraries\Panel\EksporExcel;
 
 /**
  * Unduhan PDF dan Excel klasemen sekolah (F8-05, K124 butir 8). PDF A4 tegak,
- * satu tabel per jenjang; Excel satu lembar per jenjang. Kolom poin selalu
- * ada; kalimat cara juara umum ditentukan mengikuti metode di Pengaturan >
- * Hasil (F9-11).
+ * satu tabel per klasemen kelompok umur (F11-02); Excel satu lembar per
+ * klasemen. Kolom poin selalu ada; kalimat susunan klasemen dan cara juara
+ * umum ditentukan mengikuti Pengaturan > Hasil (F9-11, F11-02).
  *
  *     $unduhan = new UnduhanKlasemen($hasil->klasemen(true), true);
  *     $unduhan->pdf();
@@ -50,7 +50,7 @@ final class UnduhanKlasemen
         return view('hasil/klasemen_pdf', [
             'klasemen'   => $this->klasemen,
             'publik'     => $this->publik,
-            'keterangan' => Klasemen::keterangan(MetodeKlasemen::metode(), MetodeKlasemen::poin()),
+            'keterangan' => Klasemen::teksSusunan(MetodeKlasemen::susunan()) . ' ' . Klasemen::keterangan(MetodeKlasemen::metode(), MetodeKlasemen::poin()),
             'namaAcara' => PdfHariLomba::namaAcara(),
             'seriTahun' => PdfHariLomba::seriTahun(),
             'logo'      => $logo,
@@ -83,10 +83,10 @@ final class UnduhanKlasemen
 
         $utama = null;
 
-        foreach ($this->klasemen as $jenjang) {
-            $lembar = (new EksporExcel(str_replace('/', ' ', $jenjang['label']), $kolom))->tambahBaris(array_map(static fn (array $b): array => [
+        foreach ($this->klasemen as $klasemen) {
+            $lembar = (new EksporExcel(str_replace('/', ' ', $klasemen['label']), $kolom))->tambahBaris(array_map(static fn (array $b): array => [
                 'juara_umum' => $b['juara_umum'] === null ? '' : 'Juara umum ' . str_repeat('I', $b['juara_umum']),
-            ] + $b, $jenjang['baris']));
+            ] + $b, $klasemen['baris']));
 
             if ($utama === null) {
                 $utama = $lembar;
