@@ -4216,6 +4216,10 @@
     .sm\:aspect-\[16\/10\] {
       aspect-ratio: 16/10;
     }
+    .sm\:size-7 {
+      width: calc(var(--spacing) * 7);
+      height: calc(var(--spacing) * 7);
+    }
     .sm\:size-11 {
       width: calc(var(--spacing) * 11);
       height: calc(var(--spacing) * 11);
@@ -4319,6 +4323,9 @@
     }
     .sm\:overflow-visible {
       overflow: visible;
+    }
+    .sm\:p-4 {
+      padding: calc(var(--spacing) * 4);
     }
     .sm\:p-5 {
       padding: calc(var(--spacing) * 5);
@@ -5349,6 +5356,29 @@
     background-image: url("../gambar/elemen/tekstur-kertas.webp");
     background-repeat: repeat;
     background-size: 512px 512px;
+  }
+  .judul-keterangan {
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--color-primary-900);
+    text-wrap: balance;
+  }
+  .pratinjau-bingkai {
+    display: block;
+    width: 100%;
+    height: clamp(16rem, calc(100vh - 13rem), 56rem);
+    height: clamp(16rem, calc(100dvh - 13rem), 56rem);
+    border: 0;
+    background-color: var(--color-gray-100);
+  }
+  .pratinjau-gambar {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100vh - 13rem);
+    max-height: calc(100dvh - 13rem);
+    margin-inline: auto;
+    object-fit: contain;
   }
 }
 @layer base {

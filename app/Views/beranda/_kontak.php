@@ -41,8 +41,8 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
 <section id="kontak" class="scroll-mt-20 bg-white" aria-labelledby="judul-kontak">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
         <div class="relative overflow-hidden rounded-3xl border border-gray-200 latar-merek p-6 shadow-lembut sm:p-10">
-            <p class="alis">Hubungi panitia</p>
-            <h2 id="judul-kontak" class="judul-tampilan ornamen-judul mt-2">Kontak</h2>
+            <p class="judul-tampilan ornamen-judul" lang="en" aria-hidden="true" data-judul-inggris>Get in Touch</p>
+            <h2 id="judul-kontak" class="judul-keterangan mt-2">Kontak</h2>
             <p class="mt-2 max-w-2xl text-lg text-gray-600">
                 <?php if ($adaKontak) : ?>
                     Ada pertanyaan tentang lomba atau pendaftaran? Hubungi panitia lewat WhatsApp.

@@ -204,7 +204,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->lengkapiPengaturan();
 
         $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'megaphone');
-        $this->assertSame('Daftar s.d. 30 November', $this->teks($this->xpathDari($this->get('/')), '//*[@data-keadaan-ringkas]'));
+        $this->assertSame('Daftar s.d. 30 November 2026', $this->teks($this->xpathDari($this->get('/')), '//*[@data-keadaan-ringkas]'));
 
         Time::setTestNow('2026-09-30 12:00:00', 'Asia/Jakarta');
         $this->assertKeadaan($this->xpathDari($this->get('/')), 'belum_dibuka', 'Belum dibuka', 'Pendaftaran dibuka 1 Oktober 2026.', 'calendar-clock');

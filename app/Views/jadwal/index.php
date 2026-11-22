@@ -63,12 +63,8 @@ $tindakan = static function (array $b, string $status): string {
 <section class="latar-merek border-b border-gray-200/70" aria-labelledby="judul-jadwal-pertandingan">
     <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12 md:flex md:items-center md:gap-8">
         <div class="min-w-0 md:flex-1">
-        <p class="text-sm font-semibold text-oranye-700"><?= esc($namaAcara) ?></p>
-        <div class="mt-1 flex flex-wrap items-center gap-3">
-            <?= ikon('calendar-clock', 'size-9 text-oranye-600 sm:size-11') ?>
-            <h1 id="judul-jadwal-pertandingan" class="judul-tampilan min-w-0">Jadwal pertandingan</h1>
-        </div>
-        <p class="mt-3 max-w-3xl text-lg text-gray-700">Urutan lomba per hari. Waktu dalam WIB dan bisa bergeser mengikuti jalannya lomba; status berganti sendiri saat lomba dimulai dan hasilnya terbit.</p>
+        <?= view('tata_letak/_judul_editorial', ['inggris' => 'Race Day', 'alis' => $namaAcara, 'judul' => 'Jadwal pertandingan', 'ikon' => 'calendar-clock', 'id' => 'judul-jadwal-pertandingan'], ['saveData' => false]) ?>
+        <p class="mt-3 max-w-3xl text-lg text-gray-700">Urutan lomba per hari dalam WIB. Jam bisa bergeser mengikuti jalannya lomba.</p>
         </div>
         <?php if (ada_gambar('judul/jadwal.webp')) : ?>
             <div class="hidden shrink-0 md:block" data-judul-ilustrasi><?= gambar_opsional('judul/jadwal.webp', ['class' => 'h-36 w-auto lg:h-44']) ?></div>

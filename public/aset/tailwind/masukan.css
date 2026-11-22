@@ -389,4 +389,35 @@
         background-size: 512px 512px;
     }
     /* ===== akhir F10-05 ================================================ */
+
+    /* ===== F10-09: halaman publik dan unduhan ========================== */
+
+    /* Keterangan Indonesia di bawah judul editorial Inggris (`_judul_editorial`): judul yang dibaca. */
+    .judul-keterangan {
+        font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+        line-height: 1.2;
+        font-weight: 700;
+        color: var(--color-primary-900);
+        text-wrap: balance;
+    }
+
+    /* Pratinjau unduhan: bingkai PDF setinggi layar dan gambar yang muat di modal. */
+    .pratinjau-bingkai {
+        display: block;
+        width: 100%;
+        height: clamp(16rem, calc(100vh - 13rem), 56rem);
+        height: clamp(16rem, calc(100dvh - 13rem), 56rem);
+        border: 0;
+        background-color: var(--color-gray-100);
+    }
+
+    .pratinjau-gambar {
+        display: block;
+        max-width: 100%;
+        max-height: calc(100vh - 13rem);
+        max-height: calc(100dvh - 13rem);
+        margin-inline: auto;
+        object-fit: contain;
+    }
+    /* ===== akhir F10-09 ================================================ */
 }

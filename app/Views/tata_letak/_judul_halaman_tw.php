@@ -2,11 +2,16 @@
 /**
  * Pita judul halaman publik bertampilan baru (F9-03): latar gradien merek,
  * ikon, `<h1>`, keterangan, dan tombol tindakan opsional. Dipakai Unduhan,
- * Hasil, dan Klasemen; halaman publik lain boleh memakainya.
+ * Hasil, Klasemen, Galeri, Cek Pendaftaran, dan Pendaftaran.
  *
- *     view('tata_letak/_judul_halaman_tw', ['judul' => 'Unduhan', 'ikon' => 'download', 'teks' => '…'], ['saveData' => false]);
+ * F10-09: judul editorial Inggris (`inggris`) tampil besar di atas `<h1>`
+ * Indonesia, dengan alis opsional (`tata_letak/_judul_editorial`, K153).
  *
- * @var string      $judul
+ *     view('tata_letak/_judul_halaman_tw', ['inggris' => 'Downloads', 'judul' => 'Unduhan', 'ikon' => 'download', 'teks' => '…'], ['saveData' => false]);
+ *
+ * @var string      $judul      judul Indonesia (`<h1>`)
+ * @var string|null $inggris    judul editorial Inggris (F10-09)
+ * @var string|null $alis       label kecil di atas judul, misalnya nama acara (F10-09)
  * @var string      $ikon       nama ikon Lucide
  * @var string|null $teks       keterangan di bawah judul (di-escape)
  * @var string|null $kembali    alamat tautan kembali (opsional)
@@ -24,10 +29,7 @@ $ilustrasi = empty($gambar) ? '' : gambar_opsional($gambar, ['class' => 'h-36 w-
         <?php if (! empty($kembali)) : ?>
             <a href="<?= esc($kembali, 'attr') ?>" class="mb-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primary-700 hover:underline" data-tautan-kembali><?= ikon('arrow-left', 'size-4') ?><?= esc($labelKembali ?? 'Kembali') ?></a>
         <?php endif ?>
-        <div class="flex flex-wrap items-center gap-3">
-            <?= ikon($ikon, 'size-9 text-oranye-600 sm:size-11') ?>
-            <h1 class="judul-tampilan min-w-0 break-words"><?= esc($judul) ?></h1>
-        </div>
+        <?= view('tata_letak/_judul_editorial', ['judul' => $judul, 'inggris' => $inggris ?? null, 'alis' => $alis ?? null, 'ikon' => $ikon], ['saveData' => false]) ?>
         <?php if (! empty($teks)) : ?>
             <p class="mt-3 max-w-3xl text-lg text-gray-600"><?= esc($teks) ?></p>
         <?php endif ?>
