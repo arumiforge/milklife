@@ -2,6 +2,8 @@
 
 namespace App\Libraries;
 
+use InvalidArgumentException;
+
 /**
  * Ilustrasi Codex untuk halaman depan (F9-03): G9-02 di
  * `public/aset/gambar/beranda/` dan G9-05 di `public/aset/gambar/nomor/`.
@@ -37,10 +39,19 @@ final class IlustrasiBeranda
 
     /**
      * Alamat berkas di `public/aset/`, atau `null` bila berkasnya belum ada.
+     * Jalur `gambar/…` dibaca lewat `GambarOpsional` (folder penggantinya ikut berlaku di uji).
      */
     public static function alamat(string $jalur): ?string
     {
         $jalur = ltrim($jalur, '/');
+
+        if (str_starts_with($jalur, 'gambar/')) {
+            try {
+                return GambarOpsional::alamat(substr($jalur, strlen('gambar/')));
+            } catch (InvalidArgumentException) {
+                return null;
+            }
+        }
 
         return is_file(FCPATH . 'aset/' . $jalur) ? aset($jalur) : null;
     }
