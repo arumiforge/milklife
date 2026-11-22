@@ -113,6 +113,8 @@ Rujukan `desain/referensi/gaya-anime-lintasan.webp`. Inspirasi *100 Meters (Hyak
 
 ## Anggaran kinerja halaman depan (ponsel)
 
+> **Sejak K170 (22 November 2026) angka di bawah hanya catatan ukur, bukan batas.** Ukuran halaman bukan prioritas; ilustrasi, animasi, dan tampilan unik tetap dipakai walau web lebih berat.
+
 Diukur di Chromium lebar 390 piksel, mode produksi dengan minify, jaringan disimulasikan *Fast 4G* (Playwright atau Lighthouse), **sebelum dan sesudah** di setiap PR yang menyentuh halaman depan; angkanya ditulis di deskripsi PR.
 
 | Ukuran | Batas |
