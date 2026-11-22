@@ -222,7 +222,7 @@
         @apply animate-pulse rounded-md bg-gray-200 motion-reduce:animate-none;
     }
 
-    /* ===== F10-05: gaya editorial ======================================
+    /* ===== F10-05: gaya editorial ===============================
      * Kelas berart memakai gambar G10-11 (`public/aset/gambar/elemen/`) hanya di
      * bawah kelas penanda `ada-<nama>` yang ditulis tata letak publik bila
      * berkasnya ada (`GambarOpsional::penandaElemen()`), jadi tanpa berkas tidak
@@ -420,4 +420,23 @@
         object-fit: contain;
     }
     /* ===== akhir F10-09 ================================================ */
+
+    /* ===== F10-07: navigasi publik ==============================
+       Ruang bawah untuk menu bawah ponsel (`tata_letak/_menu_bawah_publik`)
+       supaya isi dan kaki halaman tidak tertutup; laci kiri terbuka
+       mengunci gulir halaman (`aset/js/menu-publik.js`). */
+    .ada-menu-bawah {
+        padding-bottom: calc(3.5rem + 1px + env(safe-area-inset-bottom));
+    }
+
+    @media (min-width: 64rem) {
+        .ada-menu-bawah {
+            padding-bottom: 0;
+        }
+    }
+
+    .laci-terbuka {
+        overflow: hidden;
+    }
+    /* ===== akhir F10-07 ================================================ */
 }
