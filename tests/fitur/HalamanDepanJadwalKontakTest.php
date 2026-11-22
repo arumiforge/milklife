@@ -279,7 +279,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->get('/'));
 
-        $this->assertSame(['pembuka', 'jadwal', 'unduhan', 'kontak'], array_map(
+        $this->assertSame(['pembuka', 'jadwal', 'unduhan', 'lokasi', 'kontak'], array_map(
             static fn (DOMElement $s): string => $s->getAttribute('id'),
             iterator_to_array($xpath->query('//main/section')),
         ));

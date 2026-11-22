@@ -118,4 +118,20 @@ class HalamanDepan extends BaseConfig
     public bool $tampil_seri = false;
 
     // ---------- Akhir seri dan lintasan ----------
+
+    // ---------- Peta lokasi (F10-02) ----------
+
+    /**
+     * Alamat embed Google Maps untuk bagian Lokasi halaman depan; hanya
+     * `https://www.google.com/maps/embed?…` (`App\Libraries\PetaLokasi`).
+     * Kosong = bagian Lokasi tidak tampil. Bawaan Supersoccer Arena (permintaan B14).
+     */
+    public string $peta_embed = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.743848796379!2d110.85445437499567!3d-6.800985593196346!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e70c5529fe28039%3A0x889ddf1d4265ec0f!2sSupersoccer%20Arena!5e0!3m2!1sid!2sid!4v1795321165239!5m2!1sid!2sid';
+
+    /**
+     * Tautan "Buka di Google Maps" (https). Kosong = tautan tidak tampil.
+     */
+    public string $peta_tautan = 'https://maps.google.com/?q=Supersoccer+Arena+Kudus';
+
+    // ---------- Akhir peta lokasi ----------
 }
