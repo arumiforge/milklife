@@ -52,7 +52,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <div class="max-w-4xl space-y-6">
+    <div class="space-y-6">
         <h2 class="text-xl font-bold break-words text-gray-900"><?= esc($judul) ?></h2>
 
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>

@@ -87,7 +87,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $hasil->assertOK();
 
         $baris = $this->barisTabel($hasil);
-        $this->assertSame(['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 0));
+        $this->assertSame(['KU 8', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 0));
         $this->assertSame(['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2014–2015', 'Lahir 2011–2014', 'Lahir 2008–2010'], array_column($baris, 1));
         $this->assertSame(['SD/MI', 'SD/MI', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], array_column($baris, 2));
         $this->assertSame(['Rp 25.000', 'Rp 25.000', 'Rp 25.000', 'Rp 35.000', 'Rp 50.000'], array_column($baris, 3));
@@ -145,7 +145,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $this->assertSame(['A', 'B', 'C'], $this->nilaiSemua($xpath, '//input[@name="jenjang[]"]/@value'));
         $this->assertSame(0, $xpath->query('//input[@name="jenjang[]" and @checked]')->length);
         $this->assertSame(['SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], $this->nilaiSemua($xpath, '//label[input[@name="jenjang[]"]]'));
-        $this->assertTeksTampil($hasil, 'Sudah dipakai kelompok umur lain: 1 untuk KU 8 (Seneng Playon); 2 untuk KU 10; 3 untuk KU 12; 4 untuk KU 15; 5 untuk KU 18.');
+        $this->assertTeksTampil($hasil, 'Sudah dipakai kelompok umur lain: 1 untuk KU 8; 2 untuk KU 10; 3 untuk KU 12; 4 untuk KU 15; 5 untuk KU 18.');
     }
 
     public function testTambahBerhasil(): void
@@ -397,7 +397,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2019', 'jenjang' => ['A'], 'aktif' => '1']));
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_awal']);
-        $hasil->assertSee('bertabrakan dengan KU 8 (Seneng Playon) (lahir 2019 ke atas)');
+        $hasil->assertSee('bertabrakan dengan KU 8 (lahir 2019 ke atas)');
         $this->seeInDatabase('kelompok_umur', ['id' => $id, 'aktif' => 0]);
     }
 
@@ -438,11 +438,11 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
     public function testHapusDitolakBilaPunyaNomorLomba(): void
     {
         DataAwal::isi($this->db);
-        $id = (int) $this->db->table('kelompok_umur')->where('nama', 'KU 8 (Seneng Playon)')->get()->getRow()->id;
+        $id = (int) $this->db->table('kelompok_umur')->where('nama', 'KU 8')->get()->getRow()->id;
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}/hapus");
 
-        $this->assertGagalDialihkan($hasil, self::ALAMAT, 'KU 8 (Seneng Playon) masih punya 2 nomor lomba, jadi tidak bisa dihapus. Hapus dulu nomor lombanya di halaman Nomor Lomba, atau matikan kelompok umur ini supaya tidak muncul di pendaftaran.');
+        $this->assertGagalDialihkan($hasil, self::ALAMAT, 'KU 8 masih punya 2 nomor lomba, jadi tidak bisa dihapus. Hapus dulu nomor lombanya di halaman Nomor Lomba, atau matikan kelompok umur ini supaya tidak muncul di pendaftaran.');
         $this->seeInDatabase('kelompok_umur', ['id' => $id]);
         $this->seeNumRecords(1, 'awalan_nomor_dada', ['kelompok_umur_id' => $id]);
     }

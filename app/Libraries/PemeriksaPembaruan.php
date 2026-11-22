@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use App\Commands\MinifyAset;
+use App\Commands\SesuaikanData;
 use App\Libraries\Hasil\DataTabelSkor;
 use App\Models\SekolahModel;
 use CodeIgniter\Database\BaseConnection;
@@ -33,7 +34,10 @@ use Throwable;
  * 5. `tabel_skor`: tabel skor bawaan di `data/tabel-skor/` yang belum
  *    terpasang, atau nomor Trilomba yang masih berjenis hasil poin dan belum
  *    punya prestasi (F9-10, K143) → `php spark tabel-skor:impor --trilomba`.
- * 6. `aset`: berkas CSS/JS/SVG yang versi `.min`-nya belum ada atau lebih tua
+ * 6. `data_bawaan`: data bawaan `data:awal` lama yang belum disamakan (nama
+ *    `KU 8 (Seneng Playon)`, nomor WA contoh, media sosial lama; F10-01) →
+ *    `php spark data:sesuaikan`.
+ * 7. `aset`: berkas CSS/JS/SVG yang versi `.min`-nya belum ada atau lebih tua
  *    dari aslinya → `php spark aset:minify`. Dilewati bila `aplikasi.minify`
  *    mati dan belum ada berkas `.min` sama sekali.
  *
@@ -74,6 +78,7 @@ final class PemeriksaPembaruan
             $this->jalankan('sekolah', 'Data sekolah', 'php spark sekolah:impor', fn (): array => $this->periksaSekolah()),
             $this->jalankan('gabung', 'Pendaftaran Lunas ber-NPSN sama', 'php spark pendaftaran:gabung', fn (): array => $this->periksaGabung()),
             $this->jalankan('tabel_skor', 'Tabel skor multi-lomba (Trilomba)', 'php spark tabel-skor:impor --trilomba', fn (): array => $this->periksaTabelSkor()),
+            $this->jalankan('data_bawaan', 'Data bawaan terbaru (KU 8, WA, media sosial)', 'php spark data:sesuaikan', fn (): array => $this->periksaDataBawaan()),
             $this->jalankan('aset', 'CSS dan JavaScript kecil', 'php spark aset:minify', fn (): array => $this->periksaAset()),
         ];
     }
@@ -372,6 +377,22 @@ final class PemeriksaPembaruan
         }
 
         return [true, ucfirst(implode('; ', $bagian)) . '. Nomor yang sudah punya prestasi tidak diubah.'];
+    }
+
+    /**
+     * Data bawaan `data:awal` lama yang belum disamakan (F10-01).
+     *
+     * @return array{0: bool, 1: string}
+     */
+    private function periksaDataBawaan(): array
+    {
+        $diubah = SesuaikanData::sesuaikan($this->db, false)['diubah'];
+
+        if ($diubah === []) {
+            return [false, 'Tidak ada data bawaan lama yang perlu disamakan.'];
+        }
+
+        return [true, 'Akan diubah: ' . implode(' ', $diubah) . ' Isian admin tidak ditimpa.'];
     }
 
     /**

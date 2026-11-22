@@ -44,7 +44,7 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <section class="max-w-2xl rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-formulir-kontak">
+    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-formulir-kontak">
         <h2 id="judul-formulir-kontak" class="flex items-center gap-2 text-lg font-bold text-gray-900">
             <?= ikon($narahubung ? 'contact' : 'share-2', 'text-primary-700') ?>
             <?= esc(ucfirst($judul)) ?>

@@ -20,7 +20,7 @@ $pertama = array_key_first($hari);
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Pilih babak, lalu isi prestasi tiap peserta dari ponsel. Setiap baris tersimpan sendiri begitu diisi.
         Beberapa juri boleh mengisi babak yang berbeda bersamaan. Peringkat dan tombol Terbitkan ada di
         <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>.

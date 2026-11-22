@@ -137,12 +137,13 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
  * `false`, bagian lomba tidak menulis biaya sama sekali; datanya tetap ada di
  * `kelompokUmur()`.
  *
- * `waTanya()`: `'https://wa.me/6281234567890?text=…'` (tanpa `?text=` bila
- * pesan tanya kosong), atau `null` bila nomor WA tanya admin belum diisi.
+ * `waTanya()`: `'https://wa.me/6281234567890?text=…'`, atau `null` bila nomor
+ * WA tanya admin belum diisi. Pesannya `HalamanDepan.pesan_tanya` ditambah
+ * tagar `#MilkLifeAthleticsChallengeSeri2` pada baris baru (`TAGAR`, F10-01).
  *
  * `waBagikan()`: `'https://wa.me/?text=…'`. Pesannya `HalamanDepan.pesan_bagikan`
  * (atau nama acara bila kosong), ditambah alamat halaman depan pada baris baru
- * bila alamat itu belum tertulis di pesan.
+ * bila alamat itu belum tertulis di pesan, lalu tagar acara (`TAGAR`).
  *
  * Halaman depan baru (F9-03):
  *
@@ -238,6 +239,47 @@ final class IsiHalamanDepan
 
         return ['alamat' => $alamat, 'ukuran' => $ukuran === null ? null : ['lebar' => $ukuran[0], 'tinggi' => $ukuran[1]]];
     }
+
+    /**
+     * Logo Bakti Olahraga Djarum Foundation bawaan (F10-01), salinan utuh
+     * `sumber/logo/logo-djarum-foundation.png`, dipakai di kaki halaman bila
+     * admin belum mengunggah logo Djarum sendiri.
+     */
+    public const LOGO_DJARUM_BAWAAN = 'logo-djarum.png';
+
+    /**
+     * Logo Djarum untuk kaki halaman publik (K84): unggahan admin
+     * (`HalamanDepan.logo_djarum`) bila ada, selain itu logo bawaan
+     * `public/aset/gambar/logo-djarum.png`, atau `null` bila keduanya tidak
+     * ada. Sama seperti `logoMerek()` (K152).
+     *
+     * @param array<string, mixed> $tampilan hasil `tampilan()`, atau `[]` bila basis data belum siap
+     *
+     * @return array{kunci: string, alamat: string, alt: string, ukuran: array{lebar: int, tinggi: int}|null}|null
+     */
+    public static function logoDjarum(array $tampilan): ?array
+    {
+        $alt = 'Logo Bakti Olahraga Djarum Foundation';
+
+        if (($tampilan['logo_djarum'] ?? null) !== null) {
+            return ['kunci' => 'logo_djarum', 'alamat' => (string) $tampilan['logo_djarum'], 'alt' => $alt, 'ukuran' => $tampilan['ukuran']['logo_djarum'] ?? null];
+        }
+
+        $alamat = GambarOpsional::alamat(self::LOGO_DJARUM_BAWAAN);
+
+        if ($alamat === null) {
+            return null;
+        }
+
+        $ukuran = GambarOpsional::ukuran(self::LOGO_DJARUM_BAWAAN);
+
+        return ['kunci' => 'logo_djarum', 'alamat' => $alamat, 'alt' => $alt, 'ukuran' => $ukuran === null ? null : ['lebar' => $ukuran[0], 'tinggi' => $ukuran[1]]];
+    }
+
+    /**
+     * Tagar acara yang selalu ada di pesan "Tanya admin" dan "Bagikan ke WA" (F10-01).
+     */
+    public const TAGAR = '#MilkLifeAthleticsChallengeSeri2';
 
     /**
      * Logo yang sudah diunggah, berurutan seperti di pengaturan.
@@ -578,9 +620,9 @@ final class IsiHalamanDepan
             return null;
         }
 
-        $pesan = self::rapikanBaris(setting('HalamanDepan.pesan_tanya'));
+        $pesan = self::denganTagar(self::rapikanBaris(setting('HalamanDepan.pesan_tanya')));
 
-        return 'https://wa.me/' . $nomor . ($pesan !== '' ? '?text=' . rawurlencode($pesan) : '');
+        return 'https://wa.me/' . $nomor . '?text=' . rawurlencode($pesan);
     }
 
     /**
@@ -600,7 +642,7 @@ final class IsiHalamanDepan
             $pesan .= "\n" . $alamat;
         }
 
-        return 'https://wa.me/?text=' . rawurlencode($pesan);
+        return 'https://wa.me/?text=' . rawurlencode(self::denganTagar($pesan));
     }
 
     // ---------------------------------------------------------------
@@ -867,6 +909,19 @@ final class IsiHalamanDepan
      * Apakah pesan sudah memuat alamat halaman depan (dengan atau tanpa
      * `http(s)://`, `www.`, dan garis miring di akhir).
      */
+    /**
+     * Pesan ditambah `TAGAR` di baris baru, kecuali tagarnya sudah tertulis
+     * (huruf besar/kecil tidak dibedakan); pesan kosong menjadi tagarnya saja.
+     */
+    private static function denganTagar(string $pesan): string
+    {
+        if (stripos($pesan, self::TAGAR) !== false) {
+            return $pesan;
+        }
+
+        return $pesan === '' ? self::TAGAR : $pesan . "\n" . self::TAGAR;
+    }
+
     private static function memuatAlamat(string $pesan, string $alamat): bool
     {
         $ringkas = rtrim(TautanModel::alamatRingkas($alamat), '/');

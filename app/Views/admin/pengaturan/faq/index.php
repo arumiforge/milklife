@@ -39,7 +39,7 @@ $ikonKategori = [
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <div class="flex max-w-3xl items-start gap-3 rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" role="note">
+    <div class="flex items-start gap-3 rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" role="note">
         <?= ikon('info', 'mt-0.5 shrink-0') ?>
         <div>
             Tanya-jawab ini tampil di halaman Bantuan dan di tombol bantuan formulir pendaftaran.
@@ -52,7 +52,7 @@ $ikonKategori = [
         <section class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center" aria-labelledby="judul-bawaan">
             <span class="mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-700"><?= ikon('circle-help', 'size-7') ?></span>
             <h2 id="judul-bawaan" class="text-lg font-bold text-gray-900">Belum ada tanya-jawab</h2>
-            <p class="mt-1 max-w-xl text-gray-600">
+            <p class="mt-1 text-gray-600">
                 Pasang tanya-jawab bawaan yang sudah disusun dari petunjuk teknis, lalu sesuaikan isinya.
                 Atau tambahkan sendiri lewat tombol di tiap kategori di bawah.
             </p>

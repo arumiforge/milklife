@@ -33,7 +33,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Pilih cara menentukan juara umum di klasemen sekolah. Klasemen tetap dihitung terpisah per jenjang sekolah,
         dan kolom poin tampil di klasemen apa pun metodenya. Perubahan langsung berlaku di klasemen panel, halaman Hasil, PDF, Excel, dan videotron.
     </p>

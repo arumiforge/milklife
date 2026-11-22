@@ -245,14 +245,52 @@ final class TataLetakHalamanTest extends UjiBasisData
             ['Dasbor', site_url('admin/dasbor'), 'page'],
             ['Pendaftaran', site_url('admin/pendaftaran'), ''],
             ['Atlet', site_url('admin/atlet'), ''],
-            ['Ditolak', site_url('admin/atlet-ditolak'), ''],
             ['Rekap', site_url('admin/rekap'), ''],
         ], $this->daftarMenu($xpath, $bawah));
-        // Butir aktif cukup ikon oranye (K133).
+        // Butir kelima: Menu, membuka sidebar (F10-03, permintaan A9).
+        $tombolBawah = $xpath->query('.//li/button[@data-menu-buka]', $bawah);
+        $this->assertSame(1, $tombolBawah->length);
+        $this->assertSame('Menu', $this->teks($tombolBawah->item(0)));
+        $this->assertSame('menu-laci', $tombolBawah->item(0)->getAttribute('data-drawer-toggle'));
+        $this->assertSame(5, $xpath->query('./ul/li', $bawah)->length);
+        // Butir aktif: ikon dan label oranye (K133, F10-03).
         $this->assertStringContainsString('text-oranye-500', $xpath->query('.//a[@aria-current="page"]//*[name()="svg"]', $bawah)->item(0)?->getAttribute('class') ?? '');
+        $this->assertStringContainsString('text-oranye-600', $xpath->query('.//a[@aria-current="page"]', $bawah)->item(0)?->getAttribute('class') ?? '');
 
         // Menu samping berkelompok (rencana Tahap 9), lalu daftar akhir (K102).
         $this->assertSame(self::MENU_SAMPING, $this->kelompokMenu($xpath, $samping));
+
+        // Submenu (F10-03): tertutup bila tidak memuat halaman aktif.
+        $anak = [];
+        foreach ($xpath->query('.//a[@data-menu-anak]', $samping) as $tautan) {
+            $anak[] = $tautan->getAttribute('data-menu-tautan');
+        }
+        $this->assertSame([
+            'admin/riwayat', 'admin/atlet/nomor-dada', 'admin/sekolah/usulan', 'admin/sekolah/nama-desa',
+            'admin/pengaturan/acara', 'admin/pengaturan/pendaftaran', 'admin/pengaturan/kelompok-umur', 'admin/pengaturan/nomor-lomba',
+            'admin/pengaturan/pembayaran', 'admin/pengaturan/jadwal', 'admin/pengaturan/kontak', 'admin/pengaturan/tabel-skor',
+            'admin/pengaturan/hasil', 'admin/akun',
+        ], $anak);
+        foreach ($xpath->query('.//button[@data-lipat]', $samping) as $tombol) {
+            $daftar = $xpath->query('//*[@id="' . $tombol->getAttribute('aria-controls') . '"]')->item(0);
+            $this->assertNotNull($daftar, $tombol->getAttribute('data-lipat'));
+            $this->assertSame($daftar->hasAttribute('hidden') ? 'false' : 'true', $tombol->getAttribute('aria-expanded'));
+        }
+        $this->assertSame(4, $xpath->query('.//button[starts-with(@data-lipat, "kelompok-")][@aria-expanded="true"]', $samping)->length, 'Kelompok terbuka tanpa JavaScript.');
+        $this->assertSame(1, $xpath->query('.//button[@data-lipat="kelompok-pendaftaran"][@data-lipat-aktif]', $samping)->length, 'Kelompok halaman aktif selalu terbuka.');
+        $this->assertSame(0, $xpath->query('.//button[starts-with(@data-lipat, "butir-")][@aria-expanded="true"]', $samping)->length);
+        $this->assertStringContainsString('"' . aset('js/menu-admin.js') . '"', $html);
+
+        // Warna merek (K154): sidebar biru tua, pojok kiri atas biru berisi logo resmi.
+        $this->assertStringContainsString('bg-primary-900', $laci->getAttribute('class'));
+        $pojok = $xpath->query('.//*[@data-pojok-admin]', $laci)->item(0);
+        $this->assertNotNull($pojok);
+        $this->assertStringContainsString('bg-primary-700', $pojok->getAttribute('class'));
+        // Logo resmi bila ada (tanpa logo: ikon pengganti), di wadah putih supaya terbaca di latar biru.
+        $this->assertSame(1, $xpath->query('.//a[@data-merek-admin]/span[contains(@class, "bg-white")][.//img[@data-logo-merek] or .//*[name()="svg"]]', $pojok)->length);
+
+        // Jejak navigasi bawaan dari menu (F10-03).
+        $this->assertSame(['Dasbor', 'Dasbor'], $this->labelJejak($xpath));
         $akhir = $xpath->query('.//*[@data-menu-akhir]', $samping)->item(0);
         $this->assertNotNull($akhir);
         $this->assertSame([
@@ -306,15 +344,17 @@ final class TataLetakHalamanTest extends UjiBasisData
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasbor/rincian', 'Tests\Support\Views\contoh_admin'));
         $this->assertSame(2, $xpath->query('//a[@data-menu-tautan][@aria-current="page"]')->length);
 
-        // Halaman lain tidak menandai Dasbor.
+        // Halaman lain tidak menandai Dasbor; jejaknya hanya judul halaman.
         $xpath = $this->xpath($this->renderDiAlamat('admin/lain', 'Tests\Support\Views\contoh_admin'));
-        $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
-        // Lima butir di menu bawah (K133); dua puluh butir berkelompok dan dua di daftar akhir (K102) di menu samping.
-        $this->assertSame(27, $xpath->query('//a[@data-menu-tautan]')->length);
+        $this->assertSame(0, $xpath->query('//nav[@data-menu-admin]//*[@aria-current]')->length);
+        $this->assertSame(['Dasbor', 'Judul Contoh admin'], $this->labelJejak($xpath));
+        // Empat tautan dan butir Menu di menu bawah (K133, F10-03); di menu samping
+        // dua puluh butir berkelompok, empat belas anak submenu, dan dua di daftar akhir (K102).
+        $this->assertSame(4 + 20 + 14 + 2, $xpath->query('//a[@data-menu-tautan]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));
-        $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
+        $this->assertSame(0, $xpath->query('//nav[@data-menu-admin]//*[@aria-current]')->length);
 
         // Butir yang alamatnya paling cocok menang: Konten dan Videotron di bawah
         // admin/pengaturan tidak ikut menandai Pengaturan.
@@ -322,7 +362,9 @@ final class TataLetakHalamanTest extends UjiBasisData
             'admin/pengaturan/galeri/3/ubah'   => 'admin/pengaturan/galeri',
             'admin/pengaturan/bantuan'         => 'admin/pengaturan/bantuan',
             'admin/pengaturan/videotron'       => 'admin/pengaturan/videotron',
-            'admin/pengaturan/acara'           => 'admin/pengaturan',
+            'admin/pengaturan/acara'           => 'admin/pengaturan/acara',
+            'admin/pengaturan/jadwal/3/ubah'   => 'admin/pengaturan/jadwal',
+            'admin/sekolah/usulan'             => 'admin/sekolah/usulan',
             'admin/nomor-atlet/cetak/contoh'   => 'admin/nomor-atlet/cetak',
             'admin/seri/babak/4'               => 'admin/seri',
         ] as $alamat => $butir) {
@@ -335,6 +377,67 @@ final class TataLetakHalamanTest extends UjiBasisData
 
             $this->assertSame([$butir], $aktif, $alamat);
         }
+    }
+
+    /**
+     * Jejak bawaan (F10-03): induk submenu, butir menu, lalu judul halaman;
+     * halaman yang menulis jejak sendiri tidak mendapat jejak kedua.
+     */
+    public function testJejakBawaanDariMenu(): void
+    {
+        $_SESSION = UjiHalaman::SESI_ADMIN;
+
+        foreach ([
+            'admin/pengaturan/jadwal/3/ubah' => ['Dasbor', 'Pengaturan', 'Agenda', 'Judul Contoh admin'],
+            'admin/pengaturan/jadwal'        => ['Dasbor', 'Pengaturan', 'Judul Contoh admin'],
+            'admin/rekap/keuangan'           => ['Dasbor', 'Rekap', 'Judul Contoh admin'],
+            'admin/seri/babak/4'             => ['Dasbor', 'Seri dan lintasan', 'Judul Contoh admin'],
+        ] as $alamat => $harapan) {
+            $xpath = $this->xpath($this->renderDiAlamat($alamat, 'Tests\Support\Views\contoh_admin'));
+            $this->assertSame($harapan, $this->labelJejak($xpath), $alamat);
+            $this->assertSame(1, $xpath->query('//nav[@data-jejak]//*[@aria-current="page"]')->length, $alamat);
+        }
+
+        // Tautan butir induk mengarah ke halamannya.
+        $xpath = $this->xpath($this->renderDiAlamat('admin/pengaturan/jadwal/3/ubah', 'Tests\Support\Views\contoh_admin'));
+        $this->assertSame(site_url('admin/pengaturan/jadwal'), $xpath->query('//nav[@data-jejak]//ol//a[normalize-space()="Agenda"]')->item(0)?->getAttribute('href'));
+
+        // Judul yang sama dengan butir menu tidak diulang.
+        $this->assertSame([['label' => 'Pengaturan', 'alamat' => 'admin/pengaturan'], ['label' => 'Data Acara']], $this->jejakDiAlamat('admin/pengaturan/acara', 'Data Acara'));
+        $this->assertSame([['label' => 'Sekolah', 'alamat' => 'admin/sekolah'], ['label' => 'Usulan Nama Sekolah']], $this->jejakDiAlamat('admin/sekolah/usulan', 'Usulan Nama Sekolah'));
+        $this->assertSame([['label' => 'pendaftaran']], $this->jejakDiAlamat('admin/pendaftaran', 'pendaftaran'));
+    }
+
+    /**
+     * @return list<array{label: string, alamat?: string}>
+     */
+    private function jejakDiAlamat(string $alamat, string $judul): array
+    {
+        Services::injectMock('request', new IncomingRequest(config('App'), new SiteURI(config('App'), $alamat), null, new UserAgent()));
+
+        try {
+            return \App\Libraries\Panel\MenuAdmin::jejak($judul);
+        } finally {
+            Services::resetSingle('request');
+        }
+    }
+
+    /**
+     * Label jejak navigasi lengkap (layar lebar): Dasbor (ikon rumah), lalu butirnya.
+     *
+     * @return list<string>
+     */
+    private function labelJejak(DOMXPath $xpath): array
+    {
+        $label = [];
+
+        foreach ($xpath->query('//nav[@data-jejak]//ol/li') as $butir) {
+            $ikon    = $xpath->query('.//*[@aria-label]', $butir)->item(0);
+            $teks    = $this->teks($butir);
+            $label[] = $teks === '' && $ikon !== null ? $ikon->getAttribute('aria-label') : $teks;
+        }
+
+        return $label;
     }
 
     public function testJudulKepalaAdminMemakaiJudulBilaJudulHalamanKosong(): void
@@ -495,7 +598,7 @@ final class TataLetakHalamanTest extends UjiBasisData
         $hasil = [];
 
         foreach ($xpath->query('.//*[@data-menu-kelompok]', $menu) as $kelompok) {
-            foreach ($xpath->query('.//a[@data-menu-tautan]', $kelompok) as $tautan) {
+            foreach ($xpath->query('.//a[@data-menu-tautan][not(@data-menu-anak)]', $kelompok) as $tautan) {
                 $hasil[$kelompok->getAttribute('data-menu-kelompok')][] = $this->teks($tautan);
             }
         }

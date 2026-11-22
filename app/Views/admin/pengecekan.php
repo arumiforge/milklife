@@ -43,7 +43,7 @@ $kelasKartu  = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm
 
 <?= $this->section('isi') ?>
 <div class="p-4 sm:p-6">
-    <p class="mb-5 max-w-3xl text-gray-600">Periksa di sini apakah pendaftaran sudah terbuka, pengaturan wajib sudah lengkap, dan halaman depan sudah siap dilihat sekolah.</p>
+    <p class="mb-5 text-gray-600">Periksa di sini apakah pendaftaran sudah terbuka, pengaturan wajib sudah lengkap, dan halaman depan sudah siap dilihat sekolah.</p>
 
     <div class="grid grid-cols-1 items-start gap-5 xl:grid-cols-12">
         <section class="<?= $kelasKartu ?> xl:col-span-5" aria-labelledby="judul-keadaan" id="keadaan-pendaftaran" data-keadaan="<?= esc($keadaan, 'attr') ?>">

@@ -30,7 +30,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
     <div class="flex flex-wrap items-start justify-between gap-3">
-        <p class="max-w-3xl min-w-0 flex-1 basis-72 text-gray-700">
+        <p class="min-w-0 flex-1 basis-72 text-gray-700">
             Semua atlet dari setiap pendaftaran. Untuk mengubah data atlet, buka rincian pendaftarannya lewat ID pendaftaran.
             <?php if ($diurutkanPada !== null) : ?>
                 <br><span id="keterangan-nomor-dada" class="text-sm text-gray-600">Nomor atlet (BIB) diurutkan ulang per sekolah pada <?= esc(tanggal_id($diurutkanPada)) ?>.</span>

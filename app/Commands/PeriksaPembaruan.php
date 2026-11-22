@@ -10,8 +10,8 @@ use CodeIgniter\CLI\CLI;
  * `php spark pembaruan:periksa` (K115)
  *
  * Dijalankan setelah `git pull` di server. Memeriksa apakah pustaka
- * Composer, migrasi, data sekolah, penggabungan pendaftaran, dan CSS/JS kecil
- * sudah sesuai versi baru (`App\Libraries\PemeriksaPembaruan`), lalu menulis
+ * Composer, migrasi, data sekolah, penggabungan pendaftaran, tabel skor, data
+ * bawaan, dan CSS/JS kecil sudah sesuai versi baru (`App\Libraries\PemeriksaPembaruan`), lalu menulis
  * perintah yang perlu dijalankan, berurutan. Tidak ada yang diubah.
  *
  *     php spark pembaruan:periksa
@@ -30,7 +30,7 @@ class PeriksaPembaruan extends BaseCommand
 {
     protected $group       = 'Aplikasi';
     protected $name        = 'pembaruan:periksa';
-    protected $description = 'Setelah git pull: memeriksa perintah apa yang perlu dijalankan (composer, migrate, sekolah:impor, pendaftaran:gabung, aset:minify). Tidak mengubah apa pun.';
+    protected $description = 'Setelah git pull: memeriksa perintah apa yang perlu dijalankan (composer, migrate, sekolah:impor, pendaftaran:gabung, tabel-skor:impor, data:sesuaikan, aset:minify). Tidak mengubah apa pun.';
     protected $usage       = 'pembaruan:periksa';
 
     /**

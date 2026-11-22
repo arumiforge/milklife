@@ -380,6 +380,14 @@ Bila ada perbaikan baru di cabang `main` GitHub:
 
    `faq:awal` memasang tanya-jawab bawaan halaman Bantuan dan `halaman-depan:carousel` memasang foto bawaan carousel halaman depan; keduanya tidak menimpa isian admin, dan semua perintah di atas aman dijalankan lagi. Server **tidak perlu Node**: CSS dan pustaka tampilan baru sudah ada di git. Halaman publik baru **Jadwal, Seri dan lintasan, Peserta, Galeri, dan Videotron tetap tersembunyi** sampai admin menyalakan sakelarnya (Pengaturan → Halaman Depan, Pengaturan → Galeri, Pengaturan → Videotron, atau halaman Jadwal pertandingan); halaman Bantuan langsung tampil. Setelah itu jalankan `php spark pembaruan:periksa` sampai tidak ada perintah lain.
 
+   Pembaruan yang membawa data bawaan terbaru (Tahap 10, F10-01) butuh satu perintah tambahan, sekali saja, setelah `migrate`:
+
+   ```
+   php spark data:sesuaikan
+   ```
+
+   Perintah ini menyamakan data bawaan lama yang belum diubah admin dengan data terbaru: nama kelompok umur `KU 8 (Seneng Playon)` menjadi `KU 8` (dilewati bila `KU 8` sudah ada), nomor WA contoh `628123456789` di Pengaturan → Pembayaran dan Pengaturan → Halaman Depan menjadi 0882-1527-7227, dan media sosial bawaan lama menjadi Instagram `milklife.id`, TikTok `@milklife_id`, dan YouTube `@milklife_id`. Isian yang sudah diubah admin dan data pendaftaran tidak disentuh; menjalankannya lagi tidak mengubah apa pun. Di akhir tertulis apa yang diubah dan apa yang dilewati. Jalankan juga sebelum `php spark pendaftaran:impor` bila impor menolak karena nama kelompok umur `KU 8` tidak ditemukan.
+
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 
 Pembaruan yang membawa Cloudflare Turnstile (17 November 2026, K122) tidak mengubah `.env` yang sudah ada, jadi Turnstile masih mati sampai kuncinya ditambahkan. Salin bagian **CLOUDFLARE TURNSTILE** dari `.env.example` ke `.env` server (tiga baris `turnstile.…`), lalu ikuti "Pemeriksaan keamanan Cloudflare Turnstile" di akhir bagian 7.

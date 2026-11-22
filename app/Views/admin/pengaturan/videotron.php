@@ -22,12 +22,12 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Papan hasil untuk videotron di arena: hasil terbaru, juara umum, dan jadwal berganti sendiri, tanpa operator.
         Hanya hasil yang sudah diterbitkan yang tampil.
     </p>
 
-    <div class="max-w-3xl space-y-6">
+    <div class="space-y-6">
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
         <form action="<?= site_url('admin/pengaturan/videotron') ?>" method="post" novalidate class="space-y-6">

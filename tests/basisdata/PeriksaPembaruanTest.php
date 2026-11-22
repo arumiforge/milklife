@@ -62,9 +62,9 @@ final class PeriksaPembaruanTest extends UjiBasisData
     {
         $hasil = $this->periksa();
 
-        $this->assertSame(['composer', 'migrasi', 'sekolah', 'gabung', 'tabel_skor', 'aset'], array_keys($hasil));
+        $this->assertSame(['composer', 'migrasi', 'sekolah', 'gabung', 'tabel_skor', 'data_bawaan', 'aset'], array_keys($hasil));
         $this->assertSame([], array_filter(array_column($hasil, 'perlu')), json_encode($hasil, JSON_PRETTY_PRINT));
-        $this->assertSame([null, null, null, null, null, null], array_column($hasil, 'perintah'));
+        $this->assertSame([null, null, null, null, null, null, null], array_column($hasil, 'perintah'));
         $this->assertStringContainsString('migrasi sudah dijalankan', $hasil['migrasi']['keterangan']);
     }
 
@@ -111,6 +111,23 @@ final class PeriksaPembaruanTest extends UjiBasisData
         (new DataTabelSkor($this->db))->pasangBawaan(false, $this->akar . 'data/tabel-skor');
         $this->assertSame(1, (new DataTabelSkor($this->db))->pakaiUntukTrilomba());
         $this->assertFalse($this->periksa()['tabel_skor']['perlu']);
+    }
+
+    public function testDataBawaanLama(): void
+    {
+        // F10-01: server yang diisi data:awal lama → data:sesuaikan; tidak ada yang diubah saat memeriksa.
+        $this->db->table('kelompok_umur')->insert(['nama' => 'KU 8 (Seneng Playon)', 'tahun_lahir_awal' => 2019, 'biaya_individu' => 25000]);
+        setting('Pembayaran.nomor_wa', '628123456789');
+
+        $hasil = $this->periksa()['data_bawaan'];
+        $this->assertSame('php spark data:sesuaikan', $hasil['perintah']);
+        $this->assertStringContainsString('KU 8 (Seneng Playon) menjadi KU 8', $hasil['keterangan']);
+        $this->assertStringContainsString('nomor contoh menjadi 0882-1527-7227', $hasil['keterangan']);
+        $this->seeInDatabase('kelompok_umur', ['nama' => 'KU 8 (Seneng Playon)']);
+        $this->assertSame('628123456789', setting('Pembayaran.nomor_wa'));
+
+        $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:sesuaikan', []));
+        $this->assertFalse($this->periksa()['data_bawaan']['perlu']);
     }
 
     public function testBerkasRusakTidakDianggapBeres(): void
