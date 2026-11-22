@@ -26,14 +26,14 @@ $td     = 'px-3 py-2 align-top';
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Atlet', 'alamat' => 'admin/atlet'], ['label' => 'Urutkan nomor atlet (BIB)']]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Nomor atlet (BIB) dibagikan saat pertemuan teknik (technical meeting). Sebelum itu, nomor bisa dibuat ulang supaya nomor atlet satu sekolah berurutan,
         walau pendaftarannya masuk tidak berurutan. Sekolah yang mendaftar lebih dulu mendapat nomor lebih kecil, dan di dalam satu sekolah
         atlet diurutkan menurut urutan mendaftar. Nomor dimulai lagi dari 001 di awalan setiap kelompok umur.
     </p>
 
-    <div class="grid gap-6 lg:grid-cols-12 lg:items-stretch">
+    <div class="grid gap-4 lg:grid-cols-12 lg:items-stretch">
         <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5 min-w-0 lg:col-span-7" aria-labelledby="judul-ringkasan">
             <h2 class="text-lg font-bold text-gray-900" id="judul-ringkasan">Yang akan diberi nomor</h2>
 
@@ -105,8 +105,6 @@ $td     = 'px-3 py-2 align-top';
             </form>
         </section>
     </div>
-
-    <p><a class="inline-flex min-h-11 items-center gap-1 font-semibold text-primary-700 hover:underline" href="<?= site_url('admin/atlet') ?>"><?= ikon('arrow-left', 'size-4') ?> Kembali ke daftar atlet</a></p>
 </div>
 <?= $this->endSection() ?>
 

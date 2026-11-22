@@ -24,7 +24,7 @@ $atribut = empty($id) ? '' : ' id="' . esc($id, 'attr') . '"';
     <p class="alis mb-2" data-judul-alis><?= esc($alis) ?></p>
 <?php endif ?>
 <?php if (! empty($inggris)) : ?>
-    <p class="judul-tampilan ornamen-judul min-w-0 break-words" lang="en" aria-hidden="true" data-judul-inggris><?= esc($inggris) ?></p>
+    <p class="judul-tampilan min-w-0 break-words" lang="en" aria-hidden="true" data-judul-inggris><?= esc($inggris) ?></p>
     <<?= $tingkat . $atribut ?> class="judul-keterangan mt-2 flex min-w-0 items-center gap-2 break-words">
         <?php if (! empty($ikon)) : ?><?= ikon($ikon, 'size-6 text-oranye-600 sm:size-7') ?><?php endif ?><?= esc($judul) ?>
     </<?= $tingkat ?>>

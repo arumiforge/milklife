@@ -44,7 +44,7 @@ $kotak = static function (string $nama, string $label, string $jenis, string $ke
 <?= $this->section('judul_halaman') ?>Data Acara<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="text-gray-700">
@@ -52,13 +52,13 @@ $kotak = static function (string $nama, string $label, string $jenis, string $ke
         dan di bukti pendaftaran. Semua kotak wajib diisi.
     </p>
 
-    <div class="space-y-6">
+    <div class="space-y-4">
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
-        <form action="<?= site_url('admin/pengaturan/acara') ?>" method="post" novalidate class="space-y-6">
+        <form action="<?= site_url('admin/pengaturan/acara') ?>" method="post" novalidate class="space-y-4">
             <?= csrf_field() ?>
 
-            <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-nama-acara">
+            <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-nama-acara">
                 <h2 id="judul-nama-acara" class="mb-4 text-lg font-bold text-gray-900">Nama acara</h2>
                 <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
                     <div class="col-span-2 md:col-span-3">
@@ -73,7 +73,7 @@ $kotak = static function (string $nama, string $label, string $jenis, string $ke
                 </div>
             </section>
 
-            <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-tempat-tanggal">
+            <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-tempat-tanggal">
                 <h2 id="judul-tempat-tanggal" class="mb-4 text-lg font-bold text-gray-900">Tempat dan tanggal</h2>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div class="sm:col-span-2">

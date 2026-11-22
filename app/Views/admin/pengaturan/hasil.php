@@ -21,7 +21,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
     . ($salah
         ? 'border-red-500 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100'
         : 'border-gray-300 bg-white text-gray-900 focus:border-primary-600 focus:ring-primary-100');
-$kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
+$kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -30,7 +30,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 <?= $this->section('judul_halaman') ?>Hasil<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="text-gray-700">
@@ -40,10 +40,10 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 
     <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
-    <form action="<?= site_url('admin/pengaturan/hasil') ?>" method="post" novalidate class="space-y-6">
+    <form action="<?= site_url('admin/pengaturan/hasil') ?>" method="post" novalidate class="space-y-4">
         <?= csrf_field() ?>
 
-        <div class="grid gap-6 xl:grid-cols-2">
+        <div class="grid gap-4 xl:grid-cols-2">
             <section class="<?= $kartu ?> min-w-0" aria-labelledby="judul-metode">
                 <h2 id="judul-metode" class="mb-4 text-lg font-bold text-gray-900">Metode klasemen juara umum</h2>
                 <fieldset<?= isset($galat['metode']) ? ' aria-describedby="metode-galat"' : '' ?>>

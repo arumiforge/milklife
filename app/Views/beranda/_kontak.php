@@ -41,7 +41,7 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
 <section id="kontak" class="scroll-mt-20 bg-white" aria-labelledby="judul-kontak">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
         <div class="relative overflow-hidden rounded-3xl border border-gray-200 latar-merek p-6 shadow-lembut sm:p-10">
-            <p class="judul-tampilan ornamen-judul" lang="en" aria-hidden="true" data-judul-inggris>Get in Touch</p>
+            <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Get in Touch</p>
             <h2 id="judul-kontak" class="judul-keterangan mt-2">Kontak</h2>
             <p class="mt-2 max-w-2xl text-lg text-gray-600">
                 <?php if ($adaKontak) : ?>
@@ -64,8 +64,8 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                                             <p class="font-bold text-gray-900 break-words" data-narahubung-nama><?= esc($orang['nama']) ?></p>
                                             <p class="text-gray-600" data-narahubung-nomor><?= esc($orang['nomor']) ?></p>
                                         </div>
-                                        <a class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100" href="<?= esc($orang['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-narahubung-wa>
-                                            <?= ikon('message-circle', 'size-4') ?> Chat WA<span class="sr-only"> <?= esc($orang['nama']) ?> (di tab baru)</span>
+                                        <a class="inline-flex size-12 shrink-0 items-center justify-center rounded-lg text-green-600 hover:bg-green-50 focus:outline-none focus:ring-4 focus:ring-green-100" href="<?= esc($orang['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" title="Chat WA" data-narahubung-wa>
+                                            <?= view('tata_letak/_ikon_wa', ['kelas' => 'size-7'], ['saveData' => false]) ?><span class="sr-only">Chat WA <?= esc($orang['nama']) ?> (di tab baru)</span>
                                         </a>
                                     </li>
                                 <?php endforeach ?>

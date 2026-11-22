@@ -12,7 +12,7 @@ use App\Controllers\JadwalController;
 
 $tampilJadwal = JadwalController::tampil();
 ?>
-<section id="halaman-jadwal" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-halaman-jadwal">
+<section id="halaman-jadwal" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-halaman-jadwal">
     <h2 id="judul-halaman-jadwal" class="text-lg font-bold text-gray-900">Halaman Jadwal pertandingan</h2>
     <p class="mb-3 mt-1 text-sm text-gray-600">
         Jam mulai setiap babak per hari, dengan status Belum mulai, Berlangsung, atau Selesai dan tautan ke hasil.

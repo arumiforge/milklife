@@ -24,7 +24,7 @@ use App\Libraries\Hasil\LembarJuri;
 use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Hasil\UnduhanSeri;
 
-// ikon-sprite: arrow-left trophy list-ordered users check
+// ikon-sprite: trophy list-ordered users check
 $nomor    = $babak['nomor'];
 $jenis    = $nomor['jenis_hasil'];
 $lintasan = $babak['aturan']['lintasan'];
@@ -48,10 +48,9 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
 <?= $this->section('judul') ?>Juri <?= esc($babak['nama']) ?> <?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-4 p-4 sm:p-6" data-lembar-juri>
-    <a href="<?= site_url('admin/juri') ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?>Semua babak</a>
+<div class="space-y-4 p-4 sm:px-6 sm:py-4" data-lembar-juri>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6" aria-labelledby="judul-babak-juri">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-babak-juri">
         <h2 id="judul-babak-juri" class="text-lg font-bold break-words text-gray-900"><?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?> · <?= esc($babak['nama']) ?></h2>
         <p class="text-sm text-gray-600"><?= $jadwal === '' ? 'Jadwal menyusul' : esc($jadwal) ?> · <?= $babak['peserta'] ?> <?= $beregu ? 'regu' : 'peserta' ?></p>
         <p class="mt-2 text-sm text-gray-700"><?= esc($petunjuk) ?> Pilih DNS, DNF, atau DQ untuk peserta yang tidak start, tidak finis, atau didiskualifikasi.</p>
@@ -70,7 +69,7 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
     <?php endif ?>
 
     <?php if ($peserta === []) : ?>
-        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Atur pesertanya di halaman hasil babak atau di Seri dan lintasan.', 'aksi' => komponen('tombol', ['label' => 'Buka Seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'ikon' => 'list-ordered'])]) ?>
+        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Atur pesertanya di halaman hasil babak atau di Seri dan lintasan.', 'aksi' => komponen('tombol', ['label' => 'Buka Seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'ikon' => 'list-ordered'])]) ?>
     <?php else : ?>
         <h3 class="text-base font-bold tracking-wide text-oranye-700 uppercase"><?= esc($namaSeri($seri)) ?></h3>
         <ol class="space-y-3" aria-label="Peserta <?= esc($namaSeri($seri), 'attr') ?>">

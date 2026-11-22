@@ -15,13 +15,13 @@ use App\Libraries\Hasil\JenisHasil;
 <?= $this->section('judul') ?>Hasil Lomba<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
-    <div class="flex items-center gap-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
+    <div class="flex items-center gap-4">
         <p class="flex-1 text-gray-700">
             Pilih nomor lomba untuk membuat babak (misalnya Penyisihan seri 1, lalu Final) dan mengisi prestasinya; peringkat dihitung otomatis.
             Juara I–III diambil dari babak Final. Hasil satu nomor tampil di halaman publik setelah ditekan <strong>Terbitkan</strong>.
         </p>
-        <?= gambar_opsional('admin/hasil-lomba.webp', ['class' => 'hidden h-28 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'hasil-lomba']) ?>
+        <?= gambar_opsional('admin/hasil-lomba.webp', ['class' => 'hidden h-20 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'hasil-lomba']) ?>
     </div>
 
     <?php if ($kelompokUmur === []) : ?>
@@ -29,12 +29,12 @@ use App\Libraries\Hasil\JenisHasil;
     <?php endif ?>
 
     <?php foreach ($kelompokUmur as $ku) : ?>
-        <section class="rounded-2xl border border-gray-200 bg-white shadow-lembut" aria-labelledby="judul-ku-<?= $ku['id'] ?>">
-            <h2 class="border-b border-gray-100 px-5 py-4 text-lg font-bold text-gray-900 sm:px-6" id="judul-ku-<?= $ku['id'] ?>"><?= esc($ku['nama']) ?></h2>
-            <ul class="divide-y divide-gray-100">
+        <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lembut" aria-labelledby="judul-ku-<?= $ku['id'] ?>">
+            <h2 class="border-b border-gray-100 px-4 py-3 text-lg font-bold text-gray-900 sm:px-5" id="judul-ku-<?= $ku['id'] ?>"><?= esc($ku['nama']) ?></h2>
+            <ul class="-mt-px grid lg:grid-cols-2 xl:grid-cols-3">
                 <?php foreach ($ku['nomor'] as $n) : ?>
-                    <li>
-                        <a href="<?= site_url('admin/hasil/nomor/' . $n['id']) ?>" class="flex min-h-16 items-center gap-3 px-5 py-3 hover:bg-gray-50 focus:bg-gray-50 sm:px-6">
+                    <li class="border-t border-gray-100">
+                        <a href="<?= site_url('admin/hasil/nomor/' . $n['id']) ?>" class="flex min-h-14 items-center gap-3 px-4 py-2.5 hover:bg-gray-50 focus:bg-gray-50 sm:px-5">
                             <span class="min-w-0 flex-1">
                                 <span class="block font-semibold break-words text-primary-700"><?= esc($n['nama']) ?></span>
                                 <span class="block text-sm text-gray-600">

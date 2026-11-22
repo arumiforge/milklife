@@ -34,7 +34,7 @@ $kelasTd    = 'px-4 py-3 align-top';
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Sekolah', 'alamat' => 'admin/sekolah'], ['label' => 'Usulan nama sekolah']]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Pendaftar bisa mengusulkan nama sekolah yang lebih lengkap saat mendaftar. Pendaftarannya langsung memakai nama usulan.
         Bila disetujui, nama di data sekolah dan semua pendaftaran dari sekolah itu ikut berganti. Bila ditolak, pendaftaran pengusul

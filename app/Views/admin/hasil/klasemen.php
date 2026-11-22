@@ -24,7 +24,7 @@ $metodePoin = $metode === Klasemen::POIN;
 <?= $this->section('judul') ?>Klasemen Sekolah<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <div class="flex flex-wrap items-start gap-4">
         <p class="min-w-0 flex-1 basis-72 text-gray-700">
             <?= esc($keterangan) ?>

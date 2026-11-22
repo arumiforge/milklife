@@ -29,7 +29,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
 <?= $this->section('judul_halaman') ?>Tabel Skor<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="text-gray-700">
@@ -39,7 +39,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
     </p>
 
     <?php if ($belumDipasang !== []) : ?>
-        <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="tabel-bawaan" aria-labelledby="judul-bawaan">
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="tabel-bawaan" aria-labelledby="judul-bawaan">
             <h2 class="text-lg font-bold text-gray-900" id="judul-bawaan">Tabel bawaan panitia</h2>
             <p class="mt-1 text-sm text-gray-600">Belum terpasang: <?= esc(implode(', ', $belumDipasang)) ?>. Isinya dari tabel penilaian panitia (scoring table IAAF/PASI dan World Athletics).</p>
             <form action="<?= site_url($alamat . '/pasang') ?>" method="post" class="mt-4">
@@ -50,7 +50,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
     <?php endif ?>
 
     <?php foreach ($daftar as $t) : ?>
-        <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="tabel-<?= $t['id'] ?>" aria-labelledby="judul-tabel-<?= $t['id'] ?>">
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="tabel-<?= $t['id'] ?>" aria-labelledby="judul-tabel-<?= $t['id'] ?>">
             <h2 class="text-lg font-bold break-words text-gray-900" id="judul-tabel-<?= $t['id'] ?>"><?= esc($t['nama']) ?></h2>
             <?php if ($t['keterangan'] !== '') : ?><p class="mt-1 text-sm text-gray-600"><?= esc($t['keterangan']) ?></p><?php endif ?>
             <p class="mt-1 text-sm text-gray-700" data-pemakai>
@@ -98,7 +98,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
         <p class="text-gray-600" id="tabel-kosong">Belum ada tabel skor.</p>
     <?php endif ?>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="tambah-tabel" aria-labelledby="judul-tambah-tabel">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="tambah-tabel" aria-labelledby="judul-tambah-tabel">
         <h2 class="text-lg font-bold text-gray-900" id="judul-tambah-tabel">Tambah tabel</h2>
         <p class="mt-1 text-sm text-gray-600">Untuk tabel lain dari panitia. Tulis nama tabel dan komponennya; barisnya diisi sesudahnya lewat Excel (kolom A prestasi, kolom B poin) untuk tiap komponen, putra dan putri.</p>
         <form action="<?= site_url($alamat) ?>" method="post" class="mt-4 max-w-2xl space-y-5" novalidate>

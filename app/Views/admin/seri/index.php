@@ -35,14 +35,14 @@ $keadaan = static function (array $b): array {
 <?= $this->section('judul') ?>Seri dan lintasan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Bagi peserta tiap babak ke seri dan lintasan untuk pertemuan teknik dan juri. Babak diatur di
         <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>.
         Setelah hasil babak yang sudah dibagi lengkap, babak berikutnya terisi sendiri dari yang lolos (Q/q).
     </p>
 
-    <section id="sakelar-seri" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-sakelar-seri">
+    <section id="sakelar-seri" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-sakelar-seri">
         <h2 id="judul-sakelar-seri" class="text-lg font-bold text-gray-900">Tampil untuk umum</h2>
         <p class="mt-1 text-sm text-gray-600">
             <?php if ($tampil) : ?>
@@ -60,7 +60,7 @@ $keadaan = static function (array $b): array {
     </section>
 
     <?php if ($hari !== []) : ?>
-        <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-unduh-hari">
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-unduh-hari">
             <h2 id="judul-unduh-hari" class="text-lg font-bold text-gray-900">Unduh daftar seri per hari</h2>
             <p class="mt-1 text-sm text-gray-600">Semua babak terjadwal di hari itu yang sudah dibagi, urut jam. Untuk pertemuan teknik dan juri.</p>
             <ul class="mt-3 space-y-2" data-unduh-hari-seri>
@@ -76,15 +76,15 @@ $keadaan = static function (array $b): array {
     <?php endif ?>
 
     <?php if ($kelompokUmur === []) : ?>
-        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'list-ordered', 'judul' => 'Belum ada nomor lomba', 'teks' => 'Tambahkan nomor lomba di Pengaturan, lalu babaknya di Hasil lomba.']) ?>
+        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'list-ordered', 'judul' => 'Belum ada nomor lomba', 'teks' => 'Tambahkan nomor lomba di Pengaturan, lalu babaknya di Hasil lomba.']) ?>
     <?php endif ?>
 
     <?php foreach ($kelompokUmur as $ku) : ?>
         <section class="rounded-2xl border border-gray-200 bg-white shadow-lembut" aria-labelledby="judul-ku-<?= $ku['id'] ?>">
-            <h2 id="judul-ku-<?= $ku['id'] ?>" class="border-b border-gray-200 px-5 py-4 text-lg font-bold text-gray-900 sm:px-6"><?= esc($ku['nama']) ?></h2>
+            <h2 id="judul-ku-<?= $ku['id'] ?>" class="border-b border-gray-200 px-4 py-3 text-lg font-bold text-gray-900 sm:px-5"><?= esc($ku['nama']) ?></h2>
             <ul class="divide-y divide-gray-100">
                 <?php foreach ($ku['nomor'] as $n) : ?>
-                    <li class="grid gap-2 px-5 py-4 sm:px-6 lg:grid-cols-12 lg:items-center" data-nomor-seri="<?= $n['id'] ?>">
+                    <li class="grid gap-2 px-4 py-2 sm:px-5 lg:grid-cols-12 lg:items-center" data-nomor-seri="<?= $n['id'] ?>">
                         <div class="min-w-0 lg:col-span-4">
                             <a href="<?= site_url('admin/seri/nomor/' . $n['id']) ?>" class="inline-flex min-h-11 items-center font-bold break-words text-primary-800 underline"><?= esc($n['nama']) ?></a>
                         </div>

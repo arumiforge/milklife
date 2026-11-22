@@ -1,5 +1,5 @@
 /**
- * Laci kiri ponsel tata letak publik (F10-07, K154), tanpa skrip sebaris (K127).
+ * Laci kanan ponsel tata letak publik (F10-07, K154; dari kanan sejak F10-08), tanpa skrip sebaris (K127).
  *
  * - Tombol `[data-buka-laci]` membuka `#laci-publik`; `aria-expanded` semua
  *   tombol pembuka mengikuti keadaan laci.

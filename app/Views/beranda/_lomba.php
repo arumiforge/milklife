@@ -125,7 +125,7 @@ $kartuKu = gambar_opsional('beranda/kartu-ku.webp', ['class' => 'pointer-events-
 ?>
 <section id="lomba" class="scroll-mt-20 bg-white" aria-labelledby="judul-lomba">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
-        <p class="judul-tampilan ornamen-judul" lang="en" aria-hidden="true" data-judul-inggris>Choose Your Race</p>
+        <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Choose Your Race</p>
         <h2 id="judul-lomba" class="judul-keterangan mt-2">Kelompok umur dan nomor lomba</h2>
         <p class="mt-3 max-w-3xl text-lg text-gray-600" data-lomba-pengantar>
             Kelompok umur ditentukan dari tahun lahir atlet.

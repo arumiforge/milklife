@@ -38,11 +38,11 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
 <?= $this->section('judul_halaman') ?>Bantuan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <div class="grid gap-6 xl:grid-cols-12">
-        <section class="min-w-0 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6 xl:col-span-7" aria-labelledby="judul-formulir-faq">
+    <div class="grid gap-4 xl:grid-cols-12">
+        <section class="min-w-0 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5 xl:col-span-7" aria-labelledby="judul-formulir-faq">
             <h2 id="judul-formulir-faq" class="flex items-center gap-2 text-lg font-bold text-gray-900">
                 <?= ikon('circle-help', 'text-primary-700') ?> <?= esc($judul) ?>
             </h2>
@@ -114,15 +114,15 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
             </form>
         </section>
 
-        <div class="min-w-0 space-y-6 xl:col-span-5">
+        <div class="min-w-0 space-y-4 xl:col-span-5">
             <?php if ($pratinjau !== '') : ?>
-                <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-pratinjau">
+                <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-pratinjau">
                     <h2 id="judul-pratinjau" class="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">Pratinjau jawaban</h2>
                     <div class="isi-jawaban-faq format max-w-none break-words text-gray-700 format-primary"><?= $pratinjau ?></div>
                 </section>
             <?php endif ?>
 
-            <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-isian-otomatis">
+            <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-isian-otomatis">
                 <h2 id="judul-isian-otomatis" class="text-lg font-bold text-gray-900">Isian otomatis</h2>
                 <p class="mt-1 text-sm text-gray-600">
                     Tulis nama di bawah, lengkap dengan kurung kurawal, di dalam jawaban. Saat tampil, isian itu diganti
