@@ -84,9 +84,10 @@ jobs:
   uji:
     name: PHPUnit (PHP 8.3, MySQL 8)
     runs-on: ubuntu-latest
-    # Semua uji makan waktu sekitar 19 menit di runner GitHub (November 2026);
-    # batas 20 menit sudah terlampaui, jadi diberi ruang.
-    timeout-minutes: 35
+    # Semua uji makan waktu 25–35 menit di runner GitHub (22 November 2026,
+    # sekitar 1.850 uji); runner lambat pernah habis di batas 35 menit pada
+    # 95% uji, jadi diberi ruang.
+    timeout-minutes: 50
 
     services:
       mysql:
