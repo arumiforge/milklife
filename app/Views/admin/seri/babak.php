@@ -35,6 +35,8 @@ $nilai     = static fn (array $p, string $kotak): string => is_string($isian[$p[
 $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg border p-2 text-center text-base sm:text-sm focus:ring-4 '
     . ($salah ? 'border-red-500 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 focus:border-primary-600 focus:ring-primary-100')
     . ' disabled:bg-gray-100 disabled:text-gray-500';
+// Ikon tombol dari `komponen('tombol')`; tulis juga di sini supaya masuk sprite (berkas ini tanpa `ikon()`).
+// ikon-sprite: download list-ordered lock lock-open save shuffle trophy
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 

@@ -18,6 +18,8 @@ use App\Libraries\Hasil\PembagiSeri;
 $lintasan = $aturan['lintasan'];
 $nilai    = static fn (string $kotak, string $asal): string => is_string($isian[$kotak] ?? null) ? $isian[$kotak] : $asal;
 $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] > 0, $babak), true);
+// Ikon tombol dari `komponen('tombol')`; tulis juga di sini supaya masuk sprite (berkas ini tanpa `ikon()`).
+// ikon-sprite: download list-ordered save sheet trophy
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
