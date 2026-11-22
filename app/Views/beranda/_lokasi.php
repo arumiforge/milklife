@@ -1,0 +1,64 @@
+<?php
+/**
+ * Bagian Lokasi halaman depan (`#lokasi`, F10-02): alamat singkat dan peta
+ * Google Maps, tepat di atas Kontak.
+ *
+ * - Tidak tampil sama sekali bila alamat embed kosong (`PetaLokasi::embed()`).
+ * - Iframe tidak ditulis di HTML: `peta-lokasi.js` menyisipkannya dari
+ *   `data-peta-src` saat bagian ini mendekati layar (IntersectionObserver),
+ *   jadi tidak ada permintaan ke google.com sebelum itu. Tanpa JS atau
+ *   sebelum dimuat, kotak peta berisi tautan "Buka di Google Maps".
+ * - Rasio 4:3 di ponsel dan 16:9 di desktop lewat kelas Tailwind; tanpa
+ *   gaya sebaris (CSP K127).
+ *
+ * @var string $tempat `IsiHalamanDepan::acara()['tempat']`, misalnya 'Supersoccer Arena, Kudus'; boleh ''.
+ */
+
+use App\Libraries\PetaLokasi;
+
+$embed = PetaLokasi::embed();
+
+if ($embed === '') {
+    return;
+}
+
+$tautan    = PetaLokasi::tautan();
+$judulPeta = 'Peta ' . ($tempat !== '' ? $tempat : 'lokasi lomba') . ' (Google Maps)';
+$tabBaru   = '<span class="sr-only"> (di tab baru)</span>';
+// ikon-sprite: map-pin map external-link
+?>
+<section id="lokasi" class="scroll-mt-20 bg-white" aria-labelledby="judul-lokasi">
+    <div class="mx-auto max-w-screen-xl px-4 pt-12 sm:pt-16">
+        <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Tempat lomba</p>
+        <h2 id="judul-lokasi" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Lokasi</h2>
+        <?php if ($tempat !== '') : ?>
+            <p class="mt-2 flex items-start gap-2 text-lg text-gray-700">
+                <?= ikon('map-pin', 'mt-1 size-5 shrink-0 text-oranye-600') ?>
+                <span class="min-w-0 break-words" data-lokasi-alamat><?= esc($tempat) ?></span>
+            </p>
+        <?php endif ?>
+
+        <div class="relative mt-6 aspect-[4/3] overflow-hidden rounded-lg border border-gray-200 bg-gray-100 lg:aspect-video"
+            data-peta-lokasi data-peta-src="<?= esc($embed, 'attr') ?>" data-peta-judul="<?= esc($judulPeta, 'attr') ?>">
+            <div class="flex size-full flex-col items-center justify-center gap-3 p-6 text-center text-gray-600" data-peta-pengganti>
+                <?= ikon('map', 'size-10 text-primary-700') ?>
+                <?php if ($tautan !== '') : ?>
+                    <a class="inline-flex min-h-11 items-center gap-2 font-semibold text-primary-800 underline hover:text-primary-900 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($tautan, 'attr') ?>" target="_blank" rel="noopener noreferrer">
+                        Buka di Google Maps<?= $tabBaru ?>
+                    </a>
+                <?php else : ?>
+                    <p>Peta tampil saat bagian ini terlihat.</p>
+                <?php endif ?>
+            </div>
+        </div>
+
+        <?php if ($tautan !== '') : ?>
+            <div class="mt-4">
+                <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-bold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($tautan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-lokasi-tautan>
+                    <?= ikon('external-link', 'size-5') ?> Buka di Google Maps<?= $tabBaru ?>
+                </a>
+            </div>
+        <?php endif ?>
+    </div>
+</section>
+<script src="<?= aset('js/peta-lokasi.js') ?>" defer></script>
