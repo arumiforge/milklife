@@ -43,7 +43,7 @@ $label = 'cek-ditolak-label text-xs font-semibold uppercase tracking-wide text-g
                     <?php if ($ditolakSemua) : ?>
                         Pendaftaran ini tidak perlu dibayar. Daftarkan ulang atlet di bawah ini lewat menu Pendaftaran.
                     <?php else : ?>
-                        Atlet di bawah ini tidak lagi termasuk pendaftaran ini dan tidak ditagih. Atlet lain tetap terdaftar seperti biasa.
+                        Atlet di bawah ini dikeluarkan dari pendaftaran ini dan tidak ditagih. Atlet lain tetap terdaftar.
                     <?php endif ?>
                 </p>
             </div>
@@ -88,8 +88,8 @@ $label = 'cek-ditolak-label text-xs font-semibold uppercase tracking-wide text-g
         <div class="cek-ditolak-langkah mt-4 text-sm">
             <p class="<?= $label ?>">Yang perlu dilakukan</p>
             <ol class="mt-1 mb-3 list-decimal space-y-1 ps-5 text-gray-800">
-                <li>Buka menu Pendaftaran dan daftarkan atletnya lagi di kelompok umur yang disarankan. NISN yang sama boleh dipakai.</li>
-                <li>Bila biaya untuk atlet ini sudah terlanjur ditransfer, hubungi panitia untuk penyelesaiannya.</li>
+                <li>Buka menu Pendaftaran, lalu daftarkan lagi atletnya di kelompok umur yang disarankan. NISN yang sama boleh dipakai.</li>
+                <li>Bila Anda sudah mentransfer biaya untuk atlet ini, hubungi panitia untuk mengurusnya.</li>
             </ol>
             <div class="flex flex-wrap gap-2">
                 <a class="<?= K::UTAMA ?>" href="<?= site_url('pendaftaran') ?>"><?= ikon('pencil-line', 'size-5') ?> Daftarkan ulang</a>

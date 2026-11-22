@@ -30,7 +30,7 @@ if ($klasemen !== []) {
     'judul' => 'Klasemen sekolah',
     'ikon'  => 'award',
     'gambar' => 'judul/klasemen.webp',
-    'teks'  => 'Klasemen per jenjang sekolah. ' . $keterangan . ' Dihitung dari nomor yang hasilnya sudah diterbitkan panitia.',
+    'teks'  => 'Klasemen per jenjang sekolah. ' . $keterangan . ' Klasemen dihitung dari nomor yang hasilnya sudah diterbitkan panitia.',
     'aksi'  => $aksi,
 ], ['saveData' => false]) ?>
 
@@ -41,7 +41,7 @@ if ($klasemen !== []) {
                 'gambar' => 'gambar/keadaan/kosong-hasil.webp',
                 'ikon'   => 'hourglass',
                 'judul'  => 'Klasemen belum tersedia',
-                'teks'   => 'Klasemen muncul setelah panitia menerbitkan hasil Final. Silakan kembali lagi nanti.',
+                'teks'   => 'Klasemen tampil setelah panitia menerbitkan hasil babak Final. Sementara itu, Anda bisa melihat hasil per nomor.',
             ]) ?>
         </div>
     <?php endif ?>

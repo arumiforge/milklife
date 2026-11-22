@@ -25,7 +25,7 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
     'judul' => 'Hasil lomba',
     'ikon'  => 'trophy',
     'gambar' => 'judul/hasil.webp',
-    'teks'  => 'Hasil resmi ' . $namaAcara . ' yang sudah diterbitkan panitia, per kelompok umur dan nomor lomba.',
+    'teks'  => 'Hasil resmi ' . $namaAcara . ' dari panitia, per kelompok umur dan nomor lomba.',
     'aksi'  => $kelompokUmur === [] ? null : komponen('tombol', ['label' => 'Lihat klasemen sekolah', 'href' => site_url('hasil/klasemen'), 'varian' => 'kedua', 'ikon' => 'award', 'atribut' => ['data-tautan-klasemen' => true]]),
 ], ['saveData' => false]) ?>
 
@@ -36,8 +36,8 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                 'gambar' => 'gambar/keadaan/kosong-hasil.webp',
                 'ikon'   => 'hourglass',
                 'judul'  => 'Hasil belum diterbitkan',
-                'teks'   => 'Panitia belum menerbitkan hasil lomba. Hasil tiap nomor muncul di sini setelah diumumkan. Silakan kembali lagi nanti.',
-                'aksi'   => komponen('tombol', ['label' => 'Kembali ke beranda', 'href' => site_url('/'), 'varian' => 'kedua', 'ikon' => 'arrow-left']),
+                'teks'   => 'Panitia belum menerbitkan hasil lomba. Hasil tiap nomor tampil di sini setelah diumumkan.',
+                'aksi'   => komponen('tombol', ['label' => 'Ke halaman depan', 'href' => site_url('/'), 'varian' => 'kedua', 'ikon' => 'arrow-left']),
             ]) ?>
         </div>
     <?php endif ?>

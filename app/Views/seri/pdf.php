@@ -105,6 +105,6 @@ use App\Libraries\Hasil\UnduhanSeri;
     <?php endforeach ?>
 <?php endforeach ?>
 
-<div class="catatan">Q = lolos sebagai n terbaik tiap seri, q = lolos dari prestasi terbaik berikutnya. Daftar terbaru ada di panel admin dan halaman Jadwal situs pendaftaran.</div>
+<div class="catatan">Q berarti lolos sebagai n terbaik tiap seri. q berarti lolos lewat prestasi terbaik berikutnya. Daftar terbaru ada di panel admin dan halaman Jadwal situs pendaftaran.</div>
 </body>
 </html>

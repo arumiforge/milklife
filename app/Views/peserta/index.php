@@ -92,7 +92,7 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
         <div class="md:flex md:items-center md:gap-8">
             <div class="min-w-0 md:flex-1">
                 <?= view('tata_letak/_judul_editorial', ['inggris' => 'Meet the Athletes', 'alis' => $namaAcara, 'judul' => 'Peserta', 'ikon' => 'users', 'id' => 'judul-peserta'], ['saveData' => false]) ?>
-                <p class="mt-3 max-w-2xl text-lg text-gray-700">Atlet dari sekolah yang sudah lunas. Cari nama atau sekolah untuk melihat nomor atlet dan nomor lomba.</p>
+                <p class="mt-3 max-w-2xl text-lg text-gray-700">Atlet dari sekolah yang pembayarannya sudah lunas. Cari nama atau sekolah untuk melihat nomor atlet dan nomor lomba.</p>
             </div>
             <?php if (ada_gambar('judul/peserta.webp')) : ?>
                 <div class="hidden shrink-0 md:block" data-judul-ilustrasi><?= gambar_opsional('judul/peserta.webp', ['class' => 'h-32 w-auto']) ?></div>
@@ -203,10 +203,10 @@ $keterangan = static function (?array $hasil, bool $disaring): string {
         </div>
 
         <div class="<?= $hasil['total'] === 0 && $disaring ? '' : 'hidden' ?>" data-kosong-cari>
-            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/tidak-ketemu.webp', 'ikon' => 'search-x', 'judul' => 'Atlet tidak ditemukan', 'teks' => 'Periksa ejaan nama, coba sebagian nama saja, atau hapus saringan. Atlet baru tampil setelah pembayaran sekolahnya dinyatakan lunas oleh panitia.']) ?>
+            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/tidak-ketemu.webp', 'ikon' => 'search-x', 'judul' => 'Atlet tidak ditemukan', 'teks' => 'Coba sebagian nama saja, periksa ejaannya, atau hapus saringan. Atlet tampil setelah panitia mengonfirmasi pembayaran sekolahnya.']) ?>
         </div>
         <div class="<?= $hasil['total'] === 0 && ! $disaring ? '' : 'hidden' ?>" data-kosong-semua>
-            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/kosong-data.webp', 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Daftar peserta tampil setelah pembayaran sekolah dinyatakan lunas oleh panitia.']) ?>
+            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/kosong-data.webp', 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Daftar peserta tampil setelah panitia mengonfirmasi pembayaran sekolah.']) ?>
         </div>
 
         <nav class="mt-6 flex flex-wrap items-center justify-between gap-3<?= $hasil['jumlah_halaman'] > 1 ? '' : ' hidden' ?>" aria-label="Halaman daftar peserta" data-halaman-peserta>

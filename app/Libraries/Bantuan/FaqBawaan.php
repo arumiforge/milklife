@@ -61,15 +61,15 @@ final class FaqBawaan
 
             {daftar_kelompok_umur}
 
-            Anda tidak perlu menghitung sendiri. Setelah tanggal lahir diisi di formulir atlet, kelompok umurnya dipilih otomatis. Bila tahun lahirnya masuk dua kelompok umur, muncul kotak **Pilih kelompok umur**: tekan salah satu. Satu atlet hanya ikut satu kelompok umur.
+            Anda tidak perlu menghitung sendiri. Setelah tanggal lahir diisi di formulir atlet, kelompok umurnya dipilih otomatis. Bila tahun lahirnya masuk dua kelompok umur, muncul kotak **Pilih kelompok umur**. Tekan salah satu. Satu atlet hanya ikut satu kelompok umur.
             MD],
         ['sebelum', 'Siswa SMP yang lahirnya masuk rentang KU 12, boleh ikut KU 12?', <<<'MD'
-            Tidak. Kelompok umur dibatasi jenjang sekolah: siswa SMP/MTs hanya bisa ikut kelompok umur yang dibuka untuk SMP/MTs, begitu juga SD/MI dan SMA/MA/SMK.
+            Tidak. Kelompok umur dibatasi jenjang sekolah. Siswa SMP/MTs hanya bisa ikut kelompok umur untuk SMP/MTs. Aturan yang sama berlaku untuk SD/MI dan SMA/MA/SMK.
 
             Bila tahun lahir atlet tidak cocok dengan kelompok umur jenjangnya, formulir menampilkan pesan yang menyebut kelompok umur yang bisa diikuti.
             MD],
         ['sebelum', 'Berapa nomor lomba yang boleh diikuti satu atlet?', <<<'MD'
-            Paling banyak **{nomor_individu_maksimal} nomor individu** per atlet, ditambah nomor beregu sesuai kelompok umurnya tanpa batas. Setiap atlet wajib ikut paling sedikit satu nomor, individu atau beregu.
+            Paling banyak **{nomor_individu_maksimal} nomor individu** per atlet. Nomor beregu di kelompok umurnya boleh diikuti tanpa batas. Setiap atlet wajib ikut paling sedikit satu nomor, individu atau beregu.
             MD],
         ['sebelum', 'Apa yang perlu disiapkan sebelum mengisi formulir?', <<<'MD'
             Siapkan dulu supaya pengisian cepat:
@@ -101,15 +101,15 @@ final class FaqBawaan
             Bisa. Formulir dibuat untuk ponsel. Pakai peramban seperti Chrome dan pastikan internet stabil. Foto ofisial dan bukti transfer bisa langsung diambil dari galeri atau kamera HP.
             MD],
         ['mengisi', 'NPSN sekolah saya tidak ditemukan, bagaimana?', <<<'MD'
-            Periksa lagi 8 angka NPSN dan pastikan jenjang serta kabupaten yang dipilih sudah benar, lalu tekan **Cari** lagi.
+            Periksa lagi 8 angka NPSN, jenjang, dan kabupaten yang dipilih, lalu tekan **Cari** lagi.
 
-            Bila tetap tidak ditemukan, ketik nama sekolah secara manual di kotak yang muncul. Sekolah tanpa NPSN juga tetap bisa mendaftar; pendaftarannya nanti dicek memakai ID pendaftaran.
+            Bila tetap tidak ditemukan, ketik nama sekolah di kotak yang muncul. Sekolah tanpa NPSN tetap bisa mendaftar. Pendaftarannya nanti dicek memakai ID pendaftaran.
             MD],
         ['mengisi', 'Nama sekolah yang muncul kurang lengkap atau sama dengan sekolah lain', <<<'MD'
             Tekan tautan **Nama sekolah kurang lengkap?** di langkah Data Sekolah, lalu tulis nama lengkapnya, misalnya dengan nama desa. Pendaftaran Anda langsung memakai nama itu sampai panitia menyetujuinya.
             MD],
         ['mengisi', 'Foto ofisial dari HP boleh?', <<<'MD'
-            Boleh. Tekan kotak foto di kartu ofisial, lalu pilih foto dari galeri atau ambil langsung dengan kamera. Foto swafoto yang wajahnya jelas sudah cukup.
+            Boleh. Tekan kotak foto di kartu ofisial, lalu pilih foto dari galeri atau ambil langsung dengan kamera. Swafoto dengan wajah yang jelas sudah cukup.
 
             Foto diperkecil otomatis, jadi tidak perlu diatur ukurannya. Foto **wajib** diisi dan hanya dilihat panitia.
             MD],
@@ -117,12 +117,12 @@ final class FaqBawaan
             Paling sedikit {ofisial_minimal} dan paling banyak {ofisial_maksimal} ofisial. Tekan **Tambah ofisial** untuk menambah kartu ofisial berikutnya.
             MD],
         ['mengisi', 'Isian saya hilang kalau HP terkunci atau halaman tertutup?', <<<'MD'
-            Tidak. Isian tersimpan otomatis di HP atau komputer yang Anda pakai. Buka lagi halaman pendaftaran di **perangkat dan peramban yang sama**, isian akan muncul kembali.
+            Tidak. Isian tersimpan otomatis di HP atau komputer yang Anda pakai. Buka lagi halaman pendaftaran di **perangkat dan peramban yang sama**. Isian Anda akan muncul kembali.
 
             Isian tidak pindah ke perangkat lain. Bila ingin mulai dari awal, tekan **Kosongkan isian dan mulai dari awal** di bawah formulir.
             MD],
         ['mengisi', 'Salah ketik nama atlet sebelum mengirim, bagaimana?', <<<'MD'
-            Selama belum menekan **Kirim Pendaftaran**, Anda masih bisa memperbaikinya. Di langkah **Atlet**, tekan **Ubah** di baris atlet itu pada **Daftar sementara**, perbaiki, lalu tekan **Simpan perubahan**. Tombol **Hapus** untuk membuang atlet dari daftar.
+            Selama belum menekan **Kirim Pendaftaran**, Anda masih bisa memperbaikinya. Di langkah **Atlet**, tekan **Ubah** di baris atlet itu pada **Daftar sementara**, perbaiki, lalu tekan **Simpan perubahan**. Untuk membuang atlet dari daftar, tekan **Hapus**.
             MD],
         ['mengisi', 'Muncul pesan "NISN sudah terdaftar", artinya apa?', <<<'MD'
             Atlet dengan NISN itu sudah didaftarkan sebelumnya, oleh sekolah Anda atau sekolah lain. Satu NISN hanya boleh terdaftar sekali.
@@ -178,7 +178,7 @@ final class FaqBawaan
             Bila **sudah** dikirim bersama pendaftaran: tidak perlu dikirim lagi, bukti itu sudah tersimpan di panitia.
             MD],
         ['pembayaran', 'Saya salah memilih gambar bukti transfer atau ingin menambah bukti', <<<'MD'
-            Buka **Cek Pendaftaran**, ketik NPSN atau ID pendaftaran, tekan **Cari**. Di kartu pendaftaran yang belum lunas ada kotak unggah bukti transfer: pilih gambar yang benar, lalu tekan **Unggah**.
+            Buka **Cek Pendaftaran**, ketik NPSN atau ID pendaftaran, tekan **Cari**. Di kartu pendaftaran yang belum Lunas ada kotak unggah bukti transfer: pilih gambar yang benar, lalu tekan **Unggah**.
 
             Bukti cukup diunggah di web, tidak perlu dikirim lewat WA.
             MD],
@@ -209,12 +209,12 @@ final class FaqBawaan
             Pakai NPSN sekolah di **Cek Pendaftaran**. ID pendaftaran tertulis di setiap kartu pendaftaran dan di bukti PDF. Sekolah tanpa NPSN perlu menghubungi panitia lewat WA.
             MD],
         ['cek', 'Salah ketik nama atlet setelah pendaftaran terkirim, bagaimana?', <<<'MD'
-            Pendaftaran yang sudah terkirim tidak bisa diubah sendiri, dan jangan mendaftarkan ulang atlet yang sama (NISN-nya akan ditolak).
+            Pendaftaran yang sudah terkirim tidak bisa Anda ubah sendiri. Jangan mendaftarkan ulang atlet yang sama, karena NISN-nya akan ditolak.
 
-            Hubungi panitia lewat WA, sebutkan **ID pendaftaran**, nama atlet, dan perbaikannya. Panitia akan memperbaiki datanya; ID pendaftaran tetap sama.
+            Hubungi panitia lewat WA. Sebutkan **ID pendaftaran**, nama atlet, dan perbaikannya. Panitia akan memperbaiki datanya, dan ID pendaftaran tetap sama.
             MD],
         ['cek', 'Mengapa nomor atlet (BIB) belum muncul?', <<<'MD'
-            Nomor atlet baru dibuat setelah pendaftaran ditandai **Lunas** oleh panitia. Setelah lunas, nomor atlet tampil di **Cek Pendaftaran** dan di bukti PDF.
+            Nomor atlet baru dibuat setelah pendaftaran ditandai **Lunas** oleh panitia. Setelah Lunas, nomor atlet tampil di **Cek Pendaftaran** dan di bukti PDF.
             MD],
         ['cek', 'Ada tulisan "Perlu didaftarkan ulang" atau "atlet ditolak panitia"', <<<'MD'
             Artinya panitia mengeluarkan atlet itu dari pendaftaran, biasanya karena kelompok umur atau nomor lombanya tidak sesuai. Alasan dan kelompok umur yang disarankan tertulis di kartunya.
@@ -222,15 +222,15 @@ final class FaqBawaan
             Tekan **Daftarkan ulang** untuk mendaftarkan atlet itu lagi dengan data yang benar. Bila uang sudah terlanjur ditransfer, hubungi panitia lewat WA.
             MD],
         ['cek', 'Pendaftaran saya yang Lunas berubah menjadi Menunggu lagi', <<<'MD'
-            Ini terjadi bila panitia mengubah pendaftaran Anda (misalnya menambah atau mengurangi nomor) dan totalnya berubah. Panitia akan menghubungi Anda untuk menyelesaikan selisihnya, lalu menandai Lunas lagi. Nomor atlet yang sudah ada tetap berlaku.
+            Ini terjadi bila panitia mengubah pendaftaran Anda (misalnya menambah atau mengurangi nomor) dan totalnya berubah. Panitia akan menghubungi Anda soal selisihnya, lalu menandai Lunas lagi. Nomor atlet yang sudah ada tetap berlaku.
             MD],
         ['cek', 'Sekolah saya mendaftar lebih dari sekali, apakah tidak apa-apa?', <<<'MD'
-            Tidak apa-apa. Semua pendaftaran dengan NPSN yang sama dianggap satu sekolah. Setelah lunas, panitia menggabungkannya menjadi satu pendaftaran; ID lama tetap bisa dicari di **Cek Pendaftaran**, dan kode QR di bukti lama tetap berlaku.
+            Tidak apa-apa. Semua pendaftaran dengan NPSN yang sama dianggap satu sekolah. Setelah Lunas, panitia menggabungkannya menjadi satu pendaftaran. ID lama tetap bisa dicari di **Cek Pendaftaran**, dan kode QR di bukti lama tetap berlaku.
             MD],
 
         // ---------- Hari lomba ----------
         ['hari_lomba', 'Apa itu pertemuan teknik (technical meeting), wajib hadir?', <<<'MD'
-            Pertemuan teknik membahas pelaksanaan lomba bersama ofisial sekolah, sekaligus pembagian nomor atlet (BIB). **Setiap sekolah yang mendaftarkan siswanya wajib hadir**; sekolah yang tidak hadir wajib menerima keputusan pertemuan itu.
+            Pertemuan teknik membahas pelaksanaan lomba bersama ofisial sekolah, sekaligus pembagian nomor atlet (BIB). **Setiap sekolah yang mendaftarkan siswanya wajib hadir.** Sekolah yang tidak hadir wajib menerima keputusan pertemuan itu.
 
             Waktu dan tempatnya ada di bagian **Agenda** halaman depan.
             MD],
@@ -238,7 +238,7 @@ final class FaqBawaan
             1. **Bukti pendaftaran** berstatus Lunas, dicetak atau di HP.
             2. **Surat keterangan dari sekolah** berpas foto dan berstempel untuk setiap atlet.
 
-            Keabsahan peserta diperiksa saat pertemuan teknik. Templat surat keterangan ada di halaman **Unduhan**.
+            Panitia memeriksa keabsahan peserta saat pertemuan teknik. Templat surat keterangan ada di halaman **Unduhan**.
             MD],
         ['hari_lomba', 'Kapan nomor atlet (BIB) dibagikan dan bagaimana memakainya?', <<<'MD'
             Nomor atlet dibagikan saat pertemuan teknik. Setiap atlet wajib memasang nomor atletnya di **dada** saat berlomba.
@@ -250,7 +250,7 @@ final class FaqBawaan
             Atlet dipanggil dua kali di tempat **Roll Call** (dekat tempat pemanasan): panggilan pertama 30 menit dan panggilan terakhir 20 menit sebelum lomba dimulai. Pemanasan dilakukan di tempat Roll Call, tidak di tempat lomba.
             MD],
         ['hari_lomba', 'Pakaian dan sepatu apa yang dipakai?', <<<'MD'
-            Pakai pakaian olahraga, sebaiknya bertuliskan nama sekolah. Saat berlomba atlet boleh tidak bersepatu, asal nyaman.
+            Pakai pakaian olahraga, sebaiknya bertuliskan nama sekolah. Saat berlomba, atlet boleh tidak bersepatu asal nyaman.
 
             Saat upacara penghormatan pemenang, atlet memakai seragam olahraga sekolah lengkap, bersepatu, dan sopan.
             MD],
@@ -269,7 +269,7 @@ final class FaqBawaan
             Buka halaman **Hasil** dari menu halaman depan. Hasil setiap nomor tampil setelah panitia menerbitkannya, dan bisa diunduh sebagai PDF atau Excel.
             MD],
         ['hasil', 'Hasil nomor lomba anak saya belum muncul', <<<'MD'
-            Panitia menerbitkan hasil satu per satu setelah diperiksa. Tunggu beberapa saat lalu buka lagi halaman **Hasil**.
+            Panitia memeriksa hasil setiap nomor lalu menerbitkannya satu per satu. Tunggu sebentar, lalu buka lagi halaman **Hasil**.
             MD],
         ['hasil', 'Bagaimana juara ditentukan?', <<<'MD'
             Juara I, II, dan III diambil dari babak **Final**. Atlet juara I, II, dan III mendapat piagam dan piala. Untuk nomor beregu, satu regu juara mendapat satu piala untuk sekolahnya.

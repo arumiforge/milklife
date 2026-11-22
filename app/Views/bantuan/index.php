@@ -118,7 +118,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
 
     <div class="mt-12 space-y-10" data-daftar-faq>
         <?php if ($kategori === []) : ?>
-            <?= komponen('kosong', ['gambar' => 'gambar/bantuan/tanya-panitia.webp', 'ikon' => 'message-circle', 'judul' => 'Tanya-jawab belum tersedia', 'teks' => 'Panitia sedang menyiapkan jawaban. Untuk sementara, tanyakan langsung lewat WA di bawah.']) ?>
+            <?= komponen('kosong', ['gambar' => 'gambar/bantuan/tanya-panitia.webp', 'ikon' => 'message-circle', 'judul' => 'Tanya-jawab belum tersedia', 'teks' => 'Panitia sedang menyiapkan jawaban. Untuk sementara, tanyakan langsung lewat WhatsApp di bawah.']) ?>
         <?php endif ?>
 
         <?php foreach ($kategori as $k) : ?>
@@ -148,7 +148,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
         <?php endforeach ?>
 
         <div class="hidden" data-cari-kosong>
-            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/tidak-ketemu.webp', 'ikon' => 'search', 'judul' => 'Belum ada jawaban yang cocok', 'teks' => 'Coba kata lain yang lebih pendek, misalnya "foto", "transfer", atau "NISN". Atau tanyakan langsung ke panitia lewat WA di bawah.']) ?>
+            <?= komponen('kosong', ['gambar' => 'gambar/keadaan/tidak-ketemu.webp', 'ikon' => 'search', 'judul' => 'Belum ada jawaban yang cocok', 'teks' => 'Coba kata lain yang lebih pendek, misalnya "foto", "transfer", atau "NISN". Atau tanyakan langsung ke panitia lewat WhatsApp di bawah.']) ?>
         </div>
     </div>
 
@@ -161,7 +161,7 @@ $adaWa  = $kontak['wa_tanya'] !== null || $kontak['narahubung'] !== [];
         <div class="flex-1">
             <h2 id="judul-tanya-panitia" class="text-xl font-bold text-gray-900">Masih bingung? Tanya panitia</h2>
             <p class="mt-1 text-gray-700">
-                <?= $adaWa ? 'Kirim pesan WA dan sebutkan nama sekolah serta ID pendaftaran bila sudah mendaftar.' : 'Nomor WA panitia belum diumumkan. Lihat petunjuk teknis di halaman Unduhan.' ?>
+                <?= $adaWa ? 'Kirim pesan WhatsApp. Sebutkan nama sekolah, dan ID pendaftaran bila sudah mendaftar.' : 'Nomor WhatsApp panitia belum diumumkan. Lihat petunjuk teknis di halaman Unduhan.' ?>
             </p>
             <?php if ($adaWa) : ?>
                 <div class="mt-4 flex flex-wrap justify-center gap-3 sm:justify-start">
