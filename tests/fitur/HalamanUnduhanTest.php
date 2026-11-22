@@ -37,7 +37,7 @@ final class HalamanUnduhanTest extends UjiBasisData
         $kosong = $xpath->query('//main//*[@data-unduhan-kosong]')->item(0);
         $this->assertNotNull($kosong);
         $this->assertStringContainsString('Belum ada berkas unduhan', $this->teksSimpul($kosong));
-        $this->assertStringContainsString('Silakan kembali lagi nanti.', $this->teksSimpul($kosong));
+        $this->assertStringContainsString('jadi buka lagi halaman ini nanti.', $this->teksSimpul($kosong));
         $this->assertSame(1, $xpath->query('.//a[@href="' . site_url('/') . '"]', $kosong)->length, 'Ada jalan kembali ke beranda.');
         $this->assertSame(0, $xpath->query('//main//*[@data-daftar-unduhan]')->length);
     }

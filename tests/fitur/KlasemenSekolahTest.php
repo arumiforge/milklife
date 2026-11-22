@@ -109,14 +109,14 @@ final class KlasemenSekolahTest extends UjiBasisData
         $this->assertSame([1, 2], array_column($baris, 'peringkat'), 'Poin sama: juara I memecah seri.');
 
         $admin = $this->bukaSebagaiAdmin('admin/klasemen');
-        $admin->assertSee('jumlah poin terbanyak');
+        $admin->assertSee('sekolah dengan poin terbanyak');
         $admin->assertSee('Poin');
 
-        $this->assertStringContainsString('jumlah poin terbanyak', (new UnduhanKlasemen((new HasilLomba())->klasemen(), false))->html(false));
-        $this->get('hasil/klasemen')->assertSee('jumlah poin terbanyak');
+        $this->assertStringContainsString('sekolah dengan poin terbanyak', (new UnduhanKlasemen((new HasilLomba())->klasemen(), false))->html(false));
+        $this->get('hasil/klasemen')->assertSee('sekolah dengan poin terbanyak');
         $this->assertSame('poin', (new IsiHalamanDepan())->hasilTerbaru()['metode']);
         $this->assertSame([7, 7], array_column((new IsiHalamanDepan())->hasilTerbaru()['juara_umum'][0]['baris'], 'poin'));
-        $this->assertStringContainsString('jumlah poin terbanyak (peringkat 1 = 7, 2 = 7, 3 = 4', (new JawabanFaq())->teks('{cara_juara_umum}'));
+        $this->assertStringContainsString('sekolah dengan poin terbanyak (peringkat 1 = 7, 2 = 7, 3 = 4', (new JawabanFaq())->teks('{cara_juara_umum}'));
         $this->assertSame(['Peringkat', 'Sekolah', 'NPSN', 'Juara I', 'Juara II', 'Juara III', 'Jumlah', 'Poin', 'Juara umum'], $this->bacaExcel($this->bukaSebagaiAdmin('admin/klasemen/excel'))[0]);
     }
 

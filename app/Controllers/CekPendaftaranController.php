@@ -130,7 +130,7 @@ class CekPendaftaranController extends BaseController
 
             // ID lama dari pendaftaran yang sudah digabung (K109).
             if ($satu !== null && $satu['id_pendaftaran'] !== $kode) {
-                $data['info'] = 'Setelah pembayaran dikonfirmasi, panitia menggabungkan pendaftaran ' . $kode . ' dengan pendaftaran lain dari sekolah yang sama menjadi ' . $satu['id_pendaftaran'] . '. '
+                $data['info'] = 'Pendaftaran ' . $kode . ' sudah digabung ke ' . $satu['id_pendaftaran'] . ' bersama pendaftaran lain dari sekolah yang sama. '
                     . 'Mulai sekarang, pakai ID ' . $satu['id_pendaftaran'] . ' dan cetak ulang bukti pendaftarannya.';
             }
         } else {

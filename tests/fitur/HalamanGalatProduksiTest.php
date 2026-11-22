@@ -149,7 +149,7 @@ final class HalamanGalatProduksiTest extends CIUnitTestCase
 
         $this->assertSame(500, $kode);
         $this->assertHalamanGalatRamah($html, 'Maaf, ada kendala');
-        $this->assertStringContainsString('Coba muat ulang halaman ini beberapa menit lagi.', $html);
+        $this->assertStringContainsString('Muat ulang halaman ini beberapa menit lagi.', $html);
     }
 
     public function testGalatAdminJugaRamah(): void

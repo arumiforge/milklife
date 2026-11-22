@@ -178,7 +178,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         // Lunas: nomor dada anggota tim ikut dicetak (K87, menggantikan K52).
         $this->assertMatchesRegularExpression('#<td>FAJAR REKAAN</td>\s*<td>\d+</td>\s*<td><b>1001</b></td>\s*<td class="peran-cadangan">Cadangan</td>#', $html);
         $this->assertStringContainsString('Tanpa biaya<br>regu sudah terdaftar', $html);
-        $this->assertStringContainsString('Tidak ada nomor individu', $html);
+        $this->assertStringContainsString('Pendaftaran ini tidak memuat nomor individu', $html);
         $this->assertStringContainsString('stempel stempel-lunas', $html);
         $this->assertStringNotContainsString('var:logo', $html, 'Tanpa logo bila belum diunggah.');
 
@@ -248,7 +248,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $hasil = $this->get('bukti/' . str_repeat('a', 24) . '/MAC2A0000126');
         $hasil->assertStatus(429);
         $hasil->assertHeader('Retry-After', '6');
-        $hasil->assertSee('Tunggu 6 detik lagi');
+        $hasil->assertSee('Tunggu 6 detik, lalu muat ulang');
     }
 
     /**

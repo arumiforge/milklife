@@ -155,7 +155,7 @@ final class CekPendaftaranTest extends UjiBasisData
 
         $hasil = $this->get('cek-pendaftaran?kode=20300001');
         $hasil->assertStatus(429);
-        $hasil->assertSee('Terlalu banyak pencarian dalam waktu singkat. Tunggu 6 detik lagi');
+        $hasil->assertSee('Terlalu banyak pencarian dalam waktu singkat. Tunggu 6 detik, lalu cari lagi');
         $hasil->assertHeader('Retry-After', '6');
     }
 

@@ -250,7 +250,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
         $this->assertSame([], $this->daftarTeks($xpath, '//*[@data-lomba-biaya-individu]'));
         $hasil->assertDontSee('Rp 150.000');
-        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
+        $this->assertStringContainsString('Rincian biaya tampil di langkah pembayaran', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
 
         setting('HalamanDepan.tampilkan_biaya', true);
         $xpath = $this->xpathDari($this->get('/'));

@@ -84,7 +84,7 @@ final class KelompokUmurAtlet
                 return [
                     'kelompok_umur' => null,
                     'galat'         => "Atlet lahir tahun {$tahunLahir} masuk {$ku['nama']}, yang hanya untuk " . Jenjang::gabungLabel($boleh) . '. '
-                        . "Sekolah ini {$labelJenjang}, jadi atlet ini tidak bisa didaftarkan{$rentang}.",
+                        . "Sekolah ini {$labelJenjang}. Atlet ini belum bisa didaftarkan{$rentang}.",
                     'pilihan' => [],
                 ];
             }

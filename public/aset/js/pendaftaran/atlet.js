@@ -103,7 +103,7 @@
             return {
                 ku: null,
                 galat: 'Atlet lahir tahun ' + tahun + ' masuk ' + lain.nama + ', yang hanya untuk ' + boleh
-                    + '. Sekolah ini ' + labelJenjang + ', jadi atlet ini tidak bisa didaftarkan' + rentang + '.',
+                    + '. Sekolah ini ' + labelJenjang + '. Atlet ini belum bisa didaftarkan' + rentang + '.',
                 pilihan: []
             };
         }

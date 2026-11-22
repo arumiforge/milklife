@@ -190,7 +190,7 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $kiriman            = self::kirimanContoh();
         $kiriman['sekolah'] = ['jenjang' => 'A', 'kabupaten' => 'Pati', 'npsn' => '88888888', 'nama' => ''];
 
-        $this->assertGalat(self::periksa($kiriman), 'sekolah.nama', 'NPSN ini tidak ada di data sekolah kami');
+        $this->assertGalat(self::periksa($kiriman), 'sekolah.nama', 'NPSN ini belum ada di data sekolah');
 
         $kiriman['sekolah']['nama'] = 'MI Karangan';
         $hasil                      = self::periksa($kiriman);
@@ -381,7 +381,7 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $kiriman                       = self::kirimanContoh();
         $kiriman['atlet'][0]['nomor'] = [10, 12, 13];
 
-        $this->assertGalat(self::periksa($kiriman), 'atlet.0.nomor', 'ikut 3 nomor individu, padahal paling banyak 2');
+        $this->assertGalat(self::periksa($kiriman), 'atlet.0.nomor', 'ikut 3 nomor individu. Batasnya 2 nomor');
         $this->assertSame([], self::periksa($kiriman, [], ['aturan' => ['nomor_individu_maksimal' => 3, 'atlet_per_nomor_maksimal' => null]])['galat']);
     }
 
