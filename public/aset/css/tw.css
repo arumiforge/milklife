@@ -339,6 +339,9 @@
   .start-1\/2 {
     inset-inline-start: calc(1/2 * 100%);
   }
+  .start-3 {
+    inset-inline-start: calc(var(--spacing) * 3);
+  }
   .end-0 {
     inset-inline-end: calc(var(--spacing) * 0);
   }
@@ -353,6 +356,9 @@
   }
   .top-0 {
     top: 0px;
+  }
+  .top-1\/2 {
+    top: calc(1 / 2 * 100%);
   }
   .top-3 {
     top: calc(var(--spacing) * 3);
@@ -1125,6 +1131,9 @@
   .mt-auto {
     margin-top: auto;
   }
+  .\!mb-0 {
+    margin-bottom: 0px !important;
+  }
   .-mb-2 {
     margin-bottom: calc(var(--spacing) * -2);
   }
@@ -1412,6 +1421,9 @@
   .max-h-14 {
     max-height: calc(var(--spacing) * 14);
   }
+  .max-h-64 {
+    max-height: calc(var(--spacing) * 64);
+  }
   .max-h-\[70vh\] {
     max-height: 70vh;
   }
@@ -1420,6 +1432,9 @@
   }
   .max-h-full {
     max-height: 100%;
+  }
+  .\!min-h-9 {
+    min-height: calc(var(--spacing) * 9) !important;
   }
   .min-h-0 {
     min-height: 0px;
@@ -1830,6 +1845,10 @@
     --tw-translate-x: 100%;
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
+  .-translate-y-1\/2 {
+    --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
   .-translate-y-full {
     --tw-translate-y: -100%;
     translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -2127,6 +2146,9 @@
   }
   .overflow-y-auto {
     overflow-y: auto;
+  }
+  .overscroll-contain {
+    overscroll-behavior: contain;
   }
   .rounded {
     border-radius: 0.25rem;
@@ -3036,6 +3058,9 @@
   }
   .ps-8 {
     padding-inline-start: calc(var(--spacing) * 8);
+  }
+  .ps-10 {
+    padding-inline-start: calc(var(--spacing) * 10);
   }
   .ps-11 {
     padding-inline-start: calc(var(--spacing) * 11);
@@ -4077,6 +4102,9 @@
   .focus\:bg-gray-50:focus {
     background-color: var(--color-gray-50);
   }
+  .focus\:bg-primary-50:focus {
+    background-color: var(--color-primary-50);
+  }
   .focus\:ring-2:focus {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -4201,6 +4229,9 @@
   }
   .disabled\:text-gray-500:disabled {
     color: var(--color-gray-500);
+  }
+  .disabled\:text-gray-600:disabled {
+    color: var(--color-gray-600);
   }
   .disabled\:opacity-50:disabled {
     opacity: 50%;
