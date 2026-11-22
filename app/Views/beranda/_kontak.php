@@ -60,11 +60,11 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                                 <?php foreach ($narahubung as $orang) : ?>
                                     <li class="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4" data-narahubung-butir>
                                         <?= ikon('user', 'size-7 shrink-0 text-primary-700') ?>
-                                        <div class="min-w-0 flex-1">
+                                        <div class="min-w-0 flex-1 basis-40">
                                             <p class="font-bold text-gray-900 break-words" data-narahubung-nama><?= esc($orang['nama']) ?></p>
                                             <p class="text-gray-600" data-narahubung-nomor><?= esc($orang['nomor']) ?></p>
                                         </div>
-                                        <a class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100" href="<?= esc($orang['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-narahubung-wa>
+                                        <a class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg sm:w-auto border border-gray-300 bg-white px-4 text-sm font-semibold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-100" href="<?= esc($orang['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-narahubung-wa>
                                             <?= ikon('message-circle', 'size-4') ?> Kirim pesan WA<span class="sr-only"> <?= esc($orang['nama']) ?> (di tab baru)</span>
                                         </a>
                                     </li>
