@@ -204,42 +204,23 @@ final class PesertaPublikTest extends UjiBasisData
         $tanpa = $this->xpathDari($this->get('peserta?nomor=' . $this->idInduk['frog']));
         $this->assertSame(0, $tanpa->query('//*[@data-ilustrasi-nomor]|//option[@data-gambar]')->length);
 
-        $folder     = FCPATH . 'aset/gambar/nomor';
-        $berkas     = $folder . '/frog-jump.webp';
-        $adaDulu    = is_file($berkas);
-        $folderBaru = ! is_dir($folder);
+        $this->taruhGambarUji('nomor/frog-jump.webp');
 
-        if ($folderBaru) {
-            mkdir($folder, 0777, true);
-        }
-        if (! $adaDulu) {
-            file_put_contents($berkas, 'uji');
-        }
+        $alamat = base_url('aset/gambar/nomor/frog-jump.webp');
 
-        try {
-            $alamat = base_url('aset/gambar/nomor/frog-jump.webp');
+        // Saringan Frog Jump dipilih: gambar dan namanya tampil dari server.
+        $xpath = $this->xpathDari($this->get('peserta?nomor=' . $this->idInduk['frog']));
+        $this->assertSame(1, $xpath->query('//option[@value="' . $this->idInduk['frog'] . '"][starts-with(@data-gambar, "' . $alamat . '")]')->length);
+        $this->assertSame(0, $xpath->query('//option[@value="' . $this->idInduk['lari60putra'] . '"][@data-gambar]')->length, 'Nomor tanpa berkas tidak diberi gambar.');
+        $kotak = $xpath->query('//*[@data-ilustrasi-nomor]')->item(0);
+        $this->assertNotNull($kotak);
+        $this->assertStringNotContainsString('hidden', $kotak->getAttribute('class'));
+        $this->assertStringStartsWith($alamat, $xpath->query('.//img[@data-gambar-nomor]', $kotak)->item(0)?->getAttribute('src'));
+        $this->assertStringContainsString('Frog Jump', $xpath->query('.//*[@data-nama-nomor]', $kotak)->item(0)?->textContent);
 
-            // Saringan Frog Jump dipilih: gambar dan namanya tampil dari server.
-            $xpath = $this->xpathDari($this->get('peserta?nomor=' . $this->idInduk['frog']));
-            $this->assertSame(1, $xpath->query('//option[@value="' . $this->idInduk['frog'] . '"][starts-with(@data-gambar, "' . $alamat . '")]')->length);
-            $this->assertSame(0, $xpath->query('//option[@value="' . $this->idInduk['lari60putra'] . '"][@data-gambar]')->length, 'Nomor tanpa berkas tidak diberi gambar.');
-            $kotak = $xpath->query('//*[@data-ilustrasi-nomor]')->item(0);
-            $this->assertNotNull($kotak);
-            $this->assertStringNotContainsString('hidden', $kotak->getAttribute('class'));
-            $this->assertStringStartsWith($alamat, $xpath->query('.//img[@data-gambar-nomor]', $kotak)->item(0)?->getAttribute('src'));
-            $this->assertStringContainsString('Frog Jump', $xpath->query('.//*[@data-nama-nomor]', $kotak)->item(0)?->textContent);
-
-            // Tanpa saringan nomor: kotak tersembunyi, diisi skrip saat nomor dipilih.
-            $semua = $this->xpathDari($this->get('peserta'))->query('//*[@data-ilustrasi-nomor]')->item(0);
-            $this->assertStringContainsString('hidden', $semua?->getAttribute('class'));
-        } finally {
-            if (! $adaDulu && is_file($berkas)) {
-                unlink($berkas);
-            }
-            if ($folderBaru && is_dir($folder)) {
-                rmdir($folder);
-            }
-        }
+        // Tanpa saringan nomor: kotak tersembunyi, diisi skrip saat nomor dipilih.
+        $semua = $this->xpathDari($this->get('peserta'))->query('//*[@data-ilustrasi-nomor]')->item(0);
+        $this->assertStringContainsString('hidden', $semua?->getAttribute('class'));
     }
 
     public function testPaginasiServerTanpaJavaScript(): void
