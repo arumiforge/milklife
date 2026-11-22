@@ -81,10 +81,12 @@ final class HiasanBerandaTest extends UjiBasisData
         $this->assertGreaterThanOrEqual(1, $xpath->query('//div[@data-hiasan="garis-lintasan"][@aria-hidden="true"]/img[contains(@src, "pola/garis-lintasan.webp")]')->length);
         $this->assertStringNotContainsString('pola-titik', (string) $xpath->query('//body')->item(0)?->getAttribute('class'), 'Pola titik dilarang (G10-12), walaupun berkas lamanya masih ada.');
 
-        // Halaman masuk: stadion G10-12 mulai lg di belakang kartu, diredam lapisan terang (kontras nama acara).
+        // Halaman masuk: stadion G10-12 mulai lg menjadi latar seluruh layar (di belakang kartu dan
+        // ilustrasi, sebelum <main>), diredam lapisan terang (kontras isi kartu).
         $xpath = $this->xpathDari($this->get('admin/masuk'));
-        $this->assertStringContainsString('lg:block', (string) $xpath->query('//main/img[@data-hiasan="bintik-stadion"]')->item(0)?->getAttribute('class'));
-        $lapisan = $xpath->query('//main/img[@data-hiasan="bintik-stadion"]/following-sibling::div[1][@data-lapisan-stadion][@aria-hidden="true"]')->item(0);
+        $this->assertSame(0, $xpath->query('//main//img[@data-hiasan="bintik-stadion"]')->length);
+        $this->assertStringContainsString('lg:block', (string) $xpath->query('//main/preceding-sibling::img[@data-hiasan="bintik-stadion"]')->item(0)?->getAttribute('class'));
+        $lapisan = $xpath->query('//main/preceding-sibling::img[@data-hiasan="bintik-stadion"]/following-sibling::div[1][@data-lapisan-stadion][@aria-hidden="true"]')->item(0);
         $this->assertNotNull($lapisan);
         $this->assertStringContainsString('bg-primary-50/80', $lapisan->getAttribute('class'));
     }
