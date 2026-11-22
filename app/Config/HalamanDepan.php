@@ -134,4 +134,20 @@ class HalamanDepan extends BaseConfig
     public string $peta_tautan = 'https://maps.google.com/?q=Supersoccer+Arena+Kudus';
 
     // ---------- Akhir peta lokasi ----------
+
+    // ---------- Bilah menu atas (F10-07, K154) ----------
+
+    /**
+     * Butir bilah submenu atas tata letak publik (`App\Libraries\MenuPublik::BILAH_ATAS`).
+     * Bawaan semua menyala, supaya server lama langsung menampilkannya.
+     */
+    public bool $bilah_atas_unduhan = true;
+
+    public bool $bilah_atas_galeri = true;
+
+    public bool $bilah_atas_bantuan = true;
+
+    public bool $bilah_atas_tanya = true;
+
+    // ---------- Akhir bilah menu atas ----------
 }

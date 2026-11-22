@@ -80,7 +80,10 @@ final class KatalogTampilanTest extends UjiBasisData
         $label = array_column(MenuPublik::tombol(), 'label');
 
         $this->assertSame(['Cek Pendaftaran', 'Daftar'], $label);
-        // Kategori hanya bila kelompok umur aktif sudah ada (F9-03); Hasil hanya setelah ada yang terbit; Bantuan selalu (F9-04).
-        $this->assertSame(['Beranda', 'Kategori', 'Unduhan', 'Bantuan'], array_column(MenuPublik::butir(), 'label'), 'Hasil hanya setelah ada yang terbit.');
+        // Menu utama F10-07 (K154): Jadwal dan Peserta bersakelar, Hasil hanya setelah ada yang terbit;
+        // Unduhan dan Bantuan pindah ke bilah atas.
+        $this->assertSame(['Beranda'], array_column(MenuPublik::butir(), 'label'), 'Hasil hanya setelah ada yang terbit.');
+        $this->assertSame(['Unduhan', 'Bantuan'], array_column(MenuPublik::bilahAtas(), 'label'), 'Galeri bersakelar; Tanya Panitia hanya bila nomor WA diisi.');
+        $this->assertSame(['Beranda', 'Bantuan', 'Unduhan', 'Daftar'], array_column(MenuPublik::bawah(), 'label'), 'Jadwal dan Hasil yang mati diganti Bantuan lalu Unduhan.');
     }
 }

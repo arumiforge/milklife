@@ -119,11 +119,13 @@ final class BantuanFaqTest extends UjiBasisData
 
     public function testMenuBantuanDiTataLetakBaruDanLama(): void
     {
+        // Bantuan di bilah menu atas dan laci ponsel (F10-07, K154).
         $xpath = $this->xpathDari($this->get('bantuan'));
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Menu utama"]//a[@href="' . site_url('bantuan') . '"][@aria-current="page"]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Menu tambahan"]//a[@href="' . site_url('bantuan') . '"][@aria-current="page"]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Menu ponsel"]//a[@href="' . site_url('bantuan') . '"][@aria-current="page"]')->length);
 
         $xpath = $this->xpathDari($this->get('unduhan'));
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Menu utama"]//a[@href="' . site_url('bantuan') . '"]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Menu tambahan"]//a[@href="' . site_url('bantuan') . '"]')->length);
     }
 
     // ---------- Laci bantuan wizard ----------

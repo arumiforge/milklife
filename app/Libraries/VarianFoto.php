@@ -29,6 +29,13 @@ final class VarianFoto
     public const LEBAR = [640, 960];
 
     /**
+     * Lebar salinan logo kepala tata letak publik (F10-07): logo persegi tampil
+     * sekitar 48 piksel, logo persegi panjang sekitar 130 piksel; salinan ini
+     * cukup tajam di layar 3x tanpa mengunduh logo unggahan aslinya.
+     */
+    public const LEBAR_LOGO = [160, 400];
+
+    /**
      * Subfolder salinan di dalam folder unggahan fotonya.
      */
     public const FOLDER = 'varian';
@@ -69,6 +76,23 @@ final class VarianFoto
     }
 
     /**
+     * Jalur relatif satu salinan selebar `$lebar` (dibuat bila perlu), atau
+     * `null` bila foto tidak ada, tidak lebih lebar dari `$lebar`, atau
+     * salinannya gagal dibuat (pakai foto asli). Dipakai logo kepala (F10-07).
+     */
+    public static function kecil(string $jalur, int $lebar, ?Unggahan $unggahan = null): ?string
+    {
+        $penuh = ($unggahan ?? new Unggahan())->jalurPenuh($jalur);
+        $info  = $penuh === null || ! is_file($penuh) ? false : @getimagesize($penuh);
+
+        if ($info === false || $info[0] <= $lebar || ! self::buat((string) $penuh, $lebar)) {
+            return null;
+        }
+
+        return self::jalurRelatif($jalur, $lebar);
+    }
+
+    /**
      * Hapus semua salinan foto ini. Jalur yang tidak sah diabaikan.
      */
     public static function hapus(string $jalur, ?Unggahan $unggahan = null): void
@@ -79,7 +103,7 @@ final class VarianFoto
             return;
         }
 
-        foreach (self::LEBAR as $lebar) {
+        foreach ([...self::LEBAR, ...self::LEBAR_LOGO] as $lebar) {
             $varian = self::jalurPenuhVarian($penuh, $lebar);
 
             if (is_file($varian)) {
