@@ -40,7 +40,7 @@ Gaya anime 2D cel-shaded (K153); dikerjakan Codex berurutan dari [`desain/README
 | [G10-08 Panel admin](../desain/tugas/G10-08-panel-admin.md) | selesai (#193) |
 | [G10-12 Pola dan hiasan](../desain/tugas/G10-12-pola-hiasan.md) | selesai (#194) |
 | [G10-10 Gambar bagikan](../desain/tugas/G10-10-gambar-bagikan.md) | selesai (#196) |
-| [G10-13 Stadion SSA](../desain/tugas/G10-13-stadion-ssa.md) | menunggu Codex (K158) |
+| [G10-13 Stadion SSA](../desain/tugas/G10-13-stadion-ssa.md) | selesai (#201, K158) |
 
 Gambar Tahap 9 (G9-01 sampai G9-12) selesai dan sudah di `main` (#142, #153 sampai #163; G9-11 diganti logo resmi pemilik, K152, #158 ditutup), dipasang lewat #164, #166, #167, dan #168, dan akan tertimpa G10.
 
