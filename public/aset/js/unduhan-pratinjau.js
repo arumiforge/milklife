@@ -3,11 +3,13 @@
  *
  * Tombol "Lihat" (`a[data-unduhan-lihat]`, dari `beranda/_daftar_unduhan.php`)
  * menuju rute `unduhan/<id>/lihat` yang mengirim PDF atau gambar dengan
- * `Content-Disposition: inline`, dan membuka tab baru. Di layar `md` ke atas
- * (768 piksel) skrip ini membukanya di modal: PDF dalam `<iframe>`, gambar
- * dalam `<img>`, keduanya dari berkas sendiri (CSP `frame-src 'self'`).
- * Di ponsel, tanpa JavaScript, atau bila Flowbite tidak termuat, tautan
- * tetap membuka tab baru seperti biasa.
+ * `Content-Disposition: inline`, dan membuka tab baru. Skrip ini membukanya
+ * di modal di semua ukuran layar (F10-08, permintaan pemilik): gambar dalam
+ * `<img>`, PDF dalam `<iframe>` dari berkas sendiri (CSP `frame-src 'self'`).
+ * Di bawah `md` (768 piksel) peramban ponsel umumnya tidak bisa menampilkan
+ * PDF di dalam `<iframe>`, jadi modal PDF berisi keterangan singkat dengan
+ * tombol "Buka di tab baru" dan "Unduh" di kakinya. Tanpa JavaScript, atau
+ * bila Flowbite tidak termuat, tautan tetap membuka tab baru seperti biasa.
  */
 (function () {
     'use strict';
@@ -44,6 +46,13 @@
         var alamat = tautan.getAttribute('href');
         var nama = tautan.getAttribute('data-judul') || 'Berkas';
 
+        if (tautan.getAttribute('data-pratinjau') === 'pdf' && !layarLebar.matches) {
+            var keterangan = document.createElement('p');
+            keterangan.className = 'p-2 text-gray-700';
+            keterangan.textContent = 'Pratinjau PDF belum bisa tampil di ponsel. Tekan Buka di tab baru untuk membaca berkasnya, atau Unduh untuk menyimpannya.';
+            return keterangan;
+        }
+
         if (tautan.getAttribute('data-pratinjau') === 'pdf') {
             var bingkai = document.createElement('iframe');
             bingkai.src = alamat;
@@ -64,7 +73,7 @@
         var tautan = kejadian.target.closest('a[data-unduhan-lihat]');
 
         // Klik tengah atau dengan Ctrl/Cmd/Shift tetap membuka tab sesuai kebiasaan peramban.
-        if (!tautan || !layarLebar.matches || kejadian.button !== 0 || kejadian.ctrlKey || kejadian.metaKey || kejadian.shiftKey || kejadian.altKey) {
+        if (!tautan || kejadian.button !== 0 || kejadian.ctrlKey || kejadian.metaKey || kejadian.shiftKey || kejadian.altKey) {
             return;
         }
 
