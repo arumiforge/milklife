@@ -61,7 +61,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Isi yang tampil di halaman depan web pendaftaran. Semua boleh diisi bertahap.
         Nama, seri, tahun, tempat, dan tanggal acara diatur di <a href="<?= site_url('admin/pengaturan/acara') ?>" class="font-semibold text-primary-700 underline">Data Acara</a>.
     </p>

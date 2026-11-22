@@ -37,7 +37,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <p class="max-w-3xl text-gray-700">
+        <p class="text-gray-700">
             Kelompok umur atlet ditentukan dari jenjang sekolah lalu tahun lahirnya. Tiap kelompok umur aktif perlu batas tahun lahir,
             jenjang sekolah yang boleh ikut, biaya per nomor individu, dan awalan nomor atlet (BIB).
             Atlet tidak bisa pindah ke kelompok umur jenjang lain: atlet SMP/MTs tidak bisa ikut kelompok umur yang hanya untuk SD/MI.
@@ -49,7 +49,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
 
     <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-pilih-ku">
         <h2 id="judul-pilih-ku" class="text-lg font-bold text-gray-900">Tahun lahir di dua kelompok umur</h2>
-        <p class="mt-1 max-w-3xl text-sm text-gray-600">
+        <p class="mt-1 text-sm text-gray-600">
             Panitia bisa membuat rentang tahun lahir dua kelompok umur dalam satu jenjang beririsan, misalnya KU 10 lahir 2016–2018
             dan KU 12 lahir 2014–2016 untuk SD/MI. Atlet lahir 2016 lalu boleh ikut KU 10 atau KU 12: saat mendaftar, ofisial memilih
             salah satunya untuk setiap atlet itu, dan nomor lomba yang tampil mengikuti pilihan itu. Satu atlet tetap hanya ikut

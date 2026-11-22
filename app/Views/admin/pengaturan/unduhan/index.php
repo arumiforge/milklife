@@ -22,7 +22,7 @@
         <section class="kartu-kosong flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center" aria-labelledby="judul-kosong" data-unduhan-kosong>
             <span class="mb-4 inline-flex size-14 items-center justify-center rounded-2xl bg-primary-100 text-primary-700"><?= ikon('download', 'size-7') ?></span>
             <h2 id="judul-kosong" class="text-lg font-bold text-gray-900">Belum ada berkas unduhan</h2>
-            <p class="mt-1 max-w-xl text-gray-600">
+            <p class="mt-1 text-gray-600">
                 Unggah flyer, juknis, atau berkas lain yang perlu diunduh sekolah.
                 Berkas yang ditandai tampil akan muncul di halaman depan.
             </p>

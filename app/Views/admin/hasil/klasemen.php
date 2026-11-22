@@ -26,7 +26,7 @@ $metodePoin = $metode === Klasemen::POIN;
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
     <div class="flex flex-wrap items-start gap-4">
-        <p class="max-w-3xl min-w-0 flex-1 basis-72 text-gray-700">
+        <p class="min-w-0 flex-1 basis-72 text-gray-700">
             <?= esc($keterangan) ?>
             Klasemen dihitung per jenjang dari babak Final semua nomor<?= $metodePoin ? ' (poin dari peringkat 1–' . Klasemen::PERINGKAT_POIN . ')' : '' ?>; satu regu juara = satu piala untuk sekolahnya, sekolah dikenali dari NPSN.
             Metode diatur di <a href="<?= site_url('admin/pengaturan/hasil') ?>" class="font-semibold text-primary-700 underline">Pengaturan &gt; Hasil</a>.

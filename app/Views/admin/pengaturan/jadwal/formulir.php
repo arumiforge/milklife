@@ -45,7 +45,7 @@ $pilihan = '<span class="font-normal text-gray-500">(boleh kosong)</span>';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <section class="max-w-4xl rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-formulir-jadwal">
+    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-formulir-jadwal">
         <h2 id="judul-formulir-jadwal" class="text-lg font-bold text-gray-900"><?= $baru ? 'Tambah agenda' : 'Ubah agenda' ?></h2>
         <p class="mt-1 text-sm text-gray-600">
             Hanya judul yang wajib diisi. Isi tempat untuk kegiatan tatap muka, tautan untuk kegiatan daring.

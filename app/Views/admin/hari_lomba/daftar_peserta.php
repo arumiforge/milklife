@@ -15,7 +15,7 @@
 <div class="space-y-6 p-4 sm:p-6">
     <?= view('admin/hari_lomba/_tab', ['aktif' => 'admin/daftar-peserta'], ['saveData' => false]) ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Daftar peserta untuk pemanggilan atlet dan juri: No, nomor atlet (BIB), nama, sekolah, tanda hadir dari daftar ulang, dan kolom kosong untuk catatan juri.
         Nomor beregu ditulis per regu, anggota inti dulu lalu cadangan. Hanya atlet dari pendaftaran Lunas.
         Unduh lagi menjelang pemanggilan supaya tanda hadirnya terbaru.

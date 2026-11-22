@@ -36,7 +36,7 @@ $keadaan = static function (array $b): array {
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Bagi peserta tiap babak ke seri dan lintasan untuk pertemuan teknik dan juri. Babak diatur di
         <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>.
         Setelah hasil babak yang sudah dibagi lengkap, babak berikutnya terisi sendiri dari yang lolos (Q/q).

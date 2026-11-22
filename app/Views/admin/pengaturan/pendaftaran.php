@@ -56,11 +56,11 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Atur kapan sekolah bisa mendaftar dan batas-batas isian pendaftaran. Semua waktu dalam WIB.
     </p>
 
-    <div class="max-w-3xl space-y-6">
+    <div class="space-y-6">
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
         <form action="<?= site_url('admin/pengaturan/pendaftaran') ?>" method="post" novalidate class="space-y-6">

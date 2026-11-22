@@ -23,7 +23,7 @@
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Pilih bagian yang ingin diisi atau diubah. Bagian pertama wajib lengkap sebelum pendaftaran bisa dibuka.
     </p>
 

@@ -17,7 +17,7 @@ use App\Libraries\Hasil\JenisHasil;
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
     <div class="flex items-center gap-6">
-        <p class="max-w-3xl flex-1 text-gray-700">
+        <p class="flex-1 text-gray-700">
             Pilih nomor lomba untuk membuat babak (misalnya Penyisihan seri 1, lalu Final) dan mengisi prestasinya; peringkat dihitung otomatis.
             Juara I–III diambil dari babak Final. Hasil satu nomor tampil di halaman publik setelah ditekan <strong>Terbitkan</strong>.
         </p>

@@ -32,7 +32,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
 
 <?= $this->section('isi') ?>
 <div class="space-y-6 p-4 sm:p-6">
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Semua pendaftaran yang masuk lewat halaman Pendaftaran. Buka rinciannya untuk melihat atlet,
         menandai Lunas setelah transfer diperiksa, atau menghapus pendaftaran yang batal.
         Riwayat pendaftaran yang sudah dihapus bisa dicari di <a class="font-semibold text-primary-700 underline hover:no-underline" href="<?= site_url('admin/riwayat') ?>">Riwayat pendaftaran</a>.

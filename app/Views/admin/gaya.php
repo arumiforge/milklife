@@ -24,7 +24,7 @@ $bagian = static fn (string $id, string $judul, string $keterangan): string => '
 <?= $this->section('judul') ?>Katalog tampilan<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="mx-auto max-w-6xl space-y-12 p-4 sm:p-6">
+<div class="space-y-12 p-4 sm:p-6">
 
     <section class="latar-merek relative overflow-hidden rounded-3xl border border-gray-200 p-6 sm:p-10" data-adegan-merek>
         <div data-adegan-cadangan class="pointer-events-none absolute inset-0 transition-opacity duration-700" aria-hidden="true"></div>

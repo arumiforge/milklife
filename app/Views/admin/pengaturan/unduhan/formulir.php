@@ -54,7 +54,7 @@ $bantuan = 'mt-1.5 text-sm text-gray-600';
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <section class="max-w-3xl space-y-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-label="<?= esc($judulForm, 'attr') ?>">
+    <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-label="<?= esc($judulForm, 'attr') ?>">
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
         <form action="<?= $aksi ?>" method="post" enctype="multipart/form-data" novalidate class="space-y-5">

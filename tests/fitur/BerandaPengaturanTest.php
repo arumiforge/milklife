@@ -166,7 +166,13 @@ final class BerandaPengaturanTest extends UjiHalaman
     {
         $_SESSION = self::SESI_ADMIN;
 
-        foreach (['admin/pengaturan', 'admin/pengaturan/acara', 'admin/pengaturan/kelompok-umur/3/ubah', 'admin/akun'] as $alamat) {
+        // Halaman pengaturan menandai anak submenu Pengaturan (F10-03).
+        foreach ([
+            'admin/pengaturan'                      => 'Pengaturan',
+            'admin/pengaturan/acara'                => 'Data Acara',
+            'admin/pengaturan/kelompok-umur/3/ubah' => 'Kelompok Umur',
+            'admin/akun'                            => 'Akun',
+        ] as $alamat => $label) {
             $xpath = $this->xpathHtml($this->renderDiAlamat($alamat, 'Tests\Support\Views\contoh_admin'));
             $aktif = [];
 
@@ -175,11 +181,11 @@ final class BerandaPengaturanTest extends UjiHalaman
             }
 
             // Hanya menu samping (sidebar di ponsel); Pengaturan tidak di menu bawah (K133).
-            $this->assertSame(['Pengaturan'], $aktif, $alamat);
+            $this->assertSame([$label], $aktif, $alamat);
         }
 
         $xpath = $this->xpathHtml($this->renderDiAlamat('admin/pengaturanlain', 'Tests\Support\Views\contoh_admin'));
-        $this->assertSame(0, $xpath->query('//*[@aria-current]')->length);
+        $this->assertSame(0, $xpath->query('//nav[@data-menu-admin]//*[@aria-current]')->length);
     }
 
     public function testNamaAdminDiKepalaMenautkeAkun(): void
@@ -212,8 +218,9 @@ final class BerandaPengaturanTest extends UjiHalaman
         $this->assertStringContainsString('bg-red-50', $galat->getAttribute('class'));
         $this->assertSame(1, $xpath->query('.//button[@data-dismiss-target][.//*[@aria-label="Tutup pesan"]]', $sukses)->length);
 
-        // Pesan berada di atas isi halaman.
-        $this->assertSame(1, $xpath->query('//main[@id="isi"]/*[1][.//*[@data-pesan]]')->length);
+        // Pesan berada di atas isi halaman, tepat di bawah jejak navigasi (F10-03).
+        $this->assertSame(1, $xpath->query('//main[@id="isi"]/*[1][.//*[@data-jejak]]')->length);
+        $this->assertSame(1, $xpath->query('//main[@id="isi"]/*[2][.//*[@data-pesan]]')->length);
     }
 
     public function testTanpaPesanKilatTidakAdaKotakPesan(): void

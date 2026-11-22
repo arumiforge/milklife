@@ -75,7 +75,7 @@ $ringkasTim = static function (array $nomor): string {
         ]) ?>
     <?php else : ?>
         <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-            <p class="max-w-3xl text-gray-700">
+            <p class="text-gray-700">
                 <?= $jumlahSemua ?> nomor lomba di <?= count($kelompokUmur) ?> kelompok umur.
                 Nomor yang tidak aktif tidak muncul di pendaftaran.
             </p>

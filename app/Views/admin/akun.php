@@ -64,7 +64,7 @@ $pesan   = static fn (string $kotak, array $galat): string => isset($galat[$kota
 <div class="space-y-6 p-4 sm:p-6">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
-    <p class="max-w-3xl text-gray-700">
+    <p class="text-gray-700">
         Perubahan di halaman ini hanya berlaku untuk akun Anda sendiri.
     </p>
 

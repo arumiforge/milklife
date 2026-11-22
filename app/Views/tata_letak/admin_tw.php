@@ -9,7 +9,9 @@
  * Bagian yang diisi tampilan:
  * - `judul`: nama halaman; tab peramban `<judul> – Admin <nama acara>`.
  * - `judul_halaman` (pilihan): `<h1>` di kepala; bila kosong memakai `judul`.
- * - `jejak` (pilihan): jejak navigasi dari `admin/_jejak` (K117).
+ * - `jejak` (pilihan): jejak navigasi dari `admin/_jejak_tw` (K117). Bila
+ *   kosong, jejak disusun dari menu dan judul (`MenuAdmin::jejak()`, F10-03),
+ *   jadi setiap halaman admin punya jejak.
  * - `isi`: isi halaman, dimulai dari `<h2>`; bungkus dengan
  *   `<div class="p-4 sm:p-6">`.
  * - `kepala` (pilihan): tag tambahan di `<head>`.
@@ -24,17 +26,25 @@
  * sama dengan tata letak lama: menyala saat formulir dikirim, tautan dibuka,
  * atau tabel memuat data.
  *
+ * Warna (K154, F10-03): sidebar biru tua `primary-900` (#021F7B) setinggi
+ * layar dengan pojok kiri atas biru `primary-700` (#234987) berisi logo resmi
+ * (`IsiHalamanDepan::logoMerek()`) di wadah putih; kepala dan isi terang.
+ * Sidebar `w-72`, isi `lg:ps-72` tanpa batas lebar. Kelompok dan submenu
+ * dilipat `aset/js/menu-admin.js`.
+ *
  * Ponsel: sidebar menjadi laci (Flowbite `data-drawer-*`) yang dibuka tombol
- * menu di kepala (K131, K133); menu bawah 5 butir pendaftaran, butir aktif
- * ikon oranye (K133). Nama admin menuju Akun; Keluar `POST` dengan CSRF.
- * Penanda uji: `data-menu-admin="samping|bawah"` pada `<nav>`,
- * `data-kepala-admin` pada `<header>`.
+ * menu di kepala (K131, K133) atau butir Menu di menu bawah (F10-03); menu
+ * bawah 5 butir, butir aktif ikon dan label oranye (K133). Nama admin menuju
+ * Akun; Keluar `POST` dengan CSRF. Penanda uji:
+ * `data-menu-admin="samping|bawah"` pada `<nav>`, `data-kepala-admin` pada
+ * `<header>`, `data-pojok-admin` pada blok logo.
  *
  * @var CodeIgniter\View\View $this
  */
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
 use App\Libraries\IsiHalamanDepan;
+use App\Libraries\Panel\MenuAdmin;
 
 try {
     $logoMerek = IsiHalamanDepan::logoMerek((new IsiHalamanDepan())->tampilan());
@@ -47,6 +57,10 @@ $judulHalaman = trim($this->renderSection('judul_halaman'));
 $judulHalaman = $judulHalaman === '' ? $judul : $judulHalaman;
 $judulTab     = ($judul === '' ? '' : $judul . ' – ') . 'Admin ' . esc(AcaraController::namaTampil());
 $jejak        = trim($this->renderSection('jejak'));
+// Halaman tanpa jejak sendiri memakai jejak dari menu (F10-03).
+$jejak = $jejak !== '' ? $jejak : view('admin/_jejak_tw', [
+    'jejak' => MenuAdmin::jejak(trim(html_entity_decode(strip_tags($judul === '' ? $judulHalaman : $judul), ENT_QUOTES | ENT_HTML5, 'UTF-8'))),
+], ['saveData' => false]);
 $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
 ?>
 <!doctype html>
@@ -69,18 +83,10 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
 
     <a href="#isi" class="sr-only z-50 rounded-lg bg-white px-4 py-3 font-semibold text-primary-800 shadow-angkat focus:not-sr-only focus:fixed focus:start-4 focus:top-4">Lompat ke isi</a>
 
-    <header data-kepala-admin class="fixed inset-x-0 top-0 z-30 flex h-16 items-center gap-3 border-b border-gray-200 bg-white px-3 sm:px-4">
-        <button type="button" data-drawer-target="menu-laci" data-drawer-toggle="menu-laci" aria-controls="menu-laci" class="inline-flex size-11 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 lg:hidden">
+    <header data-kepala-admin class="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-2 border-b border-gray-200 bg-white px-2 sm:px-4 lg:start-72">
+        <button type="button" data-drawer-target="menu-laci" data-drawer-toggle="menu-laci" aria-controls="menu-laci" class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 lg:hidden">
             <?= ikon('menu', 'size-6', 'Buka menu') ?>
         </button>
-        <a href="<?= site_url('admin/dasbor') ?>" class="hidden items-center gap-2 lg:flex lg:w-60" data-merek-admin>
-            <?php if ($logoMerek !== null) : ?>
-                <img src="<?= esc($logoMerek['alamat']) ?>" class="h-10 w-auto" alt=""<?= $logoMerek['ukuran'] === null ? '' : ' width="' . (int) $logoMerek['ukuran']['lebar'] . '" height="' . (int) $logoMerek['ukuran']['tinggi'] . '"' ?> data-logo-merek>
-            <?php else : ?>
-                <span class="inline-flex size-9 items-center justify-center rounded-xl bg-primary-700 text-white"><?= ikon('zap') ?></span>
-            <?php endif ?>
-            <span class="leading-tight"><span class="block text-sm font-extrabold text-primary-900"><?= esc(AcaraController::namaTampil()) ?></span> <span class="block text-xs font-semibold text-gray-500">Panel admin</span></span>
-        </a>
         <h1 class="min-w-0 flex-1 truncate text-lg font-bold text-gray-900"><?= $judulHalaman ?></h1>
         <a href="<?= site_url('admin/akun') ?>" data-nama-admin class="hidden min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-gray-700 hover:bg-gray-100 sm:inline-flex" title="Buka Akun: ganti nama dan kata sandi">
             <?= ikon('circle-user-round', 'size-6 text-gray-500') ?><span class="sr-only">Masuk sebagai</span><span class="max-w-40 truncate"><?= esc((string) session('admin_nama')) ?></span>
@@ -91,23 +97,30 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
         </form>
     </header>
 
-    <aside id="menu-laci" class="fixed start-0 top-0 z-40 h-screen w-72 -translate-x-full transition-transform lg:z-20 lg:w-64 lg:translate-x-0 lg:pt-16" tabindex="-1" aria-label="Menu panel admin">
-        <div class="flex h-full flex-col overflow-y-auto border-e border-gray-200 bg-white px-3 py-4">
-            <div class="mb-4 flex items-center justify-between lg:hidden">
-                <span class="px-3 text-sm font-extrabold text-primary-900">Menu</span>
-                <button type="button" data-drawer-hide="menu-laci" aria-controls="menu-laci" class="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100">
-                    <?= ikon('x', '', 'Tutup menu') ?>
-                </button>
-            </div>
-            <nav aria-label="Menu admin" class="flex-1" data-menu-admin="samping">
-                <?= view('tata_letak/_menu_admin_tw', ['tempatMenu' => 'samping'], ['saveData' => false]) ?>
-            </nav>
+    <aside id="menu-laci" class="fixed start-0 top-0 z-40 flex h-screen w-72 -translate-x-full flex-col bg-primary-900 transition-transform lg:z-30 lg:translate-x-0" tabindex="-1" aria-label="Menu panel admin">
+        <div class="flex h-14 shrink-0 items-center gap-2 bg-primary-700 ps-3 pe-1" data-pojok-admin>
+            <a href="<?= site_url('admin/dasbor') ?>" class="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" data-merek-admin>
+                <span class="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-white px-1.5">
+                    <?php if ($logoMerek !== null) : ?>
+                        <img src="<?= esc($logoMerek['alamat']) ?>" class="h-8 w-auto max-w-16" alt=""<?= $logoMerek['ukuran'] === null ? '' : ' width="' . (int) $logoMerek['ukuran']['lebar'] . '" height="' . (int) $logoMerek['ukuran']['tinggi'] . '"' ?> data-logo-merek>
+                    <?php else : ?>
+                        <?= ikon('zap', 'size-6 text-primary-700') ?>
+                    <?php endif ?>
+                </span>
+                <span class="min-w-0 leading-tight"><span class="block truncate text-sm font-extrabold text-white"><?= esc(AcaraController::namaTampil()) ?></span> <span class="block text-xs font-semibold text-langit-300">Panel admin</span></span>
+            </a>
+            <button type="button" data-drawer-hide="menu-laci" aria-controls="menu-laci" class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-white hover:bg-white/10 lg:hidden">
+                <?= ikon('x', '', 'Tutup menu') ?>
+            </button>
         </div>
+        <nav aria-label="Menu admin" class="flex-1 overflow-y-auto px-2 py-3" data-menu-admin="samping">
+            <?= view('tata_letak/_menu_admin_tw', ['tempatMenu' => 'samping'], ['saveData' => false]) ?>
+        </nav>
     </aside>
 
-    <div class="pb-20 pt-16 lg:ms-64 lg:pb-0">
+    <div class="pb-20 pt-14 lg:ps-72 lg:pb-0">
         <main id="isi">
-            <?php if ($jejak !== '') : ?><div class="px-4 pt-4 sm:px-6"><?= $jejak ?></div><?php endif ?>
+            <div class="-mb-2 px-4 pt-3 sm:-mb-3 sm:px-6"><?= $jejak ?></div>
             <?= view('tata_letak/_pesan_tw', [], ['saveData' => false]) ?>
             <?= $this->renderSection('isi') ?>
         </main>
@@ -119,6 +132,7 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
 
     <script src="<?= base_url('aset/vendor/flowbite/flowbite.min.js') ?>"></script>
     <script src="<?= aset('js/kemajuan.js') ?>"></script>
+    <script src="<?= aset('js/menu-admin.js') ?>"></script>
     <?php if ($pakaiTabel) : ?>
     <script src="<?= aset('vendor/jquery/jquery.min.js') ?>"></script>
     <script src="<?= aset('vendor/datatables/js/dataTables.min.js') ?>"></script>
