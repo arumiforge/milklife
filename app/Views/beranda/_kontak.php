@@ -41,8 +41,8 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
 <section id="kontak" class="scroll-mt-20 bg-white" aria-labelledby="judul-kontak">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
         <div class="relative overflow-hidden rounded-3xl border border-gray-200 latar-merek p-6 shadow-lembut sm:p-10">
-            <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Hubungi panitia</p>
-            <h2 id="judul-kontak" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Kontak</h2>
+            <p class="alis">Hubungi panitia</p>
+            <h2 id="judul-kontak" class="judul-tampilan ornamen-judul mt-2">Kontak</h2>
             <p class="mt-2 max-w-2xl text-lg text-gray-600">
                 <?php if ($adaKontak) : ?>
                     Ada pertanyaan tentang lomba atau pendaftaran? Hubungi panitia lewat WhatsApp.
@@ -59,7 +59,7 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                             <ul class="mt-3 space-y-3" data-daftar-narahubung>
                                 <?php foreach ($narahubung as $orang) : ?>
                                     <li class="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4" data-narahubung-butir>
-                                        <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700"><?= ikon('user') ?></span>
+                                        <?= ikon('user', 'size-7 shrink-0 text-primary-700') ?>
                                         <div class="min-w-0 flex-1">
                                             <p class="font-bold text-gray-900 break-words" data-narahubung-nama><?= esc($orang['nama']) ?></p>
                                             <p class="text-gray-600" data-narahubung-nomor><?= esc($orang['nomor']) ?></p>
@@ -79,8 +79,8 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
                             <ul class="mt-3 space-y-3" data-daftar-media-sosial>
                                 <?php foreach ($mediaSosial as $media) : ?>
                                     <li>
-                                        <a class="flex min-h-11 items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 hover:border-primary-300 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($media['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-media-sosial-tautan>
-                                            <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-oranye-100 text-oranye-700"><?= ikon($ikonMedia($media['ikon'])) ?></span>
+                                        <a class="flex min-h-11 items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($media['alamat'], 'attr') ?>" target="_blank" rel="noopener noreferrer" data-media-sosial-tautan>
+                                            <?= ikon($ikonMedia($media['ikon']), 'size-7 shrink-0 text-oranye-600') ?>
                                             <span class="flex min-w-0 flex-col">
                                                 <span class="font-bold text-gray-900" data-media-sosial-label><?= esc($media['label']) ?></span>
                                                 <span class="text-sm text-gray-600 break-all" data-media-sosial-alamat><?= esc($media['alamat_ringkas']) ?></span>
@@ -97,11 +97,11 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
 
             <div class="mt-8 flex flex-col gap-3 sm:flex-row" data-kontak-tombol>
                 <?php if ($waTanya !== null) : ?>
-                    <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary-700 px-6 py-3 text-base font-bold text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300" href="<?= esc($waTanya, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-tanya>
+                    <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl tombol-utama-berart px-6 py-3 text-base font-bold focus:outline-none focus:ring-4 focus:ring-primary-300" href="<?= esc($waTanya, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-tanya>
                         <?= ikon('message-circle') ?> Tanya admin lewat WA<?= $tabBaru ?>
                     </a>
                 <?php endif ?>
-                <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border-2 border-primary-700 bg-white px-6 py-3 text-base font-bold text-primary-800 hover:bg-primary-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($waBagikan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-bagikan>
+                <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 text-base font-bold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($waBagikan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-kontak-bagikan>
                     <?= ikon('share-2') ?> Bagikan ke WA<?= $tabBaru ?>
                 </a>
             </div>

@@ -18,7 +18,7 @@
     <?php if (! empty($judul)) : ?>
         <header class="mb-4 flex items-start gap-3">
             <?php if (! empty($ikon)) : ?>
-                <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-700"><?= ikon($ikon) ?></span>
+                <?= ikon($ikon, 'mt-0.5 size-6 text-primary-700') ?>
             <?php endif ?>
             <div>
                 <h2 class="text-lg font-bold text-gray-900"><?= esc($judul) ?></h2>

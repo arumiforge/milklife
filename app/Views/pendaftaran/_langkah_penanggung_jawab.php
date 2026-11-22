@@ -49,7 +49,7 @@ $maksimal = (int) $wizard['aturan']['penanggung_jawab_maksimal'];
                     <span class="<?= K::LABEL ?>" data-label-foto>Foto</span>
                     <div class="foto-kotak flex flex-wrap items-center gap-4 rounded-lg p-1 [&.is-invalid]:ring-2 [&.is-invalid]:ring-red-500" data-isian-foto>
                         <img class="foto-pratinjau size-22 flex-none rounded-lg object-cover" alt="" hidden>
-                        <span class="foto-kosong inline-flex size-22 flex-none items-center justify-center rounded-lg bg-primary-100 text-primary-700"><?= ikon('scan-face', 'size-9') ?></span>
+                        <span class="foto-kosong inline-flex size-22 flex-none items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white text-gray-400"><?= ikon('scan-face', 'size-9') ?></span>
                         <div class="foto-tombol min-w-0 flex-[1_1_12rem]">
                             <label class="<?= K::GARIS_KECIL ?> cursor-pointer has-focus-visible:ring-4">
                                 <?= ikon('camera', 'size-4') ?> <span data-teks-foto>Ambil atau pilih foto</span>

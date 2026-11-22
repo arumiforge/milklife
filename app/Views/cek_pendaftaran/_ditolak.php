@@ -34,7 +34,7 @@ $label = 'cek-ditolak-label text-xs font-semibold uppercase tracking-wide text-g
 <section class="cek-ditolak<?= $ditolak === [] ? ' cek-ditolak-beres border-green-200 bg-green-50' : ' border-red-200 bg-red-50/60' ?> mt-6 scroll-mt-24 rounded-xl border p-4" id="atlet-ditolak-<?= $urutan ?>" aria-labelledby="judul-ditolak-<?= $urutan ?>"<?= $ditolak === [] ? ' data-beres' : '' ?>>
     <?php if ($ditolak !== []) : ?>
         <div class="cek-ditolak-kepala flex items-start gap-3">
-            <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700" aria-hidden="true"><?= ikon('user-x', 'size-5') ?></span>
+            <span class="inline-flex shrink-0 text-red-700" aria-hidden="true"><?= ikon('user-x', 'size-8') ?></span>
             <div>
                 <h4 class="cek-ditolak-judul font-bold text-red-900" id="judul-ditolak-<?= $urutan ?>">
                     <?= $ditolakSemua ? 'Semua atlet di pendaftaran ini ditolak panitia' : count($ditolak) . ' atlet perlu didaftarkan ulang' ?>
@@ -100,7 +100,7 @@ $label = 'cek-ditolak-label text-xs font-semibold uppercase tracking-wide text-g
         </div>
     <?php else : ?>
         <div class="cek-ditolak-kepala flex items-start gap-3">
-            <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-green-100 text-green-700" aria-hidden="true"><?= ikon('circle-check', 'size-5') ?></span>
+            <span class="inline-flex shrink-0 text-green-700" aria-hidden="true"><?= ikon('circle-check', 'size-8') ?></span>
             <div>
                 <h4 class="cek-ditolak-judul font-bold text-green-900" id="judul-ditolak-<?= $urutan ?>">Atlet yang ditolak sudah didaftarkan ulang</h4>
                 <p class="mt-0.5 text-sm text-gray-700"><?= $ditolakSemua ? 'Pendaftaran ini tidak perlu dibayar. Data dan tagihan atletnya ada di pendaftaran yang baru.' : 'Tidak ada lagi yang perlu dilakukan untuk atlet yang ditolak.' ?></p>

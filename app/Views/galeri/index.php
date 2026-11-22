@@ -41,7 +41,7 @@
                 <?php $tombol = $a['tempat'] !== '' ? 'Buka di ' . $a['tempat'] : 'Buka album'; ?>
                 <li class="min-w-0" data-album-galeri="<?= $a['id'] ?>">
                     <a href="<?= esc($a['tautan'], 'attr') ?>" target="_blank" rel="noopener noreferrer"
-                        class="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lembut transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+                        class="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lembut transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-lg focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
                         <span class="relative block aspect-[4/3] overflow-hidden bg-primary-100">
                             <?php if ($a['sampul'] !== null) : ?>
                                 <img src="<?= base_url($a['sampul']) ?>" alt="" class="size-full object-cover transition duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"

@@ -30,7 +30,7 @@ $format = static fn (int $n): string => number_format($n, 0, ',', '.');
             <div class="text-center">
                 <h2 id="judul-angka" class="text-lg font-bold text-langit-300 sm:text-xl">Kompetisi ini diikuti</h2>
                 <p class="mt-2">
-                    <span class="block text-6xl font-extrabold tracking-tight text-oranye-400 sm:text-8xl" data-angka-atlet><?= $format($angka['atlet']) ?></span>
+                    <span class="block font-tampilan text-7xl font-extrabold tracking-tight text-oranye-400 sm:text-9xl" data-angka-atlet><?= $format($angka['atlet']) ?></span>
                     <span class="mt-2 block text-lg font-semibold sm:text-xl">
                         atlet dari <strong class="text-oranye-300" data-angka-sekolah><?= $format($angka['sekolah']) ?></strong> sekolah<?php if ($angka['kabupaten'] > 1) : ?>
                             di <strong class="text-oranye-300" data-angka-kabupaten><?= $format($angka['kabupaten']) ?></strong> kabupaten/kota<?php endif ?>
@@ -44,7 +44,7 @@ $format = static fn (int $n): string => number_format($n, 0, ',', '.');
                     <?php foreach ($angka['kelompok_umur'] as $ku) : ?>
                         <li class="min-w-24 px-4 py-1 text-center sm:px-6">
                             <span class="block text-sm font-bold text-langit-300"><?= esc($ku['nama']) ?></span>
-                            <span class="block text-3xl font-extrabold text-oranye-400 sm:text-4xl"><?= $format($ku['atlet']) ?></span>
+                            <span class="block font-tampilan text-4xl font-extrabold text-oranye-400 sm:text-5xl"><?= $format($ku['atlet']) ?></span>
                             <span class="block text-sm text-primary-100">atlet</span>
                         </li>
                     <?php endforeach ?>

@@ -25,8 +25,8 @@ if ($unduhan === []) {
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
         <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-                <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Berkas panitia</p>
-                <h2 id="judul-unduhan" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Unduhan</h2>
+                <p class="alis">Berkas panitia</p>
+                <h2 id="judul-unduhan" class="judul-tampilan ornamen-judul mt-2">Unduhan</h2>
                 <p class="mt-2 text-lg text-gray-600">Flyer, petunjuk teknis, dan berkas lain dari panitia.</p>
             </div>
             <?= komponen('tombol', ['label' => 'Lihat semua unduhan', 'href' => site_url('unduhan'), 'varian' => 'kedua', 'ikon' => 'arrow-right', 'ikonKanan' => true, 'atribut' => ['data-unduhan-semua' => true]]) ?>
