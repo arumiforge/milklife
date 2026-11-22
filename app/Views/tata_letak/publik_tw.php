@@ -104,7 +104,7 @@ $menuBawah     = trim($this->renderSection('tanpa_menu_bawah')) === '';
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
     <?= $this->renderSection('kepala') ?>
 </head>
-<body class="flex min-h-screen flex-col bg-primary-50<?= ada_gambar('pola/titik-halus.webp') ? ' pola-titik' : '' ?><?= $menuBawah ? ' ada-menu-bawah' : '' ?>">
+<body class="flex min-h-screen flex-col bg-primary-50<?= $menuBawah ? ' ada-menu-bawah' : '' ?>">
     <a href="#isi" class="sr-only z-50 rounded-lg bg-white px-4 py-3 font-semibold text-primary-800 shadow-angkat focus:not-sr-only focus:fixed focus:start-4 focus:top-4">Lompat ke isi</a>
 
     <?php // ---------- Bilah submenu atas (F10-07, K154): layar lg ke atas ---------- ?>
