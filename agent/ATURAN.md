@@ -13,8 +13,8 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Bahasa Inggris hanya untuk slogan, judul bagian bergaya editorial, dan art; tombol, formulir, pesan, menu fungsional, dan panel admin tetap berbahasa Indonesia (K153).
 - Backup pendaftaran (data siswa asli) tidak masuk git; diuji di basis data lokal dan diimpor pemilik di server (K138, K153).
 - Laragon untuk pengembangan dan produksi, PHP 8.2+ (K08, K18); web lewat Cloudflare Tunnel, IP dari `CF-Connecting-IP` (K31).
-- Tidak menambah pustaka kecuali yang disetujui: Turnstile tanpa pustaka PHP (K122), PHPStan `require-dev` (K123), Lucide dan Three.js lokal tanpa CDN (K140), dan rantai bangun Flowbite Pro (Tailwind 4, plugin dan JS Flowbite) dengan Node hanya di komputer pengembang dan CI (K141).
-- Tampilan pindah ke Tailwind 4 berdasar Flowbite Pro (`template-flowbites/`) per halaman di Tahap 9; CSS hasil bangun di-commit, server tanpa Node; halaman yang belum dipindah tetap Bootstrap 5 (K140, K141, menggantikan K103). Mode terang, ilustrasi 3D lembut. Videotron cair untuk ukuran layar apa pun (K141).
+- Tidak menambah pustaka kecuali yang disetujui: Turnstile tanpa pustaka PHP (K122), PHPStan `require-dev` (K123), Lucide dan Three.js lokal tanpa CDN (K140), huruf judul Barlow Condensed lokal (K155), dan rantai bangun Flowbite Pro (Tailwind 4, plugin dan JS Flowbite) dengan Node hanya di komputer pengembang dan CI (K141).
+- Tampilan pindah ke Tailwind 4 berdasar Flowbite Pro (`template-flowbites/`) per halaman di Tahap 9; CSS hasil bangun di-commit, server tanpa Node; halaman yang belum dipindah tetap Bootstrap 5 (K140, K141, menggantikan K103). Mode terang; ilustrasi Codex bergaya anime olahraga 2D cel-shaded (K153, menggantikan 3D lembut), hero halaman depan memakai foto asli bergaya editorial. Videotron cair untuk ukuran layar apa pun (K141).
 - Codex hanya membuat aset gambar lewat `desain/` dan `AGENTS.md`; kode ditulis Claude, yang juga meninjau dan menggabung PR Codex (K140). Semua kebutuhan gambar dan visual dipesan ke Codex tanpa batas jumlah tugas; pemasangannya di halaman lewat tugas Claude (K150). Favicon, ikon aplikasi, dan logo merek bawaan memakai logo resmi utuh dari pemilik (`sumber/logo/`), bukan gambar Codex (K152).
 - Staging dan produksi mengambil `main`; setiap PR ke `main` harus aman langsung dipasang di produksi (K139, K140).
 - Rencana Tahap 9 dan 8 asumsinya disetujui; tugas dijalankan paralel bila memungkinkan, paling banyak 5 sub-sesi (K142, K145). Koordinator memulai tugas berikutnya dan menggabung PR otomatis sampai Tahap 9 selesai, memakai rekomendasi untuk pertanyaan terbuka, meninjau PR Codex, dan menutup dengan uji lengkap, uji peramban, dan uji asap (K145, K149). F9-05 digabung begitu CI hijau tanpa menunggu pendaftaran tutup; halaman pendaftaran ditangani admin (K149).
@@ -109,3 +109,10 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Galeri: album berupa sampul dan tautan luar (Instagram/Google Drive panitia), tautan hanya `https://`, dibuka di tab baru; album tanpa tautan atau disembunyikan tidak tampil; halaman `/galeri` dan menunya bersakelar bawaan mati; album bawaan "Seri sebelumnya" dipasang sekali (K140).
 - Papan videotron `/layar`: hanya hasil nomor terbit dan klasemen dari nomor terbit; sakelar tampil bawaan mati; tata letak cair untuk ukuran layar apa pun (K141); 6 nomor terbaru, klasemen sampai peringkat 10 (K146).
 - Jadwal pertandingan: status Berlangsung sampai hasil terbit; peringkat sama di klasemen Poin mendapat poin penuh masing-masing; galeri paling banyak 60 album, sampul boleh kosong; Lompat Tinggi tanpa aturan kegagalan, pemecah seri bisa dimatikan per nomor (K146).
+
+## Tahap 10 (identitas visual anime, panel admin, data terbaru)
+
+- Rilis langsung aktif tanpa sakelar tampilan; selama pendaftaran buka, perilaku wizard, Cek Pendaftaran, dan unggah bukti tetap sama dan diuji di peramban (K153).
+- Logo di kaus tokoh gambar Codex ditempel dari berkas resmi saat pasca-proses, tidak digambar model (K153).
+- Bilah submenu atas publik diatur admin; menu bawah publik ponsel Beranda, Jadwal, Hasil, Daftar/Cek, Menu; sidebar admin `#021F7B`, pojok kiri atas `#234987` (K154).
+- Server yang sudah terisi disamakan dengan `php spark data:sesuaikan` (KU 8, WA, media sosial; hanya nilai bawaan lama) (K154).
