@@ -1,13 +1,15 @@
 <?php
 /**
- * Papan videotron `/layar` (F9-13, K141): kerangka kosong yang diisi
+ * Layar videotron (F9-13, K141, F11-09): kerangka kosong yang diisi
  * `public/aset/js/layar.js` dari data awal (`data-awal`) lalu dari
- * `/layar/data` setiap `data-segar` detik. Tanpa tata letak publik: layar
- * penuh tanpa menu.
+ * `data-sumber` setiap `data-segar` detik. Dipakai tampilan tetap
+ * (`/layar/<jenis>/…`, data `pengaturan.tetap`) dan papan putar
+ * (`/layar/putar`). Tanpa tata letak publik: layar penuh tanpa menu.
  *
  * Parameter alamat (dibaca JS, untuk memaksa bila perlu): `?skala=1.2`
  * (perbesar/perkecil huruf, 0,5–3), `?susunan=lebar|datar|tegak|kecil`,
- * `?baris=12` (baris tabel per halaman), `?lama=15` (detik per tampilan).
+ * `?baris=12` (baris tabel per halaman), `?halaman=2` (halaman tabel yang
+ * tampil di tampilan tetap), `?lama=15` (detik per tampilan papan putar).
  *
  * Latar: adegan Three.js (`aset/vendor/three/`), dengan cadangan potongan
  * gambar G9-06 (`data-latar-*`, hanya yang berkasnya ada) bila adegan tidak
@@ -16,15 +18,21 @@
  * `alat/uji-layar.mjs` menyusun kerangka yang sama untuk uji tampilan
  * Playwright; bila atribut di sini berubah, ubah juga di sana.
  *
- * @var array<string, mixed>  $data  hasil `PapanVideotron::data()`
+ * @var array<string, mixed>  $data  hasil `PapanVideotron::data()` atau `TampilanVideotron::tampilan()`
+ * @var string                $sumber alamat JSON yang diambil ulang
  * @var array<string, string> $latar kunci (`dasar`, `pita`, `kiri-atas`, `kanan-bawah`) => alamat gambar
  * @var array<string, string> $gambar kunci (`podium`, `medali-emas`, `medali-perak`, `medali-perunggu`) => alamat gambar juara umum G9-06
+ * @var bool                  $tanpaAdegan latar unggahan admin dipakai: adegan Three.js tidak dipasang (K173)
  * @var int                   $segar detik antarpengambilan data
  */
 $atributLatar = '';
 
 foreach ($latar as $kunci => $alamat) {
     $atributLatar .= ' data-latar-' . esc($kunci, 'attr') . '="' . esc($alamat, 'attr') . '"';
+}
+
+if (! empty($tanpaAdegan)) {
+    $atributLatar .= ' data-tanpa-adegan';
 }
 
 foreach ($gambar ?? [] as $kunci => $alamat) {
@@ -39,17 +47,17 @@ foreach ($gambar ?? [] as $kunci => $alamat) {
     <meta name="robots" content="noindex">
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#011450">
-    <title><?= esc('Papan hasil – ' . $data['acara']['nama']) ?></title>
+    <title><?= esc(($data['judul'] ?? 'Papan hasil') . ' – ' . $data['acara']['nama']) ?></title>
     <?= view('tata_letak/_ikon_aplikasi', [], ['saveData' => false]) ?>
     <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
 </head>
 <body class="h-full overflow-hidden bg-primary-950 font-sans text-white antialiased">
     <div id="layar" class="fixed inset-0 overflow-hidden" data-layar
-        data-sumber="<?= site_url('layar/data') ?>"
+        data-sumber="<?= esc($sumber, 'attr') ?>"
         data-segar="<?= (int) $segar ?>"
         data-awal="<?= esc((string) json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'attr') ?>"<?= $atributLatar ?>>
-        <h1 class="sr-only"><?= esc('Papan hasil ' . $data['acara']['nama']) ?></h1>
+        <h1 class="sr-only"><?= esc(($data['judul'] ?? 'Papan hasil') . ' – ' . $data['acara']['nama']) ?></h1>
         <?php // Kerangka (F9-17) selama modul `layar.js` dan latarnya dimuat; dibuang skrip begitu papan tersusun. ?>
         <div class="absolute inset-0 flex flex-col gap-[3vmin] bg-linear-to-br from-primary-950 via-primary-900 to-primary-700 p-[4vmin]" role="status" data-kerangka-layar>
             <span class="sr-only">Memuat papan hasil…</span>

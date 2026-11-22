@@ -3,14 +3,18 @@
 namespace App\Libraries\Hasil;
 
 use App\Libraries\IsiHalamanDepan;
+use App\Libraries\Unggahan;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\I18n\Time;
 
 /**
- * Data papan videotron `/layar` (F9-13, K141). Hanya data yang sudah terbit:
+ * Data papan putar videotron `/layar/putar` (F9-13, K141; sejak F11-09 `/layar`
+ * berisi daftar tampilan tetap, `TampilanVideotron`). Hanya data yang sudah terbit:
  * hasil nomor yang `hasil_terbit_pada`-nya terisi dan klasemen dari nomor
  * terbit. Jadwal dan status babak dari `JadwalPertandingan` (F9-07), sama
  * dengan halaman `/jadwal`.
+ *
+ * `panelHasil()` dan `juaraUmum()` juga dipakai tampilan tetap.
  *
  * Isi yang dikirim (JSON `/layar/data`, dibaca `public/aset/js/layar.js`):
  *
@@ -83,6 +87,17 @@ final class PapanVideotron
     public static function tampil(): bool
     {
         return (bool) setting('Videotron.tampil');
+    }
+
+    /**
+     * Jalur gambar latar unggahan admin (K173), atau `null` bila kosong atau
+     * berkasnya tidak ada lagi.
+     */
+    public static function latar(): ?string
+    {
+        $jalur = (string) setting('Videotron.latar');
+
+        return $jalur !== '' && (new Unggahan())->ada($jalur) ? $jalur : null;
     }
 
     /**
@@ -181,48 +196,94 @@ final class PapanVideotron
                 continue;
             }
 
-            $baris = [];
-
-            foreach ($hasil->hasilBabak((int) $babak['id'], $nomor) as $h) {
-                if ($h['peringkat'] === null && $h['prestasi'] === null && $h['keterangan'] === null) {
-                    continue;
-                }
-
-                $baris[] = [
-                    'peringkat'  => $h['peringkat'],
-                    'nama'       => $h['nama'],
-                    'sekolah'    => $h['sekolah'],
-                    'nomor_dada' => $h['nomor_dada'] === null ? null : (string) $h['nomor_dada'],
-                    'prestasi'   => $h['prestasi_teks'],
-                    'keterangan' => $h['keterangan'],
-                ];
-            }
-
-            $daftar[] = [
-                'id'            => $nomor['id'],
-                'nomor'         => $nomor['nama'],
-                'kelompok_umur' => $nomor['kelompok_umur'],
-                'babak'         => (string) $babak['nama'],
-                'beregu'        => $nomor['jenis'] === 'beregu',
-                'satuan'        => match ($nomor['jenis_hasil']) {
-                    JenisHasil::JARAK => 'm',
-                    JenisHasil::POIN, JenisHasil::MULTI => 'poin',
-                    default => '',
-                },
-                'baris' => $baris,
-            ];
+            $daftar[] = $this->panelHasil($nomor, ['id' => (int) $babak['id'], 'nama' => (string) $babak['nama']], $hasil);
         }
 
         return $daftar;
     }
 
     /**
+     * Satu panel hasil babak untuk videotron: peringkat, nama, sekolah, nomor
+     * atlet, dan prestasi seperti di halaman hasil (`HasilLomba::hasilBabak()`),
+     * tanpa NISN dan NPSN. Dipakai papan putar dan tampilan tetap
+     * (`TampilanVideotron`, F11-09).
+     *
+     * - `$seri`: hanya peserta seri itu, dengan peringkat di dalam seri.
+     * - `$tanda`: tanda lolos per kunci peserta (`SeriLintasan::lolosDari()`).
+     *
+     * @param array<string, mixed>  $nomor `HasilLomba::nomor()`
+     * @param array{id: int, nama: string} $babak
+     * @param array<string, string> $tanda
+     *
+     * @return array{id: int, kunci: string, nomor: string, kelompok_umur: string, babak: string, beregu: bool, satuan: string, baris: list<array<string, mixed>>}
+     */
+    public function panelHasil(array $nomor, array $babak, ?HasilLomba $hasil = null, ?int $seri = null, array $tanda = []): array
+    {
+        $baris = [];
+
+        foreach (($hasil ?? new HasilLomba($this->db))->hasilBabak($babak['id'], $nomor) as $h) {
+            if ($h['peringkat'] === null && $h['prestasi'] === null && $h['keterangan'] === null) {
+                continue;
+            }
+
+            if ($seri !== null && $h['seri'] !== $seri) {
+                continue;
+            }
+
+            $baris[] = [
+                'peringkat'  => $h['peringkat'],
+                'nama'       => $h['nama'],
+                'sekolah'    => $h['sekolah'],
+                'nomor_dada' => $h['nomor_dada'] === null ? null : (string) $h['nomor_dada'],
+                'prestasi'   => $h['prestasi_teks'],
+                'keterangan' => $h['keterangan'],
+                'tanda'      => $tanda[$h['kunci']] ?? null,
+            ];
+        }
+
+        if ($seri !== null) {
+            // Peringkat di dalam seri: urutan peringkat babak, yang sama tetap sama.
+            $peringkat = array_values(array_filter(array_column($baris, 'peringkat'), static fn (mixed $p): bool => $p !== null));
+
+            foreach ($baris as $i => $b) {
+                if ($b['peringkat'] !== null) {
+                    $baris[$i]['peringkat'] = 1 + count(array_filter($peringkat, static fn (int $p): bool => $p < $b['peringkat']));
+                }
+            }
+        }
+
+        return [
+            'id'            => (int) $nomor['id'],
+            'kunci'         => 'babak:' . $babak['id'] . ($seri === null ? '' : ':' . $seri),
+            'nomor'         => (string) $nomor['nama'],
+            'kelompok_umur' => (string) $nomor['kelompok_umur'],
+            'babak'         => $babak['nama'] . ($seri === null ? '' : ' · Seri ' . $seri),
+            'beregu'        => $nomor['jenis'] === 'beregu',
+            'satuan'        => self::satuan((string) $nomor['jenis_hasil']),
+            'baris'         => $baris,
+        ];
+    }
+
+    /**
+     * Satuan prestasi di judul kolom: `m` (jarak), `poin` (poin, multi), atau kosong (waktu).
+     */
+    public static function satuan(string $jenisHasil): string
+    {
+        return match ($jenisHasil) {
+            JenisHasil::JARAK => 'm',
+            JenisHasil::POIN, JenisHasil::MULTI => 'poin',
+            default => '',
+        };
+    }
+
+    /**
      * Klasemen nomor terbit per kelompok umur (F11-02), sampai peringkat `BATAS_KLASEMEN`,
-     * tanpa NPSN dan rincian piala.
+     * tanpa NPSN dan rincian piala. `kunci` juga dipakai alamat tampilan tetap
+     * `layar/klasemen/<kunci>` (F11-09).
      *
      * @return list<array{kunci: string, label: string, metode: string, baris: list<array<string, mixed>>}>
      */
-    private function juaraUmum(): array
+    public function juaraUmum(): array
     {
         $daftar = [];
         $metode = MetodeKlasemen::metode();

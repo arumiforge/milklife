@@ -13,7 +13,7 @@ use RuntimeException;
  * Yang disimpan di pengaturan atau tabel adalah jalur relatifnya,
  * `unggahan/<folder>/<nama acak>.<ekstensi>`, dan alamatnya `base_url($jalur)`.
  *
- * - Folder yang boleh dipakai: `FOLDER` (`halaman-depan`, `pembayaran`, `unduhan`, `bib`, `galeri`).
+ * - Folder yang boleh dipakai: `FOLDER` (`halaman-depan`, `pembayaran`, `unduhan`, `bib`, `galeri`, `videotron`).
  * - Gambar: JPG, PNG, atau WEBP, paling besar 2 MB. Gambar yang sisi
  *   terpanjangnya lebih dari `SISI_GAMBAR` piksel dikecilkan saat disimpan,
  *   dengan format yang sama (PNG dan WEBP tetap transparan).
@@ -52,7 +52,7 @@ class Unggahan
     /**
      * Folder di bawah `unggahan/` yang boleh dipakai.
      */
-    public const FOLDER = ['halaman-depan', 'pembayaran', 'unduhan', 'bib', 'galeri'];
+    public const FOLDER = ['halaman-depan', 'pembayaran', 'unduhan', 'bib', 'galeri', 'videotron'];
 
     /**
      * Gambar: ekstensi tersimpan => jenis isi (MIME) yang diterima.

@@ -3,22 +3,35 @@
 namespace App\Controllers;
 
 use App\Libraries\GambarOpsional;
+use App\Libraries\IsiHalamanDepan;
 use App\Libraries\Hasil\PapanVideotron;
+use App\Libraries\Hasil\TampilanVideotron;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
 
 /**
- * Papan videotron (`/layar`, F9-13, K141): halaman layar penuh tanpa masuk
- * yang memutar hasil terbaru, juara umum, sedang berlangsung, dan jadwal
- * berikutnya. Isi digambar `public/aset/js/layar.js` dari JSON `/layar/data`,
- * yang diambil ulang setiap `SEGAR_DETIK`.
+ * Videotron (F9-13, K141, F11-09, K173), tanpa masuk.
  *
- * - Hanya data terbit (`App\Libraries\Hasil\PapanVideotron`).
- * - Selama sakelar `Videotron.tampil` mati (bawaan), keduanya 404.
- * - `/layar/data` ditembolok di server `TEMBOLOK_DETIK` dan boleh ditembolok
+ * - `/layar`: daftar tautan tampilan untuk operator videotron vendor, per
+ *   hari dan sesi, klasemen, kelompok umur, dan nomor lomba
+ *   (`App\Libraries\Hasil\TampilanVideotron::daftar()`).
+ * - `/layar/<jenis>/…` (`seri`, `sesi`, `klasemen`, `kelompok-umur`,
+ *   `nomor`): satu tampilan tetap layar penuh yang tidak berganti sendiri.
+ *   Isinya dari JSON `/layar/data/<jenis>/…`, diambil ulang diam-diam setiap
+ *   `SEGAR_DETIK` supaya hasil baru masuk tanpa memuat ulang.
+ * - `/layar/putar`: papan putar lama (hasil terbaru, juara umum, sedang
+ *   berlangsung, jadwal berikutnya bergantian) dari JSON `/layar/data`.
+ *
+ * Semua tampilan digambar `public/aset/js/layar.js`.
+ *
+ * - Hanya data terbit (`PapanVideotron`, `TampilanVideotron`).
+ * - Selama sakelar `Videotron.tampil` mati (bawaan), semua alamat 404.
+ * - JSON ditembolok di server `TEMBOLOK_DETIK` dan boleh ditembolok
  *   peramban/proksi sebentar; `ETag` membuat pengambilan ulang tanpa
- *   perubahan cukup dijawab 304.
- * - Latar gambar G9-06 (`aset/gambar/layar/`) hanya dipasang bila berkasnya ada.
+ *   perubahan cukup dijawab 304. Batas `BATAS_PERMINTAAN` per alamat IP.
+ * - Latar: gambar unggahan admin di Pengaturan > Videotron (K173), tanpa
+ *   adegan Three.js; bila kosong, potongan G9-06 (`aset/gambar/layar/`) yang
+ *   berkasnya ada dan adegan Three.js.
  */
 class LayarController extends BaseController
 {
@@ -28,9 +41,16 @@ class LayarController extends BaseController
 
     public const KUNCI_TEMBOLOK = 'layar-data';
 
+    public const KUNCI_TEMBOLOK_DAFTAR = 'layar-daftar';
+
+    /**
+     * Awalan kunci tembolok tampilan tetap; diikuti md5 jenis dan argumennya.
+     */
+    public const AWALAN_TEMBOLOK_TAMPILAN = 'layar-tampilan-';
+
     /**
      * Permintaan data paling banyak per alamat IP per menit (satu layar
-     * meminta dua kali per menit).
+     * meminta dua kali per menit), dihitung bersama untuk semua tampilan.
      */
     public const BATAS_PERMINTAAN = 120;
 
@@ -58,10 +78,67 @@ class LayarController extends BaseController
         'medali-perunggu' => 'medali-perunggu.webp',
     ];
 
+    /**
+     * Halaman daftar tampilan untuk operator videotron.
+     */
     public function index(): ResponseInterface
     {
         $this->pastikanTampil();
 
+        $daftar = cache(self::KUNCI_TEMBOLOK_DAFTAR);
+
+        if (! is_array($daftar) || ! isset($daftar['hari'])) {
+            $daftar = (new TampilanVideotron())->daftar();
+            cache()->save(self::KUNCI_TEMBOLOK_DAFTAR, $daftar, self::TEMBOLOK_DETIK);
+        }
+
+        return $this->response
+            ->setHeader('X-Robots-Tag', 'noindex')
+            ->setBody(view('layar/daftar', [
+                'daftar'    => $daftar,
+                'namaAcara' => (new IsiHalamanDepan())->acara()['nama'],
+            ]));
+    }
+
+    /**
+     * Papan putar lama (F9-13).
+     */
+    public function putar(): ResponseInterface
+    {
+        $this->pastikanTampil();
+
+        return $this->halamanLayar($this->dataTembolok(), site_url('layar/data'));
+    }
+
+    public function data(): ResponseInterface
+    {
+        $this->pastikanTampil();
+
+        return $this->jawabData(fn (): array => $this->dataTembolok());
+    }
+
+    /**
+     * Satu tampilan tetap, misalnya `layar/seri/12/2` atau `layar/klasemen/A`.
+     */
+    public function tampil(string $jenis, string ...$argumen): ResponseInterface
+    {
+        $this->pastikanTampil();
+
+        return $this->halamanLayar($this->dataTampilanTembolok($jenis, $argumen), site_url('layar/data/' . $jenis . '/' . implode('/', array_map('rawurlencode', $argumen))));
+    }
+
+    public function dataTampilan(string $jenis, string ...$argumen): ResponseInterface
+    {
+        $this->pastikanTampil();
+
+        return $this->jawabData(fn (): array => $this->dataTampilanTembolok($jenis, $argumen));
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function halamanLayar(array $data, string $sumber): ResponseInterface
+    {
         $gambar = [];
 
         foreach (self::GAMBAR_JUARA as $kunci => $berkas) {
@@ -82,19 +159,32 @@ class LayarController extends BaseController
             }
         }
 
+        // Latar unggahan admin (K173) menggantikan potongan G9-06 dan adegan Three.js.
+        $unggahan = PapanVideotron::latar();
+
+        if ($unggahan !== null) {
+            $latar = ['dasar' => base_url($unggahan)];
+        }
+
         return $this->response
             ->setHeader('X-Robots-Tag', 'noindex')
             ->setBody(view('layar/index', [
-                'data'   => $this->dataTembolok(),
-                'latar'  => $latar,
-                'gambar' => $gambar,
-                'segar'  => self::SEGAR_DETIK,
+                'data'        => $data,
+                'sumber'      => $sumber,
+                'latar'       => $latar,
+                'gambar'      => $gambar,
+                'tanpaAdegan' => $unggahan !== null,
+                'segar'       => self::SEGAR_DETIK,
             ]));
     }
 
-    public function data(): ResponseInterface
+    /**
+     * JSON data layar dengan batas permintaan, tembolok, dan `ETag`.
+     *
+     * @param callable(): array<string, mixed> $ambil
+     */
+    private function jawabData(callable $ambil): ResponseInterface
     {
-        $this->pastikanTampil();
         $this->response->setHeader('X-Robots-Tag', 'noindex');
 
         if (! service('throttler')->check('layar-' . hash('sha256', $this->request->getIPAddress()), self::BATAS_PERMINTAAN, MINUTE)) {
@@ -102,7 +192,7 @@ class LayarController extends BaseController
                 ->setJSON(['pesan' => 'Terlalu banyak permintaan. Layar mencoba lagi sebentar lagi.']);
         }
 
-        $data = $this->dataTembolok();
+        $data = $ambil();
         $etag = '"' . $data['versi'] . '"';
 
         $this->response
@@ -115,6 +205,31 @@ class LayarController extends BaseController
         }
 
         return $this->response->setJSON($data);
+    }
+
+    /**
+     * Isi tampilan tetap dari tembolok; 404 bila alamatnya tidak sah.
+     *
+     * @param list<string> $argumen
+     *
+     * @return array<string, mixed>
+     */
+    private function dataTampilanTembolok(string $jenis, array $argumen): array
+    {
+        $kunci = self::AWALAN_TEMBOLOK_TAMPILAN . md5($jenis . '/' . implode('/', $argumen));
+        $data  = cache($kunci);
+
+        if (! is_array($data) || ! isset($data['versi'])) {
+            $data = (new TampilanVideotron())->tampilan($jenis, $argumen);
+
+            if ($data === null) {
+                throw PageNotFoundException::forPageNotFound();
+            }
+
+            cache()->save($kunci, $data, self::TEMBOLOK_DETIK);
+        }
+
+        return $data;
     }
 
     /**

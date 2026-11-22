@@ -1,12 +1,18 @@
 /**
- * Papan videotron `/layar` (F9-13, K141). Modul ES, dimuat `app/Views/layar/index.php`.
+ * Layar videotron (F9-13, K141, F11-09, K173). Modul ES, dimuat `app/Views/layar/index.php`.
  *
  * - Data awal dari atribut `data-awal`, lalu `fetch(data-sumber)` setiap
  *   `data-segar` detik. Bila jaringan putus atau server menolak, data
  *   terakhir tetap tampil dengan tanda "Sambungan terputus".
- * - Isi diputar per `pengaturan.lama` detik: hasil nomor yang baru terbit,
- *   juara umum per kelompok umur, sedang berlangsung, jadwal berikutnya (urutan dan
- *   pilihan dari Pengaturan > Videotron). Isi kosong dilewati.
+ * - **Tampilan tetap** (`pengaturan.tetap`, alamat `/layar/<jenis>/…`): satu
+ *   tampilan yang tidak berganti sendiri. Data baru masuk diam-diam di
+ *   halaman yang sama. Bila tabel tidak muat satu layar, tabel dibagi
+ *   halaman: `?halaman=2` memilih halaman yang tampil, panah kiri/kanan
+ *   berpindah halaman (nomor halaman tidak ditulis di layar). Di susunan `lebar` dua halaman tampil berdampingan.
+ * - **Papan putar** (`/layar/putar`): isi diputar per `pengaturan.lama`
+ *   detik: hasil nomor yang baru terbit, juara umum per kelompok umur, sedang berlangsung,
+ *   jadwal berikutnya (urutan dan pilihan dari Pengaturan > Videotron). Isi
+ *   kosong dilewati.
  * - Tata letak cair untuk ukuran apa pun: satuan huruf `--u` memakai
  *   `clamp()` dari ukuran layar (kelas di `#layar`), dikali `?skala=`.
  *   Susunan dipilih dari rasio: `lebar` (≥ 2:1, hasil dan juara umum
@@ -16,10 +22,13 @@
  *   `ResizeObserver`), baris per halaman dihitung dengan mengukur tinggi
  *   panel sebenarnya (atau `?baris=`); bila tetap tidak muat, huruf panel
  *   itu diperkecil sampai muat.
- * - Latar: adegan Three.js ringan (tanpa animasi bila kurangi gerak atau
- *   WebGL tidak ada), cadangannya potongan gambar G9-06 dari `data-latar-*`,
- *   lalu gradien.
- * - Satu `setInterval` (detak 1 detik) mengatur jam, putaran, dan pengambilan
+ * - Latar: gambar unggahan admin (Pengaturan > Videotron, K173) bila ada:
+ *   `data-latar-dasar` dengan `data-tanpa-adegan`. Selain itu adegan Three.js
+ *   ringan (tanpa animasi bila kurangi gerak atau WebGL tidak ada),
+ *   cadangannya potongan gambar G9-06 dari `data-latar-*`, lalu gradien.
+ * - Tanpa jam, waktu pembaruan, dan nomor halaman (K173). Baris tabel paling
+ *   pendek muat dua baris teks.
+ * - Satu `setInterval` (detak 1 detik) mengatur putaran, kendali, dan pengambilan
  *   data; tidak ada pewaktu lain yang menumpuk, dan adegan dibuang saat
  *   halaman ditutup, jadi aman berjalan berjam-jam.
  * - Tombol layar penuh (juga tombol F), panah kiri/kanan berpindah tampilan.
@@ -31,6 +40,7 @@ const akar = document.querySelector('[data-layar]');
 const SUSUNAN = ['lebar', 'datar', 'tegak', 'kecil'];
 const LABEL = {
     hasil: 'Hasil',
+    start: 'Daftar start',
     juara_umum: 'Juara umum',
     berlangsung: 'Sedang berlangsung',
     jadwal: 'Jadwal berikutnya',
@@ -49,10 +59,6 @@ function el(tag, kelas = '', teks = null) {
     return e;
 }
 
-function jamMenit(waktu) {
-    return String(waktu.getHours()).padStart(2, '0') + '.' + String(waktu.getMinutes()).padStart(2, '0');
-}
-
 if (akar) {
     const param = new URLSearchParams(window.location.search);
     const paksa = {
@@ -60,6 +66,7 @@ if (akar) {
         susunan: SUSUNAN.includes(param.get('susunan')) ? param.get('susunan') : null,
         baris: param.has('baris') ? Math.round(angka(param.get('baris'), 1, 60) ?? 0) || null : null,
         lama: param.has('lama') ? angka(param.get('lama'), 3, 600) : null,
+        halaman: param.has('halaman') ? Math.round(angka(param.get('halaman'), 1, 999) ?? 1) : null,
     };
     const sumber = akar.dataset.sumber;
     const segarMs = (angka(akar.dataset.segar, 5, 600) ?? 30) * 1000;
@@ -75,13 +82,11 @@ if (akar) {
     const keadaan = {
         susunan: 'datar',
         slide: [],
-        indeks: 0,
+        indeks: (paksa.halaman ?? 1) - 1,
         gantiPada: 0,
         ambilPada: Date.now() + segarMs,
         sedangAmbil: false,
         putus: false,
-        diperbarui: new Date(),
-        menitJam: '',
         diam: 0,
         ukurUlang: 0,
     };
@@ -105,25 +110,25 @@ if (akar) {
     const namaAcara = el('p', 'text-[length:calc(var(--u)*1.05)] font-extrabold wrap-anywhere');
     const seri = el('p', 'text-[length:calc(var(--u)*0.75)] font-semibold text-oranye-300 wrap-anywhere');
     merek.append(namaAcara, seri);
-    const jam = el('p', 'shrink-0 text-[length:calc(var(--u)*1.25)] font-bold tabular-nums');
-    jam.setAttribute('aria-label', 'Jam');
-    kepala.append(merek, jam);
+    kepala.append(merek);
 
     const isi = el('main', 'flex min-h-0 flex-1 gap-[calc(var(--u)*0.7)]');
     isi.setAttribute('aria-live', 'off');
 
-    const kaki = el('footer', 'flex shrink-0 items-center justify-between gap-[calc(var(--u)*0.6)] text-[length:calc(var(--u)*0.65)] text-primary-100');
+    // Kaki melayang di bidang tepi bawah supaya tinggi panel tidak berubah saat tanda putus muncul.
+    // Tanpa jam, waktu pembaruan, dan nomor halaman (K173); hanya titik papan putar dan tanda putus.
+    const kaki = el('footer', 'pointer-events-none absolute inset-x-0 bottom-0 z-20 flex h-[calc(var(--u)*0.8)] items-center justify-between gap-[calc(var(--u)*0.6)] px-[calc(var(--u)*0.8)] text-[length:calc(var(--u)*0.6)] text-primary-100');
     const titik = el('div', 'flex min-w-0 flex-wrap items-center gap-[calc(var(--u)*0.3)] in-data-[susunan=kecil]:hidden');
     const status = el('p', 'ms-auto rounded-full px-[calc(var(--u)*0.6)] py-[calc(var(--u)*0.1)] text-end tabular-nums wrap-anywhere');
     status.setAttribute('role', 'status');
     kaki.append(titik, status);
-    kerangka.append(kepala, isi, kaki);
+    kerangka.append(kepala, isi);
 
     // Pengukur satuan --u dalam piksel (lebarnya 1u).
     const pengukur = el('div', 'invisible absolute start-0 top-0 h-px w-[var(--u)]');
     // Kerangka muat dari server (F9-17) diganti papan yang sesungguhnya.
     akar.querySelector('[data-kerangka-layar]')?.remove();
-    akar.append(latar, kerangka, pengukur);
+    akar.append(latar, kerangka, kaki, pengukur);
 
     function satuan() {
         return pengukur.getBoundingClientRect().width || 16;
@@ -141,6 +146,10 @@ if (akar) {
         return 'datar';
     }
 
+    function tetap() {
+        return !!data?.pengaturan?.tetap;
+    }
+
     function urutanIsi() {
         const isiData = data?.pengaturan?.isi;
         return Array.isArray(isiData) ? isiData.filter((k) => LABEL[k]) : Object.keys(LABEL);
@@ -151,7 +160,8 @@ if (akar) {
     }
 
     // ---------- Panel dan tabel ----------
-    const kelasSel = 'px-[calc(var(--u)*0.35)] py-[calc(var(--u)*0.22)] align-middle';
+    // Tinggi sel (= tinggi baris paling kecil) muat dua baris teks (K173).
+    const kelasSel = 'h-[calc(var(--u)*2.95)] px-[calc(var(--u)*0.35)] py-[calc(var(--u)*0.22)] align-middle';
     const kelasJudulKolom = 'px-[calc(var(--u)*0.35)] pb-[calc(var(--u)*0.25)] text-start align-bottom text-[length:calc(var(--u)*0.62)] font-semibold uppercase tracking-wide text-primary-200';
 
     function lencanaPeringkat(peringkat) {
@@ -204,9 +214,30 @@ if (akar) {
             if (sekolahSendiri) kolom.push({ judul: 'Sekolah', kelas: 'w-[38%]', isi: (b) => selTeks(b.sekolah, null, 'text-primary-100') });
             kolom.push({
                 judul: butir.satuan ? 'Prestasi (' + butir.satuan + ')' : 'Prestasi',
-                kelas: 'w-[calc(var(--u)*5.2)] text-end',
-                isi: (b) => el('td', kelasSel + ' whitespace-nowrap text-end font-extrabold tabular-nums text-amber-200', b.prestasi ? b.prestasi + (b.keterangan === 'r' ? ' r' : '') : (b.keterangan || '–')),
+                kelas: (butir.baris.some((b) => b.tanda) ? 'w-[calc(var(--u)*6.6)]' : 'w-[calc(var(--u)*5.2)]') + ' text-end',
+                isi: (b) => {
+                    const td = el('td', kelasSel + ' whitespace-nowrap text-end font-extrabold tabular-nums text-amber-200', b.prestasi ? b.prestasi + (b.keterangan === 'r' ? ' r' : '') : (b.keterangan || '–'));
+                    // Tanda lolos Q/q ke babak berikutnya (tampilan tetap).
+                    if (b.tanda) td.append(' ', el('span', 'text-[length:calc(var(--u)*0.7)] font-bold text-langit-300', b.tanda));
+                    return td;
+                },
             });
+            return kolom;
+        }
+        if (jenis === 'start') {
+            const beregu = !!butir.beregu;
+            const dada = !kecil && !beregu && lebarU >= 34 && butir.baris.some((b) => b.nomor_dada);
+            const sekolahSendiri = !kecil && !beregu && lebarU >= 38;
+            const tumpuk = !kecil && !beregu && !sekolahSendiri;
+            const kolom = [
+                {
+                    judul: butir.lintasan ? 'Lint.' : 'Urut', judulPanjang: butir.lintasan ? 'Lintasan' : 'Urutan tampil', kelas: 'w-[calc(var(--u)*2.6)] text-center',
+                    isi: (b) => el('td', kelasSel + ' text-center font-extrabold tabular-nums text-amber-200', b.lintasan ?? '–'),
+                },
+            ];
+            if (dada) kolom.push({ judul: 'No. atlet', kelas: 'w-[calc(var(--u)*4)]', isi: (b) => el('td', kelasSel + ' font-semibold tabular-nums text-primary-100', b.nomor_dada || '') });
+            kolom.push({ judul: beregu ? 'Sekolah / regu' : 'Nama', kelas: '', isi: (b) => selTeks(b.nama, tumpuk ? b.sekolah : null) });
+            if (sekolahSendiri) kolom.push({ judul: 'Sekolah', kelas: 'w-[40%]', isi: (b) => selTeks(b.sekolah, null, 'text-primary-100') });
             return kolom;
         }
         if (jenis === 'juara_umum') {
@@ -264,7 +295,8 @@ if (akar) {
         const warnaLabel = halaman.jenis === 'berlangsung' ? 'bg-magenta-500 text-white'
             : halaman.jenis === 'juara_umum' ? 'bg-amber-300 text-primary-950'
                 : halaman.jenis === 'jadwal' ? 'bg-langit-300 text-primary-950'
-                    : 'bg-oranye-500 text-white';
+                    : halaman.jenis === 'start' ? 'bg-white text-primary-950'
+                        : 'bg-oranye-500 text-white';
         if (halaman.jenis === 'juara_umum' && akar.dataset.gambarPodium) {
             // Podium G9-06 kecil di kepala panel juara umum, hanya bila berkasnya ada.
             const podium = el('img', 'h-[calc(var(--u)*1.6)] w-auto shrink-0');
@@ -280,7 +312,6 @@ if (akar) {
             judul.append(el('span', 'text-[length:calc(var(--u)*0.8)] font-semibold text-primary-200', halaman.sub));
         }
         kepalaPanel.append(judul);
-        if (info.halaman) kepalaPanel.append(el('span', 'ms-auto shrink-0 text-[length:calc(var(--u)*0.65)] font-semibold tabular-nums text-primary-200', info.halaman));
         panel.append(kepalaPanel);
 
         const badan = el('div', 'min-h-0 flex-1 overflow-hidden');
@@ -375,10 +406,10 @@ if (akar) {
     /** Butir isi per jenis dari data, sebelum dipecah per halaman. */
     function butirIsi(jenis) {
         if (!data) return [];
-        if (jenis === 'hasil') {
-            return (data.hasil || []).filter((n) => n.baris?.length).map((n) => ({
-                jenis, kunci: 'hasil:' + n.id, judul: n.nomor, sub: [n.kelompok_umur, n.babak].filter(Boolean).join(' · '),
-                beregu: n.beregu, satuan: n.satuan, baris: n.baris,
+        if (jenis === 'hasil' || jenis === 'start') {
+            return (data[jenis] || []).filter((n) => n.baris?.length).map((n) => ({
+                jenis, kunci: jenis + ':' + (n.kunci || n.id), judul: n.nomor, sub: [n.kelompok_umur, n.babak].filter(Boolean).join(' · '),
+                beregu: n.beregu, satuan: n.satuan, lintasan: n.lintasan, baris: n.baris,
             }));
         }
         if (jenis === 'juara_umum') {
@@ -388,6 +419,7 @@ if (akar) {
         }
         const daftar = data[jenis];
         if (!Array.isArray(daftar) || !daftar.length) return [];
+        if (jenis !== 'jadwal' && jenis !== 'berlangsung') return [];
         return [{ jenis, kunci: jenis, judul: jenis === 'jadwal' ? 'Babak berikutnya' : 'Babak yang sedang berjalan', sub: '', baris: daftar }];
     }
 
@@ -407,6 +439,11 @@ if (akar) {
 
         namaAcara.textContent = data?.acara?.nama || 'Papan hasil';
         seri.textContent = data?.acara?.seri_tahun || '';
+
+        if (tetap()) {
+            susunTetap(kunciSekarang);
+            return;
+        }
 
         const urutan = urutanIsi();
         const kiri = [];
@@ -445,6 +482,38 @@ if (akar) {
         tampilkan(lama >= 0 ? lama : Math.min(keadaan.indeks, keadaan.slide.length - 1), false);
     }
 
+    /**
+     * Tampilan tetap: semua butir dipecah per halaman, satu halaman per slot.
+     * Susunan `lebar` mencoba dua slot berdampingan; bila hanya satu halaman,
+     * kembali ke satu slot selebar layar.
+     */
+    function susunTetap(kunciSekarang) {
+        const urutan = urutanIsi();
+        let butir = urutan.flatMap((jenis) => butirIsi(jenis));
+        if (!butir.length) {
+            butir = [{
+                jenis: urutan[0] || 'hasil', kunci: 'kosong', judul: data?.judul || data?.acara?.nama || 'Papan hasil', sub: '',
+                kosong: data?.kosong || 'Hasil tampil di sini setelah panitia menerbitkannya.',
+            }];
+        }
+
+        const bangun = (jumlahSlot) => {
+            isi.replaceChildren();
+            const slot = Array.from({ length: jumlahSlot }, () => buatSlot());
+            return { slot, halaman: butir.flatMap((b) => pecah(slot[0], b)) };
+        };
+        let susunan = bangun(keadaan.susunan === 'lebar' && !butir[0].kosong ? 2 : 1);
+        if (susunan.slot.length > 1 && susunan.halaman.length < 2) susunan = bangun(1);
+
+        const { slot, halaman } = susunan;
+        keadaan.slide = [];
+        for (let i = 0; i < halaman.length; i += slot.length) keadaan.slide.push(halaman.slice(i, i + slot.length));
+        keadaan.slot = slot;
+
+        const lama = keadaan.slide.findIndex((s) => s.map((h) => h.kunci).join('|') === kunciSekarang);
+        tampilkan(lama >= 0 ? lama : Math.min(keadaan.indeks, keadaan.slide.length - 1), false);
+    }
+
     function pasPanel(panel, badan) {
         // Bila masih meluap (misalnya `?baris=` terlalu banyak), perkecil huruf panel ini.
         const u = satuan();
@@ -472,15 +541,15 @@ if (akar) {
             pasPanel(panel, badan);
             if (animasi && !kurangiGerak) requestAnimationFrame(() => bungkus.classList.remove('opacity-0'));
         });
+        // Slot tanpa halaman (halaman terakhir tampilan tetap berdampingan) dikosongkan.
+        keadaan.slot.slice(slide.length).forEach((slot) => slot.replaceChildren());
 
-        // Titik penanda tampilan (paling banyak 40).
+        // Titik penanda papan putar (paling banyak 40), tanpa teks; tampilan tetap tanpa penanda.
         titik.replaceChildren();
-        if (jumlah > 1 && jumlah <= 40) {
+        if (!tetap() && jumlah > 1 && jumlah <= 40) {
             for (let i = 0; i < jumlah; i++) {
-                titik.append(el('span', 'block size-[calc(var(--u)*0.45)] rounded-full ' + (i === keadaan.indeks ? 'bg-amber-300' : 'bg-white/30')));
+                titik.append(el('span', 'block size-[calc(var(--u)*0.4)] rounded-full ' + (i === keadaan.indeks ? 'bg-amber-300' : 'bg-white/30')));
             }
-        } else if (jumlah > 40) {
-            titik.append(el('span', 'tabular-nums', (keadaan.indeks + 1) + ' / ' + jumlah));
         }
 
         keadaan.gantiPada = Date.now() + lamaTampil();
@@ -488,10 +557,10 @@ if (akar) {
 
     // ---------- Data ----------
     function tulisStatus() {
-        const waktu = 'Diperbarui ' + jamMenit(keadaan.diperbarui);
-        status.textContent = keadaan.putus ? 'Sambungan terputus · data terakhir ' + jamMenit(keadaan.diperbarui) : waktu;
-        status.className = 'ms-auto rounded-full px-[calc(var(--u)*0.6)] py-[calc(var(--u)*0.1)] text-end tabular-nums wrap-anywhere '
-            + (keadaan.putus ? 'bg-oranye-600 font-semibold text-white' : 'in-data-[susunan=kecil]:hidden');
+        // Hanya tanda sambungan putus; data terakhir tetap tampil.
+        status.textContent = keadaan.putus ? 'Sambungan terputus' : '';
+        status.className = 'ms-auto rounded-full px-[calc(var(--u)*0.5)] text-end wrap-anywhere '
+            + (keadaan.putus ? 'bg-oranye-600 font-semibold text-white' : 'hidden');
         akar.dataset.putus = keadaan.putus ? '1' : '0';
     }
 
@@ -499,7 +568,6 @@ if (akar) {
         if (!baru || typeof baru !== 'object') return;
         const berubah = !data || baru.versi !== data.versi;
         data = baru;
-        keadaan.diperbarui = new Date();
         keadaan.putus = false;
         tulisStatus();
         if (berubah) susun();
@@ -572,12 +640,6 @@ if (akar) {
     // ---------- Detak ----------
     function detak() {
         const kini = Date.now();
-        const waktu = new Date(kini);
-        const menit = jamMenit(waktu);
-        if (menit !== keadaan.menitJam) {
-            keadaan.menitJam = menit;
-            jam.textContent = menit;
-        }
         if (keadaan.diam && kini > keadaan.diam) {
             keadaan.diam = 0;
             tombolPenuh?.classList.add('opacity-0');
@@ -587,7 +649,9 @@ if (akar) {
             keadaan.ukurUlang = 0;
             susun();
         }
-        if (keadaan.slide.length > 1 && kini >= keadaan.gantiPada) tampilkan(keadaan.indeks + 1);
+        // Tampilan tetap tidak pernah berganti sendiri (K173).
+        if (tetap()) keadaan.gantiPada = Infinity;
+        else if (keadaan.slide.length > 1 && kini >= keadaan.gantiPada) tampilkan(keadaan.indeks + 1);
         else if (kini >= keadaan.gantiPada) keadaan.gantiPada = kini + lamaTampil();
         if (kini >= keadaan.ambilPada) ambil();
     }
@@ -763,6 +827,9 @@ if (akar) {
     if (akar.dataset.uji !== undefined) {
         window.layarUji = {
             jumlah: () => keadaan.slide.length,
+            indeks: () => keadaan.indeks,
+            tetap: () => tetap(),
+            judulPanel: () => [...akar.querySelectorAll('section[data-jenis] h2')].map((h) => h.firstChild?.textContent || ''),
             susunan: () => keadaan.susunan,
             tampilkan: (i) => tampilkan(i, false),
             terapkan: (baru) => terapkan(baru),

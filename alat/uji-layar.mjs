@@ -1,14 +1,18 @@
-// Uji tampilan papan videotron /layar (F9-13, K141) dengan Playwright (Chromium).
+// Uji tampilan videotron (F9-13, K141, F11-09, K173) dengan Playwright (Chromium).
 //
 // Menyajikan public/ lewat server Node kecil dengan CSP seketat aplikasi
 // (Config/ContentSecurityPolicy.php), memuat kerangka yang sama dengan
-// app/Views/layar/index.php berisi data karangan yang panjang, lalu untuk
-// setiap ukuran layar membuka semua tampilan dan memeriksa:
+// app/Views/layar/index.php berisi data karangan yang panjang: papan putar
+// (/layar/putar) dan tampilan tetap (/layar/<jenis>/…: hasil dan daftar start
+// beberapa nomor, klasemen, keadaan kosong). Untuk setiap ukuran layar semua
+// halaman tampilan dibuka dan diperiksa:
 // - tidak ada teks yang keluar dari layar, terpotong, atau saling tindih;
 // - huruf tidak lebih kecil dari batas baca;
 // - tanpa galat konsol dan tanpa pelanggaran CSP.
-// Lalu satu uji lama berjalan: ribuan pergantian tampilan dan pembaruan data
-// tanpa jumlah elemen dan memori JS yang terus naik.
+// Lalu tampilan tetap tidak berganti sendiri, `?halaman=` memilih halaman yang
+// tampil, data baru tidak memindah halaman, dan susunan lebar memasang dua
+// halaman berdampingan, tanpa jam, waktu pembaruan, dan nomor halaman. Terakhir satu uji lama berjalan: ribuan pergantian
+// tampilan dan pembaruan data tanpa jumlah elemen dan memori JS yang terus naik.
 //
 // Jalankan: npm run uji:layar   (atau node alat/uji-layar.mjs)
 // Butuh Chromium Playwright, atau Chrome lain lewat CHROMIUM_PATH (di CI: Chrome bawaan runner).
@@ -78,6 +82,39 @@ export function dataUji(versi = 'uji-1') {
     };
 }
 
+// Tampilan tetap (TampilanVideotron::tampilan()): beberapa panel hasil dengan
+// tanda lolos dan daftar start, satu klasemen, atau keadaan kosong.
+export function dataTetap(jenis = 'sesi', versi = 'tetap-1') {
+    const dasar = dataUji(versi);
+    const data = {
+        versi,
+        acara: dasar.acara,
+        judul: 'Sesi pagi · Rabu, 9 Desember 2026',
+        pengaturan: { isi: ['hasil', 'start'], tetap: true },
+        kosong: 'Hasil sesi ini tampil di sini setelah panitia menerbitkannya.',
+        start: [],
+        hasil: [],
+        juara_umum: [],
+    };
+    if (jenis === 'sesi') {
+        data.hasil = dasar.hasil.slice(0, 4).map((n, i) => ({
+            ...n, kunci: 'babak:' + (i + 1), babak: i === 1 ? 'Penyisihan' : n.babak,
+            baris: n.baris.map((b, j) => ({ ...b, tanda: i === 1 && j < 4 ? (j < 2 ? 'Q' : 'q') : null })),
+        }));
+        data.start = [{
+            id: 9, kunci: 'start:9:2', nomor: 'Lari 60 m putri', kelompok_umur: 'KU 12', babak: 'Penyisihan · Seri 2', beregu: false, lintasan: true,
+            baris: dasar.hasil[0].baris.slice(0, 8).map((b, j) => ({ lintasan: j + 1, nama: b.nama, sekolah: b.sekolah, nomor_dada: b.nomor_dada })),
+        }];
+    } else if (jenis === 'klasemen') {
+        data.judul = 'Klasemen juara umum · SD/MI';
+        data.pengaturan.isi = ['juara_umum'];
+        data.juara_umum = [{ ...dasar.juara_umum[0], kunci: 'A', baris: [...dasar.juara_umum[0].baris, ...dasar.juara_umum[1].baris] }];
+    }
+    return data;
+}
+
+const HALAMAN_TETAP = { '/layar/tetap': () => dataTetap('sesi'), '/layar/tetap-klasemen': () => dataTetap('klasemen'), '/layar/tetap-kosong': () => dataTetap('kosong') };
+
 // Gambar juara umum G9-06 yang berkasnya ada, seperti LayarController::GAMBAR_JUARA.
 const GAMBAR_JUARA = { podium: 'podium.webp', 'medali-emas': 'medali-emas.webp', 'medali-perak': 'medali-perak.webp', 'medali-perunggu': 'medali-perunggu.webp' };
 
@@ -104,9 +141,9 @@ export function mulaiServer(data) {
     const server = createServer(async (minta, jawab) => {
         const alamat = new URL(minta.url, 'http://x');
         const kepala = { 'Content-Security-Policy': CSP };
-        if (alamat.pathname === '/layar') {
+        if (alamat.pathname === '/layar/putar' || HALAMAN_TETAP[alamat.pathname]) {
             jawab.writeHead(200, { ...kepala, 'Content-Type': 'text/html; charset=utf-8' });
-            return jawab.end(halamanUji(data));
+            return jawab.end(halamanUji(HALAMAN_TETAP[alamat.pathname]?.() ?? data));
         }
         if (alamat.pathname === '/layar/data') {
             // Selama uji jaringan dianggap putus: data terakhir harus tetap tampil.
@@ -185,7 +222,7 @@ function periksaHalaman() {
     return masalah;
 }
 
-async function ujiUkuran(peramban, alamat, [l, t]) {
+async function ujiUkuran(peramban, alamat, [l, t], jalur = '/layar/putar') {
     const konteks = await peramban.newContext({ viewport: { width: l, height: t }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
     const halaman = await konteks.newPage();
     const galat = [];
@@ -193,7 +230,7 @@ async function ujiUkuran(peramban, alamat, [l, t]) {
         if (p.type() === 'error' && !p.text().includes('503')) galat.push('konsol: ' + p.text());
     });
     halaman.on('pageerror', (g) => galat.push('skrip: ' + g.message));
-    await halaman.goto(alamat + '/layar', { waitUntil: 'load' });
+    await halaman.goto(alamat + jalur, { waitUntil: 'load' });
     await halaman.waitForFunction(() => window.layarUji && window.layarUji.jumlah() > 0);
     await halaman.evaluate(() => document.fonts.ready);
     await halaman.evaluate(() => { window.layarUji.susunUlang(); window.layarUji.kendali(); });
@@ -206,7 +243,7 @@ async function ujiUkuran(peramban, alamat, [l, t]) {
     }
     if (process.env.LAYAR_GAMBAR) {
         await halaman.evaluate(() => window.layarUji.tampilkan(0));
-        await halaman.screenshot({ path: join(process.env.LAYAR_GAMBAR, `layar-${l}x${t}.png`) });
+        await halaman.screenshot({ path: join(process.env.LAYAR_GAMBAR, `${jalur.slice(1).replace(/\//g, '-')}-${l}x${t}.png`) });
     }
     // Jaringan putus (server uji menjawab 503): data terakhir tetap tampil dengan tanda.
     const putus = await halaman.evaluate(async () => {
@@ -218,10 +255,55 @@ async function ujiUkuran(peramban, alamat, [l, t]) {
     return { susunan, jumlah, masalah: [...galat, ...masalah] };
 }
 
+/**
+ * Tampilan tetap: tidak berganti sendiri walau `?lama=` pendek, `?halaman=`
+ * memilih halaman, data baru tidak memindah halaman, dan susunan lebar
+ * memasang dua halaman berdampingan.
+ */
+async function ujiTetap(peramban, alamat) {
+    const masalah = [];
+    const konteks = await peramban.newContext({ viewport: { width: 1920, height: 1080 }, reducedMotion: 'reduce' });
+    const halaman = await konteks.newPage();
+    await halaman.goto(alamat + '/layar/tetap?halaman=2&lama=3', { waitUntil: 'load' });
+    await halaman.waitForFunction(() => window.layarUji && window.layarUji.jumlah() > 0);
+    const awal = await halaman.evaluate(() => ({ tetap: window.layarUji.tetap(), indeks: window.layarUji.indeks(), jumlah: window.layarUji.jumlah(), judul: window.layarUji.judulPanel() }));
+    if (!awal.tetap) masalah.push('pengaturan.tetap tidak terbaca');
+    if (awal.jumlah < 3) masalah.push(`halaman terlalu sedikit untuk diuji: ${awal.jumlah}`);
+    if (awal.indeks !== 1) masalah.push(`?halaman=2 membuka halaman ${awal.indeks + 1}`);
+    // Tanpa jam, waktu pembaruan, dan nomor halaman (K173).
+    const teksKaki = (await halaman.locator('#layar footer').innerText()).trim();
+    if (teksKaki !== '') masalah.push(`kaki layar berisi teks: "${teksKaki}"`);
+    if (/\d{2}\.\d{2}/.test(await halaman.locator('#layar header').innerText())) masalah.push('jam masih tampil di kepala');
+    await halaman.waitForTimeout(4500);
+    const sesudah = await halaman.evaluate(() => ({ indeks: window.layarUji.indeks(), judul: window.layarUji.judulPanel() }));
+    if (sesudah.indeks !== 1 || sesudah.judul.join('|') !== awal.judul.join('|')) masalah.push('tampilan tetap berganti sendiri');
+    // Data baru (versi lain, baris tambahan di panel terakhir) masuk tanpa memindah halaman.
+    await halaman.evaluate((baru) => window.layarUji.terapkan(baru), (() => {
+        const d = dataTetap('sesi', 'tetap-2');
+        d.hasil[3].baris.push({ ...d.hasil[3].baris[0], nama: 'Atlet Susulan Rekaan', peringkat: null, prestasi: '', keterangan: 'DNF' });
+        return d;
+    })());
+    const baru = await halaman.evaluate(() => ({ indeks: window.layarUji.indeks(), judul: window.layarUji.judulPanel() }));
+    if (baru.indeks !== 1 || baru.judul.join('|') !== awal.judul.join('|')) masalah.push('data baru memindah halaman');
+    // Panah kanan tetap bisa dipakai operator.
+    await halaman.keyboard.press('ArrowRight');
+    if ((await halaman.evaluate(() => window.layarUji.indeks())) !== 2) masalah.push('panah kanan tidak berpindah halaman');
+    await konteks.close();
+
+    const lebar = await peramban.newContext({ viewport: { width: 3840, height: 1080 }, reducedMotion: 'reduce' });
+    const pita = await lebar.newPage();
+    await pita.goto(alamat + '/layar/tetap', { waitUntil: 'load' });
+    await pita.waitForFunction(() => window.layarUji && window.layarUji.jumlah() > 0);
+    const panel = await pita.evaluate(() => document.querySelectorAll('#layar section[data-jenis]').length);
+    if (panel !== 2) masalah.push(`susunan lebar memasang ${panel} panel, seharusnya 2`);
+    await lebar.close();
+    return masalah;
+}
+
 async function ujiLama(peramban, alamat) {
     const konteks = await peramban.newContext({ viewport: { width: 1920, height: 1080 } });
     const halaman = await konteks.newPage();
-    await halaman.goto(alamat + '/layar', { waitUntil: 'load' });
+    await halaman.goto(alamat + '/layar/putar', { waitUntil: 'load' });
     await halaman.waitForFunction(() => window.layarUji && window.layarUji.jumlah() > 0);
     const cdp = await konteks.newCDPSession(halaman);
     const ukur = async () => {
@@ -261,16 +343,25 @@ async function utama() {
     const peramban = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
     let gagal = 0;
     try {
-        for (const ukuran of UKURAN) {
-            const { susunan, jumlah, masalah } = await ujiUkuran(peramban, alamat, ukuran);
-            const label = `${ukuran[0]}×${ukuran[1]} (${susunan}, ${jumlah} tampilan)`;
-            if (masalah.length) {
-                gagal++;
-                console.log(`GAGAL ${label}`);
-                for (const m of [...new Set(masalah)].slice(0, 25)) console.log('  - ' + m);
-            } else {
-                console.log(`lulus ${label}`);
+        for (const jalur of ['/layar/putar', ...Object.keys(HALAMAN_TETAP)]) {
+            for (const ukuran of UKURAN) {
+                const { susunan, jumlah, masalah } = await ujiUkuran(peramban, alamat, ukuran, jalur);
+                const label = `${jalur} ${ukuran[0]}×${ukuran[1]} (${susunan}, ${jumlah} tampilan)`;
+                if (masalah.length) {
+                    gagal++;
+                    console.log(`GAGAL ${label}`);
+                    for (const m of [...new Set(masalah)].slice(0, 25)) console.log('  - ' + m);
+                } else {
+                    console.log(`lulus ${label}`);
+                }
             }
+        }
+        const tetap = await ujiTetap(peramban, alamat);
+        if (tetap.length) {
+            gagal++;
+            console.log('GAGAL tampilan tetap: ' + tetap.join('; '));
+        } else {
+            console.log('lulus tampilan tetap (tidak berganti sendiri, ?halaman=, data baru, dua panel di layar lebar)');
         }
         const lama = await ujiLama(peramban, alamat);
         if (lama.masalah.length) {
