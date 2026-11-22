@@ -65,7 +65,11 @@ final class TataLetakGalatTest extends UjiHalaman
     {
         $hostSendiri = parse_url(base_url(), PHP_URL_HOST);
 
-        preg_match_all('#(?:https?:)?//([^/\s"\'<>?\#]+)#i', $this->renderGalat($berkas), $cocok);
+        // Nonce CSP (`base64_encode(random_bytes(12))`) bisa memuat `//` dan bukan
+        // alamat, jadi atributnya dibuang sebelum alamat dicari.
+        $html = (string) preg_replace('/\snonce="[^"]*"/', '', $this->renderGalat($berkas));
+
+        preg_match_all('#(?:https?:)?//([^/\s"\'<>?\#]+)#i', $html, $cocok);
 
         foreach ($cocok[1] as $host) {
             $host = strtolower((string) preg_replace('/:\d+$/', '', $host));
