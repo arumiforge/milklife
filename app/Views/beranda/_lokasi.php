@@ -4,7 +4,8 @@
  * Google Maps, tepat di atas Kontak.
  *
  * - Tidak tampil sama sekali bila alamat embed kosong (`PetaLokasi::embed()`).
- * - Iframe tidak ditulis di HTML: `peta-lokasi.js` menyisipkannya dari
+ * - Iframe tidak ditulis di HTML: `peta-lokasi.js` (dimuat di bagian `skrip`
+ *   `beranda.php`, di luar `<main>`) menyisipkannya dari
  *   `data-peta-src` saat bagian ini mendekati layar (IntersectionObserver),
  *   jadi tidak ada permintaan ke google.com sebelum itu. Tanpa JS atau
  *   sebelum dimuat, kotak peta berisi tautan "Buka di Google Maps".
@@ -67,4 +68,3 @@ $tabBaru   = '<span class="sr-only"> (di tab baru)</span>';
         </div>
     </div>
 </section>
-<script src="<?= aset('js/peta-lokasi.js') ?>" defer></script>

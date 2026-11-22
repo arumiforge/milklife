@@ -70,4 +70,7 @@
     <script src="<?= aset('js/carousel-beranda.js') ?>"></script>
 <?php endif ?>
 <script type="module" src="<?= aset('js/adegan-merek.js') ?>"></script>
+<?php if (App\Libraries\PetaLokasi::embed() !== '') : ?>
+    <script src="<?= aset('js/peta-lokasi.js') ?>" defer></script>
+<?php endif ?>
 <?= $this->endSection() ?>
