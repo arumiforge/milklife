@@ -160,6 +160,18 @@ final class PapanVideotronTest extends UjiBasisData
         $layar = $this->xpathDari($this->get('layar'))->query('//*[@data-layar]')->item(0);
         $this->assertInstanceOf(DOMElement::class, $layar);
         $this->assertStringContainsString('gambar/layar/latar-dasar.webp', $layar->getAttribute('data-latar-dasar'));
+        $this->assertFalse($layar->hasAttribute('data-gambar-podium'));
+
+        // Gambar juara umum G9-06 (podium dan medali) hanya untuk berkas yang ada.
+        $this->taruhGambarUji('layar/podium.webp');
+        $this->taruhGambarUji('layar/medali-emas.webp');
+        service('cache')->clean();
+
+        $layar = $this->xpathDari($this->get('layar'))->query('//*[@data-layar]')->item(0);
+        $this->assertInstanceOf(DOMElement::class, $layar);
+        $this->assertStringContainsString('gambar/layar/podium.webp', $layar->getAttribute('data-gambar-podium'));
+        $this->assertStringContainsString('gambar/layar/medali-emas.webp', $layar->getAttribute('data-gambar-medali-emas'));
+        $this->assertFalse($layar->hasAttribute('data-gambar-medali-perak'));
     }
 
     public function testPengaturanVideotron(): void
