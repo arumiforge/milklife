@@ -10,7 +10,7 @@
  * @var array<string, string>                               $pilihanIsi kode => label (`PapanVideotron::ISI`)
  */
 
-$kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
+$kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -19,7 +19,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
 <?= $this->section('judul_halaman') ?>Videotron<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="text-gray-700">
@@ -27,10 +27,10 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
         Hanya hasil yang sudah diterbitkan yang tampil.
     </p>
 
-    <div class="space-y-6">
+    <div class="space-y-4">
         <?= view('admin/_galat_isian_tw', ['galat' => $galat], ['saveData' => false]) ?>
 
-        <form action="<?= site_url('admin/pengaturan/videotron') ?>" method="post" novalidate class="space-y-6">
+        <form action="<?= site_url('admin/pengaturan/videotron') ?>" method="post" novalidate class="space-y-4">
             <?= csrf_field() ?>
 
             <section class="<?= $kartu ?>" aria-labelledby="judul-tampil-papan">
@@ -94,7 +94,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
                 Bila tulisan di videotron terlalu besar atau terlalu kecil
                 <?= ikon('chevron-down', 'size-5 shrink-0 text-gray-500 transition-transform group-open:rotate-180') ?>
             </summary>
-            <div class="space-y-2 px-5 pb-5 text-sm text-gray-700 sm:px-6">
+            <div class="space-y-2 px-4 pb-4 text-sm text-gray-700 sm:px-5">
                 <p>Papan menyesuaikan sendiri dengan ukuran layar. Bila perlu, tambahkan pengaturan di belakang alamat:</p>
                 <ul class="list-disc space-y-1 ps-5 break-words">
                     <li><code>/layar?skala=1.3</code>: huruf 30% lebih besar (0.5 sampai 3).</li>

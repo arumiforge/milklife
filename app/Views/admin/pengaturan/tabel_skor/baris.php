@@ -37,17 +37,17 @@ $galatBaris = $galat === [] ? '' : ' aria-describedby="baris-galat"';
 <?= $this->section('judul_halaman') ?>Tabel Skor<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <div>
-        <h2 class="text-xl font-bold break-words text-gray-900"><?= esc($judul) ?></h2>
+        <h2 class="text-lg font-bold break-words text-gray-900"><?= esc($judul) ?></h2>
         <p class="mt-1 text-gray-600"><?= esc($tabel['nama']) ?> · <?= count($baris) ?> baris · prestasi <?= $waktu ? 'waktu dalam detik (makin kecil makin baik)' : 'jarak dalam meter (makin jauh makin baik)' ?></p>
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-12 lg:items-start">
-        <div class="space-y-6 lg:order-2 lg:col-span-5">
-            <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="ubah-baris" aria-labelledby="judul-ubah-baris">
+    <div class="grid gap-4 lg:grid-cols-12 lg:items-start">
+        <div class="space-y-4 lg:order-2 lg:col-span-5">
+            <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="ubah-baris" aria-labelledby="judul-ubah-baris">
                 <h3 class="text-lg font-bold text-gray-900" id="judul-ubah-baris">Ubah atau tambah baris</h3>
                 <p class="mt-1 text-sm text-gray-600">Tulis prestasi dan poinnya. Bila prestasi itu sudah ada, poinnya diganti.</p>
                 <form action="<?= site_url($alamat) ?>" method="post" class="mt-4 space-y-3" novalidate>
@@ -71,7 +71,7 @@ $galatBaris = $galat === [] ? '' : ' aria-describedby="baris-galat"';
                 </form>
             </section>
 
-            <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="impor" aria-labelledby="judul-impor">
+            <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="impor" aria-labelledby="judul-impor">
                 <h3 class="text-lg font-bold text-gray-900" id="judul-impor">Ganti dari Excel</h3>
                 <p class="mt-1 text-sm text-gray-600">Kolom A prestasi (misalnya <?= $contoh ?><?= $waktu ? ' atau 2:05,10' : '' ?>), kolom B poin. Baris judul boleh ada. Semua baris <?= esc($judul) ?> diganti isi berkas; bila ada baris yang salah, tidak ada yang diganti.</p>
                 <?php if ($galatImpor !== []) : ?>
@@ -95,7 +95,7 @@ $galatBaris = $galat === [] ? '' : ' aria-describedby="baris-galat"';
         </div>
 
         <div class="lg:order-1 lg:col-span-7">
-            <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-baris">
+            <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-baris">
                 <h3 class="text-lg font-bold text-gray-900" id="judul-baris">Baris tabel</h3>
                 <?php if ($baris === []) : ?>
                     <p class="mt-2 text-gray-600" id="baris-kosong">Belum ada baris. Isi lewat Excel atau satu per satu.</p>

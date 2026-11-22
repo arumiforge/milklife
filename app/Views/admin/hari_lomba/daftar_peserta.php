@@ -12,7 +12,7 @@
 <?= $this->section('judul') ?>Daftar Peserta<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= view('admin/hari_lomba/_tab', ['aktif' => 'admin/daftar-peserta'], ['saveData' => false]) ?>
 
     <p class="text-gray-700">
@@ -26,8 +26,8 @@
     <?php endif ?>
 
     <?php foreach ($kelompokUmur as $ku) : ?>
-        <section class="rounded-2xl border border-gray-200 bg-white shadow-lembut" aria-labelledby="judul-ku-<?= $ku['id'] ?>">
-            <div class="flex flex-wrap items-center gap-2 border-b border-gray-200 px-5 py-4 sm:px-6">
+        <section class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lembut" aria-labelledby="judul-ku-<?= $ku['id'] ?>">
+            <div class="flex flex-wrap items-center gap-2 border-b border-gray-200 px-4 py-3 sm:px-5">
                 <h2 class="me-auto text-lg font-bold text-gray-900" id="judul-ku-<?= $ku['id'] ?>"><?= esc($ku['nama']) ?></h2>
                 <span class="text-sm text-gray-600">Semua nomor:</span>
                 <div class="flex gap-2" role="group" aria-label="<?= esc('Unduh semua nomor ' . $ku['nama'], 'attr') ?>">
@@ -35,9 +35,9 @@
                     <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/daftar-peserta/kelompok-umur/' . $ku['id'] . '/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'sheet', 'kelas' => 'min-h-11']) ?>
                 </div>
             </div>
-            <ul class="divide-y divide-gray-100">
+            <ul class="-mt-px grid lg:grid-cols-2">
                 <?php foreach ($ku['nomor'] as $n) : ?>
-                    <li class="flex items-center gap-2 px-5 py-3 sm:px-6">
+                    <li class="flex items-center gap-2 border-t border-gray-100 px-4 py-2.5 sm:px-5">
                         <div class="min-w-0 flex-1">
                             <div class="font-semibold break-words text-gray-900"><?= esc($n['nama']) ?></div>
                             <div class="text-sm text-gray-600"><?= $n['jenis'] === 'beregu' ? 'Beregu · ' : '' ?><?= $n['peserta'] ?> atlet</div>

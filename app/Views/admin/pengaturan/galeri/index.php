@@ -26,7 +26,7 @@ $penuh    = count($album) >= GaleriModel::BATAS;
 <?= $this->section('judul_halaman') ?>Galeri<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <div class="flex items-start gap-3 rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" role="note">
@@ -37,7 +37,7 @@ $penuh    = count($album) >= GaleriModel::BATAS;
         </div>
     </div>
 
-    <section id="sakelar-galeri" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-sakelar-galeri">
+    <section id="sakelar-galeri" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-sakelar-galeri">
         <h2 id="judul-sakelar-galeri" class="text-lg font-bold text-gray-900">Halaman Galeri</h2>
         <p class="mt-1 text-sm text-gray-600">
             Bila dimatikan, alamat /galeri tidak bisa dibuka dan menu Galeri tidak tampil di halaman depan.
@@ -52,7 +52,7 @@ $penuh    = count($album) >= GaleriModel::BATAS;
         </form>
     </section>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="daftar-album" aria-labelledby="judul-daftar-album">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="daftar-album" aria-labelledby="judul-daftar-album">
         <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div class="min-w-0">
                 <h2 id="judul-daftar-album" class="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-900">

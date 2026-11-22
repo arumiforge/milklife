@@ -19,7 +19,7 @@ $pertama = array_key_first($hari);
 <?= $this->section('judul') ?>Lembar juri<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Pilih babak, lalu isi prestasi tiap peserta dari ponsel. Setiap baris tersimpan sendiri begitu diisi.
         Beberapa juri boleh mengisi babak yang berbeda bersamaan. Peringkat dan tombol Terbitkan ada di
@@ -27,12 +27,12 @@ $pertama = array_key_first($hari);
     </p>
 
     <?php if ($hari === []) : ?>
-        <?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Lembar juri dibuat dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
+        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Lembar juri dibuat dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini.', 'aksi' => komponen('tombol', ['label' => 'Buka Hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
     <?php endif ?>
 
     <?php foreach ($hari as $tanggal => $daftar) : ?>
         <details class="group rounded-2xl border border-gray-200 bg-white shadow-lembut" data-hari-juri="<?= esc($tanggal === '' ? 'belum' : $tanggal, 'attr') ?>"<?= $tanggal === ($hariIni ?? $pertama) ? ' open' : '' ?>>
-            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 sm:px-6">
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2.5 sm:px-5">
                 <span>
                     <span class="block text-lg font-bold text-gray-900"><?= $tanggal === '' ? 'Belum dijadwalkan' : esc(JadwalPertandingan::namaHari($tanggal)) ?></span>
                     <span class="block text-sm text-gray-600"><?= count($daftar) ?> babak<?= $tanggal !== '' && $tanggal === $hariIni ? ' · hari ini' : '' ?></span>
@@ -42,7 +42,7 @@ $pertama = array_key_first($hari);
             <ul class="divide-y divide-gray-100 border-t border-gray-100">
                 <?php foreach ($daftar as $b) : ?>
                     <li>
-                        <a href="<?= site_url('admin/juri/babak/' . $b['id']) ?>" class="flex min-h-16 items-center gap-3 px-5 py-3 hover:bg-gray-50 focus:bg-gray-50 sm:px-6" data-babak-juri="<?= $b['id'] ?>">
+                        <a href="<?= site_url('admin/juri/babak/' . $b['id']) ?>" class="flex min-h-14 items-center gap-3 px-4 py-2.5 hover:bg-gray-50 focus:bg-gray-50 sm:px-5" data-babak-juri="<?= $b['id'] ?>">
                             <span class="w-14 shrink-0 text-base font-bold text-gray-900"><?= $b['jam'] === null ? '–' : esc($b['jam']) ?></span>
                             <span class="min-w-0 flex-1">
                                 <span class="block font-semibold break-words text-gray-900"><?= esc($b['nomor_lengkap']) ?> <span class="font-normal text-gray-600"><?= esc($b['kelompok_umur']) ?></span></span>

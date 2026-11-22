@@ -15,7 +15,7 @@ use App\Controllers\Admin\AtletDitolakController;
 
 $label   = 'mb-1.5 block text-sm font-semibold text-gray-900';
 $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 sm:text-sm';
-$kotak   = 'flex min-h-11 flex-col items-start gap-0.5 rounded-xl border border-s-[5px] border-gray-200 bg-white px-4 py-3 text-start text-sm font-semibold text-gray-700 shadow-lembut hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-100 aria-pressed:border-primary-300 aria-pressed:bg-primary-50 aria-pressed:ring-2 aria-pressed:ring-primary-300';
+$kotak   = 'flex min-h-11 flex-col items-start gap-0.5 rounded-xl border border-gray-200 bg-white px-4 py-3 text-start text-sm font-semibold text-gray-700 shadow-lembut hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-100 aria-pressed:border-primary-300 aria-pressed:bg-primary-50 aria-pressed:ring-2 aria-pressed:ring-primary-300';
 $angka   = 'text-2xl leading-tight font-extrabold text-primary-900';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
@@ -25,22 +25,22 @@ $angka   = 'text-2xl leading-tight font-extrabold text-primary-900';
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Atlet yang dikeluarkan panitia dari pendaftarannya. Sekolah melihat alasannya di Cek Pendaftaran sampai atletnya didaftarkan lagi.
         Untuk menolak atlet, buka rincian pendaftaran yang masih Menunggu lalu pilih <strong>Tolak atlet</strong>.
     </p>
 
     <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-3" role="group" aria-label="Saring cepat menurut keadaan" data-ringkasan-ditolak>
-        <button type="button" class="<?= $kotak ?> border-s-primary-700" data-saring-keadaan="" aria-pressed="true">
+        <button type="button" class="<?= $kotak ?>" data-saring-keadaan="" aria-pressed="true">
             <span class="<?= $angka ?>"><?= $jumlah['semua'] ?></span>
             <span>Semua</span>
         </button>
-        <button type="button" class="<?= $kotak ?> border-s-yellow-500" data-saring-keadaan="belum" aria-pressed="false">
+        <button type="button" class="<?= $kotak ?>" data-saring-keadaan="belum" aria-pressed="false">
             <span class="<?= $angka ?>"><?= $jumlah['belum'] ?></span>
             <span>Belum didaftarkan ulang</span>
         </button>
-        <button type="button" class="<?= $kotak ?> border-s-green-600" data-saring-keadaan="sudah" aria-pressed="false">
+        <button type="button" class="<?= $kotak ?>" data-saring-keadaan="sudah" aria-pressed="false">
             <span class="<?= $angka ?>"><?= $jumlah['sudah'] ?></span>
             <span>Sudah didaftarkan ulang</span>
         </button>

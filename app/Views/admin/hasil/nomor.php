@@ -35,7 +35,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Hasil lomba', 'alamat' => 'admin/hasil'], ['label' => $nomor['kelompok_umur'] . ' ' . $nomor['nama']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <div class="flex flex-wrap items-start gap-4">
         <div class="min-w-0 flex-1 basis-72">
             <p class="text-gray-700">
@@ -49,7 +49,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
         </div>
     </div>
 
-    <section class="flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="terbit" aria-labelledby="judul-terbit">
+    <section class="flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="terbit" aria-labelledby="judul-terbit">
         <div class="min-w-0 flex-1 basis-64">
             <h2 class="text-lg font-bold text-gray-900" id="judul-terbit">Halaman publik</h2>
             <?php if ($nomor['terbit_pada'] !== null) : ?>
@@ -80,7 +80,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
     <?php endif ?>
 
     <?php foreach ($babak as $b) : ?>
-        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6" aria-labelledby="judul-babak-<?= $b['id'] ?>">
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-babak-<?= $b['id'] ?>">
             <div class="flex flex-wrap items-center gap-3">
                 <h2 class="me-auto flex min-w-0 flex-wrap items-center gap-2 text-lg font-bold break-words text-gray-900" id="judul-babak-<?= $b['id'] ?>">
                     <?= esc($b['nama']) ?>
@@ -92,7 +92,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
         </section>
     <?php endforeach ?>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="tambah-babak" aria-labelledby="judul-tambah-babak">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="tambah-babak" aria-labelledby="judul-tambah-babak">
         <h2 class="text-lg font-bold text-gray-900" id="judul-tambah-babak">Tambah babak</h2>
         <form action="<?= site_url('admin/hasil/nomor/' . $nomor['id'] . '/babak') ?>" method="post" class="mt-4 space-y-5" novalidate>
             <?= csrf_field() ?>

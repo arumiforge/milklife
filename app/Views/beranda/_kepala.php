@@ -136,7 +136,7 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
                             <img src="<?= esc($f['alamat'], 'attr') ?>"<?= ($f['srcset'] ?? null) !== null ? ' srcset="' . esc($f['srcset'], 'attr') . '" sizes="(min-width: 1024px) 66vw, 100vw"' : '' ?> alt="<?= esc($alt, 'attr') ?>" class="absolute inset-0 size-full object-cover"<?= $ukuranAtribut($f['ukuran']) ?> decoding="async"<?= $i === 0 ? ' fetchpriority="high"' : ' loading="lazy"' ?>>
                             <?php if ($f['keterangan'] !== '') : ?>
                                 <?php // Keterangan kecil di pojok kanan bawah; isinya sama dengan alt, jadi disembunyikan dari pembaca layar. ?>
-                                <figcaption class="absolute bottom-3 right-4 z-20 max-w-[70%] border-l-2 border-oranye-400 pl-2 text-right text-xs leading-snug text-white/90 lg:bottom-6 lg:right-8 lg:max-w-sm" aria-hidden="true" data-keterangan-foto><?= esc($f['keterangan']) ?></figcaption>
+                                <figcaption class="absolute bottom-3 right-4 z-20 max-w-[70%] text-right text-xs leading-snug text-white/90 lg:bottom-6 lg:right-8 lg:max-w-sm" aria-hidden="true" data-keterangan-foto><?= esc($f['keterangan']) ?></figcaption>
                             <?php endif ?>
                         </figure>
                     <?php endforeach ?>

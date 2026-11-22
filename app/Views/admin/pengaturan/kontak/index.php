@@ -59,11 +59,11 @@ $ikonMedia = static fn (string $nama): string => match ($nama) {
 <?= $this->section('judul_halaman') ?>Kontak<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <?php foreach ($bagian as $b) : ?>
-        <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" id="<?= $b['id'] ?>" aria-labelledby="judul-<?= $b['id'] ?>">
+        <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="<?= $b['id'] ?>" aria-labelledby="judul-<?= $b['id'] ?>">
             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div class="min-w-0">
                     <h2 id="judul-<?= $b['id'] ?>" class="flex items-center gap-2 text-lg font-bold text-gray-900">

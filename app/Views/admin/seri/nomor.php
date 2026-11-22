@@ -18,16 +18,17 @@ use App\Libraries\Hasil\PembagiSeri;
 $lintasan = $aturan['lintasan'];
 $nilai    = static fn (string $kotak, string $asal): string => is_string($isian[$kotak] ?? null) ? $isian[$kotak] : $asal;
 $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] > 0, $babak), true);
+// Ikon tombol dari `komponen('tombol')`; tulis juga di sini supaya masuk sprite (berkas ini tanpa `ikon()`).
+// ikon-sprite: download list-ordered save sheet trophy
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
 <?= $this->section('judul') ?>Seri <?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
-    <a href="<?= site_url('admin/seri') ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?>Semua nomor</a>
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
 
-    <section id="aturan-seri" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-aturan-seri">
+    <section id="aturan-seri" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-aturan-seri">
         <h2 id="judul-aturan-seri" class="text-lg font-bold text-gray-900">Aturan seri nomor ini</h2>
         <p class="mt-1 text-sm text-gray-600">
             <?php if ($lintasan) : ?>
@@ -65,7 +66,7 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
         </form>
     </section>
 
-    <section class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-unduh-nomor">
+    <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-unduh-nomor">
         <h2 id="judul-unduh-nomor" class="text-lg font-bold text-gray-900">Unduh daftar seri</h2>
         <?php if ($adaBagi) : ?>
             <p class="mt-1 text-sm text-gray-600">Semua babak nomor ini yang sudah dibagi. Babak yang belum dikunci ditandai di berkasnya.</p>
@@ -84,7 +85,7 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
             <?= komponen('tombol', ['label' => 'Atur babak di Hasil lomba', 'href' => site_url('admin/hasil/nomor/' . $nomor['id']), 'varian' => 'hantu', 'ikon' => 'trophy']) ?>
         </div>
         <?php if ($bagan === []) : ?>
-            <div class="mt-3"><?= komponen('kosong', ['gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'list-ordered', 'judul' => 'Belum ada babak', 'teks' => 'Tambahkan babak (misalnya Penyisihan, lalu Final berisi "Kosong") di Hasil lomba. Final terisi sendiri dari yang lolos setelah hasil Penyisihan lengkap.']) ?></div>
+            <div class="mt-3"><?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'list-ordered', 'judul' => 'Belum ada babak', 'teks' => 'Tambahkan babak (misalnya Penyisihan, lalu Final berisi "Kosong") di Hasil lomba. Final terisi sendiri dari yang lolos setelah hasil Penyisihan lengkap.']) ?></div>
         <?php else : ?>
             <p class="mt-1 text-sm text-gray-600">Tekan nama babak untuk membagi, menggeser, atau mengunci daftar serinya.</p>
             <div class="mt-3">

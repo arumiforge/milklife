@@ -23,7 +23,7 @@
  *   bawah ponsel, dipakai wizard pendaftaran supaya tombol langkah tidak tertutup.
  *
  * Navigasi F10-07 (K154): bilah submenu atas di layar `lg` (`data-bilah-atas`),
- * menu utama (`nav[aria-label="Menu utama"]`), laci kiri ponsel
+ * menu utama (`nav[aria-label="Menu utama"]`), laci kanan ponsel
  * (`tata_letak/_laci_publik`, `aset/js/menu-publik.js`), dan menu bawah ponsel
  * (`tata_letak/_menu_bawah_publik`). Halaman yang menampilkan menu bawah
  * diberi ruang bawah di `<body>` supaya isinya tidak tertutup.
@@ -142,9 +142,6 @@ $menuBawah     = trim($this->renderSection('tanpa_menu_bawah')) === '';
 
     <header class="sticky top-0 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur" data-kepala-publik>
         <nav class="mx-auto flex max-w-screen-xl items-center gap-2 px-4 py-2.5 lg:gap-6" aria-label="Menu utama">
-            <button type="button" class="-ms-2 inline-flex size-12 shrink-0 items-center justify-center rounded-lg text-primary-900 hover:bg-gray-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 lg:hidden" aria-controls="laci-publik" aria-expanded="false" data-buka-laci>
-                <?= ikon('menu', 'size-6', 'Buka menu') ?>
-            </button>
             <a href="<?= site_url('/') ?>" class="flex min-h-11 min-w-0 flex-1 items-center gap-3 lg:flex-none" data-merek>
                 <?php if ($logo !== null) : ?>
                     <img src="<?= esc($logo['alamat']) ?>" class="h-10 w-auto mix-blend-multiply sm:h-12" alt="<?= esc('Logo ' . $acara['nama']) ?>"<?= $logo['ukuran'] === null ? '' : ' width="' . (int) $logo['ukuran']['lebar'] . '" height="' . (int) $logo['ukuran']['tinggi'] . '"' ?>>
@@ -168,6 +165,10 @@ $menuBawah     = trim($this->renderSection('tanpa_menu_bawah')) === '';
                     <?= komponen('tombol', ['label' => $t['label'], 'href' => $t['alamat'], 'varian' => $t['varian'], 'ikon' => $t['ikon'], 'ikonKanan' => $t['varian'] === 'oranye']) ?>
                 <?php endforeach ?>
             </div>
+            <?php // Tombol laci di kanan, laci muncul dari kanan (F10-08, permintaan pemilik). ?>
+            <button type="button" class="-me-2 inline-flex size-12 shrink-0 items-center justify-center rounded-lg text-primary-900 hover:bg-gray-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-300 lg:hidden" aria-controls="laci-publik" aria-expanded="false" data-buka-laci>
+                <?= ikon('menu', 'size-6', 'Buka menu') ?>
+            </button>
         </nav>
     </header>
 
@@ -179,13 +180,12 @@ $menuBawah     = trim($this->renderSection('tanpa_menu_bawah')) === '';
     </main>
 
     <footer class="mt-16 border-t border-gray-200 bg-white">
-        <div class="mx-auto flex max-w-screen-xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+        <div class="mx-auto flex max-w-screen-xl flex-col items-center gap-6 px-4 py-8 text-center sm:flex-row sm:justify-between sm:text-start">
             <div class="text-sm text-gray-600">
                 <p data-kaki-teks><?= nl2br(esc($kaki), false) ?></p>
-                <p class="mt-2"><a href="<?= site_url('admin/masuk') ?>" class="inline-flex min-h-11 items-center gap-1 font-semibold text-primary-700 hover:underline"><?= ikon('lock') ?>Masuk panitia</a></p>
             </div>
             <?php if ($logoKaki !== null) : ?>
-                <img src="<?= esc($logoKaki['alamat']) ?>" alt="<?= esc($logoKaki['alt']) ?>" class="h-12 w-auto max-w-full self-start sm:self-center" data-kaki-logo<?= $logoKaki['ukuran'] === null ? '' : ' width="' . (int) $logoKaki['ukuran']['lebar'] . '" height="' . (int) $logoKaki['ukuran']['tinggi'] . '"' ?>>
+                <img src="<?= esc($logoKaki['alamat']) ?>" alt="<?= esc($logoKaki['alt']) ?>" class="h-12 w-auto max-w-full" data-kaki-logo<?= $logoKaki['ukuran'] === null ? '' : ' width="' . (int) $logoKaki['ukuran']['lebar'] . '" height="' . (int) $logoKaki['ukuran']['tinggi'] . '"' ?>>
             <?php endif ?>
         </div>
         <div class="pita-merek h-1.5" aria-hidden="true"></div>
@@ -195,8 +195,13 @@ $menuBawah     = trim($this->renderSection('tanpa_menu_bawah')) === '';
         <?= view('tata_letak/_menu_bawah_publik', ['butir' => MenuPublik::bawah()], ['saveData' => false]) ?>
     <?php endif ?>
 
+    <?php // Salin ID pendaftaran sekali klik (F10-08): ikon untuk aset/js/salin-id.js dan pesan "tersalin". ?>
+    <template id="templat-salin-id"><?= ikon('copy', 'salin-id-ikon salin-id-ikon-salin') ?><?= ikon('check', 'salin-id-ikon salin-id-ikon-ok') ?></template>
+    <div class="fixed inset-x-0 bottom-24 z-[60] mx-auto w-fit max-w-[calc(100vw-2rem)] rounded-lg bg-primary-900 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-angkat lg:bottom-8" role="status" aria-live="polite" hidden data-salin-pesan data-tanpa-salin></div>
+
     <script src="<?= base_url('aset/vendor/flowbite/flowbite.min.js') ?>"></script>
     <script src="<?= aset('js/menu-publik.js') ?>"></script>
+    <script src="<?= aset('js/salin-id.js') ?>"></script>
     <?= $this->renderSection('skrip') ?>
 </body>
 </html>

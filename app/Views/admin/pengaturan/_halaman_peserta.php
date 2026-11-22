@@ -13,7 +13,7 @@ use App\Controllers\PesertaController;
 
 $tampilPeserta = PesertaController::tampil();
 ?>
-<section id="halaman-peserta" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-halaman-peserta">
+<section id="halaman-peserta" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-halaman-peserta">
     <h2 id="judul-halaman-peserta" class="text-lg font-bold text-gray-900">Halaman Peserta</h2>
     <p class="mb-3 mt-1 text-sm text-gray-600">
         Daftar atlet dari pendaftaran Lunas yang bisa dicari siapa saja: nama, sekolah, nomor atlet, dan nomor lomba.

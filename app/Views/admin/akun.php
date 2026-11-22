@@ -61,15 +61,15 @@ $pesan   = static fn (string $kotak, array $galat): string => isset($galat[$kota
 <?= $this->section('judul_halaman') ?>Akun<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<div class="space-y-6 p-4 sm:p-6">
+<div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= $this->include('admin/pengaturan/_navigasi') ?>
 
     <p class="text-gray-700">
         Perubahan di halaman ini hanya berlaku untuk akun Anda sendiri.
     </p>
 
-    <div class="grid gap-6 xl:grid-cols-2 xl:items-start">
-        <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-data-akun">
+    <div class="grid gap-4 xl:grid-cols-2 xl:items-start">
+        <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-data-akun">
             <div>
                 <h2 id="judul-data-akun" class="text-lg font-bold text-gray-900">Nama dan nama pengguna</h2>
                 <p class="mt-1 text-sm text-gray-600">Nama tampil di kepala panel admin. Nama pengguna dipakai untuk masuk.</p>
@@ -110,7 +110,7 @@ $pesan   = static fn (string $kotak, array $galat): string => isset($galat[$kota
             </form>
         </section>
 
-        <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6" aria-labelledby="judul-kata-sandi">
+        <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-kata-sandi">
             <div>
                 <h2 id="judul-kata-sandi" class="text-lg font-bold text-gray-900">Kata sandi</h2>
                 <p class="mt-1 text-sm text-gray-600">Setelah diganti, Anda tetap masuk di perangkat ini. Perangkat lain yang masuk dengan akun ini akan diminta masuk lagi.</p>
