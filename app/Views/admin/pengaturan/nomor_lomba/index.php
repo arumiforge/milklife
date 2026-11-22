@@ -49,6 +49,8 @@ $ringkasTim = static function (array $nomor): string {
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Nomor Lomba<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Nomor Lomba<?= $this->endSection() ?>
@@ -150,7 +152,7 @@ $ringkasTim = static function (array $nomor): string {
                     </p>
                 <?php else : ?>
                     <div class="relative overflow-x-auto rounded-b-2xl">
-                        <table class="w-full text-left text-sm text-gray-700">
+                        <table class="w-full text-left text-sm text-gray-700" data-tabel-klien>
                             <caption class="sr-only">Nomor lomba <?= esc($ku['nama']) ?></caption>
                             <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                                 <tr>

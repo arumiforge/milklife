@@ -12,13 +12,13 @@ Layar pertama halaman depan tampil seperti `desain/referensi/hero-editorial.webp
 
 ## Hasil
 
-- [ ] Hero: latar biru tua, alis slogan Inggris, judul besar Barlow Condensed huruf besar dengan satu kata oranye, keterangan Indonesia, tombol Daftar Sekarang dan Cek Pendaftaran mengikuti buka/tutup (K81); tahun di judul tetap disembunyikan
-- [ ] Foto asli carousel (`CarouselHalamanDepan`) memenuhi sisi kanan dengan gradasi biru tua ke kiri; keterangan foto kecil di pojok kanan bawah bila ada; ponsel: foto di atas dengan gradasi ke bawah
-- [ ] Pita tiga fakta di bawah hero (latar krem): Hari lomba, Lokasi, Batas pendaftaran "30 November 2026", dari pengaturan acara
-- [ ] Slideshow hero dan semua carousel publik: ganti tiap 5 detik, hanya titik penanda (tombol aksesibel `aria-label` "Foto n dari m"), tanpa tombol maju/mundur; berhenti saat `prefers-reduced-motion`, tab tidak terlihat, dan fokus di dalamnya
-- [ ] Foto pertama `fetchpriority="high"` dengan `srcset`; foto berikutnya dimuat menjelang tampil; latar warna rata-rata (F9-17) tetap
-- [ ] Sapuan hero G10-02 (`beranda/hero-sapuan.webp`) lewat `gambar_opsional()`
-- [ ] Anggaran kinerja rencana diukur sebelum dan sesudah, angkanya di deskripsi PR
+- [x] Hero: latar biru tua, alis slogan Inggris, judul besar Barlow Condensed huruf besar dengan satu kata oranye, keterangan Indonesia, tombol Daftar Sekarang dan Cek Pendaftaran mengikuti buka/tutup (K81); tahun di judul tetap disembunyikan
+- [x] Foto asli carousel (`CarouselHalamanDepan`) memenuhi sisi kanan dengan gradasi biru tua ke kiri; keterangan foto kecil di pojok kanan bawah bila ada; ponsel: foto di atas dengan gradasi ke bawah
+- [x] Pita tiga fakta di bawah hero (latar krem): Hari lomba, Lokasi, Batas pendaftaran "30 November 2026", dari pengaturan acara
+- [x] Slideshow hero dan semua carousel publik: ganti tiap 5 detik, hanya titik penanda (tombol aksesibel `aria-label` "Foto n dari m"), tanpa tombol maju/mundur; berhenti saat `prefers-reduced-motion`, tab tidak terlihat, dan fokus di dalamnya
+- [x] Foto pertama `fetchpriority="high"` dengan `srcset`; foto berikutnya dimuat menjelang tampil; latar warna rata-rata (F9-17) tetap
+- [x] Sapuan hero G10-02 (`beranda/hero-sapuan.webp`) lewat `gambar_opsional()`
+- [x] Anggaran kinerja rencana diukur sebelum dan sesudah, angkanya di deskripsi PR
 
 ## Berkas dan uji
 

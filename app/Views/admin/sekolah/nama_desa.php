@@ -24,6 +24,8 @@ $kelasBaris   = 'border-b border-gray-100 last:border-b-0 hover:bg-gray-50';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Tambahkan nama desa<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Sekolah<?= $this->endSection() ?>
@@ -61,7 +63,7 @@ $kelasBaris   = 'border-b border-gray-100 last:border-b-0 hover:bg-gray-50';
                 <?= csrf_field() ?>
 
                 <div class="relative overflow-x-auto rounded-xl border border-gray-200">
-                    <table class="w-full text-left text-sm text-gray-700" id="tabel-nama-baru">
+                    <table class="w-full text-left text-sm text-gray-700" id="tabel-nama-baru" data-tabel-klien>
                         <caption class="sr-only">Nama baru yang akan dipakai</caption>
                         <thead>
                             <tr>
@@ -113,7 +115,7 @@ $kelasBaris   = 'border-b border-gray-100 last:border-b-0 hover:bg-gray-50';
             </div>
 
             <div class="relative overflow-x-auto rounded-xl border border-gray-200">
-                <table class="w-full text-left text-sm text-gray-700" id="tabel-lewati">
+                <table class="w-full text-left text-sm text-gray-700" id="tabel-lewati" data-tabel-klien>
                     <caption class="sr-only">Sekolah yang perlu diubah sendiri</caption>
                     <thead>
                         <tr>

@@ -15,7 +15,7 @@ $denganId   ??= false;
 <?php if ($riwayat === []) : ?>
     <p class="text-sm text-gray-600" data-riwayat-kosong>Belum ada tindakan admin yang tercatat.</p>
 <?php else : ?>
-    <ol class="divide-y divide-gray-100 border-t border-gray-100" data-riwayat-admin>
+    <ol class="divide-y divide-gray-100 border-t border-gray-100" data-riwayat-admin data-daftar-berhalaman>
         <?php foreach ($riwayat as $r) : ?>
             <li class="py-2.5" data-tindakan="<?= esc($r['tindakan'], 'attr') ?>">
                 <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">

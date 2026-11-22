@@ -17,6 +17,8 @@ $td     = 'px-3 py-2 align-top';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Urutkan Nomor Atlet (BIB)<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Urutkan Nomor Atlet (BIB)<?= $this->endSection() ?>
@@ -40,7 +42,7 @@ $td     = 'px-3 py-2 align-top';
             <?php else : ?>
                 <p class="text-gray-700" id="ringkasan-jumlah"><strong><?= $ringkasan['atlet'] ?></strong> atlet dari <strong><?= $ringkasan['sekolah'] ?></strong> sekolah dengan pendaftaran Lunas.</p>
                 <div class="relative overflow-x-auto rounded-xl border border-gray-200">
-                    <table class="w-full text-left text-sm text-gray-700">
+                    <table class="w-full text-left text-sm text-gray-700" data-tabel-klien>
                         <thead><tr><th scope="col" class="<?= $th ?>">Kelompok umur</th><th scope="col" class="<?= $th ?> text-end">Atlet</th><th scope="col" class="<?= $th ?>">Awalan</th><th scope="col" class="<?= $th ?>">Keadaan</th></tr></thead>
                         <tbody>
                             <?php foreach ($ringkasan['per_kelompok_umur'] as $ku) : ?>

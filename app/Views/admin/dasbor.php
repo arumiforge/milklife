@@ -144,9 +144,10 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
         <h2 id="judul-tambahan" class="mb-3 text-lg font-bold text-gray-900">Angka lain</h2>
         <div class="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-6">
             <?php foreach ([
-                'perlu_diperiksa'      => ['Bukti bayar perlu diperiksa', 'file-search', 'admin/pendaftaran'],
+                // F10-04: dua angka bukti bayar berbeda; keterangannya menyebut bedanya.
+                'perlu_diperiksa'      => ['Menunggu, bukti sudah ada', 'file-search', 'admin/pendaftaran?status=menunggu&bukti=ada', 'Tinggal diperiksa lalu ditandai Lunas'],
                 // F8-02: pendaftaran dengan bukti bayar baru dari ofisial yang belum diperiksa.
-                'bukti_baru'           => ['Bukti bayar baru belum diperiksa', 'bell', 'admin/pendaftaran?bukti=baru'],
+                'bukti_baru'           => ['Bukti bayar baru belum diperiksa', 'bell', 'admin/pendaftaran?bukti=baru', 'Belum ditandai "Sudah diperiksa", termasuk di pendaftaran Lunas'],
                 'pendaftaran_menunggu' => ['Pendaftaran menunggu', 'clock', ''],
                 'pendaftaran_lunas'    => ['Pendaftaran lunas', 'badge-check', ''],
                 'nomor_dada'           => ['Nomor atlet (BIB) terbit', 'hash', ''],
@@ -158,7 +159,8 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
                 'kabupaten'            => ['Kabupaten', 'map-pin', ''],
                 'pengunjung_hari_ini'  => ['Pengunjung hari ini', 'eye', ''],
                 'kunjungan_hari_ini'   => ['Halaman dibuka hari ini', 'app-window', ''],
-            ] as $kunci => [$label, $ikon, $alamat]) : ?>
+            ] as $kunci => $kartuTambahan) : ?>
+                <?php [$label, $ikon, $alamat] = $kartuTambahan; $keterangan = $kartuTambahan[3] ?? ''; ?>
                 <?php $sorot = in_array($kunci, ['perlu_diperiksa', 'bukti_baru'], true) && $tambahan[$kunci] > 0; ?>
                 <div class="relative rounded-2xl border p-4 <?= $sorot ? 'border-oranye-300 bg-oranye-50' : 'border-gray-200 bg-white' ?>" data-tambahan="<?= $kunci ?>"<?= $sorot ? ' data-sorot' : '' ?>>
                     <?= ikon($ikon, $sorot ? 'text-oranye-600' : 'text-gray-400') ?>
@@ -170,6 +172,9 @@ $kartuGrafik = static fn (string $id, string $judul, string $keterangan, string 
                             <?= $label ?>
                         <?php endif ?>
                     </p>
+                    <?php if ($keterangan !== '') : ?>
+                        <p class="mt-1 text-xs text-gray-600" data-keterangan><?= esc($keterangan) ?></p>
+                    <?php endif ?>
                 </div>
             <?php endforeach; ?>
         </div>

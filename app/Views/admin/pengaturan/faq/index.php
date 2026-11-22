@@ -29,6 +29,8 @@ $ikonKategori = [
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Bantuan<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Bantuan<?= $this->endSection() ?>
@@ -86,7 +88,7 @@ $ikonKategori = [
                 <p class="rounded-xl border border-gray-200 px-4 py-3 text-gray-600">Belum ada tanya-jawab di kategori ini.</p>
             <?php else : ?>
                 <div class="relative overflow-x-auto rounded-xl border border-gray-200">
-                    <table class="w-full text-left text-sm text-gray-700">
+                    <table class="w-full text-left text-sm text-gray-700" data-tabel-klien>
                         <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-end">No</th>
