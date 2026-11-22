@@ -31,13 +31,23 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
 
         <?php if ($hasilTerbaru['juara_umum'] !== []) : ?>
             <div class="mt-8 grid gap-5 <?= count($hasilTerbaru['juara_umum']) >= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2' ?>" data-hasil-juara-umum>
+                <?php
+                // Gambar G9-06 bila berkasnya ada (F9-19): piala di judul, medali menggantikan kotak peringkat 1–3.
+                $piala  = gambar_opsional('layar/piala.webp', ['class' => 'size-7 shrink-0 object-contain', 'data-piala-juara-umum' => true]);
+                $medali = [1 => 'emas', 2 => 'perak', 3 => 'perunggu'];
+                ?>
                 <?php foreach ($hasilTerbaru['juara_umum'] as $jenjang) : ?>
                     <article class="rounded-2xl bg-primary-900 p-5 text-white shadow-angkat" aria-labelledby="hasil-umum-<?= esc($jenjang['jenjang'], 'attr') ?>">
-                        <h3 id="hasil-umum-<?= esc($jenjang['jenjang'], 'attr') ?>" class="flex items-center gap-2 text-lg font-extrabold"><?= ikon('medal', 'text-oranye-400') ?>Juara umum <?= esc($jenjang['label']) ?></h3>
+                        <h3 id="hasil-umum-<?= esc($jenjang['jenjang'], 'attr') ?>" class="flex items-center gap-2 text-lg font-extrabold"><?= $piala !== '' ? $piala : ikon('medal', 'text-oranye-400') ?>Juara umum <?= esc($jenjang['label']) ?></h3>
                         <ol class="mt-4 space-y-2">
                             <?php foreach ($jenjang['baris'] as $b) : ?>
                                 <li class="flex items-center gap-3 rounded-xl bg-white/10 p-3">
-                                    <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-langit-300 text-lg font-extrabold text-primary-900"><?= (int) $b['peringkat'] ?><span class="sr-only">.</span></span>
+                                    <?php $gambarMedali = isset($medali[(int) $b['peringkat']]) ? gambar_opsional('layar/medali-' . $medali[(int) $b['peringkat']] . '.webp', ['class' => 'size-9 shrink-0 object-contain', 'data-medali-juara-umum' => (int) $b['peringkat']]) : ''; ?>
+                                    <?php if ($gambarMedali !== '') : ?>
+                                        <?= $gambarMedali ?><span class="sr-only"><?= (int) $b['peringkat'] ?>.</span>
+                                    <?php else : ?>
+                                        <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-langit-300 text-lg font-extrabold text-primary-900"><?= (int) $b['peringkat'] ?><span class="sr-only">.</span></span>
+                                    <?php endif ?>
                                     <span class="min-w-0 flex-1 font-bold break-words"><?= esc($b['sekolah']) ?></span>
                                     <?php if (($hasilTerbaru['metode'] ?? '') === 'poin') : ?>
                                         <span class="shrink-0 text-sm text-primary-100" data-poin><span class="font-extrabold text-white"><?= (int) $b['poin'] ?></span> poin</span>
