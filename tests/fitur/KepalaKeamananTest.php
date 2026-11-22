@@ -80,13 +80,18 @@ final class KepalaKeamananTest extends UjiBasisData
             $this->assertContains('self', (array) $csp->{$arahan}, $arahan);
         }
 
+        // Peta lokasi halaman depan (F10-02): hanya iframe, bukan skrip dari Google.
+        $this->assertContains('https://www.google.com', (array) $csp->frameSrc);
+        $this->assertNotContains('https://www.google.com', (array) $csp->scriptSrc);
+        $this->assertNotContains('https://www.google.com', (array) $csp->scriptSrcElem);
+
         $jawaban = new Response(config(App::class));
         $jawaban->setBody('<script {csp-script-nonce}></script><style {csp-style-nonce}></style>');
         (new CspBawaan($csp))->finalize($jawaban);
         $kepala = $jawaban->getHeaderLine('Content-Security-Policy');
 
         $this->assertMatchesRegularExpression("#script-src 'self' https://challenges\\.cloudflare\\.com 'nonce-[^']+'#", $kepala);
-        $this->assertMatchesRegularExpression("#frame-src 'self' https://challenges\\.cloudflare\\.com#", $kepala);
+        $this->assertMatchesRegularExpression("#frame-src 'self' https://challenges\\.cloudflare\\.com https://www\\.google\\.com#", $kepala);
         $this->assertMatchesRegularExpression("#img-src 'self' data: blob:#", $kepala);
         $this->assertStringContainsString("object-src 'none'", $kepala);
         $this->assertStringContainsString("manifest-src 'self'", $kepala);

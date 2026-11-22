@@ -13,6 +13,7 @@
  * | `_angka.php`   | Angka acara dari pendaftaran Lunas (bila sudah ada)        | `angka`      |
  * | `_hasil.php`   | Hasil terbaru dan juara umum (bila sudah ada yang terbit)  | `hasil`      |
  * | `_unduhan.php` | Unduhan                                                    | `unduhan`    |
+ * | `_lokasi.php`  | Alamat dan peta Google Maps (bila alamat embed diisi)      | `lokasi`     |
  * | `_kontak.php`  | Narahubung, media sosial, tombol WA                        | `kontak`     |
  *
  * Saat sakelar "Tampilkan hasil di atas (hari lomba)" menyala, `_hasil.php`
@@ -65,6 +66,7 @@
 <?= view('beranda/_faq', ['faq' => $faq], ['saveData' => false]) ?>
 <?= view('beranda/_pemisah', [], ['saveData' => false]) ?>
 <?= view('beranda/_unduhan', ['unduhan' => $unduhan], ['saveData' => false]) ?>
+<?= view('beranda/_lokasi', ['tempat' => $acara['tempat']], ['saveData' => false]) ?>
 <?= view('beranda/_kontak', ['narahubung' => $narahubung, 'mediaSosial' => $mediaSosial, 'waTanya' => $waTanya, 'waBagikan' => $waBagikan], ['saveData' => false]) ?>
 <?= $this->endSection() ?>
 
@@ -73,4 +75,7 @@
     <script src="<?= aset('js/carousel-beranda.js') ?>"></script>
 <?php endif ?>
 <script type="module" src="<?= aset('js/adegan-merek.js') ?>"></script>
+<?php if (App\Libraries\PetaLokasi::embed() !== '') : ?>
+    <script src="<?= aset('js/peta-lokasi.js') ?>" defer></script>
+<?php endif ?>
 <?= $this->endSection() ?>
