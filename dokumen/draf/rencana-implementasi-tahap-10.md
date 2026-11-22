@@ -208,7 +208,7 @@ Brief di `desain/tugas/G10-*.md`; urutan di `desain/README.md`. Codex hanya menu
 ## Asumsi
 
 1. Huruf judul Barlow Condensed lokal (OFL) adalah aset, bukan pustaka kode; dipasang lewat rantai bangun yang sama dengan Inter (K141, K155).
-2. Gambar G10 pengganti memakai nama berkas yang sama dengan G9 sehingga kode pemasangan Tahap 9 tetap berlaku; `nomor/seneng-playon.webp` dan `pola/titik-halus.webp` tidak dibuat ulang (KU 8 tanpa "Seneng Playon"; titik hiasan dilarang).
+2. Gambar G10 pengganti memakai nama berkas yang sama dengan G9 sehingga kode pemasangan Tahap 9 tetap berlaku; `nomor/seneng-playon.webp` dan `pola/titik-halus.webp` tidak dibuat ulang dan dihapus dari repo di F10-10 (KU 8 tanpa "Seneng Playon"; titik hiasan dilarang; K168).
 3. Foto hero hanya dari foto carousel yang sudah dipasang admin atau bawaan; tidak ada foto baru yang di-commit.
 4. `data:sesuaikan` tidak menyentuh data pendaftaran; impor backup tetap dijalankan pemilik di server.
 5. Gambar G9 lama tertimpa oleh G10; tidak ada folder G9 terpisah yang disimpan.
