@@ -38,6 +38,7 @@ Dipasang lewat `package.json` di akar repo (versi mengikuti `package.json` templ
 | `flowbite/flowbite.min.js` | `flowbite` (`dist/flowbite.min.js`), JS komponen templat Pro: carousel, laci, modal, dropdown, tab, tooltip, akordeon, pemilih tanggal | MIT (`flowbite/LICENSE-flowbite.md`) |
 | `three/three.module.min.js`, `three/three.core.min.js` | `three` (`build/`), modul ES; berkas pertama mengimpor yang kedua | MIT (`three/LICENSE`) |
 | `inter/inter-latin-wght-normal.woff2`, `inter/inter-latin-ext-wght-normal.woff2` | `@fontsource-variable/inter`, huruf templat Pro | OFL 1.1 (`inter/LICENSE`) |
+| `barlow-condensed/barlow-condensed-{latin,latin-ext}-{600,800}-{normal,italic}.woff2` (8 berkas) | `@fontsource/barlow-condensed` (`files/`), huruf judul tampilan Tahap 10 (K155, F10-05): berat 600 dan 800, tegak dan miring, subset latin dan latin-ext saja | OFL 1.1 (`barlow-condensed/LICENSE`) |
 | `lucide/lucide.svg` | `lucide-static` (`icons/*.svg`), sprite berisi ikon yang dipakai saja (`npm run ikon`) | ISC (`lucide/LICENSE`) |
 
 CSS tampilan baru bukan di folder ini: `public/aset/css/tw.css` dibangun `npm run css` dari `public/aset/tailwind/masukan.css` dengan Tailwind 4, plugin dan tema Flowbite, dan `flowbite-typography`, seperti `src/app.css` templat Pro.

@@ -20,8 +20,9 @@
  */
 
 $varian = [
-    'utama'  => 'bg-primary-700 text-white hover:bg-primary-800 focus:ring-primary-300',
-    'oranye' => 'bg-oranye-600 text-white hover:bg-oranye-700 focus:ring-oranye-300',
+    // Warna dan latar sapuan kuas G10-11 (bila berkasnya ada) dari kelas `tombol-utama-berart` (F10-05).
+    'utama'  => 'tombol-utama-berart focus:ring-primary-300',
+    'oranye' => 'tombol-utama-berart tombol-berart-oranye focus:ring-oranye-300',
     'kedua'  => 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 hover:text-primary-700 focus:ring-gray-100',
     'bahaya' => 'bg-red-700 text-white hover:bg-red-800 focus:ring-red-300',
     'hantu'  => 'text-primary-700 hover:bg-primary-100 focus:ring-primary-100',

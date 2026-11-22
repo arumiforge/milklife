@@ -3,8 +3,8 @@
  * Flowbite Pro di `template-flowbites/`. Dibangun dengan `npm run css` menjadi
  * `public/aset/css/tw.css` (di-commit; jangan disunting tangan).
  *
- * Hanya F9-01 dan F9-17 yang mengubah berkas ini (rencana Tahap 9, aturan 7);
- * tugas lain cukup memakai kelas Tailwind/Flowbite di view.
+ * Tugas Tahap 10 menambah gaya di blok bertanda nama tugasnya (rencana Tahap 10,
+ * aturan 5); selain itu cukup memakai kelas Tailwind/Flowbite di view.
  *
  * `source(none)`: Tailwind hanya memindai folder yang disebut `@source`, supaya
  * templat Pro (ribuan halaman HTML) tidak ikut terbangun.
@@ -43,6 +43,79 @@
     unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+/* F10-05: huruf judul Barlow Condensed (OFL, K155), berat 600 dan 800, tegak dan miring. */
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 600;
+    src: url('../vendor/barlow-condensed/barlow-condensed-latin-600-normal.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: italic;
+    font-display: swap;
+    font-weight: 600;
+    src: url('../vendor/barlow-condensed/barlow-condensed-latin-600-italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 800;
+    src: url('../vendor/barlow-condensed/barlow-condensed-latin-800-normal.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: italic;
+    font-display: swap;
+    font-weight: 800;
+    src: url('../vendor/barlow-condensed/barlow-condensed-latin-800-italic.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 600;
+    src: url('../vendor/barlow-condensed/barlow-condensed-latin-ext-600-normal.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: italic;
+    font-display: swap;
+    font-weight: 600;
+    src: url('../vendor/barlow-condensed/barlow-condensed-latin-ext-600-italic.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 800;
+    src: url('../vendor/barlow-condensed/barlow-condensed-latin-ext-800-normal.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    font-style: italic;
+    font-display: swap;
+    font-weight: 800;
+    src: url('../vendor/barlow-condensed/barlow-condensed-latin-ext-800-italic.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 @theme {
     /* Biru MilkLife (`--ml-biru` #234987 = 700, `--ml-biru-tua` #021F7B = 900). */
     --color-primary-50: #F3F6FB;
@@ -77,6 +150,9 @@
 
     --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-body: var(--font-sans);
+    /* F10-05: huruf judul editorial dan krem pita fakta (rujukan hero editorial). */
+    --font-tampilan: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', ui-sans-serif, system-ui, sans-serif;
+    --color-krem: #F5EFE6;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
     /* Bayangan lembut dan gradien merek (inspirasi railway.com, mode terang). */
@@ -145,4 +221,172 @@
     .kerangka {
         @apply animate-pulse rounded-md bg-gray-200 motion-reduce:animate-none;
     }
+
+    /* ===== F10-05: gaya editorial ======================================
+     * Kelas berart memakai gambar G10-11 (`public/aset/gambar/elemen/`) hanya di
+     * bawah kelas penanda `ada-<nama>` yang ditulis tata letak publik bila
+     * berkasnya ada (`GambarOpsional::penandaElemen()`), jadi tanpa berkas tidak
+     * ada permintaan 404 dan tampilannya warna padat. Teks selalu HTML. */
+
+    /* Judul tampilan: Barlow Condensed tebal, huruf besar, skala cair 2–3,25 rem. */
+    .judul-tampilan {
+        font-family: var(--font-tampilan);
+        font-weight: 800;
+        font-size: clamp(2rem, 1.55rem + 1.9vw, 3.25rem);
+        line-height: 0.98;
+        letter-spacing: -0.005em;
+        text-transform: uppercase;
+        text-wrap: balance;
+        color: var(--color-primary-900);
+    }
+
+    /* Alis (eyebrow): label kecil huruf besar berjarak lebar dengan garis pendek oranye di depannya. */
+    .alis {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        font-size: 0.75rem;
+        line-height: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-oranye-700);
+    }
+
+    .alis::before {
+        content: "";
+        flex: none;
+        width: 1.5rem;
+        height: 2px;
+        background-color: var(--color-oranye-500);
+    }
+
+    /* Tombol utama berart: warna padat (biru; `tombol-berart-oranye` untuk oranye), latar sapuan kuas
+       G10-11 bila berkasnya ada. Fokus memakai cincin `focus:ring-*` dari komponen. */
+    .tombol-utama-berart {
+        background-color: var(--color-primary-700);
+        color: #fff;
+    }
+
+    .tombol-utama-berart:hover {
+        background-color: var(--color-primary-800);
+    }
+
+    .tombol-utama-berart.tombol-berart-oranye {
+        background-color: var(--color-oranye-600);
+    }
+
+    .tombol-utama-berart.tombol-berart-oranye:hover {
+        background-color: var(--color-oranye-700);
+    }
+
+    .ada-kuas-tombol-biru .tombol-utama-berart:not(.tombol-berart-oranye),
+    .ada-kuas-tombol-oranye .tombol-utama-berart.tombol-berart-oranye {
+        background-color: transparent;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        padding-inline: 1.75rem;
+        text-shadow: 0 1px 1px rgb(0 0 0 / 0.25);
+    }
+
+    .ada-kuas-tombol-biru .tombol-utama-berart:not(.tombol-berart-oranye) {
+        background-image: url("../gambar/elemen/kuas-tombol-biru.webp");
+    }
+
+    .ada-kuas-tombol-oranye .tombol-utama-berart.tombol-berart-oranye {
+        background-image: url("../gambar/elemen/kuas-tombol-oranye.webp");
+    }
+
+    .ada-kuas-tombol-biru .tombol-utama-berart:not(.tombol-berart-oranye):hover,
+    .ada-kuas-tombol-oranye .tombol-utama-berart.tombol-berart-oranye:hover {
+        background-color: transparent;
+        filter: brightness(0.9);
+    }
+
+    /* Pemisah lintasan: garis tipis abu-abu; potongan lintasan G10-11 bila berkasnya ada. */
+    .pemisah-lintasan {
+        display: block;
+        height: 1px;
+        border: 0;
+        background-color: var(--color-gray-200);
+    }
+
+    .ada-pemisah-lintasan .pemisah-lintasan {
+        height: clamp(1.25rem, 0.9rem + 1.5vw, 2.5rem);
+        background-color: transparent;
+        background-image: url("../gambar/elemen/pemisah-lintasan.webp");
+        background-repeat: repeat-x;
+        background-position: center;
+        background-size: auto 100%;
+    }
+
+    /* Ornamen judul: garis kecepatan G10-11 di kiri (dan kanan) judul; tanpa berkas tidak tampil apa pun. */
+    .ada-ornamen-judul-kiri .ornamen-judul::before,
+    .ada-ornamen-judul-kanan .ornamen-judul::after {
+        content: "";
+        display: inline-block;
+        width: 2em;
+        height: 1em;
+        vertical-align: -0.05em;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+
+    .ada-ornamen-judul-kiri .ornamen-judul::before {
+        margin-inline-end: 0.3em;
+        background-image: url("../gambar/elemen/ornamen-judul-kiri.webp");
+    }
+
+    .ada-ornamen-judul-kanan .ornamen-judul::after {
+        margin-inline-start: 0.3em;
+        background-image: url("../gambar/elemen/ornamen-judul-kanan.webp");
+    }
+
+    /* Bingkai foto: sudut potong miring pada anak langsung; sudut sapuan tinta G10-11 di dua sudut berlawanan. */
+    .bingkai-foto {
+        position: relative;
+        isolation: isolate;
+    }
+
+    .bingkai-foto > * {
+        clip-path: polygon(1.25rem 0, 100% 0, 100% calc(100% - 1.25rem), calc(100% - 1.25rem) 100%, 0 100%, 0 1.25rem);
+    }
+
+    .ada-bingkai-sudut .bingkai-foto::before,
+    .ada-bingkai-sudut .bingkai-foto::after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        width: clamp(3rem, 18%, 6rem);
+        aspect-ratio: 1;
+        pointer-events: none;
+        background-image: url("../gambar/elemen/bingkai-sudut.webp");
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+
+    .ada-bingkai-sudut .bingkai-foto::before {
+        inset-block-start: -0.5rem;
+        inset-inline-start: -0.5rem;
+    }
+
+    .ada-bingkai-sudut .bingkai-foto::after {
+        inset-block-end: -0.5rem;
+        inset-inline-end: -0.5rem;
+        rotate: 180deg;
+    }
+
+    /* Tekstur kertas: krem padat; serat kertas G10-11 bila berkasnya ada. */
+    .tekstur-kertas {
+        background-color: var(--color-krem);
+    }
+
+    .ada-tekstur-kertas .tekstur-kertas {
+        background-image: url("../gambar/elemen/tekstur-kertas.webp");
+        background-repeat: repeat;
+        background-size: 512px 512px;
+    }
+    /* ===== akhir F10-05 ================================================ */
 }

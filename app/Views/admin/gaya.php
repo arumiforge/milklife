@@ -56,13 +56,47 @@ $bagian = static fn (string $id, string $judul, string $keterangan): string => '
     </section>
 
     <section aria-labelledby="huruf">
-        <?= $bagian('huruf', 'Huruf', 'Inter (OFL), huruf templat Flowbite Pro, disimpan lokal.') ?>
+        <?= $bagian('huruf', 'Huruf', 'Inter (OFL) untuk teks badan dan Barlow Condensed (OFL, K155) untuk judul tampilan, keduanya disimpan lokal.') ?>
         <div class="space-y-2 rounded-2xl border border-gray-200 bg-white p-6 shadow-lembut">
             <p class="text-4xl font-extrabold tracking-tight text-primary-900">Ayo daftarkan sekolahmu</p>
             <p class="text-2xl font-bold text-gray-900">Kelompok umur dan nomor lomba</p>
             <p class="text-lg font-semibold text-gray-800">Langkah 3 dari 5: data atlet</p>
             <p class="text-base text-gray-700">Isi nama lengkap sesuai rapor. NISN 10 angka, ada di kartu pelajar atau ditanyakan ke operator sekolah.</p>
             <p class="text-sm text-gray-500">Teks kecil untuk keterangan tambahan.</p>
+        </div>
+    </section>
+
+    <section aria-labelledby="editorial" data-katalog-editorial>
+        <?= $bagian('editorial', 'Gaya editorial (F10-05)', 'Barlow Condensed (OFL) untuk judul, alis oranye, tombol utama berart, pemisah lintasan, ornamen judul, bingkai foto, dan tekstur kertas. Art G10-11 tampil bila berkasnya sudah ada; tanpa berkas memakai warna padat.') ?>
+        <?php // Kelas penanda `ada-*` di pembungkus supaya contoh art tampil walaupun tata letak admin tidak memasangnya. ?>
+        <div class="<?= esc(trim('space-y-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-lembut ' . App\Libraries\GambarOpsional::penandaElemen())) ?>">
+            <div>
+                <p class="alis">Alis · alis</p>
+                <p class="judul-tampilan ornamen-judul mt-2">Judul tampilan · judul-tampilan</p>
+                <p class="mt-1 text-gray-600">Judul Inggris (slogan, judul editorial) selalu diberi keterangan berbahasa Indonesia; tombol dan menu tetap Indonesia.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <?= komponen('tombol', ['label' => 'Daftarkan sekolah', 'ikon' => 'arrow-right', 'ikonKanan' => true]) ?>
+                <?= komponen('tombol', ['label' => 'Daftar sekarang', 'varian' => 'oranye', 'ukuran' => 'besar']) ?>
+                <span class="text-sm text-gray-500">tombol-utama-berart, tombol-berart-oranye</span>
+            </div>
+            <div>
+                <div class="pemisah-lintasan" aria-hidden="true"></div>
+                <p class="mt-1 text-sm text-gray-500">pemisah-lintasan</p>
+            </div>
+            <div class="grid gap-6 sm:grid-cols-2">
+                <figure>
+                    <div class="bingkai-foto">
+                        <div class="aspect-[4/3] bg-linear-to-br from-primary-900 via-primary-700 to-oranye-500"></div>
+                    </div>
+                    <figcaption class="mt-2 text-sm text-gray-500">bingkai-foto</figcaption>
+                </figure>
+                <div class="tekstur-kertas flex flex-col justify-center p-6">
+                    <p class="alis">Batas pendaftaran</p>
+                    <p class="font-tampilan text-4xl font-extrabold text-oranye-700">30 November</p>
+                    <p class="mt-1 text-sm text-gray-600">tekstur-kertas, krem #F5EFE6</p>
+                </div>
+            </div>
         </div>
     </section>
 

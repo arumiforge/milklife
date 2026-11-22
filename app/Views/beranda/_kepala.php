@@ -106,12 +106,10 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
     <div class="relative mx-auto grid max-w-screen-xl items-center gap-8 px-4 pb-10 pt-6 sm:pt-10 lg:grid-cols-12 lg:gap-12 lg:pb-14 lg:pt-14">
         <div class="<?= $adaKanan ? 'lg:col-span-6' : 'lg:col-span-10 xl:col-span-8' ?> flex flex-col gap-5 sm:gap-6">
             <?php if ($acara['seri_tahun'] !== '') : ?>
-                <p class="inline-flex w-fit items-center gap-2 rounded-full border border-oranye-200 bg-white/80 px-3 py-1 text-sm font-bold text-oranye-700 shadow-lembut" data-pembuka-seri>
-                    <span class="size-2 rounded-full bg-oranye-500" aria-hidden="true"></span><?= esc($acara['seri_tahun']) ?>
-                </p>
+                <p class="alis" data-pembuka-seri><?= esc($acara['seri_tahun']) ?></p>
             <?php endif ?>
 
-            <h1 id="judul-acara" class="text-[2.5rem] font-extrabold uppercase italic leading-[0.95] tracking-tight text-primary-900 sm:text-6xl lg:text-7xl">
+            <h1 id="judul-acara" class="font-tampilan text-[2.75rem] font-extrabold uppercase italic leading-[0.95] tracking-tight text-primary-900 sm:text-6xl lg:text-7xl">
                 <?php foreach ($kalimatJudul as $i => $kalimat) : ?>
                     <?php $sorot = $i === count($kalimatJudul) - 1 && $i > 0; ?>
                     <span class="block<?= $sorot ? ' text-oranye-600' : '' ?>"<?= $sorot ? ' data-judul-sorot' : '' ?>><?= esc($kalimat) ?></span>
@@ -135,7 +133,7 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                             <span class="flex min-w-0 items-center gap-2 px-4 py-3">
                                 <?= ikon('calendar-days', 'size-6 text-primary-700') ?>
                                 <span class="flex flex-col leading-tight">
-                                    <?php if ($tanggalInfo[0] !== '') : ?><strong class="text-2xl font-extrabold text-primary-900" data-info-besar><?= esc($tanggalInfo[0]) ?></strong> <?php endif ?>
+                                    <?php if ($tanggalInfo[0] !== '') : ?><strong class="font-tampilan text-3xl font-extrabold text-primary-900" data-info-besar><?= esc($tanggalInfo[0]) ?></strong> <?php endif ?>
                                     <span class="text-sm font-semibold text-gray-700"><?= esc($tanggalInfo[1]) ?></span>
                                 </span>
                             </span>
@@ -166,7 +164,7 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
                 <?php foreach ($tombol as $butir) : ?>
                     <?php
                     $kelas = 'inline-flex min-h-14 items-center justify-center gap-2 rounded-xl px-6 py-3 text-lg font-bold transition-colors focus:outline-none focus:ring-4 '
-                        . ($butir['utama'] ? 'bg-oranye-600 text-white shadow-angkat hover:bg-oranye-700 focus:ring-oranye-300' : 'border-2 border-primary-700 bg-white text-primary-800 hover:bg-primary-50 focus:ring-primary-200');
+                        . ($butir['utama'] ? 'tombol-utama-berart tombol-berart-oranye focus:ring-oranye-300' : 'border border-gray-300 bg-white text-primary-800 hover:bg-gray-50 focus:ring-primary-200');
                     ?>
                     <?php if ($butir['alamat'] === null) : ?>
                         <a class="<?= $kelas ?> cursor-not-allowed opacity-60" role="link" aria-disabled="true" data-tombol="<?= esc($butir['kunci'], 'attr') ?>"<?= $butir['utama'] ? ' data-utama' : '' ?>>
@@ -228,15 +226,15 @@ $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s
     <?php if ($kelompokUmur !== []) : ?>
         <div class="relative isolate mx-auto max-w-screen-xl px-4 pb-10" data-pembuka-ku>
             <?= $latarLintasan ?>
-            <p class="mb-4 text-sm font-bold uppercase tracking-wider text-primary-700" data-pembuka-ku-label>Kelompok umur</p>
+            <p class="alis mb-4" data-pembuka-ku-label>Kelompok umur</p>
             <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 <?= [3 => 'lg:grid-cols-3', 4 => 'lg:grid-cols-4', 5 => 'lg:grid-cols-5'][min(5, max(3, count($kelompokUmur)))] ?>">
                 <?php foreach ($kelompokUmur as $i => $ku) : ?>
                     <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>
                     <li>
-                        <a class="group flex h-full min-h-24 flex-col gap-1 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut transition hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-angkat focus:outline-none focus:ring-4 focus:ring-primary-200" href="#lomba-ku-<?= (int) $ku['id'] ?>" data-ku-kartu>
+                        <a class="group flex h-full min-h-24 flex-col gap-1 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-angkat focus:outline-none focus:ring-4 focus:ring-primary-200" href="#lomba-ku-<?= (int) $ku['id'] ?>" data-ku-kartu>
                             <?php // Nama, julukan, lalu jumlah nomor individu dan beregu (K88); jumlah 0 tidak ditulis. ?>
                             <span class="flex items-center justify-between gap-2">
-                                <span class="text-xl font-extrabold text-primary-900"><?= esc($namaKu) ?></span>
+                                <span class="font-tampilan text-2xl font-extrabold uppercase text-primary-900"><?= esc($namaKu) ?></span>
                                 <?= ikon('arrow-right', 'size-4 text-oranye-600 transition group-hover:translate-x-0.5') ?>
                             </span>
                             <?php if ($julukan !== '') : ?>

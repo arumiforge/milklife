@@ -125,8 +125,8 @@ $kartuKu = gambar_opsional('beranda/kartu-ku.webp', ['class' => 'pointer-events-
 ?>
 <section id="lomba" class="scroll-mt-20 bg-white" aria-labelledby="judul-lomba">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
-        <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Kategori dan biaya</p>
-        <h2 id="judul-lomba" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Kelompok umur dan nomor lomba</h2>
+        <p class="alis">Kategori dan biaya</p>
+        <h2 id="judul-lomba" class="judul-tampilan ornamen-judul mt-2">Kelompok umur dan nomor lomba</h2>
         <p class="mt-3 max-w-3xl text-lg text-gray-600" data-lomba-pengantar>
             Kelompok umur ditentukan dari tahun lahir atlet.
             <?php if ($tampilkanBiaya) : ?>
@@ -153,11 +153,11 @@ $kartuKu = gambar_opsional('beranda/kartu-ku.webp', ['class' => 'pointer-events-
                 <article id="lomba-ku-<?= $ku['id'] ?>" class="scroll-mt-24 rounded-2xl border border-gray-200 bg-primary-50/60 p-5 shadow-lembut sm:p-6" aria-labelledby="<?= $idJudul ?>" data-lomba-ku>
                     <?php if ($kartuKu !== '') : ?>
                         <div class="flex items-start justify-between gap-3">
-                            <h3 id="<?= $idJudul ?>" class="text-2xl font-extrabold text-primary-900"><?= esc($ku['nama']) ?></h3>
+                            <h3 id="<?= $idJudul ?>" class="font-tampilan text-3xl font-extrabold uppercase text-primary-900"><?= esc($ku['nama']) ?></h3>
                             <?= $kartuKu ?>
                         </div>
                     <?php else : ?>
-                        <h3 id="<?= $idJudul ?>" class="text-2xl font-extrabold text-primary-900"><?= esc($ku['nama']) ?></h3>
+                        <h3 id="<?= $idJudul ?>" class="font-tampilan text-3xl font-extrabold uppercase text-primary-900"><?= esc($ku['nama']) ?></h3>
                     <?php endif ?>
 
                     <dl class="mt-4 grid gap-3 sm:grid-cols-2" data-lomba-ku-info>

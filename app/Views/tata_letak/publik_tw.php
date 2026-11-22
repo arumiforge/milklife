@@ -11,6 +11,11 @@
  *   `meta description` (di-escape pemanggil); bawaan kalimat umum acara.
  * - `isi`: isi halaman di dalam `<main id="isi">`. Halaman menulis `<h1>`-nya sendiri.
  * - `kepala`: tag tambahan di `<head>`.
+ * - `preload`: `<link rel="preload">` tambahan sebelum CSS, misalnya huruf judul
+ *   Barlow Condensed yang tampil di layar pertama (F10-05).
+ *
+ * Kelas penanda `ada-<nama>` di `<html>` hanya ditulis untuk elemen G10-11 yang
+ * berkasnya ada (`GambarOpsional::penandaElemen()`, F10-05).
  * - `skrip`: `<script src>` tambahan, dimuat setelah JS Flowbite. Modul ES
  *   (Three.js) memakai `<script type="module" src>`.
  *
@@ -49,7 +54,7 @@ if ($keterangan === '') {
 $gambarBagikan = GambarOpsional::bagikan(uri_string());
 ?>
 <!doctype html>
-<html lang="id">
+<html lang="id"<?= ($penandaElemen = GambarOpsional::penandaElemen()) === '' ? '' : ' class="' . esc($penandaElemen) . '"' ?>>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -73,6 +78,7 @@ $gambarBagikan = GambarOpsional::bagikan(uri_string());
     <?php endif ?>
     <?= view('tata_letak/_ikon_aplikasi', [], ['saveData' => false]) ?>
     <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
+    <?= $this->renderSection('preload') ?>
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
     <?= $this->renderSection('kepala') ?>
 </head>

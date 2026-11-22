@@ -24,7 +24,7 @@
                 <span class="absolute top-[1.55rem] right-1/2 left-[-50%] h-[3px] rounded-full bg-gray-200 [li:has(.pil-selesai)+li>&]:bg-primary-700" aria-hidden="true"></span>
             <?php endif ?>
             <button type="button" class="pil group relative z-10 flex w-full flex-col items-center gap-1.5 rounded-lg px-0.5 py-1.5 text-center text-[0.72rem] leading-tight text-gray-500 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-200 enabled:hover:bg-primary-50 sm:text-sm [&:disabled:not(.pil-selesai)]:text-gray-400 [&.pil-aktif]:font-bold [&.pil-aktif]:text-primary-900 [&.pil-selesai]:text-primary-700" data-ke-langkah="<?= $no ?>" disabled>
-                <span class="pil-nomor inline-flex size-10 items-center justify-center rounded-full border-2 border-gray-200 bg-white font-bold group-[.pil-aktif]:border-oranye-600 group-[.pil-aktif]:bg-oranye-600 group-[.pil-aktif]:text-white group-[.pil-aktif]:ring-4 group-[.pil-aktif]:ring-oranye-100 group-[.pil-selesai]:border-primary-700 group-[.pil-selesai]:bg-primary-700 group-[.pil-selesai]:text-white" aria-hidden="true">
+                <span class="pil-nomor inline-flex size-10 items-center justify-center rounded-full bg-gray-100 font-bold group-[.pil-aktif]:bg-oranye-600 group-[.pil-aktif]:text-white group-[.pil-selesai]:bg-primary-700 group-[.pil-selesai]:text-white" aria-hidden="true">
                     <span class="pil-angka group-[.pil-selesai]:hidden"><?= $no ?></span><?= ikon('check', 'pil-centang hidden size-5 group-[.pil-selesai]:inline-block') ?>
                 </span>
                 <span class="pil-judul"><?= esc($nama) ?></span>

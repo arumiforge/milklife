@@ -11,7 +11,7 @@
  */
 
 [$warna, $ikonJenis] = [
-    'info'       => ['border-primary-200 bg-primary-100 text-primary-900', 'info'],
+    'info'       => ['border-transparent bg-primary-100 text-primary-900', 'info'],
     'sukses'     => ['border-green-200 bg-green-50 text-green-900', 'circle-check'],
     'peringatan' => ['border-yellow-200 bg-yellow-50 text-yellow-900', 'triangle-alert'],
     'bahaya'     => ['border-red-200 bg-red-50 text-red-900', 'circle-alert'],
