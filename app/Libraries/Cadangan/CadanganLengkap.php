@@ -496,7 +496,8 @@ final class CadanganLengkap
                 throw new RuntimeException('Berkas ' . $dalamZip . ' gagal disalin dari cadangan. Tidak ada yang berubah.');
             }
 
-            $tersalin = @stream_copy_to_stream($masuk, $keluar);
+            // Paling banyak satu bita lebih dari ukuran yang tertulis di zip: isi yang lebih panjang ditolak tanpa memenuhi diska.
+            $tersalin = is_array($stat) ? @stream_copy_to_stream($masuk, $keluar, (int) $stat['size'] + 1) : false;
             fclose($masuk);
             fclose($keluar);
 
