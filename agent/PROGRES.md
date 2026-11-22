@@ -4,26 +4,42 @@ Diperbarui: 22 November 2026
 
 ## Sedang berjalan
 
-Belum ada tahap berjalan. Tahap 9 sudah ditutup (F9-18) dan diarsipkan.
+**Tahap 10 — Identitas visual anime, panel admin, dan data terbaru** (K153–K155). Permintaan: [`dokumen/draf/permintaan-tahap-10.md`](../dokumen/draf/permintaan-tahap-10.md). Rencana: [`dokumen/draf/rencana-implementasi-tahap-10.md`](../dokumen/draf/rencana-implementasi-tahap-10.md). Semua siap sebelum pertemuan teknik 6 Desember.
 
-### Gambar Codex Tahap 9
+| Tugas | Status |
+|---|---|
+| [F10-01 Data dan pengaturan bawaan](tugas/F10-01-data-pengaturan-bawaan.md) | rencana |
+| [F10-02 Peta lokasi](tugas/F10-02-peta-lokasi.md) | rencana |
+| [F10-03 Tata letak panel admin](tugas/F10-03-tata-letak-admin.md) | rencana |
+| [F10-04 Tabel berpaginasi dan dasbor](tugas/F10-04-tabel-paginasi-dasbor.md) | rencana |
+| [F10-05 Fondasi gaya editorial](tugas/F10-05-fondasi-gaya-editorial.md) | rencana |
+| [F10-06 Hero editorial dan slideshow](tugas/F10-06-hero-editorial-slideshow.md) | rencana |
+| [F10-07 Navigasi publik](tugas/F10-07-navigasi-publik.md) | rencana |
+| [F10-08 Kepadatan panel admin](tugas/F10-08-kepadatan-admin.md) | rencana |
+| [F10-09 Halaman publik dan unduhan](tugas/F10-09-halaman-publik-unduhan.md) | rencana |
+| [F10-10 Pemasangan art G10](tugas/F10-10-pemasangan-art-g10.md) | rencana |
+| [F10-11 Penutupan Tahap 10](tugas/F10-11-penutupan-tahap-10.md) | rencana |
 
-Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau, digabung, dan dipasang sesi pemantau gambar (K150). Semua tugas G9 selesai 22 November 2026 dan halaman tetap aman tanpa berkasnya (K41). Pemasangan tambahan: uji tanpa gambar Codex (#164), medali dan piala juara umum (#166), hiasan beranda dan halaman masuk (#167), podium dan medali videotron (#168).
+### Gambar Codex Tahap 10
+
+Gaya anime 2D cel-shaded (K153); dikerjakan Codex berurutan dari [`desain/README.md`](../desain/README.md), ditinjau dan digabung koordinator. Pengganti G9 memakai nama berkas sama, jadi langsung tampil setelah digabung.
 
 | Tugas gambar | Status |
 |---|---|
-| [G9-01 Latar BIB](../desain/tugas/G9-01-latar-bib.md) | selesai (#142) |
-| [G9-02 Ilustrasi halaman depan](../desain/tugas/G9-02-ilustrasi-halaman-depan.md) | selesai (#153, dipasang #167) |
-| [G9-03 Panduan pendaftaran](../desain/tugas/G9-03-panduan-pendaftaran.md) | selesai (#154) |
-| [G9-04 Keadaan kosong dan galat](../desain/tugas/G9-04-keadaan-kosong-galat.md) | selesai (#155) |
-| [G9-05 Ilustrasi nomor lomba](../desain/tugas/G9-05-ikon-nomor-lomba.md) | selesai (#159) |
-| [G9-06 Videotron dan podium](../desain/tugas/G9-06-videotron-podium.md) | selesai (#162, dipasang #166 dan #168) |
-| [G9-07 Kategori Bantuan](../desain/tugas/G9-07-bantuan-kategori.md) | selesai (#156) |
-| [G9-08 Panel admin](../desain/tugas/G9-08-panel-admin.md) | selesai (#160) |
-| [G9-09 Pita judul halaman publik](../desain/tugas/G9-09-pita-judul.md) | selesai (#163) |
-| [G9-10 Gambar bagikan](../desain/tugas/G9-10-gambar-bagikan.md) | selesai (#161) |
-| [G9-11 Ikon aplikasi](../desain/tugas/G9-11-ikon-aplikasi.md) | diganti logo resmi pemilik (K152), #158 ditutup |
-| [G9-12 Pola dan hiasan latar](../desain/tugas/G9-12-pola-hiasan.md) | selesai (#157, dipasang #167) |
+| [G10-01 Lembar tokoh](../desain/tugas/G10-01-lembar-tokoh.md) | menunggu Codex |
+| [G10-11 Elemen tombol dan ornamen](../desain/tugas/G10-11-elemen-tombol-ornamen.md) | menunggu Codex |
+| [G10-02 Ilustrasi halaman depan](../desain/tugas/G10-02-ilustrasi-halaman-depan.md) | menunggu Codex |
+| [G10-09 Pita judul](../desain/tugas/G10-09-pita-judul.md) | menunggu Codex |
+| [G10-05 Nomor lomba](../desain/tugas/G10-05-ikon-nomor-lomba.md) | menunggu Codex |
+| [G10-04 Keadaan kosong dan galat](../desain/tugas/G10-04-keadaan-kosong-galat.md) | menunggu Codex |
+| [G10-03 Panduan pendaftaran](../desain/tugas/G10-03-panduan-pendaftaran.md) | menunggu Codex |
+| [G10-07 Kategori Bantuan](../desain/tugas/G10-07-bantuan-kategori.md) | menunggu Codex |
+| [G10-06 Videotron dan podium](../desain/tugas/G10-06-videotron-podium.md) | menunggu Codex |
+| [G10-08 Panel admin](../desain/tugas/G10-08-panel-admin.md) | menunggu Codex |
+| [G10-12 Pola dan hiasan](../desain/tugas/G10-12-pola-hiasan.md) | menunggu Codex |
+| [G10-10 Gambar bagikan](../desain/tugas/G10-10-gambar-bagikan.md) | menunggu Codex |
+
+Gambar Tahap 9 (G9-01 sampai G9-12) selesai dan sudah di `main` (#142, #153 sampai #163; G9-11 diganti logo resmi pemilik, K152, #158 ditutup), dipasang lewat #164, #166, #167, dan #168, dan akan tertimpa G10.
 
 ## Berikutnya
 
