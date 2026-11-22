@@ -36,9 +36,9 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
 
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
-<?= $this->section('judul') ?>Tolak Atlet <?= esc($p['id_pendaftaran']) ?><?= $this->endSection() ?>
+<?= $this->section('judul') ?>Tolak atlet <?= esc($p['id_pendaftaran']) ?><?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Tolak Atlet<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Tolak atlet<?= $this->endSection() ?>
 
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [
     App\Libraries\Panel\AsalRincian::untuk((int) $p['id']),
@@ -60,7 +60,7 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
             <div>
                 Atlet yang ditolak dikeluarkan dari pendaftaran ini, dan NISN-nya bisa didaftarkan lagi oleh sekolah.
                 Sekolah melihat alasan, kelompok umur yang sesuai, dan perubahan biayanya di Cek Pendaftaran,
-                sampai atlet itu didaftarkan lagi. Uang yang sudah terlanjur dikirim diselesaikan langsung dengan panitia.
+                sampai atlet itu didaftarkan lagi. Urusan uang yang sudah telanjur dikirim diselesaikan langsung dengan panitia.
             </div>
         </div>
     </section>
@@ -80,7 +80,7 @@ $kalimatKonfirmasi = 'Atlet yang dicentang akan dikeluarkan dari pendaftaran ' .
         <div class="flex items-start gap-3 rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900" role="status" id="tolak-lunas">
             <?= ikon('triangle-alert', 'mt-0.5 shrink-0') ?>
             <p>
-                Pendaftaran ini sudah Lunas, jadi atletnya tidak bisa ditolak.
+                Pendaftaran ini sudah Lunas. Atletnya tidak bisa ditolak.
                 Kembalikan ke Menunggu dulu di <a class="font-semibold underline hover:no-underline" href="<?= site_url($alamat) ?>">rincian pendaftaran</a> bila atletnya memang perlu ditolak.
             </p>
         </div>

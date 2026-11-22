@@ -19,9 +19,9 @@ $td     = 'px-3 py-2 align-top';
 
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
-<?= $this->section('judul') ?>Urutkan Nomor Atlet (BIB)<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Urutkan nomor atlet (BIB)<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Urutkan Nomor Atlet (BIB)<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Urutkan nomor atlet (BIB)<?= $this->endSection() ?>
 
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Atlet', 'alamat' => 'admin/atlet'], ['label' => 'Urutkan nomor atlet (BIB)']]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
@@ -81,7 +81,7 @@ $td     = 'px-3 py-2 align-top';
             <div class="flex items-start gap-3 rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900" role="note">
                 <?= ikon('triangle-alert', 'mt-0.5 size-4 shrink-0') ?>
                 <p>Semua nomor atlet (BIB) lama diganti. Jangan urutkan ulang setelah nomor atlet dibagikan ke peserta.
-                Pendaftaran yang ditandai Lunas sesudahnya mendapat nomor lanjutan, jadi urutkan lagi sebelum pertemuan teknik (technical meeting) bila perlu.</p>
+                Pendaftaran yang ditandai Lunas sesudahnya mendapat nomor lanjutan. Bila perlu, urutkan lagi sebelum pertemuan teknik (technical meeting).</p>
             </div>
 
             <?php if ($kurang !== []) : ?>

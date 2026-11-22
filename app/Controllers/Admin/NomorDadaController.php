@@ -53,7 +53,7 @@ class NomorDadaController extends BaseController
         $pesan = 'Nomor atlet (BIB) ' . $hasil['atlet'] . ' atlet dari ' . $hasil['sekolah'] . ' sekolah sudah diurutkan ulang per sekolah.';
 
         if ($hasil['dikosongkan'] > 0) {
-            $pesan .= ' Nomor atlet (BIB) ' . $hasil['dikosongkan'] . ' atlet dari pendaftaran yang belum Lunas dikosongkan; mereka mendapat nomor baru saat ditandai Lunas.';
+            $pesan .= ' Nomor atlet (BIB) ' . $hasil['dikosongkan'] . ' atlet dari pendaftaran yang belum Lunas dikosongkan. Atlet itu mendapat nomor baru saat pendaftarannya ditandai Lunas.';
         }
 
         return redirect()->to(self::ALAMAT)->with('pesan_sukses', $pesan);

@@ -222,7 +222,7 @@
             ku: dipilih,
             pilihan: cocok,
             pesan: dipilih
-                ? dipilih.nama + ' (dipilih; lahir tahun ' + tahun + ' juga boleh ikut ' + cocok.filter(function (ku) { return ku !== dipilih; }).map(function (ku) { return ku.nama; }).join(', ') + ')'
+                ? dipilih.nama + ' (dipilih, lahir tahun ' + tahun + ' juga boleh ikut ' + cocok.filter(function (ku) { return ku !== dipilih; }).map(function (ku) { return ku.nama; }).join(', ') + ')'
                 : 'Lahir tahun ' + tahun + ' boleh ikut ' + cocok.map(function (ku) { return ku.nama; }).join(' atau ') + '. Pilih kelompok umurnya dulu.'
         };
     }

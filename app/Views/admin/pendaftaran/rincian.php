@@ -68,7 +68,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
 
 <?= $this->section('judul') ?>Pendaftaran <?= esc($p['id_pendaftaran']) ?><?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Rincian Pendaftaran<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Rincian pendaftaran<?= $this->endSection() ?>
 
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [$asal, ['label' => $p['id_pendaftaran']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
 

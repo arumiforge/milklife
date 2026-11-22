@@ -51,7 +51,7 @@ final class StatusUbah
                 : 'Total berubah dari ' . rupiah((int) $hasil['total_lama']) . ' menjadi ' . rupiah((int) $hasil['total']) . '.');
 
         if ($hasil['status'] === 'lunas' && $hasil['atlet_baru'] > 0) {
-            $kalimat .= ' Pendaftaran ini sudah Lunas, jadi ' . $hasil['atlet_baru'] . ' atlet baru langsung mendapat nomor atlet (BIB), dan nomor itu tidak bisa ditarik kembali.';
+            $kalimat .= ' Karena pendaftaran ini sudah Lunas, ' . $hasil['atlet_baru'] . ' atlet baru langsung mendapat nomor atlet (BIB), dan nomor itu tidak bisa ditarik kembali.';
         }
 
         return $kalimat . $tim;

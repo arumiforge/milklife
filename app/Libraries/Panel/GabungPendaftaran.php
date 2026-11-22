@@ -182,7 +182,7 @@ final class GabungPendaftaran
         $riwayat = new RiwayatAdmin($this->db);
         $riwayat->pindahkan($dari, $ke);
         $riwayat->catat($ke, (string) $tujuan['id_pendaftaran'], RiwayatAdmin::GABUNG, 'Digabung dari ' . $sumber['id_pendaftaran']
-            . ' karena NPSN-nya sama. Atlet, ofisial, regu, dan bukti bayarnya pindah ke sini; total ditambah ' . rupiah((int) $sumber['total']) . '.');
+            . ' karena NPSN-nya sama. Atlet, ofisial, regu, dan bukti bayarnya pindah ke sini. Total ditambah ' . rupiah((int) $sumber['total']) . '.');
 
         // Catatan lama milik sumber ikut menunjuk tujuan, lalu sumber sendiri dicatat.
         $this->pastikan($this->db->table('pendaftaran_gabungan')->where('pendaftaran_id', $dari)->update(['pendaftaran_id' => $ke]));

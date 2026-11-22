@@ -81,7 +81,7 @@ final class PanelBuktiBaruTest extends UjiBasisData
         $this->assertBerhasilDialihkan(
             $this->kirimSebagaiAdmin('admin/pendaftaran/' . $p['id'] . '/bukti-bayar/diperiksa'),
             'admin/pendaftaran/' . $p['id'],
-            'Tidak ada bukti bayar baru; semuanya sudah diperiksa.',
+            'Tidak ada bukti bayar baru. Semuanya sudah diperiksa.',
         );
         $this->assertSame(1, $this->db->table('riwayat_admin')->where('pendaftaran_id', $p['id'])->countAllResults());
     }

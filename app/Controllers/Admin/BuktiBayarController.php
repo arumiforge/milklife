@@ -143,7 +143,7 @@ class BuktiBayarController extends BaseController
 
             return redirect()->to($kembali)->with(
                 'pesan_galat',
-                'Bukti bayar ke-' . $urutan . ' tidak bisa dihapus dari server, jadi gambarnya tetap disimpan. Pastikan folder writable/unggahan boleh ditulisi, lalu coba hapus lagi.',
+                'Bukti bayar ke-' . $urutan . ' tidak bisa dihapus dari server. Gambarnya masih tersimpan. Pastikan folder writable/unggahan boleh ditulisi, lalu coba hapus lagi.',
             );
         }
 
@@ -174,7 +174,7 @@ class BuktiBayarController extends BaseController
         }
 
         return $jumlah === 0
-            ? redirect()->to($kembali)->with('pesan_sukses', 'Tidak ada bukti bayar baru; semuanya sudah diperiksa.')
+            ? redirect()->to($kembali)->with('pesan_sukses', 'Tidak ada bukti bayar baru. Semuanya sudah diperiksa.')
             : redirect()->to($kembali)->with('pesan_sukses', $jumlah . ' bukti bayar baru ditandai sudah diperiksa.');
     }
 
@@ -201,7 +201,7 @@ class BuktiBayarController extends BaseController
         $baris = db_connect()->table('pendaftaran')->select('id, id_pendaftaran')->where('id', $id)->get()->getRowArray();
 
         if (! is_array($baris)) {
-            throw PageNotFoundException::forPageNotFound('Pendaftaran ini tidak ditemukan. Mungkin sudah dihapus; kembali ke daftar pendaftaran.');
+            throw PageNotFoundException::forPageNotFound('Pendaftaran ini tidak ditemukan. Mungkin sudah dihapus. Kembali ke daftar pendaftaran.');
         }
 
         return $baris;
@@ -217,7 +217,7 @@ class BuktiBayarController extends BaseController
         $baris = model(BuktiBayarModel::class)->milik($id, $buktiId);
 
         if ($baris === null) {
-            throw PageNotFoundException::forPageNotFound('Bukti bayar ini tidak ditemukan. Mungkin sudah dihapus; kembali ke rincian pendaftaran.');
+            throw PageNotFoundException::forPageNotFound('Bukti bayar ini tidak ditemukan. Mungkin sudah dihapus. Kembali ke rincian pendaftaran.');
         }
 
         return $baris;

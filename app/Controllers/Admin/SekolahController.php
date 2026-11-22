@@ -165,7 +165,7 @@ class SekolahController extends BaseController
         if ($hasil['sekolah'] === 0) {
             return redirect()->to(self::ALAMAT . '/nama-desa')->with(
                 'pesan_galat',
-                'Tidak ada nama yang diganti karena sekolah yang dicentang sudah tidak bernama sama dengan sekolah lain. Periksa lagi daftar di bawah.',
+                'Tidak ada nama yang diganti. Sekolah yang dicentang sudah tidak bernama sama dengan sekolah lain. Periksa lagi daftar di bawah.',
             );
         }
 

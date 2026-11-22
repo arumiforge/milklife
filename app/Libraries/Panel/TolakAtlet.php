@@ -255,7 +255,7 @@ final class TolakAtlet
         }
 
         if ($panjang < self::PANJANG_ALASAN_MIN) {
-            $hasil['galat'][] = 'Alasan penolakan belum diisi atau terlalu pendek. Tulis alasannya, paling sedikit ' . self::PANJANG_ALASAN_MIN . ' huruf; alasan ini dibaca sekolah di Cek Pendaftaran.';
+            $hasil['galat'][] = 'Alasan penolakan belum diisi atau terlalu pendek. Tulis alasannya, paling sedikit ' . self::PANJANG_ALASAN_MIN . ' huruf. Alasan ini dibaca sekolah di Cek Pendaftaran.';
         } elseif ($panjang > self::PANJANG_ALASAN_MAKS) {
             $hasil['galat'][] = 'Alasan penolakan terlalu panjang. Persingkat menjadi paling banyak ' . self::PANJANG_ALASAN_MAKS . ' huruf.';
         }

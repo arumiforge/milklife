@@ -174,13 +174,13 @@ final class UsulanNamaSekolah
         }
 
         if ($usulan['status'] !== UsulanNamaSekolahModel::MENUNGGU) {
-            return [$usulan, null, 'Usulan ini sudah diputuskan sebelumnya, jadi tidak diubah lagi.'];
+            return [$usulan, null, 'Usulan ini sudah diputuskan sebelumnya. Keputusannya tidak bisa diubah lagi.'];
         }
 
         $sekolah = $this->db->table('sekolah')->where('npsn', $usulan['npsn'])->get()->getRowArray();
 
         if (! is_array($sekolah)) {
-            return [$usulan, null, 'Sekolah dengan NPSN ' . $usulan['npsn'] . ' tidak ada lagi di data sekolah, jadi usulan ini tidak bisa diputuskan.'];
+            return [$usulan, null, 'Sekolah dengan NPSN ' . $usulan['npsn'] . ' tidak ada lagi di data sekolah. Usulan ini tidak bisa diputuskan.'];
         }
 
         return [$usulan, $sekolah, null];

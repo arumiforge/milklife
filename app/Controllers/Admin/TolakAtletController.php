@@ -64,7 +64,7 @@ class TolakAtletController extends BaseController
             . ($hasil['total'] === $hasil['total_lama']
                 ? 'Total tetap ' . rupiah($hasil['total']) . '.'
                 : 'Total berubah dari ' . rupiah($hasil['total_lama']) . ' menjadi ' . rupiah($hasil['total']) . '.')
-            . ($hasil['semua'] ? ' Pendaftaran ini sekarang tanpa atlet; ofisial dan bukti bayarnya tetap disimpan.' : '')
+            . ($hasil['semua'] ? ' Pendaftaran ini sekarang tanpa atlet. Ofisial dan bukti bayarnya tetap disimpan.' : '')
             . ' Alasan dan rinciannya tampil di Cek Pendaftaran sampai atlet itu didaftarkan lagi.'
             . ($hasil['tim_ditinggalkan'] === [] ? '' : ' ' . TimTanpaPembayar::kalimatSesudah($hasil['tim_ditinggalkan']));
 
