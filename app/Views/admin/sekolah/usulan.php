@@ -25,6 +25,8 @@ $kelasTd    = 'px-4 py-3 align-top';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Usulan nama sekolah<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Sekolah<?= $this->endSection() ?>
@@ -96,7 +98,7 @@ $kelasTd    = 'px-4 py-3 align-top';
         <section class="space-y-4" aria-labelledby="judul-usulan-riwayat">
             <h2 id="judul-usulan-riwayat" class="text-lg font-bold text-gray-900">Sudah diputuskan</h2>
             <div class="relative overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut">
-                <table class="w-full text-left text-sm text-gray-700">
+                <table class="w-full text-left text-sm text-gray-700" data-tabel-klien>
                     <caption class="sr-only">Riwayat usulan nama sekolah</caption>
                     <thead>
                         <tr>

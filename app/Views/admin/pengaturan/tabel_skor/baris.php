@@ -30,6 +30,8 @@ $galatBaris = $galat === [] ? '' : ' aria-describedby="baris-galat"';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?><?= esc($judul) ?> – <?= esc($tabel['nama']) ?><?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Tabel Skor<?= $this->endSection() ?>
@@ -103,7 +105,7 @@ $galatBaris = $galat === [] ? '' : ' aria-describedby="baris-galat"';
                         data-konfirmasi-judul="Hapus baris?" data-konfirmasi-tombol="Hapus baris">
                         <?= csrf_field() ?>
                         <div class="relative overflow-x-auto rounded-xl border border-gray-200">
-                            <table class="w-full text-left text-sm text-gray-700" id="tabel-baris">
+                            <table class="w-full text-left text-sm text-gray-700" id="tabel-baris" data-tabel-klien>
                                 <caption class="sr-only">Baris <?= esc($judul) ?></caption>
                                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                                     <tr><th scope="col" class="px-4 py-3">Prestasi</th><th scope="col" class="px-4 py-3 text-end">Poin</th><th scope="col" class="px-4 py-3 text-end">Hapus</th></tr>

@@ -28,6 +28,8 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Kelompok Umur<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Kelompok Umur<?= $this->endSection() ?>
@@ -110,7 +112,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
         <section aria-labelledby="judul-daftar">
             <h2 id="judul-daftar" class="sr-only">Daftar kelompok umur</h2>
             <div class="relative overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-lembut">
-                <table class="w-full text-left text-sm text-gray-700" id="tabel-kelompok-umur">
+                <table class="w-full text-left text-sm text-gray-700" id="tabel-kelompok-umur" data-tabel-klien>
                     <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-end">No</th>

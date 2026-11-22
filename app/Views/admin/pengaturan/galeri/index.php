@@ -19,6 +19,8 @@ $penuh    = count($album) >= GaleriModel::BATAS;
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Galeri<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Galeri<?= $this->endSection() ?>
@@ -69,7 +71,7 @@ $penuh    = count($album) >= GaleriModel::BATAS;
             <p class="rounded-xl border border-gray-200 px-4 py-3 text-gray-600">Belum ada album. Tekan <strong class="font-semibold text-gray-900">Tambah album</strong> untuk menambahkan album pertama.</p>
         <?php else : ?>
             <div class="relative overflow-x-auto rounded-xl border border-gray-200">
-                <table class="w-full text-left text-sm text-gray-700">
+                <table class="w-full text-left text-sm text-gray-700" data-tabel-klien>
                     <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-end">No</th>

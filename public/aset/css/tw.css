@@ -2999,6 +2999,9 @@
   .pt-6 {
     padding-top: calc(var(--spacing) * 6);
   }
+  .pt-12 {
+    padding-top: calc(var(--spacing) * 12);
+  }
   .pt-14 {
     padding-top: calc(var(--spacing) * 14);
   }
@@ -3844,6 +3847,9 @@
     .hover\:text-primary-700:hover {
       color: var(--color-primary-700);
     }
+    .hover\:text-primary-900:hover {
+      color: var(--color-primary-900);
+    }
     .hover\:text-red-800:hover {
       color: var(--color-red-800);
     }
@@ -4431,6 +4437,9 @@
     .sm\:pt-10 {
       padding-top: calc(var(--spacing) * 10);
     }
+    .sm\:pt-16 {
+      padding-top: calc(var(--spacing) * 16);
+    }
     .sm\:pb-6 {
       padding-bottom: calc(var(--spacing) * 6);
     }
@@ -4615,6 +4624,12 @@
     .lg\:inline {
       display: inline;
     }
+    .lg\:inline-flex {
+      display: inline-flex;
+    }
+    .lg\:aspect-video {
+      aspect-ratio: var(--aspect-video);
+    }
     .lg\:h-44 {
       height: calc(var(--spacing) * 44);
     }
@@ -4684,6 +4699,9 @@
     }
     .lg\:gap-6 {
       gap: calc(var(--spacing) * 6);
+    }
+    .lg\:gap-10 {
+      gap: calc(var(--spacing) * 10);
     }
     .lg\:gap-12 {
       gap: calc(var(--spacing) * 12);
@@ -5085,6 +5103,9 @@
   }
   .\[\&\:disabled\:not\(\.pil-selesai\)\]\:text-gray-400:disabled:not(.pil-selesai) {
     color: var(--color-gray-400);
+  }
+  .\[\&\>\.dt-layout-row\:not\(\.dt-layout-table\)\]\:px-3 > .dt-layout-row:not(.dt-layout-table) {
+    padding-inline: calc(var(--spacing) * 3);
   }
   .\[\&\>a\]\:flex-\[1_1_15rem\] > a {
     flex: 1 1 15rem;

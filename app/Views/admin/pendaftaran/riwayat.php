@@ -13,6 +13,8 @@
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
+<?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
+
 <?= $this->section('judul') ?>Riwayat Pendaftaran<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Riwayat Pendaftaran<?= $this->endSection() ?>
