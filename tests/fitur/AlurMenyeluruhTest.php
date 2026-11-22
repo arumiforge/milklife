@@ -39,10 +39,6 @@ final class AlurMenyeluruhTest extends UjiBasisData
         $this->pakaiFolderFotoSementara();
         $this->pakaiFolderBuktiBayarSementara();
         config('Aplikasi')->minify = true;
-
-        // mPDF membaca SCRIPT_NAME dan PHP_SELF (selalu ada di server web); uji lain bisa menghapusnya.
-        $_SERVER['SCRIPT_NAME'] ??= '/index.php';
-        $_SERVER['PHP_SELF'] ??= '/index.php';
     }
 
     protected function tearDown(): void

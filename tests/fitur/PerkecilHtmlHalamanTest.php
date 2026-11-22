@@ -28,9 +28,6 @@ final class PerkecilHtmlHalamanTest extends UjiBasisData
         $this->idPendaftaran = $this->buatPendaftaranPanel([
             'atlet' => [$this->atletPanel(['nama' => 'Budi Karangan', 'nomor' => ['lari60putra']])],
         ])['id'];
-
-        // mPDF membaca SCRIPT_NAME (selalu ada di server web); uji lain bisa menghapusnya.
-        $_SERVER['SCRIPT_NAME'] ??= '/index.php';
     }
 
     protected function tearDown(): void
