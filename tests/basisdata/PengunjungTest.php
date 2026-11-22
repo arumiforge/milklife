@@ -21,6 +21,9 @@ final class PengunjungTest extends UjiBasisData
         parent::setUp();
 
         $this->pengunjung = new Pengunjung($this->db, 'kunci-uji');
+
+        // Pembersihan acak di catat() dimatikan supaya jumlah baris pasti.
+        $this->pengunjung->peluangBersih = 0;
     }
 
     private function catat(string $ip, string $waktu, string $jalur = '/', string $peramban = self::PERAMBAN): void
@@ -114,5 +117,15 @@ final class PengunjungTest extends UjiBasisData
 
         $this->assertSame(1, $this->pengunjung->hapusLama(Time::parse('2026-11-15 10:00:00', 'Asia/Jakarta')));
         $this->assertSame(1, $this->db->table('kunjungan')->countAllResults());
+    }
+
+    public function testCatatIkutMembersihkanSesuaiPeluang(): void
+    {
+        $this->catat('10.0.0.1', '2025-01-01 09:00:00');
+
+        $this->pengunjung->peluangBersih = 1;
+        $this->catat('10.0.0.1', '2026-11-15 09:00:00');
+
+        $this->assertSame(1, $this->db->table('kunjungan')->countAllResults(), 'Peluang 1: setiap catatan ikut membersihkan.');
     }
 }

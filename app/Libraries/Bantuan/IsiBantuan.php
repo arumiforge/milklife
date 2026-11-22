@@ -2,8 +2,10 @@
 
 namespace App\Libraries\Bantuan;
 
+use App\Libraries\GambarOpsional;
 use App\Libraries\IsiHalamanDepan;
 use App\Models\FaqModel;
+use InvalidArgumentException;
 use Throwable;
 
 /**
@@ -158,9 +160,20 @@ final class IsiBantuan
 
     /**
      * Alamat gambar di `public/aset/` bila berkasnya ada, selain itu `null`.
+     * Jalur `gambar/…` dibaca lewat `GambarOpsional` (folder penggantinya ikut berlaku di uji).
      */
     public static function gambar(string $jalur): ?string
     {
+        $jalur = ltrim($jalur, '/');
+
+        if (str_starts_with($jalur, 'gambar/')) {
+            try {
+                return GambarOpsional::alamat(substr($jalur, strlen('gambar/')));
+            } catch (InvalidArgumentException) {
+                return null;
+            }
+        }
+
         return is_file(FCPATH . 'aset/' . $jalur) ? aset($jalur) : null;
     }
 

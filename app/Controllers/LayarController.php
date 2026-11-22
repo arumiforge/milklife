@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libraries\GambarOpsional;
 use App\Libraries\Hasil\PapanVideotron;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -52,8 +53,10 @@ class LayarController extends BaseController
         $latar = [];
 
         foreach (self::GAMBAR_LATAR as $kunci => $berkas) {
-            if (is_file(FCPATH . 'aset/gambar/layar/' . $berkas)) {
-                $latar[$kunci] = aset('gambar/layar/' . $berkas);
+            $alamat = GambarOpsional::alamat('layar/' . $berkas);
+
+            if ($alamat !== null) {
+                $latar[$kunci] = $alamat;
             }
         }
 

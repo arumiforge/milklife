@@ -149,36 +149,17 @@ final class PapanVideotronTest extends UjiBasisData
     public function testLatarGambarHanyaBilaBerkasnyaAda(): void
     {
         setting('Videotron.tampil', true);
-        $folder = FCPATH . 'aset/gambar/layar/';
-        $berkas = $folder . LayarController::GAMBAR_LATAR['dasar'];
-        $buat   = ! is_dir($folder);
 
         $layar = $this->xpathDari($this->get('layar'))->query('//*[@data-layar]')->item(0);
         $this->assertInstanceOf(DOMElement::class, $layar);
+        $this->assertFalse($layar->hasAttribute('data-latar-dasar'));
 
-        if (! is_file($berkas)) {
-            $this->assertFalse($layar->hasAttribute('data-latar-dasar'));
+        $this->taruhGambarUji('layar/' . LayarController::GAMBAR_LATAR['dasar']);
+        service('cache')->clean();
 
-            if ($buat) {
-                mkdir($folder, 0775, true);
-            }
-            file_put_contents($berkas, 'uji');
-
-            try {
-                service('cache')->clean();
-                $layar = $this->xpathDari($this->get('layar'))->query('//*[@data-layar]')->item(0);
-                $this->assertInstanceOf(DOMElement::class, $layar);
-                $this->assertStringContainsString('gambar/layar/latar-dasar.webp', $layar->getAttribute('data-latar-dasar'));
-            } finally {
-                unlink($berkas);
-
-                if ($buat) {
-                    rmdir($folder);
-                }
-            }
-        } else {
-            $this->assertTrue($layar->hasAttribute('data-latar-dasar'));
-        }
+        $layar = $this->xpathDari($this->get('layar'))->query('//*[@data-layar]')->item(0);
+        $this->assertInstanceOf(DOMElement::class, $layar);
+        $this->assertStringContainsString('gambar/layar/latar-dasar.webp', $layar->getAttribute('data-latar-dasar'));
     }
 
     public function testPengaturanVideotron(): void
