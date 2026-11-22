@@ -342,7 +342,7 @@ final class StatusPembayaran
         $semuaNama = array_map(static fn (int $kuId): string => $nama[$kuId] ?? 'kelompok umur ini', array_keys($penuh));
 
         return 'Pendaftaran belum ditandai Lunas dan belum ada nomor atlet (BIB) yang dibuat karena ' . self::gabung($bagian) . '. '
-            . 'Tambahkan awalan baru untuk ' . self::gabung($semuaNama) . ' di Pengaturan, Kelompok Umur, lalu tandai Lunas lagi.';
+            . 'Tambahkan awalan baru untuk ' . self::gabung($semuaNama) . ' di Pengaturan > Kelompok umur, lalu tandai Lunas lagi.';
     }
 
     /**

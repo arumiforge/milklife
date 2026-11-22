@@ -87,7 +87,7 @@ $td     = 'px-3 py-2 align-top';
             <?php if ($kurang !== []) : ?>
                 <p class="text-sm font-medium text-red-700" id="awalan-kurang">
                     Tambahkan awalan untuk <?= esc(implode(', ', array_column($kurang, 'nama'))) ?> di
-                    <a class="font-semibold underline hover:no-underline" href="<?= site_url('admin/pengaturan/kelompok-umur') ?>">Pengaturan, Kelompok Umur</a> sebelum mengurutkan.
+                    <a class="font-semibold underline hover:no-underline" href="<?= site_url('admin/pengaturan/kelompok-umur') ?>">Pengaturan > Kelompok umur</a> sebelum mengurutkan.
                 </p>
             <?php endif ?>
 

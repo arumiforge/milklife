@@ -93,7 +93,7 @@ final class TulisUbah
 
                     return self::batal('Perubahan belum disimpan. Pendaftaran ini sudah Lunas. Atlet barunya langsung mendapat nomor atlet (BIB), '
                         . 'tetapi awalan nomor atlet ' . implode(', ', $beri['penuh']) . ' sudah penuh atau belum ada. '
-                        . 'Tambahkan awalan baru di Pengaturan, Kelompok Umur, lalu simpan lagi.');
+                        . 'Tambahkan awalan baru di Pengaturan > Kelompok umur, lalu simpan lagi.');
                 }
 
                 $nomorDada = $beri['nomor'];

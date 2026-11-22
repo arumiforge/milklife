@@ -338,7 +338,7 @@ final class UrutkanNomorDada
             static fn (int $id, array $awalan): string => ($nama[$id] ?? 'kelompok umur ini') . ($awalan === [] ? ' belum punya awalan nomor atlet (BIB)' : ' kekurangan awalan nomor atlet (BIB)'),
             array_keys($penuh),
             $penuh,
-        )) . '. Tambahkan awalan di Pengaturan, Kelompok Umur, lalu urutkan lagi.';
+        )) . '. Tambahkan awalan di Pengaturan > Kelompok umur, lalu urutkan lagi.';
     }
 
     /**
