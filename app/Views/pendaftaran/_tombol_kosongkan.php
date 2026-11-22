@@ -1,7 +1,7 @@
 <?php
 /**
  * Tombol Kosongkan di judul tiap langkah wizard, di kanan tombol Bantuan
- * (permintaan pemilik 22 November 2026, K160). Layar sm ke atas: ikon dan
+ * (permintaan pemilik 22 November 2026, K161). Layar sm ke atas: ikon dan
  * kata "Kosongkan"; ponsel: ikon saja (nama lengkap tetap untuk pembaca
  * layar). Saat diarahkan tetikus, popover Flowbite menjelaskan akibatnya.
  * Klik membuka jendela konfirmasi dari `aset/js/pendaftaran.js`

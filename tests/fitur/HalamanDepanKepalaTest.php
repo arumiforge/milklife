@@ -149,7 +149,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('MilkLife Athletics Challenge', $this->teks($xpath, '//h1[@id="judul-acara"]'));
         $this->assertSame(0, $xpath->query('//*[@data-pembuka-teks]')->length, 'Teks kosong tidak ditampilkan.');
         $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
-        // Pembuka tanpa alis (K163): seri hanya di kepala halaman.
+        // Pembuka tanpa alis (K164): seri hanya di kepala halaman.
         $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//*[@data-pembuka-seri or contains(concat(" ", @class, " "), " alis ")]')->length);
         $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
 
@@ -316,7 +316,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('data:awal', []));
         $xpath = $this->xpathDari($this->get('/'));
         $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/following-sibling::*[1][@id="lomba"]')->length);
-        // Deret kartu kelompok umur tanpa label alis (K163).
+        // Deret kartu kelompok umur tanpa label alis (K164).
         $this->assertSame(0, $xpath->query('//*[@data-pembuka-ku-label]')->length);
 
         // Tiap kartu menaut ke rincian kelompok umurnya di bagian lomba.

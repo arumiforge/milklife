@@ -103,7 +103,7 @@ final class HalamanUnduhanTest extends UjiBasisData
         $this->assertSame('Downloads', $this->teksSimpul($inggris));
         $this->assertSame('en', $inggris->getAttribute('lang'));
         $this->assertSame('true', $inggris->getAttribute('aria-hidden'), 'Judul Inggris hanya hiasan; h1 tetap Indonesia.');
-        // Halaman publik tanpa alis di atas judul (K163).
+        // Halaman publik tanpa alis di atas judul (K164).
         $this->assertSame(0, $xpath->query('//main//*[@data-judul-alis or contains(concat(" ", @class, " "), " alis ")]')->length);
     }
 

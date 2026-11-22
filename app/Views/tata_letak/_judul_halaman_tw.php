@@ -5,7 +5,7 @@
  * Hasil, Klasemen, Galeri, Cek Pendaftaran, dan Pendaftaran.
  *
  * F10-09: judul editorial Inggris (`inggris`) tampil besar di atas `<h1>`
- * Indonesia (`tata_letak/_judul_editorial`, K153), tanpa alis (K163).
+ * Indonesia (`tata_letak/_judul_editorial`, K153), tanpa alis (K164).
  *
  *     view('tata_letak/_judul_halaman_tw', ['inggris' => 'Downloads', 'judul' => 'Unduhan', 'ikon' => 'download', 'teks' => '…'], ['saveData' => false]);
  *

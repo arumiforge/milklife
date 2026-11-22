@@ -2,7 +2,7 @@
 /**
  * Tombol bantuan di judul tiap langkah wizard (F9-04, F9-05): membuka laci
  * `pendaftaran/_laci_bantuan.php` (drawer Flowbite) berisi tanya-jawab
- * kategori langkah itu. Di ponsel ikon saja, seperti tombol Kosongkan (K160). `data-buka-bantuan` dibaca `aset/js/bantuan.js`.
+ * kategori langkah itu. Di ponsel ikon saja, seperti tombol Kosongkan (K161). `data-buka-bantuan` dibaca `aset/js/bantuan.js`.
  *
  * @var int $langkah 1–5
  */
