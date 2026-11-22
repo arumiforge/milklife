@@ -389,10 +389,10 @@ Semua isi diatur dari panel admin. Tampilan baru Flowbite Pro sejak Tahap 9 (K14
 - **Angka acara**: jumlah atlet, sekolah, kabupaten/kota, dan atlet per kelompok umur, hanya dari pendaftaran Lunas; tampil setelah ada datanya.
 - **Hasil dan juara umum terbaru**: juara umum I–III per jenjang dan nomor yang paling akhir diterbitkan beserta juaranya, hanya dari nomor yang sudah terbit dan mengikuti metode klasemen di Pengaturan > Hasil (18, K124, K140 butir 7a), dengan tautan ke halaman hasil dan klasemen. Selama hari lomba admin bisa menyalakan sakelar "Tampilkan hasil di atas (hari lomba)" di Pengaturan > Halaman Depan (bawaan mati) supaya bagian ini pindah tepat di bawah pembuka (K143).
 - **Pertanyaan yang sering ditanyakan**: pertanyaan pertama tiap kategori Bantuan, paling banyak enam, dengan tautan ke halaman Bantuan (F9-04).
-- Unduhan, narahubung, media sosial.
+- Unduhan, narahubung, media sosial. Tiap berkas unduhan punya tombol **Unduh**; PDF dan gambar juga punya tombol **Lihat** yang membuka berkas di peramban (jendela pratinjau di layar lebar, tab baru di ponsel) tanpa mengubah alamat unduh. Jenis dan ukuran berkas tidak ditampilkan (F10-09).
 - Tombol bagikan ke WA dan tombol tanya admin lewat WA dengan teks yang sudah diatur.
 - **Kaki halaman** dengan logo Bakti Olahraga Djarum Foundation di kanan dan tautan masuk panitia, di semua halaman publik (K84).
-- Semua halaman publik (Unduhan, Hasil, Klasemen, Bantuan, Jadwal, Peserta, Galeri, wizard, Cek Pendaftaran, unggah bukti) memakai tata letak yang sama (F9-03, F9-05); papan videotron memakai tata letak layar penuh sendiri.
+- Semua halaman publik (Unduhan, Hasil, Klasemen, Bantuan, Jadwal, Peserta, Galeri, wizard, Cek Pendaftaran, unggah bukti) memakai tata letak yang sama (F9-03, F9-05) dengan judul editorial berbahasa Inggris (misalnya "Race Day") yang selalu didampingi judul Indonesia di bawahnya; judul Indonesia yang menjadi judul halaman (F10-09, K153). Tanggal tutup pendaftaran ditulis lengkap dengan tahun ("Daftar s.d. 30 November 2026"); papan videotron memakai tata letak layar penuh sendiri.
 
 ## 11. Model data
 

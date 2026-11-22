@@ -111,7 +111,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $this->assertSame('Juknis: Lomba/Seri 2', $this->teks($xpath, './/h3', $butir->item(0)));
         $this->assertSame('Wajib dibaca. Versi terbaru.', $this->teks($xpath, './/*[@data-unduhan-keterangan]', $butir->item(0)));
         $this->assertSame(1, $xpath->query('.//*[@data-unduhan-keterangan]/br', $butir->item(0))->length);
-        $this->assertMatchesRegularExpression('/^PDF · \d+ (bita|KB)$/u', $this->teks($xpath, './/*[@data-unduhan-rincian]', $butir->item(0)));
+        $this->assertSame(0, $xpath->query('.//*[@data-unduhan-rincian]', $butir->item(0))->length, 'Jenis dan ukuran tidak tampil (F10-09).');
         $this->assertSame(1, $xpath->query('.//*[@data-ikon-jenis="file-text"]', $butir->item(0))->length);
 
         $tombol = $xpath->query('.//a[@data-unduhan-tombol]', $butir->item(0))->item(0);

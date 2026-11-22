@@ -25,7 +25,9 @@ if ($klasemen !== []) {
 
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_judul_halaman_tw', [
-    'judul' => 'Klasemen Sekolah',
+    'inggris' => 'Standings',
+    'alis'  => $namaAcara,
+    'judul' => 'Klasemen sekolah',
     'ikon'  => 'award',
     'gambar' => 'judul/klasemen.webp',
     'teks'  => 'Klasemen per jenjang sekolah. ' . $keterangan . ' Dihitung dari nomor yang hasilnya sudah diterbitkan panitia.',

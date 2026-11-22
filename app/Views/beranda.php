@@ -78,4 +78,7 @@
 <?php if (App\Libraries\PetaLokasi::embed() !== '') : ?>
     <script src="<?= aset('js/peta-lokasi.js') ?>" defer></script>
 <?php endif ?>
+<?php if (App\Libraries\BerkasUnduhan::adaPratinjau($unduhan)) : ?>
+    <script src="<?= aset('js/unduhan-pratinjau.js') ?>" defer></script>
+<?php endif ?>
 <?= $this->endSection() ?>

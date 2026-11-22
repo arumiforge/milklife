@@ -93,7 +93,7 @@ $bagian = static fn (string $id, string $judul, string $keterangan): string => '
                 </figure>
                 <div class="tekstur-kertas flex flex-col justify-center p-6">
                     <p class="alis">Batas pendaftaran</p>
-                    <p class="font-tampilan text-4xl font-extrabold text-oranye-700">30 November</p>
+                    <p class="font-tampilan text-4xl font-extrabold text-oranye-700">30 November 2026</p>
                     <p class="mt-1 text-sm text-gray-600">tekstur-kertas, krem #F5EFE6</p>
                 </div>
             </div>
