@@ -195,8 +195,9 @@ final class HalamanUnduhanTest extends UjiBasisData
     {
         $menu = $this->menu($this->xpathDari($this->get('unduhan')));
 
-        // Unduhan di bilah menu atas (F10-07, K154), bersama Bantuan; Galeri dan Tanya Panitia mati di data uji.
-        $this->assertSame(['Unduhan', 'Bantuan'], array_keys($menu));
+        // Unduhan di bilah menu atas (F10-07, K154), bersama Bantuan dan Masuk panitia (F10-08);
+        // Galeri dan Tanya Panitia mati di data uji.
+        $this->assertSame(['Unduhan', 'Bantuan', 'Masuk panitia'], array_keys($menu));
         $this->assertSame(site_url('unduhan'), $menu['Unduhan']->getAttribute('href'));
         $this->assertSame('page', $menu['Unduhan']->getAttribute('aria-current'));
         $this->assertFalse($menu['Bantuan']->hasAttribute('aria-current'));
