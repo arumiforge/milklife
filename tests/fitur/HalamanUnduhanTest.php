@@ -37,7 +37,7 @@ final class HalamanUnduhanTest extends UjiBasisData
         $kosong = $xpath->query('//main//*[@data-unduhan-kosong]')->item(0);
         $this->assertNotNull($kosong);
         $this->assertStringContainsString('Belum ada berkas unduhan', $this->teksSimpul($kosong));
-        $this->assertStringContainsString('Silakan kembali lagi nanti.', $this->teksSimpul($kosong));
+        $this->assertStringContainsString('jadi buka lagi halaman ini nanti.', $this->teksSimpul($kosong));
         $this->assertSame(1, $xpath->query('.//a[@href="' . site_url('/') . '"]', $kosong)->length, 'Ada jalan kembali ke beranda.');
         $this->assertSame(0, $xpath->query('//main//*[@data-daftar-unduhan]')->length);
     }
@@ -103,7 +103,8 @@ final class HalamanUnduhanTest extends UjiBasisData
         $this->assertSame('Downloads', $this->teksSimpul($inggris));
         $this->assertSame('en', $inggris->getAttribute('lang'));
         $this->assertSame('true', $inggris->getAttribute('aria-hidden'), 'Judul Inggris hanya hiasan; h1 tetap Indonesia.');
-        $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//main//*[@data-judul-alis]'));
+        // Halaman publik tanpa alis di atas judul (K164).
+        $this->assertSame(0, $xpath->query('//main//*[@data-judul-alis or contains(concat(" ", @class, " "), " alis ")]')->length);
     }
 
     public function testTombolLihatHanyaUntukPdfDanGambar(): void

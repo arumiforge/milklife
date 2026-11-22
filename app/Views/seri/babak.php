@@ -81,7 +81,7 @@ $teksLolos = SeriLintasan::teksLolos($lolos, (string) $nomor['jenis_hasil']);
     </div>
 
     <h2 class="mt-10 text-xl font-bold text-primary-900 sm:text-2xl">Alur babak</h2>
-    <p class="mt-1 text-sm text-gray-600">Q = lolos sebagai yang terbaik di serinya, q = lolos dari prestasi terbaik berikutnya. Tanda lolos tampil setelah hasil diumumkan.</p>
+    <p class="mt-1 text-sm text-gray-600">Q berarti lolos sebagai yang terbaik di serinya. q berarti lolos lewat prestasi terbaik berikutnya. Tanda lolos tampil setelah hasil diumumkan.</p>
     <div class="mt-4">
         <?= view('seri/_bagan', ['bagan' => $bagan, 'jenisHasil' => (string) $nomor['jenis_hasil'], 'publik' => true, 'aktif' => $babak['id'], 'lintasan' => $lintasan], ['saveData' => false]) ?>
     </div>

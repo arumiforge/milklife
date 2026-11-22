@@ -18,7 +18,7 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
 ?>
 <section id="hasil" class="scroll-mt-20 bg-white" aria-labelledby="judul-hasil">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
-        <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="flex flex-col items-center gap-4 text-center">
             <div>
                 <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Results</p>
                 <h2 id="judul-hasil" class="judul-keterangan mt-2">Hasil dan juara umum terbaru</h2>
@@ -57,7 +57,7 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                                 </li>
                             <?php endforeach ?>
                         </ol>
-                        <p class="mt-3 text-xs text-primary-200"><?= ($hasilTerbaru['metode'] ?? '') === 'poin' ? 'Urutan poin terbanyak, lalu juara I, II, dan III.' : 'Urutan juara I, II, lalu III terbanyak.' ?></p>
+                        <p class="mt-3 text-xs text-primary-200"><?= ($hasilTerbaru['metode'] ?? '') === 'poin' ? 'Diurutkan dari poin terbanyak, lalu jumlah juara I, II, dan III.' : 'Diurutkan dari jumlah juara I terbanyak, lalu juara II, lalu juara III.' ?></p>
                     </article>
                 <?php endforeach ?>
             </div>

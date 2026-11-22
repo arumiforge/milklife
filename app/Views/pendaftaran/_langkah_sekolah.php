@@ -8,7 +8,7 @@
 use App\Libraries\Pendaftaran\KelasTampilan as K;
 ?>
 <section class="langkah" id="langkah-1" data-langkah="1" aria-labelledby="judul-langkah-1" hidden>
-    <?= view('pendaftaran/_kepala_langkah', ['langkah' => 1, 'judul' => 'Data Sekolah'], ['saveData' => false]) ?>
+    <?= view('pendaftaran/_kepala_langkah', ['langkah' => 1, 'judul' => 'Data sekolah'], ['saveData' => false]) ?>
     <p class="langkah-keterangan mb-5 text-gray-600">Jenjang sekolah menentukan kelompok umur yang boleh diikuti atlet.</p>
 
     <div class="<?= K::RINGKASAN ?>" role="alert" hidden></div>
@@ -16,7 +16,14 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
     <div class="<?= K::KARTU ?> space-y-5">
         <fieldset data-jalur="sekolah.jenjang">
             <legend class="<?= K::LABEL ?> !text-base">Jenjang sekolah</legend>
-            <div class="pilihan-tombol flex flex-wrap gap-2">
+            <?php // Ponsel: daftar pilihan (K162); layar sm ke atas: tombol pilihan. Keduanya disamakan `pendaftaran/sekolah.js`. ?>
+            <select class="<?= K::ISIAN ?> sm:hidden [fieldset.is-invalid_&]:border-red-500 [fieldset.is-invalid_&]:bg-red-50" id="sekolah-jenjang-pilih" aria-label="Jenjang sekolah" data-jenjang-pilih>
+                <option value="">Pilih jenjang sekolah</option>
+                <?php foreach ($wizard['jenjang'] as $kode => $label) : ?>
+                    <option value="<?= esc($kode, 'attr') ?>"><?= esc($label) ?></option>
+                <?php endforeach ?>
+            </select>
+            <div class="pilihan-tombol hidden flex-wrap gap-2 sm:flex">
                 <?php foreach ($wizard['jenjang'] as $kode => $label) : ?>
                     <label class="<?= K::PILIHAN ?>" for="sekolah-jenjang-<?= esc($kode, 'attr') ?>">
                         <input type="radio" class="sr-only" name="sekolah-jenjang" id="sekolah-jenjang-<?= esc($kode, 'attr') ?>" value="<?= esc($kode, 'attr') ?>"><?= esc($label) ?>
@@ -24,10 +31,28 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
                 <?php endforeach ?>
             </div>
             <div class="<?= K::UMPAN ?>"></div>
+            <p class="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-gray-600" data-kunci-sekolah hidden><?= ikon('lock', 'size-4 shrink-0') ?>Terkunci, mengikuti data sekolah.</p>
         </fieldset>
 
         <div>
-            <label class="<?= K::LABEL ?>" for="sekolah-kabupaten">Kabupaten</label>
+            <label class="<?= K::LABEL ?>" for="sekolah-kabupaten" id="sekolah-kabupaten-label">Kabupaten</label>
+            <?php
+            // Ponsel: pemilih dengan kotak cari (K163), diisi dan disamakan `pendaftaran/sekolah.js`
+            // dengan `<select>` di bawahnya, yang tetap menjadi sumber nilai. Tanpa JS, `<select>` yang tampil.
+            ?>
+            <div class="relative hidden" data-kabupaten-cari>
+                <button type="button" class="<?= K::ISIAN ?> group flex items-center justify-between gap-2 text-start" id="sekolah-kabupaten-tombol" aria-expanded="false" aria-controls="sekolah-kabupaten-panel" aria-labelledby="sekolah-kabupaten-label sekolah-kabupaten-tombol">
+                    <span class="truncate" data-kabupaten-teks>Pilih kabupaten</span><?= ikon('chevron-down', 'size-5 shrink-0 text-gray-500 group-disabled:hidden') ?><?= ikon('lock', 'hidden size-5 shrink-0 text-gray-500 group-disabled:block') ?>
+                </button>
+                <div class="mt-2 rounded-xl border border-gray-200 bg-white p-2 shadow-angkat" id="sekolah-kabupaten-panel" hidden>
+                    <div class="relative">
+                        <?= ikon('search', 'pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-gray-500') ?>
+                        <input type="search" class="<?= K::ISIAN ?> ps-10" id="sekolah-kabupaten-saring" autocomplete="off" placeholder="Contoh: Kudus" aria-label="Cari kabupaten" aria-controls="sekolah-kabupaten-daftar">
+                    </div>
+                    <ul class="mt-2 max-h-64 overflow-y-auto overscroll-contain" id="sekolah-kabupaten-daftar" aria-label="Daftar kabupaten"></ul>
+                    <p class="px-3 py-2 text-sm text-gray-600" data-kabupaten-kosong hidden>Kabupaten tidak ditemukan. Coba ketik nama lain.</p>
+                </div>
+            </div>
             <select class="<?= K::ISIAN ?>" id="sekolah-kabupaten" data-jalur="sekolah.kabupaten">
                 <option value="">Pilih kabupaten</option>
                 <?php foreach ($wizard['kabupaten'] as $kabupaten) : ?>
@@ -35,6 +60,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
                 <?php endforeach ?>
             </select>
             <div class="<?= K::UMPAN ?>"></div>
+            <p class="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-gray-600" data-kunci-sekolah hidden><?= ikon('lock', 'size-4 shrink-0') ?>Terkunci, mengikuti data sekolah.</p>
         </div>
 
         <div>
@@ -46,7 +72,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
                 </button>
                 <div class="<?= K::UMPAN ?> basis-full !mt-0"></div>
             </div>
-            <div id="sekolah-npsn-keterangan" class="<?= K::BANTU ?>">Nama sekolah tampil sendiri setelah NPSN dicari.</div>
+            <div id="sekolah-npsn-keterangan" class="<?= K::BANTU ?>">Nama sekolah muncul otomatis setelah Anda mencari NPSN.</div>
         </div>
 
         <div class="flex items-center gap-3">
@@ -57,15 +83,18 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
         <div id="sekolah-hasil" class="empty:hidden" aria-live="polite"></div>
 
         <?php // Usulan nama sekolah yang lebih lengkap (K99); ditampilkan `pendaftaran/sekolah.js`. ?>
-        <div id="sekolah-usulan-kotak" hidden>
-            <label class="<?= K::LABEL ?>" for="sekolah-nama-usulan">Nama sekolah lengkap yang diusulkan</label>
+        <div id="sekolah-usulan-kotak" class="rounded-xl border border-gray-200 bg-gray-50 p-4" hidden>
+            <div class="mb-2 flex items-center justify-between gap-3">
+                <label class="<?= K::LABEL ?> !mb-0 flex items-center gap-2" for="sekolah-nama-usulan"><?= ikon('pencil', 'size-4 text-primary-700') ?>Usulan nama lengkap sekolah</label>
+                <button type="button" class="<?= K::TAUTAN ?> !min-h-9 text-sm" id="sekolah-usulan-batal" hidden><?= ikon('x', 'size-4') ?>Batal</button>
+            </div>
             <input type="text" class="<?= K::ISIAN ?>" id="sekolah-nama-usulan" maxlength="150" autocomplete="off" data-jalur="sekolah.nama_usulan"
                 placeholder="Contoh: MIS MUHAMMADIYAH JATI" aria-describedby="sekolah-nama-usulan-keterangan">
             <div class="<?= K::UMPAN ?>"></div>
-            <div id="sekolah-nama-usulan-keterangan" class="<?= K::BANTU ?>">
-                Nama ini langsung dipakai untuk pendaftaran Anda dan dikirim ke panitia untuk diperiksa.
-                Bila panitia tidak menyetujuinya, pendaftaran memakai nama dari data sekolah. Kosongkan bila nama di atas sudah benar.
-            </div>
+            <ul id="sekolah-nama-usulan-keterangan" class="mt-2 space-y-1 text-sm text-gray-600">
+                <li class="flex gap-2"><?= ikon('check', 'mt-0.5 size-4 shrink-0 text-green-700') ?>Nama ini langsung dipakai di pendaftaran Anda.</li>
+                <li class="flex gap-2"><?= ikon('info', 'mt-0.5 size-4 shrink-0 text-primary-700') ?>Panitia memeriksanya. Bila tidak disetujui, pendaftaran memakai nama dari data sekolah.</li>
+            </ul>
         </div>
 
         <div id="sekolah-nama-kotak" hidden>

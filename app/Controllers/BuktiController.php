@@ -111,7 +111,7 @@ class BuktiController extends BaseController
         $pesan = (new BerkasBuktiBayar())->unggahKe((int) $pendaftaran['id'], $this->request->getFile(BuktiBayarController::KOTAK));
 
         if ($pesan === BerkasBuktiBayar::PENUH) {
-            return $this->jawabUnggah($pendaftaran, 409, 'Bukti bayar pendaftaran ini sudah mencapai batas, paling banyak ' . BuktiBayarModel::batas() . ' gambar. Bila perlu mengganti gambar, hubungi panitia lewat WA.');
+            return $this->jawabUnggah($pendaftaran, 409, 'Bukti bayar pendaftaran ini sudah mencapai batas ' . BuktiBayarModel::batas() . ' gambar. Untuk mengganti gambar, hubungi panitia lewat WhatsApp.');
         }
 
         if ($pesan !== null) {
@@ -120,7 +120,7 @@ class BuktiController extends BaseController
 
         $jumlah = model(BuktiBayarModel::class)->jumlahMilik((int) $pendaftaran['id']);
 
-        return $this->jawabUnggah($pendaftaran, 201, 'Bukti bayar terkirim (' . $jumlah . ' dari ' . BuktiBayarModel::batas() . ' gambar). Panitia akan memeriksanya; status berubah menjadi Lunas setelah transfer diterima.');
+        return $this->jawabUnggah($pendaftaran, 201, 'Bukti bayar terkirim (' . $jumlah . ' dari ' . BuktiBayarModel::batas() . ' gambar). Panitia akan memeriksanya. Status berubah menjadi Lunas setelah transfer diterima.');
     }
 
     /**

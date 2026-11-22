@@ -203,16 +203,6 @@
             linear-gradient(180deg, #ffffff 0%, var(--color-primary-50) 100%);
     }
 
-    /* Pola titik G9-12 di atas latar merek; kelas `pola-titik` di <body> hanya dipasang bila berkasnya ada (F9-19). */
-    .pola-titik .latar-merek {
-        background-image:
-            url("../gambar/pola/titik-halus.webp"),
-            radial-gradient(60rem 30rem at 85% -10%, rgb(240 0 90 / 0.10), transparent 60%),
-            radial-gradient(50rem 30rem at -10% 10%, rgb(155 204 236 / 0.45), transparent 60%),
-            linear-gradient(180deg, #ffffff 0%, var(--color-primary-50) 100%);
-        background-size: 256px 256px, auto, auto, auto;
-    }
-
     .pita-merek {
         background-image: linear-gradient(100deg, var(--color-primary-900) 0%, var(--color-primary-700) 45%, var(--color-oranye-500) 80%, var(--color-magenta-500) 100%);
     }
@@ -370,6 +360,24 @@
         text-wrap: balance;
     }
 
+    /* ===== F10-12: judul editorial rata tengah (K167) ================== */
+    /* Judul Inggris, keterangan Indonesia di bawahnya, dan kalimat pengantar langsung sesudahnya. */
+    [data-judul-inggris],
+    [data-judul-inggris] + .judul-keterangan,
+    [data-judul-inggris] + .judul-keterangan + p {
+        text-align: center;
+    }
+
+    [data-judul-inggris] + .judul-keterangan.flex,
+    [data-judul-inggris] + .judul-keterangan + p.flex {
+        justify-content: center;
+    }
+
+    [data-judul-inggris] + .judul-keterangan + p {
+        margin-inline: auto;
+    }
+    /* ===== akhir F10-12 ================================================ */
+
     /* Pratinjau unduhan: bingkai PDF setinggi layar dan gambar yang muat di modal. */
     .pratinjau-bingkai {
         display: block;
@@ -389,6 +397,35 @@
         object-fit: contain;
     }
     /* ===== akhir F10-09 ================================================ */
+
+    /* ===== F10-10: pemasangan art G10 ===============================
+     * Elemen G10-11 yang belum dipakai F10-05, juga hanya di bawah kelas penanda
+     * `ada-<nama>` (`GambarOpsional::penandaElemen()`); tanpa berkas tidak ada
+     * permintaan dan tidak tampil apa pun. */
+
+    /* Sorot kuas: sapuan oranye tipis di belakang satu kata judul (bagian bawah, ±45% tinggi teks). */
+    .sorot-kuas {
+        position: relative;
+        z-index: 0;
+        white-space: nowrap;
+    }
+
+    .ada-kuas-sorot .sorot-kuas {
+        padding-inline: 0.08em;
+        background-image: url("../gambar/elemen/kuas-sorot.webp");
+        background-repeat: no-repeat;
+        background-position: 0 100%;
+        background-size: 100% 40%;
+    }
+
+    /* Garis kecepatan: goresan putih tipis di latar biru tua (hero), diam dan samar. */
+    .ada-garis-kecepatan .garis-kecepatan {
+        background-image: url("../gambar/elemen/garis-kecepatan.webp");
+        background-repeat: repeat-x;
+        background-position: left bottom;
+        background-size: auto 100%;
+    }
+    /* ===== akhir F10-10 ================================================ */
 
     /* ===== F10-07: navigasi publik ==============================
        Ruang bawah untuk menu bawah ponsel (`tata_letak/_menu_bawah_publik`)

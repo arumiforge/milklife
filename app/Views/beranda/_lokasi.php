@@ -30,7 +30,7 @@ $tabBaru   = '<span class="sr-only"> (di tab baru)</span>';
 ?>
 <section id="lokasi" class="scroll-mt-20 bg-white" aria-labelledby="judul-lokasi">
     <div class="mx-auto grid max-w-screen-xl gap-6 px-4 pt-12 sm:pt-16 lg:grid-cols-12 lg:items-start lg:gap-10">
-        <div class="lg:col-span-4">
+        <div class="text-center lg:col-span-4">
             <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>The Venue</p>
             <h2 id="judul-lokasi" class="judul-keterangan mt-2">Lokasi</h2>
             <?php if ($tempat !== '') : ?>

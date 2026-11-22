@@ -63,8 +63,8 @@ $tindakan = static function (array $b, string $status): string {
 <section class="latar-merek border-b border-gray-200/70" aria-labelledby="judul-jadwal-pertandingan">
     <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12 md:flex md:items-center md:gap-8">
         <div class="min-w-0 md:flex-1">
-        <?= view('tata_letak/_judul_editorial', ['inggris' => 'Race Day', 'alis' => $namaAcara, 'judul' => 'Jadwal pertandingan', 'ikon' => 'calendar-clock', 'id' => 'judul-jadwal-pertandingan'], ['saveData' => false]) ?>
-        <p class="mt-3 max-w-3xl text-lg text-gray-700">Urutan lomba per hari dalam WIB. Jam bisa bergeser mengikuti jalannya lomba.</p>
+        <?= view('tata_letak/_judul_editorial', ['inggris' => 'Race Day', 'judul' => 'Jadwal pertandingan', 'ikon' => 'calendar-clock', 'id' => 'judul-jadwal-pertandingan'], ['saveData' => false]) ?>
+        <p class="mt-3 max-w-3xl text-lg text-gray-700">Urutan lomba tiap hari. Semua jam dalam WIB dan bisa bergeser mengikuti jalannya lomba.</p>
         </div>
         <?php if (ada_gambar('judul/jadwal.webp')) : ?>
             <div class="hidden shrink-0 md:block" data-judul-ilustrasi><?= gambar_opsional('judul/jadwal.webp', ['class' => 'h-36 w-auto lg:h-44']) ?></div>

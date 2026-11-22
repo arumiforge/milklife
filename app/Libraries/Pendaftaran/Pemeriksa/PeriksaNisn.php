@@ -36,7 +36,7 @@ final class PeriksaNisn
         } elseif (isset($this->dipakai[$nisn])) {
             $this->galat->tambah("{$jalur}.nisn", "{$ke}: NISN {$nisn} sudah dipakai {$this->dipakai[$nisn]} di pendaftaran ini. Satu atlet cukup didaftarkan sekali dengan semua nomornya.");
         } elseif (isset($this->terdaftar[$nisn])) {
-            $this->galat->tambah("{$jalur}.nisn", "{$ke}: NISN {$nisn} sudah terdaftar. Atlet yang sudah terdaftar tidak bisa didaftarkan lagi; hubungi panitia bila perlu mengubah datanya.");
+            $this->galat->tambah("{$jalur}.nisn", "{$ke}: NISN {$nisn} sudah terdaftar. Atlet yang sudah terdaftar tidak bisa didaftarkan lagi. Hubungi panitia bila datanya perlu diubah.");
         } else {
             $this->dipakai[$nisn] = $ke;
         }

@@ -84,7 +84,7 @@
         var labelJenjang = DATA.jenjang[jenjang] || jenjang || '-';
 
         if (!untukJenjang.length) {
-            return { ku: null, galat: 'Belum ada kelompok umur yang dibuka untuk ' + labelJenjang + ', jadi atlet ini tidak bisa didaftarkan.', pilihan: [] };
+            return { ku: null, galat: 'Belum ada kelompok umur yang dibuka untuk ' + labelJenjang + '. Atlet ini belum bisa didaftarkan.', pilihan: [] };
         }
 
         var bagian = untukJenjang.filter(function (ku) { return !!ku.teks_tahun_lahir; }).map(namaKu);
@@ -103,7 +103,7 @@
             return {
                 ku: null,
                 galat: 'Atlet lahir tahun ' + tahun + ' masuk ' + lain.nama + ', yang hanya untuk ' + boleh
-                    + '. Sekolah ini ' + labelJenjang + ', jadi atlet ini tidak bisa didaftarkan' + rentang + '.',
+                    + '. Sekolah ini ' + labelJenjang + '. Atlet ini belum bisa didaftarkan' + rentang + '.',
                 pilihan: []
             };
         }

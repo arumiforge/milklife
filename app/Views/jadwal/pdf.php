@@ -75,6 +75,6 @@ $adaLokasi = in_array(true, array_map(static fn (array $b): bool => $b['lokasi']
         <?php endif ?>
     </tbody>
 </table>
-<div class="catatan">Waktu dalam WIB dan bisa berubah menyesuaikan jalannya lomba. Jadwal terbaru ada di halaman Jadwal situs pendaftaran.</div>
+<div class="catatan">Semua jam dalam WIB dan bisa bergeser mengikuti jalannya lomba. Jadwal terbaru ada di halaman Jadwal situs pendaftaran.</div>
 </body>
 </html>

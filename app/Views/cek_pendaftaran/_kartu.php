@@ -28,22 +28,22 @@ $ditolakSemua  = (bool) ($p['ditolak_semua'] ?? false);
 $jumlahDitolak = count($p['atlet_ditolak'] ?? []);
 $keadaan       = $lunas ? 'lunas' : ($ditolakSemua ? 'ditolak' : 'menunggu');
 $gayaKeadaan   = [
-    'lunas'    => ['border-t-green-600', 'bg-green-100 text-green-800', 'circle-check'],
-    'menunggu' => ['border-t-oranye-500', 'bg-yellow-100 text-yellow-900', 'hourglass'],
-    'ditolak'  => ['border-t-red-600', 'bg-red-100 text-red-800', 'circle-x'],
+    'lunas'    => ['border-t-4 border-t-green-600', 'bg-green-100 text-green-800', 'circle-check'],
+    'menunggu' => ['', 'bg-yellow-100 text-yellow-900', 'hourglass'],
+    'ditolak'  => ['border-t-4 border-t-red-600', 'bg-red-100 text-red-800', 'circle-x'],
 ][$keadaan];
 $jumlahBukti = (int) ($p['jumlah_bukti_bayar'] ?? 0);
 // Nomor dada tampil setelah Lunas (K88); sebelumnya tanda pisah.
 $dada = static fn (array $a): string => $lunas && ($a['nomor_dada'] ?? null) !== null
     ? '<strong class="text-primary-900">' . esc((string) $a['nomor_dada']) . '</strong>'
-    : '<span class="text-gray-400" title="Nomor atlet (BIB) keluar setelah pembayaran Lunas">–</span>';
+    : '<span class="text-gray-400" title="Nomor atlet (BIB) muncul setelah pembayaran Lunas">–</span>';
 $batasBukti = App\Models\BuktiBayarModel::batas();
 $subjudul   = 'cek-subjudul mt-6 mb-3 flex items-center gap-2 font-bold text-primary-900';
 $jumlah     = 'cek-jumlah rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-800';
 $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 [&_th]:px-3 [&_th]:py-2.5';
 // ikon-sprite: circle-check hourglass circle-x
 ?>
-<article class="cek-kartu cek-kartu-<?= $keadaan ?> overflow-hidden rounded-2xl border border-gray-200 border-t-4 <?= $gayaKeadaan[0] ?> bg-white shadow-lembut" aria-labelledby="<?= $idJudul ?>" data-status-kartu="<?= $keadaan ?>">
+<article class="cek-kartu cek-kartu-<?= $keadaan ?> overflow-hidden rounded-2xl border border-gray-200 <?= $gayaKeadaan[0] ?> bg-white shadow-lembut" aria-labelledby="<?= $idJudul ?>" data-status-kartu="<?= $keadaan ?>">
     <div class="cek-kartu-kepala flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 bg-primary-50/60 p-4 sm:px-6">
         <div class="min-w-0">
             <?php if ($banyak) : ?><p class="cek-kartu-urutan text-xs font-semibold uppercase tracking-wide text-oranye-700">Pendaftaran <?= $urutan ?></p><?php endif ?>
@@ -120,7 +120,7 @@ $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 
                     <li class="rounded-xl border border-gray-200 p-3">
                         <div class="cek-tim-kepala flex flex-wrap items-center justify-between gap-2">
                             <strong class="text-primary-900"><?= esc($tim['nomor_lomba']) ?></strong>
-                            <span class="cek-tim-biaya rounded-full bg-oranye-50 px-2.5 py-0.5 text-xs font-semibold text-oranye-800"><?= $tim['biaya_tim'] === null ? 'tanpa biaya regu, regu sudah terdaftar' : esc(rupiah($tim['biaya_tim'])) ?></span>
+                            <span class="cek-tim-biaya rounded-full bg-oranye-50 px-2.5 py-0.5 text-xs font-semibold text-oranye-800"><?= $tim['biaya_tim'] === null ? 'Tanpa biaya, regu sudah terdaftar' : esc(rupiah($tim['biaya_tim'])) ?></span>
                         </div>
                         <?php // Satu nama per baris dengan nomor dada (K88). ?>
                         <div class="mt-2 overflow-x-auto">
@@ -150,7 +150,7 @@ $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 
         <?php if ($ditolakSemua) : ?>
             <dl class="<?= $dl ?>">
                 <div class="<?= $totalPolos ?>"><dt>Total</dt><dd><?= esc(rupiah($p['total'])) ?></dd></div>
-                <div><dt>Keterangan</dt><dd>Tidak ada tagihan untuk pendaftaran ini</dd></div>
+                <div><dt>Keterangan</dt><dd>Pendaftaran ini tidak perlu dibayar</dd></div>
             </dl>
         <?php else : ?>
             <dl class="<?= $dl ?>">
@@ -164,12 +164,12 @@ $tabel      = 'w-full text-left text-sm text-gray-800 [&_td]:px-3 [&_td]:py-2.5 
             <div class="cek-unggah-bukti mt-6 rounded-xl border border-dashed border-gray-300 bg-oranye-50/50 p-4">
                 <h4 class="<?= $subjudul ?> !mt-0"><?= ikon('receipt', 'size-5 text-primary-700') ?> Bukti bayar <span class="<?= $jumlah ?>"><?= $jumlahBukti ?></span></h4>
                 <?php if ($jumlahBukti >= $batasBukti) : ?>
-                    <p class="text-gray-800">Sudah <?= $jumlahBukti ?> gambar terkirim, batas paling banyak <?= $batasBukti ?> gambar. Panitia akan memeriksanya.</p>
+                    <p class="text-gray-800">Anda sudah mengirim <?= $jumlahBukti ?> gambar, jumlah paling banyak yang diterima. Panitia akan memeriksanya.</p>
                 <?php else : ?>
-                    <p class="mb-3 text-sm text-gray-600"><?= $jumlahBukti === 0 ? 'Belum ada bukti bayar.' : 'Sudah ' . $jumlahBukti . ' gambar terkirim.' ?> Unggah foto atau tangkapan layar bukti transfer di sini, tidak perlu dikirim lewat WA.</p>
+                    <p class="mb-3 text-sm text-gray-600"><?= $jumlahBukti === 0 ? 'Belum ada bukti bayar.' : 'Sudah ' . $jumlahBukti . ' gambar terkirim.' ?> Unggah foto atau tangkapan layar bukti transfer di sini. Anda tidak perlu mengirimnya lewat WhatsApp.</p>
                     <form method="post" action="<?= esc(App\Libraries\BuktiPendaftaran::alamat($p) . '/bukti-bayar', 'attr') ?>" enctype="multipart/form-data"
                         data-konfirmasi-judul="Kirim bukti bayar?"
-                        data-konfirmasi="<?= esc('Gambar yang dipilih dikirim ke panitia sebagai bukti transfer pendaftaran ' . $p['id_pendaftaran'] . '. Setelah terkirim, gambar tidak bisa dihapus sendiri.', 'attr') ?>"
+                        data-konfirmasi="<?= esc('Gambar ini dikirim ke panitia sebagai bukti transfer pendaftaran ' . $p['id_pendaftaran'] . '. Setelah terkirim, Anda tidak bisa menghapusnya.', 'attr') ?>"
                         data-konfirmasi-tombol="Kirim bukti" data-konfirmasi-jenis="utama">
                         <?= csrf_field() ?>
                         <input type="hidden" name="kembali" value="<?= esc($kode, 'attr') ?>">

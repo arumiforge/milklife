@@ -1,7 +1,7 @@
 <?php
 /**
  * Logo WhatsApp sebagai SVG sebaris (tanpa gaya sebaris, aman CSP K127),
- * dipakai tombol Chat WA narahubung (F10-08, permintaan pemilik). Lucide tidak
+ * dipakai tombol Kirim pesan WA narahubung (F10-08, permintaan pemilik). Lucide tidak
  * punya ikon merek, jadi jalurnya diambil dari Simple Icons 13.21.0
  * (`icons/whatsapp.svg`, lisensi CC0 1.0). Warna mengikuti `currentColor`.
  *

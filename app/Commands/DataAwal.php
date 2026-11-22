@@ -76,8 +76,8 @@ class DataAwal extends BaseCommand
         'HalamanDepan.teks'           => 'Ajang atletik untuk generasi muda Indonesia.',
         'HalamanDepan.footer'         => 'Bakti Olahraga Djarum Foundation dan MilkLife',
         'HalamanDepan.nomor_wa_tanya' => '6288215277227',
-        'HalamanDepan.pesan_tanya'    => 'Tanya admin',
-        'HalamanDepan.pesan_bagikan'  => 'Bagikan ke WA',
+        'HalamanDepan.pesan_tanya'    => 'Halo panitia, saya ingin bertanya tentang lomba.',
+        'HalamanDepan.pesan_bagikan'  => 'Yuk ikut lomba atletik pelajar ini. Info dan pendaftaran:',
     ];
 
     /**

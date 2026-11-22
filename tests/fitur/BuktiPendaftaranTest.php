@@ -96,10 +96,10 @@ final class BuktiPendaftaranTest extends UjiBasisData
         foreach ([
             'BUKTI PENDAFTARAN', 'MILKLIFE ATHLETICS CHALLENGE', 'Seri 2 Tahun 2026',
             // Nama sekolah di blok sendiri paling atas, data lain berlabel di bawahnya (K108).
-            '<td class="sekolah-label">Nama Sekolah</td>', '<td class="sekolah-nama">SD NEGERI CONTOH 1</td>',
-            '<td class="info-label">Tanggal Pendaftaran</td>', '<td class="info-isi">12 November 2026</td>',
+            '<td class="sekolah-label">Nama sekolah</td>', '<td class="sekolah-nama">SD NEGERI CONTOH 1</td>',
+            '<td class="info-label">Tanggal pendaftaran</td>', '<td class="info-isi">12 November 2026</td>',
             '<td class="info-label">Kabupaten / Kota</td>', '<td class="info-isi">Kudus</td>',
-            '<td class="info-label">ID Pendaftaran</td>', '<td class="info-id" width="58mm">MAC2A0000126</td>',
+            '<td class="info-label">ID pendaftaran</td>', '<td class="info-id" width="58mm">MAC2A0000126</td>',
             '<td class="info-label">NPSN</td>', '<td class="info-isi">20300001</td>', '<td class="info-isi">SD/MI</td>',
             'Ofisial', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
             'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp 150.000',
@@ -175,7 +175,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         // Lunas: nomor dada anggota tim ikut dicetak (K87, menggantikan K52).
         $this->assertMatchesRegularExpression('#<td>FAJAR REKAAN</td>\s*<td>\d+</td>\s*<td><b>1001</b></td>\s*<td class="peran-cadangan">Cadangan</td>#', $html);
         $this->assertStringContainsString('Tanpa biaya<br>regu sudah terdaftar', $html);
-        $this->assertStringContainsString('Tidak ada nomor individu', $html);
+        $this->assertStringContainsString('Pendaftaran ini tidak memuat nomor individu', $html);
         $this->assertStringContainsString('stempel stempel-lunas', $html);
         $this->assertStringNotContainsString('var:logo', $html, 'Tanpa logo bila belum diunggah.');
 
@@ -245,7 +245,7 @@ final class BuktiPendaftaranTest extends UjiBasisData
         $hasil = $this->get('bukti/' . str_repeat('a', 24) . '/MAC2A0000126');
         $hasil->assertStatus(429);
         $hasil->assertHeader('Retry-After', '6');
-        $hasil->assertSee('Tunggu 6 detik lagi');
+        $hasil->assertSee('Tunggu 6 detik, lalu muat ulang');
     }
 
     /**

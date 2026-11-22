@@ -3,7 +3,7 @@
  * Kepala satu langkah wizard (F9-05): ilustrasi panduan G9-03 bila berkasnya
  * sudah ada (`IsiBantuan::gambarLangkah()`, tanpa gambar bila belum), judul
  * `<h2 id="judul-langkah-<n>">` yang difokuskan JS saat pindah langkah, dan
- * tombol Bantuan.
+ * tombol Bantuan serta Kosongkan di kanannya (K161).
  *
  * @var int    $langkah 1–5
  * @var string $judul
@@ -20,5 +20,8 @@ $gambar = IsiBantuan::gambarLangkah((int) $langkah);
         <?php endif ?>
         <h2 id="judul-langkah-<?= (int) $langkah ?>" class="min-w-0 text-2xl font-extrabold tracking-tight text-primary-900 focus:outline-none sm:text-3xl" tabindex="-1"><?= (int) $langkah ?>. <?= esc($judul) ?></h2>
     </div>
-    <?= view('pendaftaran/_tombol_bantuan', ['langkah' => (int) $langkah], ['saveData' => false]) ?>
+    <div class="flex shrink-0 items-center gap-2">
+        <?= view('pendaftaran/_tombol_bantuan', ['langkah' => (int) $langkah], ['saveData' => false]) ?>
+        <?= view('pendaftaran/_tombol_kosongkan', ['langkah' => (int) $langkah], ['saveData' => false]) ?>
+    </div>
 </div>

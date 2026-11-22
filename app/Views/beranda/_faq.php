@@ -13,7 +13,7 @@ if ($faq === []) {
 ?>
 <section id="faq" class="scroll-mt-20" aria-labelledby="judul-faq">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
-        <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="flex flex-col items-center gap-4 text-center">
             <div>
                 <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Got Questions?</p>
                 <h2 id="judul-faq" class="judul-keterangan mt-2">Pertanyaan yang sering ditanyakan</h2>

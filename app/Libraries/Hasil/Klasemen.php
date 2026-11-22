@@ -167,10 +167,10 @@ final class Klasemen
     public static function keterangan(string $metode = self::MEDALI, array $poin = self::POIN_BAWAAN): string
     {
         if ($metode !== self::POIN) {
-            return 'Juara umum ditentukan jumlah juara I terbanyak, lalu juara II, lalu juara III; bila masih sama, peringkat bersama.';
+            return 'Juara umum adalah sekolah dengan juara I terbanyak. Bila sama, dilihat juara II, lalu juara III. Bila masih sama, sekolah itu berbagi peringkat.';
         }
 
-        return 'Juara umum ditentukan jumlah poin terbanyak (' . self::teksPoin($poin) . '); bila sama, juara I terbanyak, lalu juara II, lalu juara III; bila masih sama, peringkat bersama.';
+        return 'Juara umum adalah sekolah dengan poin terbanyak (' . self::teksPoin($poin) . '). Bila sama, dilihat juara I terbanyak, lalu juara II, lalu juara III. Bila masih sama, sekolah itu berbagi peringkat.';
     }
 
     /**

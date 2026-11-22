@@ -14,7 +14,8 @@ namespace App\Libraries\Pendaftaran;
 final class KelasTampilan
 {
     /** Kotak isian teks, pilihan, dan berkas. */
-    public const ISIAN = 'block min-h-12 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 placeholder:text-gray-500 focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100 [&.is-invalid]:border-red-500 [&.is-invalid]:bg-red-50 [&.is-invalid]:focus:ring-red-100';
+    /** Isian; yang terkunci karena aturan (disabled) abu-abu bergaris putus (K164). */
+    public const ISIAN = 'block min-h-12 w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-base text-gray-900 placeholder:text-gray-500 focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100 [&.is-invalid]:border-red-500 [&.is-invalid]:bg-red-50 [&.is-invalid]:focus:ring-red-100 disabled:cursor-not-allowed disabled:border-dashed disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-600';
 
     /** Kotak unggah berkas (tombol "Pilih berkas" bergaya merek). */
     public const BERKAS = 'block w-full cursor-pointer rounded-lg border border-gray-300 bg-white text-base text-gray-900 file:me-3 file:min-h-12 file:cursor-pointer file:border-0 file:bg-primary-100 file:px-4 file:font-semibold file:text-primary-800 hover:file:bg-primary-200 focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100 [&.is-invalid]:border-red-500 [&.is-invalid]:bg-red-50';
@@ -26,8 +27,8 @@ final class KelasTampilan
 
     public const BANTU = 'mt-1.5 text-sm text-gray-500';
 
-    /** Kartu isian bergaris oranye (K77). */
-    public const KARTU = 'kartu-isian mb-4 rounded-2xl border border-gray-200 border-t-4 border-t-oranye-500 bg-white p-4 shadow-lembut sm:p-7';
+    /** Kartu isian berbingkai abu-abu, tanpa garis atas oranye (permintaan pemilik 22 November 2026). */
+    public const KARTU = 'kartu-isian mb-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-7';
 
     /** Ringkasan galat di atas langkah. */
     public const RINGKASAN = 'ringkasan-galat mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-900 [&_ul]:list-disc [&_ul]:ps-5';
@@ -36,7 +37,7 @@ final class KelasTampilan
     public const CENTANG = 'size-5 shrink-0 rounded border-gray-300 text-primary-700 focus:ring-4 focus:ring-primary-200 [&.is-invalid]:border-red-500';
 
     /** Pilihan berupa tombol besar: `<label class="PILIHAN"><input type="radio" class="sr-only">Teks</label>`. */
-    public const PILIHAN = 'flex flex-auto cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-center font-bold text-primary-700 transition hover:bg-primary-50 has-checked:border-primary-700 has-checked:bg-primary-700 has-checked:text-white has-checked:shadow-lembut has-focus-visible:ring-4 has-focus-visible:ring-primary-200 [fieldset.is-invalid_&]:border-red-500';
+    public const PILIHAN = 'flex flex-auto cursor-pointer flex-col items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-3 text-center font-bold text-primary-700 transition hover:bg-primary-50 has-checked:border-primary-700 has-checked:bg-primary-700 has-checked:text-white has-checked:shadow-lembut has-focus-visible:ring-4 has-focus-visible:ring-primary-200 [fieldset.is-invalid_&]:border-red-500 has-disabled:cursor-not-allowed has-disabled:border-dashed has-disabled:bg-gray-100 has-disabled:text-gray-500 has-disabled:hover:bg-gray-100 has-[:checked:disabled]:border-solid has-[:checked:disabled]:border-gray-600 has-[:checked:disabled]:bg-gray-600 has-[:checked:disabled]:text-white has-[:checked:disabled]:shadow-none';
 
     public const TOMBOL = 'inline-flex items-center justify-center gap-2 rounded-lg text-center font-semibold transition-colors focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-60';
 

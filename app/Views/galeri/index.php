@@ -21,7 +21,7 @@
 <?= $this->section('keterangan') ?>Album foto acara dari panitia.<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Gallery', 'alis' => $namaAcara, 'judul' => 'Galeri', 'ikon' => 'images', 'gambar' => 'judul/galeri.webp', 'teks' => 'Foto lomba dari panitia. Tekan album untuk membukanya di Instagram atau Google Drive.'], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Gallery', 'judul' => 'Galeri', 'ikon' => 'images', 'gambar' => 'judul/galeri.webp', 'teks' => 'Foto lomba dari panitia. Tekan album untuk membukanya di Instagram atau Google Drive.'], ['saveData' => false]) ?>
 
 <div class="mx-auto max-w-screen-xl px-4 py-10">
     <?php if ($album === []) : ?>
@@ -30,7 +30,7 @@
                 'gambar' => 'gambar/keadaan/kosong-data.webp',
                 'ikon'   => 'images',
                 'judul'  => 'Belum ada album foto',
-                'teks'   => 'Panitia belum menaruh album di sini. Foto acara akan muncul di halaman ini setelah tersedia. Silakan kembali lagi nanti.',
+                'teks'   => 'Panitia belum mengunggah album. Foto acara akan muncul di sini setelah tersedia, jadi buka lagi halaman ini nanti.',
                 'aksi'   => komponen('tombol', ['label' => 'Kembali ke beranda', 'href' => site_url('/'), 'varian' => 'kedua', 'ikon' => 'arrow-left']),
             ]) ?>
         </div>

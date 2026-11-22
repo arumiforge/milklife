@@ -72,8 +72,12 @@
         });
     });
 
-    $('#tombol-mulai-ulang').addEventListener('click', function () {
-        yakin('Mulai dari awal?', 'Semua isian dikosongkan. Data sekolah, ofisial, dan atlet di halaman ini akan hilang.', 'Kosongkan isian').then(function (setuju) {
+    document.querySelectorAll('[data-mulai-ulang]').forEach(function (tombol) {
+        tombol.addEventListener('click', mulaiUlang);
+    });
+
+    function mulaiUlang() {
+        yakin('Mulai dari awal?', 'Data sekolah, ofisial, dan atlet di halaman ini akan dihapus dan tidak bisa dikembalikan.', 'Kosongkan isian').then(function (setuju) {
             if (!setuju) {
                 return;
             }
@@ -83,7 +87,7 @@
             simpanDraf();
             tampilkanLangkah(1);
         });
-    });
+    }
 
     // Antarmuka untuk langkah 4–5 (F4-04).
     window.WizardPendaftaran = {

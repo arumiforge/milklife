@@ -38,8 +38,138 @@
         namaKotak: $('#sekolah-nama-kotak'),
         hasil: $('#sekolah-hasil'),
         usulan: $('#sekolah-nama-usulan'),
-        usulanKotak: $('#sekolah-usulan-kotak')
+        usulanKotak: $('#sekolah-usulan-kotak'),
+        usulanBatal: $('#sekolah-usulan-batal')
     };
+
+    /**
+     * Pemilih kabupaten berkotak cari untuk ponsel (K163). `<select>` tetap
+     * menjadi sumber nilai (draf, galat, kunci); pemilih ini hanya tampilan
+     * di layar di bawah sm dan mengikuti nilai, kunci, dan tanda galatnya.
+     */
+    var kabupatenCari = (function () {
+        var wadah = $('[data-kabupaten-cari]');
+        if (!wadah) {
+            return { perbarui: function () {} };
+        }
+        var pilih = L1.kabupaten;
+        var tombol = $('#sekolah-kabupaten-tombol');
+        var teks = $('[data-kabupaten-teks]', wadah);
+        var panel = $('#sekolah-kabupaten-panel');
+        var saring = $('#sekolah-kabupaten-saring');
+        var daftar = $('#sekolah-kabupaten-daftar');
+        var kosong = $('[data-kabupaten-kosong]', wadah);
+
+        // Dengan JS: pemilih ini tampil di ponsel, `<select>` di layar sm ke atas.
+        wadah.classList.replace('hidden', 'sm:hidden');
+        pilih.classList.replace('block', 'hidden');
+        pilih.classList.add('sm:block');
+
+        function tutup() {
+            panel.hidden = true;
+            tombol.setAttribute('aria-expanded', 'false');
+        }
+
+        function pilihNilai(nilai) {
+            pilih.value = nilai;
+            pilih.dispatchEvent(new Event('change', { bubbles: true }));
+            tutup();
+            tombol.focus();
+        }
+
+        function isiDaftar() {
+            var kata = saring.value.trim().toLowerCase();
+            var jumlah = 0;
+            daftar.textContent = '';
+            Array.prototype.forEach.call(pilih.options, function (opsi) {
+                if (opsi.value === '' || (kata !== '' && opsi.text.toLowerCase().indexOf(kata) === -1)) {
+                    return;
+                }
+                jumlah++;
+                var terpilih = opsi.value === pilih.value;
+                var butir = buat('li');
+                var b = buat('button', 'flex min-h-11 w-full items-center justify-between gap-2 rounded-lg px-3 text-start text-gray-900 hover:bg-primary-50 focus:bg-primary-50 focus:outline-none' + (terpilih ? ' font-semibold text-primary-800' : ''), opsi.text);
+                b.type = 'button';
+                b.setAttribute('data-nilai', opsi.value);
+                if (terpilih) {
+                    b.setAttribute('aria-current', 'true');
+                    b.appendChild(ikon('check', 'size-5 shrink-0 text-primary-700'));
+                }
+                b.addEventListener('click', function () { pilihNilai(opsi.value); });
+                butir.appendChild(b);
+                daftar.appendChild(butir);
+            });
+            kosong.hidden = jumlah > 0;
+        }
+
+        function buka() {
+            panel.hidden = false;
+            tombol.setAttribute('aria-expanded', 'true');
+            saring.value = '';
+            isiDaftar();
+            saring.focus();
+        }
+
+        function perbarui() {
+            var opsi = pilih.options[pilih.selectedIndex];
+            var ada = pilih.value !== '' && !!opsi;
+            teks.textContent = ada ? opsi.text : 'Pilih kabupaten';
+            teks.classList.toggle('text-gray-500', !ada);
+            tombol.disabled = pilih.disabled;
+            tombol.classList.toggle('is-invalid', pilih.classList.contains('is-invalid'));
+            if (pilih.disabled) {
+                tutup();
+            }
+        }
+
+        tombol.addEventListener('click', function () {
+            if (panel.hidden) {
+                buka();
+            } else {
+                tutup();
+            }
+        });
+        saring.addEventListener('input', isiDaftar);
+        saring.addEventListener('keydown', function (e) {
+            // Enter memilih hasil pertama; panah bawah pindah ke daftar.
+            var pertama = $('button', daftar);
+            if (e.key === 'Enter' && pertama) {
+                e.preventDefault();
+                pilihNilai(pertama.getAttribute('data-nilai'));
+            } else if (e.key === 'ArrowDown' && pertama) {
+                e.preventDefault();
+                pertama.focus();
+            }
+        });
+        daftar.addEventListener('keydown', function (e) {
+            var semua = $$('button', daftar);
+            var i = semua.indexOf(document.activeElement);
+            if (e.key === 'ArrowDown' && i < semua.length - 1) {
+                e.preventDefault();
+                semua[i + 1].focus();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                (i > 0 ? semua[i - 1] : saring).focus();
+            }
+        });
+        wadah.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !panel.hidden) {
+                tutup();
+                tombol.focus();
+            }
+        });
+        document.addEventListener('click', function (e) {
+            if (!panel.hidden && !wadah.contains(e.target)) {
+                tutup();
+            }
+        });
+        pilih.addEventListener('change', perbarui);
+        new MutationObserver(perbarui).observe(pilih, { attributes: true, attributeFilter: ['class', 'disabled'] });
+        perbarui();
+
+        return { perbarui: perbarui };
+    })();
+
 
     /** Nama usulan pendaftar yang berlaku (K99): hanya untuk sekolah yang ditemukan lewat NPSN. */
     function namaUsulan() {
@@ -77,8 +207,23 @@
             r.checked = r.value === jenjangSekolah();
             r.disabled = !!(ref && ref.jenjang);
         });
+        // Daftar pilihan jenjang di ponsel (K162) mengikuti tombol pilihan.
+        var pilihJenjang = $('#sekolah-jenjang-pilih');
+        if (pilihJenjang) {
+            pilihJenjang.value = jenjangSekolah() || '';
+            pilihJenjang.disabled = !!(ref && ref.jenjang);
+        }
         L1.kabupaten.value = kabupatenSekolah() || '';
         L1.kabupaten.disabled = !!(ref && ref.kabupaten);
+        kabupatenCari.perbarui();
+        // Keterangan gembok di bawah jenjang dan kabupaten yang terkunci (K164).
+        var kunci = $$('[data-kunci-sekolah]');
+        if (kunci[0]) {
+            kunci[0].hidden = !(ref && ref.jenjang);
+        }
+        if (kunci[1]) {
+            kunci[1].hidden = !(ref && ref.kabupaten);
+        }
         L1.npsn.value = s.npsn;
         L1.npsn.disabled = s.tanpaNpsn;
         L1.cari.disabled = s.tanpaNpsn;
@@ -92,6 +237,8 @@
             L1.usulan.value = s.namaUsulan || '';
         }
         L1.usulanKotak.hidden = !(!s.tanpaNpsn && ref && (kembar || s.usulanTerbuka || usulan !== ''));
+        // Usulan yang dibuka sendiri boleh dibatalkan; untuk nama kembar usulan dianjurkan (K99).
+        L1.usulanBatal.hidden = !!kembar;
 
         L1.hasil.textContent = '';
         if (!s.tanpaNpsn && ref) {
@@ -107,22 +254,29 @@
                 isi.appendChild(buat('span', 'block text-sm', ref.lokasi));
             }
             isi.appendChild(buat('span', 'block text-sm', [ref.jenjang_label, ref.kabupaten].filter(Boolean).join(' · ') + '. Jenjang dan kabupaten mengikuti data sekolah.'));
+            // Tawaran usulan nama di dalam kotak sekolah (K99, dirapikan K163).
+            if (!kembar && L1.usulanKotak.hidden) {
+                var tawaran = buat('div', 'mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-green-200 pt-3 text-sm');
+                tawaran.appendChild(buat('span', null, 'Nama sekolah kurang lengkap?'));
+                var tautan = buat('button', W.KELAS.tautan + ' text-green-900');
+                tautan.type = 'button';
+                tautan.appendChild(ikon('pencil', 'size-4'));
+                tautan.appendChild(document.createTextNode('Usulkan nama lengkap'));
+                tautan.addEventListener('click', function () {
+                    setelSekolah({ usulanTerbuka: true });
+                    L1.usulan.focus();
+                });
+                tawaran.appendChild(tautan);
+                isi.appendChild(tawaran);
+            }
             kotak.appendChild(isi);
             L1.hasil.appendChild(kotak);
 
             // Nama umum yang dipakai sekolah lain juga (K99): tawarkan usulan nama lengkap.
             if (kembar && !usulan) {
                 L1.hasil.appendChild(buat('div', W.KELAS.kotakPeringatan,
-                    'Nama ' + ref.nama + ' juga dipakai ' + ref.nama_kembar + ' sekolah lain di data kami. Supaya tidak tertukar di rekap dan bukti pendaftaran, '
+                    'Nama ' + ref.nama + ' juga dipakai ' + ref.nama_kembar + ' sekolah lain di data sekolah. Supaya tidak tertukar di rekap dan bukti pendaftaran, '
                     + 'usulkan nama lengkap sekolah Anda di bawah, misalnya dengan menambahkan nama desa.'));
-            } else if (!kembar && L1.usulanKotak.hidden) {
-                var tautan = buat('button', W.KELAS.tautan + ' mb-3', 'Nama sekolah kurang lengkap? Usulkan nama yang benar');
-                tautan.type = 'button';
-                tautan.addEventListener('click', function () {
-                    setelSekolah({ usulanTerbuka: true });
-                    L1.usulan.focus();
-                });
-                L1.hasil.appendChild(tautan);
             }
 
             var timSekolah = s.susulan.tim || {};
@@ -130,12 +284,12 @@
             Object.keys(timSekolah).forEach(function (id) { jumlahRegu += Object.keys(timSekolah[id] || {}).length; });
             if (jumlahRegu > 0) {
                 L1.hasil.appendChild(buat('div', W.KELAS.kotakInfo,
-                    'Sekolah ini sudah pernah mendaftar dan sudah punya ' + jumlahRegu + ' regu di ' + Object.keys(timSekolah).length + ' nomor beregu. '
-                    + 'Di langkah 3 (Atlet), atlet bisa dimasukkan ke regu yang sudah ada (tanpa biaya regu lagi, centang konfirmasinya) '
-                    + 'atau ke regu baru (dengan biaya regu).'));
+                    'Sekolah ini sudah pernah mendaftar dan punya ' + jumlahRegu + ' regu di ' + Object.keys(timSekolah).length + ' nomor beregu. '
+                    + 'Di langkah 3 (Atlet), Anda bisa memasukkan atlet ke regu yang sudah ada tanpa biaya regu lagi (centang konfirmasinya). '
+                    + 'Anda juga bisa membuat regu baru dengan biaya regu.'));
             }
         } else if (!s.tanpaNpsn && s.status === 'tidak_ditemukan') {
-            L1.hasil.appendChild(buat('div', W.KELAS.kotakInfo, 'NPSN ' + s.dicari + ' tidak ada di data sekolah kami. Tulis nama sekolah secara lengkap di bawah.'));
+            L1.hasil.appendChild(buat('div', W.KELAS.kotakInfo, 'NPSN ' + s.dicari + ' belum ada di data sekolah. Tulis nama sekolah secara lengkap di bawah.'));
         }
     }
 
@@ -249,10 +403,14 @@
     $$('input[name="sekolah-jenjang"]').forEach(function (r) {
         r.addEventListener('change', function () { setelSekolah({ jenjang: r.value }); });
     });
+    if ($('#sekolah-jenjang-pilih')) {
+        $('#sekolah-jenjang-pilih').addEventListener('change', function () { setelSekolah({ jenjang: this.value }); });
+    }
     L1.kabupaten.addEventListener('change', function () { setelSekolah({ kabupaten: L1.kabupaten.value }); });
     L1.nama.addEventListener('input', function () { W.draf.sekolah.nama = L1.nama.value; simpanDraf(); });
     L1.usulan.addEventListener('input', function () { W.draf.sekolah.namaUsulan = L1.usulan.value; simpanDraf(); });
     L1.usulan.addEventListener('change', function () { setelSekolah({ namaUsulan: L1.usulan.value }); });
+    L1.usulanBatal.addEventListener('click', function () { setelSekolah({ usulanTerbuka: false, namaUsulan: '' }); });
     L1.npsn.addEventListener('input', function () {
         var npsn = L1.npsn.value.replace(/\D/g, '').slice(0, 8);
         if (npsn !== L1.npsn.value) {
