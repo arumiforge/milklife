@@ -165,4 +165,17 @@ final class BantuanFaqTest extends UjiBasisData
         $hasil->assertSee(aset('js/bantuan.js'));
         $hasil->assertDontSee('Tersembunyi?');
     }
+
+    public function testKepalaBantuanHanyaBilaBerkasnyaAdaDanTidakDiunduhDiPonsel(): void
+    {
+        $this->assertSame(0, $this->xpathDari($this->get('bantuan'))->query('//img[@data-kepala-bantuan]')->length);
+
+        // Kepala G9-07 disembunyikan di bawah md dan dimuat lazy, jadi ponsel tidak mengunduhnya.
+        $this->taruhGambarUji('bantuan/kepala-bantuan.webp');
+        $img = $this->xpathDari($this->get('bantuan'))->query('//img[@data-kepala-bantuan]')->item(0);
+        $this->assertNotNull($img);
+        $this->assertStringContainsString('aset/gambar/bantuan/kepala-bantuan.webp', $img->getAttribute('src'));
+        $this->assertSame('lazy', $img->getAttribute('loading'));
+        $this->assertStringContainsString('md:block', $img->getAttribute('class'));
+    }
 }

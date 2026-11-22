@@ -164,6 +164,20 @@ if (akar) {
         return e;
     }
 
+    /**
+     * Medali G9-06 untuk juara umum I–III bila berkasnya ada (`data-gambar-medali-*`),
+     * selain itu lencana peringkat biasa. Ukurannya tetap supaya pemecahan halaman tidak bergeser.
+     */
+    function medaliPeringkat(peringkat) {
+        const alamat = { 1: akar.dataset.gambarMedaliEmas, 2: akar.dataset.gambarMedaliPerak, 3: akar.dataset.gambarMedaliPerunggu }[Number(peringkat)];
+        if (!alamat) return lencanaPeringkat(peringkat);
+        const img = el('img', 'size-[calc(var(--u)*1.7)] object-contain');
+        img.src = alamat;
+        img.alt = 'Peringkat ' + peringkat;
+        img.dataset.medali = String(peringkat);
+        return img;
+    }
+
     function selTeks(utama, kedua, kelasUtama = 'font-semibold') {
         const td = el('td', kelasSel + ' wrap-anywhere');
         td.append(el('div', kelasUtama, utama));
@@ -205,7 +219,7 @@ if (akar) {
             const metodePoin = butir.metode === 'poin';
             const medali = sempit && metodePoin ? [] : [['emas', 'I', 'bg-amber-300'], ['perak', 'II', 'bg-slate-200'], ['perunggu', 'III', 'bg-oranye-300']];
             const kolom = [
-                { judul: 'Per.', kelas: 'w-[calc(var(--u)*2.4)]', isi: (b) => { const td = el('td', kelasSel); td.append(lencanaPeringkat(b.peringkat)); return td; } },
+                { judul: 'Per.', kelas: 'w-[calc(var(--u)*2.4)]', isi: (b) => { const td = el('td', kelasSel); td.append(medaliPeringkat(b.peringkat)); return td; } },
                 { judul: 'Sekolah', kelas: '', isi: (b) => selTeks(b.sekolah, null) },
             ];
             for (const [kunci, label, warna] of medali) {
@@ -251,6 +265,14 @@ if (akar) {
             : halaman.jenis === 'juara_umum' ? 'bg-amber-300 text-primary-950'
                 : halaman.jenis === 'jadwal' ? 'bg-langit-300 text-primary-950'
                     : 'bg-oranye-500 text-white';
+        if (halaman.jenis === 'juara_umum' && akar.dataset.gambarPodium) {
+            // Podium G9-06 kecil di kepala panel juara umum, hanya bila berkasnya ada.
+            const podium = el('img', 'h-[calc(var(--u)*1.6)] w-auto shrink-0');
+            podium.src = akar.dataset.gambarPodium;
+            podium.alt = '';
+            podium.dataset.podium = '';
+            kepalaPanel.append(podium);
+        }
         kepalaPanel.append(el('span', 'shrink-0 rounded-full px-[calc(var(--u)*0.55)] py-[calc(var(--u)*0.1)] text-[length:calc(var(--u)*0.62)] font-bold uppercase tracking-wide ' + warnaLabel, LABEL[halaman.jenis]));
         const judul = el('h2', 'min-w-0 flex-1 basis-[12em] text-[length:calc(var(--u)*1.3)] font-extrabold wrap-anywhere in-data-[susunan=kecil]:text-[length:calc(var(--u)*1.05)]', halaman.judul);
         if (halaman.sub) {
