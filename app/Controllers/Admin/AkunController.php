@@ -114,7 +114,7 @@ class AkunController extends BaseController
 
         session()->set(SesiAdmin::KUNCI_NAMA, $isian['nama']);
 
-        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Data akun tersimpan.');
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Nama dan nama pengguna tersimpan.');
     }
 
     /**
@@ -163,9 +163,9 @@ class AkunController extends BaseController
         }
 
         if ($ulangi === '') {
-            $galat['ulangi_sandi'] = 'Ulangi kata sandi baru belum diisi. Ketik sekali lagi kata sandi baru yang sama.';
+            $galat['ulangi_sandi'] = 'Kotak Ulangi kata sandi baru belum diisi. Ketik sekali lagi kata sandi baru yang sama.';
         } elseif ($baru !== '' && $ulangi !== $baru) {
-            $galat['ulangi_sandi'] = 'Ulangan kata sandi tidak sama dengan kata sandi baru. Ketik ulang keduanya dengan teliti.';
+            $galat['ulangi_sandi'] = 'Kata sandi yang diulang tidak sama dengan kata sandi baru. Ketik ulang keduanya.';
         }
 
         if ($galat !== []) {
@@ -245,7 +245,7 @@ class AkunController extends BaseController
 
     private static function pesanTerlaluBanyak(int $detik): string
     {
-        return 'Terlalu banyak percobaan kata sandi. Tunggu ' . $detik . ' detik lagi, lalu coba sekali lagi.';
+        return 'Terlalu banyak percobaan kata sandi. Tunggu ' . $detik . ' detik, lalu coba lagi.';
     }
 
     /**

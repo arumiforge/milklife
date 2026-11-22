@@ -53,7 +53,7 @@ final class MasukAdminTest extends UjiBasisData
         $hasil = $this->get('admin/masuk');
 
         $hasil->assertOK();
-        $hasil->assertSee('Masuk Admin');
+        $hasil->assertSee('Masuk admin');
         $hasil->assertSee('autocomplete="username"');
         $hasil->assertSee('autocomplete="current-password"');
         $this->assertNotSame('', $this->tokenDariFormulir($hasil->getBody()));

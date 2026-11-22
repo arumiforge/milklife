@@ -71,7 +71,7 @@ final class JudulTabAdminTest extends UjiBasisData
 
         $hasil = $this->withSession([])->get('admin/masuk');
 
-        $this->assertSame('Masuk Admin – ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil));
+        $this->assertSame('Masuk admin – ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil));
         $hasil->assertSee('Panel panitia ' . AcaraController::NAMA_PENGGANTI);
     }
 
@@ -82,7 +82,7 @@ final class JudulTabAdminTest extends UjiBasisData
         $hasil = $this->withSession([])->get('admin/masuk');
         $hasil->assertOK();
 
-        $this->assertSame('Masuk Admin – ' . self::NAMA, $this->judulTab($hasil));
+        $this->assertSame('Masuk admin – ' . self::NAMA, $this->judulTab($hasil));
         $hasil->assertSee('Panel panitia ' . self::NAMA);
         $hasil->assertDontSee('MilkLife');
     }

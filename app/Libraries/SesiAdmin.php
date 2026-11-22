@@ -36,7 +36,7 @@ class SesiAdmin
     public const TANPA_SIDIK   = 'tanpa_sidik';
 
     public const PESAN_SANDI_DIGANTI = 'Kata sandi akun ini baru saja diganti. Silakan masuk lagi dengan kata sandi baru.';
-    public const PESAN_AKUN_HILANG   = 'Akun Anda tidak ditemukan lagi, jadi Anda dikeluarkan. Masuk dengan akun lain atau hubungi pengelola web.';
+    public const PESAN_AKUN_HILANG   = 'Akun Anda tidak ditemukan lagi, jadi Anda dikeluarkan dari panel. Masuk dengan akun lain atau hubungi pengelola web.';
     public const PESAN_TANPA_SIDIK   = 'Sesi Anda sudah berakhir. Silakan masuk lagi.';
 
     /**
