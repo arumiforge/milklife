@@ -97,11 +97,11 @@ final class HalamanUnduhanTest extends UjiBasisData
     {
         $menu = $this->menu($this->xpathDari($this->get('unduhan')));
 
-        // Tata letak baru (F9-03): Kategori hanya tampil bila kelompok umur sudah ada; Bantuan selalu (F9-04).
-        $this->assertSame(['Beranda', 'Unduhan', 'Bantuan'], array_keys($menu));
+        // Unduhan di bilah menu atas (F10-07, K154), bersama Bantuan; Galeri dan Tanya Panitia mati di data uji.
+        $this->assertSame(['Unduhan', 'Bantuan'], array_keys($menu));
         $this->assertSame(site_url('unduhan'), $menu['Unduhan']->getAttribute('href'));
         $this->assertSame('page', $menu['Unduhan']->getAttribute('aria-current'));
-        $this->assertFalse($menu['Beranda']->hasAttribute('aria-current'));
+        $this->assertFalse($menu['Bantuan']->hasAttribute('aria-current'));
 
         // Di halaman depan, Unduhan bertautan tetapi tidak aktif.
         $menu = $this->menu($this->xpathDari($this->get('/')));
@@ -112,13 +112,13 @@ final class HalamanUnduhanTest extends UjiBasisData
     // ---------- Bantuan ----------
 
     /**
-     * @return array<string, DOMElement> label => tautan menu utama
+     * @return array<string, DOMElement> label => tautan bilah menu atas
      */
     private function menu(DOMXPath $xpath): array
     {
         $butir = [];
 
-        foreach ($xpath->query('//nav[@aria-label="Menu utama"]//ul/li/a') as $tautan) {
+        foreach ($xpath->query('//nav[@aria-label="Menu tambahan"]//ul/li/a') as $tautan) {
             $butir[$this->teksSimpul($tautan)] = $tautan;
         }
 

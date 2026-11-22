@@ -8,6 +8,7 @@ use App\Libraries\MenuPublik;
 use App\Libraries\NomorWa;
 use App\Libraries\PetaLokasi;
 use App\Libraries\Unggahan;
+use App\Libraries\VarianFoto;
 use CodeIgniter\HTTP\ResponseInterface;
 use RuntimeException;
 
@@ -216,9 +217,11 @@ class HalamanDepanController extends BaseController
 
             if (isset($jalurBaru[$kunci])) {
                 setting('HalamanDepan.' . $kunci, $jalurBaru[$kunci]);
+                VarianFoto::hapus($lama);
                 $unggahan->hapus($lama);
             } elseif ($this->request->getPost('hapus_' . $kunci) === '1' && $lama !== '') {
                 setting('HalamanDepan.' . $kunci, '');
+                VarianFoto::hapus($lama);
                 $unggahan->hapus($lama);
             }
         }

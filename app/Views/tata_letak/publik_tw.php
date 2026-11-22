@@ -37,6 +37,7 @@
 use App\Libraries\GambarOpsional;
 use App\Libraries\IsiHalamanDepan;
 use App\Libraries\MenuPublik;
+use App\Libraries\VarianFoto;
 
 $menu      = MenuPublik::butir();
 $tombol    = MenuPublik::tombol();
@@ -49,6 +50,14 @@ try {
     $acara    = $isiDepan->acara();
     $tampilan = $isiDepan->tampilan();
     $logo     = IsiHalamanDepan::logoMerek($tampilan);
+    // Logo unggahan admin bisa ratusan KB padahal tampil kecil: pakai salinan kecil (F10-07).
+    $kunciLogo = IsiHalamanDepan::logoKepala($tampilan);
+    if ($logo !== null && $kunciLogo !== null) {
+        $logoKecil = VarianFoto::kecil((string) setting('HalamanDepan.' . $kunciLogo), VarianFoto::LEBAR_LOGO[$kunciLogo === 'logo_persegi' ? 0 : 1]);
+        if ($logoKecil !== null) {
+            $logo['alamat'] = base_url($logoKecil);
+        }
+    }
     $logoKaki = array_values(array_filter(
         IsiHalamanDepan::logoPembuka($tampilan, $acara['nama']),
         static fn (array $butir): bool => $butir['kunci'] === 'logo_djarum',
