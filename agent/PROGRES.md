@@ -22,7 +22,7 @@ Dikerjakan Codex dari [`desain/tugas/`](../desain/tugas/), ditinjau dan digabung
 | [G9-08 Panel admin](../desain/tugas/G9-08-panel-admin.md) | menunggu Codex, kode pemasangan siap |
 | [G9-09 Pita judul halaman publik](../desain/tugas/G9-09-pita-judul.md) | menunggu Codex, kode pemasangan siap |
 | [G9-10 Gambar bagikan](../desain/tugas/G9-10-gambar-bagikan.md) | menunggu Codex, kode pemasangan siap |
-| [G9-11 Ikon aplikasi](../desain/tugas/G9-11-ikon-aplikasi.md) | menunggu Codex, kode pemasangan siap |
+| [G9-11 Ikon aplikasi](../desain/tugas/G9-11-ikon-aplikasi.md) | diganti logo resmi pemilik (K152), #158 ditutup |
 | [G9-12 Pola dan hiasan latar](../desain/tugas/G9-12-pola-hiasan.md) | menunggu Codex, kode pemasangan siap |
 
 ## Berikutnya

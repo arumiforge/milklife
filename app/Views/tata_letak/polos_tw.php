@@ -21,6 +21,13 @@
  */
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
+use App\Libraries\IsiHalamanDepan;
+
+try {
+    $logoMerek = IsiHalamanDepan::logoMerek((new IsiHalamanDepan())->tampilan());
+} catch (Throwable) {
+    $logoMerek = IsiHalamanDepan::logoMerek([]);
+}
 
 $judul     = trim($this->renderSection('judul'));
 $namaAcara = esc(AcaraController::namaTampil());
@@ -48,7 +55,11 @@ $ilustrasi = gambar_opsional('admin/masuk.webp', ['class' => 'size-full object-c
         <div class="relative w-full max-w-md">
             <p class="mb-6 text-center" data-polos-merek>
                 <a href="<?= site_url('/') ?>" class="inline-flex items-center gap-2 text-xl font-extrabold text-primary-900 hover:text-primary-700">
-                    <span class="inline-flex size-10 items-center justify-center rounded-xl bg-primary-700 text-white"><?= ikon('zap') ?></span>
+                    <?php if ($logoMerek !== null) : ?>
+                        <img src="<?= esc($logoMerek['alamat']) ?>" class="h-14 w-auto" alt=""<?= $logoMerek['ukuran'] === null ? '' : ' width="' . (int) $logoMerek['ukuran']['lebar'] . '" height="' . (int) $logoMerek['ukuran']['tinggi'] . '"' ?> data-logo-merek>
+                    <?php else : ?>
+                        <span class="inline-flex size-10 items-center justify-center rounded-xl bg-primary-700 text-white"><?= ikon('zap') ?></span>
+                    <?php endif ?>
                     <span><?= $namaAcara ?></span>
                 </a>
             </p>

@@ -35,7 +35,7 @@ foreach ($latar as $kunci => $alamat) {
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#011450">
     <title><?= esc('Papan hasil – ' . $data['acara']['nama']) ?></title>
-    <link rel="icon" href="<?= aset('gambar/ikon.svg') ?>" type="image/svg+xml">
+    <?= view('tata_letak/_ikon_aplikasi', [], ['saveData' => false]) ?>
     <link rel="preload" href="<?= base_url('aset/vendor/inter/inter-latin-wght-normal.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= aset('css/tw.css') ?>">
 </head>

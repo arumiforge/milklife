@@ -24,7 +24,7 @@ Status tugas gambar hanya dicatat di `agent/PROGRES.md` oleh koordinator.
 | [G9-08](tugas/G9-08-panel-admin.md) | Halaman masuk dan panel admin | F9-19 | 1 Desember |
 | [G9-09](tugas/G9-09-pita-judul.md) | Pita judul halaman publik | F9-19 | 1 Desember |
 | [G9-10](tugas/G9-10-gambar-bagikan.md) | Gambar bagikan (Open Graph) | F9-19 | 1 Desember |
-| [G9-11](tugas/G9-11-ikon-aplikasi.md) | Ikon aplikasi dan favicon | F9-19 | 1 Desember |
+| [G9-11](tugas/G9-11-ikon-aplikasi.md) | Ikon aplikasi dan favicon (**tidak dipakai**: diganti logo resmi pemilik, K152) | F9-19 | — |
 | [G9-12](tugas/G9-12-pola-hiasan.md) | Pola dan hiasan latar | F9-19 | 3 Desember |
 
 ## Tinjauan PR gambar (untuk Claude)
