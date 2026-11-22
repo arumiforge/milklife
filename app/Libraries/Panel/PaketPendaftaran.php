@@ -30,6 +30,8 @@ use ZipArchive;
 /**
  * Paket data pendaftaran untuk pindah server (K76): ekspor ke satu zip dan
  * impor zip itu di server baru, tanpa memindahkan seluruh basis data.
+ * Sejak F11-11 paket ini menjadi bagian cadangan lengkap
+ * (`App\Libraries\Cadangan\CadanganLengkap`, Pengaturan > Cadangan).
  *
  * Isi zip:
  * - `data.json`: semua pendaftaran beserta penanggung jawab, atlet, nomor lomba
@@ -408,7 +410,7 @@ final class PaketPendaftaran
             $isi = json_decode((string) $zip->getFromName('data.json'), true);
 
             if (! is_array($isi) || ($isi['versi'] ?? null) !== self::VERSI || ! is_array($isi['pendaftaran'] ?? null)) {
-                throw new RuntimeException('Isi zip bukan ekspor pendaftaran yang dikenal. Buat ulang lewat tombol Backup data di panel admin server lama.');
+                throw new RuntimeException('Isi zip bukan ekspor pendaftaran yang dikenal. Unduh ulang lewat Pengaturan > Cadangan di panel admin server lama.');
             }
 
             $ada = $this->db->table('pendaftaran')->countAllResults();

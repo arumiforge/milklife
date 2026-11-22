@@ -332,6 +332,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('halaman-depan/jadwal', 'HalamanJadwalController::simpan');
         // ---------- Akhir sakelar halaman Jadwal pertandingan ----------
 
+        // ---------- Cadangan (F11-11) ----------
+        $routes->get('cadangan', 'CadanganController::index');
+        $routes->post('cadangan/unduh', 'CadanganController::unduh');
+        $routes->post('cadangan/impor', 'CadanganController::impor');
+        $routes->get('cadangan/(Sebelum_Impor_[0-9_a-f]+\.zip)/unduh', 'CadanganController::unduhOtomatis/$1');
+        // ---------- Akhir cadangan ----------
+
         // ---------- Galeri (F9-06) ----------
         $routes->get('galeri', 'GaleriController::index');
         $routes->get('galeri/tambah', 'GaleriController::tambah');

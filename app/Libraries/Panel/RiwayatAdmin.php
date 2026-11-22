@@ -40,6 +40,10 @@ final class RiwayatAdmin
     public const GABUNG       = 'gabung';
     public const PERIKSA_BUKTI = 'periksa_bukti';
     public const GANTI_ATLET  = 'ganti_atlet';
+    // Pengaturan > Cadangan (F11-11); tanpa pendaftaran, `id_pendaftaran` berisi `TANPA_ID`.
+    public const UNDUH_CADANGAN = 'unduh_cadangan';
+    public const IMPOR_CADANGAN = 'impor_cadangan';
+    public const TANPA_ID       = '-';
 
     /**
      * Nama tindakan untuk tampilan.
@@ -58,6 +62,8 @@ final class RiwayatAdmin
         self::GABUNG       => 'Gabung',
         self::PERIKSA_BUKTI => 'Bukti bayar diperiksa',
         self::GANTI_ATLET  => 'Ganti atlet',
+        self::UNDUH_CADANGAN => 'Unduh cadangan',
+        self::IMPOR_CADANGAN => 'Impor cadangan',
     ];
 
     /**
@@ -170,6 +176,20 @@ final class RiwayatAdmin
         return array_map(self::bentuk(...), $this->db->table('riwayat_admin')
             ->where('pendaftaran_id', $pendaftaranId)
             ->orderBy('dibuat_pada', 'DESC')->orderBy('id', 'DESC')
+            ->get()->getResultArray());
+    }
+
+    /**
+     * Riwayat unduh dan impor cadangan (F11-11), terbaru di atas.
+     *
+     * @return list<array{id: int, pendaftaran_id: int|null, id_pendaftaran: string, nama_admin: string, tindakan: string, label: string, ringkasan: string, dibuat_pada: string|null}>
+     */
+    public function untukCadangan(int $batas = 10): array
+    {
+        return array_map(self::bentuk(...), $this->db->table('riwayat_admin')
+            ->whereIn('tindakan', [self::UNDUH_CADANGAN, self::IMPOR_CADANGAN])
+            ->orderBy('dibuat_pada', 'DESC')->orderBy('id', 'DESC')
+            ->limit($batas)
             ->get()->getResultArray());
     }
 

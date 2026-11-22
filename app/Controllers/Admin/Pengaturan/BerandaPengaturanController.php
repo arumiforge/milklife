@@ -132,6 +132,7 @@ class BerandaPengaturanController extends BaseController
             ['tabel-skor', 'Tabel skor', 'table', 'admin/pengaturan/tabel-skor', 'Tabel prestasi ke poin untuk Trilomba dan nomor multi-lomba lain.', 'Hasil lomba'],
             ['hasil', 'Hasil', 'award', 'admin/pengaturan/hasil', 'Metode klasemen juara umum: medali atau poin per peringkat.', 'Hasil lomba'],
             ['videotron', 'Videotron', 'monitor', 'admin/pengaturan/videotron', 'Papan hasil di videotron arena: tampil atau tidak, isi, dan lama tiap tampilan.', 'Hasil lomba'],
+            ['cadangan', 'Cadangan', 'database-backup', 'admin/pengaturan/cadangan', 'Unduh semua data, pengaturan, dan berkas unggahan, atau pulihkan dari berkas cadangan.', 'Data'],
             ['akun', 'Akun', 'user-cog', 'admin/akun', 'Ganti nama, nama pengguna, dan kata sandi Anda.', $sendiri],
         ];
 

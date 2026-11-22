@@ -23,7 +23,7 @@ use App\Controllers\Admin\Pengaturan\BerandaPengaturanController;
 
 $halamanPengaturan = BerandaPengaturanController::daftarHalaman();
 // Ikon dari `daftarHalaman()`; tulis juga di sini supaya masuk sprite.
-// ikon-sprite: calendar-days door-open users trophy landmark app-window clock download phone circle-help images table award monitor user-cog
+// ikon-sprite: calendar-days door-open users trophy landmark app-window clock download phone circle-help images table award monitor database-backup user-cog
 ?>
 <nav class="navigasi-pengaturan min-w-0" aria-label="Navigasi pengaturan">
     <ul class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap lg:gap-1.5 sm:overflow-visible sm:px-0">
