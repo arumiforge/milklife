@@ -15,7 +15,7 @@ use Throwable;
  * - `butir()`: menu utama (Beranda, Jadwal, Hasil, Peserta);
  * - `tombol()`: Cek Pendaftaran dan Daftar di kanan menu utama;
  * - `bilahAtas()`: bilah submenu atas di layar `lg` (Unduhan, Galeri, Bantuan,
- *   Tanya Panitia), dipilih admin di Pengaturan > Halaman Depan;
+ *   Tanya panitia), dipilih admin di Pengaturan > Halaman Depan;
  * - `mediaSosial()`: ikon media sosial dari Pengaturan > Kontak;
  * - `bawah()`: empat butir menu bawah ponsel (butir kelima, Menu, membuka laci).
  *
@@ -31,7 +31,7 @@ final class MenuPublik
         'unduhan' => 'Unduhan',
         'galeri'  => 'Galeri (hanya bila halaman Galeri dinyalakan)',
         'bantuan' => 'Bantuan',
-        'tanya'   => 'Tanya Panitia lewat WA (hanya bila nomor WA tanya admin diisi)',
+        'tanya'   => 'Tanya panitia lewat WA (hanya bila nomor WA tanya admin diisi)',
     ];
 
     /**
@@ -109,7 +109,7 @@ final class MenuPublik
             }
 
             if ($wa !== null) {
-                $butir[] = ['kunci' => 'tanya', 'label' => 'Tanya Panitia', 'alamat' => $wa, 'aktif' => false, 'ikon' => 'message-circle', 'luar' => true];
+                $butir[] = ['kunci' => 'tanya', 'label' => 'Tanya panitia', 'alamat' => $wa, 'aktif' => false, 'ikon' => 'message-circle', 'luar' => true];
             }
         }
 
