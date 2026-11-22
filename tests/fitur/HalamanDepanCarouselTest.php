@@ -2,15 +2,17 @@
 
 use App\Libraries\CarouselHalamanDepan;
 use App\Libraries\Unggahan;
+use App\Libraries\VarianFoto;
 use CodeIgniter\Test\StreamFilterTrait;
 use Tests\Support\KirimFormulir;
 use Tests\Support\UjiBasisData;
 use Tests\Support\UnggahanSementara;
 
 /**
- * Carousel foto pembuka halaman depan (F9-03): foto bawaan dari `data:awal`
- * dan `halaman-depan:carousel`, tampilan carousel, dan pengelolaan foto di
- * Pengaturan > Halaman Depan. Keterangan foto karangan.
+ * Carousel foto pembuka halaman depan (F9-03, F10-06): foto bawaan dari
+ * `data:awal` dan `halaman-depan:carousel`, tampilan slideshow hero, salinan
+ * kecil `srcset` (`VarianFoto`), dan pengelolaan foto di Pengaturan > Halaman
+ * Depan. Keterangan foto karangan.
  *
  * @internal
  */
@@ -73,36 +75,98 @@ final class HalamanDepanCarouselTest extends UjiBasisData
         $hasil->assertOK();
         $xpath = $this->xpathDari($hasil);
 
-        $carousel = $xpath->query('//section[@id="pembuka"]//*[@id="carousel-beranda"][@data-carousel="static"][@data-carousel-beranda]');
+        // Slideshow sendiri (F10-06), bukan carousel Flowbite.
+        $carousel = $xpath->query('//section[@id="pembuka"]//*[@id="carousel-beranda"][@data-carousel-beranda]');
         $this->assertSame(1, $carousel->length);
         $this->assertSame('carousel', $carousel->item(0)->getAttribute('aria-roledescription'));
+        $this->assertSame(0, $xpath->query('//*[@data-carousel]')->length);
 
         $gambar = $xpath->query('//*[@data-carousel-item]/img');
         $this->assertSame($jumlah, $gambar->length);
         $this->assertSame(array_values(CarouselHalamanDepan::BAWAAN), array_map(static fn (DOMElement $img): string => $img->getAttribute('alt'), iterator_to_array($gambar)));
 
-        // Foto pertama dimuat lebih dulu, sisanya menunggu.
+        // Foto pertama dimuat lebih dulu; sisanya tersembunyi dan menunggu skrip menyiapkannya.
         $this->assertSame('high', $gambar->item(0)->getAttribute('fetchpriority'));
         $this->assertFalse($gambar->item(0)->hasAttribute('loading'));
+        $slide = $xpath->query('//*[@data-carousel-item]');
+        $this->assertSame('active', $slide->item(0)->getAttribute('data-carousel-item'));
+        $this->assertSame('Foto 1 dari ' . $jumlah, $slide->item(0)->getAttribute('aria-label'));
+        $this->assertStringNotContainsString('hidden', $slide->item(0)->getAttribute('class'));
         for ($i = 1; $i < $jumlah; $i++) {
             $this->assertSame('lazy', $gambar->item($i)->getAttribute('loading'), 'Foto ' . ($i + 1));
+            $this->assertContains('hidden', explode(' ', $slide->item($i)->getAttribute('class')), 'Foto ' . ($i + 1));
         }
-        $this->assertSame('active', $xpath->query('//*[@data-carousel-item]')->item(0)->getAttribute('data-carousel-item'));
 
-        // Indikator, tombol geser, dan tombol jeda.
-        $this->assertSame($jumlah, $xpath->query('//*[@data-indikator-carousel]/button[@data-carousel-slide-to]')->length);
-        $this->assertSame(1, $xpath->query('//button[@data-carousel-prev]')->length);
-        $this->assertSame(1, $xpath->query('//button[@data-carousel-next]')->length);
-        $jeda = $xpath->query('//button[@data-jeda-carousel]')->item(0);
-        $this->assertNotNull($jeda);
-        $this->assertSame('false', $jeda->getAttribute('aria-pressed'));
-        $this->assertSame('Jeda foto bergeser', $jeda->getAttribute('aria-label'));
+        // Semua foto ber-srcset 640/960/asli; salinannya ada di folder unggahan.
+        foreach ($gambar as $img) {
+            $this->assertMatchesRegularExpression('#/varian/[a-f0-9]{32}-640\.webp 640w, \S+/varian/[a-f0-9]{32}-960\.webp 960w, \S+/[a-f0-9]{32}\.webp \d{3,4}w$#', $img->getAttribute('srcset'));
+            $this->assertSame('(min-width: 1024px) 66vw, 100vw', $img->getAttribute('sizes'));
+        }
+
+        // Keterangan foto kecil di pojok, tidak dibaca dua kali.
+        $keterangan = $xpath->query('//*[@data-carousel-item]/figcaption[@data-keterangan-foto]');
+        $this->assertSame($jumlah, $keterangan->length);
+        $this->assertSame('true', $keterangan->item(0)->getAttribute('aria-hidden'));
+        $this->assertSame(array_values(CarouselHalamanDepan::BAWAAN)[0], trim($keterangan->item(0)->textContent));
+
+        // Hanya titik penanda (F10-06): tanpa tombol maju/mundur dan jeda.
+        $titik = $xpath->query('//*[@data-indikator-carousel]/button[@data-carousel-slide-to]');
+        $this->assertSame($jumlah, $titik->length);
+        $this->assertSame('Foto 2 dari ' . $jumlah, $titik->item(1)->getAttribute('aria-label'));
+        $this->assertSame(['true', 'false'], [$titik->item(0)->getAttribute('aria-current'), $titik->item(1)->getAttribute('aria-current')]);
+        $this->assertSame(0, $xpath->query('//*[@data-carousel-prev or @data-carousel-next or @data-jeda-carousel]')->length);
         $this->assertSame(1, $xpath->query('//script[contains(@src, "js/carousel-beranda")]')->length);
 
-        // Judul, keadaan, dan dua tombol tetap ada di pembuka, sebelum carousel (K81).
-        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]//h1[@id="judul-acara"][following::*[@id="carousel-beranda"]]')->length);
-        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]//nav[@data-tombol-utama][following::*[@id="carousel-beranda"]]')->length);
-        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]//*[@data-keadaan][following::*[@id="carousel-beranda"]]')->length);
+        // Judul dan dua tombol di hero, keadaan di pita fakta tepat di bawahnya (K81, F10-06).
+        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/*[@data-pembuka-hero]//h1[@id="judul-acara"]')->length);
+        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/*[@data-pembuka-hero]//nav[@data-tombol-utama]')->length);
+        $this->assertSame(1, $xpath->query('//section[@id="pembuka"]/*[@data-pembuka-hero]/following-sibling::*[1][@data-pembuka-info]//*[@data-keadaan]')->length);
+
+        // Foto ada: tanpa adegan Three.js.
+        $this->assertSame(0, $xpath->query('//*[@data-adegan-merek]')->length);
+    }
+
+    public function testSalinanKecilDibuatSekaliDanIkutTerhapus(): void
+    {
+        $besar = $this->simpanFotoUji(1000, 500);
+        $kecil = $this->simpanFotoUji();
+        CarouselHalamanDepan::simpan([
+            ['berkas' => $besar, 'keterangan' => 'Atlet karangan melompat'],
+            ['berkas' => $kecil, 'keterangan' => 'Atlet karangan berlari'],
+        ]);
+
+        $gambar = $this->xpathDari($this->get('/'))->query('//*[@data-carousel-item]/img');
+        $nama   = pathinfo($besar, PATHINFO_FILENAME);
+        $this->assertSame(
+            base_url('unggahan/halaman-depan/varian/' . $nama . '-640.webp') . ' 640w, ' . base_url('unggahan/halaman-depan/varian/' . $nama . '-960.webp') . ' 960w, ' . base_url($besar) . ' 1000w',
+            $gambar->item(0)->getAttribute('srcset'),
+        );
+        $this->assertFalse($gambar->item(1)->hasAttribute('srcset'), 'Foto yang lebih kecil dari 640 piksel tidak punya salinan.');
+
+        $varian = [];
+
+        foreach (VarianFoto::LEBAR as $lebar) {
+            $varian[$lebar] = $this->jalurUnggahan(VarianFoto::jalurRelatif($besar, $lebar));
+            $ukuran         = getimagesize($varian[$lebar]);
+            $this->assertNotFalse($ukuran);
+            $this->assertSame([$lebar, $lebar / 2, IMAGETYPE_WEBP], [$ukuran[0], $ukuran[1], $ukuran[2]]);
+        }
+
+        // Dibuat sekali: permintaan berikutnya memakai salinan yang sama.
+        $waktu = filemtime($varian[640]);
+        touch($varian[640], $waktu - 60);
+        clearstatcache();
+        touch($this->jalurUnggahan($besar), $waktu - 120);
+        $this->get('/');
+        clearstatcache();
+        $this->assertSame($waktu - 60, filemtime($varian[640]));
+
+        // Admin menghapus foto: salinannya ikut terhapus.
+        $this->assertBerhasilDialihkan($this->kirimSebagaiAdmin(self::ALAMAT . '/carousel/1/hapus', ['berkas' => $besar]), self::ALAMAT . '#carousel');
+        foreach ($varian as $jalur) {
+            $this->assertFileDoesNotExist($jalur);
+        }
+        $this->assertNull(VarianFoto::srcset('unggahan/halaman-depan/' . str_repeat('e', 32) . '.webp'), 'Foto yang tidak ada tanpa srcset.');
     }
 
     public function testSatuFotoTampilDiamDanFotoHilangDisembunyikan(): void
@@ -217,16 +281,26 @@ final class HalamanDepanCarouselTest extends UjiBasisData
         $this->assertSame($daftar, CarouselHalamanDepan::geser($daftar, 0, 5), 'Posisi di luar daftar diabaikan.');
     }
 
-    private function simpanFotoUji(): string
+    /**
+     * Simpan foto uji: PNG 1×1 bawaan, atau WebP polos selebar `$lebar` piksel.
+     */
+    private function simpanFotoUji(int $lebar = 0, int $tinggi = 0): string
     {
-        $jalur = 'unggahan/halaman-depan/' . bin2hex(random_bytes(16)) . '.png';
+        $jalur = 'unggahan/halaman-depan/' . bin2hex(random_bytes(16)) . ($lebar > 0 ? '.webp' : '.png');
         $penuh = $this->jalurUnggahan($jalur);
 
         if (! is_dir(dirname($penuh))) {
             mkdir(dirname($penuh), 0777, true);
         }
 
-        file_put_contents($penuh, self::isiPng());
+        if ($lebar > 0) {
+            $gambar = imagecreatetruecolor($lebar, $tinggi);
+            imagefill($gambar, 0, 0, (int) imagecolorallocate($gambar, 35, 73, 135));
+            imagewebp($gambar, $penuh, 80);
+            imagedestroy($gambar);
+        } else {
+            file_put_contents($penuh, self::isiPng());
+        }
 
         return $jalur;
     }

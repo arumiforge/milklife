@@ -53,18 +53,23 @@ final class HiasanBerandaTest extends UjiBasisData
 
     public function testDenganBerkasHiasanTerpasang(): void
     {
-        foreach (['beranda/latar-pita.webp', 'beranda/latar-lintasan.webp', 'beranda/kartu-ku.webp', 'beranda/tokoh-lompat.webp', 'pola/pita-sudut.webp', 'pola/garis-lintasan.webp', 'pola/titik-halus.webp', 'pola/bintik-stadion.webp'] as $berkas) {
+        foreach (['beranda/latar-pita.webp', 'beranda/latar-lintasan.webp', 'beranda/kartu-ku.webp', 'beranda/tokoh-lompat.webp', 'pola/pita-sudut.webp', 'pola/garis-lintasan.webp', 'pola/titik-halus.webp', 'pola/bintik-stadion.webp', 'beranda/hero-sapuan.webp'] as $berkas) {
             $this->taruhGambarUji($berkas);
         }
 
         $xpath = $this->xpathDari($this->get('/'));
 
         // Latar pita di belakang pembuka tanpa foto, hanya mulai md; pita sudut G9-12 hanya di ponsel.
-        $pita = $xpath->query('//section[@id="pembuka"]/img[@data-hiasan="latar-pita"][@aria-hidden="true"]')->item(0);
+        $pita = $xpath->query('//section[@id="pembuka"]/*[@data-pembuka-hero]/img[@data-hiasan="latar-pita"][@aria-hidden="true"]')->item(0);
         $this->assertNotNull($pita);
         $this->assertStringContainsString('hidden', $pita->getAttribute('class'));
         $this->assertStringContainsString('md:block', $pita->getAttribute('class'));
         $this->assertStringContainsString('md:hidden', (string) $xpath->query('//img[@data-hiasan="pita-sudut"]')->item(0)?->getAttribute('class'));
+
+        // Sapuan hero G10-02 mulai md, di belakang isi hero (F10-06).
+        $sapuan = $xpath->query('//*[@data-pembuka-hero]/img[@data-hiasan="hero-sapuan"][@aria-hidden="true"][@loading="lazy"]')->item(0);
+        $this->assertNotNull($sapuan);
+        $this->assertStringContainsString('md:block', $sapuan->getAttribute('class'));
 
         // Tokoh yang berkasnya ada dipakai walaupun bukan giliran harinya.
         $this->assertStringContainsString('beranda/tokoh-lompat.webp', (string) $xpath->query('//section[@id="pembuka"]//img[contains(@src, "tokoh-")]')->item(0)?->getAttribute('src'));

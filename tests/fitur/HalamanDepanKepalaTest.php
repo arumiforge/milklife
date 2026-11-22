@@ -126,10 +126,27 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame(0, $xpath->query('//*[@data-pembuka-teks]')->length, 'Teks kosong tidak ditampilkan.');
         $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
         $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//section[@id="pembuka"]//*[@data-pembuka-seri]'));
-        $this->assertSame('9–12 Desember 2026 Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
 
-        // Kartu info ringkas seperti konsep (K82).
-        $this->assertSame('9–12', $this->teks($xpath, '//*[@data-info-besar]'));
+        // Pita fakta (F10-06): "9–12 Desember" besar di atas tahun; tahun tidak ada di judul (permintaan 20).
+        $this->assertSame('9–12 Desember', $this->teks($xpath, '//*[@data-pembuka-info]//*[@data-info-besar]'));
+        $this->assertStringNotContainsString('2026', $this->teks($xpath, '//h1[@id="judul-acara"]'));
+    }
+
+    public function testFaktaLokasiMenautKeBagianPeta(): void
+    {
+        $this->isiDataAcara();
+
+        // Peta bawaan tampil (F10-02): nama tempat di pita fakta menaut ke `#lokasi`.
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame('Supersoccer Arena', $this->teks($xpath, '//*[@data-pembuka-info]//a[@data-fakta-lokasi][@href="#lokasi"]'));
+        $this->assertSame(1, $xpath->query('//section[@id="lokasi"]')->length);
+
+        // Tanpa peta tidak ada tautan ke bagian yang tidak ada.
+        setting('HalamanDepan.peta_embed', '');
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(0, $xpath->query('//*[@data-fakta-lokasi] | //section[@id="lokasi"]')->length);
+        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
     }
 
     public function testJudulDanTeksDariPengaturanDiEscape(): void
@@ -204,7 +221,8 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->lengkapiPengaturan();
 
         $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'megaphone');
-        $this->assertSame('Daftar s.d. 30 November 2026', $this->teks($this->xpathDari($this->get('/')), '//*[@data-keadaan-ringkas]'));
+        // Pita fakta: tanggal tutup lengkap dengan tahun (permintaan 20, F10-06).
+        $this->assertSame('Batas pendaftaran 30 November 2026', $this->teks($this->xpathDari($this->get('/')), '//*[@data-keadaan-ringkas]'));
 
         Time::setTestNow('2026-09-30 12:00:00', 'Asia/Jakarta');
         $this->assertKeadaan($this->xpathDari($this->get('/')), 'belum_dibuka', 'Belum dibuka', 'Pendaftaran dibuka 1 Oktober 2026.', 'calendar-clock');
