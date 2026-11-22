@@ -380,7 +380,7 @@ Semua isi diatur dari panel admin. Tampilan baru Flowbite Pro sejak Tahap 9 (K14
 - **Pembuka** berlatar gradien merek dengan hiasan 3D lembut (Three.js, mati bila pengunjung memilih kurangi gerak):
   - label seri, judul besar huruf besar, satu kata per baris dengan kata terakhir oranye (judul data awal "MilkLife Athletics Challenge"; judul panjang mengalir biasa, K86), dan teks pengantar;
   - kapsul info berisi tanggal, tempat, dan keadaan pendaftaran (6.1), dengan ujung keadaan biru saat pendaftaran terbuka (K82, K92);
-  - tombol besar **Daftar Sekarang** (saat terbuka) dan **Cek Pendaftaran**. Judul, keadaan, dan kedua tombol selalu di layar pertama (K81);
+  - tombol besar **Daftar sekarang** (saat terbuka) dan **Cek Pendaftaran**. Judul, keadaan, dan kedua tombol selalu di layar pertama (K81);
   - **carousel foto acara sebelumnya** dengan indikator, tombol sebelumnya/berikutnya, tombol jeda, dan geser di layar sentuh; berganti otomatis kecuali pengunjung memilih kurangi gerak. Foto bawaan dari pemilik (K140 butir 6) dipasang `php spark data:awal` atau `php spark halaman-depan:carousel`; admin menambah, mengurutkan, dan menghapus foto beserta keterangannya di Pengaturan > Halaman Depan (paling banyak 20). Foto bawaan dan unggahan admin dikecilkan ke sisi terpanjang 1600 piksel (K143). Bila carousel kosong, gambar kepala yang tampil; bila keduanya kosong, tidak ada kotak kosong (K41).
 - **Kartu kelompok umur** (label "Kelompok umur", K112) menaut ke rinciannya, dengan julukan dan jumlah nomor individu dan beregu (K88).
 - Rincian kelompok umur di bagian lomba menulis tahun lahir yang boleh memilih, misalnya "SD/MI lahir 2016 boleh memilih KU 10 atau KU 12, dipilih saat mendaftar", pada kedua kelompok umurnya (K134).

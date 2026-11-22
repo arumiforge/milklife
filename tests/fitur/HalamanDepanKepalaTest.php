@@ -265,9 +265,9 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // Terbuka (11 November 2026): Pendaftaran menaut ke wizard (Tahap 4).
         // Cek sudah punya halaman (Tahap 5) dan aktif karena pengaturan lengkap.
         $tombol = $this->tombolKepala();
-        $this->assertSame(['Daftar Sekarang', 'Cek Pendaftaran'], array_keys($tombol));
-        $this->assertSame(site_url('pendaftaran'), $tombol['Daftar Sekarang']->getAttribute('href'));
-        $this->assertTrue($tombol['Daftar Sekarang']->hasAttribute('data-utama'));
+        $this->assertSame(['Daftar sekarang', 'Cek Pendaftaran'], array_keys($tombol));
+        $this->assertSame(site_url('pendaftaran'), $tombol['Daftar sekarang']->getAttribute('href'));
+        $this->assertTrue($tombol['Daftar sekarang']->hasAttribute('data-utama'));
         $this->assertSame(site_url('cek-pendaftaran'), $tombol['Cek Pendaftaran']->getAttribute('href'));
 
         // Belum dibuka dan sudah ditutup: nonaktif dengan keterangannya.
