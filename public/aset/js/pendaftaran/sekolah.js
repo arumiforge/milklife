@@ -113,7 +113,7 @@
             // Nama umum yang dipakai sekolah lain juga (K99): tawarkan usulan nama lengkap.
             if (kembar && !usulan) {
                 L1.hasil.appendChild(buat('div', W.KELAS.kotakPeringatan,
-                    'Nama ' + ref.nama + ' juga dipakai ' + ref.nama_kembar + ' sekolah lain di data kami. Supaya tidak tertukar di rekap dan bukti pendaftaran, '
+                    'Nama ' + ref.nama + ' juga dipakai ' + ref.nama_kembar + ' sekolah lain di data sekolah. Supaya tidak tertukar di rekap dan bukti pendaftaran, '
                     + 'usulkan nama lengkap sekolah Anda di bawah, misalnya dengan menambahkan nama desa.'));
             } else if (!kembar && L1.usulanKotak.hidden) {
                 var tautan = buat('button', W.KELAS.tautan + ' mb-3', 'Nama sekolah kurang lengkap? Usulkan nama yang benar');
@@ -130,12 +130,12 @@
             Object.keys(timSekolah).forEach(function (id) { jumlahRegu += Object.keys(timSekolah[id] || {}).length; });
             if (jumlahRegu > 0) {
                 L1.hasil.appendChild(buat('div', W.KELAS.kotakInfo,
-                    'Sekolah ini sudah pernah mendaftar dan sudah punya ' + jumlahRegu + ' regu di ' + Object.keys(timSekolah).length + ' nomor beregu. '
-                    + 'Di langkah 3 (Atlet), atlet bisa dimasukkan ke regu yang sudah ada (tanpa biaya regu lagi, centang konfirmasinya) '
-                    + 'atau ke regu baru (dengan biaya regu).'));
+                    'Sekolah ini sudah pernah mendaftar dan punya ' + jumlahRegu + ' regu di ' + Object.keys(timSekolah).length + ' nomor beregu. '
+                    + 'Di langkah 3 (Atlet), Anda bisa memasukkan atlet ke regu yang sudah ada tanpa biaya regu lagi (centang konfirmasinya). '
+                    + 'Anda juga bisa membuat regu baru dengan biaya regu.'));
             }
         } else if (!s.tanpaNpsn && s.status === 'tidak_ditemukan') {
-            L1.hasil.appendChild(buat('div', W.KELAS.kotakInfo, 'NPSN ' + s.dicari + ' tidak ada di data sekolah kami. Tulis nama sekolah secara lengkap di bawah.'));
+            L1.hasil.appendChild(buat('div', W.KELAS.kotakInfo, 'NPSN ' + s.dicari + ' belum ada di data sekolah. Tulis nama sekolah secara lengkap di bawah.'));
         }
     }
 

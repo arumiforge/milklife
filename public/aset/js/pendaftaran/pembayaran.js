@@ -127,17 +127,17 @@
             return;
         }
         if (dipilih.size > 10 * 1024 * 1024) {
-            tampilkanGalat(5, [{ jalur: 'bukti_bayar', pesan: 'Gambar terlalu besar. Paling besar 10 MB; perkecil dulu atau pakai tangkapan layar.' }]);
+            tampilkanGalat(5, [{ jalur: 'bukti_bayar', pesan: 'Gambar lebih dari 10 MB. Perkecil dulu, atau pakai tangkapan layar.' }]);
             return;
         }
         if (DATA.turnstile && tokenTurnstile() === '') {
             pasangTurnstile();
-            tampilkanGalat(5, [{ jalur: 'turnstile', pesan: 'Pemeriksaan keamanan belum selesai. Tunggu sampai kotak pemeriksaan keamanan di atas tombol bertanda centang hijau, lalu tekan Kirim Pendaftaran lagi.' }]);
+            tampilkanGalat(5, [{ jalur: 'turnstile', pesan: 'Pemeriksaan keamanan belum selesai. Tunggu sampai kotak di atas tombol bertanda centang hijau, lalu tekan Kirim pendaftaran lagi.' }]);
             return;
         }
 
         yakin('Kirim pendaftaran?', 'Pendaftaran ' + W.rincian.sekolah.nama + ' dengan ' + W.draf.atlet.length + ' atlet dan total ' + rupiah(W.rincian.total)
-            + ' dikirim bersama bukti transfer "' + dipilih.name + '". Setelah terkirim, data tidak bisa diubah lewat halaman ini; bila ada yang perlu diubah, hubungi panitia.',
+            + ' dikirim bersama bukti transfer "' + dipilih.name + '". Setelah terkirim, data tidak bisa diubah lewat halaman ini. Bila ada yang perlu diubah, hubungi panitia.',
         'Kirim pendaftaran', 'utama').then(function (setuju) {
             if (setuju) {
                 kirimPendaftaran(dipilih);
@@ -152,7 +152,7 @@
         label.textContent = 'Mengirim…';
         var pulih = function () {
             tombol.disabled = false;
-            label.textContent = 'Kirim Pendaftaran';
+            label.textContent = 'Kirim pendaftaran';
         };
 
         // Kunci yang sama untuk kirim ulang: bila kiriman sebelumnya sudah tersimpan

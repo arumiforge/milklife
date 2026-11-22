@@ -102,7 +102,7 @@ final class BerkasBuktiBayar
         $kode = $unggahan->getError();
 
         if ($kode === UPLOAD_ERR_INI_SIZE || $kode === UPLOAD_ERR_FORM_SIZE) {
-            return 'Gambar terlalu besar. Paling besar 10 MB; perkecil dulu, lalu unggah lagi.';
+            return 'Gambar terlalu besar. Ukuran paling besar 10 MB. Perkecil dulu, lalu unggah lagi.';
         }
 
         $sumber = $unggahan->getTempName();
@@ -118,7 +118,7 @@ final class BerkasBuktiBayar
         }
 
         if ($ukuran > self::BATAS_BITA) {
-            return 'Gambar terlalu besar. Paling besar 10 MB; perkecil dulu, lalu unggah lagi.';
+            return 'Gambar terlalu besar. Ukuran paling besar 10 MB. Perkecil dulu, lalu unggah lagi.';
         }
 
         return self::periksaIsi((string) file_get_contents($sumber));
@@ -277,7 +277,7 @@ final class BerkasBuktiBayar
             $db->transRollback();
             $this->hapus($hasil['berkas']);
 
-            return 'Bukti bayar belum tersimpan karena ada gangguan di server. Coba unggah sekali lagi; bila masih gagal, hubungi panitia.';
+            return 'Bukti bayar belum tersimpan karena ada gangguan di server. Coba unggah sekali lagi. Bila masih gagal, hubungi panitia.';
         }
 
         // F8-01: unggahan admin dicatat di riwayat tindakan admin, di transaksi yang sama.
@@ -376,7 +376,7 @@ final class BerkasBuktiBayar
         }
 
         if (strlen($isi) > self::BATAS_BITA) {
-            return 'Gambar terlalu besar. Paling besar 10 MB; perkecil dulu, lalu unggah lagi.';
+            return 'Gambar terlalu besar. Ukuran paling besar 10 MB. Perkecil dulu, lalu unggah lagi.';
         }
 
         $info = @getimagesizefromstring($isi);

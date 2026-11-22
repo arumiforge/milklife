@@ -57,7 +57,7 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                                 </li>
                             <?php endforeach ?>
                         </ol>
-                        <p class="mt-3 text-xs text-primary-200"><?= ($hasilTerbaru['metode'] ?? '') === 'poin' ? 'Urutan poin terbanyak, lalu juara I, II, dan III.' : 'Urutan juara I, II, lalu III terbanyak.' ?></p>
+                        <p class="mt-3 text-xs text-primary-200"><?= ($hasilTerbaru['metode'] ?? '') === 'poin' ? 'Diurutkan dari poin terbanyak, lalu jumlah juara I, II, dan III.' : 'Diurutkan dari jumlah juara I terbanyak, lalu juara II, lalu juara III.' ?></p>
                     </article>
                 <?php endforeach ?>
             </div>

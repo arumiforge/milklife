@@ -69,7 +69,7 @@
             return 'Belum ikut nomor lomba apa pun. Tekan Ubah dan pilih nomornya.';
         }
         if (individu > maksimalIndividu) {
-            return 'Ikut ' + individu + ' nomor individu, padahal paling banyak ' + maksimalIndividu + '. Tekan Ubah dan kurangi nomornya.';
+            return 'Ikut ' + individu + ' nomor individu. Batasnya ' + maksimalIndividu + ' nomor. Tekan Ubah dan kurangi nomornya.';
         }
         return '';
     }
@@ -125,23 +125,23 @@
                 if (t.susulan) {
                     var sisa = Math.max(0, n.batas_anggota - t.lama);
                     t.pesan.push(nama + ' sudah punya ' + t.lama + ' atlet dari pendaftaran sebelumnya, dan paling banyak ' + n.batas_anggota + ' atlet. '
-                        + (sisa === 0 ? 'Regu ini sudah penuh; pilih regu lain untuk atlet tambahan.' : 'Atlet tambahan paling banyak ' + sisa + '; pindahkan ' + (jumlah - n.batas_anggota) + ' atlet ke regu lain.'));
+                        + (sisa === 0 ? 'Regu ini sudah penuh. Pilih regu lain untuk atlet tambahan.' : 'Atlet tambahan paling banyak ' + sisa + '. Pindahkan ' + (jumlah - n.batas_anggota) + ' atlet ke regu lain.'));
                 } else {
-                    t.pesan.push(nama + ' punya ' + jumlah + ' atlet, padahal paling banyak ' + n.batas_anggota + '. Pindahkan ' + (jumlah - n.batas_anggota) + ' atlet ke regu lain atau hapus dari nomor ini.');
+                    t.pesan.push(nama + ' punya ' + jumlah + ' atlet. Batasnya ' + n.batas_anggota + ' atlet. Pindahkan ' + (jumlah - n.batas_anggota) + ' atlet ke regu lain atau hapus dari nomor ini.');
                 }
             }
             if (inti.length > n.jumlah_inti) {
-                t.pesan.push(nama + ' punya ' + inti.length + ' atlet inti' + keterangan + ', padahal satu regu tepat ' + n.jumlah_inti + ' atlet inti. Jadikan '
+                t.pesan.push(nama + ' punya ' + inti.length + ' atlet inti' + keterangan + '. Satu regu harus tepat ' + n.jumlah_inti + ' atlet inti. Jadikan '
                     + (inti.length - n.jumlah_inti) + ' atlet cadangan' + (keterangan ? ', atau centang inti lama yang menjadi cadangan.' : '.'));
             } else if (inti.length < n.jumlah_inti) {
                 t.pesan.push(jumlah < n.jumlah_inti
-                    ? nama + ' baru punya ' + jumlah + ' atlet. Tambah ' + (n.jumlah_inti - jumlah) + ' atlet lagi; satu regu tepat ' + n.jumlah_inti + ' atlet inti.'
-                    : nama + ' baru punya ' + inti.length + ' atlet inti' + keterangan + '. Tandai ' + (n.jumlah_inti - inti.length) + ' atlet lagi sebagai Inti; satu regu tepat ' + n.jumlah_inti + ' atlet inti.');
+                    ? nama + ' baru punya ' + jumlah + ' atlet. Tambah ' + (n.jumlah_inti - jumlah) + ' atlet lagi. Satu regu harus tepat ' + n.jumlah_inti + ' atlet inti.'
+                    : nama + ' baru punya ' + inti.length + ' atlet inti' + keterangan + '. Tandai ' + (n.jumlah_inti - inti.length) + ' atlet lagi sebagai Inti. Satu regu harus tepat ' + n.jumlah_inti + ' atlet inti.');
             } else if (n.kategori === 'mix') {
                 var putra = inti.filter(function (a) { return a.jk === 'L'; }).length;
                 var putri = inti.length - putra;
                 if (putra < n.jumlah_putra || putri < n.jumlah_putri) {
-                    t.pesan.push(nama + ': atlet inti minimal ' + n.jumlah_putra + ' putra dan ' + n.jumlah_putri + ' putri; sekarang ' + putra + ' putra dan ' + putri + ' putri.');
+                    t.pesan.push(nama + ': atlet inti minimal ' + n.jumlah_putra + ' putra dan ' + n.jumlah_putri + ' putri. Sekarang ' + putra + ' putra dan ' + putri + ' putri.');
                 }
             }
         });

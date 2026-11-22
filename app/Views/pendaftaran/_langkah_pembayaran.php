@@ -27,7 +27,7 @@ $berhasil  = gambar_opsional('keadaan/berhasil.webp', ['class' => 'mx-auto mb-4 
     <?= view('pendaftaran/_kepala_langkah', ['langkah' => 5, 'judul' => 'Pembayaran'], ['saveData' => false]) ?>
 
     <div id="bayar-isi">
-        <p class="langkah-keterangan mb-5 text-gray-600">Pendaftaran belum terkirim. Transfer dulu, lalu unggah bukti transfernya. Isian di halaman ini tetap tersimpan di perangkat ini, jadi bila belum sempat transfer, buka lagi halaman ini nanti dan tinggal unggah buktinya.</p>
+        <p class="langkah-keterangan mb-5 text-gray-600">Pendaftaran belum terkirim. Transfer dulu, lalu unggah bukti transfernya. Isian Anda tersimpan di perangkat ini. Bila belum sempat transfer, buka lagi halaman ini nanti dan unggah buktinya.</p>
 
         <div class="<?= K::RINGKASAN ?>" role="alert" hidden></div>
 
@@ -52,9 +52,9 @@ $berhasil  = gambar_opsional('keadaan/berhasil.webp', ['class' => 'mx-auto mb-4 
         </div>
 
         <ol class="cara-bayar my-5 list-decimal space-y-1.5 ps-5 text-gray-800">
-            <li>Transfer sebesar total di atas ke rekening tersebut.</li>
+            <li>Transfer sejumlah total di atas ke rekening ini.</li>
             <li>Pilih foto atau tangkapan layar bukti transfer di bawah.</li>
-            <li>Tekan <strong>Kirim Pendaftaran</strong>. Setelah terkirim, bukti pendaftaran bisa dicetak.</li>
+            <li>Tekan <strong>Kirim pendaftaran</strong>. Setelah terkirim, Anda bisa mencetak bukti pendaftaran.</li>
         </ol>
 
         <div class="<?= K::KARTU ?> unggah-bukti-bayar">
@@ -69,14 +69,14 @@ $berhasil  = gambar_opsional('keadaan/berhasil.webp', ['class' => 'mx-auto mb-4 
                 <p class="<?= K::LABEL ?> mb-2">Pemeriksaan keamanan</p>
                 <div id="turnstile-kirim" class="cf-turnstile" data-jalur="turnstile" data-sitekey="<?= esc($turnstile['kunci_situs'], 'attr') ?>" data-action="<?= esc($turnstile['aksi'], 'attr') ?>"></div>
                 <div class="<?= K::UMPAN ?>"></div>
-                <div class="<?= K::BANTU ?>">Tunggu sampai kotak ini bertanda centang hijau sebelum menekan Kirim Pendaftaran.</div>
+                <div class="<?= K::BANTU ?>">Tunggu sampai kotak ini bertanda centang hijau sebelum menekan Kirim pendaftaran.</div>
             </div>
         <?php endif ?>
 
         <div class="langkah-tombol mt-6 flex flex-wrap items-center justify-between gap-3">
             <button type="button" class="<?= K::KEDUA ?>" data-kembali><?= ikon('arrow-left', 'size-5') ?> Kembali</button>
             <button type="button" class="<?= K::UTAMA_BESAR ?>" id="tombol-kirim" disabled>
-                <?= ikon('send', 'size-5') ?> <span>Kirim Pendaftaran</span>
+                <?= ikon('send', 'size-5') ?> <span>Kirim pendaftaran</span>
             </button>
         </div>
     </div>
@@ -94,17 +94,17 @@ $berhasil  = gambar_opsional('keadaan/berhasil.webp', ['class' => 'mx-auto mb-4 
             <button type="button" class="<?= K::GARIS_KECIL ?> align-middle" id="selesai-salin">
                 <?= ikon('copy', 'size-4') ?> <span>Salin ID</span>
             </button>
-            Catat ID ini untuk memeriksa pendaftaran.</p>
-        <p class="mt-3 text-gray-700">Status pembayaran <strong>Menunggu</strong> sampai panitia memeriksa bukti transfer, lalu menjadi <strong>Lunas</strong>.</p>
+            Catat ID ini untuk Cek Pendaftaran nanti.</p>
+        <p class="mt-3 text-gray-700">Status pembayaran tertulis <strong>Menunggu</strong> sampai panitia memeriksa bukti transfer. Setelah itu, statusnya menjadi <strong>Lunas</strong>.</p>
         <div class="tombol-bayar mt-6 flex flex-wrap justify-center gap-3 [&>a]:flex-[1_1_15rem]">
             <a class="<?= K::UTAMA_BESAR ?>" id="cetak-bukti" target="_blank" rel="noopener">
-                <?= ikon('printer', 'size-5') ?> Cetak Bukti Pendaftaran
+                <?= ikon('printer', 'size-5') ?> Cetak bukti pendaftaran
             </a>
             <a class="<?= K::TOMBOL ?> min-h-12 border border-green-700 bg-white px-6 py-3 text-base text-green-800 hover:bg-green-50 focus:ring-green-200" id="bayar-wa" target="_blank" rel="noopener noreferrer" hidden>
                 <?= ikon('message-circle', 'size-5') ?> Konfirmasi lewat WA
             </a>
         </div>
         <p class="mt-4 text-sm text-gray-500" id="selesai-keterangan"></p>
-        <a class="<?= K::TAUTAN ?> mt-2" id="daftar-lagi" href="<?= site_url('pendaftaran') ?>">Daftarkan pendaftaran baru</a>
+        <a class="<?= K::TAUTAN ?> mt-2" id="daftar-lagi" href="<?= site_url('pendaftaran') ?>">Buat pendaftaran baru</a>
     </div>
 </section>

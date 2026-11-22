@@ -30,7 +30,7 @@
                 'gambar' => 'gambar/keadaan/kosong-data.webp',
                 'ikon'   => 'images',
                 'judul'  => 'Belum ada album foto',
-                'teks'   => 'Panitia belum menaruh album di sini. Foto acara akan muncul di halaman ini setelah tersedia. Silakan kembali lagi nanti.',
+                'teks'   => 'Panitia belum mengunggah album. Foto acara akan muncul di sini setelah tersedia, jadi buka lagi halaman ini nanti.',
                 'aksi'   => komponen('tombol', ['label' => 'Kembali ke beranda', 'href' => site_url('/'), 'varian' => 'kedua', 'ikon' => 'arrow-left']),
             ]) ?>
         </div>

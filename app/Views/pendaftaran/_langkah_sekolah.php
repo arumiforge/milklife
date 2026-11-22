@@ -8,7 +8,7 @@
 use App\Libraries\Pendaftaran\KelasTampilan as K;
 ?>
 <section class="langkah" id="langkah-1" data-langkah="1" aria-labelledby="judul-langkah-1" hidden>
-    <?= view('pendaftaran/_kepala_langkah', ['langkah' => 1, 'judul' => 'Data Sekolah'], ['saveData' => false]) ?>
+    <?= view('pendaftaran/_kepala_langkah', ['langkah' => 1, 'judul' => 'Data sekolah'], ['saveData' => false]) ?>
     <p class="langkah-keterangan mb-5 text-gray-600">Jenjang sekolah menentukan kelompok umur yang boleh diikuti atlet.</p>
 
     <div class="<?= K::RINGKASAN ?>" role="alert" hidden></div>
@@ -46,7 +46,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
                 </button>
                 <div class="<?= K::UMPAN ?> basis-full !mt-0"></div>
             </div>
-            <div id="sekolah-npsn-keterangan" class="<?= K::BANTU ?>">Nama sekolah tampil sendiri setelah NPSN dicari.</div>
+            <div id="sekolah-npsn-keterangan" class="<?= K::BANTU ?>">Nama sekolah muncul otomatis setelah Anda mencari NPSN.</div>
         </div>
 
         <div class="flex items-center gap-3">
@@ -63,7 +63,7 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
                 placeholder="Contoh: MIS MUHAMMADIYAH JATI" aria-describedby="sekolah-nama-usulan-keterangan">
             <div class="<?= K::UMPAN ?>"></div>
             <div id="sekolah-nama-usulan-keterangan" class="<?= K::BANTU ?>">
-                Nama ini langsung dipakai untuk pendaftaran Anda dan dikirim ke panitia untuk diperiksa.
+                Nama ini langsung dipakai di pendaftaran Anda, lalu panitia memeriksanya.
                 Bila panitia tidak menyetujuinya, pendaftaran memakai nama dari data sekolah. Kosongkan bila nama di atas sudah benar.
             </div>
         </div>

@@ -8,9 +8,9 @@
 $galat = [
     'kode'   => '400',
     'gambar' => 'galat-404.webp',
-    'judul'  => 'Permintaan tidak bisa diproses',
+    'judul'  => 'Halaman tidak bisa dibuka',
     'pesan'  => [
-        'Data yang dikirim ke halaman ini tidak lengkap atau tidak sesuai.',
+        'Data yang terkirim ke halaman ini tidak lengkap atau tidak sesuai.',
         'Kembali ke halaman sebelumnya lalu coba lagi, atau mulai lagi dari beranda.',
     ],
     'teknis' => (defined('ENVIRONMENT') && ENVIRONMENT !== 'production') ? (string) ($message ?? '') : '',

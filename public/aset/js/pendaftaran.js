@@ -73,7 +73,7 @@
     });
 
     $('#tombol-mulai-ulang').addEventListener('click', function () {
-        yakin('Mulai dari awal?', 'Semua isian dikosongkan. Data sekolah, ofisial, dan atlet di halaman ini akan hilang.', 'Kosongkan isian').then(function (setuju) {
+        yakin('Mulai dari awal?', 'Data sekolah, ofisial, dan atlet di halaman ini akan dihapus dan tidak bisa dikembalikan.', 'Kosongkan isian').then(function (setuju) {
             if (!setuju) {
                 return;
             }

@@ -23,7 +23,7 @@
 
 use App\Libraries\Pendaftaran\KelasTampilan as K;
 
-$langkah = ['Data Sekolah', 'Ofisial', 'Atlet', 'Biaya', 'Pembayaran'];
+$langkah = ['Data sekolah', 'Ofisial', 'Atlet', 'Biaya', 'Pembayaran'];
 $sprite  = base_url('aset/vendor/lucide/lucide.svg') . (($versi = @filemtime(FCPATH . 'aset/vendor/lucide/lucide.svg')) === false ? '' : '?v=' . $versi);
 ?>
 <?= $this->extend('tata_letak/publik_tw') ?>

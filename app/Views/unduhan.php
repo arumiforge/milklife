@@ -27,7 +27,7 @@
                 'gambar' => 'gambar/keadaan/kosong-data.webp',
                 'ikon'   => 'folder-open',
                 'judul'  => 'Belum ada berkas unduhan',
-                'teks'   => 'Panitia belum menaruh berkas di sini. Flyer dan petunjuk teknis akan muncul di halaman ini setelah tersedia. Silakan kembali lagi nanti.',
+                'teks'   => 'Panitia belum mengunggah berkas. Flyer dan petunjuk teknis akan muncul di sini setelah tersedia, jadi buka lagi halaman ini nanti.',
                 'aksi'   => komponen('tombol', ['label' => 'Kembali ke beranda', 'href' => site_url('/'), 'varian' => 'kedua', 'ikon' => 'arrow-left']),
             ]) ?>
         </div>
