@@ -52,7 +52,8 @@ use ZipArchive;
  *   hasil membawa seri dan lintasan, nomor membawa aturan seri (F9-08).
  *   Nomor membawa aturan percobaan dan pemecah seri, hasil membawa
  *   percobaan dan seperseribu detik (F9-09). Nomor membawa cara pencatatan
- *   waktu (F11-04; paket lama = elektronik).
+ *   waktu (F11-04; paket lama = elektronik). Hasil membawa pasal
+ *   diskualifikasi (F11-05; boleh tidak ada).
  *   `tabel_skor`: semua tabel skor beserta barisnya, termasuk ubahan admin
  *   (F9-10; boleh tidak ada). Tabel berkode sama di server baru diganti.
  *   `faq`: tanya-jawab halaman Bantuan (F9-04). Bila ada dan berisi, isinya
@@ -1113,6 +1114,8 @@ final class PaketPendaftaran
                 'prestasi'         => $h['prestasi'] === null ? null : (int) $h['prestasi'],
                 'rincian'          => $h['rincian'],
                 'keterangan'       => $h['keterangan'],
+                // Pasal diskualifikasi (F11-05).
+                'pasal'            => $h['pasal'],
                 'peringkat'        => $h['peringkat'] === null ? null : (int) $h['peringkat'],
                 'peringkat_manual' => (int) $h['peringkat_manual'],
                 // Seri dan lintasan (F9-08).
@@ -1260,6 +1263,8 @@ final class PaketPendaftaran
                         'prestasi'         => is_numeric($h['prestasi'] ?? null) ? (int) $h['prestasi'] : null,
                         'rincian'          => is_string($h['rincian'] ?? null) && TabelSkor::bacaRincian($h['rincian']) !== [] ? TabelSkor::tulisRincian(TabelSkor::bacaRincian($h['rincian'])) : null,
                         'keterangan'       => Peringkat::keterangan($h['keterangan'] ?? null),
+                        // Pasal diskualifikasi (F11-05); paket lama tanpa pasal.
+                        'pasal'            => Peringkat::keterangan($h['keterangan'] ?? null) === 'DQ' && is_string(Peringkat::pasal($h['pasal'] ?? null)) ? Peringkat::pasal($h['pasal']) : null,
                         'peringkat'        => is_numeric($h['peringkat'] ?? null) ? (int) $h['peringkat'] : null,
                         'peringkat_manual' => (int) ($h['peringkat_manual'] ?? 0) === 1 ? 1 : 0,
                         // Seri dan lintasan (F9-08).

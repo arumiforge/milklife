@@ -358,7 +358,7 @@ final class PembagiSeri
     /**
      * Yang lolos ke babak berikutnya: Q = `$q` terbaik tiap seri, lalu q =
      * `$qKecil` prestasi terbaik berikutnya dari semua seri. Peserta tanpa
-     * prestasi atau ber-DNS/DNF/DQ tidak lolos. Peringkat sama di batas ikut lolos;
+     * prestasi atau ber-DNS/DNF/DQ/NM tidak lolos; r (mundur) dinilai dari prestasinya. Peringkat sama di batas ikut lolos;
      * prestasi sama dipisah dulu dengan `pemecah` bila ada (F9-09).
      *
      * @param list<array{kunci: string, seri: int|null, prestasi: int|null, keterangan: string|null, pemecah?: list<int>|null}> $baris
@@ -374,7 +374,7 @@ final class PembagiSeri
         foreach ($baris as $b) {
             $perSeri[(int) $b['seri']][$b['kunci']] = ['prestasi' => $b['prestasi'], 'keterangan' => $b['keterangan'], 'pemecah' => $b['pemecah'] ?? null];
 
-            if ($b['prestasi'] !== null && Peringkat::keterangan($b['keterangan']) === null) {
+            if ($b['prestasi'] !== null && ! Peringkat::tanpaPeringkat($b['keterangan'])) {
                 $prestasi[$b['kunci']] = $b['prestasi'];
                 $pemecah[$b['kunci']]  = $b['pemecah'] ?? null;
             }

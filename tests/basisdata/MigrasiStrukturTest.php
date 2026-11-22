@@ -271,6 +271,8 @@ final class MigrasiStrukturTest extends UjiBasisData
             'percobaan'        => ['varchar(255)', true, null],
             'seperseribu'      => ['int unsigned', true, null],
             'keterangan'       => ['varchar(3)', true, null],
+            // F11-05: pasal diskualifikasi.
+            'pasal'            => ['varchar(12)', true, null],
             'peringkat'        => ['smallint unsigned', true, null],
             'peringkat_manual' => ['tinyint unsigned', false, '0'],
             // F9-09: versi baris untuk lembar juri.

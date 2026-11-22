@@ -53,7 +53,7 @@ class JuriController extends BaseController
     {
         $isian = [];
 
-        foreach (['prestasi', 'percobaan', 'komponen', 'keterangan', 'versi'] as $kotak) {
+        foreach (['prestasi', 'percobaan', 'komponen', 'keterangan', 'pasal', 'versi'] as $kotak) {
             $isian[$kotak] = $this->request->getPost($kotak);
         }
 

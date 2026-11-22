@@ -58,7 +58,7 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-babak-juri">
         <h2 id="judul-babak-juri" class="text-lg font-bold break-words text-gray-900"><?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?> · <?= esc($babak['nama']) ?></h2>
         <p class="text-sm text-gray-600"><?= $jadwal === '' ? 'Jadwal menyusul' : esc($jadwal) ?> · <?= $babak['peserta'] ?> <?= $beregu ? 'regu' : 'peserta' ?></p>
-        <p class="mt-2 text-sm text-gray-700"><?= esc($petunjuk) ?> Pilih DNS, DNF, atau DQ untuk peserta yang tidak start, tidak finis, atau didiskualifikasi.</p>
+        <p class="mt-2 text-sm text-gray-700"><?= esc($petunjuk) ?> Pilih DNS, DNF, atau DQ untuk peserta yang tidak start, tidak finis, atau didiskualifikasi. Untuk DQ, tulis pasalnya bila ada, misalnya TR16.8.<?php if ($jenis === JenisHasil::JARAK) : ?> Bila semua percobaan X, keterangan NM (tanpa lompatan atau lemparan sah) terisi sendiri. Pilih r bila peserta mundur: prestasi sebelum mundur tetap dinilai.<?php endif ?></p>
         <p class="mt-2 text-sm text-gray-700">Peringkat dan tombol Terbitkan ada di <a href="<?= site_url('admin/hasil/babak/' . $babak['id']) ?>" class="font-semibold text-primary-700 underline">halaman hasil babak ini</a>.</p>
         <?php if ($jenis === JenisHasil::MULTI && $komponen === []) : ?>
             <div class="mt-3"><?= komponen('peringatan', ['jenis' => 'peringatan', 'judul' => 'Tabel skor belum dipilih', 'isi' => 'Nomor ini belum punya tabel skor. Prestasinya baru bisa diisi setelah tabel skor dipilih. Pilih tabel skor dan komponennya di Pengaturan &gt; Nomor lomba.']) ?></div>
@@ -147,10 +147,15 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
                                         <label for="<?= $awal ?>-keterangan" class="block text-sm font-semibold text-gray-700">Keterangan</label>
                                         <select id="<?= $awal ?>-keterangan" name="keterangan" class="block h-12 w-full rounded-lg border border-gray-300 bg-white px-3 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100" data-isian-juri>
                                             <option value="">Ada prestasi</option>
-                                            <?php foreach (Peringkat::KETERANGAN as $kode => $arti) : ?>
+                                            <?php foreach (Peringkat::pilihan($jenis) as $kode => $arti) : ?>
                                                 <option value="<?= $kode ?>"<?= $p['keterangan'] === $kode ? ' selected' : '' ?>><?= $kode ?> – <?= esc($arti) ?></option>
                                             <?php endforeach ?>
                                         </select>
+                                    </div>
+                                    <?php // Pasal diskualifikasi (F11-05), disimpan bila keterangan DQ. ?>
+                                    <div class="min-w-0 flex-1 basis-40">
+                                        <label for="<?= $awal ?>-pasal" class="block text-sm font-semibold text-gray-700">Pasal DQ</label>
+                                        <input type="text" id="<?= $awal ?>-pasal" name="pasal" value="<?= esc((string) $p['pasal'], 'attr') ?>" maxlength="<?= Peringkat::PANJANG_PASAL ?>" autocomplete="off" placeholder="TR16.8" class="block h-12 w-full rounded-lg border border-gray-300 bg-white px-3 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100" data-isian-juri data-pasal>
                                     </div>
                                     <?= komponen('tombol', ['label' => 'Simpan', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'check', 'kelas' => 'min-h-12', 'atribut' => ['data-tombol-simpan' => '1']]) ?>
                                 </div>

@@ -74,7 +74,8 @@ final class LembarJuri
      * Simpan satu baris dari lembar juri.
      *
      * `$isian`: `prestasi` (waktu, poin), `percobaan` (jarak: daftar teks),
-     * `komponen` (poin multi-lomba: kode => teks), `keterangan`, `versi`.
+     * `komponen` (poin multi-lomba: kode => teks), `keterangan`, `pasal`
+     * (pasal DQ, F11-05), `versi`.
      * Koreksi peringkat Final yang sudah ada dipertahankan.
      *
      * @param array<string, mixed> $isian
@@ -93,6 +94,7 @@ final class LembarJuri
         $jenis = $babak['nomor']['jenis_hasil'];
         $baris = [
             'keterangan' => is_string($isian['keterangan'] ?? null) ? $isian['keterangan'] : '',
+            'pasal'      => is_string($isian['pasal'] ?? null) ? $isian['pasal'] : '',
             'versi'      => is_scalar($isian['versi'] ?? null) ? (string) $isian['versi'] : null,
         ];
 
@@ -126,7 +128,7 @@ final class LembarJuri
      *
      * @param array<string, mixed> $h `HasilLomba::hasilBabak()`
      *
-     * @return array{id: int, versi: int, prestasi: string, isian: string, percobaan: list<string>, komponen: array<string, string>, rincian: list<array<string, mixed>>, keterangan: string, ringkasan: string}
+     * @return array{id: int, versi: int, prestasi: string, isian: string, percobaan: list<string>, komponen: array<string, string>, rincian: list<array<string, mixed>>, keterangan: string, pasal: string, ringkasan: string}
      */
     public static function ringkas(array $h): array
     {
@@ -139,21 +141,38 @@ final class LembarJuri
             'komponen'   => $h['rincian_isian'],
             'rincian'    => $h['rincian'],
             'keterangan' => (string) $h['keterangan'],
+            'pasal'      => (string) ($h['pasal'] ?? ''),
             'ringkasan'  => self::ringkasan($h),
         ];
     }
 
     /**
      * Teks pendek isi baris: prestasi (terbaik/total poin) atau keterangan.
+     * Pasal ditulis di belakang DQ; mundur (r) dengan prestasi menulis
+     * prestasinya (F11-05).
      *
      * @param array<string, mixed> $h `HasilLomba::hasilBabak()`
      */
     public static function ringkasan(array $h): string
     {
-        if ($h['keterangan'] !== null) {
-            return (string) (Peringkat::KETERANGAN[$h['keterangan']] ?? $h['keterangan']);
+        if ($h['keterangan'] === 'r' && $h['prestasi'] !== null) {
+            return self::ringkasanPrestasi($h) . ', mundur';
         }
 
+        if ($h['keterangan'] !== null) {
+            $arti = (string) (Peringkat::KETERANGAN[$h['keterangan']] ?? $h['keterangan']);
+
+            return ($h['pasal'] ?? null) !== null ? $arti . ' (' . $h['pasal'] . ')' : $arti;
+        }
+
+        return self::ringkasanPrestasi($h);
+    }
+
+    /**
+     * @param array<string, mixed> $h `HasilLomba::hasilBabak()`
+     */
+    private static function ringkasanPrestasi(array $h): string
+    {
         if ($h['prestasi'] === null) {
             return $h['percobaan'] !== null ? 'Belum ada percobaan sah' : '';
         }
