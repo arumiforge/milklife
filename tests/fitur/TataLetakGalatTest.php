@@ -96,36 +96,13 @@ final class TataLetakGalatTest extends UjiHalaman
 
     public function testIlustrasiGalatHanyaBilaBerkasnyaAda(): void
     {
-        $folder  = FCPATH . 'aset/gambar/keadaan';
-        $berkas  = $folder . '/galat-500.webp';
-        $adaDulu = is_file($berkas);
-        $folderBaru = ! is_dir($folder);
+        $this->assertStringNotContainsString('<img', $this->renderGalat('production.php'));
 
-        if ($adaDulu) {
-            rename($berkas, $berkas . '.simpan');
-        }
+        $this->taruhGambarUji('keadaan/galat-500.webp');
 
-        try {
-            $this->assertStringNotContainsString('<img', $this->renderGalat('production.php'));
-
-            if ($folderBaru) {
-                mkdir($folder, 0777, true);
-            }
-            file_put_contents($berkas, 'uji');
-
-            $html = $this->renderGalat('production.php');
-            $this->assertStringContainsString('<img class="galat-gambar" src="' . base_url('aset/gambar/keadaan/galat-500.webp') . '" alt=""', $html);
-            $this->assertStringNotContainsString('<img', $this->renderGalat('error_404.php'), '404 memakai berkasnya sendiri.');
-        } finally {
-            if (is_file($berkas)) {
-                unlink($berkas);
-            }
-            if ($adaDulu) {
-                rename($berkas . '.simpan', $berkas);
-            } elseif ($folderBaru && is_dir($folder)) {
-                rmdir($folder);
-            }
-        }
+        $html = $this->renderGalat('production.php');
+        $this->assertStringContainsString('<img class="galat-gambar" src="' . base_url('aset/gambar/keadaan/galat-500.webp') . '" alt=""', $html);
+        $this->assertStringNotContainsString('<img', $this->renderGalat('error_404.php'), '404 memakai berkasnya sendiri.');
     }
 
     /**

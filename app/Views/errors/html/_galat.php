@@ -31,7 +31,18 @@ try {
 $galatGambar = null;
 $galatNama   = $galat['gambar'] ?? '';
 
-if (preg_match('/^[a-z0-9-]+\.webp$/D', $galatNama) === 1 && defined('FCPATH') && is_file(FCPATH . 'aset/gambar/keadaan/' . $galatNama)) {
+// Folder gambar: folder pengganti `GambarOpsional::$folder` (uji) bila diisi, selain itu `public/aset/gambar/`.
+$galatFolder = defined('FCPATH') ? FCPATH . 'aset/gambar/' : null;
+
+try {
+    if (class_exists(App\Libraries\GambarOpsional::class) && App\Libraries\GambarOpsional::$folder !== null) {
+        $galatFolder = App\Libraries\GambarOpsional::$folder;
+    }
+} catch (Throwable) {
+    // Tetap memakai folder asli.
+}
+
+if (preg_match('/^[a-z0-9-]+\.webp$/D', $galatNama) === 1 && $galatFolder !== null && is_file($galatFolder . 'keadaan/' . $galatNama)) {
     $galatGambar = '/aset/gambar/keadaan/' . $galatNama;
 
     try {

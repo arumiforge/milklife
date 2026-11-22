@@ -148,48 +148,25 @@ final class PendaftaranHalamanTest extends UjiBasisData
     /**
      * Ilustrasi G9-03 di kepala langkah dan G9-04 di layar berhasil (F9-05)
      * hanya tampil bila berkasnya ada; tanpa berkas halaman tetap utuh.
-     * Berkas uji dibuat sementara dan hanya yang dibuat uji ini dihapus lagi.
+     * Berkas tiruan ditaruh di folder gambar uji (`GambarCodexKosong`).
      */
     public function testIlustrasiLangkahDanBerhasilHanyaBilaBerkasAda(): void
     {
         $this->bukaPendaftaranUji();
-        $berkas = [
-            FCPATH . 'aset/' . App\Libraries\Bantuan\IsiBantuan::FOLDER_PANDUAN . App\Libraries\Bantuan\IsiBantuan::PANDUAN[0][0],
-            FCPATH . 'aset/gambar/keadaan/berhasil.webp',
-        ];
-        $sudahAda = array_map('is_file', $berkas);
 
-        if (! in_array(true, $sudahAda, true)) {
-            $xpath = $this->xpathDari($this->get('pendaftaran'));
-            $this->assertSame(0, $xpath->query('//img[@data-gambar-langkah]')->length);
-            $this->assertSame(0, $xpath->query('//img[@data-gambar-berhasil]')->length);
-            $this->assertSame(1, $xpath->query('//div[@id="selesai"]//use[contains(@href, "#trophy")]')->length, 'Ikon pengganti ilustrasi berhasil.');
-        }
+        $xpath = $this->xpathDari($this->get('pendaftaran'));
+        $this->assertSame(0, $xpath->query('//img[@data-gambar-langkah]')->length);
+        $this->assertSame(0, $xpath->query('//img[@data-gambar-berhasil]')->length);
+        $this->assertSame(1, $xpath->query('//div[@id="selesai"]//use[contains(@href, "#trophy")]')->length, 'Ikon pengganti ilustrasi berhasil.');
 
-        $dibuat = [];
+        $this->taruhGambarUji('panduan/' . App\Libraries\Bantuan\IsiBantuan::PANDUAN[0][0], 'RIFF');
+        $this->taruhGambarUji('keadaan/berhasil.webp', 'RIFF');
 
-        try {
-            foreach ($berkas as $i => $jalur) {
-                if (! $sudahAda[$i]) {
-                    if (! is_dir(dirname($jalur))) {
-                        mkdir(dirname($jalur), 0777, true);
-                        $dibuat[] = dirname($jalur);
-                    }
-                    file_put_contents($jalur, 'RIFF');
-                    array_unshift($dibuat, $jalur);
-                }
-            }
-
-            $xpath = $this->xpathDari($this->get('pendaftaran'));
-            $gambar = $xpath->query('//section[@id="langkah-1"]//img[@data-gambar-langkah]');
-            $this->assertSame(1, $gambar->length);
-            $this->assertStringContainsString('aset/gambar/panduan/', $gambar->item(0)->getAttribute('src'));
-            $this->assertSame('', $gambar->item(0)->getAttribute('alt'));
-            $this->assertStringContainsString('aset/gambar/keadaan/berhasil.webp', $xpath->query('//div[@id="selesai"]//img[@data-gambar-berhasil]')->item(0)->getAttribute('src'));
-        } finally {
-            foreach ($dibuat as $jalur) {
-                is_dir($jalur) ? @rmdir($jalur) : @unlink($jalur);
-            }
-        }
+        $xpath  = $this->xpathDari($this->get('pendaftaran'));
+        $gambar = $xpath->query('//section[@id="langkah-1"]//img[@data-gambar-langkah]');
+        $this->assertSame(1, $gambar->length);
+        $this->assertStringContainsString('aset/gambar/panduan/', $gambar->item(0)->getAttribute('src'));
+        $this->assertSame('', $gambar->item(0)->getAttribute('alt'));
+        $this->assertStringContainsString('aset/gambar/keadaan/berhasil.webp', $xpath->query('//div[@id="selesai"]//img[@data-gambar-berhasil]')->item(0)->getAttribute('src'));
     }
 }
