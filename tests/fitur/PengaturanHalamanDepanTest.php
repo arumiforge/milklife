@@ -2,6 +2,7 @@
 
 use App\Controllers\Admin\Pengaturan\HalamanDepanController;
 use App\Libraries\Unggahan;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Support\KirimFormulir;
 use Tests\Support\UjiBasisData;
 use Tests\Support\UnggahanSementara;
@@ -19,6 +20,8 @@ final class PengaturanHalamanDepanTest extends UjiBasisData
 
     private const ALAMAT = 'admin/pengaturan/halaman-depan';
 
+    private const EMBED = 'https://www.google.com/maps/embed?pb=!1m18!2sStadion%20Karangan!5e0';
+
     private const KELAS_TANPA_GAMBAR = '[contains(concat(" ", @class, " "), " tanpa-gambar ")]';
 
     /**
@@ -33,6 +36,8 @@ final class PengaturanHalamanDepanTest extends UjiBasisData
             'nomor_wa_tanya' => '+62 812 3456 7890',
             'pesan_tanya'    => 'Halo admin, saya mau bertanya.',
             'pesan_bagikan'  => 'Yuk daftar di http://contoh.test/',
+            'peta_embed'     => self::EMBED,
+            'peta_tautan'    => 'https://maps.google.com/?q=Stadion+Karangan',
         ];
     }
 
@@ -122,6 +127,68 @@ final class PengaturanHalamanDepanTest extends UjiBasisData
         $hasil->assertSee('Teks pengantar terlalu panjang. Persingkat menjadi paling banyak 2.000 huruf.');
         $hasil->assertSee('Nomor WA belum benar.');
         $this->assertSame('Judul Lama', setting('HalamanDepan.judul'));
+    }
+
+    // ---------- Peta lokasi (F10-02) ----------
+
+    public function testPetaBawaanTampilDiFormulir(): void
+    {
+        $xpath = $this->xpathDari($this->bukaSebagaiAdmin(self::ALAMAT));
+
+        $this->assertStringStartsWith('https://www.google.com/maps/embed?pb=', $xpath->query('//section[@data-pengaturan-peta]//textarea[@name="peta_embed"]')->item(0)?->textContent);
+        $this->assertStringContainsString('Supersoccer%20Arena', $xpath->query('//textarea[@name="peta_embed"]')->item(0)?->textContent);
+        $this->assertSame('https://maps.google.com/?q=Supersoccer+Arena+Kudus', $xpath->query('//section[@data-pengaturan-peta]//input[@name="peta_tautan"]')->item(0)?->getAttribute('value'));
+    }
+
+    public function testPetaTersimpan(): void
+    {
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah());
+
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+        $this->assertSame(self::EMBED, setting('HalamanDepan.peta_embed'));
+        $this->assertSame('https://maps.google.com/?q=Stadion+Karangan', setting('HalamanDepan.peta_tautan'));
+    }
+
+    public function testKodeIframeUtuhDiambilAlamatnya(): void
+    {
+        $kode = '<iframe src="https://www.google.com/maps/embed?pb=!1m18!2sStadion%20Karangan&amp;hl=id" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>';
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['peta_embed' => $kode]));
+
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+        $this->assertSame('https://www.google.com/maps/embed?pb=!1m18!2sStadion%20Karangan&hl=id', setting('HalamanDepan.peta_embed'));
+    }
+
+    public function testPetaBolehKosong(): void
+    {
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['peta_embed' => '', 'peta_tautan' => '']));
+
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT);
+        $this->assertSame('', setting('HalamanDepan.peta_embed'));
+        $this->assertSame('', setting('HalamanDepan.peta_tautan'));
+    }
+
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function petaSalah(): iterable
+    {
+        yield 'bukan embed' => ['https://www.google.com/maps/place/Stadion+Karangan', 'maps.google.com/?q=Karangan'];
+        yield 'http biasa' => ['http://www.google.com/maps/embed?pb=!1m18', 'http://maps.google.com/?q=Karangan'];
+        yield 'asal lain' => ['https://www.google.com.contoh.test/maps/embed?pb=1', 'javascript:alert(1)'];
+        yield 'kutip' => ['https://www.google.com/maps/embed?pb="><script>', 'https://maps.google.com/?q="><b>'];
+    }
+
+    #[DataProvider('petaSalah')]
+    public function testPetaSalahDitolak(string $embed, string $tautan): void
+    {
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, self::isianSah(['judul' => 'Judul Baru', 'peta_embed' => $embed, 'peta_tautan' => $tautan]));
+
+        $this->assertIsianSalahDitampilkanUlang($hasil, ['peta_embed', 'peta_tautan']);
+        $hasil->assertSee('Alamat peta harus alamat embed Google Maps');
+        $hasil->assertSee('Tautan buka peta harus alamat web lengkap');
+        $this->assertSame('', setting('HalamanDepan.judul'), 'Tidak ada yang tersimpan.');
+        $this->assertStringContainsString('Supersoccer', (string) setting('HalamanDepan.peta_embed'));
     }
 
     public function testTokenCsrfWajib(): void

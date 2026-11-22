@@ -5,6 +5,7 @@ namespace App\Controllers\Admin\Pengaturan;
 use App\Controllers\BaseController;
 use App\Libraries\CarouselHalamanDepan;
 use App\Libraries\NomorWa;
+use App\Libraries\PetaLokasi;
 use App\Libraries\Unggahan;
 use CodeIgniter\HTTP\ResponseInterface;
 use RuntimeException;
@@ -15,7 +16,8 @@ use RuntimeException;
  * Menyimpan gambar kepala, tiga logo, judul, teks, footer, nomor WA tanya
  * admin, pesan tanya admin, pesan bagikan (kunci `HalamanDepan.*` di
  * rencana Tahap 2), dan sakelar tampil-tidaknya biaya di bagian lomba
- * (`HalamanDepan.tampilkan_biaya`). Tampilan halaman depan publik yang memakai isi ini
+ * (`HalamanDepan.tampilkan_biaya`), serta alamat embed dan tautan peta lokasi
+ * (`HalamanDepan.peta_embed`, `HalamanDepan.peta_tautan`, F10-02). Tampilan halaman depan publik yang memakai isi ini
  * dikerjakan di Tahap 3.
  *
  * - Semua isian boleh kosong; yang diisi harus benar.
@@ -81,6 +83,8 @@ class HalamanDepanController extends BaseController
 
         $nomorWa                 = (string) setting('HalamanDepan.nomor_wa_tanya');
         $isian['nomor_wa_tanya'] = $nomorWa === '' ? '' : NomorWa::tampilan($nomorWa);
+        $isian['peta_embed']     = (string) setting('HalamanDepan.peta_embed');
+        $isian['peta_tautan']    = (string) setting('HalamanDepan.peta_tautan');
 
         return $this->tampilkan($isian, [], [], (bool) setting('HalamanDepan.tampilkan_biaya'), (bool) setting('HalamanDepan.hasil_di_atas'));
     }
@@ -94,6 +98,8 @@ class HalamanDepanController extends BaseController
             'nomor_wa_tanya' => trim((string) $this->request->getPost('nomor_wa_tanya')),
             'pesan_tanya'    => self::rapikanTeks((string) $this->request->getPost('pesan_tanya')),
             'pesan_bagikan'  => self::rapikanTeks((string) $this->request->getPost('pesan_bagikan')),
+            'peta_embed'     => PetaLokasi::rapikanEmbed((string) $this->request->getPost('peta_embed')),
+            'peta_tautan'    => trim((string) $this->request->getPost('peta_tautan')),
         ];
 
         // Kotak centang: tidak terkirim sama sekali bila tidak dicentang.
@@ -125,6 +131,14 @@ class HalamanDepanController extends BaseController
             if ($nomorWa === '') {
                 $galat['nomor_wa_tanya'] = NomorWa::PESAN_GALAT;
             }
+        }
+
+        // Peta lokasi (F10-02): kosong boleh (bagian Lokasi atau tautannya tidak tampil).
+        if ($isian['peta_embed'] !== '' && ! PetaLokasi::embedSah($isian['peta_embed'])) {
+            $galat['peta_embed'] = PetaLokasi::GALAT_EMBED;
+        }
+        if ($isian['peta_tautan'] !== '' && ! PetaLokasi::tautanSah($isian['peta_tautan'])) {
+            $galat['peta_tautan'] = PetaLokasi::GALAT_TAUTAN;
         }
 
         $unggahan    = new Unggahan();
@@ -175,6 +189,8 @@ class HalamanDepanController extends BaseController
         setting('HalamanDepan.nomor_wa_tanya', $nomorWa);
         setting('HalamanDepan.tampilkan_biaya', $tampilkanBiaya);
         setting('HalamanDepan.hasil_di_atas', $hasilDiAtas);
+        setting('HalamanDepan.peta_embed', $isian['peta_embed']);
+        setting('HalamanDepan.peta_tautan', $isian['peta_tautan']);
 
         // Berkas lama dibuang setelah yang baru tersimpan. Gambar baru
         // mengalahkan centang "Hapus gambar" pada kotak yang sama.

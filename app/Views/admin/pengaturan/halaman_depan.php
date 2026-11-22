@@ -142,6 +142,19 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut sm:p-6';
             </section>
         </div>
 
+        <?php // Peta lokasi (F10-02): bagian Lokasi di halaman depan, dekat Kontak. ?>
+        <section class="<?= $kartu ?>" aria-labelledby="judul-peta" data-pengaturan-peta>
+            <h2 id="judul-peta" class="text-lg font-bold text-gray-900">Peta lokasi</h2>
+            <p class="mb-4 mt-1 text-sm text-gray-600">
+                Peta tampil di bagian Lokasi halaman depan, di atas Kontak, dengan alamat dari Tempat di Data Acara.
+                Kosongkan alamat peta bila bagian Lokasi tidak ingin ditampilkan.
+            </p>
+            <div class="grid gap-4 xl:grid-cols-2">
+                <?= $kotak('peta_embed', 'Alamat peta (embed Google Maps)', 'Di Google Maps buka tempatnya, pilih Bagikan > Sematkan peta, lalu salin kodenya ke sini. Kode <iframe> utuh juga boleh; yang disimpan hanya alamat yang diawali https://www.google.com/maps/embed?.', $isian, $galat, 4, ['maxlength' => '2000', 'spellcheck' => 'false', 'autocomplete' => 'off']) ?>
+                <?= $kotak('peta_tautan', 'Tautan buka peta', 'Tautan tombol "Buka di Google Maps", misalnya https://maps.google.com/?q=Supersoccer+Arena+Kudus. Kosongkan bila tombolnya tidak perlu.', $isian, $galat, 0, ['maxlength' => '2000', 'inputmode' => 'url', 'spellcheck' => 'false', 'autocomplete' => 'off']) ?>
+            </div>
+        </section>
+
         <section class="<?= $kartu ?> space-y-4" aria-labelledby="judul-lomba">
             <h2 id="judul-lomba" class="text-lg font-bold text-gray-900">Bagian lomba</h2>
             <div>

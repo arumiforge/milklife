@@ -160,10 +160,11 @@ class ContentSecurityPolicy extends BaseConfig
      * be loaded into nested browsing contexts.
      *
      * Kotak pemeriksaan Cloudflare Turnstile (K122) berupa iframe dari challenges.cloudflare.com.
+     * Peta lokasi halaman depan (F10-02) berupa iframe embed Google Maps dari www.google.com.
      *
      * @var list<string>|string|null
      */
-    public $frameSrc = ['self', 'https://challenges.cloudflare.com'];
+    public $frameSrc = ['self', 'https://challenges.cloudflare.com', 'https://www.google.com'];
 
     /**
      * Restricts the origins allowed to deliver video and audio.
