@@ -21,8 +21,10 @@ use SplFileInfo;
  * Membuat versi kecil (`.min.css`, `.min.js`, `.min.svg`) dari setiap berkas
  * CSS, JavaScript, dan SVG milik aplikasi di `public/aset/`, di sebelah berkas
  * aslinya. Berkas asli tidak diubah.
- * Folder `vendor/` (pustaka yang sudah memakai versi kecilnya sendiri) dan
- * berkas yang sudah berakhiran `.min` dilewati.
+ * Folder `vendor/` (pustaka yang sudah memakai versi kecilnya sendiri),
+ * folder `tailwind/` (masukan bangun Tailwind yang tidak dimuat halaman; hasil
+ * bangunnya `css/tw.css` tetap diperkecil), dan berkas yang sudah berakhiran
+ * `.min` dilewati.
  *
  * Berkas `.min` tidak masuk git; perintah ini dijalankan di server setiap
  * kali aplikasi dipasang atau diperbarui. Halaman memakai berkas `.min` bila
@@ -35,6 +37,11 @@ class MinifyAset extends BaseCommand
     protected $name        = 'aset:minify';
     protected $description = 'Membuat versi kecil (.min.css, .min.js, .min.svg) dari CSS, JavaScript, dan SVG aplikasi di public/aset/. Berkas asli tetap ada. Aman dijalankan berulang kali.';
     protected $usage       = 'aset:minify';
+
+    /**
+     * Folder yang tidak diperkecil: pustaka pihak ketiga dan masukan bangun Tailwind.
+     */
+    private const FOLDER_DILEWATI = ['vendor', 'tailwind'];
 
     /**
      * @param array<int|string, string|null> $params
@@ -84,7 +91,7 @@ class MinifyAset extends BaseCommand
 
     /**
      * Tulis berkas `.min` untuk setiap `*.css`, `*.js`, dan `*.svg` di bawah `$folder`,
-     * kecuali di folder `vendor/` dan berkas yang sudah `.min`.
+     * kecuali di folder `vendor/` dan `tailwind/` serta berkas yang sudah `.min`.
      *
      * @return list<array{berkas: string, sebelum: int, sesudah: int}> Berurutan menurut jalur; `berkas` relatif terhadap `$folder`, pemisah `/`.
      *
@@ -135,7 +142,7 @@ class MinifyAset extends BaseCommand
     {
         $iterator = new RecursiveIteratorIterator(new RecursiveCallbackFilterIterator(
             new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS),
-            static fn (SplFileInfo $berkas): bool => ! ($berkas->isDir() && strtolower($berkas->getFilename()) === 'vendor'),
+            static fn (SplFileInfo $berkas): bool => ! ($berkas->isDir() && in_array(strtolower($berkas->getFilename()), self::FOLDER_DILEWATI, true)),
         ));
 
         $daftar = [];
