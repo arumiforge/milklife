@@ -64,6 +64,8 @@ final class CekPendaftaranTest extends UjiBasisData
         $hasil->assertOK();
         $hasil->assertSee('NPSN atau ID pendaftaran');
         $this->assertSame(0, $this->xpathDari($hasil)->query('//*[@id="kode-galat"]')->length);
+        // Contoh ID di keterangan bukan ID sungguhan, jadi tidak dibuat tombol salin (F10-08).
+        $this->assertSame(1, $this->xpathDari($hasil)->query('//*[@id="kode-keterangan"][@data-tanpa-salin]')->length);
 
         $tombol = $this->xpathDari($this->get('/'))->query('//*[@data-tombol="cek"]')->item(0);
         $this->assertSame(site_url('cek-pendaftaran'), $tombol->getAttribute('href'));

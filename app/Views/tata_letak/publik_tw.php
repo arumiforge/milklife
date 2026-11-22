@@ -195,8 +195,13 @@ $menuBawah     = trim($this->renderSection('tanpa_menu_bawah')) === '';
         <?= view('tata_letak/_menu_bawah_publik', ['butir' => MenuPublik::bawah()], ['saveData' => false]) ?>
     <?php endif ?>
 
+    <?php // Salin ID pendaftaran sekali klik (F10-08): ikon untuk aset/js/salin-id.js dan pesan "tersalin". ?>
+    <template id="templat-salin-id"><?= ikon('copy', 'salin-id-ikon salin-id-ikon-salin') ?><?= ikon('check', 'salin-id-ikon salin-id-ikon-ok') ?></template>
+    <div class="fixed inset-x-0 bottom-24 z-[60] mx-auto w-fit max-w-[calc(100vw-2rem)] rounded-lg bg-primary-900 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-angkat lg:bottom-8" role="status" aria-live="polite" hidden data-salin-pesan data-tanpa-salin></div>
+
     <script src="<?= base_url('aset/vendor/flowbite/flowbite.min.js') ?>"></script>
     <script src="<?= aset('js/menu-publik.js') ?>"></script>
+    <script src="<?= aset('js/salin-id.js') ?>"></script>
     <?= $this->renderSection('skrip') ?>
 </body>
 </html>

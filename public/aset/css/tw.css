@@ -387,6 +387,9 @@
   .bottom-16 {
     bottom: calc(var(--spacing) * 16);
   }
+  .bottom-24 {
+    bottom: calc(var(--spacing) * 24);
+  }
   .bottom-\[60px\] {
     bottom: 60px;
   }
@@ -1658,6 +1661,9 @@
   .w-auto {
     width: auto;
   }
+  .w-fit {
+    width: fit-content;
+  }
   .w-full {
     width: 100%;
   }
@@ -1696,6 +1702,9 @@
   }
   .max-w-\[85vw\] {
     max-width: 85vw;
+  }
+  .max-w-\[calc\(100vw-2rem\)\] {
+    max-width: calc(100vw - 2rem);
   }
   .max-w-full {
     max-width: 100%;
@@ -4770,6 +4779,9 @@
     .lg\:bottom-6 {
       bottom: calc(var(--spacing) * 6);
     }
+    .lg\:bottom-8 {
+      bottom: calc(var(--spacing) * 8);
+    }
     .lg\:bottom-12 {
       bottom: calc(var(--spacing) * 12);
     }
@@ -5626,6 +5638,49 @@
   }
   .laci-terbuka {
     overflow: hidden;
+  }
+  .salin-id {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.05em 0.3em;
+    margin-inline: -0.3em;
+    border-radius: var(--radius-md);
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-decoration: underline dashed;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    cursor: copy;
+    overflow-wrap: anywhere;
+    text-align: start;
+  }
+  :is(h1, h2, h3, h4, .id-pendaftaran) > .salin-id {
+    min-height: 2.75rem;
+  }
+  .salin-id:hover {
+    background-color: var(--color-primary-50);
+  }
+  .salin-id:focus-visible {
+    outline: 2px solid var(--color-primary-600);
+    outline-offset: 2px;
+  }
+  .salin-id .salin-id-ikon {
+    flex: none;
+    width: 1em;
+    height: 1em;
+    color: var(--color-primary-600);
+  }
+  .salin-id .salin-id-ikon-ok {
+    display: none;
+    color: var(--color-green-700);
+  }
+  .salin-id-tersalin .salin-id-ikon-salin {
+    display: none;
+  }
+  .salin-id-tersalin .salin-id-ikon-ok {
+    display: inline-block;
   }
 }
 @layer base {

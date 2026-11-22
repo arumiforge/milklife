@@ -173,7 +173,23 @@ final class TataLetakHalamanTest extends UjiBasisData
     }
 
     /**
-     * Laci kiri ponsel dan menu bawah (F10-07, K154).
+     * Salin ID pendaftaran sekali klik (F10-08): skrip, templat ikon, dan pesan
+     * "tersalin" ada di tata letak publik (contoh ID di keterangan Cek: `CekPendaftaranTest`).
+     */
+    public function testSalinIdPendaftaranPublik(): void
+    {
+        $html  = $this->get('cek-pendaftaran')->getBody();
+        $xpath = $this->xpath($html);
+
+        $this->assertStringContainsString(aset('js/salin-id.js'), $html);
+        $templat = $xpath->query('//template[@id="templat-salin-id"]')->item(0);
+        $this->assertNotNull($templat);
+        $this->assertStringContainsString('#copy', $templat->ownerDocument->saveHTML($templat));
+        $this->assertSame(1, $xpath->query('//*[@data-salin-pesan][@role="status"][@aria-live="polite"][@hidden][@data-tanpa-salin]')->length);
+    }
+
+    /**
+     * Laci kanan ponsel dan menu bawah (F10-07, K154; F10-08).
      */
     public function testLaciDanMenuBawahPublik(): void
     {
