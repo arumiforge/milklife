@@ -7,7 +7,10 @@
  * @var string                     $namaAcara
  * @var array<string, mixed>       $nomor `HasilLomba::nomor()`
  * @var list<array<string, mixed>> $babak `HasilLomba::semuaBabak()`
+ *
+ * Nomor yang tidak dilombakan (F11-03) hanya menampilkan keterangannya, tanpa babak dan unduhan.
  */
+$dilombakan = $nomor['dilombakan'] ?? true;
 ?>
 <?= $this->extend('tata_letak/publik_tw') ?>
 
@@ -19,15 +22,17 @@
     'judul'        => trim($nomor['nama'] . ' ' . $nomor['kelompok_umur']),
     'ikon'         => 'trophy',
     'gambar'       => 'judul/hasil.webp',
-    'teks'         => 'Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.',
+    'teks'         => $dilombakan ? 'Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.' : $nomor['keterangan'],
     'kembali'      => site_url('hasil'),
     'labelKembali' => 'Semua hasil',
-    'aksi'         => komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('hasil/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ikon' => 'file-text'])
+    'aksi'         => ! $dilombakan ? null : komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('hasil/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ikon' => 'file-text'])
         . komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('hasil/' . $nomor['id'] . '/excel'), 'varian' => 'kedua', 'ikon' => 'file-spreadsheet']),
 ], ['saveData' => false]) ?>
 
 <div class="mx-auto max-w-screen-xl space-y-6 px-4 py-10">
-    <?php if ($babak === []) : ?>
+    <?php if (! $dilombakan) : ?>
+        <p class="text-gray-700" data-tidak-dilombakan><?= esc($nomor['keterangan']) ?> Nomor ini tidak masuk klasemen sekolah.</p>
+    <?php elseif ($babak === []) : ?>
         <p class="text-gray-600">Belum ada babak.</p>
     <?php endif ?>
 

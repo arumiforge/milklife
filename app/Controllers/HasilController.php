@@ -44,12 +44,17 @@ class HasilController extends BaseController
     public function nomor(int $id): string
     {
         $hasil = new HasilLomba();
-        $nomor = $this->cariTerbit($hasil, $id);
+        $nomor = $hasil->nomor($id);
+
+        // Nomor yang tidak dilombakan tampil dengan keterangannya saja (F11-03).
+        if ($nomor === null || $nomor['dilombakan']) {
+            $nomor = $this->cariTerbit($hasil, $id);
+        }
 
         return view('hasil/nomor', [
             'namaAcara' => (new IsiHalamanDepan())->acara()['nama'],
             'nomor'     => $nomor,
-            'babak'     => $hasil->semuaBabak($nomor),
+            'babak'     => $nomor['dilombakan'] ? $hasil->semuaBabak($nomor) : [],
         ]);
     }
 

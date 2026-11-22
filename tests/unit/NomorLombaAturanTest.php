@@ -309,6 +309,10 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             // F9-09: percobaan hanya untuk jenis hasil jarak; pemecah seri bawaan menyala.
             'jumlah_percobaan' => null,
             'pemecah_seri'     => 1,
+            // F11-03: bawaan dilombakan, tanpa batas peserta.
+            'tidak_dilombakan'        => 0,
+            'alasan_tidak_dilombakan' => null,
+            'peserta_minimal'         => null,
         ], NomorLombaModel::untukDisimpan(self::beregu(['biaya_beregu' => 'Rp 150.000'])));
 
         $data = NomorLombaModel::untukDisimpan(self::individu(['aktif' => '0']));
@@ -332,6 +336,7 @@ final class NomorLombaAturanTest extends CIUnitTestCase
             'kelompok_umur_id' => '2', 'nama' => 'Formula 1', 'jenis' => 'beregu', 'kategori' => 'putri', 'jenis_hasil' => '',
             'tabel_skor_id' => '', 'komponen_skor' => '', 'jumlah_inti' => '4', 'batas_anggota' => '', 'regu_maksimal' => '', 'jumlah_putra' => '', 'jumlah_putri' => '',
             'biaya_beregu' => '100000', 'urutan' => '10', 'aktif' => '1', 'jumlah_percobaan' => '', 'pemecah_seri' => '1',
+            'tidak_dilombakan' => '0', 'alasan_tidak_dilombakan' => '', 'peserta_minimal' => '',
         ], $isian);
 
         $this->assertSame('0', NomorLombaModel::isianDariBaris(['aktif' => '0'])['aktif']);

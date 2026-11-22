@@ -203,6 +203,9 @@ $ringkasTim = static function (array $nomor): string {
                                             <?php else : ?>
                                                 <?= komponen('lencana', ['label' => 'Tidak aktif', 'warna' => 'abu']) ?>
                                             <?php endif ?>
+                                            <?php if ((int) ($nomor['tidak_dilombakan'] ?? 0) === 1) : ?>
+                                                <?= komponen('lencana', ['label' => 'Tidak dilombakan', 'warna' => 'merah']) ?>
+                                            <?php endif ?>
                                         </td>
                                         <td class="px-4 py-3 text-end">
                                             <div class="inline-flex gap-1">

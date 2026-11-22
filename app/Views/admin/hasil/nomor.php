@@ -11,6 +11,7 @@
  * @var array<string, mixed>       $nomor `HasilLomba::nomor()`
  * @var list<array<string, mixed>> $babak `HasilLomba::semuaBabak()`
  * @var int                        $calon banyak calon peserta (atlet atau regu Lunas)
+ * @var string|null                $peringatan batas peserta (F11-03)
  * @var array<string, string>      $galat galat formulir tambah babak
  * @var array<string, mixed>       $isian isian formulir tambah babak yang dikembalikan
  */
@@ -48,6 +49,8 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
             <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/hasil/nomor/' . $nomor['id'] . '/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-spreadsheet', 'kelas' => 'min-h-11']) ?>
         </div>
     </div>
+
+    <?= view('admin/hasil/_status_nomor', ['nomor' => $nomor, 'peringatan' => $peringatan], ['saveData' => false]) ?>
 
     <section class="flex flex-wrap items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="terbit" aria-labelledby="judul-terbit">
         <div class="min-w-0 flex-1 basis-64">

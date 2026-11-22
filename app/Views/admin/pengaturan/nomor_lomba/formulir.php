@@ -314,6 +314,38 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                     </div>
                 </fieldset>
 
+                <?php // Status nomor dan batas peserta (F11-03, K172 butir 4). ?>
+                <fieldset class="<?= $bagian ?>" id="bagian-pelaksanaan">
+                    <legend class="<?= $judulBagian ?>">Pelaksanaan lomba</legend>
+                    <div class="grid gap-4 sm:grid-cols-2 sm:items-start">
+                        <div>
+                            <label for="peserta_minimal" class="<?= $label ?>">Batas peserta minimal</label>
+                            <div class="flex">
+                                <input type="text" inputmode="numeric" <?= $kotak('peserta_minimal', '', 'rounded-s-lg') ?> id="peserta_minimal" name="peserta_minimal"
+                                    value="<?= esc($isian['peserta_minimal'] ?? '', 'attr') ?>" aria-describedby="<?= $jelas('peserta_minimal', 'peserta_minimal-bantuan') ?>">
+                                <?= $satuan($beregu ? 'regu' : 'atlet') ?>
+                            </div>
+                            <p id="peserta_minimal-bantuan" class="<?= $bantuan ?>">Bila peserta Lunas atau hadir kurang dari angka ini, halaman Hasil dan Seri memberi peringatan. Medali tidak dikurangi otomatis. Kosongkan bila tanpa batas.</p>
+                            <?= $pesan('peserta_minimal') ?>
+                        </div>
+                        <div class="space-y-3">
+                            <?= komponen('sakelar', [
+                                'label'   => 'Tidak dilombakan',
+                                'nama'    => 'tidak_dilombakan',
+                                'centang' => ($isian['tidak_dilombakan'] ?? '0') === '1',
+                                'bantuan' => 'Nomor ini keluar dari jadwal, seri, klasemen, dan videotron. Halaman hasil menulis alasannya.',
+                            ]) ?>
+                            <div>
+                                <label for="alasan_tidak_dilombakan" class="<?= $label ?>">Alasan</label>
+                                <input type="text" <?= $kotak('alasan_tidak_dilombakan') ?> id="alasan_tidak_dilombakan" name="alasan_tidak_dilombakan" maxlength="<?= App\Libraries\Hasil\StatusNomor::ALASAN_MAKSIMAL ?>"
+                                    value="<?= esc($isian['alasan_tidak_dilombakan'] ?? '', 'attr') ?>" aria-describedby="<?= $jelas('alasan_tidak_dilombakan', 'alasan_tidak_dilombakan-bantuan') ?>">
+                                <p id="alasan_tidak_dilombakan-bantuan" class="<?= $bantuan ?>">Wajib bila tidak dilombakan. Contoh: Peserta kurang dari 3.</p>
+                                <?= $pesan('alasan_tidak_dilombakan') ?>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
                 <div class="grid gap-4 sm:grid-cols-2 sm:items-start">
                     <div>
                         <label for="urutan" class="<?= $label ?>">Urutan</label>

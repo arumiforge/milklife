@@ -54,6 +54,10 @@ final class MigrasiStrukturTest extends UjiBasisData
             // F9-09: aturan nomor lompat/lempar.
             'jumlah_percobaan' => ['tinyint unsigned', true, null],
             'pemecah_seri'     => ['tinyint unsigned', false, '1'],
+            // F11-03: status nomor dan batas peserta.
+            'tidak_dilombakan'        => ['tinyint unsigned', false, '0'],
+            'alasan_tidak_dilombakan' => ['varchar(150)', true, null],
+            'peserta_minimal'         => ['tinyint unsigned', true, null],
             'jumlah_inti'      => ['tinyint unsigned', true, null],
             'batas_anggota'    => ['tinyint unsigned', true, null],
             'regu_maksimal'    => ['tinyint unsigned', true, null],

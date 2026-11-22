@@ -9,6 +9,7 @@ use App\Libraries\Hasil\PembagiSeri;
 use App\Libraries\Hasil\Percobaan;
 use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Hasil\Prestasi;
+use App\Libraries\Hasil\StatusNomor;
 use App\Libraries\Hasil\TabelSkor;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
 use App\Libraries\Pendaftaran\PeranAwalRegu;
@@ -1140,11 +1141,12 @@ final class PaketPendaftaran
 
         $kodeTabel = array_column($this->db->table('tabel_skor')->select('id, kode')->get()->getResultArray(), 'kode', 'id');
 
-        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, jumlah_percobaan, pemecah_seri, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
+        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, jumlah_percobaan, pemecah_seri, tidak_dilombakan, alasan_tidak_dilombakan, peserta_minimal, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
             $id = (int) $n['id'];
 
             if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null || $n['tabel_skor_id'] !== null || $n['tempat_per_seri'] !== null || $n['urutan_lintasan'] !== null
-                || $n['jumlah_percobaan'] !== null || (int) $n['pemecah_seri'] === 0)) {
+                || $n['jumlah_percobaan'] !== null || (int) $n['pemecah_seri'] === 0
+                || (int) $n['tidak_dilombakan'] === 1 || $n['peserta_minimal'] !== null)) {
                 $daftar[] = $nomor[$id] + [
                     'jenis_hasil'   => $n['jenis_hasil'],
                     'tabel_skor'    => $kodeTabel[$n['tabel_skor_id']] ?? null,
@@ -1156,6 +1158,10 @@ final class PaketPendaftaran
                     // Aturan nomor (F9-09).
                     'jumlah_percobaan' => $n['jumlah_percobaan'] === null ? null : (int) $n['jumlah_percobaan'],
                     'pemecah_seri'     => (int) $n['pemecah_seri'],
+                    // Status nomor dan batas peserta (F11-03).
+                    'tidak_dilombakan'        => (int) $n['tidak_dilombakan'],
+                    'alasan_tidak_dilombakan' => $n['alasan_tidak_dilombakan'],
+                    'peserta_minimal'         => $n['peserta_minimal'] === null ? null : (int) $n['peserta_minimal'],
                     'babak'         => $babak[$id] ?? [],
                 ];
             }
@@ -1212,6 +1218,12 @@ final class PaketPendaftaran
             // Aturan nomor (F9-09); paket lama = bawaan (3 percobaan, pemecah seri menyala).
             $ubah['jumlah_percobaan'] = is_numeric($n['jumlah_percobaan'] ?? null) && (int) $n['jumlah_percobaan'] >= 1 && (int) $n['jumlah_percobaan'] <= Percobaan::MAKSIMAL ? (int) $n['jumlah_percobaan'] : null;
             $ubah['pemecah_seri']     = ($n['pemecah_seri'] ?? 1) === 0 ? 0 : 1;
+
+            // Status nomor dan batas peserta (F11-03); paket lama = dilombakan, tanpa batas.
+            $ubah['tidak_dilombakan']        = ($n['tidak_dilombakan'] ?? 0) === 1 ? 1 : 0;
+            $ubah['alasan_tidak_dilombakan'] = $ubah['tidak_dilombakan'] === 1 && is_string($n['alasan_tidak_dilombakan'] ?? null) && $n['alasan_tidak_dilombakan'] !== ''
+                ? mb_substr($n['alasan_tidak_dilombakan'], 0, StatusNomor::ALASAN_MAKSIMAL) : null;
+            $ubah['peserta_minimal']         = is_int($n['peserta_minimal'] ?? null) && $n['peserta_minimal'] >= 1 && $n['peserta_minimal'] <= StatusNomor::BATAS_MAKSIMAL ? $n['peserta_minimal'] : null;
 
             $this->db->table('nomor_lomba')->where('id', $idNomor)->update($ubah);
 

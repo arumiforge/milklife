@@ -162,6 +162,7 @@ final class PapanVideotron
 
         $terbit = $this->db->table('nomor_lomba')->select('id')
             ->where('hasil_terbit_pada IS NOT NULL', null, false)
+            ->where('tidak_dilombakan', 0) // F11-03
             ->orderBy('hasil_terbit_pada', 'DESC')->orderBy('id', 'DESC')
             ->limit(self::JUMLAH_HASIL)->get()->getResultArray();
 

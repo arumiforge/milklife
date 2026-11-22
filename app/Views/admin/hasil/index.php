@@ -4,7 +4,8 @@
  * `admin_tw`. Data dari `HasilController::index()`.
  *
  * @var CodeIgniter\View\View $this
- * @var list<array{id: int, nama: string, nomor: list<array{id: int, nama: string, jenis: string, jenis_hasil: string, terbit_pada: string|null, babak: int, final: bool, peserta: int}>}> $kelompokUmur
+ * @var list<array{id: int, nama: string, nomor: list<array<string, mixed>>}> $kelompokUmur `HasilLomba::daftarNomor()`
+ * @var array<int, string> $peringatan id nomor => peringatan batas peserta (F11-03)
  */
 
 use App\Libraries\Hasil\JenisHasil;
@@ -41,8 +42,13 @@ use App\Libraries\Hasil\JenisHasil;
                                     <?= esc(JenisHasil::LABEL[$n['jenis_hasil']] ?? $n['jenis_hasil']) ?><?= $n['jenis'] === 'beregu' ? ' · beregu' : '' ?>
                                     · <?= $n['babak'] ?> babak<?= $n['final'] ? ' · Final ' . $n['peserta'] . ' peserta' : '' ?>
                                 </span>
+                                <?php if (isset($peringatan[$n['id']])) : ?>
+                                    <span class="mt-0.5 flex items-center gap-1 text-sm font-medium text-yellow-800" data-peserta-kurang><?= ikon('triangle-alert', 'size-4 shrink-0') ?>Peserta kurang dari batas</span>
+                                <?php endif ?>
                             </span>
-                            <?php if ($n['terbit_pada'] !== null) : ?>
+                            <?php if (! $n['dilombakan']) : ?>
+                                <?= komponen('lencana', ['label' => 'Tidak dilombakan', 'warna' => 'merah']) ?>
+                            <?php elseif ($n['terbit_pada'] !== null) : ?>
                                 <?= komponen('lencana', ['label' => 'Terbit', 'warna' => 'hijau']) ?>
                             <?php elseif ($n['final']) : ?>
                                 <?= komponen('lencana', ['label' => 'Belum terbit', 'warna' => 'kuning']) ?>
