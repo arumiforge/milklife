@@ -5,6 +5,10 @@
  * belum diterbitkan). Rincian piala tiap sekolah bisa dibuka
  * (`<details>`); juara umum I–III diberi latar kuning dan `data-juara-umum`.
  *
+ * Gambar G9-06 hanya bila berkasnya ada (F9-19): piala kecil di judul tiap
+ * jenjang (`layar/piala.webp`) dan medali emas, perak, atau perunggu di
+ * samping lencana juara umum (`layar/medali-*.webp`).
+ *
  * Kolom poin selalu tampil (F9-11): pada metode poin ditebalkan dan tampil di
  * ponsel, pada metode medali disembunyikan di ponsel.
  *
@@ -16,12 +20,14 @@
 use App\Libraries\Hasil\Klasemen;
 
 $romawi     = [1 => 'I', 2 => 'II', 3 => 'III'];
+$medali     = [1 => 'emas', 2 => 'perak', 3 => 'perunggu'];
+$piala      = gambar_opsional('layar/piala.webp', ['class' => 'size-8 shrink-0 object-contain', 'data-piala-klasemen' => true]);
 $metodePoin = ($metode ?? Klasemen::MEDALI) === Klasemen::POIN;
 $admin ??= false;
 ?>
 <?php foreach ($klasemen as $jenjang) : ?>
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-6" aria-labelledby="klasemen-<?= esc($jenjang['jenjang'], 'attr') ?>">
-        <h2 class="text-xl font-extrabold text-primary-900" id="klasemen-<?= esc($jenjang['jenjang'], 'attr') ?>"><?= esc($jenjang['label']) ?></h2>
+        <h2 class="<?= $piala === '' ? '' : 'flex items-center gap-2 ' ?>text-xl font-extrabold text-primary-900" id="klasemen-<?= esc($jenjang['jenjang'], 'attr') ?>"><?= $piala ?><?= esc($jenjang['label']) ?></h2>
         <div class="relative mt-4 overflow-x-auto rounded-xl border border-gray-200">
             <table class="w-full text-left text-sm text-gray-700">
                 <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-700">
@@ -42,6 +48,7 @@ $admin ??= false;
                             <td class="px-2 py-3 sm:px-3">
                                 <span class="font-semibold break-words text-gray-900"><?= esc($b['sekolah']) ?></span>
                                 <?php if ($b['juara_umum'] !== null) : ?>
+                                    <?= gambar_opsional('layar/medali-' . $medali[$b['juara_umum']] . '.webp', ['class' => 'inline-block size-6 align-middle', 'data-medali-juara-umum' => (int) $b['juara_umum']]) ?>
                                     <?= komponen('lencana', ['label' => 'Juara umum ' . $romawi[$b['juara_umum']], 'warna' => 'kuning']) ?>
                                 <?php endif ?>
                                 <?php if ($b['piala'] === []) : ?>

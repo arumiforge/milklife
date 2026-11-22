@@ -201,11 +201,12 @@ final class GambarOpsionalTest extends UjiBasisData
             $this->assertStringContainsString(str_starts_with($alamat, 'hasil') ? 'bagikan/hasil.jpg' : 'bagikan/umum.jpg', $og, $alamat);
             $this->assertSame('summary_large_image', $this->meta($xpath, 'twitter:card'), $alamat);
 
-            // Ikon aplikasi G9-11 dan manifest.
+            // Ikon aplikasi dari logo resmi (K152) dan manifest; ikon.svg hanya
+            // cadangan bila favicon PNG tidak ada, supaya peramban tidak memilih SVG.
             $this->assertSame(2, $xpath->query('//link[@rel="icon"][@type="image/png"]')->length, $alamat);
             $this->assertSame(1, $xpath->query('//link[@rel="apple-touch-icon"][@sizes="180x180"]')->length, $alamat);
             $this->assertSame(1, $xpath->query('//link[@rel="manifest"]')->length, $alamat);
-            $this->assertSame(1, $xpath->query('//link[@rel="icon"][@type="image/svg+xml"]')->length, $alamat);
+            $this->assertSame(0, $xpath->query('//link[@rel="icon"][@type="image/svg+xml"]')->length, $alamat);
         }
 
         $xpath = $this->xpath($this->bukaOk('/'));
@@ -247,6 +248,36 @@ final class GambarOpsionalTest extends UjiBasisData
         $this->assertStringContainsString('lg:block', $xpath->query('//*[@data-polos-ilustrasi]')->item(0)->getAttribute('class'));
         $this->assertSame(1, $xpath->query('//main//img[@data-hiasan="pita-sudut"][@aria-hidden="true"]')->length);
         $this->assertSame(1, $xpath->query('//link[@rel="manifest"]')->length);
+    }
+
+    public function testLogoMerekBawaanDiKepalaDanIkonPng(): void
+    {
+        // Tanpa logo bawaan dan ikon PNG: ikon zap dan ikon.svg sebagai cadangan.
+        $publik = $this->bukaOk('/');
+        $xpath  = $this->xpath($publik);
+        $this->assertSame(0, $xpath->query('//header//a[@data-merek]/img')->length);
+        $this->assertSame(1, $xpath->query('//link[@rel="icon"][contains(@href, "ikon.svg")]')->length);
+        $this->assertSame(0, $this->xpath($this->bukaOk('admin/masuk'))->query('//*[@data-logo-merek]')->length);
+        $this->assertSame(0, $this->xpath($this->bukaAdminOk('admin/dasbor'))->query('//*[@data-logo-merek]')->length);
+
+        // Dengan logo resmi bawaan (K152) dan favicon PNG.
+        $this->buatGambar(\App\Libraries\IsiHalamanDepan::LOGO_BAWAAN, 153, 160);
+        $this->buatGambar('ikon-aplikasi/favicon-32.png', 32, 32);
+
+        $xpath = $this->xpath($this->bukaOk('/'));
+        $logo  = $xpath->query('//header//a[@data-merek]/img')->item(0);
+        $this->assertNotNull($logo);
+        $this->assertStringContainsString('aset/gambar/logo.webp', $logo->getAttribute('src'));
+        $this->assertSame('153', $logo->getAttribute('width'));
+        $this->assertSame(0, $xpath->query('//link[@rel="icon"][contains(@href, "ikon.svg")]')->length);
+        $this->assertSame(1, $xpath->query('//link[@rel="icon"][contains(@href, "favicon-32.png")]')->length);
+
+        foreach (['admin/masuk' => false, 'admin/dasbor' => true] as $alamat => $admin) {
+            $xpath = $this->xpath($admin ? $this->bukaAdminOk($alamat) : $this->bukaOk($alamat));
+            $img   = $xpath->query('//img[@data-logo-merek]')->item(0);
+            $this->assertNotNull($img, $alamat);
+            $this->assertStringContainsString('aset/gambar/logo.webp', $img->getAttribute('src'), $alamat);
+        }
     }
 
     public function testHalamanAdminDenganDanTanpaBerkas(): void

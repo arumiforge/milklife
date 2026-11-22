@@ -206,6 +206,40 @@ final class IsiHalamanDepan
     }
 
     /**
+     * Logo bawaan: logo resmi MilkLife Athletics Challenge dari pemilik (K152),
+     * dipakai di kepala halaman bila admin belum mengunggah logo sendiri.
+     */
+    public const LOGO_BAWAAN = 'logo.webp';
+
+    /**
+     * Logo untuk kepala halaman publik, panel admin, dan halaman masuk (K152):
+     * logo unggahan admin (`logoKepala()`) bila ada, selain itu logo bawaan
+     * `public/aset/gambar/logo.webp`, atau `null` bila keduanya tidak ada.
+     *
+     * @param array<string, mixed> $tampilan hasil `tampilan()`, atau `[]` bila basis data belum siap
+     *
+     * @return array{alamat: string, ukuran: array{lebar: int, tinggi: int}|null}|null
+     */
+    public static function logoMerek(array $tampilan): ?array
+    {
+        $kunci = self::logoKepala($tampilan);
+
+        if ($kunci !== null) {
+            return ['alamat' => (string) $tampilan[$kunci], 'ukuran' => $tampilan['ukuran'][$kunci] ?? null];
+        }
+
+        $alamat = GambarOpsional::alamat(self::LOGO_BAWAAN);
+
+        if ($alamat === null) {
+            return null;
+        }
+
+        $ukuran = GambarOpsional::ukuran(self::LOGO_BAWAAN);
+
+        return ['alamat' => $alamat, 'ukuran' => $ukuran === null ? null : ['lebar' => $ukuran[0], 'tinggi' => $ukuran[1]]];
+    }
+
+    /**
      * Logo yang sudah diunggah, berurutan seperti di pengaturan.
      *
      * @param array<string, mixed> $tampilan hasil `tampilan()`
