@@ -25,7 +25,6 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
-    <a href="<?= site_url('admin/seri') ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?>Semua nomor</a>
 
     <section id="aturan-seri" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-aturan-seri">
         <h2 id="judul-aturan-seri" class="text-lg font-bold text-gray-900">Aturan seri nomor ini</h2>

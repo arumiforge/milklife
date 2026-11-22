@@ -28,9 +28,9 @@ use App\Libraries\Panel\MenuAdmin;
 $alamatAktif = MenuAdmin::alamatAktif();
 
 $kelasTautan = static fn (bool $kini): string => ($kini
-    ? 'border-oranye-500 bg-white/10 text-white'
-    : 'border-transparent text-primary-100 hover:bg-white/10 hover:text-white')
-    . ' group flex min-h-11 min-w-0 flex-1 items-center gap-3 rounded-e-lg border-s-4 px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white';
+    ? 'bg-white/10 text-white'
+    : 'text-primary-100 hover:bg-white/10 hover:text-white')
+    . ' group flex min-h-11 min-w-0 flex-1 items-center gap-3 rounded-lg px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white';
 
 $tombolLipat = static fn (string $kunci, string $idDaftar, bool $buka, bool $aktif, string $label, string $kelas): string => '<button type="button" data-lipat="' . esc($kunci, 'attr') . '"' . ($aktif ? ' data-lipat-aktif' : '')
     . ' aria-controls="' . esc($idDaftar, 'attr') . '" aria-expanded="' . ($buka ? 'true' : 'false') . '" class="' . $kelas . ' focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white">'

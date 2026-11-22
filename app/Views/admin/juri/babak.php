@@ -24,7 +24,7 @@ use App\Libraries\Hasil\LembarJuri;
 use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Hasil\UnduhanSeri;
 
-// ikon-sprite: arrow-left trophy list-ordered users check
+// ikon-sprite: trophy list-ordered users check
 $nomor    = $babak['nomor'];
 $jenis    = $nomor['jenis_hasil'];
 $lintasan = $babak['aturan']['lintasan'];
@@ -49,7 +49,6 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4" data-lembar-juri>
-    <a href="<?= site_url('admin/juri') ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?>Semua babak</a>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-babak-juri">
         <h2 id="judul-babak-juri" class="text-lg font-bold break-words text-gray-900"><?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?> · <?= esc($babak['nama']) ?></h2>

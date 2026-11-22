@@ -28,7 +28,7 @@
  *
  * Warna (K154, F10-03): sidebar biru tua `primary-900` (#021F7B) setinggi
  * layar dengan pojok kiri atas biru `primary-700` (#234987) berisi logo resmi
- * (`IsiHalamanDepan::logoMerek()`) di wadah putih; kepala dan isi terang.
+ * (`IsiHalamanDepan::logoMerek()`) tanpa latar tambahan (F10-08); kepala dan isi terang.
  * Sidebar `w-72`, isi `lg:ps-72` tanpa batas lebar. Kelompok dan submenu
  * dilipat `aset/js/menu-admin.js`.
  *
@@ -100,11 +100,11 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
     <aside id="menu-laci" class="fixed start-0 top-0 z-40 flex h-screen w-72 -translate-x-full flex-col bg-primary-900 transition-transform lg:z-30 lg:translate-x-0" tabindex="-1" aria-label="Menu panel admin">
         <div class="flex h-14 shrink-0 items-center gap-2 bg-primary-700 ps-3 pe-1" data-pojok-admin>
             <a href="<?= site_url('admin/dasbor') ?>" class="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" data-merek-admin>
-                <span class="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-white px-1.5">
+                <span class="inline-flex h-10 shrink-0 items-center justify-center">
                     <?php if ($logoMerek !== null) : ?>
                         <img src="<?= esc($logoMerek['alamat']) ?>" class="h-8 w-auto max-w-16" alt=""<?= $logoMerek['ukuran'] === null ? '' : ' width="' . (int) $logoMerek['ukuran']['lebar'] . '" height="' . (int) $logoMerek['ukuran']['tinggi'] . '"' ?> data-logo-merek>
                     <?php else : ?>
-                        <?= ikon('zap', 'size-6 text-primary-700') ?>
+                        <?= ikon('zap', 'size-6 text-white') ?>
                     <?php endif ?>
                 </span>
                 <span class="min-w-0 leading-tight"><span class="block truncate text-sm font-extrabold text-white"><?= esc(AcaraController::namaTampil()) ?></span> <span class="block text-xs font-semibold text-langit-300">Panel admin</span></span>

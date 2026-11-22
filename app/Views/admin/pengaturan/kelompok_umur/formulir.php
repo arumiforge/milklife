@@ -69,7 +69,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                     <?= $pesan('nama') ?>
                 </div>
 
-                <fieldset>
+                <fieldset class="lg:row-span-2">
                     <legend class="mb-1 text-sm font-semibold text-gray-900">Tahun lahir atlet</legend>
                     <p id="tahun-lahir-bantuan" class="mb-3 text-sm text-gray-600">
                         Atlet masuk kelompok umur ini bila tahun lahirnya ada di antara kedua tahun, termasuk kedua tahun itu.
@@ -134,7 +134,7 @@ $terpakai = array_values(array_filter($ku['awalan'] ?? [], static fn (array $a):
                     </p>
                 </div>
 
-                <div>
+                <div class="lg:row-span-2">
                     <label for="awalan" class="<?= $label ?>">Awalan nomor atlet (BIB)</label>
                     <input type="text" inputmode="numeric" autocomplete="off"
                         <?= $kotak('awalan') ?> id="awalan" name="awalan"

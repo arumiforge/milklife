@@ -286,8 +286,9 @@ final class TataLetakHalamanTest extends UjiBasisData
         $pojok = $xpath->query('.//*[@data-pojok-admin]', $laci)->item(0);
         $this->assertNotNull($pojok);
         $this->assertStringContainsString('bg-primary-700', $pojok->getAttribute('class'));
-        // Logo resmi bila ada (tanpa logo: ikon pengganti), di wadah putih supaya terbaca di latar biru.
-        $this->assertSame(1, $xpath->query('.//a[@data-merek-admin]/span[contains(@class, "bg-white")][.//img[@data-logo-merek] or .//*[name()="svg"]]', $pojok)->length);
+        // Logo resmi bila ada (tanpa logo: ikon pengganti), langsung di latar biru tanpa wadah berlatar (F10-08).
+        $this->assertSame(1, $xpath->query('.//a[@data-merek-admin]/span[.//img[@data-logo-merek] or .//*[name()="svg"]]', $pojok)->length);
+        $this->assertSame(0, $xpath->query('.//a[@data-merek-admin]//*[contains(@class, "bg-white")]', $pojok)->length);
 
         // Jejak navigasi bawaan dari menu (F10-03).
         $this->assertSame(['Dasbor', 'Dasbor'], $this->labelJejak($xpath));

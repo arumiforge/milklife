@@ -76,7 +76,6 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
         <section class="space-y-5 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5">
             <div>
                 <h2 class="text-lg font-bold break-words text-gray-900"><?= $baru ? 'Tambah nomor lomba' : 'Ubah ' . esc(NomorLombaModel::namaLengkap($nomor)) ?></h2>
-                <a class="tautan-kembali mt-1 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline" href="<?= $kembali ?>"><?= ikon('arrow-left', 'size-4') ?> Kembali ke daftar nomor lomba</a>
             </div>
 
             <?php if ($dipakai) : ?>

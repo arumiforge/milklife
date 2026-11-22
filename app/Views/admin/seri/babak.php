@@ -40,9 +40,10 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
 
 <?= $this->section('judul') ?>Seri <?= esc($babak['nama']) ?> <?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?><?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Seri dan lintasan', 'alamat' => 'admin/seri'], ['label' => $nomor['nama'] . ' – ' . $nomor['kelompok_umur'], 'alamat' => 'admin/seri/nomor/' . $nomor['id']], ['label' => 'Seri ' . $babak['nama']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
-    <a href="<?= site_url('admin/seri/nomor/' . $nomor['id']) ?>" class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-primary-700 hover:underline"><?= ikon('arrow-left', 'size-4') ?><?= esc($nomor['nama'] . ' – ' . $nomor['kelompok_umur']) ?></a>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-ringkas-babak">
         <div class="flex flex-wrap items-start justify-between gap-3">

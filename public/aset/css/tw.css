@@ -2215,10 +2215,6 @@
     border-inline-start-style: var(--tw-border-style);
     border-inline-start-width: 4px;
   }
-  .border-s-\[5px\] {
-    border-inline-start-style: var(--tw-border-style);
-    border-inline-start-width: 5px;
-  }
   .border-e {
     border-inline-end-style: var(--tw-border-style);
     border-inline-end-width: 1px;
@@ -2439,9 +2435,6 @@
   .border-oranye-400 {
     border-color: var(--color-oranye-400);
   }
-  .border-oranye-500 {
-    border-color: var(--color-oranye-500);
-  }
   .border-primary-50 {
     border-color: var(--color-primary-50);
   }
@@ -2505,17 +2498,8 @@
   .border-yellow-500 {
     border-color: var(--color-yellow-500);
   }
-  .border-s-green-600 {
-    border-inline-start-color: var(--color-green-600);
-  }
   .border-s-oranye-500 {
     border-inline-start-color: var(--color-oranye-500);
-  }
-  .border-s-primary-700 {
-    border-inline-start-color: var(--color-primary-700);
-  }
-  .border-s-yellow-500 {
-    border-inline-start-color: var(--color-yellow-500);
   }
   .border-t-green-600 {
     border-top-color: var(--color-green-600);
@@ -4836,6 +4820,9 @@
     .lg\:col-span-8 {
       grid-column: span 8 / span 8;
     }
+    .lg\:row-span-2 {
+      grid-row: span 2 / span 2;
+    }
     .lg\:block {
       display: block;
     }
@@ -5146,19 +5133,11 @@
   }
   @media (width >= 64rem) {
     @media (pointer: fine) {
-      .lg\:pointer-fine\:min-h-8 {
-        min-height: calc(var(--spacing) * 8);
-      }
       .lg\:pointer-fine\:min-h-9 {
         min-height: calc(var(--spacing) * 9);
       }
       .lg\:pointer-fine\:gap-1\.5 {
         gap: calc(var(--spacing) * 1.5);
-      }
-      :where(.lg\:pointer-fine\:space-y-1 > :not(:last-child)) {
-        --tw-space-y-reverse: 0;
-        margin-block-start: calc(var(--spacing) * var(--tw-space-y-reverse));
-        margin-block-end: calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)));
       }
       .lg\:pointer-fine\:px-2\.5 {
         padding-inline: calc(var(--spacing) * 2.5);

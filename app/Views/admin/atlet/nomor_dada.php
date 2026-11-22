@@ -105,8 +105,6 @@ $td     = 'px-3 py-2 align-top';
             </form>
         </section>
     </div>
-
-    <p><a class="inline-flex min-h-11 items-center gap-1 font-semibold text-primary-700 hover:underline" href="<?= site_url('admin/atlet') ?>"><?= ikon('arrow-left', 'size-4') ?> Kembali ke daftar atlet</a></p>
 </div>
 <?= $this->endSection() ?>
 

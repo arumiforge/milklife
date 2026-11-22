@@ -1,9 +1,9 @@
 <?php
 /**
  * Navigasi pengaturan, ditampilkan di bagian atas isi setiap halaman
- * pengaturan (dan halaman Akun), tata letak `admin_tw`: tautan kembali ke
- * daftar pengaturan dan deretan tautan ke semua halaman pengaturan, dengan
- * halaman sekarang ditandai. Di ponsel deretannya bisa digeser mendatar;
+ * pengaturan (dan halaman Akun), tata letak `admin_tw`: deretan tautan ke
+ * semua halaman pengaturan, dengan halaman sekarang ditandai. Jalan kembali
+ * ke daftar pengaturan lewat jejak navigasi (F10-08). Di ponsel deretannya bisa digeser mendatar;
  * halaman tidak ikut bergeser.
  *
  *     <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -25,10 +25,7 @@ $halamanPengaturan = BerandaPengaturanController::daftarHalaman();
 // Ikon dari `daftarHalaman()`; tulis juga di sini supaya masuk sprite.
 // ikon-sprite: calendar-days door-open users trophy landmark app-window clock download phone circle-help images table award monitor user-cog
 ?>
-<nav class="navigasi-pengaturan min-w-0 space-y-2 lg:pointer-fine:space-y-1" aria-label="Navigasi pengaturan">
-    <a class="navigasi-pengaturan-kembali inline-flex min-h-11 items-center lg:pointer-fine:min-h-8 gap-1 text-sm font-semibold text-primary-700 hover:underline" href="<?= site_url('admin/pengaturan') ?>">
-        <?= ikon('arrow-left', 'size-4') ?>Semua pengaturan
-    </a>
+<nav class="navigasi-pengaturan min-w-0" aria-label="Navigasi pengaturan">
     <ul class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap lg:gap-1.5 sm:overflow-visible sm:px-0">
         <?php foreach ($halamanPengaturan as $butir) : ?>
             <?php $aktif = url_is($butir['alamat']) || url_is($butir['alamat'] . '/*'); ?>
