@@ -1,6 +1,6 @@
 <?php
 /**
- * Pemisah bagian halaman depan: potongan lintasan G9-12 `pola/garis-lintasan.webp`
+ * Pemisah bagian halaman depan (sebelum tanya-jawab dan unduhan): potongan lintasan G9-12 `pola/garis-lintasan.webp`
  * (hiasan, `aria-hidden`), hanya bila berkasnya ada (F9-19); tanpa berkas tidak
  * menulis apa pun. Dimuat `lazy` dan pendek di ponsel.
  */

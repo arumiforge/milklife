@@ -86,7 +86,7 @@ if ($foto === []) {
 $adaKanan = $foto !== [] || $tokoh !== null;
 
 // Latar G9-02 mulai layar md (ponsel tidak mengunduhnya): pita di belakang pembuka tanpa foto, lintasan samar di belakang kartu kelompok umur.
-$latarPita      = $foto === [] ? gambar_opsional('beranda/latar-pita.webp', ['class' => 'pointer-events-none absolute inset-0 hidden size-full select-none object-cover object-right md:block', 'data-hiasan' => 'latar-pita']) : '';
+$latarPita      = $foto === [] ? gambar_opsional('beranda/latar-pita.webp', ['class' => 'pointer-events-none absolute inset-0 hidden size-full select-none object-cover object-right opacity-70 md:block', 'data-hiasan' => 'latar-pita']) : '';
 $latarLintasan  = gambar_opsional('beranda/latar-lintasan.webp', ['class' => 'pointer-events-none absolute inset-0 -z-10 hidden size-full select-none object-cover md:block', 'data-hiasan' => 'latar-lintasan']);
 
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . (int) $ukuran['lebar'] . '" height="' . (int) $ukuran['tinggi'] . '"';

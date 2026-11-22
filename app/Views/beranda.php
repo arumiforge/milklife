@@ -50,7 +50,6 @@
 <?php if ($hasilDiAtas) : ?>
     <?= view('beranda/_hasil', ['hasilTerbaru' => $hasilTerbaru], ['saveData' => false]) ?>
 <?php endif ?>
-<?= view('beranda/_pemisah', [], ['saveData' => false]) ?>
 <?= view('beranda/_lomba', ['kelompokUmur' => $kelompokUmur, 'tampilkanBiaya' => $tampilkanBiaya], ['saveData' => false]) ?>
 <?= view('beranda/_jadwal', ['jadwal' => $jadwal], ['saveData' => false]) ?>
 <?= view('beranda/_angka', ['angka' => $angka, 'acara' => $acara], ['saveData' => false]) ?>
@@ -59,6 +58,7 @@
 <?php endif ?>
 <?= view('beranda/_pemisah', [], ['saveData' => false]) ?>
 <?= view('beranda/_faq', ['faq' => $faq], ['saveData' => false]) ?>
+<?= view('beranda/_pemisah', [], ['saveData' => false]) ?>
 <?= view('beranda/_unduhan', ['unduhan' => $unduhan], ['saveData' => false]) ?>
 <?= view('beranda/_kontak', ['narahubung' => $narahubung, 'mediaSosial' => $mediaSosial, 'waTanya' => $waTanya, 'waBagikan' => $waBagikan], ['saveData' => false]) ?>
 <?= $this->endSection() ?>
