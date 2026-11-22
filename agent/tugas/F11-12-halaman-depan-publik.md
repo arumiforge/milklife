@@ -13,7 +13,7 @@ Halaman depan dan halaman publik lebih rapi dan mudah dipakai di ponsel: nomor l
 
 - [ ] Bagian nomor lomba: di desktop satu KU satu baris; isi tiap KU tampil semua secara bawaan dan bisa disembunyikan sehingga hanya kepala KU yang tampil; ikon nomor lebih besar; kolom Putra dan Putri terpisah berkepala sendiri (Campuran atau beregu di bawahnya), nama nomor tanpa akhiran putra/putri.
 - [ ] Di bawah hero tanpa ikon tanggal, lokasi, dan pengeras suara; batas pendaftaran di ponsel rata tengah.
-- [ ] Kartu KU: angka besar dengan isian huruf bertekstur (`background-clip: text`), cadangan gradien sporty, dan gambar G11-01 dipakai otomatis bila berkasnya ada.
+- [ ] Kartu KU: angka besar dengan isian huruf bertekstur (`background-clip: text`), cadangan gradien sporty, dan gambar G11-01 dipakai otomatis bila berkasnya ada. Keterangan jumlah nomor individu dan beregu diganti ikon dan angka yang dipisah garis miring kecil (ikon individu 6 / ikon beregu 2; nama aksesibel tetap lengkap), supaya judul KU tetap paling menonjol.
 - [ ] Titik penanda slide di ponsel disembunyikan.
 - [ ] Hero kiri memakai latar G11-02 bila ada; batas dengan foto kanan bergradasi halus, art yang menyentuh tepi tidak terpotong lurus.
 - [ ] Menu bawah publik ponsel: Beranda, Bantuan, Daftar (tengah, lebih besar dan menonjol), Cek, Jadwal. Setelah pendaftaran tutup tombol tengah menjadi Hasil; bila Jadwal mati diganti Unduhan.
