@@ -26,8 +26,8 @@ use Throwable;
  * narahubung, media sosial, berkas unduhan, dan tanya-jawab Bantuan
  * (F9-04). Dijalankan sekali saat pemasangan, setelah `php spark migrate --all`.
  *
- * Isinya dari flyer Seri 2 – 2026 dan permintaan pemilik. Rekening, nomor WA,
- * tautan Zoom, media sosial, dan sebagian berkas unduhan masih **contoh**
+ * Isinya dari flyer Seri 2 – 2026 dan permintaan pemilik. Rekening,
+ * tautan Zoom, dan sebagian berkas unduhan masih **contoh**
  * (berkas kosong) yang harus diganti admin dengan data sebenarnya.
  * Semua bisa diubah lewat panel admin. Nomor individu dibuat dua kali, putra
  * dan putri.
@@ -64,18 +64,18 @@ class DataAwal extends BaseCommand
 
     /**
      * Pengaturan yang diisi hanya bila masih kosong; isian admin tidak ditimpa
-     * dan tidak membuat perintah menolak. Nomor WA dalam bentuk baku `628…`.
-     * Rekening dan nomor WA masih contoh (K73).
+     * dan tidak membuat perintah menolak. Nomor WA dalam bentuk baku `628…`
+     * (0882-1527-7227, Tahap 10). Rekening masih contoh (K73).
      */
     public const PENGATURAN_TAMBAHAN = [
         'Pembayaran.bank'             => 'BANK BPD JATENG',
         'Pembayaran.nomor_rekening'   => '0123456789',
         'Pembayaran.pemilik_rekening' => 'Nama Panitia',
-        'Pembayaran.nomor_wa'         => '628123456789',
+        'Pembayaran.nomor_wa'         => '6288215277227',
         'HalamanDepan.judul'          => 'MilkLife Athletics Challenge',
         'HalamanDepan.teks'           => 'Ajang atletik untuk generasi muda Indonesia.',
         'HalamanDepan.footer'         => 'Bakti Olahraga Djarum Foundation dan MilkLife',
-        'HalamanDepan.nomor_wa_tanya' => '628123456789',
+        'HalamanDepan.nomor_wa_tanya' => '6288215277227',
         'HalamanDepan.pesan_tanya'    => 'Tanya admin',
         'HalamanDepan.pesan_bagikan'  => 'Bagikan ke WA',
     ];
@@ -100,7 +100,7 @@ class DataAwal extends BaseCommand
     ];
 
     /**
-     * Narahubung (dari flyer) dan media sosial (contoh), diisi bila tabel
+     * Narahubung (dari flyer) dan media sosial resmi MilkLife, diisi bila tabel
      * `tautan` masih kosong: [jenis, label, nilai].
      *
      * @var list<array{0: string, 1: string, 2: string}>
@@ -108,9 +108,9 @@ class DataAwal extends BaseCommand
     public const TAUTAN = [
         ['narahubung', 'Just', '085601137077'],
         ['narahubung', 'Iqbal', '088215277227'],
-        ['media_sosial', 'Instagram', 'https://www.instagram.com/milklife.athletics'],
-        ['media_sosial', 'TikTok', 'https://www.tiktok.com/@milklife.athletics'],
-        ['media_sosial', 'YouTube', 'https://www.youtube.com/@milklifeathletics'],
+        ['media_sosial', 'Instagram', 'https://www.instagram.com/milklife.id'],
+        ['media_sosial', 'TikTok', 'https://www.tiktok.com/@milklife_id'],
+        ['media_sosial', 'YouTube', 'https://www.youtube.com/@milklife_id'],
     ];
 
     /**
@@ -150,14 +150,14 @@ class DataAwal extends BaseCommand
      *   Batas anggota = jumlah inti × `KALI_BATAS_ANGGOTA`; nomor mix minimal
      *   separuh inti putra dan sisanya putri.
      *
-     * KU 8 diberi nama "KU 8 (Seneng Playon)" seperti di flyer, supaya sekolah
-     * mengenalinya; admin bisa mengubahnya.
+     * Nama kelompok umur ditulis singkat (`KU 8`, permintaan Tahap 10) supaya
+     * sama dengan backup pendaftaran; admin bisa mengubahnya.
      *
      * @var list<array{nama: string, lahir: array{0: int|null, 1: int|null}, jenjang: list<string>, biaya: int, awalan: string, individu: list<string>, beregu: list<array{0: string, 1: string, 2: int, 3: int}>}>
      */
     public const KELOMPOK_UMUR = [
         [
-            'nama'     => 'KU 8 (Seneng Playon)',
+            'nama'     => 'KU 8',
             'lahir'    => [2019, null],
             'jenjang'  => ['A'],
             'biaya'    => 25000,

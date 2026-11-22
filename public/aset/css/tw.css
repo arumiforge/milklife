@@ -4517,6 +4517,9 @@
     .sm\:gap-y-1 {
       row-gap: var(--spacing);
     }
+    .sm\:self-center {
+      align-self: center;
+    }
     .sm\:overflow-visible {
       overflow: visible;
     }

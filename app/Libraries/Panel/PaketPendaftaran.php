@@ -504,12 +504,13 @@ final class PaketPendaftaran
             }
         }
 
-        $hilang = [];
+        $hilang   = [];
+        $kuHilang = [];
 
         foreach ($pendaftaran as $p) {
             foreach ($p['atlet'] ?? [] as $a) {
                 if (! isset($ku[$a['kelompok_umur'] ?? ''])) {
-                    $hilang['Kelompok umur ' . ($a['kelompok_umur'] ?? '')] = true;
+                    $kuHilang[(string) ($a['kelompok_umur'] ?? '')] = true;
                 }
 
                 foreach ($a['nomor'] ?? [] as $n) {
@@ -524,6 +525,28 @@ final class PaketPendaftaran
                     $hilang['Nomor ' . ($n['nama'] ?? '') . ' ' . ($n['kategori'] ?? '') . ' (' . ($n['kelompok_umur'] ?? '') . ')'] = true;
                 }
             }
+        }
+
+        // Nama kelompok umur yang tidak cocok disebut lebih dulu dengan sarannya
+        // (F10-01): server yang diisi data:awal lama masih memakai "KU 8 (Seneng Playon)".
+        if ($kuHilang !== []) {
+            // Nomor lomba dari kelompok umur yang hilang tidak disebut lagi satu per satu.
+            $nomorLain = array_filter(array_keys($hilang), static function (string $butir) use ($kuHilang): bool {
+                foreach (array_keys($kuHilang) as $nama) {
+                    if (str_ends_with($butir, ' (' . $nama . ')')) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            throw new RuntimeException(
+                'Nama kelompok umur di zip tidak ditemukan di server ini: ' . implode(', ', array_keys($kuHilang))
+                . ' (yang ada: ' . (array_keys($ku) === [] ? 'belum ada kelompok umur' : implode(', ', array_keys($ku))) . ').'
+                . ($nomorLain === [] ? '' : ' Nomor lomba yang juga tidak ditemukan: ' . implode(', ', $nomorLain) . '.')
+                . ' Samakan nama kelompok umur di Pengaturan > Kelompok Umur, atau jalankan "php spark data:sesuaikan" bila server ini diisi data awal versi lama, lalu impor lagi. Tidak ada yang diimpor.',
+            );
         }
 
         if ($hilang !== []) {

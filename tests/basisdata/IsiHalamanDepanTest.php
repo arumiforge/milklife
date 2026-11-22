@@ -275,7 +275,7 @@ final class IsiHalamanDepanTest extends UjiBasisData
 
         $hasil = (new IsiHalamanDepan())->kelompokUmur();
 
-        $this->assertSame(['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($hasil, 'nama'));
+        $this->assertSame(['KU 8', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($hasil, 'nama'));
         $this->assertSame(69, array_sum(array_map(static fn (array $ku): int => count($ku['nomor_individu']) + count($ku['nomor_beregu']), $hasil)));
     }
 
@@ -359,13 +359,18 @@ final class IsiHalamanDepanTest extends UjiBasisData
         $this->assertNull((new IsiHalamanDepan())->waTanya(), 'Nomor belum diisi.');
 
         setting('HalamanDepan.nomor_wa_tanya', '6281234567890');
-        $this->assertSame('https://wa.me/6281234567890', (new IsiHalamanDepan())->waTanya());
+        // Pesan kosong: tagar acara saja (F10-01).
+        $this->assertSame('https://wa.me/6281234567890?text=' . rawurlencode('#MilkLifeAthleticsChallengeSeri2'), (new IsiHalamanDepan())->waTanya());
 
         setting('HalamanDepan.pesan_tanya', "  Halo admin, saya mau tanya & daftar.\r\nTerima kasih  ");
         $this->assertSame(
-            'https://wa.me/6281234567890?text=' . rawurlencode("Halo admin, saya mau tanya & daftar.\nTerima kasih"),
+            'https://wa.me/6281234567890?text=' . rawurlencode("Halo admin, saya mau tanya & daftar.\nTerima kasih\n#MilkLifeAthleticsChallengeSeri2"),
             (new IsiHalamanDepan())->waTanya(),
         );
+
+        // Tagar yang sudah ditulis admin tidak diulang (huruf besar/kecil tidak dibedakan).
+        setting('HalamanDepan.pesan_tanya', 'Halo #milklifeathleticschallengeseri2');
+        $this->assertSame('https://wa.me/6281234567890?text=' . rawurlencode('Halo #milklifeathleticschallengeseri2'), (new IsiHalamanDepan())->waTanya());
     }
 
     public function testWaBagikan(): void
@@ -374,16 +379,16 @@ final class IsiHalamanDepanTest extends UjiBasisData
 
         // Pesan kosong: nama acara dan alamat halaman depan.
         setting('Acara.nama', 'Lomba Lari Karangan');
-        $this->assertSame('https://wa.me/?text=' . rawurlencode("Lomba Lari Karangan\n" . $alamat), (new IsiHalamanDepan())->waBagikan());
+        $this->assertSame('https://wa.me/?text=' . rawurlencode("Lomba Lari Karangan\n" . $alamat . "\n#MilkLifeAthleticsChallengeSeri2"), (new IsiHalamanDepan())->waBagikan());
 
         // Pesan admin tanpa alamat: alamat ditambahkan.
         setting('HalamanDepan.pesan_bagikan', "Ayo daftarkan siswa Anda!  \r\n");
-        $this->assertSame('https://wa.me/?text=' . rawurlencode("Ayo daftarkan siswa Anda!\n" . $alamat), (new IsiHalamanDepan())->waBagikan());
+        $this->assertSame('https://wa.me/?text=' . rawurlencode("Ayo daftarkan siswa Anda!\n" . $alamat . "\n#MilkLifeAthleticsChallengeSeri2"), (new IsiHalamanDepan())->waBagikan());
 
         // Alamat sudah tertulis (tanpa http dan garis miring akhir): tidak ditambahkan lagi.
         $ringkas = rtrim((string) preg_replace('#^https?://(www\.)?#', '', $alamat), '/');
         setting('HalamanDepan.pesan_bagikan', 'Daftar di ' . $ringkas . ' sekarang');
-        $this->assertSame('https://wa.me/?text=' . rawurlencode('Daftar di ' . $ringkas . ' sekarang'), (new IsiHalamanDepan())->waBagikan());
+        $this->assertSame('https://wa.me/?text=' . rawurlencode('Daftar di ' . $ringkas . " sekarang\n#MilkLifeAthleticsChallengeSeri2"), (new IsiHalamanDepan())->waBagikan());
     }
 
     // ---------- Tabel belum ada ----------

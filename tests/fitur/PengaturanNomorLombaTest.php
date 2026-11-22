@@ -166,7 +166,7 @@ final class PengaturanNomorLombaTest extends UjiBasisData
 
         $this->assertSame(69, $xpath->query('//tr[starts-with(@id, "nomor-")]')->length);
         $this->assertSame(
-            ['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'],
+            ['KU 8', 'KU 10', 'KU 12', 'KU 15', 'KU 18'],
             array_map(
                 static fn (DOMNode $judul): string => trim((string) $judul->firstChild?->textContent),
                 iterator_to_array($xpath->query('//section[contains(@class, "kelompok-nomor-lomba")]//h2')),

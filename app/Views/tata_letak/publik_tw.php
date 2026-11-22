@@ -58,14 +58,12 @@ try {
             $logo['alamat'] = base_url($logoKecil);
         }
     }
-    $logoKaki = array_values(array_filter(
-        IsiHalamanDepan::logoPembuka($tampilan, $acara['nama']),
-        static fn (array $butir): bool => $butir['kunci'] === 'logo_djarum',
-    ))[0] ?? null;
+    // Logo Djarum unggahan admin, atau bawaan public/aset/gambar/logo-djarum.png (F10-01).
+    $logoKaki = IsiHalamanDepan::logoDjarum($tampilan);
 } catch (Throwable) {
     $acara    = ['nama' => 'MilkLife Athletics Challenge', 'seri_tahun' => ''];
     $logo     = IsiHalamanDepan::logoMerek([]);
-    $logoKaki = null;
+    $logoKaki = IsiHalamanDepan::logoDjarum([]);
 }
 
 // Pratinjau tautan yang dibagikan (Open Graph, F9-19, G9-10). Gambar hanya bila berkasnya ada.
@@ -187,7 +185,7 @@ $menuBawah     = trim($this->renderSection('tanpa_menu_bawah')) === '';
                 <p class="mt-2"><a href="<?= site_url('admin/masuk') ?>" class="inline-flex min-h-11 items-center gap-1 font-semibold text-primary-700 hover:underline"><?= ikon('lock') ?>Masuk panitia</a></p>
             </div>
             <?php if ($logoKaki !== null) : ?>
-                <img src="<?= esc($logoKaki['alamat']) ?>" alt="<?= esc($logoKaki['alt']) ?>" class="h-12 w-auto" data-kaki-logo<?= $logoKaki['ukuran'] === null ? '' : ' width="' . (int) $logoKaki['ukuran']['lebar'] . '" height="' . (int) $logoKaki['ukuran']['tinggi'] . '"' ?>>
+                <img src="<?= esc($logoKaki['alamat']) ?>" alt="<?= esc($logoKaki['alt']) ?>" class="h-12 w-auto max-w-full self-start sm:self-center" data-kaki-logo<?= $logoKaki['ukuran'] === null ? '' : ' width="' . (int) $logoKaki['ukuran']['lebar'] . '" height="' . (int) $logoKaki['ukuran']['tinggi'] . '"' ?>>
             <?php endif ?>
         </div>
         <div class="pita-merek h-1.5" aria-hidden="true"></div>
