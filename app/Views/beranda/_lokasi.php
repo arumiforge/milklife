@@ -31,8 +31,8 @@ $tabBaru   = '<span class="sr-only"> (di tab baru)</span>';
 <section id="lokasi" class="scroll-mt-20 bg-white" aria-labelledby="judul-lokasi">
     <div class="mx-auto grid max-w-screen-xl gap-6 px-4 pt-12 sm:pt-16 lg:grid-cols-12 lg:items-start lg:gap-10">
         <div class="lg:col-span-4">
-            <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Tempat lomba</p>
-            <h2 id="judul-lokasi" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Lokasi</h2>
+            <p class="alis">Tempat lomba</p>
+            <h2 id="judul-lokasi" class="judul-tampilan ornamen-judul mt-2">Lokasi</h2>
             <?php if ($tempat !== '') : ?>
                 <p class="mt-2 flex items-start gap-2 text-lg text-gray-700">
                     <?= ikon('map-pin', 'mt-1 size-5 shrink-0 text-oranye-600') ?>
