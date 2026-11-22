@@ -87,7 +87,7 @@ final class LembarJuri
         $babak = $hasil->babak($babakId);
 
         if ($babak === null || $this->db->table('hasil')->where('id', $hasilId)->where('babak_id', $babakId)->countAllResults() === 0) {
-            return ['status' => 'hilang', 'pesan' => 'Peserta ini tidak ada lagi di babak ini. Mungkin dikeluarkan admin lain; muat ulang halaman.'];
+            return ['status' => 'hilang', 'pesan' => 'Peserta ini tidak ada lagi di babak ini. Mungkin admin lain sudah mengeluarkannya. Muat ulang halaman.'];
         }
 
         $jenis = $babak['nomor']['jenis_hasil'];

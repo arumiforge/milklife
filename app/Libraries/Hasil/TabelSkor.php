@@ -330,7 +330,7 @@ final class TabelSkor
             $nilaiPoin = (int) $poinTeks;
 
             if ($nilaiPoin > self::POIN_MAKSIMAL) {
-                $galat[] = 'Baris ' . $nomor . ': poin ' . $nilaiPoin . ' terlalu besar; paling besar ' . self::POIN_MAKSIMAL . '.';
+                $galat[] = 'Baris ' . $nomor . ': poin ' . $nilaiPoin . ' terlalu besar. Batasnya ' . self::POIN_MAKSIMAL . '.';
 
                 continue;
             }

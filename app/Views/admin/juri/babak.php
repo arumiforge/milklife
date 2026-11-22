@@ -36,7 +36,7 @@ $komponen = $jenis === JenisHasil::MULTI ? $nomor['komponen'] : [];
 
 $petunjuk = [
     JenisHasil::WAKTU => 'Tulis waktu seperti 12,34, atau 2:05,10 untuk lari jauh. Waktu dari foto finis boleh sampai seperseribu detik, misalnya 12,345.',
-    JenisHasil::JARAK => 'Tulis jarak tiap percobaan dalam meter, misalnya 3,45. Tekan X bila percobaan gagal; kosongkan percobaan yang belum dilakukan. Prestasi = jarak sah terjauh.',
+    JenisHasil::JARAK => 'Tulis jarak tiap percobaan dalam meter, misalnya 3,45. Tekan X bila percobaan gagal. Kosongkan percobaan yang belum dilakukan. Prestasinya adalah jarak sah terjauh.',
     JenisHasil::POIN  => 'Tulis poin akhir berupa angka bulat, misalnya 1250.',
     JenisHasil::MULTI => 'Tulis prestasi tiap komponen: waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poinnya dihitung dari tabel skor saat tersimpan.',
 ][$jenis] ?? '';
@@ -54,9 +54,9 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
         <h2 id="judul-babak-juri" class="text-lg font-bold break-words text-gray-900"><?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?> · <?= esc($babak['nama']) ?></h2>
         <p class="text-sm text-gray-600"><?= $jadwal === '' ? 'Jadwal menyusul' : esc($jadwal) ?> · <?= $babak['peserta'] ?> <?= $beregu ? 'regu' : 'peserta' ?></p>
         <p class="mt-2 text-sm text-gray-700"><?= esc($petunjuk) ?> Pilih DNS, DNF, atau DQ untuk peserta yang tidak start, tidak finis, atau didiskualifikasi.</p>
-        <p class="mt-2 text-sm text-gray-700">Peringkat dan Terbitkan: <a href="<?= site_url('admin/hasil/babak/' . $babak['id']) ?>" class="font-semibold text-primary-700 underline">halaman hasil babak ini</a>.</p>
+        <p class="mt-2 text-sm text-gray-700">Peringkat dan tombol Terbitkan ada di <a href="<?= site_url('admin/hasil/babak/' . $babak['id']) ?>" class="font-semibold text-primary-700 underline">halaman hasil babak ini</a>.</p>
         <?php if ($jenis === JenisHasil::MULTI && $komponen === []) : ?>
-            <div class="mt-3"><?= komponen('peringatan', ['jenis' => 'peringatan', 'judul' => 'Tabel skor belum dipilih', 'isi' => 'Nomor ini belum punya tabel skor, jadi prestasinya belum bisa diisi. Pilih tabel skor dan komponennya di Pengaturan &gt; Nomor Lomba.']) ?></div>
+            <div class="mt-3"><?= komponen('peringatan', ['jenis' => 'peringatan', 'judul' => 'Tabel skor belum dipilih', 'isi' => 'Nomor ini belum punya tabel skor. Prestasinya baru bisa diisi setelah tabel skor dipilih. Pilih tabel skor dan komponennya di Pengaturan &gt; Nomor Lomba.']) ?></div>
         <?php endif ?>
     </section>
 

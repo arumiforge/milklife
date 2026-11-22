@@ -26,7 +26,7 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Cetak Nomor Atlet (BIB)<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Cetak nomor atlet (BIB)<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -34,7 +34,7 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
 
     <div class="flex items-center gap-4">
         <p class="flex-1 text-gray-700">
-            Satu nomor atlet (BIB) seukuran setengah A4 mendatar (210 × 148,5 mm). PDF memuat dua BIB per halaman A4; potong di garis putus-putus.
+            Satu nomor atlet (BIB) seukuran setengah A4 mendatar (210 × 148,5 mm). PDF memuat dua BIB per halaman A4. Potong di garis putus-putus.
             Gambar JPG berukuran 2480 × 1754 piksel (300 dpi), satu berkas per atlet, untuk dikirim ke percetakan.
             Isinya nomor atlet, nama atlet, sekolah, dan kelompok umur. Hanya atlet dari pendaftaran Lunas.
             Urutkan nomor atlet lebih dulu bila perlu (<a class="font-semibold text-primary-700 underline" href="<?= site_url('admin/atlet/nomor-dada') ?>">Urutkan nomor atlet</a>).
@@ -84,13 +84,13 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
                         data-ukuran-maksimal="<?= TampilanBib::BATAS_LATAR ?>" aria-describedby="latar-bantuan">
                     <p id="latar-bantuan" class="mt-1.5 text-sm text-gray-600">
                         Gambar latar penuh satu BIB, dipakai semua BIB<?= $latarBawaan !== [] ? ', menggantikan latar bawaan' : '' ?>. JPG, PNG, atau WEBP, paling besar <?= Unggahan::ukuranTeks(TampilanBib::BATAS_LATAR) ?>.
-                        Ukuran terbaik 2480 × 1754 piksel (mendatar); ukuran lain dipotong di tengah supaya pas.
+                        Ukuran terbaik 2480 × 1754 piksel (mendatar). Gambar berukuran lain dipotong di bagian tengah supaya pas.
                         Sisakan bagian tengah yang polos untuk nomor dan nama atlet.
                     </p>
                     <?php if ($tampilanBib->latar !== null) : ?>
                         <label class="mt-2 inline-flex min-h-11 items-center gap-2 text-sm text-gray-900">
                             <input class="size-4 rounded border-gray-300 text-primary-700 focus:ring-primary-300" type="checkbox" value="1" id="hapus_latar" name="hapus_latar"
-                                data-konfirmasi-centang="Latar BIB unggahan dihapus dari server saat tampilan disimpan, dan tidak bisa dikembalikan." data-konfirmasi-tombol="Hapus latar">
+                                data-konfirmasi-centang="Latar BIB unggahan akan dihapus dari server saat tampilan disimpan. Latar itu tidak bisa dikembalikan." data-konfirmasi-tombol="Hapus latar">
                             Hapus latar (kembali ke BIB putih)
                         </label>
                     <?php endif ?>
@@ -131,7 +131,7 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
             <?php endif ?>
         </div>
         <?php if ($sekolahBib === []) : ?>
-            <p class="text-gray-600" id="bib-sekolah-kosong">Belum ada sekolah dengan atlet ber-nomor atlet (BIB).</p>
+            <p class="text-gray-600" id="bib-sekolah-kosong">Belum ada sekolah yang atletnya sudah punya nomor atlet (BIB).</p>
         <?php else : ?>
             <p class="mb-3 text-sm text-gray-600">
                 ZIP sekolah berisi gambar JPG per atlet dan PDF sekolah itu. ZIP semua sekolah berisi satu folder per sekolah

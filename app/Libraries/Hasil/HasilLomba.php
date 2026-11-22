@@ -894,7 +894,7 @@ final class HasilLomba
             }
 
             if ($ada->countAllResults() > 0) {
-                $galat['final'] = 'Nomor ini sudah punya babak Final. Satu nomor hanya satu Final; hapus tanda Final di babak lain dulu.';
+                $galat['final'] = 'Nomor ini sudah punya babak Final. Satu nomor hanya boleh punya satu Final. Hapus dulu tanda Final di babak lain.';
             }
         }
 

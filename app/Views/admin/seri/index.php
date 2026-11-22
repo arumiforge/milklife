@@ -37,7 +37,7 @@ $keadaan = static function (array $b): array {
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
-        Bagi peserta tiap babak ke seri dan lintasan untuk pertemuan teknik dan juri. Babak diatur di
+        Bagi peserta tiap babak ke seri dan lintasan untuk pertemuan teknik (technical meeting) dan juri. Babak diatur di
         <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>.
         Setelah hasil babak yang sudah dibagi lengkap, babak berikutnya terisi sendiri dari yang lolos (Q/q).
     </p>
@@ -62,7 +62,7 @@ $keadaan = static function (array $b): array {
     <?php if ($hari !== []) : ?>
         <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-unduh-hari">
             <h2 id="judul-unduh-hari" class="text-lg font-bold text-gray-900">Unduh daftar seri per hari</h2>
-            <p class="mt-1 text-sm text-gray-600">Semua babak terjadwal di hari itu yang sudah dibagi, urut jam. Untuk pertemuan teknik dan juri.</p>
+            <p class="mt-1 text-sm text-gray-600">Berisi semua babak terjadwal di hari itu yang sudah dibagi, diurutkan menurut jam. Dipakai untuk pertemuan teknik dan juri.</p>
             <ul class="mt-3 space-y-2" data-unduh-hari-seri>
                 <?php foreach ($hari as $h) : ?>
                     <li class="flex flex-wrap items-center gap-2">

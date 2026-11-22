@@ -128,7 +128,7 @@ final class SeriLintasan
             if (preg_match('/^\d{1,3}$/D', $tempat) !== 1 || (int) $tempat < $batas[0] || (int) $tempat > $batas[1]) {
                 $galat['tempat_per_seri'] = $lintasan
                     ? 'Lintasan per seri harus angka 1 sampai ' . PembagiSeri::LINTASAN_MAKSIMAL . ', misalnya 8. Kosongkan untuk memakai 8.'
-                    : 'Peserta per kelompok harus angka 0 sampai ' . PembagiSeri::KELOMPOK_MAKSIMAL . '. Tulis 0 atau kosongkan supaya semua peserta satu kelompok.';
+                    : 'Peserta per kelompok harus angka 0 sampai ' . PembagiSeri::KELOMPOK_MAKSIMAL . '. Tulis 0 atau kosongkan supaya semua peserta masuk satu kelompok.';
             } else {
                 $data['tempat_per_seri'] = (int) $tempat;
             }
@@ -461,7 +461,7 @@ final class SeriLintasan
         }
 
         if ($babak['ada_hasil']) {
-            return ['galat' => 'Babak ' . $babak['nama'] . ' sudah berisi prestasi, jadi tidak dibagi ulang supaya hasilnya tidak tertukar. Geser peserta satu per satu bila perlu.'];
+            return ['galat' => 'Babak ' . $babak['nama'] . ' sudah berisi prestasi. Babak ini tidak dibagi ulang supaya hasilnya tidak tertukar. Geser peserta satu per satu bila perlu.'];
         }
 
         $nomor  = $babak['nomor'];

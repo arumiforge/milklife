@@ -32,10 +32,10 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
         <h2 id="judul-aturan-seri" class="text-lg font-bold text-gray-900">Aturan seri nomor ini</h2>
         <p class="mt-1 text-sm text-gray-600">
             <?php if ($lintasan) : ?>
-                Nomor lari: peserta dibagi ke seri dengan satu lintasan per orang. Urutan lintasan unggulan dipakai di babak lanjutan: kelompok dipisah titik koma dan diundi di dalam kelompok.
+                Nomor lari: peserta dibagi ke seri dengan satu lintasan per orang. Urutan lintasan unggulan dipakai di babak lanjutan. Kelompok lintasan dipisah titik koma, lalu diundi di dalam tiap kelompok.
                 Bawaan World Athletics untuk 8 lintasan: <strong><?= PembagiSeri::URUTAN_WA ?></strong> (empat terbaik diundi di lintasan 3–6, dua berikutnya 7–8, dua terakhir 1–2).
             <?php else : ?>
-                Nomor lompat, lempar, dan poin tanpa lintasan: peserta mendapat urutan tampil yang diacak. Isi peserta per kelompok bila ingin dibagi ke beberapa kelompok; kosong atau 0 = semua satu kelompok.
+                Nomor lompat, lempar, dan poin tanpa lintasan: peserta mendapat urutan tampil yang diacak. Isi peserta per kelompok bila peserta ingin dibagi ke beberapa kelompok. Bila kosong atau 0, semua peserta masuk satu kelompok.
             <?php endif ?>
             Aturan berlaku untuk pembagian berikutnya.
         </p>
@@ -47,7 +47,7 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
                 'tipe'    => 'number',
                 'nilai'   => $nilai('tempat_per_seri', $aturan['tempat_isian']),
                 'galat'   => $galat['tempat_per_seri'] ?? null,
-                'bantuan' => $lintasan ? 'Kosong = 8 lintasan.' : 'Kosong atau 0 = satu kelompok.',
+                'bantuan' => $lintasan ? 'Bila kosong, dipakai 8 lintasan.' : 'Bila kosong atau 0, semua peserta masuk satu kelompok.',
                 'atribut' => ['min' => $lintasan ? 1 : 0, 'max' => $lintasan ? PembagiSeri::LINTASAN_MAKSIMAL : PembagiSeri::KELOMPOK_MAKSIMAL, 'inputmode' => 'numeric', 'placeholder' => $lintasan ? '8' : 'Satu kelompok'],
             ]) ?>
             <?php if ($lintasan) : ?>
@@ -56,7 +56,7 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
                     'nama'    => 'urutan_lintasan',
                     'nilai'   => $nilai('urutan_lintasan', $aturan['urutan_isian']),
                     'galat'   => $galat['urutan_lintasan'] ?? null,
-                    'bantuan' => 'Kosong = ' . PembagiSeri::urutanBawaan($aturan['tempat']) . '. Contoh urutan tetap tanpa undian: 4;5;3;6;2;7;1;8.',
+                    'bantuan' => 'Bila kosong, dipakai ' . PembagiSeri::urutanBawaan($aturan['tempat']) . '. Contoh urutan tetap tanpa undian: 4;5;3;6;2;7;1;8.',
                     'atribut' => ['placeholder' => PembagiSeri::urutanBawaan($aturan['tempat']), 'autocomplete' => 'off', 'maxlength' => 60],
                 ]) ?>
             <?php endif ?>

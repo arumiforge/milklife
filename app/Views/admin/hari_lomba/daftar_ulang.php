@@ -24,7 +24,7 @@ $tautan     = 'font-semibold text-primary-700 underline';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Daftar Ulang<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Daftar ulang<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -46,8 +46,8 @@ $tautan     = 'font-semibold text-primary-700 underline';
         </div>
 
         <p class="mt-2 text-sm text-gray-600" id="tanpa-pemindai">
-            Peramban ini tidak bisa memindai kode QR di halaman ini (paling mudah memakai Chrome di Android).
-            Ketik ID pendaftaran di bawah, atau pindai kode QR dengan aplikasi kamera ponsel: halaman bukti akan menampilkan tombol "Buka daftar ulang".
+            Peramban ini tidak bisa memindai kode QR di halaman ini. Pemindai paling mudah dipakai di Chrome pada Android.
+            Ketik ID pendaftaran di bawah, atau pindai kode QR dengan aplikasi kamera ponsel. Halaman bukti lalu menampilkan tombol "Buka daftar ulang".
         </p>
 
         <form action="<?= site_url('admin/daftar-ulang') ?>" method="get" id="formulir-cari" class="mt-4 flex gap-2">
@@ -97,11 +97,11 @@ $tautan     = 'font-semibold text-primary-700 underline';
 
             <?php if (! $lunas && ! $p['ditolak_semua']) : ?>
                 <div class="rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900" role="alert" id="peringatan-menunggu">
-                    Pendaftaran ini belum Lunas, jadi atletnya belum punya nomor atlet (BIB) dan belum bisa ditandai hadir.
+                    Pendaftaran ini belum Lunas. Atletnya belum punya nomor atlet (BIB) dan belum bisa ditandai hadir.
                     Periksa pembayarannya di <a href="<?= site_url('admin/pendaftaran/' . $hasil['id']) ?>" class="font-semibold underline">rincian pendaftaran</a>.
                 </div>
             <?php elseif ($p['ditolak_semua']) : ?>
-                <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-800" id="peringatan-ditolak">Semua atlet pendaftaran ini ditolak panitia, jadi tidak ada atlet yang ikut lomba.</div>
+                <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-800" id="peringatan-ditolak">Semua atlet pendaftaran ini ditolak panitia. Tidak ada atlet yang ikut lomba.</div>
             <?php endif ?>
 
             <?php if ($lunas && $atlet !== [] && $jumlahHadir < count($atlet)) : ?>
@@ -132,7 +132,7 @@ $tautan     = 'font-semibold text-primary-700 underline';
                             </form>
                         <?php elseif ($hadir) : ?>
                             <form action="<?= site_url('admin/daftar-ulang/' . $hasil['id'] . '/batal-hadir') ?>" method="post" class="ms-auto"
-                                data-konfirmasi="<?= esc('Tanda hadir ' . $a['nama'] . ' dibatalkan.', 'attr') ?>" data-konfirmasi-judul="Batal hadir?" data-konfirmasi-tombol="Batal hadir">
+                                data-konfirmasi="<?= esc('Tanda hadir ' . $a['nama'] . ' akan dihapus. Anda bisa menandainya hadir lagi nanti.', 'attr') ?>" data-konfirmasi-judul="Batal hadir?" data-konfirmasi-tombol="Batal hadir">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="atlet" value="<?= $a['id'] ?>">
                                 <?= komponen('tombol', ['label' => 'Batal hadir', 'tipe' => 'submit', 'varian' => 'hantu', 'ikon' => 'undo-2', 'ukuran' => 'kecil', 'kelas' => 'min-h-11']) ?>

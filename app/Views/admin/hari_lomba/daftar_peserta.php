@@ -9,7 +9,7 @@
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Daftar Peserta<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Daftar peserta<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -22,7 +22,7 @@
     </p>
 
     <?php if ($kelompokUmur === []) : ?>
-        <p class="text-gray-600" id="peserta-kosong">Belum ada nomor lomba. Tambahkan di Pengaturan, Nomor Lomba.</p>
+        <p class="text-gray-600" id="peserta-kosong">Belum ada nomor lomba. Tambahkan di Pengaturan > Nomor Lomba.</p>
     <?php endif ?>
 
     <?php foreach ($kelompokUmur as $ku) : ?>

@@ -72,21 +72,21 @@ foreach ($calon as $kunci => $c) {
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?php if ($multi && $komponen === []) : ?>
         <div id="tabel-skor-belum">
-            <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => 'Nomor ini berjenis hasil poin multi-lomba tetapi belum punya tabel skor. Pilih tabel skor dan komponennya di '
+            <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => 'Nomor ini memakai jenis hasil poin multi-lomba, tetapi belum punya tabel skor. Pilih tabel skor dan komponennya di '
                 . '<a href="' . site_url('admin/pengaturan/nomor-lomba/' . $nomor['id'] . '/ubah') . '" class="font-semibold underline">Pengaturan &gt; Nomor Lomba</a>.']) ?>
         </div>
     <?php endif ?>
     <?php if ($luarTabel > 0) : ?>
         <div id="peringatan-luar-tabel">
-            <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => $luarTabel . ' prestasi di luar tabel skor sehingga poinnya 0 (ditandai kuning di bawah). Periksa lagi apakah ada salah ketik, misalnya 0,70 untuk 7,00.']) ?>
+            <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => $luarTabel . ' prestasi berada di luar tabel skor. Poinnya 0 dan ditandai kuning di bawah. Periksa lagi apakah ada salah ketik, misalnya 0,70 untuk 7,00.']) ?>
         </div>
     <?php endif ?>
     <p class="text-gray-700">
         Prestasi <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>: <?= esc(JenisHasil::KETERANGAN[$nomor['jenis_hasil']]) ?>.
-        <?php if ($multi) : ?>Tulis waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poin tiap komponen dicari di tabel skor; prestasi di antara dua baris memakai baris yang lebih buruk. Komponen kosong bernilai 0.<?php endif ?>
-        Peringkat dihitung otomatis setelah disimpan; prestasi sama mendapat peringkat sama<?php if ($nomor['jenis_hasil'] === JenisHasil::JARAK && $nomor['pemecah_seri']) : ?>, kecuali bila percobaannya diisi di Lembar juri: yang prestasi terbaik keduanya lebih jauh di atas<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU) : ?>, kecuali bila waktunya ditulis sampai seperseribu detik (misalnya 12,345 dari foto finis)<?php endif ?>.
+        <?php if ($multi) : ?>Tulis waktu lari seperti 7,00 dan jarak dalam meter seperti 4,25. Poin tiap komponen dicari di tabel skor. Prestasi yang berada di antara dua baris memakai baris yang lebih buruk. Komponen kosong bernilai 0.<?php endif ?>
+        Peringkat dihitung otomatis setelah disimpan. Prestasi yang sama mendapat peringkat yang sama<?php if ($nomor['jenis_hasil'] === JenisHasil::JARAK && $nomor['pemecah_seri']) : ?>, kecuali bila percobaannya diisi di Lembar juri. Bila begitu, peserta yang prestasi terbaik keduanya lebih jauh berada di atas<?php elseif ($nomor['jenis_hasil'] === JenisHasil::WAKTU) : ?>, kecuali bila waktunya ditulis sampai seperseribu detik (misalnya 12,345 dari foto finis)<?php endif ?>.
         Pilih DNS (tidak start), DNF (tidak finis), atau DQ (diskualifikasi) untuk peserta tanpa peringkat.
-        <?php if ($final) : ?>Di Final peringkat boleh dikoreksi (misalnya dari foto finis); kosongkan supaya dihitung otomatis.<?php endif ?>
+        <?php if ($final) : ?>Di Final, peringkat boleh dikoreksi (misalnya dari foto finis). Kosongkan kotak koreksi supaya peringkat dihitung otomatis.<?php endif ?>
     </p>
     <div class="flex flex-wrap gap-2">
         <?php // Seri dan lintasan (F9-08). ?>
@@ -198,7 +198,7 @@ foreach ($calon as $kunci => $c) {
         <?php if ($pilihan === []) : ?>
             <p class="mt-3 text-gray-600" id="calon-kosong">Belum ada <?= $beregu ? 'regu' : 'atlet' ?> dari pendaftaran Lunas di nomor ini.</p>
         <?php else : ?>
-            <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/peserta') ?>" method="post" class="mt-4 space-y-4"<?= $hasil === [] ? '' : ' data-konfirmasi="Peserta yang tidak dicentang dikeluarkan dari babak ini, dan prestasinya di babak ini ikut terhapus." data-konfirmasi-judul="Simpan peserta?" data-konfirmasi-tombol="Simpan peserta" data-konfirmasi-jenis="utama"' ?>>
+            <form action="<?= site_url('admin/hasil/babak/' . $babak['id'] . '/peserta') ?>" method="post" class="mt-4 space-y-4"<?= $hasil === [] ? '' : ' data-konfirmasi="Peserta yang tidak dicentang akan dikeluarkan dari babak ini. Prestasinya di babak ini ikut terhapus." data-konfirmasi-judul="Simpan peserta?" data-konfirmasi-tombol="Simpan peserta" data-konfirmasi-jenis="utama"' ?>>
                 <?= csrf_field() ?>
                 <div class="grid gap-x-4 sm:grid-cols-2">
                     <?php foreach ($pilihan as $kunci => $p) : ?>

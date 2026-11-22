@@ -12,20 +12,20 @@ use App\Libraries\Hasil\JenisHasil;
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Hasil Lomba<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Hasil lomba<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <div class="flex items-center gap-4">
         <p class="flex-1 text-gray-700">
-            Pilih nomor lomba untuk membuat babak (misalnya Penyisihan seri 1, lalu Final) dan mengisi prestasinya; peringkat dihitung otomatis.
+            Pilih nomor lomba untuk membuat babak (misalnya Penyisihan seri 1, lalu Final) dan mengisi prestasinya. Peringkat dihitung otomatis.
             Juara I–III diambil dari babak Final. Hasil satu nomor tampil di halaman publik setelah ditekan <strong>Terbitkan</strong>.
         </p>
         <?= gambar_opsional('admin/hasil-lomba.webp', ['class' => 'hidden h-20 w-auto shrink-0 sm:block', 'data-gambar-admin' => 'hasil-lomba']) ?>
     </div>
 
     <?php if ($kelompokUmur === []) : ?>
-        <p class="text-gray-600" id="hasil-kosong">Belum ada nomor lomba. Tambahkan di Pengaturan, Nomor Lomba.</p>
+        <p class="text-gray-600" id="hasil-kosong">Belum ada nomor lomba. Tambahkan di Pengaturan > Nomor Lomba.</p>
     <?php endif ?>
 
     <?php foreach ($kelompokUmur as $ku) : ?>

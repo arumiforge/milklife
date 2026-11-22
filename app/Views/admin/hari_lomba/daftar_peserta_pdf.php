@@ -65,7 +65,7 @@ $barisPeserta = static function (int $no, array $p, bool $beregu): string {
         </tr>
     </table>
     <h1>Daftar Peserta <?= esc($daftar['nama']) ?> – <?= esc($daftar['kelompok_umur']) ?></h1>
-    <div class="keterangan"><?= esc($jumlah) ?> dari pendaftaran Lunas. Tanda &#10003; = sudah hadir saat daftar ulang.</div>
+    <div class="keterangan"><?= esc($jumlah) ?> dari pendaftaran Lunas. Tanda &#10003; berarti sudah hadir saat daftar ulang.</div>
     <table class="data">
         <thead>
             <tr>

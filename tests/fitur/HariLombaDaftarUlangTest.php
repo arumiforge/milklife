@@ -110,7 +110,7 @@ final class HariLombaDaftarUlangTest extends UjiBasisData
         $this->assertGagalDialihkan(
             $this->kirimSebagaiAdmin(self::ALAMAT . '/' . $p['id'] . '/hadir', ['semua' => '1']),
             site_url(self::ALAMAT) . '?id=' . $p['id_pendaftaran'] . '#daftar-atlet',
-            'Pendaftaran ' . $p['id_pendaftaran'] . ' belum Lunas, jadi atletnya belum bisa ditandai hadir. Periksa pembayarannya dulu di menu Pendaftaran.',
+            'Pendaftaran ' . $p['id_pendaftaran'] . ' belum Lunas. Atletnya belum bisa ditandai hadir. Periksa pembayarannya dulu di menu Pendaftaran.',
         );
         $this->assertSame(0, $this->db->table('atlet')->where('hadir_pada IS NOT NULL', null, false)->countAllResults());
     }
