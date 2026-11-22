@@ -1,6 +1,6 @@
 <?php
 /**
- * Sakelar halaman Jadwal pertandingan publik (F9-07) di Pengaturan > Halaman Depan.
+ * Sakelar halaman Jadwal pertandingan publik (F9-07) di Pengaturan > Halaman depan.
  *
  * Formulir sendiri, langsung tersimpan ke `HalamanDepan.tampil_jadwal` lewat
  * `Admin\Pengaturan\HalamanJadwalController`. Bawaan mati: `/jadwal` 404 dan

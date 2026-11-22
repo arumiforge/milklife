@@ -1,6 +1,6 @@
 <?php
 /**
- * Pengaturan > Tabel Skor (F9-10): daftar tabel skor multi-lomba, pasang
+ * Pengaturan > Tabel skor (F9-10): daftar tabel skor multi-lomba, pasang
  * tabel bawaan panitia, tambah dan hapus tabel, tata letak Tailwind `admin_tw`.
  * Data dari `TabelSkorController::index()`.
  *
@@ -24,9 +24,9 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
 
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
-<?= $this->section('judul') ?>Tabel Skor<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Tabel skor<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Tabel Skor<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Tabel skor<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -34,7 +34,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
 
     <p class="text-gray-700">
         Tabel skor mengubah prestasi (waktu atau jarak) menjadi poin untuk nomor berjenis hasil poin multi-lomba, misalnya Trilomba.
-        Prestasi di antara dua baris memakai baris yang lebih buruk; prestasi di luar tabel mendapat 0 poin dan ditandai.
+        Prestasi di antara dua baris memakai baris yang lebih buruk. Prestasi di luar tabel mendapat 0 poin dan ditandai.
         Setiap perubahan baris langsung menghitung ulang poin dan peringkat hasil lomba yang memakai tabel itu.
     </p>
 
@@ -100,7 +100,7 @@ $kelasKotak = static fn (bool $salah): string => 'block w-full rounded-lg border
 
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="tambah-tabel" aria-labelledby="judul-tambah-tabel">
         <h2 class="text-lg font-bold text-gray-900" id="judul-tambah-tabel">Tambah tabel</h2>
-        <p class="mt-1 text-sm text-gray-600">Untuk tabel lain dari panitia. Tulis nama tabel dan komponennya; barisnya diisi sesudahnya lewat Excel (kolom A prestasi, kolom B poin) untuk tiap komponen, putra dan putri.</p>
+        <p class="mt-1 text-sm text-gray-600">Untuk tabel lain dari panitia. Tulis nama tabel dan komponennya. Barisnya diisi sesudahnya lewat Excel (kolom A prestasi, kolom B poin) untuk tiap komponen, putra dan putri.</p>
         <form action="<?= site_url($alamat) ?>" method="post" class="mt-4 max-w-2xl space-y-5" novalidate>
             <?= csrf_field() ?>
             <div>

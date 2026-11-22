@@ -56,7 +56,7 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
         <p class="mt-2 text-sm text-gray-700"><?= esc($petunjuk) ?> Pilih DNS, DNF, atau DQ untuk peserta yang tidak start, tidak finis, atau didiskualifikasi.</p>
         <p class="mt-2 text-sm text-gray-700">Peringkat dan tombol Terbitkan ada di <a href="<?= site_url('admin/hasil/babak/' . $babak['id']) ?>" class="font-semibold text-primary-700 underline">halaman hasil babak ini</a>.</p>
         <?php if ($jenis === JenisHasil::MULTI && $komponen === []) : ?>
-            <div class="mt-3"><?= komponen('peringatan', ['jenis' => 'peringatan', 'judul' => 'Tabel skor belum dipilih', 'isi' => 'Nomor ini belum punya tabel skor. Prestasinya baru bisa diisi setelah tabel skor dipilih. Pilih tabel skor dan komponennya di Pengaturan &gt; Nomor Lomba.']) ?></div>
+            <div class="mt-3"><?= komponen('peringatan', ['jenis' => 'peringatan', 'judul' => 'Tabel skor belum dipilih', 'isi' => 'Nomor ini belum punya tabel skor. Prestasinya baru bisa diisi setelah tabel skor dipilih. Pilih tabel skor dan komponennya di Pengaturan &gt; Nomor lomba.']) ?></div>
         <?php endif ?>
     </section>
 

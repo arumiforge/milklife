@@ -116,7 +116,7 @@ class PembayaranController extends BaseController
             $nomorRekening = (string) preg_replace('/[\s.\-]+/', '', $isian['nomor_rekening']);
 
             if (preg_match('/^\d{5,30}$/', $nomorRekening) !== 1) {
-                $galat['nomor_rekening'] = 'Nomor rekening hanya boleh berisi angka, 5 sampai 30 angka. Spasi, titik, dan tanda hubung boleh ikut diketik; huruf tidak.';
+                $galat['nomor_rekening'] = 'Nomor rekening hanya boleh berisi angka, 5 sampai 30 angka. Spasi, titik, dan tanda hubung boleh ikut diketik, tetapi huruf tidak.';
             }
         }
 

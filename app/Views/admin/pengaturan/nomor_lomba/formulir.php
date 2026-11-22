@@ -64,9 +64,9 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?><?= $baru ? 'Tambah Nomor Lomba' : 'Ubah Nomor Lomba' ?><?= $this->endSection() ?>
+<?= $this->section('judul') ?><?= $baru ? 'Tambah nomor lomba' : 'Ubah nomor lomba' ?><?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Nomor Lomba<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Nomor lomba<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -82,8 +82,8 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                 <div class="flex items-start gap-3 rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" role="note" id="keterangan-dipakai">
                     <?= ikon('info', 'mt-0.5 shrink-0') ?>
                     <div class="min-w-0">
-                        Nomor ini sudah dipakai atlet atau tim, jadi kelompok umur, jenis, kategori, jumlah inti, batas anggota, dan jumlah putra/putri minimalnya dikunci, dan nomor ini tidak bisa dihapus.
-                        Nama, biaya beregu, urutan, dan aktif tetap bisa diubah; biaya baru hanya berlaku untuk pendaftaran berikutnya.
+                        Nomor ini sudah dipakai atlet atau tim, jadi tidak bisa dihapus. Kelompok umur, jenis, kategori, jumlah inti, batas anggota, dan jumlah putra/putri minimalnya juga dikunci.
+                        Nama, biaya beregu, urutan, dan aktif tetap bisa diubah. Biaya baru hanya berlaku untuk pendaftaran berikutnya.
                         Bila tidak dipakai lagi, matikan saja supaya tidak muncul di pendaftaran.
                     </div>
                 </div>
@@ -126,7 +126,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                     <label for="nama" class="<?= $label ?>">Nama nomor</label>
                     <input type="text" <?= $kotak('nama') ?> id="nama" name="nama" maxlength="<?= NomorLombaModel::NAMA_MAKSIMAL ?>"
                         value="<?= esc($isian['nama'], 'attr') ?>" aria-describedby="<?= $jelas('nama', 'nama-bantuan') ?>">
-                    <p id="nama-bantuan" class="<?= $bantuan ?>">Tanpa putra/putri; kategorinya dipilih di bawah. Contoh: Lari 60 m.</p>
+                    <p id="nama-bantuan" class="<?= $bantuan ?>">Tulis tanpa putra/putri karena kategorinya dipilih di bawah. Contoh: Lari 60 m.</p>
                     <?= $pesan('nama') ?>
                 </div>
                 </div>
@@ -179,7 +179,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                             </label>
                         <?php endforeach; ?>
                     </div>
-                    <p id="jenis_hasil-bantuan" class="<?= $bantuan ?>">Untuk hasil lomba: waktu (lari, jalan cepat, estafet; makin kecil makin baik), jarak (lompat, lempar, tolak), poin (poin akhir ditulis langsung), atau poin multi-lomba (Trilomba: prestasi tiap komponen diisi, poinnya dihitung dari tabel skor).</p>
+                    <p id="jenis_hasil-bantuan" class="<?= $bantuan ?>">Cara hasil lomba diisi. Waktu untuk lari, jalan cepat, dan estafet (makin kecil makin baik). Jarak untuk lompat, lempar, dan tolak. Poin bila poin akhir ditulis langsung. Poin multi-lomba untuk Trilomba: prestasi tiap komponen diisi, lalu poinnya dihitung dari tabel skor.</p>
                     <?= $pesan('jenis_hasil') ?>
                 </fieldset>
 
@@ -187,7 +187,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                 <fieldset class="<?= $bagian ?>" id="bagian-multi"<?= $multi ? '' : ' hidden' ?>>
                     <legend class="<?= $judulBagian ?>">Tabel skor poin multi-lomba</legend>
                     <?php if ($tabelSkor === []) : ?>
-                        <p class="text-sm text-gray-600" id="tabel-skor-kosong">Belum ada tabel skor. Pasang tabel bawaan panitia di <a class="font-semibold text-primary-700 underline" href="<?= site_url('admin/pengaturan/tabel-skor') ?>">Pengaturan &gt; Tabel Skor</a>, lalu kembali ke sini.</p>
+                        <p class="text-sm text-gray-600" id="tabel-skor-kosong">Belum ada tabel skor. Pasang tabel bawaan panitia di <a class="font-semibold text-primary-700 underline" href="<?= site_url('admin/pengaturan/tabel-skor') ?>">Pengaturan &gt; Tabel skor</a>, lalu kembali ke sini.</p>
                     <?php else : ?>
                         <div class="mb-3">
                             <label for="tabel_skor_id" class="<?= $label ?>">Tabel skor</label>
@@ -215,7 +215,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                                 </div>
                             </fieldset>
                         <?php endforeach ?>
-                        <p class="<?= $bantuan ?>">Tidak dicentang sama sekali = semua komponen tabel dipakai. Poin dicari di baris <?= esc($isian['kategori'] === 'putri' ? 'putri' : 'putra') ?> sesuai kategori nomor ini.</p>
+                        <p class="<?= $bantuan ?>">Bila tidak ada yang dicentang, semua komponen tabel dipakai. Poin dicari di baris <?= esc($isian['kategori'] === 'putri' ? 'putri' : 'putra') ?> sesuai kategori nomor ini.</p>
                         <?= $pesan('komponen_skor') ?>
                     <?php endif ?>
                 </fieldset>
@@ -228,7 +228,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                             <label for="jumlah_percobaan" class="<?= $label ?>">Banyak percobaan</label>
                             <input type="number" <?= $kotak('jumlah_percobaan') ?> id="jumlah_percobaan" name="jumlah_percobaan" min="1" max="<?= App\Libraries\Hasil\Percobaan::MAKSIMAL ?>" inputmode="numeric" placeholder="3"
                                 value="<?= esc($isian['jumlah_percobaan'] ?? '', 'attr') ?>" aria-describedby="<?= $jelas('jumlah_percobaan', 'jumlah_percobaan-bantuan') ?>">
-                            <p id="jumlah_percobaan-bantuan" class="<?= $bantuan ?>">Kosong = 3. Juri mengisi jarak tiap percobaan di Lembar juri; prestasi = jarak sah terjauh.</p>
+                            <p id="jumlah_percobaan-bantuan" class="<?= $bantuan ?>">Bila kosong, dipakai 3. Juri mengisi jarak tiap percobaan di Lembar juri. Prestasinya adalah jarak sah terjauh.</p>
                             <?= $pesan('jumlah_percobaan') ?>
                         </div>
                         <div class="md:col-span-2 md:pt-6">
@@ -236,7 +236,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                                 'label'   => 'Prestasi sama dipisah prestasi terbaik kedua',
                                 'nama'    => 'pemecah_seri',
                                 'centang' => ($isian['pemecah_seri'] ?? '1') !== '0',
-                                'bantuan' => 'Bila jarak terbaik sama, yang jarak terbaik keduanya lebih jauh di atas (lalu ketiga, dan seterusnya). Hanya berlaku bila percobaannya diisi; matikan supaya prestasi sama tetap berperingkat sama.',
+                                'bantuan' => 'Bila jarak terbaik sama, yang jarak terbaik keduanya lebih jauh di atas (lalu ketiga, dan seterusnya). Hanya berlaku bila percobaannya diisi. Matikan supaya prestasi sama tetap berperingkat sama.',
                             ]) ?>
                         </div>
                     </div>
@@ -244,7 +244,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
 
                 <fieldset class="<?= $bagian ?>" id="bagian-tim"<?= $beregu ? '' : ' hidden' ?>>
                     <legend class="<?= $judulBagian ?>">Tim beregu</legend>
-                    <p class="mb-4 text-sm text-gray-600">Wajib diisi untuk nomor beregu. Satu sekolah boleh mendaftarkan beberapa regu (Regu A, B, C, …); setiap regu berisi tepat sejumlah anggota inti, ditambah cadangan sampai batas anggota.</p>
+                    <p class="mb-4 text-sm text-gray-600">Wajib diisi untuk nomor beregu. Satu sekolah boleh mendaftarkan beberapa regu (Regu A, B, C, …). Setiap regu berisi tepat sejumlah anggota inti, ditambah cadangan sampai batas anggota.</p>
 
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div>
@@ -273,7 +273,7 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                                     value="<?= esc($isian['regu_maksimal'] ?? '', 'attr') ?>" aria-describedby="<?= $jelas('regu_maksimal', 'regu_maksimal-bantuan') ?>">
                                 <?= $satuan('regu') ?>
                             </div>
-                            <p id="regu_maksimal-bantuan" class="<?= $bantuan ?>">Contoh: 3 berarti paling banyak tiga regu per sekolah. Nama regunya diatur di Pengaturan, Pendaftaran. Kosongkan bila tidak dibatasi.</p>
+                            <p id="regu_maksimal-bantuan" class="<?= $bantuan ?>">Contoh: 3 berarti paling banyak tiga regu per sekolah. Nama regunya diatur di Pengaturan > Pendaftaran. Kosongkan bila tidak dibatasi.</p>
                             <?= $pesan('regu_maksimal') ?>
                         </div>
                         <div>

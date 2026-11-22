@@ -14,7 +14,7 @@ use App\Libraries\Unggahan;
 use App\Models\UnduhanModel;
 
 $menambah  = $baris === null;
-$judulForm = $menambah ? 'Tambah Unduhan' : 'Ubah Unduhan';
+$judulForm = $menambah ? 'Tambah unduhan' : 'Ubah unduhan';
 $aksi      = $menambah ? site_url('admin/pengaturan/unduhan') : site_url('admin/pengaturan/unduhan/' . (int) $baris['id']);
 
 $jenisBerkas = array_map('strtoupper', array_keys(Unggahan::JENIS_BERKAS));

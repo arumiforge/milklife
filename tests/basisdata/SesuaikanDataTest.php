@@ -127,7 +127,7 @@ final class SesuaikanDataTest extends UjiBasisData
             $this->fail('Impor seharusnya ditolak.');
         } catch (RuntimeException $e) {
             $this->assertStringContainsString('Nama kelompok umur di zip tidak ditemukan di server ini: KU 8 (yang ada: KU 8 (Seneng Playon), KU 10, KU 12, KU 15, KU 18).', $e->getMessage());
-            $this->assertStringContainsString('Samakan nama kelompok umur di Pengaturan > Kelompok Umur, atau jalankan "php spark data:sesuaikan"', $e->getMessage());
+            $this->assertStringContainsString('Samakan nama kelompok umur di Pengaturan > Kelompok umur, atau jalankan "php spark data:sesuaikan"', $e->getMessage());
             $this->assertStringNotContainsString('Nomor Lari 40 m', $e->getMessage(), 'Nomor lomba dari kelompok umur yang hilang tidak disebut satu per satu.');
         }
 

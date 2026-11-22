@@ -8,7 +8,7 @@
  *   jam mulai, dan lokasi. Urutan baris = urutan jadwal; babak yang belum dijadwalkan di akhir.
  * - "Isi berurutan" (`aset/js/admin-jadwal-pertandingan.js`) mengisi jam
  *   baris yang dicentang mulai jam tertentu dengan jeda tetap, tanpa menyimpan.
- * - Sakelar tampil untuk umum memakai pengendali Pengaturan > Halaman Depan.
+ * - Sakelar tampil untuk umum memakai pengendali Pengaturan > Halaman depan.
  *
  * @var CodeIgniter\View\View                    $this
  * @var list<array<string, mixed>>               $babak  `JadwalPertandingan::semua()`

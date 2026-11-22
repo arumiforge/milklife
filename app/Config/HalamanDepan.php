@@ -92,7 +92,7 @@ class HalamanDepan extends BaseConfig
     /**
      * Tampilkan halaman Peserta publik (`/peserta`, F9-12) dan butir menunya.
      * Nilai awal mati: halaman menjawab 404 sampai admin menyalakannya di
-     * Pengaturan > Halaman Depan setelah mencobanya di staging (rencana Tahap 9).
+     * Pengaturan > Halaman depan setelah mencobanya di staging (rencana Tahap 9).
      */
     public bool $tampil_peserta = false;
 
@@ -101,7 +101,7 @@ class HalamanDepan extends BaseConfig
     /**
      * Tampilkan halaman Jadwal pertandingan (`/jadwal`, F9-07) dan butir menunya.
      * Nilai awal mati: halaman menjawab 404 sampai admin menyalakannya di
-     * Pengaturan > Halaman Depan setelah mencobanya di staging (rencana Tahap 9).
+     * Pengaturan > Halaman depan setelah mencobanya di staging (rencana Tahap 9).
      */
     public bool $tampil_jadwal = false;
 

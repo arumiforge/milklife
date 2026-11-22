@@ -39,9 +39,9 @@ $kotak = static function (string $nama, string $label, string $jenis, string $ke
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Data Acara<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Data acara<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Data Acara<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Data acara<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">

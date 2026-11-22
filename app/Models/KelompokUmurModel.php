@@ -355,7 +355,7 @@ class KelompokUmurModel extends Model
         } elseif (preg_match('/^\d{1,3}$/D', $urutan) === 1) {
             $data['urutan'] = (int) $urutan;
         } else {
-            $galat['urutan'] = 'Urutan belum benar. Tulis angka bulat 0 sampai ' . self::URUTAN_MAKSIMAL . '; angka kecil tampil lebih dulu.';
+            $galat['urutan'] = 'Urutan belum benar. Tulis angka bulat 0 sampai ' . self::URUTAN_MAKSIMAL . '. Angka kecil tampil lebih dulu.';
         }
 
         // Aktif
@@ -380,7 +380,7 @@ class KelompokUmurModel extends Model
                     . mb_strtolower(self::teksTahunLahir($tabrakan['tahun_lahir_awal'], $tabrakan['tahun_lahir_akhir']))
                     . ') untuk jenjang ' . Jenjang::gabungLabel($jenjangSama) . '. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif.'
                     . ' Ubah tahunnya, hapus centang jenjang yang sama, matikan salah satu kelompok umur,'
-                    . ' atau nyalakan "Pendaftar memilih kelompok umur" di halaman Kelompok Umur.';
+                    . ' atau nyalakan "Pendaftar memilih kelompok umur" di halaman Kelompok umur.';
             }
         }
 
@@ -469,7 +469,7 @@ class KelompokUmurModel extends Model
         $nomor = $this->db->table('nomor_lomba')->where('kelompok_umur_id', $id)->countAllResults();
 
         if ($nomor > 0) {
-            return "{$nama} masih punya {$nomor} nomor lomba, jadi tidak bisa dihapus. Hapus dulu nomor lombanya di halaman Nomor Lomba, atau matikan kelompok umur ini supaya tidak muncul di pendaftaran.";
+            return "{$nama} masih punya {$nomor} nomor lomba, jadi tidak bisa dihapus. Hapus dulu nomor lombanya di halaman Nomor lomba, atau matikan kelompok umur ini supaya tidak muncul di pendaftaran.";
         }
 
         return null;
@@ -520,7 +520,7 @@ class KelompokUmurModel extends Model
         if ($milikLain !== []) {
             $kode = (string) array_key_first($milikLain);
 
-            return 'Awalan ' . $kode . ' sudah dipakai ' . $milikLain[$kode] . '. Satu awalan hanya untuk satu kelompok umur; pilih angka lain yang belum dipakai.';
+            return 'Awalan ' . $kode . ' sudah dipakai ' . $milikLain[$kode] . '. Satu awalan hanya untuk satu kelompok umur. Pilih angka lain yang belum dipakai.';
         }
 
         if ($id === null) {

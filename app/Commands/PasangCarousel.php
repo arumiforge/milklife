@@ -14,7 +14,7 @@ use Throwable;
  * `data:awal`.
  *
  * Aman dijalankan berulang: daftar foto yang sudah diatur admin di
- * Pengaturan > Halaman Depan (termasuk bila semua fotonya sudah dihapus)
+ * Pengaturan > Halaman depan (termasuk bila semua fotonya sudah dihapus)
  * tidak ditimpa.
  */
 class PasangCarousel extends BaseCommand
@@ -54,7 +54,7 @@ class PasangCarousel extends BaseCommand
         }
 
         if ($hasil['dipasang'] > 0) {
-            CLI::write($hasil['dipasang'] . ' foto carousel halaman depan dipasang (bisa ditambah, diurutkan, dan dihapus di Pengaturan > Halaman Depan).');
+            CLI::write($hasil['dipasang'] . ' foto carousel halaman depan dipasang (bisa ditambah, diurutkan, dan dihapus di Pengaturan > Halaman depan).');
         }
 
         if ($hasil['gagal'] > 0) {

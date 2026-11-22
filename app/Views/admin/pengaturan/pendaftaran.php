@@ -48,7 +48,7 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
-<?= $this->section('judul') ?>Pengaturan Pendaftaran<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Pengaturan pendaftaran<?= $this->endSection() ?>
 
 <?= $this->section('judul_halaman') ?>Pendaftaran<?= $this->endSection() ?>
 
@@ -126,7 +126,7 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
                     <legend class="text-lg font-bold text-gray-900">Nama regu beregu</legend>
                     <p id="nama_regu-keterangan" class="mb-3 mt-1 text-sm text-gray-600">
                         Satu sekolah boleh mendaftarkan beberapa regu di satu nomor beregu. Pilih cara ofisial memberi nama regunya.
-                        Aturan inti dan cadangan tetap berlaku, dan batas regu tiap nomor diatur di <a href="<?= site_url('admin/pengaturan/nomor-lomba') ?>" class="font-semibold text-primary-700 underline">Nomor Lomba</a>.
+                        Aturan inti dan cadangan tetap berlaku, dan batas regu tiap nomor diatur di <a href="<?= site_url('admin/pengaturan/nomor-lomba') ?>" class="font-semibold text-primary-700 underline">Nomor lomba</a>.
                     </p>
                     <?php $keteranganRegu = [
                         'ketentuan' => 'Ofisial memilih dari daftar nama regu di bawah, atau huruf A, B, C, … bila daftarnya kosong. Banyaknya nama di daftar juga membatasi regu per sekolah.',
@@ -154,7 +154,7 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
                         <?= $kotak('awalan_regu', 'Awalan nama regu', 'text', 'Kata di depan nama regu: "Regu" tampil "Regu A", "Tim" tampil "Tim A".', ['maxlength' => '15', 'required' => 'required']) ?>
                     </div>
                     <div class="sm:col-span-2">
-                        <?= $kotak('label_regu', 'Daftar nama regu', 'text', 'Dipisah koma, misalnya A, B, C atau Putra 1, Putra 2; awalan tidak perlu ditulis. Kosongkan supaya ofisial memilih huruf A, B, C, … tanpa batas. Dipakai pada pilihan "Ketentuan admin".', ['maxlength' => '400', 'placeholder' => 'Kosong: A, B, C, … tanpa batas']) ?>
+                        <?= $kotak('label_regu', 'Daftar nama regu', 'text', 'Dipisah koma, misalnya A, B, C atau Putra 1, Putra 2. Awalan tidak perlu ditulis. Kosongkan supaya ofisial memilih huruf A, B, C, … tanpa batas. Dipakai pada pilihan "Ketentuan admin".', ['maxlength' => '400', 'placeholder' => 'Kosong: A, B, C, … tanpa batas']) ?>
                     </div>
                 </div>
             </section>
@@ -164,7 +164,7 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
                     <legend class="text-lg font-bold text-gray-900">Tampilan usia atlet</legend>
                     <p id="tampilan_usia-keterangan" class="mb-3 mt-1 text-sm text-gray-600">
                         Usia hanya ditampilkan sebagai keterangan dan dihitung pada tanggal mulai acara
-                        (<?php if ($tanggalMulaiAcara !== '') : ?><?= esc($tanggalMulaiAcara) ?><?php else : ?>belum diisi di <a href="<?= site_url('admin/pengaturan/acara') ?>" class="font-semibold text-primary-700 underline">Data Acara</a><?php endif ?>).
+                        (<?php if ($tanggalMulaiAcara !== '') : ?><?= esc($tanggalMulaiAcara) ?><?php else : ?>belum diisi di <a href="<?= site_url('admin/pengaturan/acara') ?>" class="font-semibold text-primary-700 underline">Data acara</a><?php endif ?>).
                         Kelompok umur atlet ditentukan dari tahun lahirnya, bukan dari usia ini.
                     </p>
                     <div class="space-y-1">

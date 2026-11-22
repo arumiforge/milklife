@@ -74,7 +74,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $hasil->assertSee('Tambahkan kelompok umur pertama');
 
         $xpath = $this->xpathDari($hasil);
-        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page" and contains(., "Kelompok Umur")]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page" and contains(., "Kelompok umur")]')->length);
         $this->assertGreaterThan(0, $xpath->query('//a[@href="' . site_url(self::ALAMAT . '/tambah') . '"]')->length);
         $this->assertSame(0, $xpath->query('//table')->length);
     }
@@ -136,7 +136,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
 
         $hasil = $this->bukaSebagaiAdmin(self::ALAMAT . '/tambah');
         $hasil->assertOK();
-        $hasil->assertSee('Tambah Kelompok Umur');
+        $hasil->assertSee('Tambah kelompok umur');
 
         $xpath = $this->xpathDari($hasil);
         $this->assertSame(site_url(self::ALAMAT), $xpath->query('//form[@id="formulir-kelompok-umur"]')->item(0)?->getAttribute('action'));
@@ -253,7 +253,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $hasil = $this->bukaSebagaiAdmin(self::ALAMAT);
         $hasil->assertOK();
         $hasil->assertSee('Pendaftar memilih kelompok umur');
-        $hasil->assertSee('Tahun lahir yang dipilihkan kelompok umurnya oleh pendaftar');
+        $hasil->assertSee('Tahun lahir yang kelompok umurnya dipilih pendaftar');
         $this->assertMatchesRegularExpression('/id="pilih_kelompok_umur"[^>]*checked/', (string) $hasil->getBody());
         $this->assertMatchesRegularExpression('/SD\/MI, lahir\s+2016:\s+KU 10 atau KU 12/', $hasil->getBody());
 
@@ -442,7 +442,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
 
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}/hapus");
 
-        $this->assertGagalDialihkan($hasil, self::ALAMAT, 'KU 8 masih punya 2 nomor lomba, jadi tidak bisa dihapus. Hapus dulu nomor lombanya di halaman Nomor Lomba, atau matikan kelompok umur ini supaya tidak muncul di pendaftaran.');
+        $this->assertGagalDialihkan($hasil, self::ALAMAT, 'KU 8 masih punya 2 nomor lomba, jadi tidak bisa dihapus. Hapus dulu nomor lombanya di halaman Nomor lomba, atau matikan kelompok umur ini supaya tidak muncul di pendaftaran.');
         $this->seeInDatabase('kelompok_umur', ['id' => $id]);
         $this->seeNumRecords(1, 'awalan_nomor_dada', ['kelompok_umur_id' => $id]);
     }

@@ -56,7 +56,7 @@ use App\Libraries\DataKelengkapan;
  * Tampilannya:
  *
  *     <?= $this->extend('tata_letak/admin_tw') ?>
- *     <?= $this->section('judul') ?>Data Acara<?= $this->endSection() ?>
+ *     <?= $this->section('judul') ?>Data acara<?= $this->endSection() ?>
  *     <?= $this->section('isi') ?>
  *     <div class="p-4 sm:p-6">
  *         <?= $this->include('admin/pengaturan/_navigasi') ?>
@@ -118,18 +118,18 @@ class BerandaPengaturanController extends BaseController
         $sendiri = 'Akun Anda';
 
         $daftar = [
-            ['acara', 'Data Acara', 'calendar-days', 'admin/pengaturan/acara', 'Nama, seri, tahun, tempat, dan tanggal acara.', $wajib],
+            ['acara', 'Data acara', 'calendar-days', 'admin/pengaturan/acara', 'Nama, seri, tahun, tempat, dan tanggal acara.', $wajib],
             ['pendaftaran', 'Pendaftaran', 'door-open', 'admin/pengaturan/pendaftaran', 'Jadwal buka dan tutup, buka manual, tampilan usia, dan batas-batas pendaftaran.', $wajib],
-            ['kelompok-umur', 'Kelompok Umur', 'users', 'admin/pengaturan/kelompok-umur', 'Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor atlet (BIB).', $wajib],
-            ['nomor-lomba', 'Nomor Lomba', 'trophy', 'admin/pengaturan/nomor-lomba', 'Nomor individu dan beregu tiap kelompok umur, beserta biaya beregu.', $wajib],
+            ['kelompok-umur', 'Kelompok umur', 'users', 'admin/pengaturan/kelompok-umur', 'Batas tahun lahir, jenjang sekolah yang boleh ikut, biaya, dan awalan nomor atlet (BIB).', $wajib],
+            ['nomor-lomba', 'Nomor lomba', 'trophy', 'admin/pengaturan/nomor-lomba', 'Nomor individu dan beregu tiap kelompok umur, beserta biaya beregu.', $wajib],
             ['pembayaran', 'Pembayaran', 'landmark', 'admin/pengaturan/pembayaran', 'Rekening, nomor WA konfirmasi, dan isi pesan pembayaran.', $wajib],
-            ['halaman-depan', 'Halaman Depan', 'app-window', 'admin/pengaturan/halaman-depan', 'Gambar kepala, logo, judul, teks, dan pesan WA.', $depan],
+            ['halaman-depan', 'Halaman depan', 'app-window', 'admin/pengaturan/halaman-depan', 'Gambar kepala, logo, judul, teks, dan pesan WA.', $depan],
             ['jadwal', 'Agenda', 'clock', 'admin/pengaturan/jadwal', 'Sosialisasi, pertemuan teknik (technical meeting), dan agenda lain.', $depan],
             ['unduhan', 'Unduhan', 'download', 'admin/pengaturan/unduhan', 'Flyer, juknis, dan berkas lain untuk diunduh sekolah.', $depan],
             ['kontak', 'Kontak', 'phone', 'admin/pengaturan/kontak', 'Narahubung dan media sosial.', $depan],
             ['bantuan', 'Bantuan', 'circle-help', 'admin/pengaturan/bantuan', 'Tanya-jawab di halaman Bantuan dan di formulir pendaftaran.', $depan],
             ['galeri', 'Galeri', 'images', 'admin/pengaturan/galeri', 'Album foto acara yang membuka Instagram atau Google Drive panitia.', $depan],
-            ['tabel-skor', 'Tabel Skor', 'table', 'admin/pengaturan/tabel-skor', 'Tabel prestasi ke poin untuk Trilomba dan nomor multi-lomba lain.', 'Hasil lomba'],
+            ['tabel-skor', 'Tabel skor', 'table', 'admin/pengaturan/tabel-skor', 'Tabel prestasi ke poin untuk Trilomba dan nomor multi-lomba lain.', 'Hasil lomba'],
             ['hasil', 'Hasil', 'award', 'admin/pengaturan/hasil', 'Metode klasemen juara umum: medali atau poin per peringkat.', 'Hasil lomba'],
             ['videotron', 'Videotron', 'monitor', 'admin/pengaturan/videotron', 'Papan hasil di videotron arena: tampil atau tidak, isi, dan lama tiap tampilan.', 'Hasil lomba'],
             ['akun', 'Akun', 'user-cog', 'admin/akun', 'Ganti nama, nama pengguna, dan kata sandi Anda.', $sendiri],

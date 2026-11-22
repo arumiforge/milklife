@@ -38,9 +38,9 @@ use App\Models\TautanModel;
         <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-daftar-jadwal">
             <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div class="min-w-0">
-                    <h2 id="judul-daftar-jadwal" class="text-lg font-bold text-gray-900">Daftar jadwal</h2>
+                    <h2 id="judul-daftar-jadwal" class="text-lg font-bold text-gray-900">Daftar agenda</h2>
                     <p class="mt-1 text-sm text-gray-600">
-                        Tampil di halaman depan menurut urutan; angka kecil lebih dulu.
+                        Tampil di halaman depan menurut urutan. Angka kecil lebih dulu.
                     </p>
                 </div>
                 <?= komponen('tombol', ['label' => 'Tambah agenda', 'href' => site_url('admin/pengaturan/jadwal/tambah'), 'ikon' => 'plus']) ?>

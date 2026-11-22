@@ -34,7 +34,7 @@ $galatBaris = $galat === [] ? '' : ' aria-describedby="baris-galat"';
 
 <?= $this->section('judul') ?><?= esc($judul) ?> – <?= esc($tabel['nama']) ?><?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Tabel Skor<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Tabel skor<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -73,7 +73,7 @@ $galatBaris = $galat === [] ? '' : ' aria-describedby="baris-galat"';
 
             <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" id="impor" aria-labelledby="judul-impor">
                 <h3 class="text-lg font-bold text-gray-900" id="judul-impor">Ganti dari Excel</h3>
-                <p class="mt-1 text-sm text-gray-600">Kolom A prestasi (misalnya <?= $contoh ?><?= $waktu ? ' atau 2:05,10' : '' ?>), kolom B poin. Baris judul boleh ada. Semua baris <?= esc($judul) ?> diganti isi berkas; bila ada baris yang salah, tidak ada yang diganti.</p>
+                <p class="mt-1 text-sm text-gray-600">Kolom A prestasi (misalnya <?= $contoh ?><?= $waktu ? ' atau 2:05,10' : '' ?>), kolom B poin. Baris judul boleh ada. Semua baris <?= esc($judul) ?> diganti isi berkas. Bila ada baris yang salah, tidak ada yang diganti.</p>
                 <?php if ($galatImpor !== []) : ?>
                     <ul class="mt-3 list-disc space-y-0.5 rounded-xl border border-red-200 bg-red-50 p-4 ps-8 text-sm text-red-900" id="galat-impor" role="alert">
                         <?php foreach ($galatImpor as $pesan) : ?><li><?= esc($pesan) ?></li><?php endforeach ?>

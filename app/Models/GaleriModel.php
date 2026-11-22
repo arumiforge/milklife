@@ -252,7 +252,7 @@ class GaleriModel extends Model
         } elseif (preg_match('/^\d{1,4}$/', $isianUr) === 1) {
             $urutan = (int) $isianUr;
         } else {
-            $galat['urutan'] = 'Urutan belum benar. Tulis angka 0 sampai ' . self::URUTAN_MAKSIMAL . '; angka kecil tampil lebih dulu.';
+            $galat['urutan'] = 'Urutan belum benar. Tulis angka 0 sampai ' . self::URUTAN_MAKSIMAL . '. Angka kecil tampil lebih dulu.';
         }
 
         return [[

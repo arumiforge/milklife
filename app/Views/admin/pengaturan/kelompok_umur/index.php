@@ -30,9 +30,9 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
 
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
-<?= $this->section('judul') ?>Kelompok Umur<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Kelompok umur<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Kelompok Umur<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Kelompok umur<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -53,8 +53,8 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
         <h2 id="judul-pilih-ku" class="text-lg font-bold text-gray-900">Tahun lahir di dua kelompok umur</h2>
         <p class="mt-1 text-sm text-gray-600">
             Panitia bisa membuat rentang tahun lahir dua kelompok umur dalam satu jenjang beririsan, misalnya KU 10 lahir 2016–2018
-            dan KU 12 lahir 2014–2016 untuk SD/MI. Atlet lahir 2016 lalu boleh ikut KU 10 atau KU 12: saat mendaftar, ofisial memilih
-            salah satunya untuk setiap atlet itu, dan nomor lomba yang tampil mengikuti pilihan itu. Satu atlet tetap hanya ikut
+            dan KU 12 lahir 2014–2016 untuk SD/MI. Atlet lahir 2016 boleh ikut KU 10 atau KU 12. Saat mendaftar, ofisial memilih
+            salah satunya untuk setiap atlet itu. Nomor lomba yang tampil mengikuti pilihan itu. Satu atlet tetap hanya ikut
             satu kelompok umur, dan biaya individu mengikuti kelompok umur yang dipilih.
         </p>
         <form action="<?= site_url('admin/pengaturan/kelompok-umur/pilihan') ?>" method="post" class="mt-3 space-y-3">
@@ -72,7 +72,7 @@ $belumDiisi = static fn (string $teks = 'Belum diisi'): string => '<span class="
             <div class="mt-4 flex items-start gap-3 rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900" role="status">
                 <?= ikon('signpost', 'mt-0.5 shrink-0') ?>
                 <div class="min-w-0">
-                    <p class="mb-1 font-semibold">Tahun lahir yang dipilihkan kelompok umurnya oleh pendaftar:</p>
+                    <p class="mb-1 font-semibold">Tahun lahir yang kelompok umurnya dipilih pendaftar:</p>
                     <ul class="mb-1 list-disc space-y-0.5 ps-5">
                         <?php foreach ($irisan as $baris) : ?>
                             <?php

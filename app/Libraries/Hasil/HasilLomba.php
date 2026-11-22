@@ -536,7 +536,7 @@ final class HasilLomba
         $multi = $jenis === JenisHasil::MULTI;
 
         if ($multi && $nomor['komponen'] === []) {
-            return [0 => 'Nomor ini belum punya tabel skor. Pilih tabel skor dan komponennya di Pengaturan > Nomor Lomba.'];
+            return [0 => 'Nomor ini belum punya tabel skor. Pilih tabel skor dan komponennya di Pengaturan > Nomor lomba.'];
         }
 
         $barisSkor = $multi ? (new DataTabelSkor($this->db))->barisKomponen((int) $nomor['tabel_skor_id'], $nomor['komponen'], $nomor['kategori']) : [];

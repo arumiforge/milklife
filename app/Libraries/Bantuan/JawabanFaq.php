@@ -45,7 +45,7 @@ final class JawabanFaq
         'ofisial_minimal'         => 'Ofisial paling sedikit',
         'ofisial_maksimal'        => 'Ofisial paling banyak',
         'daftar_kelompok_umur'    => 'Daftar kelompok umur aktif: jenjang dan tahun lahir',
-        'daftar_biaya'            => 'Daftar biaya individu dan beregu per kelompok umur (bila "Tampilkan biaya di halaman depan" menyala; bila mati, kalimat bahwa rincian biaya ada di langkah Biaya, K143)',
+        'daftar_biaya'            => 'Daftar biaya individu dan beregu per kelompok umur. Bila "Tampilkan biaya di halaman depan" mati, yang tampil kalimat bahwa rincian biaya ada di langkah Biaya (K143)',
         'cara_juara_umum'         => 'Kalimat cara juara umum ditentukan, sesuai metode klasemen di Pengaturan > Hasil (F9-11)',
     ];
 

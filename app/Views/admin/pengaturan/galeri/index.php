@@ -32,8 +32,8 @@ $penuh    = count($album) >= GaleriModel::BATAS;
     <div class="flex items-start gap-3 rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" role="note">
         <?= ikon('info', 'mt-0.5 shrink-0') ?>
         <div>
-            Foto acara tidak diunggah ke web ini. Setiap album berisi sampul dan tautan ke album Instagram atau Google Drive panitia;
-            pengunjung yang menekan album dibawa ke sana di tab baru. Album tanpa tautan atau yang disembunyikan tidak tampil untuk umum.
+            Foto acara tidak diunggah ke web ini. Setiap album berisi sampul dan tautan ke album Instagram atau Google Drive panitia.
+            Pengunjung yang menekan album dibawa ke sana di tab baru. Album tanpa tautan atau yang disembunyikan tidak tampil untuk umum.
         </div>
     </div>
 

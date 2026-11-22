@@ -51,9 +51,9 @@ $ringkasTim = static function (array $nomor): string {
 
 <?= $this->section('tabel') ?>ya<?= $this->endSection() ?>
 
-<?= $this->section('judul') ?>Nomor Lomba<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Nomor lomba<?= $this->endSection() ?>
 
-<?= $this->section('judul_halaman') ?>Nomor Lomba<?= $this->endSection() ?>
+<?= $this->section('judul_halaman') ?>Nomor lomba<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
@@ -65,7 +65,7 @@ $ringkasTim = static function (array $nomor): string {
             'ikon'   => 'users',
             'judul'  => 'Belum ada kelompok umur',
             'teks'   => 'Setiap nomor lomba milik satu kelompok umur. Buat kelompok umur dulu, lalu kembali ke sini untuk menambah nomor lombanya.',
-            'aksi'   => komponen('tombol', ['label' => 'Buka Kelompok Umur', 'href' => site_url('admin/pengaturan/kelompok-umur'), 'ikon' => 'users']),
+            'aksi'   => komponen('tombol', ['label' => 'Buka kelompok umur', 'href' => site_url('admin/pengaturan/kelompok-umur'), 'ikon' => 'users']),
         ]) ?>
     <?php elseif ($jumlahSemua === 0) : ?>
         <?= komponen('kosong', ['padat' => true,

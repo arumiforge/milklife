@@ -25,7 +25,7 @@ use App\Libraries\Hasil\JenisHasil;
     </div>
 
     <?php if ($kelompokUmur === []) : ?>
-        <p class="text-gray-600" id="hasil-kosong">Belum ada nomor lomba. Tambahkan di Pengaturan > Nomor Lomba.</p>
+        <p class="text-gray-600" id="hasil-kosong">Belum ada nomor lomba. Tambahkan di Pengaturan > Nomor lomba.</p>
     <?php endif ?>
 
     <?php foreach ($kelompokUmur as $ku) : ?>

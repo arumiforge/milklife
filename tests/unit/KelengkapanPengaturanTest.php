@@ -72,7 +72,7 @@ final class KelengkapanPengaturanTest extends CIUnitTestCase
         $this->assertSame(5, $kelengkapan->jumlahLengkap());
         $this->assertSame([], $kelengkapan->belumLengkap());
         $this->assertSame('2 kelompok umur aktif sudah lengkap.', $kelengkapan->untukHalaman('kelompok-umur')['keterangan']);
-        $this->assertSame('3 nomor lomba aktif; nomor beregu sudah lengkap.', $kelengkapan->untukHalaman('nomor-lomba')['keterangan']);
+        $this->assertSame('3 nomor lomba aktif. Nomor beregu sudah lengkap.', $kelengkapan->untukHalaman('nomor-lomba')['keterangan']);
     }
 
     public function testSetiapButirPunyaLabelDanAlamatHalaman(): void

@@ -73,7 +73,7 @@ foreach ($calon as $kunci => $c) {
     <?php if ($multi && $komponen === []) : ?>
         <div id="tabel-skor-belum">
             <?= komponen('peringatan', ['jenis' => 'peringatan', 'isi' => 'Nomor ini memakai jenis hasil poin multi-lomba, tetapi belum punya tabel skor. Pilih tabel skor dan komponennya di '
-                . '<a href="' . site_url('admin/pengaturan/nomor-lomba/' . $nomor['id'] . '/ubah') . '" class="font-semibold underline">Pengaturan &gt; Nomor Lomba</a>.']) ?>
+                . '<a href="' . site_url('admin/pengaturan/nomor-lomba/' . $nomor['id'] . '/ubah') . '" class="font-semibold underline">Pengaturan &gt; Nomor lomba</a>.']) ?>
         </div>
     <?php endif ?>
     <?php if ($luarTabel > 0) : ?>
