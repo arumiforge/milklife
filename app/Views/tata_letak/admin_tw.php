@@ -34,6 +34,13 @@
  */
 
 use App\Controllers\Admin\Pengaturan\AcaraController;
+use App\Libraries\IsiHalamanDepan;
+
+try {
+    $logoMerek = IsiHalamanDepan::logoMerek((new IsiHalamanDepan())->tampilan());
+} catch (Throwable) {
+    $logoMerek = IsiHalamanDepan::logoMerek([]);
+}
 
 $judul        = trim($this->renderSection('judul'));
 $judulHalaman = trim($this->renderSection('judul_halaman'));
@@ -67,7 +74,11 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
             <?= ikon('menu', 'size-6', 'Buka menu') ?>
         </button>
         <a href="<?= site_url('admin/dasbor') ?>" class="hidden items-center gap-2 lg:flex lg:w-60" data-merek-admin>
-            <span class="inline-flex size-9 items-center justify-center rounded-xl bg-primary-700 text-white"><?= ikon('zap') ?></span>
+            <?php if ($logoMerek !== null) : ?>
+                <img src="<?= esc($logoMerek['alamat']) ?>" class="h-10 w-auto" alt=""<?= $logoMerek['ukuran'] === null ? '' : ' width="' . (int) $logoMerek['ukuran']['lebar'] . '" height="' . (int) $logoMerek['ukuran']['tinggi'] . '"' ?> data-logo-merek>
+            <?php else : ?>
+                <span class="inline-flex size-9 items-center justify-center rounded-xl bg-primary-700 text-white"><?= ikon('zap') ?></span>
+            <?php endif ?>
             <span class="leading-tight"><span class="block text-sm font-extrabold text-primary-900"><?= esc(AcaraController::namaTampil()) ?></span> <span class="block text-xs font-semibold text-gray-500">Panel admin</span></span>
         </a>
         <h1 class="min-w-0 flex-1 truncate text-lg font-bold text-gray-900"><?= $judulHalaman ?></h1>

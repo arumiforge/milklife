@@ -32,15 +32,14 @@ try {
     $isiDepan = new IsiHalamanDepan();
     $acara    = $isiDepan->acara();
     $tampilan = $isiDepan->tampilan();
-    $kunci    = IsiHalamanDepan::logoKepala($tampilan);
-    $logo     = $kunci === null ? null : ['alamat' => $tampilan[$kunci], 'ukuran' => $tampilan['ukuran'][$kunci] ?? null];
+    $logo     = IsiHalamanDepan::logoMerek($tampilan);
     $logoKaki = array_values(array_filter(
         IsiHalamanDepan::logoPembuka($tampilan, $acara['nama']),
         static fn (array $butir): bool => $butir['kunci'] === 'logo_djarum',
     ))[0] ?? null;
 } catch (Throwable) {
     $acara    = ['nama' => 'MilkLife Athletics Challenge', 'seri_tahun' => ''];
-    $logo     = null;
+    $logo     = IsiHalamanDepan::logoMerek([]);
     $logoKaki = null;
 }
 
