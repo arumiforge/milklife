@@ -53,7 +53,7 @@ final class MasukAdminTest extends UjiBasisData
         $hasil = $this->get('admin/masuk');
 
         $hasil->assertOK();
-        $hasil->assertSee('Masuk admin');
+        $hasil->assertSee('Admin Area');
         $hasil->assertSee('autocomplete="username"');
         $hasil->assertSee('autocomplete="current-password"');
         $this->assertNotSame('', $this->tokenDariFormulir($hasil->getBody()));
@@ -73,6 +73,14 @@ final class MasukAdminTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//*[@data-polos-kartu]')->length);
         $this->assertSame(1, $xpath->query('//*[@data-polos-kartu]//form[@method="post"]//input[@name="sandi"][@type="password"]')->length);
         $this->assertSame(1, $xpath->query('//*[@data-polos-kartu]//h1')->length);
+        $this->assertSame('Admin Area', trim($xpath->query('//*[@data-polos-kartu]//h1')->item(0)->textContent));
+
+        // Tautan kembali ke beranda di bawah kartu, di luar formulir.
+        $beranda = $xpath->query('//main[@id="isi"]//a[@data-tautan-beranda]');
+        $this->assertSame(1, $beranda->length);
+        $this->assertSame(0, $xpath->query('//*[@data-polos-kartu]//a[@data-tautan-beranda]')->length);
+        $this->assertSame(rtrim(site_url('/'), '/'), rtrim($beranda->item(0)->getAttribute('href'), '/'));
+        $this->assertSame('Kembali ke beranda', trim($beranda->item(0)->textContent));
     }
 
     public function testMasukDenganTokenDariHalaman(): void
