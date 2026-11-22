@@ -29,7 +29,7 @@ class MasukController extends BaseController
      */
     public const JENDELA_DETIK = 60;
 
-    public const PESAN_GAGAL = 'Nama pengguna atau kata sandi salah. Periksa lagi, lalu coba sekali lagi.';
+    public const PESAN_GAGAL = 'Nama pengguna atau kata sandi salah.';
 
     /**
      * Hash bcrypt dari nilai acak yang tidak diketahui siapa pun. Dipakai saat
