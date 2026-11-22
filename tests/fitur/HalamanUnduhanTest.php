@@ -1,5 +1,6 @@
 <?php
 
+use CodeIgniter\Exceptions\PageNotFoundException;
 use Tests\Support\KirimFormulir;
 use Tests\Support\UjiBasisData;
 use Tests\Support\UnggahanSementara;
@@ -91,6 +92,103 @@ final class HalamanUnduhanTest extends UjiBasisData
         $this->assertSame('Unduhan – Lomba <b>Karangan</b>', $this->teks($xpath, '//title'));
         $this->assertSame('Juknis <script>alert(1)</script>', $this->teks($xpath, '//main//ul[@data-daftar-unduhan]//h2'));
         $this->assertSame(0, $xpath->query('//main//script | //main//i')->length);
+    }
+
+    public function testJudulEditorialInggrisDenganH1Indonesia(): void
+    {
+        $xpath = $this->xpathDari($this->get('unduhan'));
+
+        $inggris = $xpath->query('//main//*[@data-judul-inggris]')->item(0);
+        $this->assertNotNull($inggris);
+        $this->assertSame('Downloads', $this->teksSimpul($inggris));
+        $this->assertSame('en', $inggris->getAttribute('lang'));
+        $this->assertSame('true', $inggris->getAttribute('aria-hidden'), 'Judul Inggris hanya hiasan; h1 tetap Indonesia.');
+        $this->assertSame('Lomba Lari Karangan', $this->teks($xpath, '//main//*[@data-judul-alis]'));
+    }
+
+    public function testTombolLihatHanyaUntukPdfDanGambar(): void
+    {
+        $juknis = $this->simpanBerkasUji('pdf', self::isiPdf());
+        $flyer  = $this->simpanBerkasUji('png', self::isiPng());
+        $formulir = $this->simpanBerkasUji('docx', 'PK karangan');
+
+        $this->tambahUnduhan(['judul' => 'Juknis', 'urutan' => 1, 'berkas' => $juknis]);
+        $this->tambahUnduhan(['judul' => 'Flyer', 'urutan' => 2, 'berkas' => $flyer]);
+        $this->tambahUnduhan(['judul' => 'Formulir', 'urutan' => 3, 'berkas' => $formulir]);
+
+        $hasil = $this->get('unduhan');
+        $xpath = $this->xpathDari($hasil);
+        $butir = $xpath->query('//main//li[@data-unduhan-butir]');
+        $this->assertSame(3, $butir->length);
+
+        $lihat = [];
+
+        foreach ($butir as $li) {
+            $a       = $xpath->query('.//a[@data-unduhan-lihat]', $li)->item(0);
+            $lihat[] = $a === null ? null : [$a->getAttribute('href'), $a->getAttribute('data-pratinjau'), $a->getAttribute('target'), $this->teksSimpul($a)];
+            $this->assertSame(1, $xpath->query('.//a[@data-unduhan-tombol]', $li)->length, 'Semua berkas tetap bisa diunduh.');
+        }
+
+        $id = array_map(static fn (DOMElement $li): int => (int) $li->getAttribute('data-id'), iterator_to_array($butir));
+        $this->assertSame([
+            [site_url('unduhan/' . $id[0] . '/lihat'), 'pdf', '_blank', 'Lihat Juknis'],
+            [site_url('unduhan/' . $id[1] . '/lihat'), 'gambar', '_blank', 'Lihat Flyer'],
+            null,
+        ], $lihat);
+
+        // Jenis dan ukuran berkas tidak tampil (F10-09).
+        $this->assertSame(0, $xpath->query('//main//*[@data-unduhan-rincian]')->length);
+        $this->assertSame(1, $xpath->query('//main//*[@data-pratinjau-modal]')->length);
+        $this->assertSame(1, $xpath->query('//script[contains(@src, "js/unduhan-pratinjau")]')->length);
+    }
+
+    public function testTanpaPdfAtauGambarTidakAdaModalPratinjau(): void
+    {
+        $this->tambahUnduhan(['judul' => 'Formulir', 'berkas' => $this->simpanBerkasUji('xlsx', 'PK karangan')]);
+
+        $xpath = $this->xpathDari($this->get('unduhan'));
+
+        $this->assertSame(0, $xpath->query('//a[@data-unduhan-lihat]')->length);
+        $this->assertSame(0, $xpath->query('//*[@data-pratinjau-modal]')->length);
+        $this->assertSame(0, $xpath->query('//script[contains(@src, "js/unduhan-pratinjau")]')->length);
+    }
+
+    public function testPratinjauPdfDanGambarInline(): void
+    {
+        $this->tambahUnduhan(['judul' => 'Juknis: Seri/2', 'berkas' => $this->simpanBerkasUji('pdf', self::isiPdf())]);
+        $idPdf = (int) $this->db->insertID();
+        $this->tambahUnduhan(['judul' => 'Flyer', 'berkas' => $this->simpanBerkasUji('png', self::isiPng())]);
+        $idPng = (int) $this->db->insertID();
+
+        $hasil = $this->get('unduhan/' . $idPdf . '/lihat');
+        $hasil->assertOK();
+        $this->assertStringStartsWith('application/pdf', $hasil->response()->getHeaderLine('Content-Type'));
+        $this->assertSame('inline; filename="Juknis- Seri-2.pdf"; filename*=UTF-8\'\'Juknis-%20Seri-2.pdf', $hasil->response()->getHeaderLine('Content-Disposition'));
+        $this->assertSame(self::isiPdf(), $hasil->response()->getBody());
+
+        $hasil = $this->get('unduhan/' . $idPng . '/lihat');
+        $hasil->assertOK();
+        $this->assertStringStartsWith('image/png', $hasil->response()->getHeaderLine('Content-Type'));
+        $this->assertStringStartsWith('inline;', $hasil->response()->getHeaderLine('Content-Disposition'));
+    }
+
+    public function testPratinjauDitolakUntukBerkasLainTersembunyiAtauHilang(): void
+    {
+        $this->tambahUnduhan(['judul' => 'Formulir', 'berkas' => $this->simpanBerkasUji('docx', 'PK karangan')]);
+        $idDocx = (int) $this->db->insertID();
+        $this->tambahUnduhan(['judul' => 'Tersembunyi', 'berkas' => $this->simpanBerkasUji('pdf', self::isiPdf()), 'tampil' => 0]);
+        $idSembunyi = (int) $this->db->insertID();
+        $this->tambahUnduhan(['judul' => 'Hilang', 'berkas' => 'unggahan/unduhan/' . str_repeat('c', 32) . '.pdf']);
+        $idHilang = (int) $this->db->insertID();
+
+        foreach ([$idDocx, $idSembunyi, $idHilang, 999999] as $id) {
+            try {
+                $this->get('unduhan/' . $id . '/lihat');
+                $this->fail('Seharusnya 404: ' . $id);
+            } catch (PageNotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 
     public function testMenuUnduhanAktifDiHalamanUnduhan(): void

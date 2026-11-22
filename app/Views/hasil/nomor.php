@@ -15,10 +15,12 @@
 
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_judul_halaman_tw', [
+    'inggris'      => 'Results',
+    'alis'         => $nomor['kelompok_umur'],
     'judul'        => $nomor['nama'],
     'ikon'         => 'trophy',
     'gambar'       => 'judul/hasil.webp',
-    'teks'         => $nomor['kelompok_umur'] . ' · Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.',
+    'teks'         => 'Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.',
     'kembali'      => site_url('hasil'),
     'labelKembali' => 'Semua hasil',
     'aksi'         => komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('hasil/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ikon' => 'file-text'])

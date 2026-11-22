@@ -12,10 +12,10 @@ Unduhan bisa dilihat dulu sebelum diunduh, tanggal tutup lengkap dengan tahun, d
 
 ## Hasil
 
-- [ ] Unduhan: tombol "Lihat" untuk PDF dan gambar (modal Flowbite berisi `<iframe>`/`<img>` dari berkas sendiri di desktop, tab baru di ponsel) dan "Unduh"; berkas lain hanya "Unduh"; jenis dan ukuran berkas tidak tampil; rute pratinjau mengirim `Content-Disposition: inline` tanpa mengubah unduhan lama
-- [ ] "Daftar s.d. 30 November 2026" (dengan tahun) di semua tempat tanggal tutup tampil; judul hero tetap tanpa tahun
-- [ ] Jadwal, Hasil, Klasemen, Peserta, Galeri, Bantuan, Unduhan, Cek Pendaftaran, dan wizard memakai kelas editorial F10-05 di pita judul (judul Inggris + keterangan Indonesia, misalnya "Race Day" / "Jadwal pertandingan"), ikon polos, tanpa border penuh berwarna; perubahan visual saja
-- [ ] Tinjau pilihan kata tiap halaman publik (tombol kata kerja, kalimat pendek untuk guru); daftar perubahan di PR
+- [x] Unduhan: tombol "Lihat" untuk PDF dan gambar (modal Flowbite berisi `<iframe>`/`<img>` dari berkas sendiri di desktop, tab baru di ponsel) dan "Unduh"; berkas lain hanya "Unduh"; jenis dan ukuran berkas tidak tampil; rute pratinjau mengirim `Content-Disposition: inline` tanpa mengubah unduhan lama
+- [x] "Daftar s.d. 30 November 2026" (dengan tahun) di semua tempat tanggal tutup tampil; judul hero tetap tanpa tahun
+- [x] Jadwal, Hasil, Klasemen, Peserta, Galeri, Bantuan, Unduhan, Cek Pendaftaran, dan wizard memakai kelas editorial F10-05 di pita judul (judul Inggris + keterangan Indonesia, misalnya "Race Day" / "Jadwal pertandingan"), ikon polos, tanpa border penuh berwarna; perubahan visual saja
+- [x] Tinjau pilihan kata tiap halaman publik (tombol kata kerja, kalimat pendek untuk guru); daftar perubahan di PR
 
 ## Berkas dan uji
 

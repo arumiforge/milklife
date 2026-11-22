@@ -20,8 +20,8 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
         <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-                <p class="alis">Hasil resmi panitia</p>
-                <h2 id="judul-hasil" class="judul-tampilan ornamen-judul mt-2">Hasil dan juara umum terbaru</h2>
+                <p class="judul-tampilan ornamen-judul" lang="en" aria-hidden="true" data-judul-inggris>Results</p>
+                <h2 id="judul-hasil" class="judul-keterangan mt-2">Hasil dan juara umum terbaru</h2>
             </div>
             <div class="flex flex-wrap gap-2">
                 <?= komponen('tombol', ['label' => 'Lihat semua hasil', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']) ?>

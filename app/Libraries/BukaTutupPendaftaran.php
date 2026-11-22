@@ -199,12 +199,12 @@ final class BukaTutupPendaftaran
     }
 
     /**
-     * Ringkasan dua baris untuk kartu info halaman depan (K82), tanpa tahun
-     * dan jam supaya pendek:
+     * Ringkasan dua baris untuk kartu info halaman depan (K82), tanpa jam
+     * supaya pendek; tanggal selalu dengan tahun (F10-09):
      *
      * - disiapkan:    ["Pendaftaran", "Segera dibuka"]
-     * - belum_dibuka: ["Dibuka", "1 Oktober"]
-     * - terbuka:      ["Daftar s.d.", "30 November"]
+     * - belum_dibuka: ["Dibuka", "1 Oktober 2026"]
+     * - terbuka:      ["Daftar s.d.", "30 November 2026"]
      * - ditutup:      ["Pendaftaran", "Ditutup"]
      *
      * Kalimat lengkapnya tetap dari `kalimat()`.
@@ -213,7 +213,7 @@ final class BukaTutupPendaftaran
      */
     public function ringkas(): array
     {
-        $tanggal = $this->batas === null ? '' : (int) $this->batas->format('j') . ' ' . _aplikasi_nama_bulan((int) $this->batas->format('n'));
+        $tanggal = $this->batas === null ? '' : (int) $this->batas->format('j') . ' ' . _aplikasi_nama_bulan((int) $this->batas->format('n')) . ' ' . $this->batas->format('Y');
 
         return match ($this->keadaan) {
             self::DISIAPKAN    => ['Pendaftaran', 'Segera dibuka'],

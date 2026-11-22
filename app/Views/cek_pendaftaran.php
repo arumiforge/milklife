@@ -34,7 +34,7 @@ $sekolah = $hasil[0] ?? null;
 
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_bilah_kemajuan_tw', [], ['saveData' => false]) ?>
-<?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Cek Pendaftaran', 'ikon' => 'search', 'gambar' => 'judul/cek-pendaftaran.webp', 'teks' => 'Lihat data pendaftaran, biaya, dan status pembayaran sekolah Anda.'], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Check Your Entry', 'alis' => $namaAcara, 'judul' => 'Cek Pendaftaran', 'ikon' => 'search', 'gambar' => 'judul/cek-pendaftaran.webp', 'teks' => 'Masukkan NPSN atau ID pendaftaran untuk melihat data atlet, biaya, dan status pembayaran sekolah Anda.'], ['saveData' => false]) ?>
 
 <div class="halaman-cek mx-auto max-w-5xl px-4 pb-12">
     <?php if (! $siap) : ?>

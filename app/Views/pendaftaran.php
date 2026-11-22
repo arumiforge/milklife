@@ -33,7 +33,7 @@ $sprite  = base_url('aset/vendor/lucide/lucide.svg') . (($versi = @filemtime(FCP
 <?= $this->section('keterangan') ?>Daftarkan sekolah dan atlet secara daring.<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<?= view('tata_letak/_judul_halaman_tw', ['judul' => 'Pendaftaran', 'ikon' => 'pencil-line', 'teks' => $bukaTutup->kalimat()], ['saveData' => false]) ?>
+<?= view('tata_letak/_judul_halaman_tw', ['inggris' => 'Join the Race', 'alis' => $namaAcara, 'judul' => 'Pendaftaran', 'ikon' => 'pencil-line', 'teks' => $bukaTutup->kalimat()], ['saveData' => false]) ?>
 
 <div class="halaman-pendaftaran mx-auto max-w-4xl px-4 pb-12">
     <?php if ($wizard === null) : ?>

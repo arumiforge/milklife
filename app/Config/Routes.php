@@ -16,6 +16,11 @@ $routes->get('/', 'BerandaController::index');
 // alamatnya menampilkan halaman tidak ditemukan.
 $routes->get('unduhan', 'UnduhanController::index');
 
+// ---------- Pratinjau unduhan (F10-09) ----------
+// PDF dan gambar dibuka di peramban (`inline`); alamat unduh lama tidak berubah.
+$routes->get('unduhan/(:num)/lihat', 'UnduhanController::lihat/$1');
+// ---------- Akhir pratinjau unduhan ----------
+
 // Cek pendaftaran dan bukti (Tahap 5). Blok milik sesi Tahap 5 (K48).
 $routes->get('cek-pendaftaran', 'CekPendaftaranController::index');
 // Bukti PDF: kode acak lalu ID pendaftaran (K77); alamat tanpa kode tidak ada lagi.
