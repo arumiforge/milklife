@@ -49,7 +49,7 @@ final class HalamanDepanLokasiTest extends UjiBasisData
 
         // Tautan buka peta: di kotak pengganti dan di bawah peta, tab baru.
         $tautan = $xpath->query('//section[@id="lokasi"]//a[@href="https://maps.google.com/?q=Supersoccer+Arena+Kudus"]');
-        $this->assertSame(2, $tautan->length);
+        $this->assertSame(3, $tautan->length, "Kotak pengganti, tombol desktop (kolom kiri), dan tombol ponsel (di bawah peta).");
         foreach ($tautan as $a) {
             $this->assertSame('_blank', $a->getAttribute('target'));
             $this->assertSame('noopener noreferrer', $a->getAttribute('rel'));

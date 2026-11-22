@@ -28,37 +28,43 @@ $tabBaru   = '<span class="sr-only"> (di tab baru)</span>';
 // ikon-sprite: map-pin map external-link
 ?>
 <section id="lokasi" class="scroll-mt-20 bg-white" aria-labelledby="judul-lokasi">
-    <div class="mx-auto max-w-screen-xl px-4 pt-12 sm:pt-16">
-        <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Tempat lomba</p>
-        <h2 id="judul-lokasi" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Lokasi</h2>
-        <?php if ($tempat !== '') : ?>
-            <p class="mt-2 flex items-start gap-2 text-lg text-gray-700">
-                <?= ikon('map-pin', 'mt-1 size-5 shrink-0 text-oranye-600') ?>
-                <span class="min-w-0 break-words" data-lokasi-alamat><?= esc($tempat) ?></span>
-            </p>
-        <?php endif ?>
-
-        <div class="relative mt-6 aspect-[4/3] overflow-hidden rounded-lg border border-gray-200 bg-gray-100 lg:aspect-video"
-            data-peta-lokasi data-peta-src="<?= esc($embed, 'attr') ?>" data-peta-judul="<?= esc($judulPeta, 'attr') ?>">
-            <div class="flex size-full flex-col items-center justify-center gap-3 p-6 text-center text-gray-600" data-peta-pengganti>
-                <?= ikon('map', 'size-10 text-primary-700') ?>
-                <?php if ($tautan !== '') : ?>
-                    <a class="inline-flex min-h-11 items-center gap-2 font-semibold text-primary-800 underline hover:text-primary-900 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($tautan, 'attr') ?>" target="_blank" rel="noopener noreferrer">
-                        Buka di Google Maps<?= $tabBaru ?>
-                    </a>
-                <?php else : ?>
-                    <p>Peta tampil saat bagian ini terlihat.</p>
-                <?php endif ?>
-            </div>
-        </div>
-
-        <?php if ($tautan !== '') : ?>
-            <div class="mt-4">
-                <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-bold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($tautan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-lokasi-tautan>
+    <div class="mx-auto grid max-w-screen-xl gap-6 px-4 pt-12 sm:pt-16 lg:grid-cols-12 lg:items-start lg:gap-10">
+        <div class="lg:col-span-4">
+            <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Tempat lomba</p>
+            <h2 id="judul-lokasi" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Lokasi</h2>
+            <?php if ($tempat !== '') : ?>
+                <p class="mt-2 flex items-start gap-2 text-lg text-gray-700">
+                    <?= ikon('map-pin', 'mt-1 size-5 shrink-0 text-oranye-600') ?>
+                    <span class="min-w-0 break-words" data-lokasi-alamat><?= esc($tempat) ?></span>
+                </p>
+            <?php endif ?>
+            <?php if ($tautan !== '') : ?>
+                <a class="mt-4 hidden min-h-12 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-bold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200 lg:inline-flex" href="<?= esc($tautan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-lokasi-tautan>
                     <?= ikon('external-link', 'size-5') ?> Buka di Google Maps<?= $tabBaru ?>
                 </a>
+            <?php endif ?>
+        </div>
+
+        <div class="lg:col-span-8">
+            <div class="relative aspect-[4/3] overflow-hidden rounded-lg border border-gray-200 bg-gray-100 lg:aspect-video"
+                data-peta-lokasi data-peta-src="<?= esc($embed, 'attr') ?>" data-peta-judul="<?= esc($judulPeta, 'attr') ?>">
+                <div class="flex size-full flex-col items-center justify-center gap-3 p-6 text-center text-gray-600" data-peta-pengganti>
+                    <?= ikon('map', 'size-10 text-primary-700') ?>
+                    <?php if ($tautan !== '') : ?>
+                        <a class="inline-flex min-h-11 items-center gap-2 font-semibold text-primary-800 underline hover:text-primary-900 focus:outline-none focus:ring-4 focus:ring-primary-200" href="<?= esc($tautan, 'attr') ?>" target="_blank" rel="noopener noreferrer">
+                            Buka di Google Maps<?= $tabBaru ?>
+                        </a>
+                    <?php else : ?>
+                        <p>Peta tampil saat bagian ini terlihat.</p>
+                    <?php endif ?>
+                </div>
             </div>
-        <?php endif ?>
+            <?php if ($tautan !== '') : ?>
+                <a class="mt-4 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-3 text-base font-bold text-primary-800 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-primary-200 lg:hidden" href="<?= esc($tautan, 'attr') ?>" target="_blank" rel="noopener noreferrer" data-lokasi-tautan>
+                    <?= ikon('external-link', 'size-5') ?> Buka di Google Maps<?= $tabBaru ?>
+                </a>
+            <?php endif ?>
+        </div>
     </div>
 </section>
 <script src="<?= aset('js/peta-lokasi.js') ?>" defer></script>

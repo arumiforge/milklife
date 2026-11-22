@@ -4571,6 +4571,9 @@
     .lg\:inline {
       display: inline;
     }
+    .lg\:inline-flex {
+      display: inline-flex;
+    }
     .lg\:aspect-video {
       aspect-ratio: var(--aspect-video);
     }
@@ -4649,6 +4652,9 @@
     }
     .lg\:gap-6 {
       gap: calc(var(--spacing) * 6);
+    }
+    .lg\:gap-10 {
+      gap: calc(var(--spacing) * 10);
     }
     .lg\:gap-12 {
       gap: calc(var(--spacing) * 12);
