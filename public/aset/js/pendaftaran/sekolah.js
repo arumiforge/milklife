@@ -77,6 +77,12 @@
             r.checked = r.value === jenjangSekolah();
             r.disabled = !!(ref && ref.jenjang);
         });
+        // Daftar pilihan jenjang di ponsel (K160) mengikuti tombol pilihan.
+        var pilihJenjang = $('#sekolah-jenjang-pilih');
+        if (pilihJenjang) {
+            pilihJenjang.value = jenjangSekolah() || '';
+            pilihJenjang.disabled = !!(ref && ref.jenjang);
+        }
         L1.kabupaten.value = kabupatenSekolah() || '';
         L1.kabupaten.disabled = !!(ref && ref.kabupaten);
         L1.npsn.value = s.npsn;
@@ -249,6 +255,9 @@
     $$('input[name="sekolah-jenjang"]').forEach(function (r) {
         r.addEventListener('change', function () { setelSekolah({ jenjang: r.value }); });
     });
+    if ($('#sekolah-jenjang-pilih')) {
+        $('#sekolah-jenjang-pilih').addEventListener('change', function () { setelSekolah({ jenjang: this.value }); });
+    }
     L1.kabupaten.addEventListener('change', function () { setelSekolah({ kabupaten: L1.kabupaten.value }); });
     L1.nama.addEventListener('input', function () { W.draf.sekolah.nama = L1.nama.value; simpanDraf(); });
     L1.usulan.addEventListener('input', function () { W.draf.sekolah.namaUsulan = L1.usulan.value; simpanDraf(); });

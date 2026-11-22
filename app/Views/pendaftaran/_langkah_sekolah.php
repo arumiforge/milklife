@@ -16,7 +16,14 @@ use App\Libraries\Pendaftaran\KelasTampilan as K;
     <div class="<?= K::KARTU ?> space-y-5">
         <fieldset data-jalur="sekolah.jenjang">
             <legend class="<?= K::LABEL ?> !text-base">Jenjang sekolah</legend>
-            <div class="pilihan-tombol flex flex-wrap gap-2">
+            <?php // Ponsel: daftar pilihan (K160); layar sm ke atas: tombol pilihan. Keduanya disamakan `pendaftaran/sekolah.js`. ?>
+            <select class="<?= K::ISIAN ?> sm:hidden [fieldset.is-invalid_&]:border-red-500 [fieldset.is-invalid_&]:bg-red-50" id="sekolah-jenjang-pilih" aria-label="Jenjang sekolah" data-jenjang-pilih>
+                <option value="">Pilih jenjang sekolah</option>
+                <?php foreach ($wizard['jenjang'] as $kode => $label) : ?>
+                    <option value="<?= esc($kode, 'attr') ?>"><?= esc($label) ?></option>
+                <?php endforeach ?>
+            </select>
+            <div class="pilihan-tombol hidden flex-wrap gap-2 sm:flex">
                 <?php foreach ($wizard['jenjang'] as $kode => $label) : ?>
                     <label class="<?= K::PILIHAN ?>" for="sekolah-jenjang-<?= esc($kode, 'attr') ?>">
                         <input type="radio" class="sr-only" name="sekolah-jenjang" id="sekolah-jenjang-<?= esc($kode, 'attr') ?>" value="<?= esc($kode, 'attr') ?>"><?= esc($label) ?>

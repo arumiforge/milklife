@@ -4439,6 +4439,9 @@
     .sm\:block {
       display: block;
     }
+    .sm\:flex {
+      display: flex;
+    }
     .sm\:hidden {
       display: none;
     }
@@ -5355,6 +5358,9 @@
   }
   fieldset.is-invalid .\[fieldset\.is-invalid_\&\]\:border-red-500 {
     border-color: var(--color-red-500);
+  }
+  fieldset.is-invalid .\[fieldset\.is-invalid_\&\]\:bg-red-50 {
+    background-color: var(--color-red-50);
   }
   li:has(.pil-selesai) + li > .\[li\:has\(\.pil-selesai\)\+li\>\&\]\:bg-primary-700 {
     background-color: var(--color-primary-700);
