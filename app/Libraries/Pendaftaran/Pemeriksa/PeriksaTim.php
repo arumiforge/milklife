@@ -128,8 +128,8 @@ final class PeriksaTim
 
                 if ($lama !== null && $konfirmasi !== null && ! in_array($kunci, $konfirmasi, true)) {
                     $this->galat->tambah("konfirmasi.{$kunci}", Regu::nama(NomorLombaModel::namaLengkap($nomor), $label, $tunggal)
-                        . ': sekolah ini sudah punya regu ini (' . count($lama) . ' atlet dari pendaftaran sebelumnya), '
-                        . 'jadi atlet yang dipilih menjadi tambahan anggota regu itu tanpa biaya regu. '
+                        . ': sekolah ini sudah punya regu ini (' . count($lama) . ' atlet dari pendaftaran sebelumnya). '
+                        . 'Atlet yang dipilih menjadi tambahan anggota regu itu tanpa biaya regu. '
                         . 'Centang kotak konfirmasi pada regu ini di daftar sementara, atau pilih regu lain, lalu lanjutkan lagi.');
                 }
 

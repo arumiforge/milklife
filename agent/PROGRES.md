@@ -15,10 +15,10 @@ Diperbarui: 22 November 2026
 | [F10-05 Fondasi gaya editorial](tugas/F10-05-fondasi-gaya-editorial.md) | selesai (#172) |
 | [F10-06 Hero editorial dan slideshow](tugas/F10-06-hero-editorial-slideshow.md) | selesai (#176) |
 | [F10-07 Navigasi publik](tugas/F10-07-navigasi-publik.md) | selesai (#177) |
-| [F10-08 Kepadatan panel admin](tugas/F10-08-kepadatan-admin.md) | selesai (#190, masukan pemilik K160) |
+| [F10-08 Kepadatan panel admin](tugas/F10-08-kepadatan-admin.md) | selesai (#190, masukan pemilik K168) |
 | [F10-09 Halaman publik dan unduhan](tugas/F10-09-halaman-publik-unduhan.md) | selesai (#179) |
-| [F10-10 Pemasangan art G10](tugas/F10-10-pemasangan-art-g10.md) | selesai (#198, masukan pemilik K160) |
-| F10-12 Tata bahasa halaman publik (K159; berkas tugas di PR-nya) | menunggu tinjauan (#200) |
+| [F10-10 Pemasangan art G10](tugas/F10-10-pemasangan-art-g10.md) | selesai (#198, masukan pemilik K168) |
+| [F10-12 Tata bahasa halaman publik](tugas/F10-12-tata-bahasa-publik.md) | selesai (#200, K159–K167) |
 | [F10-13 Tata bahasa panel admin](tugas/F10-13-tata-bahasa-admin.md) | dikerjakan |
 | [F10-11 Penutupan Tahap 10](tugas/F10-11-penutupan-tahap-10.md) | rencana |
 

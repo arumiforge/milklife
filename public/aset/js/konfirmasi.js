@@ -21,8 +21,8 @@
  * Atribut:
  * - `data-konfirmasi` (wajib): kalimat yang menyebut apa yang akan terjadi.
  *   Isinya di-escape dengan `esc(..., 'attr')`; ditampilkan sebagai teks biasa.
- * - `data-konfirmasi-judul` (pilihan): judul jendela. Bawaan "Yakin?".
- * - `data-konfirmasi-tombol` (pilihan): label tombol konfirmasi. Bawaan "Ya, lanjutkan".
+ * - `data-konfirmasi-judul` (pilihan): judul jendela. Bawaan "Lanjutkan?".
+ * - `data-konfirmasi-tombol` (pilihan): label tombol konfirmasi. Bawaan "Lanjutkan".
  * - `data-konfirmasi-jenis` (pilihan): `bahaya` (bawaan, tombol merah) atau
  *   `utama` (tombol oranye, untuk tindakan yang tidak menghapus).
  *
@@ -118,9 +118,9 @@
         var elemen = document.getElementById('jendela-konfirmasi');
         var setuju = elemen.querySelector('[data-konfirmasi-setuju]');
 
-        elemen.querySelector('#jendela-konfirmasi-judul').textContent = judul || 'Yakin?';
+        elemen.querySelector('#jendela-konfirmasi-judul').textContent = judul || 'Lanjutkan?';
         elemen.querySelector('#jendela-konfirmasi-isi').textContent = kalimat;
-        setuju.textContent = labelTombol || 'Ya, lanjutkan';
+        setuju.textContent = labelTombol || 'Lanjutkan';
         setuju.className = 'inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white focus:outline-none focus:ring-4 '
             + (jenis === 'utama' ? 'bg-oranye-600 hover:bg-oranye-700 focus:ring-oranye-300' : 'bg-red-700 hover:bg-red-800 focus:ring-red-300');
 

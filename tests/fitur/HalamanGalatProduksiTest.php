@@ -139,7 +139,7 @@ final class HalamanGalatProduksiTest extends CIUnitTestCase
         [$kode, $html] = $this->buka('/cek%3Cpendaftaran');
 
         $this->assertSame(400, $kode);
-        $this->assertHalamanGalatRamah($html, 'Permintaan tidak bisa diproses');
+        $this->assertHalamanGalatRamah($html, 'Halaman tidak bisa dibuka');
         $this->assertStringContainsString('<p class="galat-kode"><span>400</span></p>', $html);
     }
 
@@ -149,7 +149,7 @@ final class HalamanGalatProduksiTest extends CIUnitTestCase
 
         $this->assertSame(500, $kode);
         $this->assertHalamanGalatRamah($html, 'Maaf, ada kendala');
-        $this->assertStringContainsString('Coba muat ulang halaman ini beberapa menit lagi.', $html);
+        $this->assertStringContainsString('Muat ulang halaman ini beberapa menit lagi.', $html);
     }
 
     public function testGalatAdminJugaRamah(): void

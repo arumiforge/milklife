@@ -23,7 +23,7 @@ if ($unduhan === []) {
 ?>
 <section id="unduhan" class="scroll-mt-20" aria-labelledby="judul-unduhan">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
-        <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="flex flex-col items-center gap-4 text-center">
             <div>
                 <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Downloads</p>
                 <h2 id="judul-unduhan" class="judul-keterangan mt-2">Unduhan</h2>

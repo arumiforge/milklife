@@ -160,7 +160,7 @@ final class HasilKlasemenTest extends CIUnitTestCase
         $this->assertStringContainsString('juara I terbanyak', Klasemen::keterangan(Klasemen::MEDALI));
         $this->assertStringNotContainsString('poin', Klasemen::keterangan(Klasemen::MEDALI));
         $this->assertSame(
-            'Juara umum ditentukan jumlah poin terbanyak (peringkat 1 = 7, 2 = 5, 3 = 4, 4 = 3, 5 = 2, 6 = 1 poin); bila sama, juara I terbanyak, lalu juara II, lalu juara III; bila masih sama, peringkat bersama.',
+            'Juara umum adalah sekolah dengan poin terbanyak (peringkat 1 = 7, 2 = 5, 3 = 4, 4 = 3, 5 = 2, 6 = 1 poin). Bila sama, dilihat juara I terbanyak, lalu juara II, lalu juara III. Bila masih sama, sekolah itu berbagi peringkat.',
             Klasemen::keterangan(Klasemen::POIN, Klasemen::POIN_BAWAAN),
         );
         $this->assertSame('semua peringkat 0 poin', Klasemen::teksPoin([0, 0, 0, 0, 0, 0, 0, 0]));

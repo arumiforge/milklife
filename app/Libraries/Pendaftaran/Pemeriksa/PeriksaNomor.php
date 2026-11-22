@@ -85,7 +85,7 @@ final class PeriksaNomor
         }
 
         if ($jumlahIndividu > $maksimalIndividu) {
-            $this->galat->tambah("{$jalur}.nomor", "{$ke}: ikut {$jumlahIndividu} nomor individu, padahal paling banyak {$maksimalIndividu}. Hapus " . ($jumlahIndividu - $maksimalIndividu) . ' nomor individu.');
+            $this->galat->tambah("{$jalur}.nomor", "{$ke}: ikut {$jumlahIndividu} nomor individu. Batasnya {$maksimalIndividu} nomor. Hapus " . ($jumlahIndividu - $maksimalIndividu) . ' nomor individu.');
         }
 
         return $sah;

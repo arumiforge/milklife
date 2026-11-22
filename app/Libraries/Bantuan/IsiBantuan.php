@@ -41,7 +41,7 @@ final class IsiBantuan
         ['langkah-2-ofisial.webp', 'Isi ofisial', 'Tulis nama dan nomor WA pendamping, lalu pasang fotonya dari HP.'],
         ['langkah-3-atlet.webp', 'Tambahkan atlet', 'Isi data atlet, pilih nomor lombanya, lalu tekan Tambahkan ke daftar.'],
         ['langkah-4-biaya.webp', 'Periksa biaya', 'Total biaya dihitung otomatis. Periksa rinciannya.'],
-        ['langkah-5-transfer.webp', 'Transfer dan kirim', 'Transfer, pilih foto bukti transfer, lalu tekan Kirim Pendaftaran.'],
+        ['langkah-5-transfer.webp', 'Transfer dan kirim', 'Transfer, pilih foto bukti transfer, lalu tekan Kirim pendaftaran.'],
         ['langkah-6-cek.webp', 'Cetak bukti', 'Cetak bukti pendaftaran dan pantau statusnya di Cek Pendaftaran.'],
         ['hari-lomba-qr.webp', 'Daftar ulang', 'Di hari lomba, tunjukkan kode QR di bukti pendaftaran ke panitia.'],
     ];

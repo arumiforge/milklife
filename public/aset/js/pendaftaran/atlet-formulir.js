@@ -71,7 +71,7 @@
         var kunci = hasil.pilihan.map(function (ku) { return ku.id; }).join(',');
         pilihKu.kotak.hidden = false;
         pilihKu.keterangan.textContent = 'Atlet lahir tahun ' + tahun + ' boleh ikut ' + hasil.pilihan.length + ' kelompok umur. '
-            + 'Pilih satu: nomor lomba yang tampil mengikuti kelompok umur yang dipilih, dan atlet hanya ikut nomor di kelompok umur itu.';
+            + 'Pilih satu. Atlet hanya bisa ikut nomor lomba di kelompok umur yang dipilih.';
 
         if (pilihKu.daftar.getAttribute('data-ku') === kunci) {
             return;

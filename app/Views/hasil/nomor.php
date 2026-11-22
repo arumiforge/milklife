@@ -16,8 +16,7 @@
 <?= $this->section('isi') ?>
 <?= view('tata_letak/_judul_halaman_tw', [
     'inggris'      => 'Results',
-    'alis'         => $nomor['kelompok_umur'],
-    'judul'        => $nomor['nama'],
+    'judul'        => trim($nomor['nama'] . ' ' . $nomor['kelompok_umur']),
     'ikon'         => 'trophy',
     'gambar'       => 'judul/hasil.webp',
     'teks'         => 'Hasil semua babak. DNS = tidak start, DNF = tidak finis, DQ = diskualifikasi.',

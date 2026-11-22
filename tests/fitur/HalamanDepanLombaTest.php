@@ -230,7 +230,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $this->assertSame(['KU Rahasia'], $this->daftarTeks($xpath, '//article[@data-lomba-ku]/h3'));
         $this->assertSame(0, $xpath->query('//*[@data-lomba-biaya-individu or @data-lomba-biaya-beregu]')->length);
         $this->assertSame(['Tahun lahir', 'Jenjang sekolah'], $this->daftarTeks($xpath, '//dl[@data-lomba-ku-info]//dt'));
-        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran saat mendaftar.', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
+        $this->assertStringContainsString('Rincian biaya tampil di langkah pembayaran saat Anda mendaftar.', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
         $this->assertSame(['Estafet Rusa — Putra, Putri', 'Estafet Kosong — Mixed'], $this->daftarTeks($xpath, '//*[@data-lomba-beregu-kepala]'));
         $this->assertSame(['4 atlet per regu'], $this->daftarTeks($xpath, '//ul[@data-lomba-beregu-info]/li'));
 
@@ -250,7 +250,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
 
         $this->assertSame([], $this->daftarTeks($xpath, '//*[@data-lomba-biaya-individu]'));
         $hasil->assertDontSee('Rp 150.000');
-        $this->assertStringContainsString('Rincian biaya ditampilkan di bagian pembayaran', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
+        $this->assertStringContainsString('Rincian biaya tampil di langkah pembayaran', $this->teks($xpath, '//*[@data-lomba-pengantar]'));
 
         setting('HalamanDepan.tampilkan_biaya', true);
         $xpath = $this->xpathDari($this->get('/'));

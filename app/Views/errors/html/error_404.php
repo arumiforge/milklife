@@ -11,7 +11,7 @@ $galat = [
     'judul'  => 'Halaman tidak ditemukan',
     'pesan'  => [
         'Alamat yang Anda buka tidak ada atau sudah dipindahkan.',
-        'Periksa kembali alamatnya, atau kembali ke beranda untuk melanjutkan.',
+        'Periksa lagi alamatnya, atau buka beranda untuk melanjutkan.',
     ],
     'teknis' => (defined('ENVIRONMENT') && ENVIRONMENT !== 'production') ? (string) ($message ?? '') : '',
 ];

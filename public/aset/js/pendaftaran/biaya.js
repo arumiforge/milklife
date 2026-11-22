@@ -127,9 +127,9 @@
             return 'Belum tersambung ke server. Periksa sambungan internet, lalu coba lagi. Isian tetap tersimpan.';
         }
         if (!hasil.isi) {
-            return 'Halaman ini sudah terlalu lama terbuka. Muat ulang halaman (isian tetap tersimpan), lalu coba lagi.';
+            return 'Halaman ini sudah terlalu lama terbuka. Muat ulang halaman, lalu coba lagi. Isian Anda tetap tersimpan.';
         }
-        return hasil.isi.pesan || 'Terjadi kendala. Coba lagi beberapa saat lagi.';
+        return hasil.isi.pesan || 'Permintaan belum berhasil. Tunggu sebentar, lalu coba lagi.';
     }
 
     /**

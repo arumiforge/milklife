@@ -13,9 +13,9 @@ $maksimalIndividu = (int) $wizard['aturan']['nomor_individu_maksimal'];
 <section class="langkah" id="langkah-3" data-langkah="3" aria-labelledby="judul-langkah-3" hidden>
     <?= view('pendaftaran/_kepala_langkah', ['langkah' => 3, 'judul' => 'Atlet'], ['saveData' => false]) ?>
     <p class="langkah-keterangan mb-5 text-gray-600">
-        Kelompok umur ditentukan dari jenjang sekolah dan tahun lahir. Bila tahun lahir atlet masuk dua kelompok umur,
-        Anda memilih salah satunya. Setiap atlet ikut satu kelompok umur, minimal satu nomor, dan paling banyak
-        <?= $maksimalIndividu ?> nomor individu.
+        Kelompok umur ditentukan dari jenjang sekolah dan tahun lahir. Bila tahun lahir atlet cocok dengan dua kelompok umur,
+        pilih salah satunya. Setiap atlet ikut satu kelompok umur dan paling sedikit satu nomor. Nomor individu paling banyak
+        <?= $maksimalIndividu ?> per atlet.
     </p>
 
     <div class="<?= K::RINGKASAN ?>" role="alert" hidden></div>

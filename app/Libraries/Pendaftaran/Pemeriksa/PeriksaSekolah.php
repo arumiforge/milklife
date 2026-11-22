@@ -94,8 +94,8 @@ final class PeriksaSekolah
         } else {
             if ($nama === '') {
                 $this->galat->tambah('sekolah.nama', $npsn === null
-                    ? 'Nama sekolah belum diisi. Tulis nama sekolah, atau isi NPSN supaya nama sekolah tampil sendiri.'
-                    : 'NPSN ini tidak ada di data sekolah kami. Tulis nama sekolah secara lengkap.');
+                    ? 'Nama sekolah belum diisi. Tulis nama sekolah, atau isi NPSN supaya nama sekolah muncul otomatis.'
+                    : 'NPSN ini belum ada di data sekolah. Tulis nama sekolah secara lengkap.');
             } elseif (mb_strlen($nama) > $maksimal) {
                 $this->galat->tambah('sekolah.nama', 'Nama sekolah terlalu panjang. Tulis paling banyak ' . $maksimal . ' huruf.');
             } elseif (preg_match('/\bSLB\b|sekolah\s+luar\s+biasa/iu', $nama) === 1) {

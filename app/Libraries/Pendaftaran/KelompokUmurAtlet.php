@@ -70,7 +70,7 @@ final class KelompokUmurAtlet
         if ($untukJenjang === []) {
             return [
                 'kelompok_umur' => null,
-                'galat'         => "Belum ada kelompok umur yang dibuka untuk {$labelJenjang}, jadi atlet ini tidak bisa didaftarkan.",
+                'galat'         => "Belum ada kelompok umur yang dibuka untuk {$labelJenjang}. Atlet ini belum bisa didaftarkan.",
                 'pilihan'       => [],
             ];
         }
@@ -84,7 +84,7 @@ final class KelompokUmurAtlet
                 return [
                     'kelompok_umur' => null,
                     'galat'         => "Atlet lahir tahun {$tahunLahir} masuk {$ku['nama']}, yang hanya untuk " . Jenjang::gabungLabel($boleh) . '. '
-                        . "Sekolah ini {$labelJenjang}, jadi atlet ini tidak bisa didaftarkan{$rentang}.",
+                        . "Sekolah ini {$labelJenjang}. Atlet ini belum bisa didaftarkan{$rentang}.",
                     'pilihan' => [],
                 ];
             }

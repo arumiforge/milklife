@@ -64,7 +64,7 @@ final class PeriksaRegu
                 $this->galat->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} belum memilih regu. Pilih " . Regu::awalan() . ' ' . self::teksLabel($boleh) . '.');
                 $sah = false;
             } elseif (! in_array($label, $boleh, true)) {
-                $this->galat->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} tidak punya " . Regu::label($label) . '; satu sekolah paling banyak '
+                $this->galat->tambah("{$jalur}.regu", "{$ke}: {$namaNomor} tidak punya " . Regu::label($label) . '. Satu sekolah paling banyak '
                     . count($boleh) . ' regu di nomor ini. Pilih ' . Regu::awalan() . ' ' . self::teksLabel($boleh) . '.');
                 $sah = false;
             }

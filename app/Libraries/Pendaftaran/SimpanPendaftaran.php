@@ -68,7 +68,7 @@ final class SimpanPendaftaran
      */
     public const POLA_KUNCI_KIRIM = '/^[A-Za-z0-9_-]{16,64}$/D';
 
-    public const PESAN_TANPA_BUKTI = 'Bukti transfer belum dipilih. Transfer dulu sebesar total, lalu pilih foto atau tangkapan layar bukti transfer (JPG, PNG, atau WEBP).';
+    public const PESAN_TANPA_BUKTI = 'Bukti transfer belum dipilih. Transfer dulu sejumlah total pembayaran, lalu pilih foto atau tangkapan layar bukti transfer (JPG, PNG, atau WEBP).';
 
     private BaseConnection $db;
 
@@ -105,7 +105,7 @@ final class SimpanPendaftaran
             return self::gagal([[
                 'langkah' => 5,
                 'jalur'   => 'kirim',
-                'pesan'   => 'Pendaftaran lain dari sekolah ini sedang disimpan. Tunggu beberapa detik, lalu tekan Kirim Pendaftaran lagi.',
+                'pesan'   => 'Pendaftaran lain dari sekolah ini sedang disimpan. Tunggu beberapa detik, lalu tekan Kirim pendaftaran lagi.',
             ]]);
         }
 

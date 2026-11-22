@@ -24,5 +24,6 @@ Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 (CodeIgniter 4.7, P
 | Lingkungan cloud belum siap (MySQL, `vendor/`) | `agent/SETUP-CLOUD.md` |
 | Tahap 9 (rombak tampilan, Tailwind, hari lomba) | `dokumen/draf/rencana-implementasi-tahap-9.md` |
 | Meninjau atau menulis tugas gambar Codex | `desain/README.md`, `AGENTS.md` |
+| Menulis atau mengubah teks antarmuka, pesan, panduan | `.claude/skills/bahasa-indonesia-plain/SKILL.md` |
 | Alasan sebuah keputusan | `grep K<nomor> agent/KEPUTUSAN.md` |
 | Perilaku lengkap web | `dokumen/final/rancangan-web-pendaftaran.md` |

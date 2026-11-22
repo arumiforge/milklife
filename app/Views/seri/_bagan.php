@@ -70,7 +70,7 @@ $jumlah      = count($bagan);
                                                 <span class="block truncate text-xs text-gray-600"><?= esc($p['sekolah']) ?></span>
                                             </span>
                                             <?php if (($p['prestasi_teks'] ?? '') !== '') : ?><span class="shrink-0 text-xs font-semibold text-gray-700"><?= esc($p['prestasi_teks']) ?></span><?php endif ?>
-                                            <?php if ($tanda !== null) : ?><span class="shrink-0 rounded bg-green-700 px-1.5 py-0.5 text-xs font-bold text-white" title="<?= $tanda === 'Q' ? 'Lolos: terbaik di serinya' : 'Lolos: prestasi terbaik berikutnya' ?>" data-tanda-lolos="<?= $tanda ?>"><?= $tanda ?></span><?php endif ?>
+                                            <?php if ($tanda !== null) : ?><span class="shrink-0 rounded bg-green-700 px-1.5 py-0.5 text-xs font-bold text-white" title="<?= $tanda === 'Q' ? 'Lolos: terbaik di serinya' : 'Lolos: lewat prestasi terbaik berikutnya' ?>" data-tanda-lolos="<?= $tanda ?>"><?= $tanda ?></span><?php endif ?>
                                         </li>
                                     <?php endforeach ?>
                                 </ul>
