@@ -69,7 +69,9 @@ final class AkunAdminTest extends UjiBasisData
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/akun', $this->sesi()));
 
         $this->assertSame(1, $xpath->query('//nav[@aria-label="Navigasi pengaturan"]//a[@aria-current="page" and contains(., "Akun")]')->length);
-        $this->assertGreaterThan(0, $xpath->query('//a[@aria-current="page" and contains(@href, "admin/pengaturan")]')->length);
+        // Sidebar: anak submenu Akun di bawah Pengaturan aktif, submenunya terbuka (F10-03).
+        $this->assertSame(1, $xpath->query('//nav[@data-menu-admin="samping"]//a[@data-menu-anak][@aria-current="page"][@data-menu-tautan="admin/akun"]')->length);
+        $this->assertSame(1, $xpath->query('//nav[@data-menu-admin="samping"]//button[@data-lipat="butir-admin-pengaturan"][@aria-expanded="true"][@data-lipat-aktif]')->length);
     }
 
     public function testTertutupUntukYangBelumMasuk(): void
