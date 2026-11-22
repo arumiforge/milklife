@@ -113,6 +113,30 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame(base_url($ada), $this->xpathDari($this->get('unduhan'))->query('//footer//img[@data-kaki-logo]')->item(0)?->getAttribute('src'));
     }
 
+    public function testLogoDjarumBawaanBilaAdminBelumMengunggah(): void
+    {
+        // Tanpa berkas bawaan dan tanpa unggahan: kaki halaman tanpa logo.
+        $this->assertSame(0, $this->xpathDari($this->get('/'))->query('//footer//img[@data-kaki-logo]')->length);
+
+        // Logo bawaan public/aset/gambar/logo-djarum.png (F10-01).
+        $this->taruhGambarUji('logo-djarum.png', (string) file_get_contents(ROOTPATH . 'sumber/logo/logo-djarum-foundation.png'));
+        $logo = $this->xpathDari($this->get('/'))->query('//footer//img[@data-kaki-logo]')->item(0);
+        $this->assertNotNull($logo);
+        $this->assertStringStartsWith(base_url('aset/gambar/logo-djarum.png') . '?v=', $logo->getAttribute('src'));
+        $this->assertSame('Logo Bakti Olahraga Djarum Foundation', $logo->getAttribute('alt'));
+        $this->assertSame(['510', '100'], [$logo->getAttribute('width'), $logo->getAttribute('height')]);
+
+        // Unggahan admin menggantikan logo bawaan.
+        $jalur = $this->simpanGambarUji();
+        setting('HalamanDepan.logo_djarum', $jalur);
+        $this->assertSame(base_url($jalur), $this->xpathDari($this->get('/'))->query('//footer//img[@data-kaki-logo]')->item(0)?->getAttribute('src'));
+    }
+
+    public function testBerkasLogoDjarumBawaanSamaDenganSumber(): void
+    {
+        $this->assertFileEquals(ROOTPATH . 'sumber/logo/logo-djarum-foundation.png', FCPATH . 'aset/gambar/logo-djarum.png');
+    }
+
     // ---------- Judul, teks, dan data acara ----------
 
     public function testJudulKosongMemakaiNamaAcara(): void
@@ -280,8 +304,13 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[@data-ku-kartu]'));
         $this->assertCount(5, $kartu);
         // Nama, julukan, dan jumlah nomor; jumlah 0 tidak ditulis (K88).
-        $this->assertSame('KU 8 Seneng Playon 2 nomor individu', $this->teksSimpul($kartu[0]));
+        $this->assertSame('KU 8 2 nomor individu', $this->teksSimpul($kartu[0]));
         $this->assertSame('KU 10 6 nomor individu 5 nomor beregu', $this->teksSimpul($kartu[1]));
+
+        // Julukan dalam kurung yang ditambahkan admin tetap tampil terpisah.
+        $this->db->table('kelompok_umur')->where('nama', 'KU 8')->update(['nama' => 'KU 8 (Julukan Karangan)']);
+        $kartuBaru = $this->xpathDari($this->get('/'))->query('//section[@id="pembuka"]//a[@data-ku-kartu]');
+        $this->assertSame('KU 8 Julukan Karangan 2 nomor individu', $this->teksSimpul($kartuBaru->item(0)));
 
         foreach ($kartu as $a) {
             $this->assertSame(1, $xpath->query('//article[@id="' . substr($a->getAttribute('href'), 1) . '"]')->length, $a->getAttribute('href'));

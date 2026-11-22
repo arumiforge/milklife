@@ -64,8 +64,8 @@ final class DataKelengkapanTest extends UjiBasisData
         $kelengkapan = (new DataKelengkapan())->kelengkapan();
 
         $ku = $kelengkapan->untukHalaman('kelompok-umur')['keterangan'];
-        $this->assertStringContainsString('KU 8 (Seneng Playon), KU 10, KU 12, KU 15, KU 18 belum punya jenjang sekolah.', $ku);
-        $this->assertStringContainsString('KU 8 (Seneng Playon), KU 10, KU 12, KU 15, KU 18 belum punya biaya individu.', $ku);
+        $this->assertStringContainsString('KU 8, KU 10, KU 12, KU 15, KU 18 belum punya jenjang sekolah.', $ku);
+        $this->assertStringContainsString('KU 8, KU 10, KU 12, KU 15, KU 18 belum punya biaya individu.', $ku);
         $this->assertStringNotContainsString('awalan', $ku);
 
         $this->assertSame(

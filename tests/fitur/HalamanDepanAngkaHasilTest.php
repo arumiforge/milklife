@@ -59,7 +59,7 @@ final class HalamanDepanAngkaHasilTest extends UjiBasisData
         $this->buatPendaftaran('SD KARANGAN DUA', '99990002', 'Jepara', 'lunas', ['KU 10' => 1200]);
         // Tanpa NPSN dihitung sebagai sekolah sendiri; Menunggu tidak dihitung.
         $this->buatPendaftaran('SEKOLAH TANPA NPSN', null, 'Kudus', 'lunas', ['KU 15' => 2]);
-        $this->buatPendaftaran('SD KARANGAN MENUNGGU', '99990009', 'Pati', 'menunggu', ['KU 8 (Seneng Playon)' => 5]);
+        $this->buatPendaftaran('SD KARANGAN MENUNGGU', '99990009', 'Pati', 'menunggu', ['KU 8' => 5]);
 
         $xpath = $this->xpathDari($this->get('/'));
         $bagian = $xpath->query('//section[@id="angka"]')->item(0);

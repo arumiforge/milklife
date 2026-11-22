@@ -157,7 +157,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $tautan = $xpath->query('//section[@id="kontak"]//a');
         $this->assertSame(1, $tautan->length);
         $this->assertSame('Bagikan ke WA (di tab baru)', $this->teksSimpul($tautan->item(0)));
-        $this->assertSame('https://wa.me/?text=' . rawurlencode("Lomba Lari Karangan\n" . site_url('/')), $tautan->item(0)->getAttribute('href'));
+        $this->assertSame('https://wa.me/?text=' . rawurlencode("Lomba Lari Karangan\n" . site_url('/') . "\n#MilkLifeAthleticsChallengeSeri2"), $tautan->item(0)->getAttribute('href'));
         $this->assertTabBaru($tautan->item(0));
     }
 
@@ -220,13 +220,13 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         $tanya = $xpath->query('//section[@id="kontak"]//a[@data-kontak-tanya]')->item(0);
         $this->assertNotNull($tanya);
         $this->assertSame('Tanya admin lewat WA (di tab baru)', $this->teksSimpul($tanya));
-        $this->assertSame('https://wa.me/6281299998888?text=' . rawurlencode('Halo admin, saya mau tanya & daftar?'), $tanya->getAttribute('href'));
+        $this->assertSame('https://wa.me/6281299998888?text=' . rawurlencode("Halo admin, saya mau tanya & daftar?\n#MilkLifeAthleticsChallengeSeri2"), $tanya->getAttribute('href'));
         $this->assertStringContainsString('?text=Halo%20admin%2C%20saya%20mau%20tanya%20%26%20daftar%3F', $tanya->getAttribute('href'));
         $this->assertTabBaru($tanya);
 
         $bagikan = $xpath->query('//section[@id="kontak"]//a[@data-kontak-bagikan]')->item(0);
         $this->assertNotNull($bagikan);
-        $this->assertSame('https://wa.me/?text=' . rawurlencode("Ayo ikut lomba!\nDaftar di sini\n" . site_url('/')), $bagikan->getAttribute('href'));
+        $this->assertSame('https://wa.me/?text=' . rawurlencode("Ayo ikut lomba!\nDaftar di sini\n" . site_url('/') . "\n#MilkLifeAthleticsChallengeSeri2"), $bagikan->getAttribute('href'));
 
         // Semua tautan keluar di bagian kontak dibuka di tab baru.
         foreach ($xpath->query('//section[@id="kontak"]//a') as $a) {
@@ -240,7 +240,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
 
         $xpath = $this->xpathDari($this->get('/'));
 
-        $this->assertSame('https://wa.me/6281299998888', $xpath->query('//a[@data-kontak-tanya]')->item(0)?->getAttribute('href'));
+        $this->assertSame('https://wa.me/6281299998888?text=' . rawurlencode('#MilkLifeAthleticsChallengeSeri2'), $xpath->query('//a[@data-kontak-tanya]')->item(0)?->getAttribute('href'));
         $this->assertSame(0, $xpath->query('//section[@id="kontak"]//h3')->length, 'Tanpa narahubung dan media sosial, subjudulnya tidak tampil.');
     }
 

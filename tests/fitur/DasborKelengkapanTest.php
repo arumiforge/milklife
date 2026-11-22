@@ -106,7 +106,7 @@ final class DasborKelengkapanTest extends UjiBasisData
             $this->centang($xpath),
         );
         $hasil->assertSee('2 dari 5 sudah lengkap.');
-        $hasil->assertSee('KU 8 (Seneng Playon), KU 10, KU 12, KU 15, KU 18 belum punya jenjang sekolah.');
+        $hasil->assertSee('KU 8, KU 10, KU 12, KU 15, KU 18 belum punya jenjang sekolah.');
         $hasil->assertSee('1 Oktober 2026 pukul 00.00 sampai 30 November 2026 pukul 23.59');
         // Jadwal sudah ada, tetapi pengaturan belum lengkap.
         $hasil->assertSee('Pendaftaran sedang disiapkan.');

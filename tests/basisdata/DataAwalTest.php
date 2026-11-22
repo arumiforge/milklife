@@ -97,8 +97,11 @@ final class DataAwalTest extends UjiBasisData
         }
 
         $this->assertSame('BANK BPD JATENG', setting('Pembayaran.bank'));
-        $this->assertSame('628123456789', App\Libraries\NomorWa::normalkan('08123456789'));
-        $this->assertSame('628123456789', setting('Pembayaran.nomor_wa'));
+        // Nomor WA panitia terbaru (permintaan Tahap 10), tampil 0882-1527-7227.
+        $this->assertSame('6288215277227', App\Libraries\NomorWa::normalkan('0882-1527-7227'));
+        $this->assertSame('6288215277227', setting('Pembayaran.nomor_wa'));
+        $this->assertSame('6288215277227', setting('HalamanDepan.nomor_wa_tanya'));
+        $this->assertSame('0882-1527-7227', App\Libraries\NomorWa::tampilan('6288215277227'));
 
         // Pengaturan lengkap: pendaftaran bisa dibuka sesuai jadwal.
         $this->assertSame([], (new App\Libraries\DataKelengkapan())->kelengkapan()->belumLengkap());
@@ -121,7 +124,14 @@ final class DataAwalTest extends UjiBasisData
             [['narahubung', 'Just', '085601137077'], ['narahubung', 'Iqbal', '088215277227']],
             array_map(static fn (array $b): array => [$b['jenis'], $b['label'], $b['nilai']], array_slice($tautan, 0, 2)),
         );
-        $this->assertSame(['Instagram', 'TikTok', 'YouTube'], array_column(array_slice($tautan, 2), 'label'));
+        $this->assertSame(
+            [
+                ['Instagram', 'https://www.instagram.com/milklife.id'],
+                ['TikTok', 'https://www.tiktok.com/@milklife_id'],
+                ['YouTube', 'https://www.youtube.com/@milklife_id'],
+            ],
+            array_map(static fn (array $b): array => [$b['label'], $b['nilai']], array_slice($tautan, 2)),
+        );
     }
 
     public function testIsianAdminTidakDitimpa(): void
@@ -187,7 +197,7 @@ final class DataAwalTest extends UjiBasisData
 
         $baris = $this->db->table('kelompok_umur')->orderBy('urutan')->get()->getResultArray();
 
-        $this->assertSame(['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 'nama'));
+        $this->assertSame(['KU 8', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 'nama'));
         $this->assertSame(['1', '2', '3', '4', '5'], array_column($baris, 'urutan'));
 
         // K36: KU 8 lahir 2019 ke atas (akhir kosong), KU 10 2016–2018,
@@ -209,7 +219,7 @@ final class DataAwalTest extends UjiBasisData
             ->select('k.nama, j.jenjang')->join('kelompok_umur k', 'k.id = j.kelompok_umur_id')
             ->orderBy('k.urutan')->get()->getResultArray();
         $this->assertSame(
-            [['KU 8 (Seneng Playon)', 'A'], ['KU 10', 'A'], ['KU 12', 'A'], ['KU 15', 'B'], ['KU 18', 'C']],
+            [['KU 8', 'A'], ['KU 10', 'A'], ['KU 12', 'A'], ['KU 15', 'B'], ['KU 18', 'C']],
             array_map(static fn (array $b): array => [$b['nama'], $b['jenjang']], $jenjang),
         );
     }
@@ -226,7 +236,7 @@ final class DataAwalTest extends UjiBasisData
             ->get()->getResultArray();
 
         $this->assertSame([
-            ['nama' => 'KU 8 (Seneng Playon)', 'awalan' => '1', 'urutan' => '1', 'nomor_terakhir' => '0'],
+            ['nama' => 'KU 8', 'awalan' => '1', 'urutan' => '1', 'nomor_terakhir' => '0'],
             ['nama' => 'KU 10', 'awalan' => '2', 'urutan' => '1', 'nomor_terakhir' => '0'],
             ['nama' => 'KU 12', 'awalan' => '3', 'urutan' => '1', 'nomor_terakhir' => '0'],
             ['nama' => 'KU 15', 'awalan' => '4', 'urutan' => '1', 'nomor_terakhir' => '0'],
@@ -258,7 +268,7 @@ final class DataAwalTest extends UjiBasisData
         $this->seeNumRecords(11, 'nomor_lomba', ['jenis' => 'beregu']);
 
         $harapan = [
-            'KU 8 (Seneng Playon)' => [
+            'KU 8' => [
                 'individu' => ['Lari 40 m'],
                 'beregu'   => [],
             ],
@@ -349,7 +359,7 @@ final class DataAwalTest extends UjiBasisData
         $this->assertStringContainsString('Kelompok umur: 5', $keluaran);
         $this->assertStringContainsString('Nomor lomba  : 69 (58 individu, 11 beregu)', $keluaran);
         $this->assertMatchesRegularExpression('/KU 10\s+: lahir 2016–2018,\s+awalan nomor atlet \(BIB\) 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 8 \(Seneng Playon\)\s+: lahir 2019 ke atas,\s+awalan nomor atlet \(BIB\) 1/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 8\s+: lahir 2019 ke atas,\s+awalan nomor atlet \(BIB\) 1/', $keluaran);
         $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2014–2015,\s+awalan nomor atlet \(BIB\) 3/', $keluaran);
         $this->assertStringNotContainsString('Patokan usia', $keluaran);
         $this->assertStringContainsString('Gambar kepala bawaan dipasang', $keluaran);

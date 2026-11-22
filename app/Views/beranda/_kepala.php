@@ -91,7 +91,7 @@ $latarLintasan  = gambar_opsional('beranda/latar-lintasan.webp', ['class' => 'po
 
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . (int) $ukuran['lebar'] . '" height="' . (int) $ukuran['tinggi'] . '"';
 
-/** Nama kelompok umur dipisah: "KU 8 (Seneng Playon)" → ["KU 8", "Seneng Playon"]. */
+/** Nama kelompok umur dipisah bila admin menambah julukan dalam kurung: "KU 8 (Julukan)" → ["KU 8", "Julukan"]; "KU 8" → ["KU 8", ""]. */
 $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s*$/u', $nama, $c) === 1 ? [$c[1], $c[2]] : [$nama, ''];
 ?>
 <section id="pembuka" class="latar-merek relative overflow-hidden border-b border-gray-200/70" aria-labelledby="judul-acara"<?= $foto !== [] ? ' data-pembuka-foto="' . count($foto) . '"' : '' ?>>

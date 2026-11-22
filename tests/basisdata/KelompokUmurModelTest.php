@@ -184,7 +184,7 @@ final class KelompokUmurModelTest extends UjiBasisData
 
         // Batas kosong = tidak terbatas: "lahir 2020 ke atas" menabrak KU 8 (2019 ke atas).
         [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 6', 'tahun_lahir_awal' => '2020', 'jenjang' => ['A']]));
-        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 8 (Seneng Playon) (lahir 2019 ke atas) untuk jenjang SD/MI.', $galat['tahun_lahir_awal']);
+        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 8 (lahir 2019 ke atas) untuk jenjang SD/MI.', $galat['tahun_lahir_awal']);
     }
 
     public function testRentangBeririsanBolehUntukJenjangLain(): void
@@ -328,7 +328,7 @@ final class KelompokUmurModelTest extends UjiBasisData
 
         $daftar = $this->model->daftarLengkap();
 
-        $this->assertSame(['KU 6', 'KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($daftar, 'nama'));
+        $this->assertSame(['KU 6', 'KU 8', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($daftar, 'nama'));
         $this->assertSame(['A'], $daftar[0]['jenjang']);
         $this->assertSame([], $daftar[0]['awalan']);
         $this->assertSame(0, $daftar[0]['jumlah_nomor_lomba']);

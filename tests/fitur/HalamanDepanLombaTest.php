@@ -51,7 +51,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
         $this->assertSame(0, $xpath->query('//section[@id="lomba"]//table')->length, 'Tanpa tabel lebar.');
 
         $this->assertSame(
-            ['KU 8 (Seneng Playon)', 'KU 10', 'KU 12', 'KU 15', 'KU 18'],
+            ['KU 8', 'KU 10', 'KU 12', 'KU 15', 'KU 18'],
             $this->daftarTeks($xpath, '//article[@data-lomba-ku]/h3'),
         );
         $this->assertSame(
