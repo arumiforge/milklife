@@ -92,7 +92,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Juara I–III dari babak Final; regu juara = satu piala (K124).
 - Poin multi-lomba (Trilomba): admin mengisi prestasi mentah tiap komponen, web menghitung poin dari tabel skor yang bisa diubah admin (bawaan tabel panitia Trilomba O2SN SMP dan Pancalomba SMA/SMK); di antara dua baris memakai baris yang lebih buruk, di luar tabel 0 poin dengan peringatan; total = jumlah poin komponen (K140 butir 7b, menggantikan K124 butir 3).
 - Juara umum per jenjang dengan metode pilihan admin di Pengaturan > Hasil: **Medali** (bawaan, juknis: juara I, lalu II, lalu III) atau **Poin per peringkat** 1–8 (bawaan 7-5-4-3-2-1-0-0; poin, lalu juara I, II, III); masih sama = peringkat bersama; kolom poin selalu tampil; kontingen = NPSN (K124, K140 butir 7a).
-- Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri (K130). Di ponsel semua butir ada di sidebar yang dibuka tombol menu di kepala halaman; menu bawah 5 butir urusan pendaftaran: Dasbor, Pendaftaran, Atlet, Ditolak, Rekap; butir aktif cukup ikon oranye tanpa garis bawah (K131–K133).
+- Hasil publik setelah "Terbitkan" per nomor; PDF dan Excel; akun admin yang sama (K124). Hasil dan klasemen punya butir menu admin sendiri (K130). Di ponsel semua butir ada di sidebar yang dibuka tombol menu di kepala halaman; menu bawah 5 butir: Dasbor, Pendaftaran, Atlet, Rekap, dan Menu yang membuka sidebar (Atlet ditolak hanya di sidebar); butir aktif ikon dan label oranye tanpa garis bawah (K131–K133, K157).
 - Tandai hadir di daftar ulang hanya untuk pendaftaran Lunas (K129).
 - Cetak BIB per kelompok umur (PDF) dan per sekolah (PDF, ZIP gambar JPG 300 dpi + PDF); ZIP semua sekolah satu folder per sekolah; satu latar penuh untuk semua BIB (unggahan sendiri, atau latar bawaan G9-01 bila berkasnya ada), kepala dan warna tulisan (gelap/terang) dipilih admin (K137, F9-16).
 - Pecah berkas besar tanpa ubah perilaku setelah F7-26, F7-27, F8-01 (K121).
@@ -114,5 +114,6 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 
 - Rilis langsung aktif tanpa sakelar tampilan; selama pendaftaran buka, perilaku wizard, Cek Pendaftaran, dan unggah bukti tetap sama dan diuji di peramban (K153).
 - Logo di kaus tokoh gambar Codex ditempel dari berkas resmi saat pasca-proses, tidak digambar model (K153).
-- Bilah submenu atas publik diatur admin; menu bawah publik ponsel Beranda, Jadwal, Hasil, Daftar/Cek, Menu; sidebar admin `#021F7B`, pojok kiri atas `#234987` (K154).
+- Bilah submenu atas publik diatur admin; menu bawah publik ponsel Beranda, Jadwal, Hasil, Daftar/Cek, Menu (yang mati diganti Bantuan lalu Unduhan); menu utama tanpa Kategori; sidebar admin `#021F7B`, pojok kiri atas `#234987`, submenu Pengaturan tanpa mengulang halaman kelompok lain (K154, K157).
+- Judul editorial Inggris di pita judul dan bagian halaman depan hanya hiasan; `<h1>`/`<h2>` tetap Indonesia (K153, K157).
 - Server yang sudah terisi disamakan dengan `php spark data:sesuaikan` (KU 8, WA, media sosial; hanya nilai bawaan lama) (K154).
