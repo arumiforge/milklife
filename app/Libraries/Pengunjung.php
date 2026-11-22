@@ -44,6 +44,12 @@ final class Pengunjung
 
     private const POLA_PONSEL = '~mobile|android|iphone|ipad|ipod|opera mini|iemobile~i';
 
+    /**
+     * Satu dari sekian catatan ikut membersihkan catatan lama (`hapusLama()`);
+     * 0 = tidak pernah. Uji yang menghitung baris mengisinya 0 supaya hasilnya pasti.
+     */
+    public int $peluangBersih = 200;
+
     private BaseConnection $db;
 
     private string $kunci;
@@ -128,8 +134,8 @@ final class Pengunjung
             'ponsel'  => self::ponsel($peramban) ? 1 : 0,
         ]);
 
-        // Sekitar satu dari 200 catatan ikut membersihkan catatan lama.
-        if (random_int(1, 200) === 1) {
+        // Sekitar satu dari `$peluangBersih` catatan ikut membersihkan catatan lama.
+        if ($this->peluangBersih > 0 && random_int(1, $this->peluangBersih) === 1) {
             $this->hapusLama($waktu);
         }
     }
