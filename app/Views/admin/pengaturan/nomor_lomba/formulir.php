@@ -358,6 +358,14 @@ $judulBagian = 'px-1 text-sm font-bold text-gray-900';
                                 <?= $pesan('alasan_tidak_dilombakan') ?>
                             </div>
                         </div>
+                        <?php // Spesifikasi alat untuk rekor kejuaraan (F11-06, CR 25.2). ?>
+                        <div>
+                            <label for="berat_alat" class="<?= $label ?>">Spesifikasi alat</label>
+                            <input type="text" <?= $kotak('berat_alat') ?> id="berat_alat" name="berat_alat" maxlength="<?= App\Models\NomorLombaModel::ALAT_MAKSIMAL ?>" placeholder="Contoh: Peluru 3 kg"
+                                value="<?= esc($isian['berat_alat'] ?? '', 'attr') ?>" aria-describedby="<?= $jelas('berat_alat', 'berat_alat-bantuan') ?>">
+                            <p id="berat_alat-bantuan" class="<?= $bantuan ?>">Boleh kosong. Rekor kejuaraan dicatat per spesifikasi alat: rekor dengan alat berbeda tidak saling memecahkan.</p>
+                            <?= $pesan('berat_alat') ?>
+                        </div>
                     </div>
                 </fieldset>
 

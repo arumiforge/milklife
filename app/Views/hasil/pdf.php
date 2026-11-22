@@ -13,8 +13,15 @@
 use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\Peringkat;
+use App\Libraries\Hasil\Rekor;
 
 $beregu = $nomor['jenis'] === 'beregu';
+// Rekor kejuaraan (F11-06): legenda CR hanya bila ada hasil yang membuat rekor.
+$adaRekor = false;
+
+foreach ($babak as $b) {
+    $adaRekor = $adaRekor || in_array(true, array_column($b['hasil'], 'rekor'), true);
+}
 $kolom  = $beregu ? 4 : 6;
 ?>
 <!doctype html>
@@ -52,7 +59,7 @@ $kolom  = $beregu ? 4 : 6;
     </tr>
 </table>
 <h1>Hasil <?= esc($nomor['nama']) ?> – <?= esc($nomor['kelompok_umur']) ?></h1>
-<div class="keterangan">Jenis hasil: <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>. <?= esc(Peringkat::legenda($nomor['jenis_hasil'])) ?><?= ! empty($nomor['waktu_tangan']) ? ' ' . esc(App\Libraries\Hasil\Prestasi::TANDA_TANGAN) : '' ?></div>
+<div class="keterangan">Jenis hasil: <?= esc(JenisHasil::LABEL[$nomor['jenis_hasil']]) ?>. <?= esc(Peringkat::legenda($nomor['jenis_hasil'])) ?><?= ! empty($nomor['waktu_tangan']) ? ' ' . esc(App\Libraries\Hasil\Prestasi::TANDA_TANGAN) : '' ?><?= $adaRekor ? ' ' . Rekor::TANDA . ' = ' . Rekor::ARTI_TANDA . '.' : '' ?></div>
 <?php if ($babak === []) : ?>
     <div class="kosong">Belum ada babak.</div>
 <?php endif ?>
@@ -80,7 +87,7 @@ $kolom  = $beregu ? 4 : 6;
                     </td>
                     <?php if (! $beregu) : ?><td><?= esc($h['sekolah']) ?></td><?php endif ?>
                     <td>
-                        <?= esc($h['prestasi_teks']) ?>
+                        <?= esc($h['prestasi_teks']) ?><?= ! empty($h['rekor']) ? ' <b>' . Rekor::TANDA . '</b>' : '' ?>
                         <?php foreach ($h['rincian'] ?? [] as $r) : ?><div class="anggota"><?= esc($r['nama']) ?> <?= $r['prestasi'] === '' ? '– (0)' : esc($r['prestasi']) . ' (' . $r['poin'] . ')' ?></div><?php endforeach ?>
                     </td>
                     <td><?= esc(Peringkat::teks($h['keterangan'], $h['pasal'] ?? null)) ?></td>

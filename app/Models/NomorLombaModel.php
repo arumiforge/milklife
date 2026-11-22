@@ -90,6 +90,7 @@ class NomorLombaModel extends Model
     public const ANGGOTA_MAKSIMAL = 50;
     public const URUTAN_MAKSIMAL  = 9999;
     public const NAMA_MAKSIMAL    = 100;
+    public const ALAT_MAKSIMAL    = 60; // spesifikasi alat (F11-06)
 
     protected $table            = 'nomor_lomba';
     protected $primaryKey       = 'id';
@@ -105,6 +106,8 @@ class NomorLombaModel extends Model
         'tidak_dilombakan', 'alasan_tidak_dilombakan', 'peserta_minimal',
         // Cara pencatatan waktu (F11-04).
         'cara_waktu',
+        // Spesifikasi alat untuk rekor (F11-06).
+        'berat_alat',
     ];
 
     protected $useTimestamps = true;
@@ -123,7 +126,7 @@ class NomorLombaModel extends Model
      *
      * @param array<string, mixed> $mentah
      *
-     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string, jumlah_percobaan: string, pemecah_seri: string, tidak_dilombakan: string, alasan_tidak_dilombakan: string, peserta_minimal: string, cara_waktu: string}
+     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string, jumlah_percobaan: string, pemecah_seri: string, tidak_dilombakan: string, alasan_tidak_dilombakan: string, peserta_minimal: string, cara_waktu: string, berat_alat: string}
      */
     public static function rapikanIsian(array $mentah): array
     {
@@ -154,6 +157,8 @@ class NomorLombaModel extends Model
             'peserta_minimal'         => $teks('peserta_minimal'),
             // Cara pencatatan waktu (F11-04); bawaan elektronik.
             'cara_waktu'       => $teks('cara_waktu') === 'tangan' ? 'tangan' : 'elektronik',
+            // Spesifikasi alat (F11-06), teks bebas.
+            'berat_alat'       => (string) preg_replace('/\s+/u', ' ', $teks('berat_alat')),
         ];
 
         if ($isian['jenis'] === 'individu') {
@@ -227,6 +232,11 @@ class NomorLombaModel extends Model
         // Status nomor dan batas peserta (F11-03).
         $galat += StatusNomor::periksa($isian);
 
+        // Spesifikasi alat (F11-06).
+        if (mb_strlen($isian['berat_alat'] ?? '') > self::ALAT_MAKSIMAL) {
+            $galat['berat_alat'] = 'Spesifikasi alat terlalu panjang. Persingkat menjadi paling banyak ' . self::ALAT_MAKSIMAL . ' huruf, misalnya Peluru 3 kg.';
+        }
+
         if ($isian['urutan'] !== '' && self::angka($isian['urutan'], 0, self::URUTAN_MAKSIMAL) === null) {
             $galat['urutan'] = 'Urutan harus angka bulat 0 sampai ' . self::URUTAN_MAKSIMAL . '. Angka kecil tampil lebih dulu. Kosongkan untuk menaruhnya paling akhir.';
         }
@@ -273,6 +283,8 @@ class NomorLombaModel extends Model
             'peserta_minimal'         => $angka($isian['peserta_minimal'] ?? ''),
             // Cara pencatatan waktu (F11-04), hanya untuk jenis hasil waktu.
             'cara_waktu'       => ($isian['cara_waktu'] ?? '') === 'tangan' && $jenisHasil === JenisHasil::WAKTU ? 'tangan' : 'elektronik',
+            // Spesifikasi alat (F11-06); kosong = null.
+            'berat_alat'       => ($isian['berat_alat'] ?? '') === '' ? null : $isian['berat_alat'],
         ];
     }
 
@@ -304,6 +316,9 @@ class NomorLombaModel extends Model
 
         // Cara pencatatan waktu (F11-04).
         $isian['cara_waktu'] = self::waktuTangan($baris) ? 'tangan' : 'elektronik';
+
+        // Spesifikasi alat (F11-06).
+        $isian['berat_alat'] = (string) ($baris['berat_alat'] ?? '');
 
         return $isian;
     }

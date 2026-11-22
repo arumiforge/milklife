@@ -169,6 +169,8 @@ final class JejakHalamanAdminTest extends UjiBasisData
         $faq = (int) $this->db->insertID();
         $this->db->table('galeri')->insert(['judul' => 'Album karangan']);
         $galeri = (int) $this->db->insertID();
+        $this->db->table('rekor')->insert(['nomor_lomba_id' => $this->idInduk['lari60putra'], 'kelompok_umur' => 'KU 10', 'nomor' => 'Lari 60 m putra', 'kategori' => 'putra', 'jenis_hasil' => 'waktu', 'cara_waktu' => 'elektronik', 'prestasi' => 950, 'atlet' => 'ATLET KARANGAN', 'sekolah' => 'SD KARANGAN', 'seri' => 'Seri 2']);
+        $rekor = (int) $this->db->insertID();
 
         $nomor = $this->idInduk['lari60putra'];
         $this->db->table('babak')->insert(['nomor_lomba_id' => $nomor, 'nama' => 'Final', 'final' => 1, 'urutan' => 1]);
@@ -192,6 +194,7 @@ final class JejakHalamanAdminTest extends UjiBasisData
             'unduhan ([0-9]+)'                       => $unduhan,
             'bantuan ([0-9]+)'                       => $faq,
             'galeri ([0-9]+)'                        => $galeri,
+            'rekor ([0-9]+)'                         => $rekor,
             'tabel-skor ([0-9]+)'                    => (int) $tabel['id'],
             'tabel-skor ([0-9]+) ([a-z0-9-]+)'       => (string) ($komponen[0]['kode'] ?? ''),
         ];

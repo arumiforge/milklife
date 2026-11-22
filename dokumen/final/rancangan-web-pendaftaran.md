@@ -10,6 +10,7 @@
 | Revisi 4 | Disesuaikan dengan yang dibangun di Tahap 4–7: foto ofisial wajib (K50); batas nomor individu per atlet dan atlet per nomor (K51, K53); konfirmasi tim susulan (K57); tim tanpa pembayar (K68); ID pendaftaran tetap saat diubah (K63); cek dan bukti tanpa tanggal lahir dan nomor atlet (K49, K52); panel tanpa pendaftaran baru, nomor atlet atlet tambahan, saringan status rekap (K58–K60); sesi lain keluar saat ganti sandi dan halaman galat ramah (K67); CI GitHub (K46); cadangan harian (K66); juknis tidak ditunggu (K55). Bagian yang berubah: 5, 6.3, 6.5, 6.6, 6.8, 6.9, 8, 9, 13, 14, 15, 16, 17 |
 | Revisi 5 | Kelompok umur ditentukan jenjang dulu, baru tahun lahir; rentang tahun lahir boleh beririsan antar-jenjang, tidak dalam satu jenjang (K95). Bagian yang berubah: 6.4, 17 |
 | Revisi 6 | Data sekolah dari Sekolah Kita dan menu Sekolah di panel untuk memberi nama pembeda (K97); kelompok umur dan nomor lomba yang sudah dimatikan tetap boleh dipertahankan saat admin mengubah pendaftaran (K98); usulan nama sekolah dari pendaftar (K99). Disesuaikan juga dengan keputusan yang sudah berjalan: penulisan rupiah (K80), bukti transfer diunggah ofisial dan pendaftaran baru masuk bersama bukti transfer (K83, K90), alamat dan isi bukti PDF serta halaman cek (K77, K78, K87–K89, K91). Bagian yang berubah: 5, 6.2, 6.7, 7, 8, 9, 11, 15, 17 |
+| Revisi 33 | Rekor kejuaraan dicatat mulai Seri 2 (K172 butir 3, F11-06): rekor baru dari hasil Final yang terbit, tanda CR di hasil dan videotron, tarik terbitan mengembalikan rekor lama, rekor isian admin, spesifikasi alat per nomor, halaman `/rekor` bersakelar. Bagian yang berubah: 5, 11, 18 |
 | Revisi 32 | Videotron menjadi daftar tampilan tetap yang dipilih operator (K173, F11-09): `/layar` berisi tautan per seri, per sesi, klasemen, kelompok umur, dan nomor lomba; tiap tautan satu tampilan layar penuh yang tidak berganti sendiri; papan putar lama pindah ke `/layar/putar`. Bagian yang berubah: 5, 10, 18 |
 | Revisi 31 | Peta halaman dilengkapi halaman Pengecekan admin `/admin/pengecekan` (K102), tujuan tombol Buka Pengecekan di dasbor. Bagian yang berubah: 5 |
 | Revisi 30 | Penutupan Tahap 10 (K153–K168, F10-11): data bawaan terbaru (`KU 8` tanpa "Seneng Playon", WA 0882-1527-7227 dengan tagar acara, media sosial resmi, logo Djarum Foundation baru, pesan WA bawaan) dan perintah aman `php spark data:sesuaikan` untuk server yang sudah terisi (K153, K154 butir 4, K166 butir 3); peta lokasi Supersoccer Arena dengan CSP `frame-src https://www.google.com`. Panel admin: sidebar biru tua dengan pojok logo biru, sidebar lebih lebar, menu dan submenu bisa dilipat, jejak navigasi di setiap halaman, semua tabel berpaginasi, dua kartu bukti bayar di dasbor, menu bawah ponsel Dasbor, Pendaftaran, Atlet, Rekap, Menu (K154 butir 3, K156 butir 3, K157 butir 1, K168). Gaya editorial: judul Barlow Condensed (K155), judul Inggris hiasan di atas judul Indonesia, rata tengah (K157 butir 3, K167), tanpa alis (K164), tanpa garis atas oranye, garis kiri, dan garis pendek (K160, K168); hero foto asli dengan slideshow 5 detik (K156 butir 4); navigasi publik dengan bilah submenu atas, Masuk panitia di bilah atas, laci kanan, dan menu bawah tanpa Menu dengan Cek paling kanan (K154, K157 butir 2, K168 butir 8–11); unduhan dengan Lihat sebagai modal (K168 butir 6); gambar Codex bergaya anime 2D cel-shaded dengan stadion mirip SSA (K153, K158); tata bahasa dengan skill `bahasa-indonesia-plain` (K159, K165, K166); wizard dengan tombol Kosongkan di judul langkah, jenjang dan kabupaten untuk ponsel, usulan nama yang dirapikan, pilihan terkunci yang jelas (K161–K163, K164 butir 2), dan nomor pendaftaran yang bisa disalin sekali klik (K168 butir 12). Bagian yang berubah: 2, 4, 5, 6.2, 7, 8, 9, 10, 12, 13, 14, 15, 16, 19, lampiran |
@@ -107,6 +108,7 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/bantuan` | Bantuan dan tanya-jawab per kategori, bisa dicari, panduan bergambar langkah pendaftaran, tautan WA panitia; selalu tampil (Tahap 9, F9-04) |
 | `/hasil` | Hasil lomba per nomor yang sudah diterbitkan admin (Tahap 8, K124) |
 | `/hasil/klasemen` | Klasemen sekolah per kelompok umur dari nomor yang sudah terbit (Tahap 8, K124, K172) |
+| `/rekor` | Rekor kejuaraan yang berlaku per kelompok umur dan nomor lomba; bersakelar, bawaan mati (Tahap 11, K172, F11-06) |
 | `/jadwal` | Jadwal pertandingan per hari dari babak yang diberi tanggal dan jam, status otomatis, PDF per hari; bersakelar, bawaan mati (Tahap 9, F9-07) |
 | `/peserta` | Peserta publik: cari nama, sekolah, nomor atlet; saring kelompok umur, nomor lomba, putra/putri; hanya pendaftaran Lunas; bersakelar, bawaan mati (Tahap 9, F9-12, K144) |
 | `/galeri` | Album foto bersampul yang menaut ke Instagram atau Google Drive; bersakelar, bawaan mati (Tahap 9, F9-06) |
@@ -135,6 +137,7 @@ Semua URL dan teks antarmuka berbahasa Indonesia.
 | `/admin/hasil` | Babak, prestasi, peringkat, dan Terbitkan per nomor lomba (Tahap 8, K124) |
 | `/admin/seri` | Seri dan lintasan: aturan seri per nomor, bagi otomatis, geser, aturan lolos Q/q, kunci, unduhan daftar seri per nomor dan per hari (Tahap 9, K140 butir 8) |
 | `/admin/klasemen` | Klasemen sekolah per kelompok umur, termasuk nomor yang belum terbit (Tahap 8, K124, K172) |
+| `/admin/rekor` | Rekor kejuaraan (berlaku dan riwayat), tambah dan ubah rekor isian admin, sakelar halaman Rekor (Tahap 11, K172, F11-06) |
 | `/admin/rekap` | Rekap per nomor lomba, tim beregu, per sekolah, per kelompok umur, keuangan |
 | `/admin/sekolah` | Data sekolah: daftar dengan saringan nama kembar, ubah nama dan data lain (K97) |
 | `/admin/sekolah/nama-desa` | Tambahkan nama desa ke semua sekolah bernama sama sekaligus (K114) |
@@ -474,6 +477,13 @@ Tambahan Tahap 9 (K140 butir 7c dan 7d, aturan nomor dan lembar juri):
 | `nomor_lomba` | tambahan: banyak percobaan lompat/lempar (kosong = 3) dan sakelar pemecah seri prestasi terbaik kedua (bawaan menyala) |
 | `hasil` | tambahan: prestasi tiap percobaan (jarak, gagal, lewat), waktu dalam seperseribu detik bila diisi, dan versi baris (naik setiap kali disimpan) |
 
+Tambahan Tahap 11 (K172 butir 3, rekor kejuaraan, F11-06):
+
+| Tabel atau kolom | Isi utama |
+|---|---|
+| `nomor_lomba` | tambahan: spesifikasi alat (teks bebas, misalnya "Peluru 3 kg") |
+| `rekor` | nomor lomba (kosong bila nomornya dihapus) dan salinan nama nomor, kelompok umur, kategori, jenis hasil; cara pencatatan waktu (nomor waktu), spesifikasi alat, prestasi, atlet, sekolah, seri, tanggal; hasil asal (terisi untuk rekor dari hasil terbit) |
+
 Keunikan NISN, nomor atlet, dan kunci kirim dijaga oleh basis data, bukan hanya oleh aplikasi.
 
 ## 12. Tampilan
@@ -607,6 +617,16 @@ Ketentuan Tahap 8 (K124, K125). Bagian ini menjadi aturan saat dibangun; rincian
 - **Tabel skor** di Pengaturan > Tabel Skor: tabel bawaan **Trilomba O2SN SMP** (60 m, lompat jauh, tolak peluru) dan **Pancalomba SMA/SMK** (100 m, 800 m, lompat jauh, tolak peluru, lempar lembing), putra dan putri, diambil dari tabel penilaian panitia (`sumber/tabel-skor/`) dengan alat di `data/alat/` yang mencocokkan baris sampel PDF (misalnya 60 m putra 7,00 = 882 poin). Admin bisa mengubah, menambah, dan menghapus baris, mengganti semua baris satu komponen dan kategori dari Excel (kolom prestasi dan poin), mengunduhnya sebagai Excel, dan menambah tabel lain dari panitia. Setiap perubahan baris langsung menghitung ulang poin dan peringkat hasil yang memakai tabel itu. Isian poin langsung (jenis hasil Poin) tetap bisa dipakai.
 - **Nomor beregu**: juara per regu; satu regu juara = satu piala untuk sekolahnya.
 - **Terbitkan** (K124 butir 7): hasil satu nomor tampil di halaman publik `hasil` setelah admin menekan "Terbitkan" untuk nomor itu, dan bisa ditarik kembali.
+
+**Rekor kejuaraan** (K172 butir 3, F11-06): dicatat mulai Seri 2; hasil Seri 1 tidak diimpor.
+
+- Rekor dicatat per **nomor lomba** (kelompok umur dan jenis kelamin ikut nomornya), **spesifikasi alat** (teks bebas per nomor di Pengaturan > Nomor lomba, huruf besar-kecil tidak dibedakan), dan **cara pencatatan waktu**. Rekor waktu tangan dan waktu elektronik tidak saling memecahkan; rekor dengan alat berbeda juga tidak.
+- Saat hasil nomor diterbitkan, prestasi babak Final yang **lebih baik** dari rekor yang berlaku menjadi rekor baru; bila belum ada rekor, prestasi terbaik Final menjadi rekor pertama. Prestasi yang sama dengan rekor tidak memecahkannya. NM, DNS, DNF, dan DQ tidak membuat rekor; r tetap dinilai. Peserta dengan prestasi terbaik yang sama dicatat semua.
+- Hasil yang membuat rekor ditandai **CR** di halaman hasil admin dan publik, PDF, Excel, dan videotron.
+- **Tarik kembali** terbitan menghapus rekor dari nomor itu sehingga rekor lama berlaku lagi. Hasil terbit yang dikoreksi, babak yang dihapus, atau peserta yang dikeluarkan menghitung ulang rekornya.
+- Admin bisa **mengisi rekor dengan tangan** di `admin/rekor` (misalnya rekor awal dari panitia), lalu mengubah dan menghapusnya. Rekor dari hasil hanya berubah lewat hasilnya.
+- Halaman publik `/rekor` menampilkan rekor yang berlaku; sakelarnya di `admin/rekor`, bawaan mati. Tanda CR tidak bergantung pada sakelar ini.
+- Rekor isian admin dan spesifikasi alat ikut Backup data; rekor dari hasil dihitung ulang setelah impor.
 
 **Klasemen sekolah** (K124 butir 5–6, K140 butir 7a, K172 butir 2):
 

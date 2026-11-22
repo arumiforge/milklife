@@ -268,7 +268,9 @@ final class HasilLomba
      * teks untuk kotak isian (dengan seperseribu bila ada), `pemecah` untuk
      * `Peringkat::hitung()`, `versi` penanda perubahan baris.
      *
-     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, pasal: string|null, peringkat: int|null, manual: bool, seri: int|null, lintasan: int|null, percobaan: list<int|string|null>|null, percobaan_teks: list<string>, seperseribu: int|null, prestasi_isian: string, pemecah: list<int>|null, versi: int}>
+     * `rekor` (F11-06): hasil ini membuat rekor kejuaraan (tanda CR).
+     *
+     * @return list<array{id: int, kunci: string, nama: string, sekolah: string, npsn: string|null, jenjang: string, pendaftaran_id: int, nomor_dada: string|null, anggota: list<string>, prestasi: int|null, prestasi_teks: string, rincian: list<array{nama: string, prestasi: string, poin: int, luar: string|null}>, rincian_isian: array<string, string>, keterangan: string|null, pasal: string|null, peringkat: int|null, manual: bool, seri: int|null, lintasan: int|null, percobaan: list<int|string|null>|null, percobaan_teks: list<string>, seperseribu: int|null, prestasi_isian: string, pemecah: list<int>|null, versi: int, rekor: bool}>
      */
     public function hasilBabak(int $babakId, array $nomor): array
     {
@@ -350,6 +352,13 @@ final class HasilLomba
                 'pemecah'        => Peringkat::pemecah($jenisHasil, $percobaan, $ribu, (bool) ($nomor['pemecah_seri'] ?? true)),
                 'versi'          => (int) ($b['versi'] ?? 0),
             ];
+        }
+
+        // Rekor kejuaraan (F11-06): tanda CR pada hasil yang membuat rekor.
+        $rekor = (new Rekor($this->db))->penanda(array_column($hasil, 'id'));
+
+        foreach ($hasil as $i => $h) {
+            $hasil[$i]['rekor'] = isset($rekor[$h['id']]);
         }
 
         usort($hasil, static fn (array $x, array $y): int => [$x['peringkat'] ?? PHP_INT_MAX, $x['keterangan'] ?? '', (string) $x['nomor_dada'], $x['nama']]
@@ -493,12 +502,26 @@ final class HasilLomba
             }
         });
 
+        // Rekor kejuaraan (F11-06) hanya dari babak Final.
+        (new Rekor($this->db))->perbarui($babak['nomor']['id']);
+
         return [];
     }
 
     public function hapusBabak(int $babakId): bool
     {
-        return $this->db->table('babak')->where('id', $babakId)->delete() !== false && $this->db->affectedRows() > 0;
+        $nomorId = $this->db->table('babak')->select('nomor_lomba_id')->where('id', $babakId)->get()->getRowArray()['nomor_lomba_id'] ?? null;
+        $rekor   = new Rekor($this->db);
+
+        // Rekor kejuaraan (F11-06) dari babak ini dilepas lebih dulu, lalu dihitung ulang.
+        $rekor->lepasHasil(array_map('intval', array_column($this->db->table('hasil')->select('id')->where('babak_id', $babakId)->get()->getResultArray(), 'id')));
+        $terhapus = $this->db->table('babak')->where('id', $babakId)->delete() !== false && $this->db->affectedRows() > 0;
+
+        if ($nomorId !== null) {
+            $rekor->perbarui((int) $nomorId);
+        }
+
+        return $terhapus;
     }
 
     /**
@@ -531,12 +554,15 @@ final class HasilLomba
 
         $this->transaksi(function () use ($buang, $babakId, $babak, $baru): void {
             if ($buang !== []) {
+                (new Rekor($this->db))->lepasHasil(array_map('intval', $buang));
                 $this->db->table('hasil')->whereIn('id', $buang)->delete();
             }
 
             $this->tulisPeserta($babakId, $babak['nomor'], $baru, date('Y-m-d H:i:s'));
             $this->hitungUlang($babakId, $babak['nomor']['jenis_hasil']);
         });
+
+        (new Rekor($this->db))->perbarui($babak['nomor']['id']);
 
         return ['tambah' => count($baru), 'hapus' => count($buang)];
     }
@@ -707,15 +733,22 @@ final class HasilLomba
         // ini sudah dibagi ke seri dan hasilnya lengkap.
         (new SeriLintasan($this->db))->setelahHasilTersimpan($babakId);
 
+        // Rekor kejuaraan (F11-06): hasil terbit yang diubah dihitung ulang.
+        (new Rekor($this->db))->perbarui($nomor['id']);
+
         return [];
     }
 
     /**
      * Terbitkan (`true`) atau tarik kembali (`false`) hasil satu nomor.
+     *
+     * Rekor kejuaraan (F11-06): terbit mencatat rekor baru dari babak Final,
+     * tarik kembali menghapusnya sehingga rekor lama berlaku lagi.
      */
     public function terbitkan(int $nomorId, bool $terbit): void
     {
         $this->db->table('nomor_lomba')->where('id', $nomorId)->update(['hasil_terbit_pada' => $terbit ? date('Y-m-d H:i:s') : null]);
+        (new Rekor($this->db))->perbarui($nomorId);
     }
 
     /**

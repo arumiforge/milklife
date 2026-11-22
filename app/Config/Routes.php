@@ -66,6 +66,11 @@ $routes->get('jadwal/(:num)', 'SeriController::babak/$1');
 $routes->get('galeri', 'GaleriController::index');
 // ---------- Akhir galeri publik ----------
 
+// ---------- Rekor kejuaraan publik (F11-06) ----------
+// 404 selama sakelar Rekor.tampil mati (bawaan).
+$routes->get('rekor', 'RekorController::index');
+// ---------- Akhir rekor publik ----------
+
 // ---------- Papan videotron (F9-13) ----------
 // Hanya data terbit; 404 selama sakelar `Videotron.tampil` mati.
 $routes->get('layar', 'LayarController::index');
@@ -219,6 +224,16 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('hasil/babak/(:num)/ubah', 'HasilController::ubahBabak/$1');
     $routes->post('hasil/babak/(:num)/hapus', 'HasilController::hapusBabak/$1');
     // ---------- Akhir hasil lomba (F8-04) ----------
+
+    // ---------- Rekor kejuaraan (F11-06, K172) ----------
+    $routes->get('rekor', 'RekorController::index');
+    $routes->get('rekor/tambah', 'RekorController::tambah');
+    $routes->post('rekor', 'RekorController::buat');
+    $routes->post('rekor/tampil', 'RekorController::tampil');
+    $routes->get('rekor/(:num)/ubah', 'RekorController::ubah/$1');
+    $routes->post('rekor/(:num)', 'RekorController::perbarui/$1');
+    $routes->post('rekor/(:num)/hapus', 'RekorController::hapus/$1');
+    // ---------- Akhir rekor kejuaraan ----------
 
     // ---------- Jadwal pertandingan (F9-07) ----------
     // Tanggal, jam mulai, dan lokasi semua babak; juga dari halaman babak.
