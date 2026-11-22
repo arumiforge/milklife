@@ -70,7 +70,7 @@ final class GayaEditorialTest extends UjiBasisData
             }
         }
 
-        foreach (['judul-tampilan', 'alis', 'tombol-utama-berart', 'pemisah-lintasan', 'ornamen-judul', 'bingkai-foto', 'tekstur-kertas'] as $kelas) {
+        foreach (['judul-tampilan', 'alis', 'tombol-utama-berart', 'pemisah-lintasan', 'bingkai-foto', 'tekstur-kertas'] as $kelas) {
             $this->assertMatchesRegularExpression('#\.' . $kelas . '\b[^{]*\{#', $css, $kelas);
         }
 

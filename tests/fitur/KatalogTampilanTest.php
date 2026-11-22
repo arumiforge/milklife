@@ -41,7 +41,7 @@ final class KatalogTampilanTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//*[@id="menu-laci"]')->length);
 
         // Gaya editorial F10-05: semua kelas baru tampil di katalog.
-        foreach (['judul-tampilan', 'alis', 'tombol-utama-berart', 'pemisah-lintasan', 'ornamen-judul', 'bingkai-foto', 'tekstur-kertas'] as $kelas) {
+        foreach (['judul-tampilan', 'alis', 'tombol-utama-berart', 'pemisah-lintasan', 'bingkai-foto', 'tekstur-kertas'] as $kelas) {
             $this->assertGreaterThan(0, $xpath->query('//*[@data-katalog-editorial]//*[contains(concat(" ", normalize-space(@class), " "), " ' . $kelas . ' ")]')->length, $kelas);
         }
     }
@@ -84,7 +84,7 @@ final class KatalogTampilanTest extends UjiBasisData
         // Menu utama F10-07 (K154): Jadwal dan Peserta bersakelar, Hasil hanya setelah ada yang terbit;
         // Unduhan dan Bantuan pindah ke bilah atas.
         $this->assertSame(['Beranda'], array_column(MenuPublik::butir(), 'label'), 'Hasil hanya setelah ada yang terbit.');
-        $this->assertSame(['Unduhan', 'Bantuan'], array_column(MenuPublik::bilahAtas(), 'label'), 'Galeri bersakelar; Tanya Panitia hanya bila nomor WA diisi.');
-        $this->assertSame(['Beranda', 'Bantuan', 'Unduhan', 'Daftar'], array_column(MenuPublik::bawah(), 'label'), 'Jadwal dan Hasil yang mati diganti Bantuan lalu Unduhan.');
+        $this->assertSame(['Unduhan', 'Bantuan', 'Masuk panitia'], array_column(MenuPublik::bilahAtas(), 'label'), 'Galeri bersakelar; Tanya Panitia hanya bila nomor WA diisi; Masuk panitia selalu di akhir (F10-08).');
+        $this->assertSame(['Beranda', 'Bantuan', 'Unduhan', 'Daftar', 'Cek'], array_column(MenuPublik::bawah(), 'label'), 'Jadwal dan Hasil yang mati diganti Bantuan lalu Unduhan; Cek paling kanan (F10-08).');
     }
 }

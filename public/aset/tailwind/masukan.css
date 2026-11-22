@@ -240,7 +240,7 @@
         color: var(--color-primary-900);
     }
 
-    /* Alis (eyebrow): label kecil huruf besar berjarak lebar dengan garis pendek oranye di depannya. */
+    /* Alis (eyebrow): label kecil huruf besar berjarak lebar, tanpa garis atau hiasan di depannya (F10-08). */
     .alis {
         display: inline-flex;
         align-items: center;
@@ -251,14 +251,6 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--color-oranye-700);
-    }
-
-    .alis::before {
-        content: "";
-        flex: none;
-        width: 1.5rem;
-        height: 2px;
-        background-color: var(--color-oranye-500);
     }
 
     /* Tombol utama berart: warna padat (biru; `tombol-berart-oranye` untuk oranye), latar sapuan kuas
@@ -319,29 +311,6 @@
         background-repeat: repeat-x;
         background-position: center;
         background-size: auto 100%;
-    }
-
-    /* Ornamen judul: garis kecepatan G10-11 di kiri (dan kanan) judul; tanpa berkas tidak tampil apa pun. */
-    .ada-ornamen-judul-kiri .ornamen-judul::before,
-    .ada-ornamen-judul-kanan .ornamen-judul::after {
-        content: "";
-        display: inline-block;
-        width: 2em;
-        height: 1em;
-        vertical-align: -0.05em;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-    }
-
-    .ada-ornamen-judul-kiri .ornamen-judul::before {
-        margin-inline-end: 0.3em;
-        background-image: url("../gambar/elemen/ornamen-judul-kiri.webp");
-    }
-
-    .ada-ornamen-judul-kanan .ornamen-judul::after {
-        margin-inline-start: 0.3em;
-        background-image: url("../gambar/elemen/ornamen-judul-kanan.webp");
     }
 
     /* Bingkai foto: sudut potong miring pada anak langsung; sudut sapuan tinta G10-11 di dua sudut berlawanan. */

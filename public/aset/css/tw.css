@@ -1050,9 +1050,6 @@
   .my-5 {
     margin-block: calc(var(--spacing) * 5);
   }
-  .-ms-2 {
-    margin-inline-start: calc(var(--spacing) * -2);
-  }
   .ms-1 {
     margin-inline-start: var(--spacing);
   }
@@ -4070,6 +4067,9 @@
   .focus\:ring-gray-200:focus {
     --tw-ring-color: var(--color-gray-200);
   }
+  .focus\:ring-green-100:focus {
+    --tw-ring-color: var(--color-green-100);
+  }
   .focus\:ring-green-200:focus {
     --tw-ring-color: var(--color-green-200);
   }
@@ -4528,9 +4528,6 @@
     }
     .sm\:gap-y-1 {
       row-gap: var(--spacing);
-    }
-    .sm\:self-center {
-      align-self: center;
     }
     .sm\:overflow-visible {
       overflow: visible;
@@ -5516,13 +5513,6 @@
     text-transform: uppercase;
     color: var(--color-oranye-700);
   }
-  .alis::before {
-    content: "";
-    flex: none;
-    width: 1.5rem;
-    height: 2px;
-    background-color: var(--color-oranye-500);
-  }
   .tombol-utama-berart {
     background-color: var(--color-primary-700);
     color: #fff;
@@ -5567,24 +5557,6 @@
     background-repeat: repeat-x;
     background-position: center;
     background-size: auto 100%;
-  }
-  .ada-ornamen-judul-kiri .ornamen-judul::before, .ada-ornamen-judul-kanan .ornamen-judul::after {
-    content: "";
-    display: inline-block;
-    width: 2em;
-    height: 1em;
-    vertical-align: -0.05em;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
-  .ada-ornamen-judul-kiri .ornamen-judul::before {
-    margin-inline-end: 0.3em;
-    background-image: url("../gambar/elemen/ornamen-judul-kiri.webp");
-  }
-  .ada-ornamen-judul-kanan .ornamen-judul::after {
-    margin-inline-start: 0.3em;
-    background-image: url("../gambar/elemen/ornamen-judul-kanan.webp");
   }
   .bingkai-foto {
     position: relative;

@@ -29,7 +29,7 @@ if ($jadwal === []) {
 ?>
 <section id="jadwal" class="scroll-mt-20" aria-labelledby="judul-jadwal">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
-        <p class="judul-tampilan ornamen-judul" lang="en" aria-hidden="true" data-judul-inggris>Key Dates</p>
+        <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Key Dates</p>
         <h2 id="judul-jadwal" class="judul-keterangan mt-2">Agenda</h2>
 
         <ol class="mt-8 grid gap-4 md:grid-cols-2">
