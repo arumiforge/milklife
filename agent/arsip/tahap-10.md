@@ -42,7 +42,7 @@ Gaya anime olahraga 2D cel-shaded (K153), stadion mirip Supersoccer Arena (K158)
 | G10-10 Gambar bagikan | #196 |
 | G10-13 Stadion SSA | #201 |
 
-Berkas G9 `pola/titik-halus.webp` dan `nomor/seneng-playon.webp` dihapus (K168 butir 15).
+Berkas G9 `pola/titik-halus.webp` dan `nomor/seneng-playon.webp` dihapus (K168 butir 15). Ornamen judul G10-11 (`elemen/ornamen-judul-kiri.webp`, `-kanan.webp`) yang tidak terpakai dihapus setelah penutupan (K171).
 
 ## Hasil
 
