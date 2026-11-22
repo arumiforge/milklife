@@ -1,6 +1,6 @@
 # Desain
 
-Folder kerja aset gambar Tahap 9 (K140) dan Tahap 10 (K153). Gambar dibuat **Codex** dari brief di `tugas/`, ditinjau dan digabung Claude, lalu dipakai halaman oleh tugas Claude yang disebut di tiap brief. Aturan Codex ada di [`AGENTS.md`](../AGENTS.md); rencana lengkap di [`dokumen/draf/rencana-implementasi-tahap-10.md`](../dokumen/draf/rencana-implementasi-tahap-10.md) (Tahap 9: [`rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md)).
+Folder kerja aset gambar Tahap 9 (K140), Tahap 10 (K153), dan Tahap 11 (K175). Gambar dibuat **Codex** dari brief di `tugas/`, ditinjau dan digabung Claude, lalu dipakai halaman oleh tugas Claude yang disebut di tiap brief. Aturan Codex ada di [`AGENTS.md`](../AGENTS.md); rencana lengkap di [`dokumen/draf/rencana-implementasi-tahap-10.md`](../dokumen/draf/rencana-implementasi-tahap-10.md) (Tahap 9: [`rencana-implementasi-tahap-9.md`](../dokumen/draf/rencana-implementasi-tahap-9.md)).
 
 | Folder | Isi | Ditulis oleh |
 |---|---|---|
@@ -10,6 +10,15 @@ Folder kerja aset gambar Tahap 9 (K140) dan Tahap 10 (K153). Gambar dibuat **Cod
 | `../public/aset/gambar/<folder di brief>/` | Gambar jadi yang dipakai web | Codex |
 
 Status tugas gambar hanya dicatat di `agent/PROGRES.md` oleh koordinator.
+
+## Urutan Tahap 11 (halaman depan, K175)
+
+Gaya tetap anime Tahap 10. Halaman memakai cadangan gradien sampai berkas tiba, lalu gambar langsung tampil tanpa perubahan kode.
+
+| Tugas | Isi | Dipakai oleh | Perlu sebelum |
+|---|---|---|---|
+| [G11-01](tugas/G11-01-kartu-kelompok-umur.md) | Art kartu dan tekstur isian angka tiap kelompok umur (`ku/ku-<n>-art.webp`, `ku/ku-<n>-isian.webp`) | F11-12 | 28 November |
+| [G11-02](tugas/G11-02-latar-hero-kiri.md) | Latar art hero kiri bertepi pudar (`beranda/hero-kiri.webp`, `beranda/hero-kiri-ponsel.webp`) | F11-12 | 28 November |
 
 ## Urutan Tahap 10 (gaya anime, K153)
 
