@@ -71,8 +71,9 @@ final class JudulTabAdminTest extends UjiBasisData
 
         $hasil = $this->withSession([])->get('admin/masuk');
 
-        $this->assertSame('Masuk admin – ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil));
-        $hasil->assertSee('Panel panitia ' . AcaraController::NAMA_PENGGANTI);
+        $this->assertSame('Admin Area – ' . AcaraController::NAMA_PENGGANTI, $this->judulTab($hasil));
+        // Teks "Panel panitia <nama acara>" di bawah judul sudah dihapus (permintaan pemilik 22 November 2026).
+        $hasil->assertDontSee('Panel panitia');
     }
 
     public function testHalamanMasukMemakaiNamaAcara(): void
@@ -82,8 +83,9 @@ final class JudulTabAdminTest extends UjiBasisData
         $hasil = $this->withSession([])->get('admin/masuk');
         $hasil->assertOK();
 
-        $this->assertSame('Masuk admin – ' . self::NAMA, $this->judulTab($hasil));
-        $hasil->assertSee('Panel panitia ' . self::NAMA);
+        $this->assertSame('Admin Area – ' . self::NAMA, $this->judulTab($hasil));
+        $hasil->assertDontSee('Panel panitia');
+        $hasil->assertSee(self::NAMA);
         $hasil->assertDontSee('MilkLife');
     }
 

@@ -8,12 +8,12 @@
 ?>
 <?= $this->extend('tata_letak/polos_tw') ?>
 
-<?= $this->section('judul') ?>Masuk admin<?= $this->endSection() ?>
+<?= $this->section('judul') ?>Admin Area<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
-<h1 class="text-2xl font-bold text-gray-900" id="judul-contoh-formulir">Masuk admin</h1>
+<h1 class="text-2xl font-bold text-gray-900" id="judul-contoh-formulir">Admin Area</h1>
 <p class="mt-1 mb-6 text-sm text-gray-600">Masukkan nama pengguna dan kata sandi panitia.</p>
-<?= komponen('peringatan', ['jenis' => 'bahaya', 'isi' => 'Nama pengguna atau kata sandi salah. Periksa lagi, lalu coba sekali lagi.', 'kelas' => 'mb-4']) ?>
+<?= komponen('peringatan', ['jenis' => 'bahaya', 'isi' => 'Nama pengguna atau kata sandi salah.', 'kelas' => 'mb-4']) ?>
 <form method="post" action="#" id="formulir-contoh" class="space-y-4">
     <div>
         <label for="nama_pengguna" class="mb-1.5 block text-sm font-semibold text-gray-900">Nama pengguna</label>
