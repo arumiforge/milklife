@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\Hasil\JadwalPertandingan;
 use App\Libraries\Hasil\SeriLintasan;
+use App\Libraries\Hasil\StatusNomor;
 use App\Libraries\Hasil\UnduhanSeri;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\DownloadResponse;
@@ -45,6 +46,7 @@ class SeriController extends BaseController
 
         return view('admin/seri/index', [
             'kelompokUmur' => $ku,
+            'peringatan'   => (new StatusNomor())->peringatanNomor(array_merge(...array_column($ku, 'nomor'))),
             'tampil'       => SeriLintasan::tampil(),
             'hari'         => $seri->hariDibagi(),
         ]);
@@ -67,6 +69,7 @@ class SeriController extends BaseController
 
         return view('admin/seri/nomor', [
             'nomor'  => $nomor,
+            'peringatan' => (new StatusNomor())->peringatanNomor([$nomor])[$nomor['id']] ?? null,
             'aturan' => $seri->aturanNomor($nomor),
             'babak'  => $seri->daftarBabak($id),
             'bagan'  => $seri->bagan($id, false),
@@ -104,6 +107,7 @@ class SeriController extends BaseController
 
         return view('admin/seri/babak', [
             'babak'       => $babak,
+            'peringatan'  => (new StatusNomor())->peringatanNomor([$babak['nomor']])[$babak['nomor']['id']] ?? null,
             'peserta'     => $peserta,
             'perSeri'     => SeriLintasan::perSeri($peserta),
             'lolos'       => $seri->aturanLolos($babak),

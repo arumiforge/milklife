@@ -13,6 +13,7 @@
  * @var array<string, string>                  $tanda       kunci => Q/q (hasil babak ini lengkap)
  * @var array{kurang: list<string>, lebih: list<string>}|null $selisih beda dengan yang lolos dari babak sebelumnya
  * @var bool                                   $daftarUlang sudah ada atlet yang ditandai hadir
+ * @var string|null                            $peringatan  batas peserta (F11-03)
  * @var array<int|string, string>              $galat       id hasil => pesan geser
  * @var array<int|string, mixed>               $isian       isian geser yang dikembalikan saat ada galat
  * @var array<string, string>                  $galatLolos  kotak => pesan
@@ -46,6 +47,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
+    <?= view('admin/hasil/_status_nomor', ['nomor' => $babak['nomor'], 'peringatan' => $peringatan], ['saveData' => false]) ?>
 
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-ringkas-babak">
         <div class="flex flex-wrap items-start justify-between gap-3">

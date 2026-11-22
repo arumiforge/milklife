@@ -7,6 +7,7 @@
  *
  * @var CodeIgniter\View\View      $this
  * @var list<array<string, mixed>> $kelompokUmur `HasilLomba::daftarNomor()` + `babak_seri` (`SeriLintasan::daftarBabak()`)
+ * @var array<int, string>         $peringatan   id nomor => peringatan batas peserta (F11-03)
  * @var bool                       $tampil       sakelar `HalamanDepan.tampil_seri`
  * @var list<string>               $hari         'Y-m-d' yang punya babak sudah dibagi
  */
@@ -89,6 +90,13 @@ $keadaan = static function (array $b): array {
                             <a href="<?= site_url('admin/seri/nomor/' . $n['id']) ?>" class="inline-flex min-h-11 items-center font-bold break-words text-primary-800 underline"><?= esc($n['nama']) ?></a>
                         </div>
                         <div class="flex flex-wrap gap-2 lg:col-span-8">
+                            <?php if (! $n['dilombakan']) : ?>
+                                <?php // Nomor yang tidak dilombakan keluar dari daftar seri (F11-03). ?>
+                                <span class="inline-flex min-h-11 items-center gap-2 text-sm text-gray-600" data-tidak-dilombakan><?= komponen('lencana', ['label' => 'Tidak dilombakan', 'warna' => 'merah']) ?><?= esc($n['keterangan']) ?></span>
+                            <?php else : ?>
+                            <?php if (isset($peringatan[$n['id']])) : ?>
+                                <span class="inline-flex min-h-11 w-full items-center gap-1 text-sm font-medium text-yellow-800" data-peserta-kurang><?= ikon('triangle-alert', 'size-4 shrink-0') ?>Peserta kurang dari batas</span>
+                            <?php endif ?>
                             <?php if ($n['babak_seri'] === []) : ?>
                                 <span class="text-sm text-gray-600">Belum ada babak. <a href="<?= site_url('admin/hasil/nomor/' . $n['id']) ?>" class="font-semibold text-primary-700 underline">Tambah babak</a></span>
                             <?php endif ?>
@@ -99,6 +107,7 @@ $keadaan = static function (array $b): array {
                                     <?= komponen('lencana', ['label' => $label, 'warna' => $warna, 'ikon' => $ikon]) ?>
                                 </a>
                             <?php endforeach ?>
+                            <?php endif ?>
                         </div>
                     </li>
                 <?php endforeach ?>

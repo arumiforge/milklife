@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\Percobaan;
+use App\Libraries\Hasil\StatusNomor;
 use App\Libraries\Pendaftaran\Regu;
 use CodeIgniter\Model;
 
@@ -88,6 +89,8 @@ class NomorLombaModel extends Model
         'urutan', 'aktif',
         // Aturan nomor lompat/lempar (F9-09).
         'jumlah_percobaan', 'pemecah_seri',
+        // Status nomor dan batas peserta (F11-03).
+        'tidak_dilombakan', 'alasan_tidak_dilombakan', 'peserta_minimal',
     ];
 
     protected $useTimestamps = true;
@@ -106,7 +109,7 @@ class NomorLombaModel extends Model
      *
      * @param array<string, mixed> $mentah
      *
-     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string, jumlah_percobaan: string, pemecah_seri: string}
+     * @return array{kelompok_umur_id: string, nama: string, jenis: string, kategori: string, jenis_hasil: string, tabel_skor_id: string, komponen_skor: string, jumlah_inti: string, batas_anggota: string, regu_maksimal: string, jumlah_putra: string, jumlah_putri: string, biaya_beregu: string, urutan: string, aktif: string, jumlah_percobaan: string, pemecah_seri: string, tidak_dilombakan: string, alasan_tidak_dilombakan: string, peserta_minimal: string}
      */
     public static function rapikanIsian(array $mentah): array
     {
@@ -131,6 +134,10 @@ class NomorLombaModel extends Model
             // Aturan nomor lompat/lempar (F9-09); pemecah seri bawaan menyala.
             'jumlah_percobaan' => $teks('jumlah_percobaan'),
             'pemecah_seri'     => $teks('pemecah_seri') === '0' ? '0' : '1',
+            // Status nomor dan batas peserta (F11-03); bawaan dilombakan, tanpa batas.
+            'tidak_dilombakan'        => $teks('tidak_dilombakan') === '1' ? '1' : '0',
+            'alasan_tidak_dilombakan' => (string) preg_replace('/\s+/u', ' ', $teks('alasan_tidak_dilombakan')),
+            'peserta_minimal'         => $teks('peserta_minimal'),
         ];
 
         if ($isian['jenis'] === 'individu') {
@@ -201,6 +208,9 @@ class NomorLombaModel extends Model
             $galat += self::periksaTim($isian);
         }
 
+        // Status nomor dan batas peserta (F11-03).
+        $galat += StatusNomor::periksa($isian);
+
         if ($isian['urutan'] !== '' && self::angka($isian['urutan'], 0, self::URUTAN_MAKSIMAL) === null) {
             $galat['urutan'] = 'Urutan harus angka bulat 0 sampai ' . self::URUTAN_MAKSIMAL . '. Angka kecil tampil lebih dulu. Kosongkan untuk menaruhnya paling akhir.';
         }
@@ -241,6 +251,10 @@ class NomorLombaModel extends Model
             // Aturan nomor lompat/lempar (F9-09), hanya untuk jenis hasil jarak.
             'jumlah_percobaan' => $jenisHasil === JenisHasil::JARAK ? $angka($isian['jumlah_percobaan'] ?? '') : null,
             'pemecah_seri'     => ($isian['pemecah_seri'] ?? '1') === '0' && $jenisHasil === JenisHasil::JARAK ? 0 : 1,
+            // Status nomor dan batas peserta (F11-03); alasan hanya disimpan untuk nomor yang tidak dilombakan.
+            'tidak_dilombakan'        => ($isian['tidak_dilombakan'] ?? '0') === '1' ? 1 : 0,
+            'alasan_tidak_dilombakan' => ($isian['tidak_dilombakan'] ?? '0') === '1' && ($isian['alasan_tidak_dilombakan'] ?? '') !== '' ? $isian['alasan_tidak_dilombakan'] : null,
+            'peserta_minimal'         => $angka($isian['peserta_minimal'] ?? ''),
         ];
     }
 
@@ -264,6 +278,11 @@ class NomorLombaModel extends Model
         // Aturan nomor lompat/lempar (F9-09).
         $isian['jumlah_percobaan'] = (string) ($baris['jumlah_percobaan'] ?? '');
         $isian['pemecah_seri']     = (int) ($baris['pemecah_seri'] ?? 1) === 0 ? '0' : '1';
+
+        // Status nomor dan batas peserta (F11-03).
+        $isian['tidak_dilombakan']        = (int) ($baris['tidak_dilombakan'] ?? 0) === 1 ? '1' : '0';
+        $isian['alasan_tidak_dilombakan'] = (string) ($baris['alasan_tidak_dilombakan'] ?? '');
+        $isian['peserta_minimal']         = (string) ($baris['peserta_minimal'] ?? '');
 
         return $isian;
     }

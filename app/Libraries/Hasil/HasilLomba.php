@@ -71,7 +71,10 @@ final class HasilLomba
     /**
      * Kelompok umur berurutan beserta nomor lombanya. Kelompok umur tanpa nomor dilewati.
      *
-     * @return list<array{id: int, nama: string, nomor: list<array{id: int, nama: string, jenis: string, jenis_hasil: string, terbit_pada: string|null, babak: int, final: bool, peserta: int}>}>
+     * `$hanyaTerbit` (halaman publik): nomor yang terbit, ditambah nomor yang
+     * tidak dilombakan supaya keterangannya tampil (F11-03).
+     *
+     * @return list<array{id: int, nama: string, nomor: list<array{id: int, nama: string, jenis: string, jenis_hasil: string, terbit_pada: string|null, babak: int, final: bool, peserta: int, dilombakan: bool, keterangan: string, peserta_minimal: int|null}>}>
      */
     public function daftarNomor(bool $hanyaTerbit = false): array
     {
@@ -88,10 +91,10 @@ final class HasilLomba
             ->groupBy('b.nomor_lomba_id')
             ->get()->getResultArray(), 'jumlah', 'nomor_lomba_id');
 
-        $kueri = $this->db->table('nomor_lomba')->select('id, kelompok_umur_id, nama, kategori, jenis, jenis_hasil, hasil_terbit_pada');
+        $kueri = $this->db->table('nomor_lomba')->select('id, kelompok_umur_id, nama, kategori, jenis, jenis_hasil, hasil_terbit_pada, tidak_dilombakan, alasan_tidak_dilombakan, peserta_minimal');
 
         if ($hanyaTerbit) {
-            $kueri->where('hasil_terbit_pada IS NOT NULL', null, false);
+            $kueri->groupStart()->where('hasil_terbit_pada IS NOT NULL', null, false)->orWhere('tidak_dilombakan', 1)->groupEnd();
         }
 
         $nomor = [];
@@ -108,7 +111,7 @@ final class HasilLomba
                 'babak'       => $babak[$id]['jumlah'] ?? 0,
                 'final'       => $babak[$id]['final'] ?? false,
                 'peserta'     => (int) ($peserta[$id] ?? 0),
-            ];
+            ] + self::status($n);
         }
 
         $hasil = [];
@@ -139,12 +142,14 @@ final class HasilLomba
      * `jumlah_percobaan` dan `pemecah_seri` (F9-09): aturan nomor lompat/lempar
      * (berlaku untuk jenis hasil jarak).
      *
-     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string, tabel_skor_id: int|null, komponen: list<array{kode: string, nama: string, jenis: string}>, jumlah_percobaan: int, pemecah_seri: bool}|null
+     * `dilombakan`, `keterangan`, `peserta_minimal` (F11-03): status nomor dan batas peserta.
+     *
+     * @return array{id: int, nama: string, jenis: string, kategori: string, jenis_hasil: string, terbit_pada: string|null, kelompok_umur_id: int, kelompok_umur: string, tabel_skor_id: int|null, komponen: list<array{kode: string, nama: string, jenis: string}>, jumlah_percobaan: int, pemecah_seri: bool, dilombakan: bool, keterangan: string, peserta_minimal: int|null}|null
      */
     public function nomor(int $id): ?array
     {
         $n = $this->db->table('nomor_lomba nl')
-            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.tabel_skor_id, nl.komponen_skor, nl.hasil_terbit_pada, nl.kelompok_umur_id, nl.jumlah_percobaan, nl.pemecah_seri, ku.nama AS kelompok_umur')
+            ->select('nl.id, nl.nama, nl.kategori, nl.jenis, nl.jenis_hasil, nl.tabel_skor_id, nl.komponen_skor, nl.hasil_terbit_pada, nl.kelompok_umur_id, nl.jumlah_percobaan, nl.pemecah_seri, nl.tidak_dilombakan, nl.alasan_tidak_dilombakan, nl.peserta_minimal, ku.nama AS kelompok_umur')
             ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
             ->where('nl.id', $id)
             ->get()->getRowArray();
@@ -170,6 +175,24 @@ final class HasilLomba
             // Aturan nomor (F9-09).
             'jumlah_percobaan' => Percobaan::jumlah($n['jumlah_percobaan']),
             'pemecah_seri'     => (int) ($n['pemecah_seri'] ?? 1) === 1,
+        ] + self::status($n);
+    }
+
+    /**
+     * Status nomor dan batas peserta dari baris `nomor_lomba` (F11-03).
+     *
+     * @param array<string, mixed> $n
+     *
+     * @return array{dilombakan: bool, keterangan: string, peserta_minimal: int|null}
+     */
+    private static function status(array $n): array
+    {
+        $dilombakan = (int) ($n['tidak_dilombakan'] ?? 0) !== 1;
+
+        return [
+            'dilombakan'      => $dilombakan,
+            'keterangan'      => $dilombakan ? '' : StatusNomor::keterangan($n['alasan_tidak_dilombakan'] ?? null),
+            'peserta_minimal' => ($n['peserta_minimal'] ?? null) === null ? null : (int) $n['peserta_minimal'],
         ];
     }
 
@@ -694,7 +717,8 @@ final class HasilLomba
 
         foreach ($this->daftarNomor($hanyaTerbit) as $ku) {
             foreach ($ku['nomor'] as $n) {
-                if (! $n['final']) {
+                // Nomor yang tidak dilombakan keluar dari klasemen (F11-03).
+                if (! $n['final'] || ! $n['dilombakan']) {
                     continue;
                 }
 

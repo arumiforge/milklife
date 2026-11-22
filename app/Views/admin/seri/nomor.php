@@ -7,6 +7,7 @@
  * @var CodeIgniter\View\View      $this
  * @var array<string, mixed>       $nomor  `HasilLomba::nomor()`
  * @var array<string, mixed>       $aturan `SeriLintasan::aturanNomor()`
+ * @var string|null                $peringatan batas peserta (F11-03)
  * @var list<array<string, mixed>> $babak  `SeriLintasan::daftarBabak()`
  * @var list<array<string, mixed>> $bagan  `SeriLintasan::bagan()` (admin)
  * @var array<string, string>      $galat  kotak => pesan
@@ -27,6 +28,7 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
+    <?= view('admin/hasil/_status_nomor', ['nomor' => $nomor, 'peringatan' => $peringatan], ['saveData' => false]) ?>
 
     <section id="aturan-seri" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-aturan-seri">
         <h2 id="judul-aturan-seri" class="text-lg font-bold text-gray-900">Aturan seri nomor ini</h2>

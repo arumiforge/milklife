@@ -28,7 +28,8 @@ class SeriController extends BaseController
         $seri  = new SeriLintasan();
         $babak = $seri->babak($id);
 
-        if ($babak === null || ! $babak['dikunci']) {
+        // Nomor yang tidak dilombakan keluar dari daftar seri (F11-03).
+        if ($babak === null || ! $babak['dikunci'] || ! ($babak['nomor']['dilombakan'] ?? true)) {
             throw PageNotFoundException::forPageNotFound('Daftar seri babak ini belum diumumkan.');
         }
 

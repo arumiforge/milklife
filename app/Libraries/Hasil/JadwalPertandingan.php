@@ -77,6 +77,8 @@ final class JadwalPertandingan
             ->select('b.id, b.nama AS babak, b.final, b.tanggal, b.jam_mulai, b.lokasi, b.seri_dikunci_pada, nl.id AS nomor_id, nl.nama, nl.kategori, nl.hasil_terbit_pada, ku.id AS kelompok_umur_id, ku.nama AS kelompok_umur')
             ->join('nomor_lomba nl', 'nl.id = b.nomor_lomba_id')
             ->join('kelompok_umur ku', 'ku.id = nl.kelompok_umur_id')
+            // Nomor yang tidak dilombakan keluar dari jadwal, lembar juri, dan videotron (F11-03).
+            ->where('nl.tidak_dilombakan', 0)
             ->orderBy('b.tanggal IS NULL', '', false)->orderBy('b.tanggal')
             ->orderBy('b.jam_mulai IS NULL', '', false)->orderBy('b.jam_mulai')
             ->orderBy('ku.urutan')->orderBy('ku.id')

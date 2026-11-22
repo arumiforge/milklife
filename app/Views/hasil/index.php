@@ -48,7 +48,10 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                 <?php foreach ($ku['nomor'] as $n) : ?>
                     <li class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut" data-hasil-nomor="<?= (int) $n['id'] ?>">
                         <h3 class="text-lg font-bold"><a class="text-primary-800 hover:underline" href="<?= site_url('hasil/' . $n['id']) ?>"><?= esc($n['nama']) ?></a></h3>
-                        <?php if (($juara[$n['id']] ?? []) === []) : ?>
+                        <?php if (! $n['dilombakan']) : ?>
+                            <?php // Nomor yang tidak dilombakan (F11-03). ?>
+                            <p class="mt-2 text-sm text-gray-700" data-tidak-dilombakan><?= esc($n['keterangan']) ?></p>
+                        <?php elseif (($juara[$n['id']] ?? []) === []) : ?>
                             <p class="mt-2 text-sm text-gray-600">Juara belum ditetapkan. Lihat hasil semua babak.</p>
                         <?php else : ?>
                             <ol class="mt-3 space-y-2 text-sm">
@@ -60,7 +63,9 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                                 <?php endforeach ?>
                             </ol>
                         <?php endif ?>
-                        <a href="<?= site_url('hasil/' . $n['id']) ?>" class="mt-auto inline-flex min-h-11 items-center gap-1 pt-3 text-sm font-semibold text-primary-700 hover:underline">Lihat semua babak<span class="sr-only"> <?= esc($n['nama']) ?></span><?= ikon('arrow-right', 'size-4') ?></a>
+                        <?php if ($n['dilombakan']) : ?>
+                            <a href="<?= site_url('hasil/' . $n['id']) ?>" class="mt-auto inline-flex min-h-11 items-center gap-1 pt-3 text-sm font-semibold text-primary-700 hover:underline">Lihat semua babak<span class="sr-only"> <?= esc($n['nama']) ?></span><?= ikon('arrow-right', 'size-4') ?></a>
+                        <?php endif ?>
                     </li>
                 <?php endforeach ?>
             </ul>

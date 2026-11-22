@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Libraries\Hasil\HasilLomba;
 use App\Libraries\Hasil\JadwalPertandingan;
+use App\Libraries\Hasil\StatusNomor;
 use App\Libraries\Hasil\UnduhanHasil;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -28,7 +29,13 @@ class HasilController extends BaseController
 
     public function index(): string
     {
-        return view('admin/hasil/index', ['kelompokUmur' => $this->hasil->daftarNomor()]);
+        $ku = $this->hasil->daftarNomor();
+
+        return view('admin/hasil/index', [
+            'kelompokUmur' => $ku,
+            // Peringatan batas peserta (F11-03).
+            'peringatan' => (new StatusNomor())->peringatanNomor(array_merge(...array_column($ku, 'nomor'))),
+        ]);
     }
 
     public function nomor(int $id): string
@@ -39,6 +46,7 @@ class HasilController extends BaseController
             'nomor' => $nomor,
             'babak' => $this->hasil->semuaBabak($nomor),
             'calon' => count($this->hasil->calon($nomor)),
+            'peringatan' => (new StatusNomor())->peringatanNomor([$nomor])[$nomor['id']] ?? null,
             'galat' => (array) (session('galat_babak') ?? []),
             'isian' => (array) (session('isian_babak') ?? []),
         ]);
