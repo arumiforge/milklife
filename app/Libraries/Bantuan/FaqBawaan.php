@@ -89,11 +89,11 @@ final class FaqBawaan
         ['mengisi', 'Bagaimana langkah mendaftar?', <<<'MD'
             Tekan tombol **Daftar** di halaman depan, lalu ikuti lima langkah:
 
-            1. **Data Sekolah**: pilih jenjang dan kabupaten, ketik NPSN, tekan **Cari**.
+            1. **Data sekolah**: pilih jenjang dan kabupaten, ketik NPSN, tekan **Cari**.
             2. **Ofisial**: isi nama, nomor WA, dan foto pendamping.
             3. **Atlet**: isi data atlet satu per satu, pilih nomor lombanya, tekan **Tambahkan ke daftar**.
             4. **Biaya**: periksa rincian biaya.
-            5. **Pembayaran**: transfer, pilih foto bukti transfer, lalu tekan **Kirim Pendaftaran**.
+            5. **Pembayaran**: transfer, pilih foto bukti transfer, lalu tekan **Kirim pendaftaran**.
 
             Setelah terkirim, Anda mendapat ID pendaftaran dan bukti pendaftaran yang bisa dicetak.
             MD],
@@ -106,7 +106,7 @@ final class FaqBawaan
             Bila tetap tidak ditemukan, ketik nama sekolah di kotak yang muncul. Sekolah tanpa NPSN tetap bisa mendaftar. Pendaftarannya nanti dicek memakai ID pendaftaran.
             MD],
         ['mengisi', 'Nama sekolah yang muncul kurang lengkap atau sama dengan sekolah lain', <<<'MD'
-            Tekan tautan **Nama sekolah kurang lengkap?** di langkah Data Sekolah, lalu tulis nama lengkapnya, misalnya dengan nama desa. Pendaftaran Anda langsung memakai nama itu sampai panitia menyetujuinya.
+            Tekan tautan **Nama sekolah kurang lengkap?** di langkah Data sekolah, lalu tulis nama lengkapnya, misalnya dengan nama desa. Pendaftaran Anda langsung memakai nama itu sampai panitia menyetujuinya.
             MD],
         ['mengisi', 'Foto ofisial dari HP boleh?', <<<'MD'
             Boleh. Tekan kotak foto di kartu ofisial, lalu pilih foto dari galeri atau ambil langsung dengan kamera. Swafoto dengan wajah yang jelas sudah cukup.
@@ -122,7 +122,7 @@ final class FaqBawaan
             Isian tidak pindah ke perangkat lain. Bila ingin mulai dari awal, tekan **Kosongkan isian dan mulai dari awal** di bawah formulir.
             MD],
         ['mengisi', 'Salah ketik nama atlet sebelum mengirim, bagaimana?', <<<'MD'
-            Selama belum menekan **Kirim Pendaftaran**, Anda masih bisa memperbaikinya. Di langkah **Atlet**, tekan **Ubah** di baris atlet itu pada **Daftar sementara**, perbaiki, lalu tekan **Simpan perubahan**. Untuk membuang atlet dari daftar, tekan **Hapus**.
+            Selama belum menekan **Kirim pendaftaran**, Anda masih bisa memperbaikinya. Di langkah **Atlet**, tekan **Ubah** di baris atlet itu pada **Daftar sementara**, perbaiki, lalu tekan **Simpan perubahan**. Untuk membuang atlet dari daftar, tekan **Hapus**.
             MD],
         ['mengisi', 'Muncul pesan "NISN sudah terdaftar", artinya apa?', <<<'MD'
             Atlet dengan NISN itu sudah didaftarkan sebelumnya, oleh sekolah Anda atau sekolah lain. Satu NISN hanya boleh terdaftar sekali.
@@ -140,7 +140,7 @@ final class FaqBawaan
             Untuk nomor mixed (campuran), jumlah putra dan putri di atlet inti harus sesuai syarat yang tertulis di kartu nomornya.
             MD],
         ['mengisi', 'Kotak "Pemeriksaan keamanan" tidak mau centang', <<<'MD'
-            Tunggu beberapa detik sampai kotak itu bertanda centang hijau, baru tekan **Kirim Pendaftaran**. Bila lama tidak berubah, periksa internet, muat ulang halaman (isian tidak hilang), lalu coba lagi.
+            Tunggu beberapa detik sampai kotak itu bertanda centang hijau, baru tekan **Kirim pendaftaran**. Bila lama tidak berubah, periksa internet, muat ulang halaman (isian tidak hilang), lalu coba lagi.
             MD],
         ['mengisi', 'Sudah mendaftar, ternyata ada atlet yang belum ikut. Bagaimana menambahnya?', <<<'MD'
             Daftar lagi lewat tombol **Daftar** dengan NPSN sekolah yang sama, lalu isi hanya atlet tambahan itu. Atlet yang sudah terdaftar tidak perlu diisi lagi (NISN-nya akan ditolak).
@@ -163,12 +163,12 @@ final class FaqBawaan
             1. Transfer sebesar total yang tertera di langkah **Pembayaran**.
             2. Potret struk atau ambil tangkapan layar bukti transfer dari aplikasi bank.
             3. Tekan kotak **Bukti transfer**, pilih gambar itu.
-            4. Tekan **Kirim Pendaftaran**, lalu setujui jendela konfirmasi.
+            4. Tekan **Kirim pendaftaran**, lalu setujui jendela konfirmasi.
 
             Gambar boleh JPG, PNG, atau WEBP, paling besar 10 MB.
             MD],
         ['pembayaran', 'Apakah pendaftaran sudah tersimpan sebelum saya transfer?', <<<'MD'
-            Belum. Pendaftaran baru masuk ke panitia saat Anda menekan **Kirim Pendaftaran** bersama bukti transfernya.
+            Belum. Pendaftaran baru masuk ke panitia saat Anda menekan **Kirim pendaftaran** bersama bukti transfernya.
 
             Bila belum sempat transfer, tidak apa-apa: isian tetap tersimpan di perangkat Anda. Buka lagi halaman pendaftaran nanti di perangkat yang sama, lalu tinggal unggah bukti transfernya.
             MD],
@@ -178,7 +178,7 @@ final class FaqBawaan
             Bila **sudah** dikirim bersama pendaftaran: tidak perlu dikirim lagi, bukti itu sudah tersimpan di panitia.
             MD],
         ['pembayaran', 'Saya salah memilih gambar bukti transfer atau ingin menambah bukti', <<<'MD'
-            Buka **Cek Pendaftaran**, ketik NPSN atau ID pendaftaran, tekan **Cari**. Di kartu pendaftaran yang belum Lunas ada kotak unggah bukti transfer: pilih gambar yang benar, lalu tekan **Unggah**.
+            Buka **Cek Pendaftaran**, ketik NPSN atau ID pendaftaran, tekan **Cari**. Di kartu pendaftaran yang belum Lunas ada kotak unggah bukti transfer: pilih gambar yang benar, lalu tekan **Unggah bukti bayar**.
 
             Bukti cukup diunggah di web, tidak perlu dikirim lewat WA.
             MD],

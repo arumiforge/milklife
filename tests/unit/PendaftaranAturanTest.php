@@ -80,7 +80,7 @@ final class PendaftaranAturanTest extends CIUnitTestCase
 
         $this->assertNull($hasil['kelompok_umur']);
         $this->assertSame(
-            'Atlet lahir tahun 2012 masuk KU 15, yang hanya untuk SMP/MTs. Sekolah ini SD/MI, jadi atlet ini tidak bisa didaftarkan. '
+            'Atlet lahir tahun 2012 masuk KU 15, yang hanya untuk SMP/MTs. Sekolah ini SD/MI. Atlet ini belum bisa didaftarkan. '
             . 'Kelompok umur untuk SD/MI: KU 10 (lahir 2016–2018), KU 12 (lahir 2015).',
             $hasil['galat'],
         );
@@ -125,7 +125,7 @@ final class PendaftaranAturanTest extends CIUnitTestCase
 
         $this->assertNull($hasil['kelompok_umur']);
         $this->assertSame(
-            'Atlet lahir tahun 2015 masuk KU 12, yang hanya untuk SD/MI. Sekolah ini SMP/MTs, jadi atlet ini tidak bisa didaftarkan. Kelompok umur untuk SMP/MTs: KU 15 (lahir 2011–2014).',
+            'Atlet lahir tahun 2015 masuk KU 12, yang hanya untuk SD/MI. Sekolah ini SMP/MTs. Atlet ini belum bisa didaftarkan. Kelompok umur untuk SMP/MTs: KU 15 (lahir 2011–2014).',
             $hasil['galat'],
         );
     }
@@ -223,7 +223,7 @@ final class PendaftaranAturanTest extends CIUnitTestCase
     {
         $daftar = [['id' => 1, 'nama' => 'KU 8', 'tahun_lahir_awal' => 2019, 'tahun_lahir_akhir' => null, 'jenjang' => []]];
 
-        $this->assertSame('Belum ada kelompok umur yang dibuka untuk SD/MI, jadi atlet ini tidak bisa didaftarkan.', KelompokUmurAtlet::tentukan(2020, 'A', $daftar)['galat']);
+        $this->assertSame('Belum ada kelompok umur yang dibuka untuk SD/MI. Atlet ini belum bisa didaftarkan.', KelompokUmurAtlet::tentukan(2020, 'A', $daftar)['galat']);
     }
 
     // Usia
@@ -328,7 +328,7 @@ final class PendaftaranAturanTest extends CIUnitTestCase
     public function testTimKurangDariInti(): void
     {
         $this->assertSame(
-            ["Kanga's Escape putra Regu A baru punya 3 atlet. Tambah 1 atlet lagi; satu regu tepat 4 atlet inti."],
+            ["Kanga's Escape putra Regu A baru punya 3 atlet. Tambah 1 atlet lagi. Satu regu harus tepat 4 atlet inti."],
             KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLL', 3)),
         );
     }
@@ -337,7 +337,7 @@ final class PendaftaranAturanTest extends CIUnitTestCase
     {
         // Cukup atlet, tetapi baru 3 yang ditandai inti.
         $this->assertSame(
-            ["Kanga's Escape putra Regu A baru punya 3 atlet inti. Tandai 1 atlet lagi sebagai Inti; satu regu tepat 4 atlet inti."],
+            ["Kanga's Escape putra Regu A baru punya 3 atlet inti. Tandai 1 atlet lagi sebagai Inti. Satu regu harus tepat 4 atlet inti."],
             KelengkapanTim::periksa(self::nomor(20), 'A', self::anggota('LLLLL', 3)),
         );
         $this->assertSame(
@@ -357,7 +357,7 @@ final class PendaftaranAturanTest extends CIUnitTestCase
     public function testTimMixDiperiksaPadaInti(): void
     {
         $pesan = KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLLLLLPP', 8));
-        $this->assertSame(["Estafet 8 × 50 m mixed Regu A: atlet inti minimal 4 putra dan 4 putri; sekarang 6 putra dan 2 putri. Jadikan 2 putri sebagai inti."], $pesan);
+        $this->assertSame(["Estafet 8 × 50 m mixed Regu A: atlet inti minimal 4 putra dan 4 putri. Sekarang 6 putra dan 2 putri. Jadikan 2 putri sebagai inti."], $pesan);
 
         // Putri ada, tetapi sebagai cadangan.
         $pesan = KelengkapanTim::periksa(self::nomor(21), 'A', self::anggota('LLLLLLPPPP', 8));

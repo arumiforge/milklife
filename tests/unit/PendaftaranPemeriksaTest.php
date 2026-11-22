@@ -518,7 +518,7 @@ final class PendaftaranPemeriksaTest extends CIUnitTestCase
         $kiriman          = self::kirimanContoh();
         $kiriman['atlet'] = self::timKanga(4, 10, 'C');
 
-        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu C; satu sekolah paling banyak 2 regu di nomor ini. Pilih Regu A atau B.');
+        $this->assertGalat(self::periksa($kiriman, [], $induk), 'atlet.0.regu', 'tidak punya Regu C. Satu sekolah paling banyak 2 regu di nomor ini. Pilih Regu A atau B.');
 
         $kiriman['atlet'] = self::timKanga(4, 10, 'b');
         $this->assertSame([], self::periksa($kiriman, [], $induk)['galat'], 'Huruf kecil dirapikan menjadi B.');

@@ -219,7 +219,7 @@ final class HalamanDepanJadwalKontakTest extends UjiBasisData
         // Tombol tanya admin dan bagikan dengan pesan yang diatur (rawurlencode).
         $tanya = $xpath->query('//section[@id="kontak"]//a[@data-kontak-tanya]')->item(0);
         $this->assertNotNull($tanya);
-        $this->assertSame('Tanya admin lewat WA (di tab baru)', $this->teksSimpul($tanya));
+        $this->assertSame('Tanya panitia lewat WA (di tab baru)', $this->teksSimpul($tanya));
         $this->assertSame('https://wa.me/6281299998888?text=' . rawurlencode("Halo admin, saya mau tanya & daftar?\n#MilkLifeAthleticsChallengeSeri2"), $tanya->getAttribute('href'));
         $this->assertStringContainsString('?text=Halo%20admin%2C%20saya%20mau%20tanya%20%26%20daftar%3F', $tanya->getAttribute('href'));
         $this->assertTabBaru($tanya);

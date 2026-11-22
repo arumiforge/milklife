@@ -99,10 +99,10 @@ final class BuktiPendaftaranTest extends UjiBasisData
         foreach ([
             'BUKTI PENDAFTARAN', 'MILKLIFE ATHLETICS CHALLENGE', 'Seri 2 Tahun 2026',
             // Nama sekolah di blok sendiri paling atas, data lain berlabel di bawahnya (K108).
-            '<td class="sekolah-label">Nama Sekolah</td>', '<td class="sekolah-nama">SD NEGERI CONTOH 1</td>',
-            '<td class="info-label">Tanggal Pendaftaran</td>', '<td class="info-isi">12 November 2026</td>',
+            '<td class="sekolah-label">Nama sekolah</td>', '<td class="sekolah-nama">SD NEGERI CONTOH 1</td>',
+            '<td class="info-label">Tanggal pendaftaran</td>', '<td class="info-isi">12 November 2026</td>',
             '<td class="info-label">Kabupaten / Kota</td>', '<td class="info-isi">Kudus</td>',
-            '<td class="info-label">ID Pendaftaran</td>', '<td class="info-id" width="58mm">MAC2A0000126</td>',
+            '<td class="info-label">ID pendaftaran</td>', '<td class="info-id" width="58mm">MAC2A0000126</td>',
             '<td class="info-label">NPSN</td>', '<td class="info-isi">20300001</td>', '<td class="info-isi">SD/MI</td>',
             'Ofisial', '<b>Ibu Karangan</b>', ', <b>Pak Rekaan</b>', '0812-0000-0002',
             'CANDRA REKAAN', '9900000002', 'Lompat Jauh putra', 'Rp 150.000',

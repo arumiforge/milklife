@@ -21,7 +21,7 @@ final class TataLetakGalatTest extends UjiHalaman
     {
         return [
             '404'      => ['error_404.php', 'Halaman tidak ditemukan'],
-            '400'      => ['error_400.php', 'Permintaan tidak bisa diproses'],
+            '400'      => ['error_400.php', 'Halaman tidak bisa dibuka'],
             'produksi' => ['production.php', 'Maaf, ada kendala'],
         ];
     }
