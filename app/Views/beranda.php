@@ -45,6 +45,11 @@
 
 <?= $this->section('judul') ?><?= esc(trim($acara['nama'] . ' ' . $acara['seri_tahun'])) ?><?= $this->endSection() ?>
 
+<?php // Huruf judul pembuka (Barlow Condensed 800 miring, F10-05) tampil di layar pertama. ?>
+<?= $this->section('preload') ?>
+<link rel="preload" href="<?= base_url('aset/vendor/barlow-condensed/barlow-condensed-latin-800-italic.woff2') ?>" as="font" type="font/woff2" crossorigin>
+<?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <?= view('beranda/_kepala', ['acara' => $acara, 'tampilan' => $tampilan, 'bukaTutup' => $bukaTutup, 'tombol' => $tombol, 'kelompokUmur' => $kelompokUmur, 'carousel' => $carousel], ['saveData' => false]) ?>
 <?php if ($hasilDiAtas) : ?>

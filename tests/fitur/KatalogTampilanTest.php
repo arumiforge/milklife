@@ -39,6 +39,11 @@ final class KatalogTampilanTest extends UjiBasisData
         $this->assertGreaterThan(0, $xpath->query('//*[@data-carousel-item]')->length, 'Carousel berindikator.');
         $this->assertGreaterThan(0, $xpath->query('//*[@data-carousel-slide-to]')->length);
         $this->assertSame(1, $xpath->query('//*[@id="menu-laci"]')->length);
+
+        // Gaya editorial F10-05: semua kelas baru tampil di katalog.
+        foreach (['judul-tampilan', 'alis', 'tombol-utama-berart', 'pemisah-lintasan', 'ornamen-judul', 'bingkai-foto', 'tekstur-kertas'] as $kelas) {
+            $this->assertGreaterThan(0, $xpath->query('//*[@data-katalog-editorial]//*[contains(concat(" ", normalize-space(@class), " "), " ' . $kelas . ' ")]')->length, $kelas);
+        }
     }
 
     public function testMenuBawahPonselLimaButirPendaftaran(): void

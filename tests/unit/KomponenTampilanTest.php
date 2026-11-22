@@ -69,7 +69,7 @@ final class KomponenTampilanTest extends CIUnitTestCase
     {
         $tautan = komponen('tombol', ['label' => 'Daftar <sekarang>', 'href' => '/pendaftaran', 'ikon' => 'arrow-right', 'ikonKanan' => true, 'varian' => 'oranye']);
         $this->assertMatchesRegularExpression('#<a href="/pendaftaran" class="[^"]*"#', $tautan);
-        $this->assertStringContainsString('bg-oranye-600', $tautan);
+        $this->assertStringContainsString('tombol-utama-berart tombol-berart-oranye', $tautan, 'Warna dan latar berart dari kelas F10-05.');
         $this->assertStringContainsString('min-h-11', $tautan, 'Target sentuh paling kecil 44 piksel.');
         $this->assertStringContainsString('Daftar &lt;sekarang&gt;<svg', $tautan, 'Label di-escape, ikon di kanan.');
 
@@ -79,6 +79,8 @@ final class KomponenTampilanTest extends CIUnitTestCase
         $this->assertStringNotContainsString('onclick', $tombol);
 
         $this->assertStringContainsString('type="submit"', komponen('tombol', ['label' => 'Kirim', 'tipe' => 'submit']));
+        $this->assertMatchesRegularExpression('#class="[^"]*tombol-utama-berart focus:ring-primary-300#', $tombol, 'Varian utama memakai tombol berart (F10-05).');
+        $this->assertStringNotContainsString('tombol-utama-berart', komponen('tombol', ['label' => 'Batal', 'varian' => 'kedua']));
     }
 
     public function testIsianMenandaiGalatUntukPembacaLayar(): void

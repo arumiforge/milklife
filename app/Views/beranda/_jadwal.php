@@ -29,8 +29,8 @@ if ($jadwal === []) {
 ?>
 <section id="jadwal" class="scroll-mt-20" aria-labelledby="judul-jadwal">
     <div class="mx-auto max-w-screen-xl px-4 py-12 sm:py-16">
-        <p class="text-sm font-bold uppercase tracking-wider text-oranye-600">Sosialisasi dan pertemuan teknik</p>
-        <h2 id="judul-jadwal" class="mt-1 text-3xl font-extrabold tracking-tight text-primary-900 sm:text-4xl">Agenda</h2>
+        <p class="alis">Sosialisasi dan pertemuan teknik</p>
+        <h2 id="judul-jadwal" class="judul-tampilan ornamen-judul mt-2">Agenda</h2>
 
         <ol class="mt-8 grid gap-4 md:grid-cols-2">
             <?php foreach ($jadwal as $butir) : ?>
@@ -40,11 +40,11 @@ if ($jadwal === []) {
                 ?>
                 <li class="flex gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-lembut" data-jadwal-butir data-id="<?= (int) $butir['id'] ?>">
                     <?php if ($tanggal === null || count($tanggal) < 3) : ?>
-                        <span class="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-gray-100 text-gray-500" aria-hidden="true" data-jadwal-tanggal><?= ikon('hourglass', 'size-6') ?></span>
+                        <span class="flex w-14 shrink-0 justify-center pt-1 text-gray-400" aria-hidden="true" data-jadwal-tanggal><?= ikon('hourglass', 'size-8') ?></span>
                     <?php else : ?>
-                        <span class="flex size-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-primary-700 text-white" aria-hidden="true" data-jadwal-tanggal>
-                            <span class="text-2xl font-extrabold leading-none"><?= esc($tanggal[0]) ?></span>
-                            <span class="text-xs font-bold uppercase"><?= esc(mb_substr($tanggal[1], 0, 3)) ?></span>
+                        <span class="flex w-14 shrink-0 flex-col items-center border-e border-gray-200 pe-3 text-primary-900" aria-hidden="true" data-jadwal-tanggal>
+                            <span class="font-tampilan text-4xl font-extrabold leading-none"><?= esc($tanggal[0]) ?></span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-oranye-700"><?= esc(mb_substr($tanggal[1], 0, 3)) ?></span>
                         </span>
                     <?php endif ?>
 

@@ -30,6 +30,20 @@ final class GambarOpsional
     ];
 
     /**
+     * Elemen berart G10-11 (`elemen/<nama>.webp`) yang dipakai kelas CSS F10-05 lewat kelas
+     * penanda `ada-<nama>` di `<html>` tata letak publik (lihat `penandaElemen()`).
+     */
+    public const ELEMEN = [
+        'kuas-tombol-oranye',
+        'kuas-tombol-biru',
+        'pemisah-lintasan',
+        'ornamen-judul-kiri',
+        'ornamen-judul-kanan',
+        'bingkai-sudut',
+        'tekstur-kertas',
+    ];
+
+    /**
      * Folder pengganti `public/aset/gambar/` untuk uji (berakhiran `/`); null = folder asli.
      */
     public static ?string $folder = null;
@@ -131,6 +145,24 @@ final class GambarOpsional
         $berkas = self::BAGIKAN[$segmen] ?? null;
 
         return ($berkas === null ? null : self::alamat('bagikan/' . $berkas . '.jpg')) ?? self::alamat('bagikan/umum.jpg');
+    }
+
+    /**
+     * Kelas penanda `ada-<nama>` untuk setiap elemen G10-11 yang berkasnya ada, dipisah spasi
+     * (F10-05). CSS hanya merujuk berkas elemen di bawah kelas penandanya, jadi tanpa
+     * berkas tidak ada permintaan 404 dan elemen memakai warna padat.
+     */
+    public static function penandaElemen(): string
+    {
+        $kelas = [];
+
+        foreach (self::ELEMEN as $nama) {
+            if (self::ada('elemen/' . $nama . '.webp')) {
+                $kelas[] = 'ada-' . $nama;
+            }
+        }
+
+        return implode(' ', $kelas);
     }
 
     private static function folder(): string
