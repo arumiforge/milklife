@@ -38,13 +38,16 @@ final class PengaturanCadanganTest extends UjiBasisData
 
     protected function setUp(): void
     {
+        // Jalur sementara diisi sebelum apa pun yang bisa gagal, supaya
+        // tearDown() tidak pernah membersihkan dengan jalur kosong (`glob('*')`
+        // di folder kerja menghapus berkas di akar repo).
+        $this->folderOtomatis = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'milklife-cadangan-' . bin2hex(random_bytes(6));
+        $this->zip            = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'milklife-cadangan-' . bin2hex(random_bytes(6)) . '.zip';
         parent::setUp();
         $this->siapkanDataPanel();
         $this->pakaiFolderFotoSementara();
         $this->pakaiFolderBuktiBayarSementara();
-        $this->folderOtomatis = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'milklife-cadangan-' . bin2hex(random_bytes(6));
         CadanganLengkap::gantiFolderOtomatis($this->folderOtomatis);
-        $this->zip = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'milklife-cadangan-' . bin2hex(random_bytes(6)) . '.zip';
         $this->bersihkanSementara();
         // Pembatas percobaan kata sandi mulai dari nol di setiap uji.
         Services::resetSingle('throttler');
@@ -53,8 +56,11 @@ final class PengaturanCadanganTest extends UjiBasisData
 
     protected function tearDown(): void
     {
-        foreach (glob($this->zip . '*') ?: [] as $berkas) {
-            @unlink($berkas);
+        // Hanya berkas sementara uji di folder temp sistem yang dibersihkan.
+        if ($this->zip !== '' && str_starts_with($this->zip, sys_get_temp_dir() . DIRECTORY_SEPARATOR)) {
+            foreach (glob($this->zip . '*') ?: [] as $berkas) {
+                @unlink($berkas);
+            }
         }
 
         CadanganLengkap::gantiFolderOtomatis(null);
