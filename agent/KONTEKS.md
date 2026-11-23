@@ -18,7 +18,7 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17–20 memuat K116–K134, revisi 23–29 memuat Tahap 9 K137–K151, revisi 30 Tahap 10, revisi 32–37 Tahap 11 K172–K176). Panduan admin hari lomba (draf): `dokumen/draf/panduan-admin-hari-lomba.md`.
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17–20 memuat K116–K134, revisi 23–29 memuat Tahap 9 K137–K151, revisi 30 Tahap 10, revisi 32–37 Tahap 11 K172–K176). Panduan admin hari lomba (disetujui pemilik, K178): `dokumen/final/panduan-admin-hari-lomba.md`.
 - Rencana implementasi per tahap: `dokumen/draf/rencana-implementasi-tahap-<n>.md` (Tahap 1–10); Tahap 11 berdasar telaah `dokumen/draf/telaah-hasil-seri-1.md`.
 - Panduan pemasangan dan pembaruan server: `dokumen/final/panduan-pemasangan-produksi.md`.
 - Aturan yang berlaku: `agent/ATURAN.md`; letak kode: `agent/PETA-KODE.md`.
