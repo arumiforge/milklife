@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101); **revisi 12 23 November 2026** (penutupan Tahap 11, diubah langsung sesuai K101); **revisi 13 23 November 2026** (K182, ditulis ulang untuk Ubuntu dan Docker, diubah langsung sesuai K101) |
-| Revisi 13 | Server pindah dari Windows dan Laragon ke VPS Ubuntu 24.04 dengan Docker Compose (K182): PHP 8.5.13 di FrankenPHP, MySQL 8.4, cloudflared di container, cadangan harian lewat cron host, dan langkah pindah dari server Laragon. Panduan ditulis ulang; ringkasan perintah sekali jalan Tahap 9 sampai 11 diringkas di bagian 10. Bagian yang berubah: semua |
+| Revisi 13 | Server pindah dari Windows dan Laragon ke VPS Ubuntu 24.04 dengan Docker Compose (K182): PHP 8.5.13 di FrankenPHP, MySQL 8.4, cloudflared di container, cadangan harian lewat cron host yang disalin ke Cloudflare R2, dan langkah pindah dari server Laragon. Panduan ditulis ulang; ringkasan perintah sekali jalan Tahap 9 sampai 11 diringkas di bagian 10. Bagian yang berubah: semua |
 | Revisi 12 | Penutupan Tahap 11 (F11-08): ringkasan perintah sekali jalan pembaruan Tahap 11 (`cadangan:buat`, `migrate --all`, `data:sesuaikan`, `aset:minify`, `pembaruan:periksa`), langkah tanya-jawab baru di `data:sesuaikan`, pengaturan yang diperiksa admin setelah pembaruan (susunan klasemen, pelaksanaan nomor lomba, nomor acara, sakelar Rekor dan Videotron), dan alamat `/layar` untuk operator videotron vendor (K172–K176). Bagian yang berubah: 10 |
 | Revisi 11 | Cadangan di panel admin (F11-11, K174): menu Pengaturan > Cadangan menggantikan tombol Backup data, cadangannya berisi semua data, pengaturan, dan berkas unggahan; impor lewat panel mengganti semua setelah cadangan otomatis di `writable\cadangan`; perintah `php spark cadangan:pulihkan` untuk berkas yang terlalu besar diunggah; batas unggah PHP untuk impor. Bagian yang berubah: 8, 9, 10 |
 | Revisi 10 | Penutupan Tahap 10 (F10-11): ringkasan perintah sekali jalan pembaruan Tahap 10 berurutan (`migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `data:sesuaikan`, `aset:minify`, lalu `pendaftaran:impor` bila perlu, K157 butir 4), dan catatan bahwa tanya-jawab serta pesan WA yang sudah tersimpan di server tidak berubah otomatis, disunting admin di Pengaturan → Bantuan dan Pengaturan → Halaman depan (K166 butir 3). Bagian yang berubah: 10 |
@@ -31,7 +31,7 @@ Panduan ini ditulis untuk **Ubuntu 24.04 dengan Docker** (K182). Semua perintah 
 - Satu proyek berisi tiga container: **app** (FrankenPHP dengan PHP 8.5.13 dan OPcache), **db** (MySQL 8.4), dan **cloudflared** (Cloudflare Tunnel).
 - Tidak ada container yang membuka port ke host atau ke internet. Pengunjung membuka `https://<alamat-pendaftaran>`, Cloudflare memasang HTTPS, lalu meneruskan permintaan lewat tunnel ke `http://app:8080` di jaringan internal proyek itu. Port yang terbuka di VPS hanya SSH.
 - Data yang harus bertahan ada di tiga volume Docker (`writable`, `unggahan`, `mysql`) dan satu folder cadangan di host. Kode ada di dalam image, yang dibangun ulang setiap memperbarui versi.
-- Setiap malam cron di host menjalankan `php spark cadangan:buat` di container app, yang menulis satu berkas zip cadangan ke folder cadangan dan menghapus cadangan yang berumur 14 hari atau lebih.
+- Setiap malam cron di host menjalankan `php spark cadangan:buat` di container app, yang menulis satu berkas zip cadangan ke folder cadangan dan menghapus cadangan yang berumur 14 hari atau lebih. Setelah itu layanan `salin-r2` menyalin cadangan baru ke bucket Cloudflare R2.
 
 ## 1. Yang perlu disiapkan
 
@@ -240,14 +240,29 @@ Setelah berhasil, cadangan yang berumur 14 hari atau lebih di folder itu dihapus
 2. Jadwalkan setiap pukul 02.00 dengan cron di host:
 
    ```
-   echo '0 2 * * * root cd /srv/milklife-produksi && docker compose -f docker/compose.yaml exec -T app php spark cadangan:buat >> /var/log/milklife-cadangan.log 2>&1' | sudo tee /etc/cron.d/milklife-produksi
+   echo '0 2 * * * root cd /srv/milklife-produksi && { docker compose -f docker/compose.yaml exec -T app php spark cadangan:buat && docker compose -f docker/compose.yaml run --rm -T salin-r2; } >> /var/log/milklife-cadangan.log 2>&1' | sudo tee /etc/cron.d/milklife-produksi
    ```
 
-   Keesokan harinya, periksa bahwa ada berkas baru di folder cadangan dan baca `/var/log/milklife-cadangan.log` bila tidak ada. Staging tidak perlu dijadwalkan.
+   Baris ini membuat cadangan, lalu menyalinnya ke Cloudflare R2 (lihat "Salinan di luar server" di bawah). Bila pembuatan cadangan gagal, penyalinan tidak dijalankan. Keesokan harinya, periksa bahwa ada berkas baru di folder cadangan dan di bucket R2, dan baca `/var/log/milklife-cadangan.log` bila tidak ada. Staging tidak perlu dijadwalkan.
 
-### Salinan di luar server
+### Salinan di luar server (Cloudflare R2)
 
-Cadangan di VPS yang sama tidak menolong bila VPS-nya rusak atau hilang. Seminggu sekali, dan setelah pendaftaran ditutup, unduh berkas zip terbaru lewat jendela SFTP Bitvise ke penyimpanan yang hanya bisa dibuka panitia.
+Cadangan di VPS yang sama tidak menolong bila VPS-nya rusak atau hilang. Karena itu setiap cadangan harian juga disalin ke bucket Cloudflare R2 oleh layanan `salin-r2` (rclone di container, K182). Layanan ini hanya menyalin berkas `cadangan-milklife-*.zip` yang berumur kurang dari 3 hari, ke folder `milklife-produksi/` di bucket, dan tidak pernah menghapus apa pun di bucket.
+
+1. Di dasbor Cloudflare, buka **R2** → bucket yang sudah ada → **Settings**. Salin alamat **S3 API** (`https://<id-akun>.r2.cloudflarestorage.com`, tanpa nama bucket di belakangnya) ke `R2_ENDPOINT`, dan nama bucket ke `R2_BUCKET` di `docker/.env`.
+2. Pastikan bucket tidak terbuka untuk umum: **Public access** mati, tanpa domain publik.
+3. Token: **R2** → **Manage API tokens** → **Create API token**, izin **Object Read & Write**, hanya untuk bucket ini. Salin **Access Key ID** dan **Secret Access Key** ke `R2_ACCESS_KEY_ID` dan `R2_SECRET_ACCESS_KEY`. Kunci rahasia hanya tampil sekali. Bila token yang sudah ada punya izin lebih luas (misalnya semua bucket atau Admin), buat token baru khusus MilkLife.
+4. Coba sekali, setelah `spark cadangan:buat` berhasil:
+
+   ```
+   mlk run --rm salin-r2
+   mlk run --rm salin-r2 ls r2:<nama-bucket>/milklife-produksi
+   ```
+
+   Perintah kedua harus menampilkan berkas zip yang baru dibuat. Bila tampil `403` atau `SignatureDoesNotMatch`, periksa kembali isian token dan endpoint.
+5. Atur penghapusan otomatis di bucket: **Settings** → **Object lifecycle rules** → hapus objek berawalan `milklife-produksi/` setelah, misalnya, 90 hari. Tanpa aturan ini, semua cadangan tetap tersimpan di bucket.
+
+Berkas di R2 berisi data pribadi siswa seperti berkas aslinya. Hanya panitia yang memegang akun Cloudflare yang boleh mengunduhnya. Setelah lomba selesai dan data tidak diperlukan lagi, hapus folder itu di bucket.
 
 ### Cadangan dari panel admin
 
@@ -436,14 +451,14 @@ Cadangan:
 
 - [ ] `spark cadangan:buat` berhasil, dan berkas zip muncul di folder cadangan host.
 - [ ] `/etc/cron.d/milklife-produksi` ada, dan keesokan paginya ada cadangan baru.
-- [ ] Tempat salinan di luar server sudah disiapkan.
+- [ ] `mlk run --rm salin-r2` berhasil, berkas zip tampil di bucket R2, bucket tidak publik, dan aturan lifecycle sudah dipasang.
 
 Selama masa pendaftaran, periksa sesekali bahwa folder cadangan berisi berkas hari ini, dan putuskan usulan nama sekolah dari pendaftar di **Sekolah** → **Usulan nama dari pendaftar**.
 
 ## Asumsi yang perlu ditinjau
 
 1. VPS sudah menjalankan Docker untuk aplikasi lain; MilkLife tidak memakai port host, reverse proxy, atau cloudflared milik aplikasi lain, dan subnet-nya dipilih supaya tidak bentrok (K182).
-2. Cadangan dijalankan pukul 02.00 waktu server oleh cron host. Container app dan db memakai zona waktu `Asia/Jakarta`.
+2. Cadangan dijalankan pukul 02.00 waktu server oleh cron host, lalu disalin ke bucket Cloudflare R2 yang sudah dimiliki panitia. Container app dan db memakai zona waktu `Asia/Jakarta`.
 3. `.env` dan `docker/.env` tidak ikut dalam berkas cadangan (berisi rahasia); pengembang menyimpan salinannya sendiri.
 4. Image dibangun di server dari kode hasil `git pull`; tidak ada registry image terpisah.
 5. Kode diambil dan diperbarui dengan `git` dari repo privat lewat deploy key baca saja per server (K138, K148).
