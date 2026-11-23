@@ -83,7 +83,7 @@ docker build --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY --target dasar 
 docker run -d --name mysql-uji -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_DATABASE=milklife_uji \
   mysql:8.4.13 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
-# Semua uji, memakai vendor/ dari kontainer cloud (sekitar 60 menit).
+# Semua uji, memakai vendor/ dari kontainer cloud (sekitar 50 menit).
 docker run --rm --network container:mysql-uji -v "$PWD":/app -w /app --entrypoint sh \
   milklife-dasar:uji -c 'php -d memory_limit=-1 vendor/bin/phpunit'
 ```
