@@ -376,9 +376,6 @@
   .top-full {
     top: 100%;
   }
-  .-right-6 {
-    right: calc(var(--spacing) * -6);
-  }
   .-right-8 {
     right: calc(var(--spacing) * -8);
   }
@@ -393,9 +390,6 @@
   }
   .right-6 {
     right: calc(var(--spacing) * 6);
-  }
-  .-bottom-2 {
-    bottom: calc(var(--spacing) * -2);
   }
   .bottom-0 {
     bottom: 0px;
@@ -1464,9 +1458,6 @@
   }
   .h-\[75\%\] {
     height: 75%;
-  }
-  .h-\[85\%\] {
-    height: 85%;
   }
   .h-\[85px\] {
     height: 85px;
