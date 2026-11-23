@@ -9,7 +9,7 @@ Diperbarui: 23 November 2026
 ## Berikutnya
 
 - Gambar G11-01 (kartu kelompok umur) dan G11-02 (latar hero kiri) dari Codex, perlu sebelum 28 November 2026. Sampai berkas tiba, halaman depan memakai gradien cadangan.
-- Pembaruan server produksi Tahap 11 (panduan produksi bagian 10): `cadangan:buat`, `migrate --all`, `data:sesuaikan`, `aset:minify`, `pembaruan:periksa`. Sakelar Rekor dan Videotron dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139), dan alamat `/layar` diberikan ke operator videotron vendor. Panduan admin hari lomba (`dokumen/final/panduan-admin-hari-lomba.md`, K178) dibagikan ke admin panitia sebelum pertemuan teknik.
+- Pembaruan server produksi Tahap 11 (panduan produksi bagian 10): `cadangan:buat`, `migrate --all`, `data:sesuaikan`, `aset:minify`, `pembaruan:periksa`. Sakelar Rekor dan Videotron dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139), dan alamat `/layar` diberikan ke operator videotron vendor. Panduan admin hari lomba (`dokumen/final/panduan-admin-hari-lomba.md`, K178, revisi 1 K182) siap dibagikan ke admin panitia dan juri sebelum pertemuan teknik; setelah pembaruan server, admin membuat akun juri di Pengaturan > Akun juri dan menyunting jawaban ganti atlet di Bantuan.
 - Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember 2026.
 
 ## Selesai
