@@ -255,13 +255,26 @@ final class FaqBawaan
             Saat upacara penghormatan pemenang, atlet memakai seragam olahraga sekolah lengkap, bersepatu, dan sopan.
             MD],
         ['hari_lomba', 'Bolehkah mengganti atau menambah atlet setelah terdaftar di nomor lomba?', <<<'MD'
-            Menurut petunjuk teknis, atlet yang sudah terdaftar di nomor lomba **tidak dapat ditambah atau digantikan**, kecuali dicoret. Pastikan data atlet dan nomor lombanya benar sebelum pendaftaran ditutup.
+            Atlet **tidak dapat ditambah** setelah pendaftaran ditutup. Pastikan data atlet dan nomor lombanya benar sebelum batas pendaftaran.
+
+            Bila atlet berhalangan, sekolah bisa meminta panitia **mengganti** atlet itu dengan siswa lain dari sekolah yang sama. Syaratnya:
+
+            - pendaftaran sudah Lunas;
+            - daftar seri nomor itu belum dikunci dan hasilnya belum diisi;
+            - kelompok umur dan jenis kelamin atlet pengganti sama dengan nomor lombanya, dan atlet pengganti belum terdaftar.
+
+            Atlet pengganti memakai nomor lomba atlet lama dan mendapat nomor atlet (BIB) baru. Biaya tidak berubah. Kirim nama atlet lama serta nama, NISN, dan tanggal lahir atlet pengganti ke panitia lewat WA.
             MD],
         ['hari_lomba', 'Apakah panitia menanggung transportasi dan penginapan?', <<<'MD'
             Tidak. Biaya transportasi dan akomodasi ditanggung masing-masing peserta.
             MD],
         ['hari_lomba', 'Bagaimana jika ingin mengajukan protes?', <<<'MD'
             Protes dibuat **tertulis**, ditandatangani pelatih atau ofisial, disertai uang protes **Rp 300.000**. Bila protes diterima, uangnya dikembalikan. Keputusan wasit bersifat mutlak.
+            MD],
+        ['hari_lomba', 'Apa itu nomor acara, misalnya Acara 101?', <<<'MD'
+            Nomor acara adalah nomor urut setiap babak di jadwal lomba, misalnya **Acara 101**. Pembawa acara memakai nomor ini saat memanggil atlet. Nomor yang sama tertulis di jadwal, daftar seri, dan lembar hasil.
+
+            Lihat nomor acara di halaman **Jadwal** setelah panitia mengumumkannya.
             MD],
 
         // ---------- Hasil dan juara ----------
@@ -284,6 +297,31 @@ final class FaqBawaan
         ['hasil', 'Kapan piagam dan piala diberikan?', <<<'MD'
             Piagam dan piala diberikan panitia di lokasi lomba melalui upacara penghormatan pemenang. Piagam tidak diunduh dari web ini.
             MD],
+        ['hasil', 'Apa arti DNS, DNF, DQ, NM, r, dan CR di hasil lomba?', <<<'MD'
+            - **DNS**: tidak start.
+            - **DNF**: tidak finis.
+            - **DQ**: didiskualifikasi. Pasal aturannya ditulis di dalam kurung, misalnya DQ (TR16.8).
+            - **NM**: tidak ada lompatan atau lemparan yang sah.
+            - **r**: mundur dari lomba. Prestasi sebelum mundur tetap dinilai.
+            - **CR**: rekor kejuaraan baru.
+
+            NM dan r hanya dipakai di nomor lompat dan lempar. Atlet dengan DNS, DNF, DQ, atau NM tidak mendapat peringkat.
+            MD],
+        ['hasil', 'Mengapa waktu di beberapa nomor hanya satu angka di belakang koma?', <<<'MD'
+            Nomor itu memakai **waktu tangan**: waktunya dicatat dengan stopwatch, bukan alat elektronik. Sesuai aturan atletik, waktu tangan dibulatkan ke atas ke 0,1 detik. Contohnya, 12,34 detik ditulis 12,4.
+
+            Lembar hasil nomor itu diberi keterangan waktu tangan.
+            MD],
+        ['hasil', 'Apa artinya nomor lomba bertanda Tidak dilombakan?', <<<'MD'
+            Panitia bisa memutuskan sebuah nomor tidak dilombakan, misalnya karena pesertanya kurang dari batas di petunjuk teknis. Alasannya tertulis di halaman **Hasil** nomor itu.
+
+            Nomor yang tidak dilombakan tidak punya juara dan tidak dihitung di klasemen juara umum. Bila atlet Anda terdaftar di nomor itu, hubungi panitia lewat WA.
+            MD],
+        ['hasil', 'Apa itu rekor kejuaraan dan di mana melihatnya?', <<<'MD'
+            Rekor kejuaraan adalah prestasi terbaik setiap nomor lomba, dicatat mulai Seri 2. Rekor baru diambil dari babak **Final** bila prestasinya lebih baik dari rekor sebelumnya, lalu ditandai **CR** di hasil.
+
+            Daftar rekor ada di halaman **Rekor**. Tautannya ada di bagian bawah halaman **Hasil** setelah panitia menampilkannya.
+            MD],
     ];
 
     /**
@@ -305,6 +343,10 @@ final class FaqBawaan
         if ($db->table('faq')->insertBatch($baris) !== count($baris)) {
             throw new RuntimeException('Tanya-jawab bawaan gagal disimpan.');
         }
+
+        // Tanya-jawab Tahap 11 sudah ikut terpasang; `data:sesuaikan` tidak
+        // perlu menambahkannya lagi (F11-08).
+        setting('Bantuan.faqTahap11', true);
 
         return count($baris);
     }

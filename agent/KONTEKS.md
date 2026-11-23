@@ -4,7 +4,7 @@
 
 Web pendaftaran **MilkLife Athletics Challenge Seri 2 – 2026** untuk sekolah se-Karesidenan Pati (Blora, Rembang, Pati, Kudus, Jepara). Acara berada di bawah Bakti Olahraga Djarum Foundation, berlangsung 9–12 Desember 2026 di Supersoccer Arena, Kudus.
 
-Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 juga hari lomba (daftar ulang lewat kode QR, cetak nomor atlet (BIB), daftar peserta per nomor), hasil lomba semua babak, dan klasemen juara umum sekolah per jenjang. Tahap 9 (K140, K141) menambah jadwal pertandingan per babak, seri dan lintasan dengan aturan lolos Q/q dan bagan alur babak, aturan nomor (percobaan, pemecah seri) dan lembar juri ponsel, kalkulator poin multi-lomba dari tabel skor panitia, metode klasemen Medali atau Poin, serta halaman publik Bantuan/FAQ, Jadwal, Peserta, Galeri, dan papan videotron `/layar`. Fitur publik baru bersakelar bawaan mati kecuali Bantuan. Penjurian di lapangan tetap oleh juri.
+Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 juga hari lomba (daftar ulang lewat kode QR, cetak nomor atlet (BIB), daftar peserta per nomor), hasil lomba semua babak, dan klasemen juara umum sekolah (per kelompok umur sejak K172). Tahap 9 (K140, K141) menambah jadwal pertandingan per babak, seri dan lintasan dengan aturan lolos Q/q dan bagan alur babak, aturan nomor (percobaan, pemecah seri) dan lembar juri ponsel, kalkulator poin multi-lomba dari tabel skor panitia, metode klasemen Medali atau Poin, serta halaman publik Bantuan/FAQ, Jadwal, Peserta, Galeri, dan papan videotron `/layar`. Fitur publik baru bersakelar bawaan mati kecuali Bantuan. Tahap 11 (K172–K176) menambah ganti atlet oleh admin, status nomor Tidak dilombakan dan batas peserta, cara pencatatan waktu tangan atau elektronik, kode NM dan r serta pasal DQ, rekor kejuaraan, nomor acara per babak, videotron berupa daftar tampilan tetap untuk operator vendor, cadangan lengkap di Pengaturan, panel admin ringkas, dan halaman depan yang dirapikan. Penjurian di lapangan tetap oleh juri.
 
 ## Pengguna
 
@@ -18,8 +18,8 @@ CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.2+ (Laragon p
 
 ## Dokumen utama
 
-- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17–20 memuat K116–K134, revisi 23–29 memuat Tahap 9 K137–K151).
-- Rencana implementasi per tahap: `dokumen/draf/rencana-implementasi-tahap-<n>.md` (Tahap 1–9).
+- Rancangan: `dokumen/final/rancangan-web-pendaftaran.md` (disetujui pemilik, K17; revisi 17–20 memuat K116–K134, revisi 23–29 memuat Tahap 9 K137–K151, revisi 30 Tahap 10, revisi 32–37 Tahap 11 K172–K176). Panduan admin hari lomba (draf): `dokumen/draf/panduan-admin-hari-lomba.md`.
+- Rencana implementasi per tahap: `dokumen/draf/rencana-implementasi-tahap-<n>.md` (Tahap 1–10); Tahap 11 berdasar telaah `dokumen/draf/telaah-hasil-seri-1.md`.
 - Panduan pemasangan dan pembaruan server: `dokumen/final/panduan-pemasangan-produksi.md`.
 - Aturan yang berlaku: `agent/ATURAN.md`; letak kode: `agent/PETA-KODE.md`.
 - Arsip tahap selesai: `agent/arsip/`.

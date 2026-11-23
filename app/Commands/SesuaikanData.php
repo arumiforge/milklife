@@ -2,12 +2,14 @@
 
 namespace App\Commands;
 
+use App\Libraries\Bantuan\FaqBawaan;
 use App\Libraries\NomorWa;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Config\Services;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\I18n\Time;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -25,7 +27,15 @@ use Throwable;
  *   `@milklifeathletics`) menjadi alamat resmi MilkLife di `DataAwal::TAUTAN`;
  * - kalimat bawaan lama "Juara umum dihitung per jenjang sekolah." di
  *   tanya-jawab dihapus, karena klasemen kini per kelompok umur dan
- *   `{cara_juara_umum}` sudah menyebut susunannya (F11-02, K172 butir 2).
+ *   `{cara_juara_umum}` sudah menyebut susunannya (F11-02, K172 butir 2);
+ * - jawaban bawaan lama "Bolehkah mengganti atau menambah atlet …" yang belum
+ *   diubah admin diganti jawaban baru tentang ganti atlet oleh panitia
+ *   (F11-01, F11-08);
+ * - tanya-jawab bawaan Tahap 11 (nomor acara, kode hasil, waktu tangan,
+ *   tidak dilombakan, rekor) ditambahkan **sekali** bila pertanyaannya belum
+ *   ada; penanda `Bantuan.faqTahap11` mencegahnya ditambah lagi setelah
+ *   dihapus admin. Tabel `faq` yang masih kosong dilewati, karena `faq:awal`
+ *   memasang semuanya (F11-08).
  *
  * Setiap langkah hanya mengubah nilai bawaan lama; isian yang sudah diubah
  * admin dan data pendaftaran tidak disentuh, jadi aman dijalankan berkali-kali.
@@ -35,7 +45,7 @@ class SesuaikanData extends BaseCommand
 {
     protected $group       = 'Aplikasi';
     protected $name        = 'data:sesuaikan';
-    protected $description = 'Menyamakan data bawaan lama (nama KU 8, nomor WA contoh, media sosial lama, kalimat juara umum per jenjang di tanya-jawab) dengan data bawaan terbaru. Isian admin tidak ditimpa; aman dijalankan lagi.';
+    protected $description = 'Menyamakan data bawaan lama (nama KU 8, nomor WA contoh, media sosial lama, tanya-jawab juara umum dan ganti atlet, tanya-jawab baru Tahap 11) dengan data bawaan terbaru. Isian admin tidak ditimpa; aman dijalankan lagi.';
     protected $usage       = 'data:sesuaikan';
 
     /**
@@ -75,6 +85,25 @@ class SesuaikanData extends BaseCommand
     public const FAQ_JUARA_UMUM_LAMA = 'Juara umum dihitung **per jenjang sekolah**. {cara_juara_umum}';
 
     public const FAQ_JUARA_UMUM_BARU = '{cara_juara_umum}';
+
+    /**
+     * Pertanyaan dan jawaban bawaan lama tentang ganti atlet (sebelum F11-01).
+     * Jawaban diganti hanya bila isinya masih persis sama.
+     */
+    public const FAQ_GANTI_ATLET_PERTANYAAN = 'Bolehkah mengganti atau menambah atlet setelah terdaftar di nomor lomba?';
+
+    public const FAQ_GANTI_ATLET_LAMA = 'Menurut petunjuk teknis, atlet yang sudah terdaftar di nomor lomba **tidak dapat ditambah atau digantikan**, kecuali dicoret. Pastikan data atlet dan nomor lombanya benar sebelum pendaftaran ditutup.';
+
+    /**
+     * Pertanyaan bawaan baru Tahap 11 yang ditambahkan sekali ke server lama.
+     */
+    public const FAQ_TAHAP_11 = [
+        'Apa itu nomor acara, misalnya Acara 101?',
+        'Apa arti DNS, DNF, DQ, NM, r, dan CR di hasil lomba?',
+        'Mengapa waktu di beberapa nomor hanya satu angka di belakang koma?',
+        'Apa artinya nomor lomba bertanda Tidak dilombakan?',
+        'Apa itu rekor kejuaraan dan di mana melihatnya?',
+    ];
 
     /**
      * @param array<int|string, string|null> $params
@@ -129,6 +158,8 @@ class SesuaikanData extends BaseCommand
             self::nomorWa($hasil, false);
             self::mediaSosial($db, $waktu, $hasil, false);
             self::faqJuaraUmum($db, $waktu, $hasil, false);
+            self::faqGantiAtlet($db, $waktu, $hasil, false);
+            self::faqTahap11($db, $waktu, $hasil, false);
 
             return $hasil;
         }
@@ -140,6 +171,8 @@ class SesuaikanData extends BaseCommand
             self::nomorWa($hasil);
             self::mediaSosial($db, $waktu, $hasil);
             self::faqJuaraUmum($db, $waktu, $hasil);
+            self::faqGantiAtlet($db, $waktu, $hasil);
+            self::faqTahap11($db, $waktu, $hasil);
 
             $db->transCommit();
         } catch (Throwable $e) {
@@ -254,5 +287,95 @@ class SesuaikanData extends BaseCommand
         }
 
         $hasil['diubah'][] = 'Tanya-jawab juara umum: kalimat "per jenjang sekolah" dihapus dari ' . count($baris) . ' jawaban; susunan klasemen per kelompok umur kini disebut otomatis.';
+    }
+
+    /**
+     * @param array{diubah: list<string>, dilewati: list<string>} $hasil
+     */
+    private static function faqGantiAtlet(BaseConnection $db, string $waktu, array &$hasil, bool $ubah = true): void
+    {
+        $baru  = null;
+        $ganti = 0;
+
+        foreach (FaqBawaan::baris($waktu) as $b) {
+            if ($b['pertanyaan'] === self::FAQ_GANTI_ATLET_PERTANYAAN) {
+                $baru = $b['jawaban'];
+            }
+        }
+
+        foreach ($db->table('faq')->select('id, jawaban')->orderBy('id')->get()->getResultArray() as $b) {
+            if (str_replace("\r\n", "\n", trim((string) $b['jawaban'])) !== self::FAQ_GANTI_ATLET_LAMA) {
+                continue;
+            }
+
+            if ($ubah && $baru !== null) {
+                $db->table('faq')->where('id', (int) $b['id'])->update(['jawaban' => $baru, 'diubah_pada' => $waktu]);
+            }
+
+            $ganti++;
+        }
+
+        if ($ganti === 0) {
+            $hasil['dilewati'][] = 'Tanya-jawab ganti atlet: tidak ada jawaban bawaan lama.';
+
+            return;
+        }
+
+        $hasil['diubah'][] = 'Tanya-jawab ganti atlet: jawaban bawaan lama diganti jawaban tentang ganti atlet oleh panitia (' . $ganti . ' jawaban).';
+    }
+
+    /**
+     * @param array{diubah: list<string>, dilewati: list<string>} $hasil
+     */
+    private static function faqTahap11(BaseConnection $db, string $waktu, array &$hasil, bool $ubah = true): void
+    {
+        if ((bool) setting('Bantuan.faqTahap11')) {
+            $hasil['dilewati'][] = 'Tanya-jawab baru Tahap 11: sudah pernah ditambahkan.';
+
+            return;
+        }
+
+        if ($db->table('faq')->countAllResults() === 0) {
+            $hasil['dilewati'][] = 'Tanya-jawab baru Tahap 11: tanya-jawab belum dipasang; jalankan "php spark faq:awal".';
+
+            return;
+        }
+
+        $ada = array_column($db->table('faq')->select('pertanyaan')->get()->getResultArray(), 'pertanyaan');
+        $ada = array_map(static fn ($p): string => mb_strtolower(trim((string) $p)), $ada);
+
+        $urutan = [];
+
+        foreach ($db->table('faq')->select('kategori, MAX(urutan) AS urutan')->groupBy('kategori')->get()->getResultArray() as $b) {
+            $urutan[(string) $b['kategori']] = (int) $b['urutan'];
+        }
+
+        $tambah = [];
+
+        foreach (FaqBawaan::baris($waktu) as $b) {
+            if (! in_array($b['pertanyaan'], self::FAQ_TAHAP_11, true) || in_array(mb_strtolower($b['pertanyaan']), $ada, true)) {
+                continue;
+            }
+
+            $urutan[$b['kategori']] = ($urutan[$b['kategori']] ?? 0) + 1;
+            $b['urutan']            = $urutan[$b['kategori']];
+            $tambah[]               = $b;
+        }
+
+        if ($ubah) {
+            if ($tambah !== [] && $db->table('faq')->insertBatch($tambah) !== count($tambah)) {
+                throw new RuntimeException('Tanya-jawab baru Tahap 11 gagal disimpan.');
+            }
+
+            setting('Bantuan.faqTahap11', true);
+        }
+
+        if ($tambah === []) {
+            $hasil['dilewati'][] = 'Tanya-jawab baru Tahap 11: semua pertanyaannya sudah ada.';
+
+            return;
+        }
+
+        $hasil['diubah'][] = 'Tanya-jawab baru Tahap 11 ditambahkan (' . count($tambah) . '): ' . implode(' ', array_column($tambah, 'pertanyaan'));
     }
 }

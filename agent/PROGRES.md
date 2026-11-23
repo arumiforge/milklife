@@ -1,31 +1,16 @@
 # Progres
 
-Diperbarui: 22 November 2026
+Diperbarui: 23 November 2026
 
 ## Sedang berjalan
 
-**Tahap 11 — Pelajaran hasil Seri 1** (K172). Telaah dan rekomendasi: [`dokumen/draf/telaah-hasil-seri-1.md`](../dokumen/draf/telaah-hasil-seri-1.md). Semua sebelum lomba 9 Desember; P1 (F11-01 sampai F11-05) lebih dulu, sebelum pertemuan teknik 6 Desember.
-
-| Tugas | Status |
-|---|---|
-| [F11-01 Ganti atlet oleh admin](tugas/F11-01-ganti-atlet.md) | selesai (#211) |
-| [F11-02 Klasemen per kelompok umur](tugas/F11-02-klasemen-kelompok-umur.md) | selesai (#212) |
-| [F11-03 Status nomor dan batas peserta](tugas/F11-03-status-nomor-batas-peserta.md) | selesai (#213) |
-| [F11-04 Cara pencatatan waktu](tugas/F11-04-cara-pencatatan-waktu.md) | selesai (#214) |
-| [F11-05 Kode NM dan r](tugas/F11-05-kode-nm-r.md) | selesai (#215) |
-| [F11-06 Rekor kejuaraan](tugas/F11-06-rekor-kejuaraan.md) | rencana |
-| [F11-07 Nomor acara](tugas/F11-07-nomor-acara.md) | selesai (#216) |
-| [F11-09 Daftar tampilan videotron](tugas/F11-09-daftar-tampilan-videotron.md) | selesai (#218) |
-| [F11-10 Panel admin ringkas](tugas/F11-10-panel-admin-ringkas.md) | rencana |
-| [F11-11 Cadangan di Pengaturan](tugas/F11-11-cadangan-pengaturan.md) | rencana |
-| [F11-12 Halaman depan dan publik dirapikan](tugas/F11-12-halaman-depan-publik.md) | rencana |
-| [F11-08 Penutupan Tahap 11](tugas/F11-08-penutupan-tahap-11.md) | rencana |
-
-Pembaruan server mengikuti bagian 10 panduan produksi. Server yang dipasang sebelum Tahap 9 menjalankan sekali, berurutan: `php spark migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `data:sesuaikan`, `aset:minify`, lalu `pendaftaran:impor <berkas.zip>` bila memindah data. Server yang sudah menjalankan perintah Tahap 9 cukup `migrate --all`, `data:sesuaikan`, dan `aset:minify`. Tanya-jawab dan pesan WA yang sudah tersimpan tidak berubah otomatis; admin menyuntingnya di Pengaturan > Bantuan dan Pengaturan > Halaman depan. Fitur publik bersakelar (Jadwal, Seri, Peserta, Galeri, Videotron) dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139). Kesiapan server (`/sehat`, pemantauan uptime, tembolok halaman depan, `client_max_body_size`, `memory_limit`, uji pulih cadangan) ditangani pemilik (K119). Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember.
+- Tidak ada.
 
 ## Berikutnya
 
-F11-06 setelah F11-04 dan F11-05 digabung; F11-10 dan F11-11 (K174) serta F11-12 dengan gambar G11-01 dan G11-02 (K175) setelah gelombang 1; terakhir penutupan F11-08. Semua sebelum lomba 9 Desember.
+- Gambar G11-01 (kartu kelompok umur) dan G11-02 (latar hero kiri) dari Codex, perlu sebelum 28 November 2026. Sampai berkas tiba, halaman depan memakai gradien cadangan.
+- Pembaruan server produksi Tahap 11 (panduan produksi bagian 10): `cadangan:buat`, `migrate --all`, `data:sesuaikan`, `aset:minify`, `pembaruan:periksa`. Sakelar Rekor dan Videotron dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139), dan alamat `/layar` diberikan ke operator videotron vendor. Draf panduan admin hari lomba (`dokumen/draf/panduan-admin-hari-lomba.md`) ditinjau pemilik.
+- Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember 2026.
 
 ## Selesai
 
@@ -40,6 +25,7 @@ F11-06 setelah F11-04 dan F11-05 digabung; F11-10 dan F11-11 (K174) serta F11-12
 - Tahap 8 — Hari lomba dan hasil: [`arsip/tahap-8.md`](arsip/tahap-8.md). Selesai 18 November 2026; F8-01 sampai F8-05 dan F8-07 (#102, #103, #104, #113, #114, #107), penutupan F8-06 bersama F7-06.
 - Tahap 9 — Rombak tampilan dan fitur publik hari lomba: [`arsip/tahap-9.md`](arsip/tahap-9.md). Selesai 22 November 2026; F9-01 sampai F9-17 dan F9-19 (#121–#150), penutupan F9-18 (#151).
 - Tahap 10 — Identitas visual anime, panel admin, dan data terbaru: [`arsip/tahap-10.md`](arsip/tahap-10.md). Selesai 22 November 2026; F10-01 sampai F10-10, F10-12, F10-13 (#172–#203) dan gambar G10-01 sampai G10-13, penutupan F10-11.
+- Tahap 11 — Pelajaran hasil Seri 1: [`arsip/tahap-11.md`](arsip/tahap-11.md). Selesai 23 November 2026; F11-01 sampai F11-07 dan F11-09 sampai F11-12 (#211–#224), penutupan F11-08. Gambar G11-01 dan G11-02 belum dibuat Codex.
 
 ## Menunggu pemilik
 

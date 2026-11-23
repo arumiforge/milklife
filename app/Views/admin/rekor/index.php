@@ -20,8 +20,6 @@ $jumlah = array_sum(array_map(static fn (array $k): int => count($k['rekor']), $
 
 <?= $this->section('judul') ?>Rekor kejuaraan<?= $this->endSection() ?>
 
-<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Hasil lomba', 'alamat' => 'admin/hasil'], ['label' => 'Rekor kejuaraan']]], ['saveData' => false]) ?><?= $this->endSection() ?>
-
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <div class="flex items-start gap-3 rounded-xl border border-primary-200 bg-primary-100 p-4 text-sm text-primary-900" role="note">

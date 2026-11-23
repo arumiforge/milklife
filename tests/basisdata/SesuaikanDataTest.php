@@ -2,6 +2,7 @@
 
 use App\Commands\DataAwal;
 use App\Commands\SesuaikanData;
+use App\Libraries\Bantuan\FaqBawaan;
 use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Pendaftaran\IdPendaftaran;
 use CodeIgniter\Test\StreamFilterTrait;
@@ -120,6 +121,8 @@ final class SesuaikanDataTest extends UjiBasisData
             ['kategori' => 'hasil', 'pertanyaan' => 'Bagaimana juara umum dihitung?', 'jawaban' => $lama, 'urutan' => 1, 'aktif' => 1, 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu],
             ['kategori' => 'hasil', 'pertanyaan' => 'Pertanyaan karangan', 'jawaban' => 'Jawaban karangan admin.', 'urutan' => 2, 'aktif' => 1, 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu],
         ]);
+        // Tanya-jawab Tahap 11 dianggap sudah ditambahkan; diuji terpisah.
+        setting('Bantuan.faqTahap11', true);
 
         $this->assertSame(EXIT_SUCCESS, $this->jalankan());
 
@@ -132,6 +135,67 @@ final class SesuaikanDataTest extends UjiBasisData
         $this->resetStreamFilterBuffer();
         $this->assertSame(EXIT_SUCCESS, $this->jalankan());
         $this->assertStringContainsString('Tanya-jawab juara umum: tidak ada kalimat bawaan lama', $this->getStreamFilterBuffer());
+    }
+
+    public function testTanyaJawabTahap11DitambahkanSekaliDanJawabanGantiAtletLamaDiganti(): void
+    {
+        // Server Tahap 10: tanya-jawab bawaan lama tanpa pertanyaan Tahap 11,
+        // jawaban ganti atlet lama, satu pertanyaan Tahap 11 sudah dibuat admin.
+        $waktu = date('Y-m-d H:i:s');
+        $lama  = array_values(array_filter(
+            FaqBawaan::baris($waktu),
+            static fn (array $b): bool => ! in_array($b['pertanyaan'], SesuaikanData::FAQ_TAHAP_11, true),
+        ));
+
+        foreach ($lama as &$b) {
+            if ($b['pertanyaan'] === SesuaikanData::FAQ_GANTI_ATLET_PERTANYAAN) {
+                $b['jawaban'] = SesuaikanData::FAQ_GANTI_ATLET_LAMA;
+            }
+        }
+        unset($b);
+
+        $lama[] = ['kategori' => 'hasil', 'pertanyaan' => 'Apa itu rekor kejuaraan dan di mana melihatnya?', 'jawaban' => 'Jawaban karangan admin.', 'urutan' => 9, 'aktif' => 0, 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu];
+        $this->db->table('faq')->insertBatch($lama);
+        $this->assertFalse((bool) setting('Bantuan.faqTahap11'));
+
+        $this->assertSame(EXIT_SUCCESS, $this->jalankan());
+        $keluaran = $this->getStreamFilterBuffer();
+
+        $this->seeNumRecords(count(FaqBawaan::DAFTAR), 'faq', []);
+        $this->assertTrue((bool) setting('Bantuan.faqTahap11'));
+        $this->assertStringContainsString('Tanya-jawab baru Tahap 11 ditambahkan (4)', $keluaran);
+        $this->assertStringContainsString('Tanya-jawab ganti atlet: jawaban bawaan lama diganti', $keluaran);
+
+        // Jawaban admin tetap; tambahan masuk di akhir kategorinya.
+        $this->seeInDatabase('faq', ['pertanyaan' => 'Apa itu rekor kejuaraan dan di mana melihatnya?', 'jawaban' => 'Jawaban karangan admin.', 'aktif' => 0]);
+        $acara = $this->db->table('faq')->where('pertanyaan', SesuaikanData::FAQ_TAHAP_11[0])->get()->getRowArray();
+        $this->assertSame('hari_lomba', $acara['kategori']);
+        $this->assertSame((int) $this->db->table('faq')->selectMax('urutan')->where('kategori', 'hari_lomba')->get()->getRow()->urutan, (int) $acara['urutan']);
+        $ganti = $this->db->table('faq')->where('pertanyaan', SesuaikanData::FAQ_GANTI_ATLET_PERTANYAAN)->get()->getRowArray();
+        $this->assertStringContainsString('meminta panitia **mengganti**', $ganti['jawaban']);
+
+        // Pertanyaan baru yang dihapus admin tidak kembali.
+        $this->db->table('faq')->where('pertanyaan', SesuaikanData::FAQ_TAHAP_11[1])->delete();
+        $this->resetStreamFilterBuffer();
+        $this->assertSame(EXIT_SUCCESS, $this->jalankan());
+        $this->dontSeeInDatabase('faq', ['pertanyaan' => SesuaikanData::FAQ_TAHAP_11[1]]);
+        $this->assertStringContainsString('Tanya-jawab baru Tahap 11: sudah pernah ditambahkan.', $this->getStreamFilterBuffer());
+        $this->assertStringContainsString('Tanya-jawab ganti atlet: tidak ada jawaban bawaan lama.', $this->getStreamFilterBuffer());
+    }
+
+    public function testJawabanGantiAtletYangDiubahAdminTidakDitimpaDanFaqAwalMenandai(): void
+    {
+        $waktu = date('Y-m-d H:i:s');
+        $this->db->table('faq')->insert(['kategori' => 'hari_lomba', 'pertanyaan' => SesuaikanData::FAQ_GANTI_ATLET_PERTANYAAN, 'jawaban' => SesuaikanData::FAQ_GANTI_ATLET_LAMA . ' Tambahan admin.', 'urutan' => 1, 'aktif' => 1, 'dibuat_pada' => $waktu, 'diubah_pada' => $waktu]);
+
+        $this->assertSame(EXIT_SUCCESS, $this->jalankan());
+        $this->seeInDatabase('faq', ['jawaban' => SesuaikanData::FAQ_GANTI_ATLET_LAMA . ' Tambahan admin.']);
+
+        // Pemasangan baru: faq:awal memasang semuanya dan menyalakan penanda.
+        $this->db->table('faq')->truncate();
+        setting()->forget('Bantuan.faqTahap11');
+        $this->assertSame(count(FaqBawaan::DAFTAR), FaqBawaan::pasang($this->db));
+        $this->assertTrue((bool) setting('Bantuan.faqTahap11'));
     }
 
     public function testZipBackupKu8BisaDiimporSetelahDisesuaikan(): void
