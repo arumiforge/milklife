@@ -33,8 +33,8 @@ $metodePoin = $metode === Klasemen::POIN;
             Halaman publik hanya menghitung nomor yang sudah diterbitkan.
         </p>
         <div class="flex flex-wrap gap-2" role="group" aria-label="Unduh klasemen">
-            <?= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('admin/klasemen/pdf'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-text', 'kelas' => 'min-h-11']) ?>
-            <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/klasemen/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-spreadsheet', 'kelas' => 'min-h-11']) ?>
+            <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url('admin/klasemen/pdf')]) ?>
+            <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url('admin/klasemen/excel')]) ?>
         </div>
     </div>
 

@@ -63,7 +63,7 @@ $kelasKotak = static fn (bool $salah): string => 'block min-h-11 w-16 rounded-lg
         <div class="mt-3 flex flex-wrap gap-2">
             <?= komponen('tombol', ['label' => 'Isi hasil babak ini', 'href' => site_url('admin/hasil/babak/' . $babak['id']), 'varian' => 'kedua', 'ikon' => 'trophy']) ?>
             <?php if ($babak['dibagi'] > 0) : ?>
-                <?= komponen('tombol', ['label' => 'Unduh PDF nomor ini', 'href' => site_url('admin/seri/nomor/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ikon' => 'download']) ?>
+                <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url('admin/seri/nomor/' . $nomor['id'] . '/pdf'), 'label' => 'Unduh PDF nomor ini', 'teks' => 'Unduh PDF nomor ini']) ?>
             <?php endif ?>
         </div>
     </section>

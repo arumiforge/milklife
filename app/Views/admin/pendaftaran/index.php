@@ -41,8 +41,8 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
     <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-tabel-pendaftaran">
         <h2 id="judul-tabel-pendaftaran" class="sr-only">Daftar pendaftaran</h2>
 
-        <form id="saringan-pendaftaran" class="flex flex-wrap items-end gap-3" role="search" aria-label="Saring pendaftaran" data-saringan-tabel>
-            <div class="min-w-0 flex-[1_1_12rem]">
+        <form id="saringan-pendaftaran" class="grid grid-cols-2 items-end gap-3 lg:grid-cols-4" role="search" aria-label="Saring pendaftaran" data-saringan-tabel>
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-status">Status</label>
                 <select class="<?= $pilihan ?>" id="saring-status" name="status">
                     <option value="">Semua status</option>
@@ -50,7 +50,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                     <option value="menunggu">Menunggu</option>
                 </select>
             </div>
-            <div class="min-w-0 flex-[1_1_12rem]">
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-bukti">Bukti bayar</label>
                 <select class="<?= $pilihan ?>" id="saring-bukti" name="bukti">
                     <option value="">Semua</option>
@@ -58,7 +58,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                     <option value="ada">Sudah ada bukti</option>
                 </select>
             </div>
-            <div class="min-w-0 flex-[1_1_12rem]">
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-jenjang">Jenjang</label>
                 <select class="<?= $pilihan ?>" id="saring-jenjang" name="jenjang">
                     <option value="">Semua jenjang</option>
@@ -67,7 +67,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="min-w-0 flex-[1_1_12rem]">
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-kabupaten">Kabupaten/Kota</label>
                 <select class="<?= $pilihan ?>" id="saring-kabupaten" name="kabupaten">
                     <option value="">Semua kabupaten</option>
@@ -76,9 +76,9 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="flex max-w-full flex-wrap gap-2">
+            <div class="col-span-full flex flex-wrap gap-2" data-tombol-aksi>
                 <?= komponen('tombol', ['label' => 'Kosongkan saringan', 'tipe' => 'reset', 'varian' => 'kedua', 'ikon' => 'circle-x']) ?>
-                <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/pendaftaran/excel'), 'varian' => 'kedua', 'ikon' => 'file-spreadsheet', 'atribut' => ['id' => 'excel-pendaftaran']]) ?>
+                <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url('admin/pendaftaran/excel'), 'atribut' => ['id' => 'excel-pendaftaran']]) ?>
             </div>
         </form>
 
@@ -90,7 +90,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                 <?= ikon('square-check', 'size-4') ?>
                 <span><span id="jumlah-dipilih">0</span> pendaftaran dicentang</span>
             </p>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2" data-tombol-aksi>
                 <?= komponen('tombol', ['label' => 'Tandai Lunas', 'tipe' => 'submit', 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'circle-check', 'kelas' => 'min-h-11 disabled:pointer-events-none disabled:opacity-50', 'atribut' => ['name' => 'tindakan', 'value' => 'lunas', 'disabled' => true]]) ?>
                 <?= komponen('tombol', ['label' => 'Kembalikan ke Menunggu', 'tipe' => 'submit', 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'hourglass', 'kelas' => 'min-h-11 disabled:pointer-events-none disabled:opacity-50', 'atribut' => ['name' => 'tindakan', 'value' => 'menunggu', 'disabled' => true]]) ?>
                 <?= komponen('tombol', ['label' => 'Hapus', 'tipe' => 'submit', 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'trash-2', 'kelas' => 'min-h-11 text-red-700! disabled:pointer-events-none disabled:opacity-50', 'atribut' => ['name' => 'tindakan', 'value' => 'hapus', 'disabled' => true]]) ?>

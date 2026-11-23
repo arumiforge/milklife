@@ -72,7 +72,7 @@ $rentangTanggal = JadwalPertandingan::rentangIsian($kini);
                 <p class="mt-1 text-sm text-gray-600">PDF untuk dicetak atau dibagikan ke grup ofisial. Simpan jadwal dulu supaya perubahan ikut tercetak.</p>
                 <div class="mt-3 flex flex-wrap gap-2" data-unduh-hari>
                     <?php foreach ($hari as $h) : ?>
-                        <?= komponen('tombol', ['label' => 'Unduh PDF ' . JadwalPertandingan::namaHari($h), 'href' => site_url('admin/jadwal-pertandingan/' . $h . '/pdf'), 'varian' => 'kedua', 'ikon' => 'download']) ?>
+                        <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url('admin/jadwal-pertandingan/' . $h . '/pdf'), 'label' => 'Unduh PDF ' . JadwalPertandingan::namaHari($h), 'teks' => 'Unduh PDF ' . JadwalPertandingan::namaHari($h)]) ?>
                     <?php endforeach ?>
                 </div>
             </section>

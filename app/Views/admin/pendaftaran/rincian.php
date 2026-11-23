@@ -108,7 +108,7 @@ $kalimatHapus = 'Pendaftaran ' . $p['id_pendaftaran'] . ' dari ' . $p['nama_seko
                 </p>
             </div>
 
-            <div class="flex flex-wrap gap-2" id="tindakan-pendaftaran">
+            <div class="flex flex-wrap gap-2" id="tindakan-pendaftaran" data-tombol-aksi>
                 <?php if ($lunas) : ?>
                     <form action="<?= site_url($alamat . '/menunggu') ?>" method="post"
                         data-konfirmasi="<?= esc($kalimatMenunggu, 'attr') ?>"

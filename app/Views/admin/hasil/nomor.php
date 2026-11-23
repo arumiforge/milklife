@@ -46,8 +46,8 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
             <p class="text-sm text-gray-600"><?= $calon ?> <?= $beregu ? 'regu' : 'atlet' ?> dari pendaftaran Lunas. Jenis hasil diubah di Pengaturan > Nomor lomba.</p>
         </div>
         <div class="flex flex-wrap gap-2" role="group" aria-label="Unduh hasil">
-            <?= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('admin/hasil/nomor/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-text', 'kelas' => 'min-h-11']) ?>
-            <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/hasil/nomor/' . $nomor['id'] . '/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-spreadsheet', 'kelas' => 'min-h-11']) ?>
+            <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url('admin/hasil/nomor/' . $nomor['id'] . '/pdf')]) ?>
+            <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url('admin/hasil/nomor/' . $nomor['id'] . '/excel')]) ?>
         </div>
     </div>
 
