@@ -11,7 +11,8 @@
  * tanpa ikon; batas pendaftaran rata tengah di ponsel. Kartu KU: angka besar
  * berisian gradien sporty (`.isian-ku-<1–5>`) atau tekstur G11-01
  * (`ku/ku-<n>-isian.webp`, kelas `.isian-ku-gambar-<n>`), art G11-01
- * (`ku/ku-<n>-art.webp`) atau garis cadangan `.kartu-ku-garis`.
+ * (`ku/ku-<n>-art.webp`, latar pudar seluruh kartu sejak K180) atau garis
+ * cadangan `.kartu-ku-garis`.
  *
  * F11-15 (K179): angka KU (`.angka-ku`) memenuhi kartu, mengikuti lebar
  * kartu, dan melewati tepi bawah dan kanan, terpotong kotak kartu; jumlah
@@ -269,9 +270,10 @@ $nilaiFakta = 'mt-1 font-tampilan text-[clamp(1.25rem,6.4vw,1.75rem)] font-extra
                     <?php
                     [$namaKu, $julukan] = $pisahNama($ku['nama']);
                     // Angka KU besar berisian tekstur G11-01 (`ku/ku-<n>-isian.webp`) bila ada, selain itu gradien (K175).
+                    // Art G11-01 (`ku/ku-<n>-art.webp`, 5:4) menjadi latar pudar seluruh kartu di belakang angka (K180).
                     $angkaKu  = preg_match('/^(.*?)(\d+)\s*$/u', $namaKu, $c) === 1 ? [trim($c[1]), $c[2]] : null;
                     $isian    = $angkaKu !== null && ada_gambar('ku/ku-' . $angkaKu[1] . '-isian.webp');
-                    $artKu    = $angkaKu === null ? '' : gambar_opsional('ku/ku-' . $angkaKu[1] . '-art.webp', ['class' => 'pointer-events-none absolute -bottom-2 -right-6 -z-10 h-[85%] w-auto max-w-none select-none', 'data-hiasan' => 'ku-art']);
+                    $artKu    = $angkaKu === null ? '' : gambar_opsional('ku/ku-' . $angkaKu[1] . '-art.webp', ['class' => 'pointer-events-none absolute inset-0 -z-10 size-full select-none object-cover', 'data-hiasan' => 'ku-art']);
                     $individu = count($ku['nomor_individu'] ?? []);
                     $beregu   = count($ku['nomor_beregu'] ?? []);
                     ?>
