@@ -18,7 +18,7 @@ Telaah dan rekomendasi: [`dokumen/draf/telaah-hasil-seri-1.md`](../../dokumen/dr
 | [F11-12 Halaman depan dan publik dirapikan](../tugas/F11-12-halaman-depan-publik.md) | selesai | 2 | #221 |
 | [F11-10 Panel admin ringkas](../tugas/F11-10-panel-admin-ringkas.md) | selesai | 2 | #222, #224 |
 | [F11-08 Penutupan Tahap 11](../tugas/F11-08-penutupan-tahap-11.md) | selesai | akhir | PR penutupan |
-| [F11-14 Panduan admin hari lomba](../tugas/F11-14-panduan-admin-hari-lomba.md) | selesai | sisipan setelah penutupan | PR F11-14 |
+| [F11-14 Panduan admin hari lomba](../tugas/F11-14-panduan-admin-hari-lomba.md) | selesai | sisipan setelah penutupan | #228 |
 
 PR koordinator dan pendukung: #210 (telaah hasil Seri 1, tugas F11-01 sampai F11-08, K172), #217 (K174, K175, tugas F11-10 sampai F11-12), #219 (brief gambar G11-01 dan G11-02).
 

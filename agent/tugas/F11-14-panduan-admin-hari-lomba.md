@@ -25,4 +25,4 @@ PDF panduan ada di `dokumen/pdf/`, uji dokumen lulus, dan tidak ada tautan `agen
 
 ## Catatan
 
-Permintaan pemilik 23 November 2026: "kerjakan Draf panduan admin hari lomba". Tanpa tangkapan layar karena PDF dokumen dibuat dari teks Markdown saja (`MarkdownSederhana` tidak memuat gambar). Kode tidak diubah.
+Permintaan pemilik 23 November 2026: "kerjakan Draf panduan admin hari lomba". Tanpa tangkapan layar karena PDF dokumen dibuat dari teks Markdown saja (`MarkdownSederhana` tidak memuat gambar). Kode tidak diubah. PR #228.
