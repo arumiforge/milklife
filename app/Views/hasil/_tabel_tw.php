@@ -10,6 +10,7 @@
  */
 
 use App\Libraries\Hasil\Peringkat;
+use App\Libraries\Hasil\Rekor;
 
 $beregu = $nomor['jenis'] === 'beregu';
 $admin ??= false;
@@ -40,7 +41,7 @@ $admin ??= false;
                     </td>
                     <?php if (! $beregu) : ?><td class="hidden px-2 py-3 sm:px-3 md:table-cell"><?= esc($h['sekolah']) ?></td><?php endif ?>
                     <td class="whitespace-nowrap px-2 py-3 sm:px-3 font-semibold text-gray-900">
-                        <?= esc($h['prestasi_teks']) ?><?= $h['prestasi_teks'] !== '' && ($h['rincian'] ?? []) !== [] ? ' poin' : '' ?><?= $h['keterangan'] !== null ? ' ' . komponen('lencana', ['label' => Peringkat::teks($h['keterangan'], $h['pasal'] ?? null), 'warna' => 'abu']) : '' ?>
+                        <?= esc($h['prestasi_teks']) ?><?= $h['prestasi_teks'] !== '' && ($h['rincian'] ?? []) !== [] ? ' poin' : '' ?><?= ! empty($h['rekor']) ? ' <abbr title="' . Rekor::ARTI_TANDA . '" class="no-underline" data-rekor>' . komponen('lencana', ['label' => Rekor::TANDA, 'warna' => 'merah']) . '</abbr>' : '' ?><?= $h['keterangan'] !== null ? ' ' . komponen('lencana', ['label' => Peringkat::teks($h['keterangan'], $h['pasal'] ?? null), 'warna' => 'abu']) : '' ?>
                         <?php if (($h['rincian'] ?? []) !== []) : ?>
                             <?php // Poin multi-lomba (F9-10): prestasi dan poin tiap komponen. ?>
                             <ul class="mt-1 whitespace-normal text-xs font-normal text-gray-500" data-rincian-poin>

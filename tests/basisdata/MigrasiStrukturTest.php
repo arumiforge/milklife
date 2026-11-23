@@ -56,6 +56,8 @@ final class MigrasiStrukturTest extends UjiBasisData
             'pemecah_seri'     => ['tinyint unsigned', false, '1'],
             // F11-04: cara pencatatan waktu (tepat setelah pemecah_seri).
             'cara_waktu'       => ["enum('elektronik','tangan')", false, 'elektronik'],
+            // F11-06: spesifikasi alat (tepat setelah cara_waktu).
+            'berat_alat'       => ['varchar(60)', true, null],
             // F11-03: status nomor dan batas peserta.
             'tidak_dilombakan'        => ['tinyint unsigned', false, '0'],
             'alasan_tidak_dilombakan' => ['varchar(150)', true, null],
@@ -224,6 +226,25 @@ final class MigrasiStrukturTest extends UjiBasisData
             'diganti_oleh'         => ['varchar(100)', false, null],
             'dibuat_pada'          => ['datetime', false, null],
         ],
+        // F11-06 (K172): rekor kejuaraan mulai Seri 2.
+        'rekor' => [
+            'id'             => ['int unsigned', false, null],
+            'nomor_lomba_id' => ['int unsigned', true, null],
+            'kelompok_umur'  => ['varchar(50)', false, null],
+            'nomor'          => ['varchar(120)', false, null],
+            'kategori'       => ["enum('putra','putri','mix')", false, null],
+            'jenis_hasil'    => ['varchar(5)', false, null],
+            'cara_waktu'     => ["enum('elektronik','tangan')", true, null],
+            'berat_alat'     => ['varchar(60)', true, null],
+            'prestasi'       => ['int', false, null],
+            'atlet'          => ['varchar(255)', false, null],
+            'sekolah'        => ['varchar(150)', false, null],
+            'seri'           => ['varchar(40)', false, null],
+            'tanggal'        => ['date', true, null],
+            'hasil_id'       => ['int unsigned', true, null],
+            'dibuat_pada'    => ['datetime', true, null],
+            'diubah_pada'    => ['datetime', true, null],
+        ],
         // F8-01 (K124): riwayat tindakan admin per pendaftaran.
         'riwayat_admin' => [
             'id'             => ['int unsigned', false, null],
@@ -348,6 +369,9 @@ final class MigrasiStrukturTest extends UjiBasisData
         // F9-10: baris ikut tabelnya; tabel yang dipakai nomor tidak bisa dihapus.
         'tabel_skor_baris.tabel_skor_id' => ['tabel_skor', 'CASCADE'],
         'nomor_lomba.tabel_skor_id'      => ['tabel_skor', 'RESTRICT'],
+        // F11-06: rekor tetap ada (dengan salinan nama) bila nomor atau hasilnya dihapus.
+        'rekor.nomor_lomba_id' => ['nomor_lomba', 'SET NULL'],
+        'rekor.hasil_id'       => ['hasil', 'SET NULL'],
     ];
 
     public function testSemuaTabelDomainAdaDenganInnoDBDanUtf8mb4(): void

@@ -9,6 +9,7 @@ use App\Libraries\Hasil\PembagiSeri;
 use App\Libraries\Hasil\Percobaan;
 use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Hasil\Prestasi;
+use App\Libraries\Hasil\Rekor;
 use App\Libraries\Hasil\StatusNomor;
 use App\Libraries\Hasil\TabelSkor;
 use App\Libraries\Pendaftaran\FotoPenanggungJawab;
@@ -18,6 +19,7 @@ use App\Libraries\Pendaftaran\SimpanPendaftaran;
 use App\Libraries\Unggahan;
 use App\Models\FaqModel;
 use App\Models\GaleriModel;
+use App\Models\NomorLombaModel;
 use App\Models\SekolahModel;
 use App\Models\UsulanNamaSekolahModel;
 use CodeIgniter\Database\BaseConnection;
@@ -53,7 +55,11 @@ use ZipArchive;
  *   Nomor membawa aturan percobaan dan pemecah seri, hasil membawa
  *   percobaan dan seperseribu detik (F9-09). Nomor membawa cara pencatatan
  *   waktu (F11-04; paket lama = elektronik). Hasil membawa pasal
- *   diskualifikasi (F11-05; boleh tidak ada).
+ *   diskualifikasi (F11-05; boleh tidak ada). Nomor membawa spesifikasi
+ *   alat (F11-06; boleh tidak ada).
+ *   `rekor`: rekor kejuaraan yang diisi admin (F11-06; boleh tidak ada).
+ *   Bila ada, menggantikan rekor isian admin server ini; rekor dari hasil
+ *   terbit dihitung ulang dari hasil yang diimpor.
  *   `tabel_skor`: semua tabel skor beserta barisnya, termasuk ubahan admin
  *   (F9-10; boleh tidak ada). Tabel berkode sama di server baru diganti.
  *   `faq`: tanya-jawab halaman Bantuan (F9-04). Bila ada dan berisi, isinya
@@ -348,6 +354,8 @@ final class PaketPendaftaran
             'tabel_skor' => (new DataTabelSkor($this->db))->eksporSemua(),
             // Album Galeri (F9-06); sampulnya ikut di folder `galeri/` zip.
             'galeri' => $galeri,
+            // Rekor kejuaraan yang diisi admin (F11-06); rekor dari hasil dihitung ulang saat impor.
+            'rekor' => (new Rekor($this->db))->ekspor($nomor),
             'sekolah_disunting' => $this->db->table('sekolah')
                 ->select('npsn, nama, bentuk, jenjang, status, alamat, desa_kelurahan, kecamatan, kabupaten, disunting_pada')
                 ->where('disunting_pada IS NOT NULL', null, false)->orderBy('npsn')->get()->getResultArray(),
@@ -838,6 +846,36 @@ final class PaketPendaftaran
         $this->simpanUsulanNama(is_array($isi['usulan_nama'] ?? null) ? $isi['usulan_nama'] : [], $isi['pendaftaran'], $tabel);
         $this->simpanFaq(is_array($isi['faq'] ?? null) ? $isi['faq'] : [], $tabel);
         $this->simpanGaleri(is_array($isi['galeri'] ?? null) ? $isi['galeri'] : [], $tabel);
+        $this->simpanRekor($isi, $nomor, $tabel);
+    }
+
+    /**
+     * Rekor kejuaraan (F11-06). Bila paket membawa kunci `rekor`, rekor yang
+     * diisi admin di server ini diganti isinya; paket lama tanpa kunci itu
+     * tidak mengubah apa pun. Rekor dari hasil terbit dihitung ulang dari
+     * hasil yang baru diimpor.
+     *
+     * @param array<string, mixed>                         $isi
+     * @param array<string, int>                           $nomor
+     * @param callable(string, array<string, mixed>): int $tabel
+     */
+    private function simpanRekor(array $isi, array $nomor, callable $tabel): void
+    {
+        if (is_array($isi['rekor'] ?? null)) {
+            $this->db->table('rekor')->where('hasil_id', null)->delete();
+
+            foreach ($isi['rekor'] as $r) {
+                $kunci   = is_array($r) && is_array($r['nomor_kunci'] ?? null) ? $r['nomor_kunci'] : null;
+                $nomorId = $kunci === null ? null : ($nomor[self::kunciNomor((string) ($kunci['kelompok_umur'] ?? ''), (string) ($kunci['nama'] ?? ''), (string) ($kunci['kategori'] ?? ''))] ?? null);
+                $baris   = Rekor::barisImpor($r, $nomorId);
+
+                if ($baris !== null) {
+                    $tabel('rekor', $baris);
+                }
+            }
+        }
+
+        (new Rekor($this->db))->perbaruiSemua();
     }
 
     /**
@@ -1149,12 +1187,12 @@ final class PaketPendaftaran
 
         $kodeTabel = array_column($this->db->table('tabel_skor')->select('id, kode')->get()->getResultArray(), 'kode', 'id');
 
-        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, jumlah_percobaan, pemecah_seri, tidak_dilombakan, alasan_tidak_dilombakan, peserta_minimal, cara_waktu, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
+        foreach ($this->db->table('nomor_lomba')->select('id, jenis_hasil, tabel_skor_id, komponen_skor, tempat_per_seri, urutan_lintasan, jumlah_percobaan, pemecah_seri, tidak_dilombakan, alasan_tidak_dilombakan, peserta_minimal, cara_waktu, berat_alat, hasil_terbit_pada')->orderBy('id')->get()->getResultArray() as $n) {
             $id = (int) $n['id'];
 
             if (isset($nomor[$id]) && (isset($babak[$id]) || $n['hasil_terbit_pada'] !== null || $n['tabel_skor_id'] !== null || $n['tempat_per_seri'] !== null || $n['urutan_lintasan'] !== null
                 || $n['jumlah_percobaan'] !== null || (int) $n['pemecah_seri'] === 0
-                || (int) $n['tidak_dilombakan'] === 1 || $n['peserta_minimal'] !== null || $n['cara_waktu'] === 'tangan')) {
+                || (int) $n['tidak_dilombakan'] === 1 || $n['peserta_minimal'] !== null || $n['cara_waktu'] === 'tangan' || $n['berat_alat'] !== null)) {
                 $daftar[] = $nomor[$id] + [
                     'jenis_hasil'   => $n['jenis_hasil'],
                     'tabel_skor'    => $kodeTabel[$n['tabel_skor_id']] ?? null,
@@ -1172,6 +1210,8 @@ final class PaketPendaftaran
                     'peserta_minimal'         => $n['peserta_minimal'] === null ? null : (int) $n['peserta_minimal'],
                     // Cara pencatatan waktu (F11-04).
                     'cara_waktu'       => $n['cara_waktu'],
+                    // Spesifikasi alat (F11-06).
+                    'berat_alat'       => $n['berat_alat'],
                     'babak'         => $babak[$id] ?? [],
                 ];
             }
@@ -1237,6 +1277,9 @@ final class PaketPendaftaran
 
             // Cara pencatatan waktu (F11-04); paket lama = elektronik.
             $ubah['cara_waktu'] = ($n['cara_waktu'] ?? null) === 'tangan' ? 'tangan' : 'elektronik';
+
+            // Spesifikasi alat (F11-06); paket lama = kosong.
+            $ubah['berat_alat'] = is_string($n['berat_alat'] ?? null) && trim($n['berat_alat']) !== '' ? mb_substr(trim($n['berat_alat']), 0, NomorLombaModel::ALAT_MAKSIMAL) : null;
 
             $this->db->table('nomor_lomba')->where('id', $idNomor)->update($ubah);
 

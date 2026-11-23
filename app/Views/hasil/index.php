@@ -71,5 +71,10 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
             </ul>
         </section>
     <?php endforeach ?>
+
+    <?php if (App\Libraries\Hasil\Rekor::tampil()) : ?>
+        <?php // Rekor kejuaraan (F11-06), bila halamannya dinyalakan. ?>
+        <p data-tautan-rekor><a href="<?= site_url('rekor') ?>" class="inline-flex min-h-11 items-center gap-1 font-semibold text-primary-700 hover:underline">Lihat rekor kejuaraan<?= ikon('arrow-right', 'size-4') ?></a></p>
+    <?php endif ?>
 </div>
 <?= $this->endSection() ?>

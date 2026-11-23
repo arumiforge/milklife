@@ -2707,6 +2707,9 @@
   .bg-red-100 {
     background-color: var(--color-red-100);
   }
+  .bg-red-600 {
+    background-color: var(--color-red-600);
+  }
   .bg-red-700 {
     background-color: var(--color-red-700);
   }
@@ -3019,6 +3022,9 @@
   }
   .px-6 {
     padding-inline: calc(var(--spacing) * 6);
+  }
+  .px-\[calc\(var\(--u\)\*0\.2\)\] {
+    padding-inline: calc(var(--u) * 0.2);
   }
   .px-\[calc\(var\(--u\)\*0\.5\)\] {
     padding-inline: calc(var(--u) * 0.5);
@@ -5005,6 +5011,9 @@
     }
     .lg\:inline-flex {
       display: inline-flex;
+    }
+    .lg\:table-cell {
+      display: table-cell;
     }
     .lg\:aspect-auto {
       aspect-ratio: auto;

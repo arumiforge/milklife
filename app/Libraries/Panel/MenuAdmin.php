@@ -67,10 +67,11 @@ final class MenuAdmin
                 ['label' => 'Seri dan lintasan', 'ikon' => 'list-ordered', 'alamat' => 'admin/seri'],
                 ['label' => 'Lembar juri', 'ikon' => 'clipboard-pen', 'alamat' => 'admin/juri'],
             ],
-            // Hasil lomba (F8-04), klasemen (F8-05), papan videotron (F9-13).
+            // Hasil lomba (F8-04), klasemen (F8-05), rekor (F11-06), papan videotron (F9-13).
             'Hasil' => [
                 ['label' => 'Hasil lomba', 'ikon' => 'trophy', 'alamat' => 'admin/hasil'],
                 ['label' => 'Klasemen', 'ikon' => 'medal', 'alamat' => 'admin/klasemen'],
+                ['label' => 'Rekor', 'ikon' => 'timer', 'alamat' => 'admin/rekor'],
                 ['label' => 'Videotron', 'ikon' => 'monitor-play', 'alamat' => 'admin/pengaturan/videotron'],
             ],
             // Isi halaman publik; halamannya tetap di bawah Pengaturan (F2-05, F2-07, F9-04, F9-06).

@@ -101,7 +101,9 @@ final class UnduhanHasil
                 'anggota'    => implode(', ', $h['anggota']),
                 'sekolah'    => $h['sekolah'],
                 'prestasi'   => $h['prestasi_teks'],
-                'keterangan' => $h['keterangan'] === null ? ($h['manual'] ? 'Peringkat diubah admin' : '') : $h['keterangan'] . ' (' . Peringkat::KETERANGAN[$h['keterangan']] . (($h['pasal'] ?? null) !== null ? ', ' . $h['pasal'] : '') . ')',
+                'keterangan' => trim(($h['keterangan'] === null ? ($h['manual'] ? 'Peringkat diubah admin' : '') : $h['keterangan'] . ' (' . Peringkat::KETERANGAN[$h['keterangan']] . (($h['pasal'] ?? null) !== null ? ', ' . $h['pasal'] : '') . ')')
+                    // Rekor kejuaraan (F11-06).
+                    . (! empty($h['rekor']) ? ' ' . Rekor::TANDA . ' (' . Rekor::ARTI_TANDA . ')' : '')),
             ], $b['hasil']));
 
             if ($utama === null) {

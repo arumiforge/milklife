@@ -238,6 +238,8 @@ final class PapanVideotron
                 'prestasi'   => $h['prestasi_teks'],
                 'keterangan' => $h['keterangan'],
                 'tanda'      => $tanda[$h['kunci']] ?? null,
+                // Rekor kejuaraan (F11-06): tanda CR.
+                'rekor'      => $h['rekor'] ?? false,
             ];
         }
 

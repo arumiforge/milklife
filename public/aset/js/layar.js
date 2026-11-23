@@ -214,9 +214,11 @@ if (akar) {
             if (sekolahSendiri) kolom.push({ judul: 'Sekolah', kelas: 'w-[38%]', isi: (b) => selTeks(b.sekolah, null, 'text-primary-100') });
             kolom.push({
                 judul: butir.satuan ? 'Prestasi (' + butir.satuan + ')' : 'Prestasi',
-                kelas: (butir.baris.some((b) => b.tanda) ? 'w-[calc(var(--u)*6.6)]' : 'w-[calc(var(--u)*5.2)]') + ' text-end',
+                kelas: (butir.baris.some((b) => b.tanda || b.rekor) ? 'w-[calc(var(--u)*6.6)]' : 'w-[calc(var(--u)*5.2)]') + ' text-end',
                 isi: (b) => {
                     const td = el('td', kelasSel + ' whitespace-nowrap text-end font-extrabold tabular-nums text-amber-200', b.prestasi ? b.prestasi + (b.keterangan === 'r' ? ' r' : '') : (b.keterangan || '–'));
+                    // Rekor kejuaraan (F11-06).
+                    if (b.rekor) td.append(' ', el('span', 'rounded bg-red-600 px-[calc(var(--u)*0.2)] text-[length:calc(var(--u)*0.7)] font-bold text-white', 'CR'));
                     // Tanda lolos Q/q ke babak berikutnya (tampilan tetap).
                     if (b.tanda) td.append(' ', el('span', 'text-[length:calc(var(--u)*0.7)] font-bold text-langit-300', b.tanda));
                     return td;
