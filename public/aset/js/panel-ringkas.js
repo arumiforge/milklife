@@ -1,5 +1,5 @@
 /*
- * Panel admin ringkas (F11-10, K174 butir 4, 6, 7, 8). Dimuat
+ * Panel admin ringkas (F11-10, K174 butir 4, 6, 7). Dimuat
  * `tata_letak/admin_tw.php` di semua halaman admin.
  *
  * 1. Teks panjang: isi sel tabel (`main td`) dan paragraf di kartu admin
@@ -23,8 +23,8 @@
  * 3. Kotak cari dan pilihan jumlah baris DataTables: teks label ("Cari",
  *    "Tampilkan … baris") hanya untuk pembaca layar di ponsel.
  *
- * 4. Tombol unduh ikon (`komponen('tombol_unduh')`): ketukan di layar sentuh
- *    menampilkan labelnya sebentar (`data-tampil-label`).
+ * Tombol unduh ikon (`komponen('tombol_unduh')`) diatur `aset/js/tombol-unduh.js`
+ * (F11-13, K177).
  */
 (function () {
     'use strict';
@@ -213,20 +213,6 @@
             });
         });
     }
-
-    // ---------- 4. Label tombol unduh di layar sentuh ----------
-
-    document.addEventListener('pointerdown', function (e) {
-        var tombol = e.target.closest ? e.target.closest('[data-tombol-unduh]') : null;
-        if (!tombol || e.pointerType === 'mouse') {
-            return;
-        }
-        tombol.setAttribute('data-tampil-label', '');
-        window.clearTimeout(tombol._waktuLabel);
-        tombol._waktuLabel = window.setTimeout(function () {
-            tombol.removeAttribute('data-tampil-label');
-        }, 1800);
-    });
 
     // ---------- Jalankan ----------
 

@@ -81,6 +81,13 @@ jobs:
         env:
           CHROMIUM_PATH: /usr/bin/google-chrome
 
+      # Tombol unduh ikon (F11-13, K177): ponsel ketuk dua kali, desktop dan
+      # papan ketik langsung mengunduh (alat/uji-unduh.mjs).
+      - name: Uji tombol unduh
+        run: npm run uji:unduh
+        env:
+          CHROMIUM_PATH: /usr/bin/google-chrome
+
   uji:
     name: PHPUnit (PHP 8.3, MySQL 8)
     runs-on: ubuntu-latest

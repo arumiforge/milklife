@@ -102,6 +102,13 @@ final class KomponenTampilanTest extends CIUnitTestCase
         $this->assertMatchesRegularExpression('#<span[^>]*aria-hidden="true">Unduh PDF</span>#', $pdf);
         // Tanpa teks terlihat selain label kecil yang tersembunyi dari pembaca layar.
         $this->assertSame('PDF Unduh PDF', trim((string) preg_replace('/\s+/', ' ', strip_tags($pdf))));
+
+        // Label kecil tertambat di tepi kanan secara bawaan; deret rata tengah hasil publik memakai `tengah` (F11-13).
+        $this->assertMatchesRegularExpression('#<span class="[^"]*\bend-0\b[^"]*" aria-hidden="true">#', $excel);
+        $tengah = komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => '/x.pdf', 'tambat' => 'tengah']);
+        $this->assertMatchesRegularExpression('#<span class="[^"]*left-1/2 -translate-x-1/2[^"]*" aria-hidden="true">#', $tengah);
+        $this->assertStringNotContainsString(' end-0 ', $tengah);
+        $this->assertStringContainsString('start-0', komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => '/x.pdf', 'tambat' => 'awal']));
     }
 
     public function testIsianMenandaiGalatUntukPembacaLayar(): void

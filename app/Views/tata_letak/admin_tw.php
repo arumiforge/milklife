@@ -163,6 +163,7 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
     <script src="<?= aset('js/menu-admin.js') ?>"></script>
     <script src="<?= aset('js/cari-menu.js') ?>"></script>
     <script src="<?= aset('js/panel-ringkas.js') ?>"></script>
+    <script src="<?= aset('js/tombol-unduh.js') ?>"></script>
     <?php if ($pakaiTabel) : ?>
     <script src="<?= aset('vendor/jquery/jquery.min.js') ?>"></script>
     <script src="<?= aset('vendor/datatables/js/dataTables.min.js') ?>"></script>
