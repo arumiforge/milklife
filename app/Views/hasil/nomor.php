@@ -26,10 +26,15 @@ $dilombakan = $nomor['dilombakan'] ?? true;
     'ikon'         => 'trophy',
     'gambar'       => 'judul/hasil.webp',
     'teks'         => $dilombakan ? 'Hasil semua babak. ' . App\Libraries\Hasil\Peringkat::legenda($nomor['jenis_hasil']) . (! empty($nomor['waktu_tangan']) ? ' ' . App\Libraries\Hasil\Prestasi::TANDA_TANGAN : '') : $nomor['keterangan'],
-    'kembali'      => site_url('hasil'),
-    'labelKembali' => 'Semua hasil',
-    'aksi'         => ! $dilombakan ? null : komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('hasil/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ikon' => 'file-text'])
-        . komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('hasil/' . $nomor['id'] . '/excel'), 'varian' => 'kedua', 'ikon' => 'file-spreadsheet']),
+    // Jejak lengkap di kiri atas; unduhan ikon saja dengan nama aksesibel lengkap (K175).
+    'jejak' => [
+        ['Beranda', site_url('/')],
+        ['Hasil', site_url('hasil')],
+        [$nomor['kelompok_umur'], site_url('hasil') . '#hasil-ku-' . (int) $nomor['kelompok_umur_id']],
+        [$nomor['nama']],
+    ],
+    'aksi' => ! $dilombakan ? null : view('hasil/_unduh_ikon', ['jenis' => 'pdf', 'href' => site_url('hasil/' . $nomor['id'] . '/pdf'), 'label' => 'Unduh PDF hasil ' . trim($nomor['nama'] . ' ' . $nomor['kelompok_umur']), 'atribut' => []], ['saveData' => false])
+        . view('hasil/_unduh_ikon', ['jenis' => 'excel', 'href' => site_url('hasil/' . $nomor['id'] . '/excel'), 'label' => 'Unduh Excel hasil ' . trim($nomor['nama'] . ' ' . $nomor['kelompok_umur']), 'atribut' => []], ['saveData' => false]),
 ], ['saveData' => false]) ?>
 
 <div class="mx-auto max-w-screen-xl space-y-6 px-4 py-10">

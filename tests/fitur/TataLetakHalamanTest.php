@@ -212,13 +212,14 @@ final class TataLetakHalamanTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//div[@id="laci-publik"]//a[@href="' . site_url('cek-pendaftaran') . '"]')->length);
         $this->assertSame('page', $xpath->query('//ul[@data-laci-tambahan]//a[@href="' . site_url('bantuan') . '"]')->item(0)?->getAttribute('aria-current'));
 
-        // Menu bawah: Cek paling kanan, tanpa butir Menu (F10-08); ruang bawah di body.
+        // Menu bawah K175: Beranda, Bantuan, Daftar (tengah, menonjol), Cek, Jadwal atau Unduhan; ruang bawah di body.
         $bawah = $xpath->query('//nav[@data-menu-bawah-publik][@aria-label="Menu bawah"]')->item(0);
         $this->assertNotNull($bawah);
-        $this->assertSame(['Beranda', 'Bantuan', 'Unduhan', 'Cek'], array_map(
+        $this->assertSame(['Beranda', 'Bantuan', 'Daftar', 'Cek', 'Unduhan'], array_map(
             fn (DOMElement $el): string => $this->teks($el),
             iterator_to_array($xpath->query('.//li/*', $bawah)),
-        ), 'Pendaftaran belum dibuka: tanpa Daftar, Cek tetap paling kanan.');
+        ), 'Jadwal mati: butir terakhir Unduhan.');
+        $this->assertSame(site_url('pendaftaran'), $xpath->query('.//a[@data-menu-bawah-utama]', $bawah)->item(0)?->getAttribute('href'));
         $this->assertSame('page', $xpath->query('.//a[@href="' . site_url('bantuan') . '"]', $bawah)->item(0)?->getAttribute('aria-current'));
         $this->assertSame(1, $xpath->query('//body[contains(concat(" ", @class, " "), " ada-menu-bawah ")]')->length);
     }

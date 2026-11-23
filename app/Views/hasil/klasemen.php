@@ -13,8 +13,9 @@
 $aksi = komponen('tombol', ['label' => 'Lihat hasil per nomor', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']);
 
 if ($klasemen !== []) {
-    $aksi .= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('hasil/klasemen/pdf'), 'varian' => 'kedua', 'ikon' => 'file-text'])
-        . komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('hasil/klasemen/excel'), 'varian' => 'kedua', 'ikon' => 'file-spreadsheet']);
+    // Unduhan ikon saja dengan nama aksesibel lengkap (K175).
+    $aksi .= view('hasil/_unduh_ikon', ['jenis' => 'pdf', 'href' => site_url('hasil/klasemen/pdf'), 'label' => 'Unduh PDF klasemen sekolah', 'atribut' => []], ['saveData' => false])
+        . view('hasil/_unduh_ikon', ['jenis' => 'excel', 'href' => site_url('hasil/klasemen/excel'), 'label' => 'Unduh Excel klasemen sekolah', 'atribut' => []], ['saveData' => false]);
 }
 ?>
 <?= $this->extend('tata_letak/publik_tw') ?>
@@ -30,6 +31,7 @@ if ($klasemen !== []) {
     'ikon'  => 'award',
     'gambar' => 'judul/klasemen.webp',
     'teks'  => $keterangan . ' Klasemen dihitung dari nomor yang hasilnya sudah diterbitkan panitia.',
+    'jejak' => [['Beranda', site_url('/')], ['Hasil', site_url('hasil')], ['Klasemen sekolah']],
     'aksi'  => $aksi,
 ], ['saveData' => false]) ?>
 

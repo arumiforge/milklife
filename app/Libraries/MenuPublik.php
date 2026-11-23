@@ -149,40 +149,33 @@ final class MenuPublik
     }
 
     /**
-     * Butir menu bawah ponsel (K154, F10-08): Beranda, Jadwal, Hasil, Daftar,
-     * Cek. Jadwal atau Hasil yang halamannya mati diganti Bantuan, lalu
-     * Unduhan supaya tidak ada butir kembar. Setelah pendaftaran tutup, Daftar
-     * diganti pengganti berikutnya (bila masih ada). Butir Menu dihapus atas
-     * permintaan pemilik; laci tetap dibuka tombol menu di kepala halaman.
+     * Butir menu bawah ponsel (K175, F11-12): Beranda, Bantuan, tombol tengah,
+     * Cek, Jadwal. Tombol tengah (`utama`) tampil lebih besar dan menonjol:
+     * Daftar, lalu Hasil setelah pendaftaran ditutup. Bila Jadwal dimatikan,
+     * butir terakhir diganti Unduhan. Menggantikan susunan K154/K157/K168.
      *
-     * @return list<array{label: string, alamat: string, aktif: bool, ikon: string}>
+     * @return list<array{label: string, alamat: string, aktif: bool, ikon: string, utama: bool}>
      */
     public static function bawah(): array
     {
-        $pengganti = [
+        $tengah = self::ditutup()
+            ? ['label' => 'Hasil', 'alamat' => site_url('hasil'), 'aktif' => url_is('hasil') || url_is('hasil/*'), 'ikon' => 'trophy']
+            : ['label' => 'Daftar', 'alamat' => site_url('pendaftaran'), 'aktif' => url_is('pendaftaran') || url_is('pendaftaran/*'), 'ikon' => 'pencil-line'];
+
+        $butir = [
+            self::beranda(),
             self::bantuan(),
-            ['kunci' => 'unduhan', 'label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan'), 'ikon' => 'download', 'luar' => false],
+            $tengah + ['utama' => true],
+            ['label' => 'Cek', 'alamat' => site_url('cek-pendaftaran'), 'aktif' => url_is('cek-pendaftaran') || url_is('cek-pendaftaran/*'), 'ikon' => 'search'],
+            self::jadwal() ?? ['label' => 'Unduhan', 'alamat' => site_url('unduhan'), 'aktif' => url_is('unduhan'), 'ikon' => 'download'],
         ];
-
-        $butir = [self::beranda()];
-
-        foreach ([self::jadwal(), self::hasil()] as $tengah) {
-            $butir[] = $tengah ?? array_shift($pengganti);
-        }
-
-        if (self::terbuka()) {
-            $butir[] = ['label' => 'Daftar', 'alamat' => site_url('pendaftaran'), 'aktif' => url_is('pendaftaran'), 'ikon' => 'pencil-line'];
-        } elseif ($pengganti !== []) {
-            $butir[] = array_shift($pengganti);
-        }
-
-        $butir[] = ['label' => 'Cek', 'alamat' => site_url('cek-pendaftaran'), 'aktif' => url_is('cek-pendaftaran') || url_is('cek-pendaftaran/*'), 'ikon' => 'search'];
 
         return array_map(static fn (array $b): array => [
             'label'  => $b['label'],
             'alamat' => $b['alamat'],
             'aktif'  => $b['aktif'],
             'ikon'   => $b['ikon'],
+            'utama'  => $b['utama'] ?? false,
         ], $butir);
     }
 
@@ -245,6 +238,18 @@ final class MenuPublik
     {
         try {
             return (new IsiHalamanDepan())->bukaTutup()->terbuka();
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Pendaftaran sudah ditutup (bukan belum dibuka atau masih disiapkan).
+     */
+    private static function ditutup(): bool
+    {
+        try {
+            return (new IsiHalamanDepan())->bukaTutup()->keadaan() === BukaTutupPendaftaran::DITUTUP;
         } catch (Throwable) {
             return false;
         }

@@ -23,10 +23,11 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                 <p class="judul-tampilan" lang="en" aria-hidden="true" data-judul-inggris>Results</p>
                 <h2 id="judul-hasil" class="judul-keterangan mt-2">Hasil dan juara umum terbaru</h2>
             </div>
-            <div class="flex flex-wrap gap-2">
-                <?= komponen('tombol', ['label' => 'Lihat semua hasil', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']) ?>
-                <?= komponen('tombol', ['label' => 'Lihat klasemen sekolah', 'href' => site_url('hasil/klasemen'), 'varian' => 'kedua', 'ikon' => 'award']) ?>
-            </div>
+            <?php // Di ponsel satu baris: satu tombol berteks, lainnya ikon (K175). ?>
+            <?= komponen('deret_tombol', ['tombol' => [
+                ['label' => 'Lihat semua hasil', 'href' => site_url('hasil'), 'ikon' => 'trophy'],
+                ['label' => 'Lihat klasemen sekolah', 'href' => site_url('hasil/klasemen'), 'ikon' => 'award'],
+            ], 'kelas' => 'justify-center']) ?>
         </div>
 
         <?php if ($hasilTerbaru['juara_umum'] !== []) : ?>
@@ -34,7 +35,7 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                 <?php
                 // Gambar G9-06 bila berkasnya ada (F9-19): piala di judul, medali menggantikan kotak peringkat 1–3.
                 $piala  = gambar_opsional('layar/piala.webp', ['class' => 'size-7 shrink-0 object-contain', 'data-piala-juara-umum' => true]);
-                $medali = [1 => 'emas', 2 => 'perak', 3 => 'perunggu'];
+                $berkasMedali = [1 => 'emas', 2 => 'perak', 3 => 'perunggu'];
                 ?>
                 <?php foreach ($hasilTerbaru['juara_umum'] as $jenjang) : ?>
                     <article class="rounded-2xl bg-primary-900 p-5 text-white shadow-angkat" aria-labelledby="hasil-umum-<?= esc($jenjang['kunci'], 'attr') ?>">
@@ -42,7 +43,7 @@ $medali = [1 => 'bg-yellow-100 text-yellow-800', 2 => 'bg-gray-200 text-gray-800
                         <ol class="mt-4 space-y-2">
                             <?php foreach ($jenjang['baris'] as $b) : ?>
                                 <li class="flex items-center gap-3 rounded-xl bg-white/10 p-3">
-                                    <?php $gambarMedali = isset($medali[(int) $b['peringkat']]) ? gambar_opsional('layar/medali-' . $medali[(int) $b['peringkat']] . '.webp', ['class' => 'size-9 shrink-0 object-contain', 'data-medali-juara-umum' => (int) $b['peringkat']]) : ''; ?>
+                                    <?php $gambarMedali = isset($berkasMedali[(int) $b['peringkat']]) ? gambar_opsional('layar/medali-' . $berkasMedali[(int) $b['peringkat']] . '.webp', ['class' => 'size-9 shrink-0 object-contain', 'data-medali-juara-umum' => (int) $b['peringkat']]) : ''; ?>
                                     <?php if ($gambarMedali !== '') : ?>
                                         <?= $gambarMedali ?><span class="sr-only"><?= (int) $b['peringkat'] ?>.</span>
                                     <?php else : ?>

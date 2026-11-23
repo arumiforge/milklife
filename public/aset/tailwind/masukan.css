@@ -502,4 +502,53 @@
         display: inline-block;
     }
     /* ===== akhir F10-08 ================================================ */
+
+    /* ===== F11-12: halaman depan dan publik (K175) =====================
+       Angka kelompok umur berisian gradien sporty, atau tekstur G11-01
+       (`gambar/ku/ku-<n>-isian.webp`) bila view menandainya ada. */
+    .isian-ku {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .isian-ku-1 { background-image: linear-gradient(125deg, var(--color-oranye-600) 0 38%, var(--color-magenta-500) 38% 52%, var(--color-oranye-500) 52%); }
+    .isian-ku-2 { background-image: linear-gradient(125deg, var(--color-oranye-700) 0 30%, var(--color-oranye-500) 30% 58%, var(--color-yellow-500) 58%); }
+    .isian-ku-3 { background-image: linear-gradient(125deg, var(--color-primary-800) 0 40%, var(--color-primary-600) 40% 62%, var(--color-primary-500) 62%); }
+    .isian-ku-4 { background-image: linear-gradient(125deg, var(--color-primary-900) 0 45%, var(--color-magenta-600) 45% 60%, var(--color-magenta-500) 60%); }
+    .isian-ku-5 { background-image: linear-gradient(125deg, var(--color-primary-900) 0 42%, var(--color-oranye-600) 42% 56%, var(--color-oranye-500) 56%); }
+
+    .isian-ku-gambar-8 { background-image: url("../gambar/ku/ku-8-isian.webp"); }
+    .isian-ku-gambar-10 { background-image: url("../gambar/ku/ku-10-isian.webp"); }
+    .isian-ku-gambar-12 { background-image: url("../gambar/ku/ku-12-isian.webp"); }
+    .isian-ku-gambar-15 { background-image: url("../gambar/ku/ku-15-isian.webp"); }
+    .isian-ku-gambar-18 { background-image: url("../gambar/ku/ku-18-isian.webp"); }
+
+    /* Cadangan art kartu KU: garis kecepatan miring samar di pojok kanan bawah. */
+    .kartu-ku-garis::after {
+        content: "";
+        position: absolute;
+        inset: auto -1rem -1rem auto;
+        z-index: -1;
+        width: 70%;
+        height: 70%;
+        background-image: repeating-linear-gradient(-55deg, transparent 0 14px, var(--garis-ku) 14px 20px);
+        mask-image: linear-gradient(135deg, transparent 15%, #000 85%);
+        pointer-events: none;
+    }
+
+    .kartu-ku-garis-1 { --garis-ku: color-mix(in oklab, var(--color-oranye-500) 18%, transparent); }
+    .kartu-ku-garis-2 { --garis-ku: color-mix(in oklab, var(--color-oranye-400) 22%, transparent); }
+    .kartu-ku-garis-3 { --garis-ku: color-mix(in oklab, var(--color-primary-500) 16%, transparent); }
+    .kartu-ku-garis-4 { --garis-ku: color-mix(in oklab, var(--color-magenta-500) 14%, transparent); }
+    .kartu-ku-garis-5 { --garis-ku: color-mix(in oklab, var(--color-primary-800) 14%, transparent); }
+
+    /* Hiasan hero yang menyentuh foto memudar di tepi kanan, tidak terpotong lurus. */
+    .tepi-pudar {
+        mask-image: linear-gradient(to right, #000 55%, transparent);
+    }
+    /* ===== akhir F11-12 ================================================ */
 }

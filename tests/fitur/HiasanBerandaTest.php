@@ -91,6 +91,39 @@ final class HiasanBerandaTest extends UjiBasisData
         $this->assertStringContainsString('bg-primary-50/80', $lapisan->getAttribute('class'));
     }
 
+    public function testGambarG11DipakaiBilaAda(): void
+    {
+        $this->db->table('kelompok_umur')->where('nama', 'KU Karangan')->update(['nama' => 'KU 10']);
+
+        // Tanpa berkas G11: angka KU berisian gradien dan kartu bergaris cadangan (K175).
+        $xpath = $this->xpathDari($this->get('/'));
+        $angka = $xpath->query('//a[@data-ku-kartu]//*[contains(concat(" ", @class, " "), " isian-ku ")]')->item(0);
+        $this->assertSame('10', trim((string) $angka?->textContent));
+        $this->assertStringContainsString('isian-ku-1', $angka->getAttribute('class'));
+        $this->assertStringNotContainsString('isian-ku-gambar', $angka->getAttribute('class'));
+        $this->assertStringContainsString('kartu-ku-garis', (string) $xpath->query('//a[@data-ku-kartu]')->item(0)?->getAttribute('class'));
+
+        foreach (['ku/ku-10-art.webp', 'ku/ku-10-isian.webp', 'beranda/hero-kiri.webp', 'beranda/hero-kiri-ponsel.webp'] as $berkas) {
+            $this->taruhGambarUji($berkas);
+        }
+
+        $xpath = $this->xpathDari($this->get('/'));
+        $kartu = $xpath->query('//a[@data-ku-kartu]')->item(0);
+        $this->assertStringNotContainsString('kartu-ku-garis', $kartu->getAttribute('class'));
+        $this->assertSame(1, $xpath->query('.//img[@data-hiasan="ku-art"][@aria-hidden="true"][contains(@src, "ku/ku-10-art.webp")]', $kartu)->length);
+        $this->assertSame(1, $xpath->query('.//*[@data-isian-gambar][contains(concat(" ", @class, " "), " isian-ku-gambar-10 ")]', $kartu)->length);
+
+        // Latar hero kiri G11-02: versi lebar mulai lg, versi tegak di bawahnya.
+        $this->assertStringContainsString('lg:block', (string) $xpath->query('//*[@data-pembuka-hero]/img[@data-hiasan="hero-kiri"][@aria-hidden="true"]')->item(0)?->getAttribute('class'));
+        $this->assertStringContainsString('lg:hidden', (string) $xpath->query('//*[@data-pembuka-hero]/img[@data-hiasan="hero-kiri-ponsel"][@aria-hidden="true"]')->item(0)?->getAttribute('class'));
+
+        // CSS merujuk tekstur tiap KU hanya lewat kelas yang ditulis view bila berkasnya ada.
+        $css = (string) file_get_contents(FCPATH . 'aset/css/tw.css');
+        foreach ([8, 10, 12, 15, 18] as $n) {
+            $this->assertStringContainsString('gambar/ku/ku-' . $n . '-isian.webp', $css);
+        }
+    }
+
     public function testTanpaRujukanPolaTitik(): void
     {
         $css = (string) file_get_contents(FCPATH . 'aset/css/tw.css');

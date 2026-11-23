@@ -4,6 +4,16 @@
  * seperti `desain/referensi/hero-editorial.webp`, pita tiga fakta, lalu deret
  * kartu kelompok umur.
  *
+ * F11-12 (K175): latar art hero kiri G11-02 (`beranda/hero-kiri.webp`, versi
+ * tegak `hero-kiri-ponsel.webp`) bila berkasnya ada; gradasi foto lebih
+ * panjang dan hiasan yang menyentuh foto memudar (`.tepi-pudar`), jadi tidak
+ * ada garis potong lurus. Titik penanda slide hanya di layar lebar. Pita fakta
+ * tanpa ikon; batas pendaftaran rata tengah di ponsel. Kartu KU: angka besar
+ * berisian gradien sporty (`.isian-ku-<1–5>`) atau tekstur G11-01
+ * (`ku/ku-<n>-isian.webp`, kelas `.isian-ku-gambar-<n>`), art G11-01
+ * (`ku/ku-<n>-art.webp`) atau garis cadangan `.kartu-ku-garis`, dan jumlah
+ * nomor berupa ikon dan angka dengan nama aksesibel lengkap.
+ *
  * - Hero berlatar biru tua tanpa alis (K164): judul besar
  *   Barlow Condensed huruf besar, keterangan Indonesia, dan dua tombol yang
  *   mengikuti buka/tutup pendaftaran (K81). Tombol tanpa alamat tampil
@@ -15,7 +25,7 @@
  *   pun belum ada, ilustrasi tokoh G9-02 di layar lebar bila berkasnya ada,
  *   atau tidak ada gambar sama sekali (K41).
  * - Slideshow (lebih dari satu foto) diatur `public/aset/js/carousel-beranda.js`:
- *   ganti tiap 5 detik, hanya titik penanda. Tanpa JS hanya foto pertama yang
+ *   ganti tiap 5 detik, hanya titik penanda (mulai lg). Tanpa JS hanya foto pertama yang
  *   tampil. Foto pertama `fetchpriority="high"`; foto lain tersembunyi
  *   (`hidden`) dengan `loading="lazy"`, jadi baru diunduh saat skrip
  *   menyiapkannya menjelang tampil. Semua foto ber-`srcset` 640/960/asli
@@ -25,7 +35,7 @@
  *   hanya satu kalimat pendek) satu baris dan baris terakhir oranye (K83,
  *   K86). Bila kosong, nama acara menjadi judul. Tahun tidak ditulis di judul
  *   (permintaan 20). Satu-satunya `<h1>` halaman ada di sini (`#judul-acara`).
- * - Pita fakta berlatar krem: Hari lomba, Lokasi (dipisah di koma terakhir,
+ * - Pita fakta berlatar krem tanpa ikon: Hari lomba, Lokasi (dipisah di koma terakhir,
  *   menaut ke bagian peta `#lokasi` F10-02 bila tampil),
  *   dan keadaan pendaftaran ("Batas pendaftaran 30 November 2026", K82
  *   diperbarui). Kalimat lengkap keadaan tetap untuk pembaca layar.
@@ -52,13 +62,13 @@ use App\Libraries\PetaLokasi;
 $keadaan = $bukaTutup->keadaan();
 $batas   = $bukaTutup->batas();
 
-// Fakta ketiga di pita: ikon, label, nilai, dan warna menurut keadaan (K82, permintaan 20: tanggal bertahun).
-// ikon-sprite: megaphone calendar-clock door-closed hourglass
-[$ikonKeadaan, $labelKeadaan, $nilaiKeadaan] = match ($keadaan) {
-    BukaTutupPendaftaran::TERBUKA      => ['megaphone', 'Batas pendaftaran', tanggal_id($batas)],
-    BukaTutupPendaftaran::BELUM_DIBUKA => ['calendar-clock', 'Pendaftaran dibuka', tanggal_id($batas)],
-    BukaTutupPendaftaran::DITUTUP      => ['door-closed', 'Pendaftaran', 'Ditutup'],
-    default                            => ['hourglass', 'Pendaftaran', 'Segera dibuka'],
+// Fakta ketiga di pita: label, nilai, dan warna menurut keadaan (K82, permintaan 20: tanggal bertahun).
+// Tanpa ikon sejak F11-12 (K175).
+[$labelKeadaan, $nilaiKeadaan] = match ($keadaan) {
+    BukaTutupPendaftaran::TERBUKA      => ['Batas pendaftaran', tanggal_id($batas)],
+    BukaTutupPendaftaran::BELUM_DIBUKA => ['Pendaftaran dibuka', tanggal_id($batas)],
+    BukaTutupPendaftaran::DITUTUP      => ['Pendaftaran', 'Ditutup'],
+    default                            => ['Pendaftaran', 'Segera dibuka'],
 };
 $sorotKeadaan = $keadaan === BukaTutupPendaftaran::TERBUKA;
 
@@ -97,9 +107,12 @@ if ($foto === []) {
 }
 
 // Hiasan art: sapuan hero G10-02 mulai md; latar pita G9-02 (mulai md) dan pita sudut G9-12 (ponsel) hanya tanpa foto.
-$sapuan        = gambar_opsional('beranda/hero-sapuan.webp', ['class' => 'pointer-events-none absolute bottom-0 left-0 hidden w-2/3 max-w-3xl select-none opacity-50 md:block', 'data-hiasan' => 'hero-sapuan']);
+$sapuan        = gambar_opsional('beranda/hero-sapuan.webp', ['class' => 'tepi-pudar pointer-events-none absolute bottom-0 left-0 z-10 hidden w-2/3 max-w-3xl select-none opacity-50 md:block', 'data-hiasan' => 'hero-sapuan']);
 $latarPita     = $foto === [] ? gambar_opsional('beranda/latar-pita.webp', ['class' => 'pointer-events-none absolute inset-0 hidden size-full select-none object-cover object-right opacity-30 md:block', 'data-hiasan' => 'latar-pita']) : '';
 $pitaSudut     = $foto === [] ? gambar_opsional('pola/pita-sudut.webp', ['class' => 'pointer-events-none absolute -right-8 -top-8 w-36 select-none opacity-60 sm:w-72' . ($latarPita === '' ? '' : ' md:hidden'), 'loading' => false, 'data-hiasan' => 'pita-sudut']) : '';
+// Latar art hero kiri G11-02 (K175): tepi kanannya memudar ke foto; versi tegak di ponsel di bawah foto.
+$heroKiri       = gambar_opsional('beranda/hero-kiri.webp', ['class' => 'pointer-events-none absolute inset-y-0 left-0 z-10 hidden h-full w-[62%] select-none object-cover object-left lg:block', 'loading' => false, 'data-hiasan' => 'hero-kiri']);
+$heroKiriPonsel = gambar_opsional('beranda/hero-kiri-ponsel.webp', ['class' => 'pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[75%] w-full select-none object-cover object-top lg:hidden', 'data-hiasan' => 'hero-kiri-ponsel']);
 $latarLintasan = gambar_opsional('beranda/latar-lintasan.webp', ['class' => 'pointer-events-none absolute inset-0 -z-10 hidden size-full select-none object-cover md:block', 'data-hiasan' => 'latar-lintasan']);
 
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . (int) $ukuran['lebar'] . '" height="' . (int) $ukuran['tinggi'] . '"';
@@ -139,11 +152,13 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
                     <?php endforeach ?>
                     <?php // Gradasi biru tua: ke bawah di ponsel, ke kiri di layar lebar. ?>
                     <div class="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-1/2 bg-linear-to-b from-transparent to-primary-900 lg:hidden" aria-hidden="true"></div>
-                    <div class="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-3/4 bg-linear-to-r from-primary-900 via-primary-900/75 via-35% to-transparent lg:block" aria-hidden="true"></div>
+                    <?php // Gradasi kiri panjang dan bertahap supaya batas dengan sisi kiri tidak terlihat sebagai garis (K175). ?>
+                    <div class="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-[85%] bg-linear-to-r from-primary-900 via-primary-900/70 via-30% to-transparent lg:block" aria-hidden="true" data-gradasi-foto></div>
                     <div class="pointer-events-none absolute inset-x-0 bottom-0 z-10 hidden h-1/3 bg-linear-to-t from-primary-900/60 to-transparent lg:block" aria-hidden="true"></div>
                 </div>
                 <?php if ($putar) : ?>
-                    <div class="relative z-20 flex flex-wrap justify-center px-4 lg:absolute lg:bottom-12 lg:right-6 lg:justify-end lg:px-0" data-indikator-carousel>
+                    <?php // Titik penanda slide hanya di layar lebar (K175); di ponsel foto tetap berganti otomatis. ?>
+                    <div class="absolute bottom-12 right-6 z-20 hidden justify-end lg:flex" data-indikator-carousel>
                         <?php foreach ($foto as $i => $f) : ?>
                             <button type="button" class="group inline-flex h-11 w-7 items-center justify-center focus:outline-none" aria-current="<?= $i === 0 ? 'true' : 'false' ?>" aria-label="Foto <?= $i + 1 ?> dari <?= count($foto) ?>" data-carousel-slide-to="<?= $i ?>">
                                 <span class="block h-2 w-2 rounded-full bg-white/50 transition-all group-hover:bg-white/80 group-focus-visible:ring-2 group-focus-visible:ring-white group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-primary-900 group-aria-[current=true]:w-5 group-aria-[current=true]:bg-oranye-400 motion-reduce:transition-none" aria-hidden="true"></span>
@@ -156,11 +171,13 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
             <img src="<?= esc($tokoh, 'attr') ?>" alt="" class="pointer-events-none absolute bottom-0 right-0 hidden h-auto w-[42%] max-w-xl lg:block" width="1200" height="1200" fetchpriority="high">
         <?php endif ?>
 
+        <?= $heroKiri ?>
+        <?= $heroKiriPonsel ?>
         <?= $sapuan ?>
 
         <?php if (ada_gambar('elemen/garis-kecepatan.webp')) : ?>
             <?php // Garis kecepatan G10-11 samar di tepi bawah hero, di bawah tombol (mulai lg; di ponsel akan memotong tombol garis tepi), latar CSS lewat penanda `ada-garis-kecepatan` (F10-10). ?>
-            <div class="garis-kecepatan pointer-events-none absolute bottom-0 left-0 hidden h-24 w-[55%] opacity-40 lg:block" aria-hidden="true" data-garis-kecepatan></div>
+            <div class="garis-kecepatan tepi-pudar pointer-events-none absolute bottom-0 left-0 z-10 hidden bg-[length:100%_100%] bg-no-repeat h-24 w-[55%] opacity-40 lg:block" aria-hidden="true" data-garis-kecepatan></div>
         <?php endif ?>
 
         <div class="relative z-10 mx-auto max-w-screen-xl px-4 pb-10 lg:flex lg:min-h-[34rem] lg:items-center lg:py-16 xl:min-h-[38rem] <?= $foto !== [] ? 'pt-2 sm:pt-4' : 'pt-10 sm:pt-14' ?>">
@@ -205,17 +222,17 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
         <div class="mx-auto grid max-w-screen-xl grid-cols-2 sm:grid-cols-3">
             <div class="contents" data-pembuka-waktu>
                 <?php if ($acara['tanggal'] === '' && $acara['tempat'] === '') : ?>
-                    <p class="col-span-2 flex items-center gap-2 px-4 py-5 font-semibold text-gray-700"><?= ikon('calendar-days', 'size-5 text-primary-700') ?>Tanggal dan tempat acara segera diumumkan</p>
+                    <p class="col-span-2 px-4 py-5 font-semibold text-gray-700">Tanggal dan tempat acara segera diumumkan</p>
                 <?php else : ?>
                     <?php if ($acara['tanggal'] !== '') : ?>
                         <div class="min-w-0 border-r border-primary-900/10 px-4 py-4 sm:py-5<?= $acara['tempat'] === '' ? ' col-span-2' : '' ?>">
-                            <p class="<?= $labelFakta ?>"><?= ikon('calendar-days', 'size-4 text-primary-700') ?>Hari lomba</p>
+                            <p class="<?= $labelFakta ?>">Hari lomba</p>
                             <p class="<?= $nilaiFakta ?>"><span data-info-besar><?= esc($tanggalInfo[0]) ?></span><?php if ($tanggalInfo[1] !== '') : ?> <span class="mt-1.5 block font-sans text-sm font-semibold text-gray-700"><?= esc($tanggalInfo[1]) ?></span><?php endif ?></p>
                         </div>
                     <?php endif ?>
                     <?php if ($acara['tempat'] !== '') : ?>
                         <div class="min-w-0 px-4 py-4 sm:border-r sm:border-primary-900/10 sm:py-5<?= $acara['tanggal'] === '' ? ' col-span-2' : '' ?>">
-                            <p class="<?= $labelFakta ?>"><?= ikon('map-pin', 'size-4 text-oranye-600') ?>Lokasi</p>
+                            <p class="<?= $labelFakta ?>">Lokasi</p>
                             <?php // Tautan ke bagian peta `#lokasi` (F10-02) bila bagian itu tampil. ?>
                             <p class="<?= $nilaiFakta ?> break-words"><?php if ($adaPeta) : ?><a class="decoration-oranye-500 decoration-2 underline-offset-4 hover:underline focus:outline-none focus-visible:underline" href="#lokasi" data-fakta-lokasi><?php endif ?><?= esc($tempatInfo[0]) ?><?php if ($adaPeta) : ?></a><?php endif ?><?php if ($tempatInfo[1] !== '') : ?><span class="sr-only">,</span> <span class="mt-1.5 block font-sans text-sm font-semibold text-gray-700"><?= esc($tempatInfo[1]) ?></span><?php endif ?></p>
                         </div>
@@ -223,10 +240,10 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
                 <?php endif ?>
             </div>
 
-            <div class="<?= $sorotKeadaan ? 'bg-oranye-100/60' : 'bg-primary-900/5' ?> col-span-2 border-t border-primary-900/10 px-4 py-4 sm:col-span-1 sm:border-t-0 sm:py-5" data-keadaan="<?= esc($keadaan, 'attr') ?>">
+            <div class="<?= $sorotKeadaan ? 'bg-oranye-100/60' : 'bg-primary-900/5' ?> col-span-2 border-t border-primary-900/10 px-4 py-4 text-center sm:col-span-1 sm:border-t-0 sm:py-5 sm:text-left" data-keadaan="<?= esc($keadaan, 'attr') ?>">
                 <?php // Tampilan ringkas; kalimat lengkap tetap dibaca pembaca layar. ?>
                 <div aria-hidden="true" data-keadaan-ringkas>
-                    <p class="<?= $labelFakta ?>"><?= ikon($ikonKeadaan, 'size-4 ' . ($sorotKeadaan ? 'text-oranye-700' : 'text-primary-700')) ?><?= esc($labelKeadaan) ?></p>
+                    <p class="<?= $labelFakta ?> justify-center sm:justify-start"><?= esc($labelKeadaan) ?></p>
                     <p class="<?= $nilaiFakta ?><?= $sorotKeadaan ? ' text-oranye-700' : '' ?>"><?= esc($nilaiKeadaan) ?></p>
                 </div>
                 <div class="sr-only">
@@ -242,22 +259,44 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
             <?= $latarLintasan ?>
             <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 <?= [3 => 'lg:grid-cols-3', 4 => 'lg:grid-cols-4', 5 => 'lg:grid-cols-5'][min(5, max(3, count($kelompokUmur)))] ?>">
                 <?php foreach ($kelompokUmur as $i => $ku) : ?>
-                    <?php [$namaKu, $julukan] = $pisahNama($ku['nama']); ?>
+                    <?php
+                    [$namaKu, $julukan] = $pisahNama($ku['nama']);
+                    // Angka KU besar berisian tekstur G11-01 (`ku/ku-<n>-isian.webp`) bila ada, selain itu gradien (K175).
+                    $angkaKu  = preg_match('/^(.*?)(\d+)\s*$/u', $namaKu, $c) === 1 ? [trim($c[1]), $c[2]] : null;
+                    $isian    = $angkaKu !== null && ada_gambar('ku/ku-' . $angkaKu[1] . '-isian.webp');
+                    $artKu    = $angkaKu === null ? '' : gambar_opsional('ku/ku-' . $angkaKu[1] . '-art.webp', ['class' => 'pointer-events-none absolute -bottom-2 -right-6 -z-10 h-[85%] w-auto max-w-none select-none', 'data-hiasan' => 'ku-art']);
+                    $individu = count($ku['nomor_individu'] ?? []);
+                    $beregu   = count($ku['nomor_beregu'] ?? []);
+                    ?>
                     <li>
-                        <a class="group flex h-full min-h-24 flex-col gap-1 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-angkat focus:outline-none focus:ring-4 focus:ring-primary-200" href="#lomba-ku-<?= (int) $ku['id'] ?>" data-ku-kartu>
-                            <?php // Nama, julukan, lalu jumlah nomor individu dan beregu (K88); jumlah 0 tidak ditulis. ?>
-                            <span class="flex items-center justify-between gap-2">
-                                <span class="font-tampilan text-2xl font-extrabold uppercase text-primary-900"><?= esc($namaKu) ?></span>
-                                <?= ikon('arrow-right', 'size-4 text-oranye-600 transition group-hover:translate-x-0.5') ?>
+                        <a class="group relative isolate flex h-full min-h-32 flex-col gap-1 overflow-hidden rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-angkat focus:outline-none focus:ring-4 focus:ring-primary-200<?= $artKu === '' ? ' kartu-ku-garis kartu-ku-garis-' . ($i % 5 + 1) : '' ?>" href="#lomba-ku-<?= (int) $ku['id'] ?>" data-ku-kartu>
+                            <?= $artKu ?>
+                            <?php // Nama KU paling menonjol; julukan, lalu jumlah nomor individu dan beregu berupa ikon dan angka (K88, K175). ?>
+                            <span class="flex items-start justify-between gap-2">
+                                <?php if ($angkaKu !== null) : ?>
+                                    <span class="flex items-baseline gap-1 font-tampilan font-extrabold uppercase italic leading-none text-primary-900" data-ku-nama>
+                                        <?php if ($angkaKu[0] !== '') : ?><span class="text-2xl"><?= esc($angkaKu[0]) ?></span> <?php endif ?>
+                                        <span class="isian-ku isian-ku-<?= $i % 5 + 1 ?> pr-1 text-7xl tracking-tight sm:text-8xl<?= $isian ? ' isian-ku-gambar-' . esc($angkaKu[1], 'attr') : '' ?>"<?= $isian ? ' data-isian-gambar' : '' ?>><?= esc($angkaKu[1]) ?></span>
+                                    </span>
+                                <?php else : ?>
+                                    <span class="font-tampilan text-2xl font-extrabold uppercase text-primary-900" data-ku-nama><?= esc($namaKu) ?></span>
+                                <?php endif ?>
+                                <?= ikon('arrow-right', 'mt-1 size-4 shrink-0 text-oranye-600 transition group-hover:translate-x-0.5') ?>
                             </span>
                             <?php if ($julukan !== '') : ?>
                                 <span class="text-sm font-semibold text-oranye-700"><?= esc($julukan) ?></span>
                             <?php endif ?>
-                            <?php foreach (['individu' => count($ku['nomor_individu'] ?? []), 'beregu' => count($ku['nomor_beregu'] ?? [])] as $jenis => $jumlah) : ?>
-                                <?php if ($jumlah > 0) : ?>
-                                    <span class="text-sm text-gray-600"><?= $jumlah ?> nomor <?= $jenis ?></span>
-                                <?php endif ?>
-                            <?php endforeach ?>
+                            <?php if ($individu + $beregu > 0) : ?>
+                                <span class="mt-auto flex items-center gap-1.5 pt-1 text-sm font-semibold text-gray-600" data-ku-jumlah>
+                                    <?php if ($individu > 0) : ?>
+                                        <span class="inline-flex items-center gap-1"><?= ikon('user', 'size-4 text-primary-700') ?><span aria-hidden="true"><?= $individu ?></span><span class="sr-only"><?= $individu ?> nomor individu</span></span>
+                                    <?php endif ?>
+                                    <?php if ($individu > 0 && $beregu > 0) : ?><span class="text-xs text-gray-400" aria-hidden="true">/</span><span class="sr-only">,</span><?php endif ?>
+                                    <?php if ($beregu > 0) : ?>
+                                        <span class="inline-flex items-center gap-1"><?= ikon('users', 'size-4 text-oranye-600') ?><span aria-hidden="true"><?= $beregu ?></span><span class="sr-only"><?= $beregu ?> nomor beregu</span></span>
+                                    <?php endif ?>
+                                </span>
+                            <?php endif ?>
                         </a>
                     </li>
                 <?php endforeach ?>
