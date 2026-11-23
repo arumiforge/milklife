@@ -67,7 +67,9 @@ final class TataLetakHalamanTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('//main//h1')->length, 'Halaman depan punya tepat satu h1.');
         $hasil->assertSee('Pendaftaran sedang disiapkan.');
         $hasil->assertSee('Seri 2 – 2026');
-        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath->query('//*[@data-pembuka-waktu]')->item(0)));
+        // Di ponsel lokasi disingkat SSA (K179); nama lengkap tetap ada untuk layar lebar dan pembaca layar.
+        $this->assertStringStartsWith('Hari lomba 9–12 Desember 2026 Lokasi', $this->teks($xpath->query('//*[@data-pembuka-waktu]')->item(0)));
+        $this->assertStringEndsWith('Supersoccer Arena, Kudus', $this->teks($xpath->query('//*[@data-pembuka-waktu]')->item(0)));
         $this->assertSame(1, $xpath->query('//main/section[@id="pembuka"]')->length);
     }
 

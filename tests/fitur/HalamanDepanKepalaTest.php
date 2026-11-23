@@ -151,7 +151,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertSame('Seri 2 – 2026', $this->teks($xpath, '//header//*[@data-kepala-seri]'));
         // Pembuka tanpa alis (K164): seri hanya di kepala halaman.
         $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//*[@data-pembuka-seri or contains(concat(" ", @class, " "), " alis ")]')->length);
-        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teksDibaca($xpath->query('//*[@data-pembuka-waktu]')->item(0)));
 
         // Pita fakta (F10-06): "9–12 Desember" besar di atas tahun; tahun tidak ada di judul (permintaan 20).
         $this->assertSame('9–12 Desember', $this->teks($xpath, '//*[@data-pembuka-info]//*[@data-info-besar]'));
@@ -164,14 +164,40 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
         // Peta bawaan tampil (F10-02): nama tempat di pita fakta menaut ke `#lokasi`.
         $xpath = $this->xpathDari($this->get('/'));
-        $this->assertSame('Supersoccer Arena', $this->teks($xpath, '//*[@data-pembuka-info]//a[@data-fakta-lokasi][@href="#lokasi"]'));
+        $tautan = $xpath->query('//*[@data-pembuka-info]//a[@data-fakta-lokasi][@href="#lokasi"]')->item(0);
+        $this->assertNotNull($tautan);
+        $this->assertSame('Supersoccer Arena', $this->teksDibaca($tautan));
         $this->assertSame(1, $xpath->query('//section[@id="lokasi"]')->length);
 
         // Tanpa peta tidak ada tautan ke bagian yang tidak ada.
         setting('HalamanDepan.peta_embed', '');
         $xpath = $this->xpathDari($this->get('/'));
         $this->assertSame(0, $xpath->query('//*[@data-fakta-lokasi] | //section[@id="lokasi"]')->length);
-        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teks($xpath, '//*[@data-pembuka-waktu]'));
+        $this->assertSame('Hari lomba 9–12 Desember 2026 Lokasi Supersoccer Arena, Kudus', $this->teksDibaca($xpath->query('//*[@data-pembuka-waktu]')->item(0)));
+    }
+
+    public function testLokasiDisingkatDiPonsel(): void
+    {
+        $this->isiDataAcara();
+
+        // K179: di ponsel "Supersoccer Arena" tampil "SSA" supaya pita satu baris;
+        // nama lengkap tampil mulai layar sm dan tetap dibaca pembaca layar.
+        $xpath   = $this->xpathDari($this->get('/'));
+        $singkat = $xpath->query('//*[@data-pembuka-info]//*[@data-tempat-singkat]')->item(0);
+        $this->assertNotNull($singkat);
+        $this->assertSame('SSA', $this->teksSimpul($singkat));
+        $this->assertSame('true', $singkat->getAttribute('aria-hidden'));
+        $this->assertStringContainsString('sm:hidden', $singkat->getAttribute('class'));
+        $lengkap = $singkat->nextSibling;
+        $this->assertInstanceOf(DOMElement::class, $lengkap);
+        $this->assertSame('Supersoccer Arena', $this->teksSimpul($lengkap));
+        $this->assertStringContainsString('sr-only sm:not-sr-only', $lengkap->getAttribute('class'));
+
+        // Tempat lain tidak disingkat.
+        setting('Acara.tempat', 'Stadion Karangan, Kudus');
+        $xpath = $this->xpathDari($this->get('/'));
+        $this->assertSame(0, $xpath->query('//*[@data-tempat-singkat]')->length);
+        $this->assertSame('Stadion Karangan', $this->teks($xpath, '//*[@data-pembuka-info]//a[@data-fakta-lokasi]'));
     }
 
     public function testJudulDanTeksDariPengaturanDiEscape(): void
@@ -322,17 +348,20 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // Tiap kartu menaut ke rincian kelompok umurnya di bagian lomba.
         $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[@data-ku-kartu]'));
         $this->assertCount(5, $kartu);
-        // Nama, julukan, dan jumlah nomor berupa ikon dan angka; nama aksesibel tetap lengkap,
-        // jumlah 0 tidak ditulis (K88, K175).
+        // Nama, julukan, lalu jumlah nomor; nama aksesibel lengkap dan jumlah 0 tidak ditulis (K88, K179).
         $this->assertSame('KU 8 2 nomor individu', $this->teksDibaca($kartu[0]));
-        $this->assertSame('KU 10 6 nomor individu , 5 nomor beregu', $this->teksDibaca($kartu[1]));
-        // Tampilan: ikon dan angka dipisah garis miring kecil.
+        $this->assertSame('KU 10 6 nomor individu 5 nomor beregu', $this->teksDibaca($kartu[1]));
+        // Tampilan (K179): jumlah nomor cukup ikon dan angka, di bawah angka KU.
         $this->assertSame(['6', '5'], array_map(
             $this->teksSimpul(...),
             iterator_to_array($xpath->query('.//*[@data-ku-jumlah]/span/span[@aria-hidden="true"]', $kartu[1])),
         ));
-        $this->assertSame('/', $this->teksSimpul($xpath->query('.//*[@data-ku-jumlah]/span[@aria-hidden="true"]', $kartu[1])->item(0)));
-        $this->assertSame(2, $xpath->query('.//*[@data-ku-jumlah]//*[name()="svg"]', $kartu[1])->length);
+        $this->assertSame(1, $xpath->query('.//*[@data-ku-jumlah-individu]/*[name()="svg"]', $kartu[1])->length);
+        $this->assertSame(1, $xpath->query('.//*[@data-ku-jumlah-beregu]/*[name()="svg"]', $kartu[1])->length);
+        $this->assertSame(0, $xpath->query('.//*[@data-ku-jumlah-beregu]', $kartu[0])->length);
+        $this->assertSame(1, $xpath->query('.//*[@data-ku-nama]/following-sibling::*[@data-ku-jumlah]', $kartu[1])->length);
+        // Angka KU memenuhi kartu dan terpotong kotaknya.
+        $this->assertStringContainsString('overflow-hidden', $kartu[1]->getAttribute('class'));
         // Angka KU besar berisian gradien sebelum tekstur G11-01 ada.
         $angka = $xpath->query('//a[@data-ku-kartu]//*[contains(concat(" ", @class, " "), " isian-ku ")]');
         $this->assertSame(['8', '10', '12', '15', '18'], array_map($this->teksSimpul(...), iterator_to_array($angka)));
