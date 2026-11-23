@@ -365,7 +365,7 @@ Satu regu juara dihitung satu piala untuk sekolahnya. Sekolah dikenali dari NPSN
 
 ### 4.2 Unduhan PDF dan Excel
 
-Tombol unduh berupa ikon: ikon PDF merah dan ikon lembar kerja hijau untuk Excel. Arahkan kursor ke ikon, atau tekan di ponsel, untuk melihat namanya.
+Tombol unduh berupa ikon: ikon PDF merah dan ikon lembar kerja hijau untuk Excel. Di komputer, arahkan kursor ke ikon untuk melihat namanya, lalu klik untuk mengunduh. Di ponsel, ketukan pertama menampilkan nama tombolnya; ketuk sekali lagi untuk mengunduh.
 
 | Yang diunduh | Menu |
 |---|---|

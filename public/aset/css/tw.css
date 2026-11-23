@@ -3869,9 +3869,6 @@
     rotate: 180deg;
   }
   @media (hover: hover) {
-    :is(:where(.group):hover .group-hover\:block) {
-      display: block;
-    }
     :is(:where(.group):hover .group-hover\:scale-105) {
       --tw-scale-x: 105%;
       --tw-scale-y: 105%;
@@ -3917,9 +3914,6 @@
   :is(:where(.group):focus .group-focus\:ring-white) {
     --tw-ring-color: var(--color-white);
   }
-  :is(:where(.group):focus-visible .group-focus-visible\:block) {
-    display: block;
-  }
   :is(:where(.group):focus-visible .group-focus-visible\:ring-2) {
     --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -3938,9 +3932,6 @@
     --tw-ring-offset-color: var(--color-primary-900);
   }
   :is(:where(.group\/unduh):focus-visible .group-focus-visible\/unduh\:block) {
-    display: block;
-  }
-  :is(:where(.group):active .group-active\:block) {
     display: block;
   }
   :is(:where(.group\/unduh):active .group-active\/unduh\:block) {
@@ -4414,9 +4405,6 @@
   }
   .focus-visible\:outline-white:focus-visible {
     outline-color: var(--color-white);
-  }
-  .active\:bg-gray-100:active {
-    background-color: var(--color-gray-100);
   }
   @media (hover: hover) {
     .enabled\:hover\:bg-primary-50:enabled:hover {

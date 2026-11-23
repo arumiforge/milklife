@@ -133,15 +133,20 @@ final class HasilLombaTest extends UjiBasisData
         $this->assertStringContainsString('#hasil-ku-', $x->query('//nav[@data-jejak-publik]//li[3]/a')->item(0)?->getAttribute('href') ?? '');
         $this->assertSame('page', $x->query('//nav[@data-jejak-publik]//li[4]/span')->item(0)?->getAttribute('aria-current'));
         $this->assertSame(0, $x->query('//*[@data-tautan-kembali]')->length, 'Tautan kembali diganti jejak.');
-        $pdf = $x->query('//a[@data-unduh-ikon="pdf"]')->item(0);
+        $pdf = $x->query('//a[@data-tombol-unduh="pdf"]')->item(0);
         $this->assertSame(site_url('hasil/' . $nomor . '/pdf'), $pdf?->getAttribute('href'));
         $this->assertStringStartsWith('Unduh PDF hasil Lari 60 m putra KU', $pdf->getAttribute('aria-label'));
         $this->assertSame('Unduh PDF', trim($x->query('.//span[@aria-hidden="true"]', $pdf)->item(0)?->textContent ?? ''));
-        $this->assertSame(site_url('hasil/' . $nomor . '/excel'), $x->query('//a[@data-unduh-ikon="excel"]')->item(0)?->getAttribute('href'));
+        $this->assertSame(site_url('hasil/' . $nomor . '/excel'), $x->query('//a[@data-tombol-unduh="excel"]')->item(0)?->getAttribute('href'));
+
+        // Hasil publik memakai komponen tombol unduh yang sama dengan panel admin (F11-13, K177).
+        $this->assertSame(1, $x->query('//a[@data-tombol-unduh="pdf"]//*[@data-ikon-pdf]')->length);
+        $this->assertSame('Unduh Excel', trim($x->query('//a[@data-tombol-unduh="excel"]//span[@aria-hidden="true"]')->item(0)?->textContent ?? ''));
+        $this->assertStringContainsString('"' . aset('js/tombol-unduh.js') . '"', $rinci->getBody());
 
         $klasemen = $this->xpathDari($this->get('hasil/klasemen'));
-        $this->assertSame(1, $klasemen->query('//a[@data-unduh-ikon="pdf"][@aria-label="Unduh PDF klasemen sekolah"]')->length);
-        $this->assertSame(1, $klasemen->query('//a[@data-unduh-ikon="excel"][@aria-label="Unduh Excel klasemen sekolah"]')->length);
+        $this->assertSame(1, $klasemen->query('//a[@data-tombol-unduh="pdf"][@aria-label="Unduh PDF klasemen sekolah"]')->length);
+        $this->assertSame(1, $klasemen->query('//a[@data-tombol-unduh="excel"][@aria-label="Unduh Excel klasemen sekolah"]')->length);
         $this->assertSame(3, $klasemen->query('//nav[@data-jejak-publik]//li')->length);
         $this->assertSame(2, $this->xpathDari($publik)->query('//nav[@data-jejak-publik]//li')->length);
 

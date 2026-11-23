@@ -257,6 +257,8 @@ final class TataLetakHalamanTest extends UjiBasisData
         $this->assertStringContainsString('"' . aset('js/cari-menu.js') . '"', $html);
         // Teks ringkas, tombol aksi ponsel, dan label cari tabel (F11-10, K174 butir 4, 6, 7).
         $this->assertStringContainsString('"' . aset('js/panel-ringkas.js') . '"', $html);
+        // Tombol unduh ikon: ketuk dulu untuk menampilkan teks di layar sentuh (F11-13, K177).
+        $this->assertStringContainsString('"' . aset('js/tombol-unduh.js') . '"', $html);
         $keluar = $xpath->query('.//button[@data-keluar-admin]', $kepala)->item(0);
         $this->assertNotNull($keluar);
         $this->assertSame('Keluar', $this->teks($keluar));

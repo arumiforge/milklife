@@ -202,6 +202,7 @@ $menuBawah     = trim($this->renderSection('tanpa_menu_bawah')) === '';
     <script src="<?= base_url('aset/vendor/flowbite/flowbite.min.js') ?>"></script>
     <script src="<?= aset('js/menu-publik.js') ?>"></script>
     <script src="<?= aset('js/salin-id.js') ?>"></script>
+    <script src="<?= aset('js/tombol-unduh.js') ?>"></script>
     <?= $this->renderSection('skrip') ?>
 </body>
 </html>

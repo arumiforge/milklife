@@ -13,9 +13,9 @@
 $aksi = komponen('tombol', ['label' => 'Lihat hasil per nomor', 'href' => site_url('hasil'), 'varian' => 'kedua', 'ikon' => 'trophy']);
 
 if ($klasemen !== []) {
-    // Unduhan ikon saja dengan nama aksesibel lengkap (K175).
-    $aksi .= view('hasil/_unduh_ikon', ['jenis' => 'pdf', 'href' => site_url('hasil/klasemen/pdf'), 'label' => 'Unduh PDF klasemen sekolah', 'atribut' => []], ['saveData' => false])
-        . view('hasil/_unduh_ikon', ['jenis' => 'excel', 'href' => site_url('hasil/klasemen/excel'), 'label' => 'Unduh Excel klasemen sekolah', 'atribut' => []], ['saveData' => false]);
+    // Unduhan ikon saja dengan nama aksesibel lengkap (K175, K177).
+    $aksi .= komponen('tombol_unduh', ['tambat' => 'tengah', 'jenis' => 'pdf', 'href' => site_url('hasil/klasemen/pdf'), 'label' => 'Unduh PDF klasemen sekolah'])
+        . komponen('tombol_unduh', ['tambat' => 'tengah', 'jenis' => 'excel', 'href' => site_url('hasil/klasemen/excel'), 'label' => 'Unduh Excel klasemen sekolah']);
 }
 ?>
 <?= $this->extend('tata_letak/publik_tw') ?>

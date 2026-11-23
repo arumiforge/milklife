@@ -10,7 +10,8 @@
     "vendor": "node alat/vendor.mjs",
     "ikon": "node alat/ikon.mjs",
     "bangun": "npm run vendor && npm run ikon && npm run css",
-    "uji:layar": "node alat/uji-layar.mjs"
+    "uji:layar": "node alat/uji-layar.mjs",
+    "uji:unduh": "node alat/uji-unduh.mjs"
   },
   "devDependencies": {
     "@fontsource-variable/inter": "^5.2.5",
