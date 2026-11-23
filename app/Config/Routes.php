@@ -93,7 +93,8 @@ $routes->post('pendaftaran/simpan', 'PendaftaranController::simpan');
 // ---------- Akhir pendaftaran ----------
 
 // Admin. Semua rute dijaga filter `admin` (`App\Filters\AdminFilter`):
-// yang belum masuk hanya bisa membuka halaman masuk.
+// yang belum masuk hanya bisa membuka halaman masuk, dan akun juri hanya
+// Lembar juri dan Akun (F11-16).
 $routes->get('admin', static fn () => redirect()->to('admin/dasbor'), ['filter' => 'admin']);
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'admin'], static function (RouteCollection $routes): void {
     $routes->get('masuk', 'MasukController::index');
@@ -368,6 +369,16 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->get('hasil', 'MetodeKlasemenController::index');
         $routes->post('hasil', 'MetodeKlasemenController::simpan');
         // ---------- Akhir metode klasemen (F9-11) ----------
+
+        // ---------- Akun juri (F11-16, K181) ----------
+        // Satu akun per juri; akun juri sendiri hanya bisa membuka Lembar juri dan Akun.
+        $routes->get('akun-juri', 'AkunJuriController::index');
+        $routes->get('akun-juri/tambah', 'AkunJuriController::tambah');
+        $routes->post('akun-juri', 'AkunJuriController::buat');
+        $routes->get('akun-juri/(:num)/ubah', 'AkunJuriController::ubah/$1');
+        $routes->post('akun-juri/(:num)', 'AkunJuriController::perbarui/$1');
+        $routes->post('akun-juri/(:num)/hapus', 'AkunJuriController::hapus/$1');
+        // ---------- Akhir akun juri ----------
 
         // ---------- Papan videotron (F9-13) ----------
         $routes->get('videotron', 'VideotronController::index');

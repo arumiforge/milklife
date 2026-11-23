@@ -18,6 +18,11 @@ use App\Models\AdminModel;
  * Tanpa kolom baru di basis data: hash kata sandi sudah berubah setiap kali
  * kata sandi diganti, karena garamnya selalu baru.
  *
+ * Peran akun (`admin` atau `juri`, F11-16, K181) dibaca bersama hash di
+ * pemeriksaan yang sama dan disalin ke sesi (`admin_peran`), jadi peran di
+ * sesi selalu mengikuti basis data. `juri()` membaca salinan itu untuk menu
+ * dan tampilan; `AdminFilter` membatasi halaman akun juri.
+ *
  * Diambil lewat `Factories::libraries(SesiAdmin::class)` supaya uji halaman
  * tanpa basis data bisa memasang tiruan (`tests/_support/SesiAdminUji.php`).
  */
@@ -26,6 +31,7 @@ class SesiAdmin
     public const KUNCI_ID    = 'admin_id';
     public const KUNCI_NAMA  = 'admin_nama';
     public const KUNCI_SIDIK = 'admin_sidik';
+    public const KUNCI_PERAN = 'admin_peran';
 
     /**
      * Hasil `periksa()`.
@@ -54,26 +60,38 @@ class SesiAdmin
     }
 
     /**
+     * Sidik hash kata sandi dan peran akun yang tersimpan sekarang, atau
+     * `null` bila akunnya tidak ada. Satu bacaan basis data.
+     *
+     * @return array{sidik: string, peran: string}|null
+     */
+    public function akunTersimpan(int $idAdmin): ?array
+    {
+        $akun = model(AdminModel::class)->untukSesi($idAdmin);
+
+        return $akun === null ? null : ['sidik' => self::sidik($akun['sandi']), 'peran' => $akun['peran']];
+    }
+
+    /**
      * Sidik hash kata sandi yang tersimpan sekarang, atau `null` bila akunnya
      * tidak ada.
      */
     public function sidikTersimpan(int $idAdmin): ?string
     {
-        $hash = model(AdminModel::class)->sandiTersimpan($idAdmin);
-
-        return $hash === null ? null : self::sidik($hash);
+        return $this->akunTersimpan($idAdmin)['sidik'] ?? null;
     }
 
     /**
-     * Bandingkan sidik di sesi dengan hash tersimpan.
+     * Bandingkan sidik di sesi dengan hash tersimpan. Bila sah, peran akun
+     * yang tersimpan disalin ke sesi.
      *
      * @return self::SAH|self::SANDI_DIGANTI|self::AKUN_HILANG|self::TANPA_SIDIK
      */
     public function periksa(int $idAdmin, mixed $sidikSesi): string
     {
-        $tersimpan = $this->sidikTersimpan($idAdmin);
+        $akun = $this->akunTersimpan($idAdmin);
 
-        if ($tersimpan === null) {
+        if ($akun === null) {
             return self::AKUN_HILANG;
         }
 
@@ -82,7 +100,24 @@ class SesiAdmin
             return self::TANPA_SIDIK;
         }
 
-        return hash_equals($tersimpan, $sidikSesi) ? self::SAH : self::SANDI_DIGANTI;
+        if (! hash_equals($akun['sidik'], $sidikSesi)) {
+            return self::SANDI_DIGANTI;
+        }
+
+        if (session(self::KUNCI_PERAN) !== $akun['peran']) {
+            session()->set(self::KUNCI_PERAN, $akun['peran']);
+        }
+
+        return self::SAH;
+    }
+
+    /**
+     * Apakah sesi ini milik akun juri (salinan peran di sesi, diperbarui
+     * `periksa()` di setiap permintaan halaman admin).
+     */
+    public static function juri(): bool
+    {
+        return session(self::KUNCI_PERAN) === AdminModel::PERAN_JURI;
     }
 
     /**
@@ -100,7 +135,7 @@ class SesiAdmin
     /**
      * Isi sesi untuk admin yang baru masuk. ID sesi dibuat ulang oleh pemanggil.
      *
-     * @param array<string, mixed> $admin baris tabel `admin` (`id`, `nama`, `sandi`)
+     * @param array<string, mixed> $admin baris tabel `admin` (`id`, `nama`, `sandi`, `peran`)
      */
     public static function mulai(array $admin): void
     {
@@ -108,6 +143,7 @@ class SesiAdmin
             self::KUNCI_ID    => (int) $admin['id'],
             self::KUNCI_NAMA  => (string) $admin['nama'],
             self::KUNCI_SIDIK => self::sidik((string) $admin['sandi']),
+            self::KUNCI_PERAN => AdminModel::peranSah($admin['peran'] ?? null),
         ]);
     }
 

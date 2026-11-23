@@ -15,16 +15,22 @@ use CodeIgniter\CLI\CLI;
  * tersimpan di riwayat terminal). Dari terminal, kata sandi dibaca tanpa
  * ditampilkan bila `stty` tersedia. Bila masukan standar bukan terminal
  * (dipakai dari skrip), setiap jawaban dibaca satu baris dari masukan standar.
+ *
+ * `--peran juri` membuat akun juri yang hanya bisa membuka Lembar juri dan
+ * Akun (F11-16, K181); bawaannya akun admin. Peran akun yang sudah ada tidak
+ * diubah perintah ini. Akun juri juga bisa dibuat admin di Pengaturan >
+ * Akun juri.
  */
 class BuatAdmin extends BaseCommand
 {
     protected $group       = 'Aplikasi';
     protected $name        = 'admin:buat';
     protected $description = 'Membuat akun admin, atau mengganti kata sandi admin yang sudah ada.';
-    protected $usage       = 'admin:buat [--nama "Nama Lengkap"] [--pengguna nama_pengguna]';
+    protected $usage       = 'admin:buat [--nama "Nama Lengkap"] [--pengguna nama_pengguna] [--peran admin|juri]';
     protected $options     = [
         '--nama'     => 'Nama admin yang tampil di panel admin. Bila tidak diisi, akan ditanyakan.',
         '--pengguna' => 'Nama pengguna untuk masuk (huruf, angka, titik, garis bawah; 3–30 karakter). Bila tidak diisi, akan ditanyakan.',
+        '--peran'    => 'admin (bawaan, semua halaman) atau juri (hanya Lembar juri dan Akun). Hanya untuk akun baru.',
     ];
 
     /**
@@ -35,6 +41,13 @@ class BuatAdmin extends BaseCommand
     public function run(array $params): int
     {
         $model = model(AdminModel::class);
+        $peran = $this->opsi($params, 'peran') ?? AdminModel::PERAN_ADMIN;
+
+        if (! in_array($peran, [AdminModel::PERAN_ADMIN, AdminModel::PERAN_JURI], true)) {
+            CLI::error('Peran "' . $peran . '" tidak dikenal. Tulis --peran admin atau --peran juri.');
+
+            return EXIT_ERROR;
+        }
 
         $namaPengguna = $this->tanyaSampaiBenar(
             'Nama pengguna',
@@ -79,8 +92,10 @@ class BuatAdmin extends BaseCommand
             // jadi setiap sesi yang sedang masuk diminta masuk ulang (K67).
             $pesan = 'Kata sandi admin "' . $namaPengguna . '" sudah diganti. Semua sesi yang sedang masuk dengan akun ini akan diminta masuk lagi.';
         } else {
-            $galat = $this->simpanAdmin($model, $nama, $namaPengguna, $sandi);
-            $pesan = 'Admin "' . $namaPengguna . '" sudah dibuat. Silakan masuk di /admin/masuk.';
+            $galat = $this->simpanAdmin($model, $nama, $namaPengguna, $sandi, $peran);
+            $pesan = $peran === AdminModel::PERAN_JURI
+                ? 'Akun juri "' . $namaPengguna . '" sudah dibuat. Juri masuk di /admin/masuk dan hanya bisa membuka Lembar juri.'
+                : 'Admin "' . $namaPengguna . '" sudah dibuat. Silakan masuk di /admin/masuk.';
         }
 
         if ($galat !== []) {
@@ -102,11 +117,12 @@ class BuatAdmin extends BaseCommand
      *
      * @return list<string> pesan galat; kosong bila berhasil
      */
-    public function simpanAdmin(AdminModel $model, string $nama, string $namaPengguna, string $sandi): array
+    public function simpanAdmin(AdminModel $model, string $nama, string $namaPengguna, string $sandi, string $peran = AdminModel::PERAN_ADMIN): array
     {
         $berhasil = $model->insert([
             'nama'          => $nama,
             'nama_pengguna' => $namaPengguna,
+            'peran'         => $peran,
             'sandi'         => $sandi,
         ]);
 

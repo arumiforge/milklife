@@ -17,10 +17,15 @@
  *
  * @var list<array{label: string, alamat?: string|null}> $jejak
  */
-$jejak = array_values($jejak ?? []);
 
-if ($jejak === [] || mb_strtolower($jejak[0]['label']) !== 'dasbor') {
-    array_unshift($jejak, ['label' => 'Dasbor', 'alamat' => 'admin/dasbor']);
+use App\Libraries\SesiAdmin;
+
+$jejak = array_values($jejak ?? []);
+// Akun juri tidak punya Dasbor; jejaknya dimulai dari Lembar juri (F11-16).
+$awal = SesiAdmin::juri() ? ['label' => 'Lembar juri', 'alamat' => 'admin/juri'] : ['label' => 'Dasbor', 'alamat' => 'admin/dasbor'];
+
+if ($jejak === [] || mb_strtolower($jejak[0]['label']) !== mb_strtolower($awal['label'])) {
+    array_unshift($jejak, $awal);
 }
 
 $induk = count($jejak) > 1 ? $jejak[count($jejak) - 2] : null;

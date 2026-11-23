@@ -18,6 +18,7 @@
  * @var array<string, string>  $galatSandi pesan per kotak formulir 2
  */
 
+use App\Libraries\SesiAdmin;
 use App\Models\AdminModel;
 
 $kotakSandi = [
@@ -62,7 +63,9 @@ $pesan   = static fn (string $kotak, array $galat): string => isset($galat[$kota
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
-    <?= $this->include('admin/pengaturan/_navigasi') ?>
+    <?php if (! SesiAdmin::juri()) : ?>
+        <?= $this->include('admin/pengaturan/_navigasi') ?>
+    <?php endif ?>
 
     <p class="text-gray-700">
         Perubahan di halaman ini hanya berlaku untuk akun Anda sendiri.

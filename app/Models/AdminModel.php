@@ -16,6 +16,9 @@ use CodeIgniter\Model;
  * - Kata sandi diberikan sebagai teks asli ke `insert()`/`update()`, divalidasi,
  *   lalu SELALU diubah menjadi hash oleh callback `hashSandi` sebelum masuk
  *   basis data. Tidak ada jalur lain untuk menyimpan kolom `sandi`.
+ * - Peran (F11-16, K181): `admin` (bawaan, semua halaman) atau `juri` (hanya
+ *   Lembar juri dan Akun miliknya). Peran dipilih saat akun dibuat dan tidak
+ *   diubah sesudahnya.
  */
 class AdminModel extends Model
 {
@@ -26,11 +29,14 @@ class AdminModel extends Model
      */
     public const SANDI_MAKSIMAL = 72;
 
+    public const PERAN_ADMIN = 'admin';
+    public const PERAN_JURI  = 'juri';
+
     protected $table            = 'admin';
     protected $primaryKey       = 'id';
     protected $returnType       = 'array';
     protected $useAutoIncrement = true;
-    protected $allowedFields    = ['nama', 'nama_pengguna', 'sandi'];
+    protected $allowedFields    = ['nama', 'nama_pengguna', 'peran', 'sandi'];
 
     protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
@@ -58,6 +64,10 @@ class AdminModel extends Model
                 'is_unique[admin.nama_pengguna,id,{id}]',
             ],
         ],
+        'peran' => [
+            'label' => 'Peran',
+            'rules' => ['permit_empty', 'in_list[' . self::PERAN_ADMIN . ',' . self::PERAN_JURI . ']'],
+        ],
         'sandi' => [
             'label' => 'Kata sandi',
             'rules' => ['required', 'min_length[' . self::SANDI_MINIMAL . ']', 'max_length[' . self::SANDI_MAKSIMAL . ']'],
@@ -75,6 +85,9 @@ class AdminModel extends Model
             'max_length'  => 'Nama pengguna terlalu panjang. Tulis paling banyak 30 karakter.',
             'regex_match' => 'Nama pengguna hanya boleh berisi huruf, angka, titik, dan garis bawah, tanpa spasi.',
             'is_unique'   => 'Nama pengguna ini sudah dipakai. Pilih nama pengguna lain.',
+        ],
+        'peran' => [
+            'in_list' => 'Peran hanya boleh admin atau juri.',
         ],
         'sandi' => [
             'required'   => 'Kata sandi belum diisi.',
@@ -130,6 +143,61 @@ class AdminModel extends Model
         $baris = $this->builder()->select('sandi')->where($this->primaryKey, $id)->get()->getRowArray();
 
         return is_array($baris) && is_string($baris['sandi'] ?? null) ? $baris['sandi'] : null;
+    }
+
+    /**
+     * Hash kata sandi dan peran satu akun dalam satu bacaan, untuk
+     * `SesiAdmin` di setiap permintaan halaman admin; `null` bila akunnya
+     * tidak ada.
+     *
+     * @return array{sandi: string, peran: string}|null
+     */
+    public function untukSesi(int $id): ?array
+    {
+        if ($id < 1) {
+            return null;
+        }
+
+        $baris = $this->builder()->select('sandi, peran')->where($this->primaryKey, $id)->get()->getRowArray();
+
+        if (! is_array($baris) || ! is_string($baris['sandi'] ?? null)) {
+            return null;
+        }
+
+        return ['sandi' => $baris['sandi'], 'peran' => self::peranSah($baris['peran'] ?? null)];
+    }
+
+    /**
+     * Peran yang dikenal; nilai lain dibaca sebagai juri supaya akun dengan
+     * peran rusak tidak pernah mendapat hak admin.
+     */
+    public static function peranSah(mixed $peran): string
+    {
+        return $peran === self::PERAN_ADMIN ? self::PERAN_ADMIN : self::PERAN_JURI;
+    }
+
+    /**
+     * Semua akun juri, urut nama.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function daftarJuri(): array
+    {
+        return $this->where('peran', self::PERAN_JURI)->orderBy('nama')->orderBy('id')->findAll();
+    }
+
+    /**
+     * Satu akun juri, atau `null` bila tidak ada atau bukan juri.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function cariJuri(int $id): ?array
+    {
+        if ($id < 1) {
+            return null;
+        }
+
+        return $this->where('peran', self::PERAN_JURI)->find($id);
     }
 
     /**
