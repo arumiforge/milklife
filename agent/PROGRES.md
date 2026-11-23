@@ -8,7 +8,6 @@ Diperbarui: 23 November 2026
 
 ## Berikutnya
 
-- Gambar G11-01 (kartu kelompok umur) dan G11-02 (latar hero kiri) dari Codex, perlu sebelum 28 November 2026. Sampai berkas tiba, halaman depan memakai gradien cadangan.
 - Pembaruan server produksi Tahap 11 berlangsung sekaligus saat produksi pindah ke Docker (F11-17, panduan produksi bagian 8): `migrate --all` dan perintah yang diminta `pembaruan:periksa`, misalnya `data:sesuaikan`. Sakelar Rekor dan Videotron dinyalakan admin setelah dicoba di staging (https://staging.mac2026.web.id, K139), dan alamat `/layar` diberikan ke operator videotron vendor. Panduan admin hari lomba (`dokumen/final/panduan-admin-hari-lomba.md`, K178, revisi 1 K183) siap dibagikan ke admin panitia dan juri sebelum pertemuan teknik; setelah pembaruan server, admin membuat akun juri di Pengaturan > Akun juri dan menyunting jawaban ganti atlet di Bantuan.
 - Pendaftaran tutup 30 November, pertemuan teknik 6 Desember, lomba 9–12 Desember 2026.
 
@@ -25,7 +24,7 @@ Diperbarui: 23 November 2026
 - Tahap 8 — Hari lomba dan hasil: [`arsip/tahap-8.md`](arsip/tahap-8.md). Selesai 18 November 2026; F8-01 sampai F8-05 dan F8-07 (#102, #103, #104, #113, #114, #107), penutupan F8-06 bersama F7-06.
 - Tahap 9 — Rombak tampilan dan fitur publik hari lomba: [`arsip/tahap-9.md`](arsip/tahap-9.md). Selesai 22 November 2026; F9-01 sampai F9-17 dan F9-19 (#121–#150), penutupan F9-18 (#151).
 - Tahap 10 — Identitas visual anime, panel admin, dan data terbaru: [`arsip/tahap-10.md`](arsip/tahap-10.md). Selesai 22 November 2026; F10-01 sampai F10-10, F10-12, F10-13 (#172–#203) dan gambar G10-01 sampai G10-13, penutupan F10-11.
-- Tahap 11 — Pelajaran hasil Seri 1: [`arsip/tahap-11.md`](arsip/tahap-11.md). Selesai 23 November 2026; F11-01 sampai F11-07 dan F11-09 sampai F11-12 (#211–#224), penutupan F11-08. Gambar G11-01 dan G11-02 belum dibuat Codex.
+- Tahap 11 — Pelajaran hasil Seri 1: [`arsip/tahap-11.md`](arsip/tahap-11.md). Selesai 23 November 2026; F11-01 sampai F11-07 dan F11-09 sampai F11-12 (#211–#224), penutupan F11-08. Gambar G11-01 (kartu kelompok umur, #236) dan G11-02 (latar hero kiri, #237) dari Codex dipasang 24 November 2026; PR #230 dan #231 dari brief lama ditutup.
 - Tugas sisipan Tahap 11 setelah penutupan: F11-15 kartu KU dan pita fakta halaman depan (K179), F11-16 peran juri (K181, #234), F11-17 migrasi server ke Docker (K182, #235).
 
 ## Menunggu pemilik
