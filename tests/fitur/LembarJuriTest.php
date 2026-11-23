@@ -283,7 +283,8 @@ final class LembarJuriTest extends UjiBasisData
         $this->assertStringContainsString('NM = tanpa lompatan atau lemparan sah', $html);
         $ket = array_column($unduhan->excel()->lembar()->getSheet(0)->toArray(), 5);
         $this->assertContains('DQ (Diskualifikasi, TR16.8)', $ket);
-        $this->assertContains('r (Mundur)', $ket);
+        // r tetap dinilai, jadi prestasinya bisa sekaligus membuat rekor kejuaraan (F11-06).
+        $this->assertNotSame([], array_filter($ket, static fn (mixed $k): bool => is_string($k) && str_starts_with($k, 'r (Mundur)')));
     }
 
     public function testHalamanHasilMempertahankanPercobaan(): void

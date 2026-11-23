@@ -29,7 +29,7 @@ final class TataLetakHalamanTest extends UjiBasisData
     private const MENU_SAMPING = [
         'Pendaftaran' => ['Dasbor', 'Pendaftaran', 'Atlet', 'Atlet ditolak', 'Sekolah', 'Rekap'],
         'Hari lomba'  => ['Daftar ulang', 'Cetak BIB', 'Daftar peserta', 'Jadwal pertandingan', 'Seri dan lintasan', 'Lembar juri'],
-        'Hasil'       => ['Hasil lomba', 'Klasemen', 'Videotron'],
+        'Hasil'       => ['Hasil lomba', 'Klasemen', 'Rekor', 'Videotron'],
         'Konten'      => ['Halaman depan', 'Bantuan', 'Galeri', 'Unduhan'],
         'Pengaturan'  => ['Pengaturan'],
     ];
@@ -371,8 +371,8 @@ final class TataLetakHalamanTest extends UjiBasisData
         $this->assertSame(0, $xpath->query('//nav[@data-menu-admin]//*[@aria-current]')->length);
         $this->assertSame(['Dasbor', 'Judul Contoh admin'], $this->labelJejak($xpath));
         // Empat tautan dan butir Menu di menu bawah (K133, F10-03); di menu samping
-        // dua puluh butir berkelompok, empat belas anak submenu, dan dua di daftar akhir (K102).
-        $this->assertSame(4 + 20 + 14 + 2, $xpath->query('//a[@data-menu-tautan]')->length);
+        // dua puluh satu butir berkelompok (Rekor, F11-06), empat belas anak submenu, dan dua di daftar akhir (K102).
+        $this->assertSame(4 + 21 + 14 + 2, $xpath->query('//a[@data-menu-tautan]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));
