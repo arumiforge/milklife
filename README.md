@@ -12,14 +12,14 @@ Web pendaftaran MilkLife Athletics Challenge Seri 2 – 2026 untuk sekolah se-Ka
 | Sampai mana pengerjaannya | [`agent/PROGRES.md`](agent/PROGRES.md) |
 | Aturan kerja di repo ini | [`agent/ALUR-KERJA.md`](agent/ALUR-KERJA.md) |
 | Keputusan yang sudah diambil | [`agent/KEPUTUSAN.md`](agent/KEPUTUSAN.md) |
-| Memasang di komputer server produksi | [`dokumen/final/panduan-pemasangan-produksi.md`](dokumen/final/panduan-pemasangan-produksi.md) |
-| Memasang staging (salinan untuk mencoba perubahan) | [`.env.staging.example`](.env.staging.example), langkahnya di kepala berkas |
+| Memasang di server produksi (Ubuntu 24.04 dan Docker, K182) | [`dokumen/final/panduan-pemasangan-produksi.md`](dokumen/final/panduan-pemasangan-produksi.md), berkas di [`docker/`](docker/) |
+| Memasang staging (salinan untuk mencoba perubahan) | [`.env.staging.example`](.env.staging.example), langkahnya di kepala berkas, dengan Docker yang sama seperti produksi |
 
 ## Memasang di Laragon
 
-Langkah di bawah untuk komputer pengembangan. Untuk komputer server produksi (HTTPS lewat Cloudflare Tunnel, `.env` produksi, cadangan harian, pemulihan, dan pembaruan versi), ikuti [panduan pemasangan produksi](dokumen/final/panduan-pemasangan-produksi.md).
+Langkah di bawah untuk komputer pengembangan. Server staging dan produksi berjalan di Docker pada VPS Ubuntu 24.04 (K182); untuk itu ikuti [panduan pemasangan produksi](dokumen/final/panduan-pemasangan-produksi.md).
 
-Yang dibutuhkan: Laragon dengan PHP 8.2 atau lebih baru (disarankan 8.3), MySQL 8, dan Composer (sudah ada di Laragon).
+Yang dibutuhkan: Laragon dengan **PHP 8.5.13 atau lebih baru** (unduh PHP 8.5 *Thread Safe* x64 dari windows.php.net, ekstrak ke `C:\laragon\bin\php\`, lalu pilih di menu PHP → Version), MySQL 8.4, dan Composer (sudah ada di Laragon). Versi PHP lebih lama ditolak `composer install`.
 
 1. Letakkan folder proyek di folder `www` Laragon dengan nama `milklife`, lalu tekan **Reload** di Laragon. Alamatnya menjadi `http://milklife.test`.
 2. Buka terminal Laragon di folder proyek, lalu pasang pustaka:
@@ -103,18 +103,18 @@ Bila admin mengunggah berkas yang lebih besar dari `post_max_size`, halaman kemb
 
 ### Cloudflare Tunnel
 
-Web dibuka dari internet lewat Cloudflare Tunnel (K31). Susunannya:
+Web dibuka dari internet lewat Cloudflare Tunnel (K31, K182). Susunannya:
 
-- `cloudflared` dipasang di **komputer server yang sama** dengan Laragon, dan meneruskan alamat publik ke Nginx lokal, misalnya `http://milklife.test` atau `http://127.0.0.1:80`.
-- Di mata aplikasi, semua pengunjung lewat tunnel datang dari komputer itu sendiri (`127.0.0.1` atau `::1`). Alamat pengunjung yang asli dikirim Cloudflare dalam kepala `CF-Connecting-IP`.
-- Aplikasi memercayai kepala `CF-Connecting-IP` **hanya** dari `127.0.0.1` dan `::1` (`app/Config/App.php`, `$proxyIPs`). Permintaan dari alamat lain, misalnya komputer lain di jaringan sekolah, tetap dicatat dengan alamatnya sendiri walaupun membawa kepala itu, jadi alamat tidak bisa dipalsukan.
+- Di server, `cloudflared` berjalan sebagai container di proyek compose yang sama dengan aplikasi (`docker/compose.yaml`) dan meneruskan alamat publik ke `http://app:8080`.
+- Alamat pengunjung yang asli dikirim Cloudflare dalam kepala `CF-Connecting-IP`.
+- Aplikasi memercayai kepala `CF-Connecting-IP` dan `X-Forwarded-Proto` **hanya** dari `127.0.0.1`, `::1`, dan subnet jaringan compose yang diisi lewat variabel `MILKLIFE_SUBNET_PROXY` (`app/Config/App.php`, `$proxyIPs`). Permintaan dari alamat lain tetap dicatat dengan alamatnya sendiri walaupun membawa kepala itu, jadi alamat tidak bisa dipalsukan.
 - Dengan begitu, pembatasan percobaan masuk admin dan pembatasan laju di halaman pendaftaran, cek, dan bukti dihitung per pengunjung, bukan semua pengunjung dianggap satu alamat.
 
-Jangan jalankan `cloudflared` di komputer lain yang meneruskan ke server ini; bila terpaksa, alamat komputer itu harus ditambahkan ke `$proxyIPs`.
+Jangan menjalankan `cloudflared` di luar proyek compose lingkungan itu; bila terpaksa, alamatnya harus ditambahkan ke `$proxyIPs`.
 
 ## Tampilan (Tahap 9)
 
-Tampilan baru memakai Flowbite Pro (Tailwind 4), ikon Lucide, dan Three.js (K140, K141). CSS dan pustakanya **sudah ada di git**, jadi komputer server tidak perlu Node. Node 22 hanya diperlukan di komputer pengembang yang mengubah tampilan:
+Tampilan baru memakai Flowbite Pro (Tailwind 4), ikon Lucide, dan Three.js (K140, K141). CSS dan pustakanya **sudah ada di git**, jadi server dan image Docker tidak perlu Node. Node 24 hanya diperlukan di komputer pengembang yang mengubah tampilan:
 
 ```
 npm install
@@ -175,12 +175,13 @@ composer uji
 | `public/aset/tailwind/` | Sumber CSS tampilan baru (`npm run css`) |
 | `alat/` | Skrip Node pembangun tampilan (`npm run vendor`, `npm run ikon`) dan uji tampilan videotron (`npm run uji:layar`) |
 | `tests/` | Uji: `unit/` (aturan murni), `basisdata/` (migrasi dan model), `fitur/` (halaman dan rute) |
+| `docker/` | Image dan susunan Docker Compose untuk staging dan produksi (K182): `Dockerfile`, `compose.yaml`, `Caddyfile`, `php.ini`, contoh `docker/.env` |
 | `writable/` | Sesi, log, dan berkas sementara buatan aplikasi; isinya tidak masuk git |
 | `vendor/` | Pustaka dari Composer; dibuat oleh `composer install`, tidak masuk git |
 
 ## Teknologi
 
-CodeIgniter 4.7, PHP 8.2+, MySQL 8, Nginx (Laragon). Tampilan: Flowbite Pro (Tailwind 4), Lucide, dan Three.js; semuanya disimpan lokal, tanpa CDN.
+CodeIgniter 4.7, PHP 8.5.13+, MySQL 8.4. Server: Docker Compose di Ubuntu 24.04 dengan FrankenPHP dan Cloudflare Tunnel (K182); komputer pengembang boleh memakai Laragon. Tampilan: Flowbite Pro (Tailwind 4), Lucide, dan Three.js; semuanya disimpan lokal, tanpa CDN.
 
 Pustaka Composer: mPDF (bukti dan rekap PDF), PhpSpreadsheet (ekspor Excel), chillerlan/php-qrcode (kode QR di bukti), matthiasmullie/minify (`aset:minify`), dan CodeIgniter Settings. Untuk uji: PHPUnit 10, Faker, vfsStream.
 

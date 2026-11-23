@@ -12,7 +12,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Dokumen boleh diubah langsung sesuai kondisi terbaru, PDF dibuat ulang (K100, K101).
 - Bahasa Inggris hanya untuk slogan, judul bagian bergaya editorial, dan art; tombol, formulir, pesan, menu fungsional, dan panel admin tetap berbahasa Indonesia, kecuali judul editorial "Admin Area" di halaman masuk admin (K153, K171).
 - Backup pendaftaran (data siswa asli) tidak masuk git; diuji di basis data lokal dan diimpor pemilik di server (K138, K153).
-- Laragon untuk pengembangan dan produksi, PHP 8.2+ (K08, K18); web lewat Cloudflare Tunnel, IP dari `CF-Connecting-IP` (K31).
+- Staging dan produksi di Docker Compose pada VPS Ubuntu 24.04: PHP 8.5.13+ di FrankenPHP (mode biasa), MySQL 8.4, OPcache tanpa Redis/Memcached, tanpa port ke host (K182, menggantikan K08 dan K18). Web lewat Cloudflare Tunnel (container cloudflared), IP dari `CF-Connecting-IP` dipercaya dari 127.0.0.1, ::1, dan subnet compose `MILKLIFE_SUBNET_PROXY` (K31, K182).
 - Tidak menambah pustaka kecuali yang disetujui: Turnstile tanpa pustaka PHP (K122), PHPStan `require-dev` (K123), Lucide dan Three.js lokal tanpa CDN (K140), huruf judul Barlow Condensed lokal (K155), dan rantai bangun Flowbite Pro (Tailwind 4, plugin dan JS Flowbite) dengan Node hanya di komputer pengembang dan CI (K141).
 - Tampilan pindah ke Tailwind 4 berdasar Flowbite Pro (`template-flowbites/`) per halaman di Tahap 9; CSS hasil bangun di-commit, server tanpa Node; halaman yang belum dipindah tetap Bootstrap 5 (K140, K141, menggantikan K103). Mode terang; ilustrasi Codex bergaya anime olahraga 2D cel-shaded (K153, menggantikan 3D lembut), hero halaman depan memakai foto asli bergaya editorial. Stadion di gambar Codex dikenali sebagai Supersoccer Arena Kudus dari foto rujukan pemilik, tanpa menyalin tulisan, sponsor, atau watermark (K158). Videotron cair untuk ukuran layar apa pun (K141).
 - Codex hanya membuat aset gambar lewat `desain/` dan `AGENTS.md`; kode ditulis Claude, yang juga meninjau dan menggabung PR Codex (K140). Semua kebutuhan gambar dan visual dipesan ke Codex tanpa batas jumlah tugas; pemasangannya di halaman lewat tugas Claude (K150). Favicon, ikon aplikasi, dan logo merek bawaan memakai logo resmi utuh dari pemilik (`sumber/logo/`), bukan gambar Codex (K152).
@@ -78,7 +78,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Kolom No, pilih massal (100), Backup data dan `pendaftaran:impor` (K76, K77); Backup data tanpa dimuat ke memori (K118 B4). Cadangan pindah ke Pengaturan > Cadangan: semua data, berkas, dan pengaturan; impor web mengganti semua setelah cadangan otomatis dan konfirmasi sandi (K174).
 - Antarmuka tanpa teks teknis (K79). Ubah boleh mempertahankan KU dan nomor yang sudah ditutup (K98).
 - Monitoring `arumi.php`, catatan pengunjung, menu Pengecekan, dasbor bergrafik (K102, K104).
-- `pembaruan:periksa` setelah `git pull` (K115). Cadangan harian 14 hari (K66).
+- `pembaruan:periksa` setelah `git pull` dan bangun ulang image (K115, K182). Cadangan harian 14 hari lewat cron host, lalu disalin ke bucket Cloudflare R2 panitia oleh layanan `salin-r2` (K66, K182).
 
 ## Halaman depan
 

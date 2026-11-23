@@ -186,6 +186,11 @@ class App extends BaseConfig
      * itu sendiri. Pengunjung yang langsung datang dari alamat lain tidak bisa
      * memalsukan alamatnya lewat kepala ini. Lihat README, bagian Cloudflare Tunnel.
      *
+     * Di Docker (K182) `cloudflared` berjalan di container sendiri, jadi
+     * permintaan datang dari subnet jaringan compose. Subnet itu ditambahkan
+     * dari variabel lingkungan `MILKLIFE_SUBNET_PROXY` (diisi compose.yaml
+     * dari `SUBNET` di docker/.env); lihat __construct() di bawah.
+     *
      * @var array<string, string>
      */
     public array $proxyIPs = [
@@ -214,4 +219,48 @@ class App extends BaseConfig
      * `{csp-style-nonce}`).
      */
     public bool $CSPEnabled = true;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $isian  = $_ENV['MILKLIFE_SUBNET_PROXY'] ?? $_SERVER['MILKLIFE_SUBNET_PROXY'] ?? getenv('MILKLIFE_SUBNET_PROXY');
+        $subnet = self::subnetProxy(is_string($isian) ? $isian : '');
+
+        if ($subnet !== null) {
+            $this->proxyIPs[$subnet] = 'CF-Connecting-IP';
+        }
+    }
+
+    /**
+     * Subnet proxy dari lingkungan (K182), atau null bila kosong atau
+     * bentuknya bukan alamat IPv4/IPv6 dengan awalan, misalnya
+     * `10.201.0.0/24`. Isian yang salah diabaikan supaya web tetap berjalan;
+     * akibatnya hanya semua pengunjung terbaca dari alamat cloudflared.
+     */
+    public static function subnetProxy(string $isian): ?string
+    {
+        $isian = trim($isian);
+
+        if (preg_match('~^([0-9a-fA-F:.]+)/(\d{1,3})$~', $isian, $m) !== 1) {
+            return null;
+        }
+
+        $biner = @inet_pton($m[1]);
+
+        if ($biner === false) {
+            return null;
+        }
+
+        $awalan = (int) $m[2];
+        $batas  = strlen($biner) === 4 ? 32 : 128;
+
+        // Awalan terlalu pendek (misalnya /0 atau /4) berarti mempercayai
+        // hampir semua alamat; itu bukan jaringan compose.
+        if ($awalan < ($batas === 32 ? 8 : 48) || $awalan > $batas) {
+            return null;
+        }
+
+        return $isian;
+    }
 }

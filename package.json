@@ -1,8 +1,11 @@
 {
   "name": "milklife-tampilan",
   "private": true,
-  "description": "Alat bangun tampilan Tahap 9 (K140, K141): CSS Flowbite Pro (Tailwind 4) dan salinan pustaka tampilan. Hanya untuk komputer pengembang dan CI; server produksi tidak menjalankan Node.",
+  "description": "Alat bangun tampilan Tahap 9 (K140, K141): CSS Flowbite Pro (Tailwind 4) dan salinan pustaka tampilan. Hanya untuk komputer pengembang dan CI (Node 24); server dan image Docker tidak menjalankan Node.",
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24"
+  },
   "type": "module",
   "scripts": {
     "css": "tailwindcss -i public/aset/tailwind/masukan.css -o public/aset/css/tw.css",

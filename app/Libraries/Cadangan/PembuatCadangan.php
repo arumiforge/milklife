@@ -165,7 +165,7 @@ final class PembuatCadangan
     {
         return 'mysqldump (' . $this->pengaturan->mysqldump . ') gagal mencadangkan basis data.'
             . ($keluaran === '' ? '' : ' Pesannya: ' . $keluaran . '.')
-            . ' Periksa cadangan.mysqldump (jalur mysqldump.exe di Laragon) dan isian database.default di .env, lalu jalankan perintah ini lagi.';
+            . ' Periksa cadangan.mysqldump (di Docker cukup mysqldump; di Windows jalur lengkap mysqldump.exe) dan isian basis data di .env atau docker/.env, lalu jalankan perintah ini lagi.';
     }
 
     private function isiBerkasOpsi(): string
