@@ -75,8 +75,8 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
         <?php if ($adaBagi) : ?>
             <p class="mt-1 text-sm text-gray-600">Semua babak nomor ini yang sudah dibagi. Babak yang belum dikunci ditandai di berkasnya.</p>
             <div class="mt-3 flex flex-wrap gap-2">
-                <?= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('admin/seri/nomor/' . $nomor['id'] . '/pdf'), 'varian' => 'kedua', 'ikon' => 'download']) ?>
-                <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/seri/nomor/' . $nomor['id'] . '/excel'), 'varian' => 'kedua', 'ikon' => 'sheet']) ?>
+                <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url('admin/seri/nomor/' . $nomor['id'] . '/pdf')]) ?>
+                <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url('admin/seri/nomor/' . $nomor['id'] . '/excel')]) ?>
             </div>
         <?php else : ?>
             <p class="mt-1 text-sm text-gray-600">Belum ada babak yang dibagi. Buka babak di bawah, lalu tekan Bagi otomatis.</p>

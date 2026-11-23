@@ -31,8 +31,8 @@
                 <h2 class="me-auto text-lg font-bold text-gray-900" id="judul-ku-<?= $ku['id'] ?>"><?= esc($ku['nama']) ?></h2>
                 <span class="text-sm text-gray-600">Semua nomor:</span>
                 <div class="flex gap-2" role="group" aria-label="<?= esc('Unduh semua nomor ' . $ku['nama'], 'attr') ?>">
-                    <?= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('admin/daftar-peserta/kelompok-umur/' . $ku['id'] . '/pdf'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-text', 'kelas' => 'min-h-11']) ?>
-                    <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/daftar-peserta/kelompok-umur/' . $ku['id'] . '/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'sheet', 'kelas' => 'min-h-11']) ?>
+                    <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url('admin/daftar-peserta/kelompok-umur/' . $ku['id'] . '/pdf')]) ?>
+                    <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url('admin/daftar-peserta/kelompok-umur/' . $ku['id'] . '/excel')]) ?>
                 </div>
             </div>
             <ul class="-mt-px grid lg:grid-cols-2">
@@ -43,8 +43,8 @@
                             <div class="text-sm text-gray-600"><?= $n['jenis'] === 'beregu' ? 'Beregu · ' : '' ?><?= $n['peserta'] ?> atlet</div>
                         </div>
                         <div class="flex shrink-0 gap-2" role="group" aria-label="<?= esc('Unduh ' . $n['nama'], 'attr') ?>">
-                            <?= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url('admin/daftar-peserta/' . $n['id'] . '/pdf'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-text', 'kelas' => 'min-h-11', 'atribut' => ['aria-label' => 'PDF ' . $n['nama']]]) ?>
-                            <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/daftar-peserta/' . $n['id'] . '/excel'), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'sheet', 'kelas' => 'min-h-11', 'atribut' => ['aria-label' => 'Excel ' . $n['nama']]]) ?>
+                            <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url('admin/daftar-peserta/' . $n['id'] . '/pdf'), 'label' => 'Unduh PDF ' . $n['nama']]) ?>
+                            <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url('admin/daftar-peserta/' . $n['id'] . '/excel'), 'label' => 'Unduh Excel ' . $n['nama']]) ?>
                         </div>
                     </li>
                 <?php endforeach ?>

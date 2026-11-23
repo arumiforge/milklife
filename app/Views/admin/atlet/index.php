@@ -41,8 +41,8 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
     </div>
 
     <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-label="Daftar atlet">
-        <form id="saringan-atlet" class="flex flex-wrap items-end gap-3" role="search" aria-label="Saring daftar atlet" data-saringan-tabel>
-            <div class="min-w-0 flex-[1_1_12rem]">
+        <form id="saringan-atlet" class="grid grid-cols-2 items-end gap-3 lg:grid-cols-4" role="search" aria-label="Saring daftar atlet" data-saringan-tabel>
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-kelompok-umur">Kelompok umur</label>
                 <select class="<?= $pilihan ?>" id="saring-kelompok-umur" name="kelompok_umur">
                     <option value="">Semua</option>
@@ -51,7 +51,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="min-w-0 flex-[1_1_12rem]">
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-jenis-kelamin">Jenis kelamin</label>
                 <select class="<?= $pilihan ?>" id="saring-jenis-kelamin" name="jenis_kelamin">
                     <option value="">Semua</option>
@@ -60,7 +60,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="min-w-0 flex-[1_1_12rem]">
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-nomor-lomba">Nomor lomba</label>
                 <select class="<?= $pilihan ?>" id="saring-nomor-lomba" name="nomor_lomba">
                     <option value="">Semua</option>
@@ -73,7 +73,7 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="min-w-0 flex-[1_1_12rem]">
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-status">Status pembayaran</label>
                 <select class="<?= $pilihan ?>" id="saring-status" name="status">
                     <option value="">Semua</option>
@@ -82,9 +82,9 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="flex max-w-full flex-wrap gap-2">
+            <div class="col-span-full flex flex-wrap gap-2" data-tombol-aksi>
                 <?= komponen('tombol', ['label' => 'Kosongkan', 'tipe' => 'reset', 'varian' => 'kedua', 'ikon' => 'circle-x']) ?>
-                <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/atlet/excel'), 'varian' => 'kedua', 'ikon' => 'file-spreadsheet', 'atribut' => ['id' => 'excel-atlet']]) ?>
+                <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url('admin/atlet/excel'), 'atribut' => ['id' => 'excel-atlet']]) ?>
             </div>
         </form>
 

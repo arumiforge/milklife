@@ -503,7 +503,7 @@
     }
     /* ===== akhir F10-08 ================================================ */
 
-    /* ===== F11-12: halaman depan dan publik (K175) =====================
+    /* ===== F11-12: halaman depan dan publik (K175) ==============
        Angka kelompok umur berisian gradien sporty, atau tekstur G11-01
        (`gambar/ku/ku-<n>-isian.webp`) bila view menandainya ada. */
     .isian-ku {
@@ -551,4 +551,90 @@
         mask-image: linear-gradient(to right, #000 55%, transparent);
     }
     /* ===== akhir F11-12 ================================================ */
+=======
+    /* ===== F11-10: panel admin ringkas (K174 butir 4 dan 6) =========== */
+    /* Teks lebih dari dua baris di tabel dan kartu admin dipotong;
+       `aset/js/panel-ringkas.js` memasang kelas dan tombol Selengkapnya.
+       Teksnya tetap utuh di DOM, jadi tetap terbaca pembaca layar. */
+    .teks-ringkas:not(.teks-ringkas-buka) {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .tombol-ringkas {
+        display: inline-flex;
+        min-height: 1.75rem;
+        align-items: center;
+        font-size: var(--text-xs);
+        font-weight: 600;
+        color: var(--color-primary-700);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        white-space: nowrap;
+    }
+
+    .tombol-ringkas:hover {
+        text-decoration: none;
+    }
+
+    .tombol-ringkas:focus-visible {
+        outline: 2px solid var(--color-primary-600);
+        outline-offset: 2px;
+        border-radius: 0.25rem;
+    }
+
+    /* ===== akhir F11-10 =============================================== */
+}
+
+/* F11-10: di luar @layer supaya mengalahkan kelas utilitas `flex`, `px-*`
+   pada grup dan tombolnya (gaya tanpa layer menang atas semua layer). */
+/* Tombol aksi di ponsel: tiga per baris, ikon di atas sebagian teks;
+   tekan pertama menampilkan teks penuh (tombol melebar satu baris),
+   tekan kedua menjalankan tindakannya. */
+@media (width < 40rem) {
+    [data-tombol-aksi] {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    [data-tombol-aksi] > form {
+        display: contents;
+    }
+
+    [data-tombol-aksi] :is(a, button):not([data-tombol-unduh]) {
+        min-width: 0;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding-inline: 0.375rem;
+        padding-block: 0.5rem;
+        font-size: var(--text-xs);
+        line-height: 1.2;
+    }
+
+    [data-tombol-aksi] [data-tombol-unduh] {
+        justify-self: center;
+        width: 100%;
+        height: auto;
+        min-height: 2.75rem;
+    }
+
+    [data-tombol-aksi] .label-tombol-aksi {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    [data-tombol-aksi] [data-tombol-terbuka] {
+        grid-column: 1 / -1;
+    }
+
+    [data-tombol-aksi] [data-tombol-terbuka] .label-tombol-aksi {
+        white-space: normal;
+    }
 }

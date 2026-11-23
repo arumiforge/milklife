@@ -83,6 +83,27 @@ final class KomponenTampilanTest extends CIUnitTestCase
         $this->assertStringNotContainsString('tombol-utama-berart', komponen('tombol', ['label' => 'Batal', 'varian' => 'kedua']));
     }
 
+    /**
+     * Tombol unduh ikon saja (F11-10, K174 butir 8): nama aksesibel lengkap,
+     * label kecil hanya hiasan, ikon lembar kerja atau PDF.
+     */
+    public function testTombolUnduhIkonSajaBernamaAksesibel(): void
+    {
+        $excel = komponen('tombol_unduh', ['jenis' => 'excel', 'href' => '/admin/atlet/excel', 'atribut' => ['id' => 'excel-atlet']]);
+        $this->assertStringContainsString('aria-label="Unduh Excel"', $excel);
+        $this->assertStringContainsString('id="excel-atlet"', $excel);
+        $this->assertStringContainsString('data-tombol-unduh="excel"', $excel);
+        $this->assertStringContainsString('#file-spreadsheet', $excel);
+        $this->assertMatchesRegularExpression('#<span[^>]*aria-hidden="true">Unduh Excel</span>#', $excel);
+
+        $pdf = komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => '/x.pdf', 'label' => 'Unduh PDF daftar seri <Sabtu>']);
+        $this->assertStringContainsString('aria-label="Unduh PDF daftar seri &lt;Sabtu&gt;"', $pdf);
+        $this->assertStringContainsString('data-ikon-pdf', $pdf);
+        $this->assertMatchesRegularExpression('#<span[^>]*aria-hidden="true">Unduh PDF</span>#', $pdf);
+        // Tanpa teks terlihat selain label kecil yang tersembunyi dari pembaca layar.
+        $this->assertSame('PDF Unduh PDF', trim((string) preg_replace('/\s+/', ' ', strip_tags($pdf))));
+    }
+
     public function testIsianMenandaiGalatUntukPembacaLayar(): void
     {
         $html = komponen('isian', ['label' => 'NISN', 'nama' => 'nisn', 'nilai' => '12"3', 'wajib' => true, 'bantuan' => '10 angka.', 'galat' => 'NISN harus 10 angka.']);

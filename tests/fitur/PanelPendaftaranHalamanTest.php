@@ -87,6 +87,11 @@ final class PanelPendaftaranHalamanTest extends UjiBasisData
         }
 
         $this->assertSame(site_url('admin/pendaftaran/excel'), $xpath->query('//a[@id="excel-pendaftaran"]')->item(0)->getAttribute('href'));
+        // Unduh Excel ikon saja dengan nama aksesibel lengkap; saringan dua isian
+        // per baris dan tombol aksi bertanda untuk tampilan ponsel (F11-10, K174).
+        $this->assertSame('Unduh Excel', $xpath->query('//a[@id="excel-pendaftaran"]')->item(0)->getAttribute('aria-label'));
+        $this->assertStringContainsString('grid-cols-2', $xpath->query('//form[@id="saringan-pendaftaran"]')->item(0)->getAttribute('class'));
+        $this->assertSame(2, $xpath->query('//*[@data-tombol-aksi]')->length);
 
         // Aset tabel dan bentuk kolom halaman ini.
         $this->assertStringContainsString(aset('js/tabel-admin.js'), (string) $hasil->response()->getBody());

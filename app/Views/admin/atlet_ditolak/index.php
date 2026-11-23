@@ -47,8 +47,8 @@ $angka   = 'text-2xl leading-tight font-extrabold text-primary-900';
     </div>
 
     <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-label="Daftar atlet ditolak">
-        <form id="saringan-atlet-ditolak" class="flex flex-wrap items-end gap-3" role="search" aria-label="Saring daftar atlet ditolak" data-saringan-tabel>
-            <div class="min-w-0 flex-[1_1_12rem]">
+        <form id="saringan-atlet-ditolak" class="grid grid-cols-2 items-end gap-3 lg:grid-cols-4" role="search" aria-label="Saring daftar atlet ditolak" data-saringan-tabel>
+            <div class="min-w-0">
                 <label class="<?= $label ?>" for="saring-keadaan">Keadaan</label>
                 <select class="<?= $pilihan ?>" id="saring-keadaan" name="keadaan">
                     <option value="">Semua</option>
@@ -57,9 +57,9 @@ $angka   = 'text-2xl leading-tight font-extrabold text-primary-900';
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="flex max-w-full flex-wrap gap-2">
+            <div class="col-span-full flex flex-wrap gap-2" data-tombol-aksi>
                 <?= komponen('tombol', ['label' => 'Kosongkan', 'tipe' => 'reset', 'varian' => 'kedua', 'ikon' => 'circle-x']) ?>
-                <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/atlet-ditolak/excel'), 'varian' => 'kedua', 'ikon' => 'file-spreadsheet', 'atribut' => ['id' => 'excel-atlet-ditolak']]) ?>
+                <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url('admin/atlet-ditolak/excel'), 'atribut' => ['id' => 'excel-atlet-ditolak']]) ?>
             </div>
         </form>
 

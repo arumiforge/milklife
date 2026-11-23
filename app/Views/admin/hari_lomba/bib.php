@@ -22,7 +22,6 @@ use App\Libraries\Unggahan;
 $latarBawaan ??= [];
 $kunciBawaan  = $tampilanBib->kunciBawaan();
 $adaUnggahan  = $tampilanBib->latar !== null && $kunciBawaan === null;
-$tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 hover:text-primary-700';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -145,8 +144,8 @@ $tombolUnduh  = 'inline-flex min-h-11 items-center gap-2 rounded-lg border borde
                             <p class="text-sm text-gray-600"><?php if ($s['npsn'] !== '') : ?>NPSN <?= esc($s['npsn']) ?> · <?php endif ?><span data-jumlah-atlet><?= $s['atlet'] ?></span> atlet</p>
                         </div>
                         <div class="flex gap-2">
-                            <a class="<?= $tombolUnduh ?>" href="<?= site_url('admin/nomor-atlet/cetak/sekolah/' . $s['kunci'] . '/pdf') ?>" aria-label="<?= esc('Unduh PDF BIB ' . $s['nama'], 'attr') ?>"><?= ikon('file-text', 'size-4') ?>PDF</a>
-                            <a class="<?= $tombolUnduh ?>" href="<?= site_url('admin/nomor-atlet/cetak/sekolah/' . $s['kunci'] . '/zip') ?>" aria-label="<?= esc('Unduh ZIP gambar BIB ' . $s['nama'], 'attr') ?>"><?= ikon('file-archive', 'size-4') ?>ZIP</a>
+                            <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url('admin/nomor-atlet/cetak/sekolah/' . $s['kunci'] . '/pdf'), 'label' => 'Unduh PDF BIB ' . $s['nama']]) ?>
+                            <?= komponen('tombol_unduh', ['jenis' => 'zip', 'href' => site_url('admin/nomor-atlet/cetak/sekolah/' . $s['kunci'] . '/zip'), 'label' => 'Unduh ZIP gambar BIB ' . $s['nama'], 'teks' => 'Unduh ZIP gambar']) ?>
                         </div>
                     </li>
                 <?php endforeach ?>

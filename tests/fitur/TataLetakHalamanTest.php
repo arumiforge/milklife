@@ -253,6 +253,8 @@ final class TataLetakHalamanTest extends UjiBasisData
         $this->assertSame(1, $xpath->query('.//button[@data-cari-menu-buka][@aria-controls="cari-menu-panel"]//*[@aria-label="Cari menu"]', $cari)->length, 'Tombol ikon cari menu di ponsel bernama aksesibel.');
         $this->assertSame(1, $xpath->query('.//button[@data-cari-menu-tutup]//*[@aria-label="Tutup pencarian menu"]', $cari)->length);
         $this->assertStringContainsString('"' . aset('js/cari-menu.js') . '"', $html);
+        // Teks ringkas, tombol aksi ponsel, dan label cari tabel (F11-10, K174 butir 4, 6, 7).
+        $this->assertStringContainsString('"' . aset('js/panel-ringkas.js') . '"', $html);
         $keluar = $xpath->query('.//button[@data-keluar-admin]', $kepala)->item(0);
         $this->assertNotNull($keluar);
         $this->assertSame('Keluar', $this->teks($keluar));

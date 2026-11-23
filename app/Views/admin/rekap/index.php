@@ -112,8 +112,8 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                 </nav>
             <?php endif ?>
             <div class="flex flex-wrap gap-2">
-                <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url($alamat . '/excel') . ($keuangan ? '' : $kueri), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-spreadsheet', 'kelas' => 'min-h-11', 'atribut' => ['id' => 'excel-rekap']]) ?>
-                <?= komponen('tombol', ['label' => 'Unduh PDF', 'href' => site_url($alamat . '/pdf') . ($keuangan ? '' : $kueri), 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'file-text', 'kelas' => 'min-h-11', 'atribut' => ['id' => 'pdf-rekap']]) ?>
+                <?= komponen('tombol_unduh', ['jenis' => 'excel', 'href' => site_url($alamat . '/excel') . ($keuangan ? '' : $kueri), 'atribut' => ['id' => 'excel-rekap']]) ?>
+                <?= komponen('tombol_unduh', ['jenis' => 'pdf', 'href' => site_url($alamat . '/pdf') . ($keuangan ? '' : $kueri), 'atribut' => ['id' => 'pdf-rekap']]) ?>
             </div>
         </div>
 

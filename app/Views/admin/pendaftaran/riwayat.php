@@ -33,12 +33,12 @@
 
     <section class="rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-cari-riwayat">
         <h2 id="judul-cari-riwayat" class="sr-only">Cari riwayat</h2>
-        <form action="<?= site_url('admin/riwayat') ?>" method="get" role="search" class="flex flex-wrap items-end gap-3" id="form-cari-riwayat">
-            <div class="min-w-0 flex-[1_1_16rem] sm:max-w-md">
-                <label class="mb-1.5 block text-sm font-semibold text-gray-900" for="cari-id">ID pendaftaran</label>
+        <form action="<?= site_url('admin/riwayat') ?>" method="get" role="search" class="flex items-end gap-2 sm:flex-wrap sm:gap-3" id="form-cari-riwayat">
+            <div class="min-w-0 flex-1 sm:flex-[1_1_16rem] sm:max-w-md">
+                <label class="mb-1.5 block text-sm font-semibold text-gray-900 max-sm:sr-only" for="cari-id">ID pendaftaran</label>
                 <input type="search" class="block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2.5 text-base text-gray-900 focus:border-primary-600 focus:ring-4 focus:ring-primary-100 sm:text-sm" id="cari-id" name="id" value="<?= esc($kata, 'attr') ?>" maxlength="20" autocomplete="off" placeholder="MAC2A0000126">
             </div>
-            <?= komponen('tombol', ['label' => 'Cari', 'tipe' => 'submit', 'ikon' => 'search', 'kelas' => 'w-full sm:w-auto']) ?>
+            <?= komponen('tombol', ['label' => 'Cari', 'tipe' => 'submit', 'ikon' => 'search', 'kelas' => 'shrink-0']) ?>
         </form>
     </section>
 
