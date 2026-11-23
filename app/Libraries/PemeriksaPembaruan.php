@@ -52,7 +52,7 @@ final class PemeriksaPembaruan
      */
     public const KOLOM_SEKOLAH = ['nama', 'bentuk', 'jenjang', 'status', 'alamat', 'desa_kelurahan', 'kecamatan', 'kabupaten'];
 
-    public const GALAT_BASIS_DATA = 'Belum bisa diperiksa karena basis data tidak bisa dihubungi. Nyalakan MySQL (di Laragon: Start All) dan pastikan pengaturan basis data di .env benar, lalu jalankan pemeriksaan ini lagi.';
+    public const GALAT_BASIS_DATA = 'Belum bisa diperiksa karena basis data tidak bisa dihubungi. Pastikan container basis data menyala (docker compose ps) dan pengaturan basis data di .env benar, lalu jalankan pemeriksaan ini lagi.';
 
     private BaseConnection $db;
 

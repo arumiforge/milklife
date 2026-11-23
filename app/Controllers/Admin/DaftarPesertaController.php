@@ -47,7 +47,7 @@ class DaftarPesertaController extends BaseController
             throw PageNotFoundException::forPageNotFound('Kelompok umur tidak ditemukan.');
         }
 
-        @set_time_limit(300);
+        perpanjang_batas_waktu(300);
 
         return $this->kirim((new DaftarPeserta())->susunKelompokUmur($kelompokUmurId), (string) $nama->nama . ' Semua nomor', $jenis);
     }

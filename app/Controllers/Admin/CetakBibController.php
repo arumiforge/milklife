@@ -57,7 +57,7 @@ class CetakBibController extends BaseController
         }
 
         // Ratusan halaman bisa butuh waktu lebih lama dari batas bawaan.
-        @set_time_limit(300);
+        perpanjang_batas_waktu(300);
 
         return $this->unduhPdf($bib->pdf($id), $bib->namaBerkas($id));
     }
@@ -102,7 +102,7 @@ class CetakBibController extends BaseController
         }
 
         if ($jenis === 'pdf') {
-            @set_time_limit(300);
+            perpanjang_batas_waktu(300);
 
             return $this->unduhPdf($bib->pdfSekolah($kunci), CetakBib::namaBerkasSekolah($sekolah['nama'], 'pdf'));
         }

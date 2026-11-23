@@ -48,9 +48,44 @@ if [ -n "$REF" ] && [ ! -f "$CACHE/$KUNCI.zip" ]; then
   rm -rf "$SEMENTARA"
 fi
 
-COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --no-progress --prefer-dist
+# PHP kontainer cloud masih 8.3, sedangkan composer.json meminta 8.5.13 (K182).
+COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --no-progress --prefer-dist --ignore-platform-req=php
 ```
 
 Basis data dan sandi di atas hanya untuk uji sekali pakai di kontainer, bukan rahasia.
 
 Paket `phpstan/phpstan` (F7-31) di Packagist hanya punya dist `api.github.com/.../zipball/<ref>`, tanpa source git, dan proxy sesi menolak `api.github.com` (403). Langkah di atas mengambil commit yang sama dari `github.com` dengan git, lalu menaruhnya di cache Composer dengan nama yang dicari Composer (sha1 URL dist). Bila `composer.lock` menaikkan versi PHPStan, langkah itu otomatis mengikuti `reference` baru. Di CI GitHub langkah ini tidak perlu.
+
+## Uji di PHP 8.5 dan MySQL 8.4 (K182)
+
+Sejak K182 server memakai PHP 8.5.13 dan MySQL 8.4, sedangkan kontainer cloud bawaan memakai PHP 8.3. Pustaka dipasang dengan `--ignore-platform-req=php` (skrip di atas), jadi `composer uji` tetap jalan di PHP 8.3 untuk kerja harian. Sebelum PR yang menyentuh `docker/`, `composer.json`, atau sintaks PHP baru, jalankan uji di image yang sama dengan server. Docker sudah terpasang di kontainer cloud; daemonnya dinyalakan sendiri:
+
+```bash
+(dockerd > /tmp/dockerd.log 2>&1 &); sleep 5
+
+# Hanya di kontainer cloud: image dasar dibuat memercayai proxy sesi dan
+# apt memakai https, karena build Docker tidak mewarisi pengaturan proxy.
+mkdir -p /tmp/dasar-uji && cp /root/.ccr/ca-bundle.crt /tmp/dasar-uji/ca.crt
+cat > /tmp/dasar-uji/Dockerfile <<'DOK'
+FROM dunglas/frankenphp:1.14.0-php8.5.13-bookworm
+COPY ca.crt /usr/local/share/ca-certificates/proxy-sesi.crt
+RUN cat /usr/local/share/ca-certificates/proxy-sesi.crt >> /etc/ssl/certs/ca-certificates.crt \
+ && sed -i 's#http://deb.debian.org#https://deb.debian.org#g' /etc/apt/sources.list.d/debian.sources
+DOK
+docker pull dunglas/frankenphp:1.14.0-php8.5.13-bookworm
+docker build -t dunglas/frankenphp:1.14.0-php8.5.13-bookworm /tmp/dasar-uji
+
+# Tahap "dasar" image aplikasi: PHP 8.5.13, ekstensi, klien MySQL 8.4.
+docker build --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY --target dasar \
+  -f docker/Dockerfile -t milklife-dasar:uji .
+
+# MySQL 8.4 untuk uji, root tanpa sandi sesuai .env.example.
+docker run -d --name mysql-uji -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_DATABASE=milklife_uji \
+  mysql:8.4.13 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+# Semua uji, memakai vendor/ dari kontainer cloud (sekitar 50 menit).
+docker run --rm --network container:mysql-uji -v "$PWD":/app -w /app --entrypoint sh \
+  milklife-dasar:uji -c 'php -d memory_limit=-1 vendor/bin/phpunit'
+```
+
+Tahap Composer di `docker/Dockerfile` (dist dari `api.github.com`) gagal di kontainer cloud karena proxy sesi; job CI "Image Docker" membangun image lengkapnya. Batas tarik Docker Hub tanpa akun juga bisa habis (galat 429); tunggu sebentar lalu ulangi.

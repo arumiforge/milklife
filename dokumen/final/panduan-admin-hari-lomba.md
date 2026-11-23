@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K182, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K183, diubah langsung sesuai K101) |
 | Tanggal | 23 November 2026 |
-| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K182; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
+| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K183; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
 | Revisi 1 | Versi siap bagi untuk admin panitia dan juri: alamat situs dan kontak, latihan di situs staging, akun juri sendiri (F11-16), cara sekolah meminta ganti atlet, belum ada rekor awal, nama berkas cadangan, dan langkah menyunting jawaban ganti atlet di Bantuan. Bagian Asumsi dihapus karena sudah dijawab pemilik. Bagian yang berubah: Tujuan, Alamat dan kontak (baru), Ringkasan alur, 1, 1.6, 1.7, 1.9 (baru), 2.2, 3.1, 4.3, 5, 6 |
 
 ## Tujuan

@@ -207,3 +207,26 @@ if (! function_exists('_aplikasi_nama_bulan')) {
     }
 }
 
+
+if (! function_exists('perpanjang_batas_waktu')) {
+    /**
+     * Memperpanjang batas waktu skrip untuk pekerjaan berat (PDF ratusan
+     * halaman), tanpa pernah memperpendeknya.
+     *
+     * set_time_limit() biasa juga memperpendek batas yang sudah tanpa batas
+     * (0, misalnya di baris perintah dan uji). Di FrankenPHP (PHP ZTS, K182)
+     * batas itu dihitung dengan jam dinding sejak dipanggil, sehingga satu
+     * panggilan di uji membuat seluruh proses PHPUnit berhenti 300 detik
+     * kemudian.
+     */
+    function perpanjang_batas_waktu(int $detik): void
+    {
+        $sekarang = (int) ini_get('max_execution_time');
+
+        if ($sekarang === 0 || ($detik !== 0 && $sekarang >= $detik)) {
+            return;
+        }
+
+        @set_time_limit($detik);
+    }
+}

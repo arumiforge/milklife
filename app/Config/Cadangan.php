@@ -26,8 +26,9 @@ class Cadangan extends BaseConfig
     public int $simpanHari = 14;
 
     /**
-     * Program `mysqldump`. Di Laragon tulis jalur lengkapnya, misalnya
-     * `C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump.exe`.
+     * Program `mysqldump`. Di image Docker (K182) cukup `mysqldump` (klien
+     * MySQL 8.4 sudah terpasang). Di Windows tulis jalur lengkap
+     * `mysqldump.exe`.
      */
     public string $mysqldump = 'mysqldump';
 }

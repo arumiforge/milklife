@@ -33,10 +33,10 @@ jobs:
       - name: Ambil kode
         uses: actions/checkout@v4
 
-      - name: Pasang Node 22
+      - name: Pasang Node 24
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: npm
 
       - name: Pasang paket tampilan
@@ -63,10 +63,10 @@ jobs:
       - name: Ambil kode
         uses: actions/checkout@v4
 
-      - name: Pasang Node 22
+      - name: Pasang Node 24
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: npm
 
       - name: Pasang paket tampilan
@@ -88,8 +88,37 @@ jobs:
         env:
           CHROMIUM_PATH: /usr/bin/google-chrome
 
+  docker:
+    # Image aplikasi untuk staging dan produksi (K182) harus tetap bisa
+    # dibangun: ekstensi PHP, klien MySQL 8.4 untuk cadangan, pustaka
+    # Composer tanpa alat uji, dan aset:minify.
+    name: Image Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Bangun image aplikasi
+        run: docker build -f docker/Dockerfile -t milklife-app:ci .
+
+      - name: Periksa isi image
+        run: |
+          docker run --rm --entrypoint sh milklife-app:ci -c '
+            php -v | head -1
+            php -r "exit(version_compare(PHP_VERSION, \"8.5.13\", \">=\") ? 0 : 1);"
+            php -m | grep -qx intl && php -m | grep -qx mysqli && php -m | grep -qx gd && php -m | grep -qx zip
+            mysqldump --version | grep -q " 8\.4\."
+            test -f public/aset/css/tw.min.css
+          '
+
+      - name: Periksa susunan compose
+        run: |
+          cp docker/.env.example docker/.env
+          docker compose -f docker/compose.yaml config --quiet
+
   uji:
-    name: PHPUnit (PHP 8.3, MySQL 8)
+    name: PHPUnit (PHP 8.5, MySQL 8.4)
     runs-on: ubuntu-latest
     # Semua uji makan waktu 25–35 menit di runner GitHub (22 November 2026,
     # sekitar 1.850 uji); runner lambat pernah habis di batas 35 menit pada
@@ -98,7 +127,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:8.4
         env:
           # Sandi karangan untuk basis data uji sekali pakai, bukan rahasia.
           MYSQL_ROOT_PASSWORD: sandi-uji
@@ -114,10 +143,10 @@ jobs:
       - name: Ambil kode
         uses: actions/checkout@v4
 
-      - name: Pasang PHP 8.3
+      - name: Pasang PHP 8.5
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.5'
           extensions: intl, mbstring, mysqli, gd, fileinfo, exif
           coverage: none
           tools: composer:v2
