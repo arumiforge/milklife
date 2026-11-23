@@ -11,8 +11,12 @@
  * tanpa ikon; batas pendaftaran rata tengah di ponsel. Kartu KU: angka besar
  * berisian gradien sporty (`.isian-ku-<1–5>`) atau tekstur G11-01
  * (`ku/ku-<n>-isian.webp`, kelas `.isian-ku-gambar-<n>`), art G11-01
- * (`ku/ku-<n>-art.webp`) atau garis cadangan `.kartu-ku-garis`, dan jumlah
- * nomor berupa ikon dan angka dengan nama aksesibel lengkap.
+ * (`ku/ku-<n>-art.webp`) atau garis cadangan `.kartu-ku-garis`.
+ *
+ * F11-15 (K179): angka KU (`.angka-ku`) memenuhi kartu, mengikuti lebar
+ * kartu, dan melewati tepi bawah dan kanan, terpotong kotak kartu; jumlah
+ * nomor berupa ikon dan angka di bawah, boleh menimpa angka. Di ponsel lokasi Supersoccer Arena ditulis SSA
+ * (nama lengkap untuk pembaca layar dan mulai layar sm).
  *
  * - Hero berlatar biru tua tanpa alis (K164): judul besar
  *   Barlow Condensed huruf besar, keterangan Indonesia, dan dua tombol yang
@@ -77,6 +81,9 @@ $tanggalInfo = preg_match('/^(.+?)\s+(\d{4})$/u', $acara['tanggal'], $c) === 1 ?
 $koma        = mb_strrpos($acara['tempat'], ',');
 $adaPeta     = PetaLokasi::embed() !== '';
 $tempatInfo  = $koma === false ? [$acara['tempat'], ''] : [trim(mb_substr($acara['tempat'], 0, $koma)), trim(mb_substr($acara['tempat'], $koma + 1))];
+// Singkatan nama tempat di ponsel supaya pita satu baris (K179). Hanya nama
+// yang ada di daftar ini yang disingkat; tempat lain tetap ditulis lengkap.
+$singkatTempat = ['supersoccer arena' => 'SSA'][mb_strtolower($tempatInfo[0])] ?? null;
 
 // Judul per kalimat; judul satu kalimat paling banyak 4 kata per kata (K83, K86).
 $kalimatJudul = preg_split('/(?<=[.!?])\s+/u', $tampilan['judul'], -1, PREG_SPLIT_NO_EMPTY) ?: [];
@@ -121,7 +128,7 @@ $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : '
 $pisahNama = static fn (string $nama): array => preg_match('/^(.*?)\s*\((.+)\)\s*$/u', $nama, $c) === 1 ? [$c[1], $c[2]] : [$nama, ''];
 
 $labelFakta = 'flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-gray-600';
-$nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:text-4xl';
+$nilaiFakta = 'mt-1 font-tampilan text-[clamp(1.25rem,6.4vw,1.75rem)] font-extrabold leading-none sm:text-4xl';
 ?>
 <section id="pembuka" class="relative" aria-labelledby="judul-acara"<?= $foto !== [] ? ' data-pembuka-foto="' . count($foto) . '"' : '' ?>>
     <div class="relative isolate overflow-hidden bg-primary-900 text-white" data-pembuka-hero>
@@ -234,7 +241,7 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
                         <div class="min-w-0 px-4 py-4 sm:border-r sm:border-primary-900/10 sm:py-5<?= $acara['tanggal'] === '' ? ' col-span-2' : '' ?>">
                             <p class="<?= $labelFakta ?>">Lokasi</p>
                             <?php // Tautan ke bagian peta `#lokasi` (F10-02) bila bagian itu tampil. ?>
-                            <p class="<?= $nilaiFakta ?> break-words"><?php if ($adaPeta) : ?><a class="decoration-oranye-500 decoration-2 underline-offset-4 hover:underline focus:outline-none focus-visible:underline" href="#lokasi" data-fakta-lokasi><?php endif ?><?= esc($tempatInfo[0]) ?><?php if ($adaPeta) : ?></a><?php endif ?><?php if ($tempatInfo[1] !== '') : ?><span class="sr-only">,</span> <span class="mt-1.5 block font-sans text-sm font-semibold text-gray-700"><?= esc($tempatInfo[1]) ?></span><?php endif ?></p>
+                            <p class="<?= $nilaiFakta ?> break-words"><?php if ($adaPeta) : ?><a class="decoration-oranye-500 decoration-2 underline-offset-4 hover:underline focus:outline-none focus-visible:underline" href="#lokasi" data-fakta-lokasi><?php endif ?><?php if ($singkatTempat !== null) : ?><span class="sm:hidden" aria-hidden="true" data-tempat-singkat><?= esc($singkatTempat) ?></span><span class="sr-only sm:not-sr-only"><?= esc($tempatInfo[0]) ?></span><?php else : ?><?= esc($tempatInfo[0]) ?><?php endif ?><?php if ($adaPeta) : ?></a><?php endif ?><?php if ($tempatInfo[1] !== '') : ?><span class="sr-only">,</span> <span class="mt-1.5 block font-sans text-sm font-semibold text-gray-700"><?= esc($tempatInfo[1]) ?></span><?php endif ?></p>
                         </div>
                     <?php endif ?>
                 <?php endif ?>
@@ -269,31 +276,30 @@ $nilaiFakta = 'mt-1 font-tampilan text-[1.75rem] font-extrabold leading-none sm:
                     $beregu   = count($ku['nomor_beregu'] ?? []);
                     ?>
                     <li>
-                        <a class="group relative isolate flex h-full min-h-32 flex-col gap-1 overflow-hidden rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-angkat focus:outline-none focus:ring-4 focus:ring-primary-200<?= $artKu === '' ? ' kartu-ku-garis kartu-ku-garis-' . ($i % 5 + 1) : '' ?>" href="#lomba-ku-<?= (int) $ku['id'] ?>" data-ku-kartu>
+                        <a class="kartu-ku group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white px-3 pt-2 shadow-lembut transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-angkat focus:outline-none focus:ring-4 focus:ring-primary-200 sm:px-4<?= $artKu === '' ? ' kartu-ku-garis kartu-ku-garis-' . ($i % 5 + 1) : '' ?>" href="#lomba-ku-<?= (int) $ku['id'] ?>" data-ku-kartu>
                             <?= $artKu ?>
-                            <?php // Nama KU paling menonjol; julukan, lalu jumlah nomor individu dan beregu berupa ikon dan angka (K88, K175). ?>
-                            <span class="flex items-start justify-between gap-2">
+                            <?php
+                            // Angka KU memenuhi kartu: melewati tepi bawah dan kanan lalu terpotong kotak. Jumlah nomor
+                            // berupa ikon dan angka di bawah, boleh menimpa angka KU; nama aksesibel tetap lengkap (K88, K179).
+                            ?>
+                            <span class="angka-ku flex items-baseline gap-[0.04em] whitespace-nowrap font-tampilan font-extrabold uppercase italic text-primary-900" data-ku-nama>
                                 <?php if ($angkaKu !== null) : ?>
-                                    <span class="flex items-baseline gap-1 font-tampilan font-extrabold uppercase italic leading-none text-primary-900" data-ku-nama>
-                                        <?php if ($angkaKu[0] !== '') : ?><span class="text-2xl"><?= esc($angkaKu[0]) ?></span> <?php endif ?>
-                                        <span class="isian-ku isian-ku-<?= $i % 5 + 1 ?> pr-1 text-7xl tracking-tight sm:text-8xl<?= $isian ? ' isian-ku-gambar-' . esc($angkaKu[1], 'attr') : '' ?>"<?= $isian ? ' data-isian-gambar' : '' ?>><?= esc($angkaKu[1]) ?></span>
-                                    </span>
+                                    <?php if ($angkaKu[0] !== '') : ?><span class="relative -top-[1.6em] text-[0.22em]"><?= esc($angkaKu[0]) ?></span> <?php endif ?>
+                                    <span class="isian-ku isian-ku-<?= $i % 5 + 1 ?> relative left-[0.06em] -mb-[0.3em] -mt-[0.17em] pr-[0.08em] tracking-tight<?= $isian ? ' isian-ku-gambar-' . esc($angkaKu[1], 'attr') : '' ?>" data-ku-angka<?= $isian ? ' data-isian-gambar' : '' ?>><?= esc($angkaKu[1]) ?></span>
                                 <?php else : ?>
-                                    <span class="font-tampilan text-2xl font-extrabold uppercase text-primary-900" data-ku-nama><?= esc($namaKu) ?></span>
+                                    <span class="mb-12 mt-2 whitespace-normal text-2xl"><?= esc($namaKu) ?></span>
                                 <?php endif ?>
-                                <?= ikon('arrow-right', 'mt-1 size-4 shrink-0 text-oranye-600 transition group-hover:translate-x-0.5') ?>
                             </span>
                             <?php if ($julukan !== '') : ?>
-                                <span class="text-sm font-semibold text-oranye-700"><?= esc($julukan) ?></span>
+                                <span class="absolute left-3 top-2 z-10 text-sm font-semibold text-oranye-700 sm:left-4"><?= esc($julukan) ?></span>
                             <?php endif ?>
                             <?php if ($individu + $beregu > 0) : ?>
-                                <span class="mt-auto flex items-center gap-1.5 pt-1 text-sm font-semibold text-gray-600" data-ku-jumlah>
+                                <span class="kartu-ku-jumlah absolute bottom-2 left-3 z-10 flex items-center gap-1 font-bold text-primary-900 sm:left-4" data-ku-jumlah>
                                     <?php if ($individu > 0) : ?>
-                                        <span class="inline-flex items-center gap-1"><?= ikon('user', 'size-4 text-primary-700') ?><span aria-hidden="true"><?= $individu ?></span><span class="sr-only"><?= $individu ?> nomor individu</span></span>
+                                        <span class="flex items-center gap-1 rounded-full bg-white/90 px-1.5 py-0.5 shadow-sm" data-ku-jumlah-individu><?= ikon('user', 'size-[1.15em] shrink-0 text-primary-700') ?><span aria-hidden="true"><?= $individu ?></span><span class="sr-only"><?= $individu ?> nomor individu</span></span>
                                     <?php endif ?>
-                                    <?php if ($individu > 0 && $beregu > 0) : ?><span class="text-xs text-gray-400" aria-hidden="true">/</span><span class="sr-only">,</span><?php endif ?>
                                     <?php if ($beregu > 0) : ?>
-                                        <span class="inline-flex items-center gap-1"><?= ikon('users', 'size-4 text-oranye-600') ?><span aria-hidden="true"><?= $beregu ?></span><span class="sr-only"><?= $beregu ?> nomor beregu</span></span>
+                                        <span class="flex items-center gap-1 rounded-full bg-white/90 px-1.5 py-0.5 shadow-sm" data-ku-jumlah-beregu><?= ikon('users', 'size-[1.15em] shrink-0 text-oranye-600') ?><span aria-hidden="true"><?= $beregu ?></span><span class="sr-only"><?= $beregu ?> nomor beregu</span></span>
                                     <?php endif ?>
                                 </span>
                             <?php endif ?>
