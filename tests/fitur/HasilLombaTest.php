@@ -124,6 +124,36 @@ final class HasilLombaTest extends UjiBasisData
         $rinci->assertDontSee('diubah admin');
         $this->assertStringStartsWith('%PDF', $this->get('hasil/' . $nomor . '/pdf')->response()->getBody());
 
+        // K175: jejak lengkap di kiri atas, unduhan ikon saja dengan nama aksesibel lengkap.
+        $x     = $this->xpathDari($rinci);
+        $jejak = array_map(static fn (DOMElement $li): string => trim((string) preg_replace('/\s+/u', ' ', $li->textContent)), iterator_to_array($x->query('//nav[@data-jejak-publik][@aria-label="Jejak halaman"]//li')));
+        $this->assertCount(4, $jejak);
+        $this->assertSame(['Beranda', 'Hasil'], array_slice($jejak, 0, 2));
+        $this->assertSame('Lari 60 m putra', $jejak[3]);
+        $this->assertStringContainsString('#hasil-ku-', $x->query('//nav[@data-jejak-publik]//li[3]/a')->item(0)?->getAttribute('href') ?? '');
+        $this->assertSame('page', $x->query('//nav[@data-jejak-publik]//li[4]/span')->item(0)?->getAttribute('aria-current'));
+        $this->assertSame(0, $x->query('//*[@data-tautan-kembali]')->length, 'Tautan kembali diganti jejak.');
+        $pdf = $x->query('//a[@data-unduh-ikon="pdf"]')->item(0);
+        $this->assertSame(site_url('hasil/' . $nomor . '/pdf'), $pdf?->getAttribute('href'));
+        $this->assertStringStartsWith('Unduh PDF hasil Lari 60 m putra KU', $pdf->getAttribute('aria-label'));
+        $this->assertSame('Unduh PDF', trim($x->query('.//span[@aria-hidden="true"]', $pdf)->item(0)?->textContent ?? ''));
+        $this->assertSame(site_url('hasil/' . $nomor . '/excel'), $x->query('//a[@data-unduh-ikon="excel"]')->item(0)?->getAttribute('href'));
+
+        $klasemen = $this->xpathDari($this->get('hasil/klasemen'));
+        $this->assertSame(1, $klasemen->query('//a[@data-unduh-ikon="pdf"][@aria-label="Unduh PDF klasemen sekolah"]')->length);
+        $this->assertSame(1, $klasemen->query('//a[@data-unduh-ikon="excel"][@aria-label="Unduh Excel klasemen sekolah"]')->length);
+        $this->assertSame(3, $klasemen->query('//nav[@data-jejak-publik]//li')->length);
+        $this->assertSame(2, $this->xpathDari($publik)->query('//nav[@data-jejak-publik]//li')->length);
+
+        // Halaman depan: Lihat semua hasil dan Lihat klasemen dalam satu deret yang melebar di ponsel.
+        $beranda = $this->get('/');
+        $deret   = $this->xpathDari($beranda)->query('//section[@id="hasil"]//*[@data-deret-tombol]/a[@data-deret-butir]');
+        $this->assertSame([site_url('hasil'), site_url('hasil/klasemen')], array_map(static fn (DOMElement $a): string => $a->getAttribute('href'), iterator_to_array($deret)));
+        $this->assertTrue($deret->item(0)->hasAttribute('data-lebar'));
+        $this->assertFalse($deret->item(1)->hasAttribute('data-lebar'));
+        $this->assertSame('Lihat klasemen sekolah', trim($deret->item(1)->textContent), 'Teks tetap ada untuk pembaca layar.');
+        $this->assertStringContainsString(aset('js/deret-tombol.js'), $beranda->getBody());
+
         $juara = (new HasilLomba())->juara(true);
         $this->assertSame([1, 2], array_column($juara, 'peringkat'));
         $this->assertSame('SD KARANGAN MAJU', $juara[0]['sekolah']);

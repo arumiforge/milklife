@@ -71,7 +71,7 @@ final class KatalogTampilanTest extends UjiBasisData
         $this->assertStringNotContainsString('bootstrap', $html);
         $this->assertStringContainsString('href="' . site_url('cek-pendaftaran') . '"', $html);
         $this->assertStringContainsString('Masuk panitia', $html);
-        $this->assertStringNotContainsString('>Daftar<', $html, 'Tombol Daftar hanya saat pendaftaran terbuka.');
+        $this->assertNotContains('Daftar', array_column(MenuPublik::tombol(), 'label'), 'Tombol Daftar di kepala hanya saat pendaftaran terbuka.');
     }
 
     public function testTombolDaftarSaatPendaftaranTerbuka(): void
@@ -85,6 +85,21 @@ final class KatalogTampilanTest extends UjiBasisData
         // Unduhan dan Bantuan pindah ke bilah atas.
         $this->assertSame(['Beranda'], array_column(MenuPublik::butir(), 'label'), 'Hasil hanya setelah ada yang terbit.');
         $this->assertSame(['Unduhan', 'Bantuan', 'Masuk panitia'], array_column(MenuPublik::bilahAtas(), 'label'), 'Galeri bersakelar; Tanya Panitia hanya bila nomor WA diisi; Masuk panitia selalu di akhir (F10-08).');
-        $this->assertSame(['Beranda', 'Bantuan', 'Unduhan', 'Daftar', 'Cek'], array_column(MenuPublik::bawah(), 'label'), 'Jadwal dan Hasil yang mati diganti Bantuan lalu Unduhan; Cek paling kanan (F10-08).');
+        // Menu bawah K175: Daftar di tengah dan menonjol; Jadwal yang mati diganti Unduhan.
+        $this->assertSame(['Beranda', 'Bantuan', 'Daftar', 'Cek', 'Unduhan'], array_column(MenuPublik::bawah(), 'label'));
+        $this->assertSame([false, false, true, false, false], array_column(MenuPublik::bawah(), 'utama'));
+    }
+
+    public function testMenuBawahSetelahPendaftaranDitutupDanJadwalMenyala(): void
+    {
+        $this->bukaPendaftaranUji();
+        setting('Pendaftaran.akhir', '2026-01-02 23:59:00');
+        setting('HalamanDepan.tampil_jadwal', true);
+
+        // K175: tombol tengah menjadi Hasil dengan tampilan menonjol yang sama; Jadwal paling kanan.
+        $bawah = MenuPublik::bawah();
+        $this->assertSame(['Beranda', 'Bantuan', 'Hasil', 'Cek', 'Jadwal'], array_column($bawah, 'label'));
+        $this->assertSame(site_url('hasil'), $bawah[2]['alamat']);
+        $this->assertTrue($bawah[2]['utama']);
     }
 }

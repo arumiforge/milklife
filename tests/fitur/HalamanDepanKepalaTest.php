@@ -236,7 +236,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $hasil = $this->get('/');
         $xpath = $this->xpathDari($hasil);
 
-        $this->assertKeadaan($xpath, 'disiapkan', 'Sedang disiapkan', 'Pendaftaran sedang disiapkan.', 'hourglass');
+        $this->assertKeadaan($xpath, 'disiapkan', 'Sedang disiapkan', 'Pendaftaran sedang disiapkan.');
         $hasil->assertDontSee('Panitia sedang menyiapkan formulir pendaftaran untuk sekolah.');
         $this->assertSame(0, $xpath->query('//*[@id="judul-status"]')->length);
     }
@@ -245,15 +245,15 @@ final class HalamanDepanKepalaTest extends UjiBasisData
     {
         $this->lengkapiPengaturan();
 
-        $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.', 'megaphone');
+        $this->assertKeadaan($this->xpathDari($this->get('/')), 'terbuka', 'Terbuka', 'Pendaftaran dibuka sampai 30 November 2026 pukul 23.59.');
         // Pita fakta: tanggal tutup lengkap dengan tahun (permintaan 20, F10-06).
         $this->assertSame('Batas pendaftaran 30 November 2026', $this->teks($this->xpathDari($this->get('/')), '//*[@data-keadaan-ringkas]'));
 
         Time::setTestNow('2026-09-30 12:00:00', 'Asia/Jakarta');
-        $this->assertKeadaan($this->xpathDari($this->get('/')), 'belum_dibuka', 'Belum dibuka', 'Pendaftaran dibuka 1 Oktober 2026.', 'calendar-clock');
+        $this->assertKeadaan($this->xpathDari($this->get('/')), 'belum_dibuka', 'Belum dibuka', 'Pendaftaran dibuka 1 Oktober 2026.');
 
         Time::setTestNow('2026-12-01 00:00:00', 'Asia/Jakarta');
-        $this->assertKeadaan($this->xpathDari($this->get('/')), 'ditutup', 'Ditutup', 'Pendaftaran sudah ditutup pada 30 November 2026 pukul 23.59.', 'door-closed');
+        $this->assertKeadaan($this->xpathDari($this->get('/')), 'ditutup', 'Ditutup', 'Pendaftaran sudah ditutup pada 30 November 2026 pukul 23.59.');
     }
 
     // ---------- Tombol ----------
@@ -322,14 +322,26 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         // Tiap kartu menaut ke rincian kelompok umurnya di bagian lomba.
         $kartu = iterator_to_array($xpath->query('//section[@id="pembuka"]//a[@data-ku-kartu]'));
         $this->assertCount(5, $kartu);
-        // Nama, julukan, dan jumlah nomor; jumlah 0 tidak ditulis (K88).
-        $this->assertSame('KU 8 2 nomor individu', $this->teksSimpul($kartu[0]));
-        $this->assertSame('KU 10 6 nomor individu 5 nomor beregu', $this->teksSimpul($kartu[1]));
+        // Nama, julukan, dan jumlah nomor berupa ikon dan angka; nama aksesibel tetap lengkap,
+        // jumlah 0 tidak ditulis (K88, K175).
+        $this->assertSame('KU 8 2 nomor individu', $this->teksDibaca($kartu[0]));
+        $this->assertSame('KU 10 6 nomor individu , 5 nomor beregu', $this->teksDibaca($kartu[1]));
+        // Tampilan: ikon dan angka dipisah garis miring kecil.
+        $this->assertSame(['6', '5'], array_map(
+            $this->teksSimpul(...),
+            iterator_to_array($xpath->query('.//*[@data-ku-jumlah]/span/span[@aria-hidden="true"]', $kartu[1])),
+        ));
+        $this->assertSame('/', $this->teksSimpul($xpath->query('.//*[@data-ku-jumlah]/span[@aria-hidden="true"]', $kartu[1])->item(0)));
+        $this->assertSame(2, $xpath->query('.//*[@data-ku-jumlah]//*[name()="svg"]', $kartu[1])->length);
+        // Angka KU besar berisian gradien sebelum tekstur G11-01 ada.
+        $angka = $xpath->query('//a[@data-ku-kartu]//*[contains(concat(" ", @class, " "), " isian-ku ")]');
+        $this->assertSame(['8', '10', '12', '15', '18'], array_map($this->teksSimpul(...), iterator_to_array($angka)));
+        $this->assertSame(0, $xpath->query('//*[@data-isian-gambar]')->length);
 
         // Julukan dalam kurung yang ditambahkan admin tetap tampil terpisah.
         $this->db->table('kelompok_umur')->where('nama', 'KU 8')->update(['nama' => 'KU 8 (Julukan Karangan)']);
         $kartuBaru = $this->xpathDari($this->get('/'))->query('//section[@id="pembuka"]//a[@data-ku-kartu]');
-        $this->assertSame('KU 8 Julukan Karangan 2 nomor individu', $this->teksSimpul($kartuBaru->item(0)));
+        $this->assertSame('KU 8 Julukan Karangan 2 nomor individu', $this->teksDibaca($kartuBaru->item(0)));
 
         foreach ($kartu as $a) {
             $this->assertSame(1, $xpath->query('//article[@id="' . substr($a->getAttribute('href'), 1) . '"]')->length, $a->getAttribute('href'));
@@ -415,14 +427,15 @@ final class HalamanDepanKepalaTest extends UjiBasisData
 
     // ---------- Bantuan ----------
 
-    private function assertKeadaan(DOMXPath $xpath, string $keadaan, string $label, string $kalimat, string $ikon): void
+    private function assertKeadaan(DOMXPath $xpath, string $keadaan, string $label, string $kalimat): void
     {
         $kotak = $xpath->query('//section[@id="pembuka"]//*[@data-keadaan]');
         $this->assertSame(1, $kotak->length);
         $this->assertSame($keadaan, $kotak->item(0)->getAttribute('data-keadaan'));
         $this->assertSame($label, $this->teks($xpath, '//*[@data-keadaan-label]'));
         $this->assertSame($kalimat, $this->teks($xpath, '//*[@data-keadaan-kalimat]'));
-        $this->assertSame(1, $xpath->query('//*[@data-keadaan]//*[name()="use"][substring-after(@href, "#") = "' . $ikon . '"]')->length, 'Ikon ' . $ikon);
+        // Pita fakta tanpa ikon tanggal, lokasi, dan pengeras suara (K175).
+        $this->assertSame(0, $xpath->query('//*[@data-pembuka-info]//*[name()="svg"]')->length, 'Pita fakta tanpa ikon.');
     }
 
     private function isiDataAcara(): void
@@ -477,6 +490,21 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $this->assertNotNull($simpul, "Tidak ditemukan: {$kueri}");
 
         return $this->teksSimpul($simpul);
+    }
+
+    /**
+     * Teks yang dibaca pembaca layar: tanpa simpul `aria-hidden`.
+     */
+    private function teksDibaca(DOMNode $simpul): string
+    {
+        $salinan = $simpul->cloneNode(true);
+        $xpath   = new DOMXPath($simpul->ownerDocument);
+
+        foreach (iterator_to_array($xpath->query('.//*[@aria-hidden="true"]', $salinan)) as $tersembunyi) {
+            $tersembunyi->parentNode?->removeChild($tersembunyi);
+        }
+
+        return $this->teksSimpul($salinan);
     }
 
     private function teksSimpul(DOMNode $simpul): string

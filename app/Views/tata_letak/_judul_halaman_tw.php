@@ -13,6 +13,9 @@
  * @var string|null $inggris    judul editorial Inggris (F10-09)
  * @var string      $ikon       nama ikon Lucide
  * @var string|null $teks       keterangan di bawah judul (di-escape)
+ * @var list<array{0: string, 1?: string|null}>|null $jejak jejak halaman `[label, alamat]` dari
+ *                              Beranda sampai halaman ini (butir terakhir tanpa alamat), selalu di
+ *                              kiri atas pita walau judulnya di tengah (K175); menggantikan `kembali`
  * @var string|null $kembali    alamat tautan kembali (opsional)
  * @var string|null $labelKembali
  * @var string|null $aksi       HTML tombol (sudah di-escape pemanggil)
@@ -23,7 +26,23 @@
 $ilustrasi = empty($gambar) ? '' : gambar_opsional($gambar, ['class' => 'h-36 w-auto lg:h-44']);
 ?>
 <div class="latar-merek border-b border-gray-200/70">
-    <div class="mx-auto max-w-screen-xl px-4 py-8 sm:py-12<?= $ilustrasi === '' ? '' : ' md:flex md:items-center md:gap-8' ?><?= $ilustrasi === '' && ! empty($inggris) ? ' text-center' : '' ?>">
+    <?php if (! empty($jejak)) : ?>
+        <nav class="mx-auto max-w-screen-xl px-4 pt-4 text-left text-sm sm:pt-5" aria-label="Jejak halaman" data-jejak-publik>
+            <ol class="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                <?php foreach ($jejak as $i => $butirJejak) : ?>
+                    <li class="flex items-center gap-1.5">
+                        <?php if ($i > 0) : ?><?= ikon('chevron-right', 'size-3.5 text-gray-400') ?><?php endif ?>
+                        <?php if (($butirJejak[1] ?? null) !== null && $i < count($jejak) - 1) : ?>
+                            <a href="<?= esc($butirJejak[1], 'attr') ?>" class="inline-flex min-h-8 items-center font-semibold text-primary-700 hover:underline"><?= esc($butirJejak[0]) ?></a>
+                        <?php else : ?>
+                            <span class="font-semibold text-gray-700" aria-current="page"><?= esc($butirJejak[0]) ?></span>
+                        <?php endif ?>
+                    </li>
+                <?php endforeach ?>
+            </ol>
+        </nav>
+    <?php endif ?>
+    <div class="mx-auto max-w-screen-xl px-4 <?= empty($jejak) ? 'py-8 sm:py-12' : 'pb-8 pt-4 sm:pb-12 sm:pt-6' ?><?= $ilustrasi === '' ? '' : ' md:flex md:items-center md:gap-8' ?><?= $ilustrasi === '' && ! empty($inggris) ? ' text-center' : '' ?>">
         <?php if ($ilustrasi !== '') : ?><div class="min-w-0 md:flex-1<?= empty($inggris) ? '' : ' text-center' ?>"><?php endif ?>
         <?php if (! empty($kembali)) : ?>
             <a href="<?= esc($kembali, 'attr') ?>" class="mb-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primary-700 hover:underline" data-tautan-kembali><?= ikon('arrow-left', 'size-4') ?><?= esc($labelKembali ?? 'Kembali') ?></a>

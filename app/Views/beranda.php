@@ -73,6 +73,9 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('skrip') ?>
+<?php if ($hasilTerbaru !== null) : ?>
+    <script src="<?= aset('js/deret-tombol.js') ?>" defer></script>
+<?php endif ?>
 <?php if (count($carousel) > 1) : ?>
     <script src="<?= aset('js/carousel-beranda.js') ?>"></script>
 <?php endif ?>
