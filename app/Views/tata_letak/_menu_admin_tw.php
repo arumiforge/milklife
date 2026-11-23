@@ -13,7 +13,7 @@
  *   JavaScript kelompok terbuka dan submenu yang tidak aktif tertutup.
  * - `$tempatMenu = 'bawah'`: menu bawah ponsel, 5 butir Dasbor, Pendaftaran,
  *   Atlet, Rekap, Pengaturan (K174 butir 3); butir aktif ikon dan label
- *   oranye (K133).
+ *   oranye (K133). Akun juri: 2 butir Lembar juri dan Akun (F11-16).
  *
  * Penanda untuk uji dan skrip (tidak bergantung pada kelas CSS):
  * `data-menu-kelompok="<nama>"`, `data-menu-tautan="<alamat>"`,
@@ -65,8 +65,9 @@ $tautanSamping = static function (array $butir) use ($alamatAktif, $kelasTautan,
 };
 ?>
 <?php if (($tempatMenu ?? 'samping') === 'bawah') : ?>
-    <ul class="mx-auto grid max-w-xl grid-cols-5">
-        <?php foreach (MenuAdmin::bawah() as $butir) : ?>
+    <?php $bawah = MenuAdmin::bawah(); ?>
+    <ul class="mx-auto grid max-w-xl <?= count($bawah) === 2 ? 'grid-cols-2' : 'grid-cols-5' ?>">
+        <?php foreach ($bawah as $butir) : ?>
             <?php $kini = MenuAdmin::aktifDiBawah($butir, $alamatAktif); ?>
             <li class="min-w-0">
                 <a data-menu-tautan="<?= esc($butir['alamat'], 'attr') ?>" href="<?= site_url($butir['alamat']) ?>"<?= $kini ? ' aria-current="page"' : '' ?> class="flex min-h-14 flex-col items-center justify-center gap-0.5 px-0.5 text-[11px] min-[380px]:text-xs focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-primary-700 <?= $kini ? 'font-bold text-oranye-600' : 'font-semibold text-gray-700' ?>"<?= isset($butir['label_pendek']) ? ' title="' . esc($butir['label'], 'attr') . '"' : '' ?>>

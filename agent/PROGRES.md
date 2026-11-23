@@ -4,7 +4,7 @@ Diperbarui: 23 November 2026
 
 ## Sedang berjalan
 
-- Tidak ada.
+- F11-16 peran juri di panel admin (K181), tugas sisipan Tahap 11: menunggu tinjauan.
 
 ## Berikutnya
 

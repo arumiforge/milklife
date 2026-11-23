@@ -185,6 +185,9 @@ final class JejakHalamanAdminTest extends UjiBasisData
         // Akun admin sesi uji (`admin_id` 1) supaya halaman Akun terbuka.
         $this->db->table('admin')->insert(['nama' => 'Admin Uji', 'nama_pengguna' => 'admin.uji', 'sandi' => password_hash('sandi-karangan-1', PASSWORD_DEFAULT)]);
         $this->assertSame(1, (int) $this->db->insertID());
+        // Akun juri karangan untuk halaman Ubah akun juri (F11-16).
+        $this->db->table('admin')->insert(['nama' => 'Juri Karangan', 'nama_pengguna' => 'juri.karangan', 'peran' => 'juri', 'sandi' => password_hash('sandi-karangan-2', PASSWORD_DEFAULT)]);
+        $juri = (int) $this->db->insertID();
 
         $this->db->table('sekolah')->insert(['npsn' => '99999971', 'nama' => 'SD KARANGAN JEJAK', 'jenjang' => 'A', 'kabupaten' => 'Kudus']);
         $sekolah = (int) $this->db->insertID();
@@ -223,6 +226,7 @@ final class JejakHalamanAdminTest extends UjiBasisData
             'unduhan ([0-9]+)'                       => $unduhan,
             'bantuan ([0-9]+)'                       => $faq,
             'galeri ([0-9]+)'                        => $galeri,
+            'akun-juri ([0-9]+)'                     => $juri,
             'rekor ([0-9]+)'                         => $rekor,
             'tabel-skor ([0-9]+)'                    => (int) $tabel['id'],
             'tabel-skor ([0-9]+) ([a-z0-9-]+)'       => (string) ($komponen[0]['kode'] ?? ''),

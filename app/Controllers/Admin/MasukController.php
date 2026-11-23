@@ -121,12 +121,18 @@ class MasukController extends BaseController
 
         $sesi   = session();
         $tujuan = AdminFilter::tujuanAman($sesi->get(AdminFilter::KUNCI_TUJUAN));
+        $juri   = AdminModel::peranSah($admin['peran'] ?? null) === AdminModel::PERAN_JURI;
+
+        // Akun juri hanya kembali ke alamat yang boleh dibukanya (F11-16).
+        if ($juri && $tujuan !== null && ! AdminFilter::bolehUntukJuri(explode('?', $tujuan, 2)[0])) {
+            $tujuan = null;
+        }
 
         $sesi->regenerate(true);
         $sesi->remove(AdminFilter::KUNCI_TUJUAN);
         SesiAdmin::mulai($admin);
 
-        return redirect()->to($tujuan ?? 'admin/dasbor');
+        return redirect()->to($tujuan ?? ($juri ? AdminFilter::HALAMAN_JURI : 'admin/dasbor'));
     }
 
     /**

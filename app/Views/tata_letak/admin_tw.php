@@ -52,6 +52,7 @@
 use App\Controllers\Admin\Pengaturan\AcaraController;
 use App\Libraries\IsiHalamanDepan;
 use App\Libraries\Panel\MenuAdmin;
+use App\Libraries\SesiAdmin;
 
 try {
     $logoMerek = IsiHalamanDepan::logoMerek((new IsiHalamanDepan())->tampilan());
@@ -127,7 +128,7 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
 
     <aside id="menu-laci" class="fixed start-0 top-0 z-40 flex h-screen w-72 -translate-x-full flex-col bg-primary-900 transition-transform lg:z-30 lg:translate-x-0" tabindex="-1" aria-label="Menu panel admin">
         <div class="flex h-14 shrink-0 items-center gap-2 bg-primary-700 ps-3 pe-1" data-pojok-admin>
-            <a href="<?= site_url('admin/dasbor') ?>" class="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" data-merek-admin>
+            <a href="<?= site_url(SesiAdmin::juri() ? 'admin/juri' : 'admin/dasbor') ?>" class="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" data-merek-admin>
                 <span class="inline-flex h-10 shrink-0 items-center justify-center">
                     <?php if ($logoMerek !== null) : ?>
                         <img src="<?= esc($logoMerek['alamat']) ?>" class="h-8 w-auto max-w-16" alt=""<?= $logoMerek['ukuran'] === null ? '' : ' width="' . (int) $logoMerek['ukuran']['lebar'] . '" height="' . (int) $logoMerek['ukuran']['tinggi'] . '"' ?> data-logo-merek>
@@ -135,7 +136,7 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
                         <?= ikon('zap', 'size-6 text-white') ?>
                     <?php endif ?>
                 </span>
-                <span class="min-w-0 leading-tight"><span class="block truncate text-sm font-extrabold text-white"><?= esc(AcaraController::namaTampil()) ?></span> <span class="block text-xs font-semibold text-langit-300">Panel admin</span></span>
+                <span class="min-w-0 leading-tight"><span class="block truncate text-sm font-extrabold text-white"><?= esc(AcaraController::namaTampil()) ?></span> <span class="block text-xs font-semibold text-langit-300"><?= SesiAdmin::juri() ? 'Panel juri' : 'Panel admin' ?></span></span>
             </a>
             <button type="button" data-drawer-hide="menu-laci" aria-controls="menu-laci" class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-white hover:bg-white/10 lg:hidden">
                 <?= ikon('x', '', 'Tutup menu') ?>

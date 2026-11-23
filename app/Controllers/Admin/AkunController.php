@@ -10,8 +10,10 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 /**
  * Halaman Akun: admin yang sedang masuk mengganti nama, nama pengguna, dan
- * kata sandinya sendiri (K26). Akun yang diubah selalu `admin_id` di sesi;
- * tidak ada ID di alamat atau formulir.
+ * kata sandinya sendiri (K26). Akun juri hanya mengganti nama dan kata
+ * sandi; nama pengguna juri diganti admin di Pengaturan > Akun juri (K181).
+ * Akun yang diubah selalu `admin_id` di sesi; tidak ada ID di alamat atau
+ * formulir.
  *
  * - `GET admin/akun` → `index`: dua formulir di satu halaman.
  * - `POST admin/akun` → `simpan`: nama dan nama pengguna. Kata sandi saat ini
@@ -72,9 +74,15 @@ class AkunController extends BaseController
         }
 
         $model = model(AdminModel::class);
+        $juri  = ($admin['peran'] ?? AdminModel::PERAN_ADMIN) === AdminModel::PERAN_JURI;
         $isian = [
-            'nama'          => trim((string) $this->request->getPost('nama')),
-            'nama_pengguna' => AdminModel::normalkanNamaPengguna((string) $this->request->getPost('nama_pengguna')),
+            'nama' => trim((string) $this->request->getPost('nama')),
+            // Juri hanya mengganti nama tampilan; nama pengguna juri diganti
+            // admin di Pengaturan > Akun juri (K181). Isian yang dikirim
+            // diabaikan, jadi formulir buatan pun tidak bisa menggantinya.
+            'nama_pengguna' => $juri
+                ? (string) $admin['nama_pengguna']
+                : AdminModel::normalkanNamaPengguna((string) $this->request->getPost('nama_pengguna')),
         ];
         $sandi = (string) $this->request->getPost('sandi_akun');
 
@@ -114,7 +122,7 @@ class AkunController extends BaseController
 
         session()->set(SesiAdmin::KUNCI_NAMA, $isian['nama']);
 
-        return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Nama dan nama pengguna tersimpan.');
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', $juri ? 'Nama tersimpan.' : 'Nama dan nama pengguna tersimpan.');
     }
 
     /**

@@ -33,4 +33,9 @@ abstract class UjiHalaman extends CIUnitTestCase
      * yang dipasang `SesiAdminUji` di setiap uji.
      */
     public const SESI_ADMIN = ['admin_id' => 1, 'admin_nama' => 'Admin Uji', 'admin_sidik' => SesiAdminTiruan::SIDIK];
+
+    /**
+     * Isi sesi akun juri yang sudah masuk (F11-16): hanya Lembar juri dan Akun.
+     */
+    public const SESI_JURI = ['admin_id' => 2, 'admin_nama' => 'Juri Uji', 'admin_sidik' => SesiAdminTiruan::SIDIK, 'admin_peran' => 'juri'];
 }
