@@ -1,0 +1,38 @@
+# Server web MilkLife di dalam container (K182).
+#
+# cloudflared meneruskan pengunjung ke http://app:8080. HTTPS dipasang
+# Cloudflare, jadi Caddy tidak membuat sertifikat sendiri.
+
+{
+	auto_https off
+	admin off
+	skip_install_trust
+
+	frankenphp
+}
+
+:8080 {
+	root * /app/public
+	encode zstd gzip
+
+	# Hanya dua berkas PHP di folder publik yang boleh dijalankan:
+	# index.php (CodeIgniter) dan arumi.php (Monitoring, K102). Berkas PHP
+	# lain, misalnya yang terselip di folder unggahan, ditolak.
+	@php_lain {
+		path *.php
+		not path /index.php /arumi.php
+	}
+	respond @php_lain 404
+
+	# Berkas tersembunyi seperti .htaccess tidak dilayani.
+	@tersembunyi path /.*
+	respond @tersembunyi 404
+
+	# FrankenPHP mengisi HTTPS dengan teks kosong untuk HTTP biasa, dan
+	# CodeIgniter menganggap teks kosong itu HTTPS menyala. Dengan "off",
+	# CodeIgniter membaca X-Forwarded-Proto dari cloudflared, sehingga
+	# app.forceGlobalSecureRequests tetap bekerja (K31, K182).
+	php_server {
+		env HTTPS off
+	}
+}

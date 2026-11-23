@@ -1,0 +1,25 @@
+# Yang tidak ikut masuk image Docker (K182). Rahasia, data, dan berkas
+# yang hanya untuk pengembang tetap di luar image.
+.git
+.github
+.claude
+.env
+.env.*
+docker/.env
+vendor
+node_modules
+writable/*
+!writable/index.html
+!writable/.htaccess
+!writable/*/index.html
+public/unggahan
+tests
+agent
+dokumen
+desain
+sumber
+data/cadangan*
+template-flowbites
+alat
+*.zip
+*.sql

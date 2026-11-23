@@ -1,0 +1,90 @@
+# Susunan Docker Compose MilkLife untuk satu lingkungan (staging ATAU
+# produksi), K182. Panduan lengkap: dokumen/final/panduan-pemasangan-produksi.md.
+#
+# Setiap lingkungan punya folder kode sendiri di server, berkas docker/.env
+# sendiri (salinan docker/.env.example), dan .env aplikasi sendiri di folder
+# kode. Perintah dijalankan dari folder kode, misalnya:
+#
+#   docker compose -f docker/compose.yaml up -d --build
+#   docker compose -f docker/compose.yaml exec app php spark migrate --all
+#
+# Tidak ada `ports:`: tidak satu pun container membuka port ke host atau ke
+# internet. Pengunjung masuk lewat container cloudflared (Cloudflare Tunnel),
+# dan basis data hanya bisa dijangkau container app.
+
+name: ${COMPOSE_PROJECT_NAME:?Isi COMPOSE_PROJECT_NAME di docker/.env}
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Subnet jaringan di bawah. Hanya permintaan dari subnet ini (yaitu
+      # dari cloudflared) yang boleh membawa alamat asli pengunjung lewat
+      # kepala CF-Connecting-IP (K31, K182). Pengaturan aplikasi lain,
+      # termasuk sambungan basis data (hostname db), tetap di .env aplikasi.
+      MILKLIFE_SUBNET_PROXY: ${SUBNET:?Isi SUBNET di docker/.env}
+    volumes:
+      - ../.env:/app/.env:ro
+      - writable:/app/writable
+      - unggahan:/app/public/unggahan
+      - ${FOLDER_CADANGAN:?Isi FOLDER_CADANGAN di docker/.env}:/cadangan
+    networks:
+      - milklife
+    logging: &log
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "5"
+
+  db:
+    image: mysql:8.4.13
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: ${DB_NAMA:?Isi DB_NAMA di docker/.env}
+      MYSQL_USER: ${DB_PENGGUNA:?Isi DB_PENGGUNA di docker/.env}
+      MYSQL_PASSWORD: ${DB_SANDI:?Isi DB_SANDI di docker/.env}
+      MYSQL_ROOT_PASSWORD: ${DB_SANDI_ROOT:?Isi DB_SANDI_ROOT di docker/.env}
+      TZ: Asia/Jakarta
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks:
+      - milklife
+    logging: *log
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.11.2
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?Isi TUNNEL_TOKEN di docker/.env}
+    depends_on:
+      - app
+    networks:
+      - milklife
+    logging: *log
+
+networks:
+  milklife:
+    ipam:
+      config:
+        - subnet: ${SUBNET}
+
+volumes:
+  writable:
+  unggahan:
+  mysql:

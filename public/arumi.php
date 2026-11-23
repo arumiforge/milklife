@@ -176,12 +176,46 @@ function ukuranFolder(string $folder): array
     return ['ada' => true, 'bita' => $bita, 'berkas' => $berkas];
 }
 
+/**
+ * Apakah permintaan datang dari cloudflared: komputer ini sendiri (Laragon)
+ * atau subnet jaringan Docker (K182). Daftarnya sama dengan `App::$proxyIPs`.
+ */
+function dariProxyTepercaya(): bool
+{
+    $jauh = @inet_pton((string) ($_SERVER['REMOTE_ADDR'] ?? ''));
+
+    if ($jauh === false) {
+        return false;
+    }
+
+    foreach (array_keys(config('App')->proxyIPs) as $proxy) {
+        [$alamat, $awalan] = array_pad(explode('/', (string) $proxy, 2), 2, null);
+        $jaringan          = @inet_pton($alamat);
+
+        if ($jaringan === false || strlen($jaringan) !== strlen($jauh)) {
+            continue;
+        }
+
+        $bit    = $awalan === null ? strlen($jaringan) * 8 : (int) $awalan;
+        $penuh  = intdiv($bit, 8);
+        $sisa   = $bit % 8;
+        $topeng = $sisa === 0 ? 0 : (0xFF << (8 - $sisa)) & 0xFF;
+
+        if (substr($jauh, 0, $penuh) === substr($jaringan, 0, $penuh)
+            && ($sisa === 0 || (ord($jauh[$penuh]) & $topeng) === (ord($jaringan[$penuh]) & $topeng))) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function alamatPengunjung(): string
 {
     $jauh = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
 
-    // Di balik Cloudflare Tunnel permintaan datang dari komputer ini sendiri.
-    if (in_array($jauh, ['127.0.0.1', '::1'], true) && ! empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+    // Di balik Cloudflare Tunnel permintaan datang dari cloudflared.
+    if (dariProxyTepercaya() && ! empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
         return (string) $_SERVER['HTTP_CF_CONNECTING_IP'];
     }
 
@@ -194,7 +228,7 @@ function lewatHttps(): bool
         return true;
     }
 
-    return in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)
+    return dariProxyTepercaya()
         && strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
 }
 
