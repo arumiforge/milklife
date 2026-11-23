@@ -26,7 +26,9 @@ final class AdminModelTest extends UjiBasisData
     {
         $kolom = array_column($this->db->getFieldData('admin'), null, 'name');
 
-        $this->assertSame(['id', 'nama', 'nama_pengguna', 'sandi', 'dibuat_pada', 'diubah_pada'], array_keys($kolom));
+        // `peran` dari migrasi F11-16 (K181), tepat setelah nama pengguna.
+        $this->assertSame(['id', 'nama', 'nama_pengguna', 'peran', 'sandi', 'dibuat_pada', 'diubah_pada'], array_keys($kolom));
+        $this->assertSame('admin', trim((string) $kolom['peran']->default, "'"));
         $this->assertSame(255, (int) $kolom['sandi']->max_length);
 
         $tabel = $this->db->query(

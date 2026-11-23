@@ -6,7 +6,6 @@ use App\Libraries\SesiAdmin;
 use CodeIgniter\Config\Factories;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\IncomingRequest;
-use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 
@@ -26,7 +25,13 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   tidak ada: sesi diakhiri lalu dialihkan ke `/admin/masuk` dengan pesan
  *   yang menjelaskannya. Lihat `SesiAdmin`.
  *
- * Pemeriksaan sidik membaca satu kolom dari tabel `admin` di setiap
+ * - Akun juri (F11-16, K181) hanya boleh membuka Lembar juri (`admin/juri`
+ *   dan di bawahnya), Akun miliknya (`admin/akun`), dan keluar. Alamat lain
+ *   dengan `GET` dialihkan ke Lembar juri (`admin` dan `admin/dasbor` tanpa
+ *   pesan, lainnya dengan pesan); kiriman formulir dan permintaan skrip
+ *   dijawab 403. Halaman masuk selalu dialihkan ke Lembar juri.
+ *
+ * Pemeriksaan sidik dan peran membaca dua kolom dari tabel `admin` di setiap
  * permintaan halaman admin.
  */
 class AdminFilter implements FilterInterface
@@ -35,10 +40,19 @@ class AdminFilter implements FilterInterface
 
     private const HALAMAN_MASUK = 'admin/masuk';
 
+    public const HALAMAN_JURI = 'admin/juri';
+
+    public const PESAN_JURI = 'Akun juri hanya bisa membuka Lembar juri dan Akun. Minta admin panitia bila Anda perlu halaman lain.';
+
+    /**
+     * Alamat awal panel yang membawa akun juri ke Lembar juri tanpa pesan.
+     */
+    private const AWAL_PANEL = ['admin', 'admin/dasbor'];
+
     /**
      * @param list<string>|null $arguments
      */
-    public function before(RequestInterface $request, $arguments = null): ?RedirectResponse
+    public function before(RequestInterface $request, $arguments = null): ?ResponseInterface
     {
         $jalur        = $request instanceof IncomingRequest ? trim($request->getPath(), '/') : '';
         $halamanMasuk = $jalur === self::HALAMAN_MASUK;
@@ -48,6 +62,10 @@ class AdminFilter implements FilterInterface
             $hasil = Factories::libraries(SesiAdmin::class)->periksa((int) session(SesiAdmin::KUNCI_ID), session(SesiAdmin::KUNCI_SIDIK));
 
             if ($hasil === SesiAdmin::SAH) {
+                if (SesiAdmin::juri()) {
+                    return $this->batasiJuri($request, $jalur);
+                }
+
                 return $halamanMasuk ? redirect()->to('admin/dasbor') : null;
             }
 
@@ -72,6 +90,45 @@ class AdminFilter implements FilterInterface
         }
 
         return redirect()->to(self::HALAMAN_MASUK)->with('pesan_masuk', $pesan);
+    }
+
+    /**
+     * Akun juri: lanjut bila alamatnya boleh, selain itu dialihkan ke Lembar
+     * juri (`GET` biasa) atau ditolak 403.
+     */
+    private function batasiJuri(RequestInterface $request, string $jalur): ?ResponseInterface
+    {
+        if ($jalur === self::HALAMAN_MASUK) {
+            return redirect()->to(self::HALAMAN_JURI);
+        }
+
+        if (self::bolehUntukJuri($jalur)) {
+            return null;
+        }
+
+        $get = $request instanceof IncomingRequest && $request->getMethod() === 'GET' && ! $request->isAJAX();
+
+        if ($get && in_array($jalur, self::AWAL_PANEL, true)) {
+            return redirect()->to(self::HALAMAN_JURI);
+        }
+
+        if ($get) {
+            return redirect()->to(self::HALAMAN_JURI)->with('pesan_galat', self::PESAN_JURI);
+        }
+
+        return service('response')->setStatusCode(403)->setContentType('text/plain')->setBody(self::PESAN_JURI);
+    }
+
+    /**
+     * Apakah akun juri boleh membuka jalur ini (tanpa kueri, tanpa `/` di
+     * tepi): Lembar juri dan di bawahnya, Akun, dan keluar.
+     */
+    public static function bolehUntukJuri(string $jalur): bool
+    {
+        $jalur = trim($jalur, '/');
+
+        return in_array($jalur, [self::HALAMAN_JURI, 'admin/akun', 'admin/akun/sandi', 'admin/keluar'], true)
+            || str_starts_with($jalur, self::HALAMAN_JURI . '/');
     }
 
     /**

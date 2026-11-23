@@ -24,8 +24,11 @@ use App\Libraries\Hasil\JenisHasil;
 use App\Libraries\Hasil\LembarJuri;
 use App\Libraries\Hasil\Peringkat;
 use App\Libraries\Hasil\UnduhanSeri;
+use App\Libraries\SesiAdmin;
 
 // ikon-sprite: trophy list-ordered users check
+// Akun juri tidak bisa membuka Hasil, Seri, dan Pengaturan (F11-16), jadi tanpa tautan ke sana.
+$juri     = SesiAdmin::juri();
 $nomor    = $babak['nomor'];
 $jenis    = $nomor['jenis_hasil'];
 $lintasan = $babak['aturan']['lintasan'];
@@ -62,9 +65,13 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
         <h2 id="judul-babak-juri" class="text-lg font-bold break-words text-gray-900"><?= esc(JadwalPertandingan::awalanAcara($babak['nomor_acara'])) ?><?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?> · <?= esc($babak['nama']) ?></h2>
         <p class="text-sm text-gray-600"><?= $jadwal === '' ? 'Jadwal menyusul' : esc($jadwal) ?> · <?= $babak['peserta'] ?> <?= $beregu ? 'regu' : 'peserta' ?></p>
         <p class="mt-2 text-sm text-gray-700"><?= esc($petunjuk) ?> Pilih DNS, DNF, atau DQ untuk peserta yang tidak start, tidak finis, atau didiskualifikasi. Untuk DQ, tulis pasalnya bila ada, misalnya TR16.8.<?php if ($jenis === JenisHasil::JARAK) : ?> Bila semua percobaan X, keterangan NM (tanpa lompatan atau lemparan sah) terisi sendiri. Pilih r bila peserta mundur: prestasi sebelum mundur tetap dinilai.<?php endif ?></p>
-        <p class="mt-2 text-sm text-gray-700">Peringkat dan tombol Terbitkan ada di <a href="<?= site_url('admin/hasil/babak/' . $babak['id']) ?>" class="font-semibold text-primary-700 underline">halaman hasil babak ini</a>.</p>
+        <?php if ($juri) : ?>
+            <p class="mt-2 text-sm text-gray-700">Peringkat dan penerbitan hasil diurus admin panitia.</p>
+        <?php else : ?>
+            <p class="mt-2 text-sm text-gray-700">Peringkat dan tombol Terbitkan ada di <a href="<?= site_url('admin/hasil/babak/' . $babak['id']) ?>" class="font-semibold text-primary-700 underline">halaman hasil babak ini</a>.</p>
+        <?php endif ?>
         <?php if ($jenis === JenisHasil::MULTI && $komponen === []) : ?>
-            <div class="mt-3"><?= komponen('peringatan', ['jenis' => 'peringatan', 'judul' => 'Tabel skor belum dipilih', 'isi' => 'Nomor ini belum punya tabel skor. Prestasinya baru bisa diisi setelah tabel skor dipilih. Pilih tabel skor dan komponennya di Pengaturan &gt; Nomor lomba.']) ?></div>
+            <div class="mt-3"><?= komponen('peringatan', ['jenis' => 'peringatan', 'judul' => 'Tabel skor belum dipilih', 'isi' => 'Nomor ini belum punya tabel skor. Prestasinya baru bisa diisi setelah tabel skor dipilih. ' . ($juri ? 'Minta admin panitia memilih tabel skornya.' : 'Pilih tabel skor dan komponennya di Pengaturan &gt; Nomor lomba.')]) ?></div>
         <?php endif ?>
     </section>
 
@@ -77,7 +84,11 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
     <?php endif ?>
 
     <?php if ($peserta === []) : ?>
-        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Atur pesertanya di halaman hasil babak atau di Seri dan lintasan.', 'aksi' => komponen('tombol', ['label' => 'Buka seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'ikon' => 'list-ordered'])]) ?>
+        <?php if ($juri) : ?>
+            <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Minta admin panitia mengatur pesertanya, lalu muat ulang halaman ini.']) ?>
+        <?php else : ?>
+            <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'users', 'judul' => 'Belum ada peserta', 'teks' => 'Babak ini belum punya peserta. Atur pesertanya di halaman hasil babak atau di Seri dan lintasan.', 'aksi' => komponen('tombol', ['label' => 'Buka seri dan lintasan', 'href' => site_url('admin/seri/babak/' . $babak['id']), 'ikon' => 'list-ordered'])]) ?>
+        <?php endif ?>
     <?php else : ?>
         <h3 class="text-base font-bold tracking-wide text-oranye-700 uppercase"><?= esc($namaSeri($seri)) ?></h3>
         <ol class="space-y-3" aria-label="Peserta <?= esc($namaSeri($seri), 'attr') ?>">

@@ -4,7 +4,9 @@
  * tata letak Tailwind `admin_tw`.
  *
  * 1. Nama dan nama pengguna → `POST admin/akun`. Kotak "Kata sandi saat ini"
- *    hanya wajib bila nama pengguna diganti.
+ *    hanya wajib bila nama pengguna diganti. Akun juri hanya melihat kotak
+ *    Nama; nama penggunanya tampil sebagai teks dan diganti admin di
+ *    Pengaturan > Akun juri (K181).
  * 2. Kata sandi → `POST admin/akun/sandi`.
  *
  * Hanya satu formulir yang dikirim tiap kali, jadi ringkasan isian salah
@@ -18,7 +20,10 @@
  * @var array<string, string>  $galatSandi pesan per kotak formulir 2
  */
 
+use App\Libraries\SesiAdmin;
 use App\Models\AdminModel;
+
+$juri = ($admin['peran'] ?? AdminModel::PERAN_ADMIN) === AdminModel::PERAN_JURI;
 
 $kotakSandi = [
     'sandi_saat_ini' => ['Kata sandi saat ini', 'current-password', 'Kata sandi yang Anda pakai untuk masuk sekarang.'],
@@ -62,7 +67,9 @@ $pesan   = static fn (string $kotak, array $galat): string => isset($galat[$kota
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
-    <?= $this->include('admin/pengaturan/_navigasi') ?>
+    <?php if (! SesiAdmin::juri()) : ?>
+        <?= $this->include('admin/pengaturan/_navigasi') ?>
+    <?php endif ?>
 
     <p class="text-gray-700">
         Perubahan di halaman ini hanya berlaku untuk akun Anda sendiri.
@@ -71,8 +78,13 @@ $pesan   = static fn (string $kotak, array $galat): string => isset($galat[$kota
     <div class="grid gap-4 xl:grid-cols-2 xl:items-start">
         <section class="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5" aria-labelledby="judul-data-akun">
             <div>
-                <h2 id="judul-data-akun" class="text-lg font-bold text-gray-900">Nama dan nama pengguna</h2>
-                <p class="mt-1 text-sm text-gray-600">Nama tampil di kepala panel admin. Nama pengguna dipakai untuk masuk.</p>
+                <?php if ($juri) : ?>
+                    <h2 id="judul-data-akun" class="text-lg font-bold text-gray-900">Nama</h2>
+                    <p class="mt-1 text-sm text-gray-600">Nama tampil di kepala panel juri.</p>
+                <?php else : ?>
+                    <h2 id="judul-data-akun" class="text-lg font-bold text-gray-900">Nama dan nama pengguna</h2>
+                    <p class="mt-1 text-sm text-gray-600">Nama tampil di kepala panel admin. Nama pengguna dipakai untuk masuk.</p>
+                <?php endif ?>
             </div>
 
             <?= view('admin/_galat_isian_tw', ['galat' => $galatAkun], ['saveData' => false]) ?>
@@ -88,23 +100,31 @@ $pesan   = static fn (string $kotak, array $galat): string => isset($galat[$kota
                     <?= $pesan('nama', $galatAkun) ?>
                 </div>
 
-                <div>
-                    <label for="nama_pengguna" class="<?= $label ?>">Nama pengguna</label>
-                    <input type="text" id="nama_pengguna" name="nama_pengguna" maxlength="30"
-                        autocomplete="username" autocapitalize="none" spellcheck="false" required
-                        value="<?= esc($isianAkun['nama_pengguna'] ?? '', 'attr') ?>"
-                        <?= $atributKotak('nama_pengguna', $galatAkun, true) ?>>
-                    <p id="nama_pengguna-petunjuk" class="<?= $petunjuk ?>">3–30 karakter: huruf kecil, angka, titik, atau garis bawah, tanpa spasi.</p>
-                    <?= $pesan('nama_pengguna', $galatAkun) ?>
-                </div>
+                <?php if ($juri) : ?>
+                    <div>
+                        <p class="<?= $label ?>">Nama pengguna</p>
+                        <p class="font-mono text-gray-900"><?= esc((string) $admin['nama_pengguna']) ?></p>
+                        <p class="<?= $petunjuk ?>">Dipakai untuk masuk. Minta admin panitia bila nama pengguna perlu diganti.</p>
+                    </div>
+                <?php else : ?>
+                    <div>
+                        <label for="nama_pengguna" class="<?= $label ?>">Nama pengguna</label>
+                        <input type="text" id="nama_pengguna" name="nama_pengguna" maxlength="30"
+                            autocomplete="username" autocapitalize="none" spellcheck="false" required
+                            value="<?= esc($isianAkun['nama_pengguna'] ?? '', 'attr') ?>"
+                            <?= $atributKotak('nama_pengguna', $galatAkun, true) ?>>
+                        <p id="nama_pengguna-petunjuk" class="<?= $petunjuk ?>">3–30 karakter: huruf kecil, angka, titik, atau garis bawah, tanpa spasi.</p>
+                        <?= $pesan('nama_pengguna', $galatAkun) ?>
+                    </div>
 
-                <div>
-                    <label for="sandi_akun" class="<?= $label ?>">Kata sandi saat ini</label>
-                    <input type="password" id="sandi_akun" name="sandi_akun" maxlength="255" autocomplete="current-password"
-                        <?= $atributKotak('sandi_akun', $galatAkun, true) ?>>
-                    <p id="sandi_akun-petunjuk" class="<?= $petunjuk ?>">Hanya perlu diisi bila Anda mengganti nama pengguna.</p>
-                    <?= $pesan('sandi_akun', $galatAkun) ?>
-                </div>
+                    <div>
+                        <label for="sandi_akun" class="<?= $label ?>">Kata sandi saat ini</label>
+                        <input type="password" id="sandi_akun" name="sandi_akun" maxlength="255" autocomplete="current-password"
+                            <?= $atributKotak('sandi_akun', $galatAkun, true) ?>>
+                        <p id="sandi_akun-petunjuk" class="<?= $petunjuk ?>">Hanya perlu diisi bila Anda mengganti nama pengguna.</p>
+                        <?= $pesan('sandi_akun', $galatAkun) ?>
+                    </div>
+                <?php endif ?>
 
                 <?= komponen('tombol', ['label' => 'Simpan nama', 'tipe' => 'submit', 'ikon' => 'check']) ?>
             </form>

@@ -308,7 +308,7 @@ final class TataLetakHalamanTest extends UjiBasisData
             'admin/riwayat', 'admin/atlet/nomor-dada', 'admin/sekolah/usulan', 'admin/sekolah/nama-desa',
             'admin/pengaturan/acara', 'admin/pengaturan/pendaftaran', 'admin/pengaturan/kelompok-umur', 'admin/pengaturan/nomor-lomba',
             'admin/pengaturan/pembayaran', 'admin/pengaturan/jadwal', 'admin/pengaturan/kontak', 'admin/pengaturan/tabel-skor',
-            'admin/pengaturan/hasil', 'admin/pengaturan/cadangan', 'admin/akun',
+            'admin/pengaturan/hasil', 'admin/pengaturan/akun-juri', 'admin/pengaturan/cadangan', 'admin/akun',
         ], $anak);
         foreach ($xpath->query('.//button[@data-lipat]', $samping) as $tombol) {
             $daftar = $xpath->query('//*[@id="' . $tombol->getAttribute('aria-controls') . '"]')->item(0);
@@ -390,8 +390,8 @@ final class TataLetakHalamanTest extends UjiBasisData
         $this->assertSame(0, $xpath->query('//nav[@data-menu-admin]//*[@aria-current]')->length);
         $this->assertSame(['Dasbor', 'Judul Contoh admin'], $this->labelJejak($xpath));
         // Lima tautan di menu bawah (K174); di menu samping dua puluh satu butir
-        // berkelompok (Rekor, F11-06), lima belas anak submenu (Cadangan, F11-11), dan dua di daftar akhir (K102).
-        $this->assertSame(5 + 21 + 15 + 2, $xpath->query('//a[@data-menu-tautan]')->length);
+        // berkelompok (Rekor, F11-06), enam belas anak submenu (Akun juri, F11-16), dan dua di daftar akhir (K102).
+        $this->assertSame(5 + 21 + 16 + 2, $xpath->query('//a[@data-menu-tautan]')->length);
 
         // Alamat yang hanya berawalan sama tidak dianggap halaman di bawahnya.
         $xpath = $this->xpath($this->renderDiAlamat('admin/dasborlain', 'Tests\Support\Views\contoh_admin'));

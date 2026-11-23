@@ -9,7 +9,8 @@ Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 jug
 ## Pengguna
 
 - **Ofisial sekolah**: tanpa akun, mendaftar lewat wizard, memeriksa rekap lewat NPSN atau ID pendaftaran.
-- **Admin**: satu peran, mengatur seluruh aturan, memeriksa pembayaran, dan (Tahap 8) mencatat hasil lomba.
+- **Admin**: mengatur seluruh aturan, memeriksa pembayaran, dan (Tahap 8) mencatat hasil lomba.
+- **Juri**: akun sendiri per juri yang hanya mengisi prestasi di Lembar juri (K181).
 - **Pengunjung umum**: melihat hasil dan klasemen yang sudah diterbitkan (K124), Bantuan, dan (bila dinyalakan admin) jadwal, seri, peserta Lunas, galeri, dan videotron.
 
 ## Teknologi

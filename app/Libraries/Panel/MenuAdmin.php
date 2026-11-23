@@ -3,6 +3,7 @@
 namespace App\Libraries\Panel;
 
 use App\Controllers\Admin\Pengaturan\BerandaPengaturanController;
+use App\Libraries\SesiAdmin;
 
 /**
  * Menu panel admin, satu-satunya tempat butir menu ditulis (F9-14, F10-03).
@@ -19,6 +20,10 @@ use App\Controllers\Admin\Pengaturan\BerandaPengaturanController;
  * - menu bawah ponsel: butir bertanda `bawah`, tepat 5 butir: Dasbor,
  *   Pendaftaran, Atlet, Rekap, Pengaturan (K174 butir 3, menggantikan butir
  *   Menu K157). Sidebar tetap dibuka tombol menu di kepala halaman.
+ *
+ * Akun juri (F11-16, K181) hanya mendapat kelompok Juri: Lembar juri dan
+ * Akun, keduanya juga di menu bawah, tanpa daftar akhir Pengecekan (lihat
+ * `AdminFilter`).
  *
  * Butir: `label`, `ikon` (nama ikon Lucide), `alamat`, pilihan `label_pendek`
  * (menu bawah), `bawah`, `aktif_juga` (alamat lain yang ikut menandai
@@ -40,6 +45,10 @@ final class MenuAdmin
      */
     public static function kelompok(): array
     {
+        if (SesiAdmin::juri()) {
+            return self::kelompokJuri();
+        }
+
         $kelompok = [
             'Pendaftaran' => [
                 ['label' => 'Dasbor', 'ikon' => 'layout-dashboard', 'alamat' => 'admin/dasbor', 'bawah' => true],
@@ -93,6 +102,21 @@ final class MenuAdmin
     }
 
     /**
+     * Menu akun juri: hanya halaman yang boleh dibukanya.
+     *
+     * @return array<string, list<array{label: string, ikon: string, alamat: string, bawah: bool}>>
+     */
+    private static function kelompokJuri(): array
+    {
+        return [
+            'Juri' => [
+                ['label' => 'Lembar juri', 'ikon' => 'clipboard-pen', 'alamat' => 'admin/juri', 'bawah' => true],
+                ['label' => 'Akun', 'ikon' => 'user-cog', 'alamat' => 'admin/akun', 'bawah' => true],
+            ],
+        ];
+    }
+
+    /**
      * Halaman dari `BerandaPengaturanController::daftarHalaman()` yang belum
      * menjadi butir di kelompok lain, supaya satu halaman tidak tampil dua
      * kali di sidebar.
@@ -123,6 +147,10 @@ final class MenuAdmin
      */
     public static function akhir(): array
     {
+        if (SesiAdmin::juri()) {
+            return [];
+        }
+
         return [
             ['label' => 'Pengecekan', 'ikon' => 'clipboard-list', 'alamat' => 'admin/pengecekan'],
         ];
@@ -162,7 +190,7 @@ final class MenuAdmin
      */
     public static function aktifDiBawah(array $butir, ?string $aktif): bool
     {
-        if ($butir['alamat'] === 'admin/pengaturan') {
+        if ($butir['alamat'] === 'admin/pengaturan' && ! SesiAdmin::juri()) {
             return url_is('admin/pengaturan') || self::halamanPengaturan() !== null;
         }
 
@@ -283,6 +311,11 @@ final class MenuAdmin
      */
     private static function halamanPengaturan(): ?array
     {
+        // Akun juri tidak bisa membuka Pengaturan, jadi jejaknya lewat menu juri.
+        if (SesiAdmin::juri()) {
+            return null;
+        }
+
         $kini = null;
 
         foreach (BerandaPengaturanController::daftarHalaman() as $halaman) {

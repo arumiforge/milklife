@@ -10,9 +10,12 @@
  */
 
 use App\Libraries\Hasil\JadwalPertandingan;
+use App\Libraries\SesiAdmin;
 
 // ikon-sprite: chevron-right chevron-down clipboard-pen calendar-x trophy
 $pertama = array_key_first($hari);
+// Akun juri tidak bisa membuka Hasil lomba (F11-16), jadi tanpa tautan ke sana.
+$juri = SesiAdmin::juri();
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 
@@ -22,11 +25,18 @@ $pertama = array_key_first($hari);
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
         Pilih babak, lalu isi prestasi tiap peserta dari ponsel. Setiap baris tersimpan sendiri begitu diisi.
-        Beberapa juri boleh mengisi babak yang berbeda bersamaan. Peringkat dan tombol Terbitkan ada di
-        <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>.
+        Beberapa juri boleh mengisi babak yang berbeda bersamaan.
+        <?php if ($juri) : ?>
+            Peringkat dan penerbitan hasil diurus admin panitia.
+        <?php else : ?>
+            Peringkat dan tombol Terbitkan ada di
+            <a href="<?= site_url('admin/hasil') ?>" class="font-semibold text-primary-700 underline">Hasil lomba</a>.
+        <?php endif ?>
     </p>
 
-    <?php if ($hari === []) : ?>
+    <?php if ($hari === [] && $juri) : ?>
+        <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Admin panitia belum menyiapkan babak lomba. Muat ulang halaman ini nanti.']) ?>
+    <?php elseif ($hari === []) : ?>
         <?= komponen('kosong', ['padat' => true, 'gambar' => ['gambar/admin/kosong-admin.webp', 'gambar/keadaan/kosong-data.webp'], 'ikon' => 'calendar-x', 'judul' => 'Belum ada babak', 'teks' => 'Lembar juri dibuat dari babak tiap nomor lomba. Tambahkan babak (misalnya Penyisihan dan Final) di Hasil lomba, lalu kembali ke sini.', 'aksi' => komponen('tombol', ['label' => 'Buka hasil lomba', 'href' => site_url('admin/hasil'), 'ikon' => 'trophy'])]) ?>
     <?php endif ?>
 
