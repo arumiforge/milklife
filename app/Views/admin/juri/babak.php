@@ -53,6 +53,8 @@ $kelasKotak = 'block h-14 w-full min-w-0 rounded-lg border border-gray-300 bg-wh
 
 <?= $this->section('judul') ?>Juri <?= esc($babak['nama']) ?> <?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?><?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Lembar juri', 'alamat' => 'admin/juri'], ['label' => $nomor['nama'] . ' ' . $nomor['kelompok_umur']], ['label' => $babak['nama']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4" data-lembar-juri>
 

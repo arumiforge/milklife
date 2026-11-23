@@ -6,7 +6,9 @@ use Tests\Support\PanelDataContoh;
 use Tests\Support\UjiBasisData;
 
 /**
- * Setiap halaman admin punya jejak navigasi (F10-03): semua rute admin `GET`
+ * Setiap halaman admin punya jejak navigasi (F10-03) yang seragam (F11-10,
+ * K174 butir 2: dimulai "Dasbor", tanpa ikon rumah, sejalan dengan pil
+ * navigasi yang ditandai): semua rute admin `GET`
  * yang menampilkan halaman dibuka sebagai admin dengan data contoh
  * karangan, lalu diperiksa memakai tata letak `admin_tw` dan memuat satu
  * jejak (`admin/_jejak_tw`, `data-jejak`) yang diakhiri halaman itu sendiri.
@@ -89,6 +91,19 @@ final class JejakHalamanAdminTest extends UjiBasisData
             $this->assertSame(1, $xpath->query('//main[@id="isi"]//nav[@data-jejak][@aria-label="Jejak navigasi"]')->length, "{$alamat} punya tepat satu jejak navigasi.");
             $this->assertSame(1, $xpath->query('//nav[@data-jejak]//ol/li[last()]/*[@aria-current="page"]')->length, "{$alamat}: butir terakhir jejak adalah halaman ini.");
 
+            // Jejak dimulai teks "Dasbor" tanpa ikon rumah dan tidak berulang (K174 butir 2).
+            $label = array_map(fn (DOMNode $li): string => $this->teksTerbaca($xpath, $li), iterator_to_array($xpath->query('//nav[@data-jejak]//ol/li')));
+            $jalur = implode(' › ', $label);
+            $this->assertSame('Dasbor', $label[0] ?? null, "{$alamat}: jejak dimulai Dasbor ({$jalur}).");
+            $this->assertSame(0, $xpath->query('//nav[@data-jejak]//*[name()="use"][contains(@href, "#house")]')->length, "{$alamat}: jejak tanpa ikon rumah.");
+            $this->assertSame(count($label), count(array_unique($label)), "{$alamat}: butir jejak tidak berulang ({$jalur}).");
+
+            // Jejak sejalan dengan pil navigasi (Pengaturan, Hari lomba, jenis Rekap): label pil yang ditandai ada di jejak.
+            $pil = $xpath->query('//main//nav[@aria-label="Navigasi pengaturan" or @aria-label="Jenis rekap" or @data-tab-hari-lomba]//a[@aria-current="page"]')->item(0);
+            if ($pil !== null) {
+                $this->assertContains($this->teksTerbaca($xpath, $pil), $label, "{$alamat}: pil yang ditandai ada di jejak ({$jalur}).");
+            }
+
             $dibuka[] = $pola;
         }
 
@@ -100,6 +115,20 @@ final class JejakHalamanAdminTest extends UjiBasisData
             $this->assertContains($wajib, $dibuka);
         }
         $this->assertGreaterThan(50, count($dibuka));
+    }
+
+    /**
+     * Teks simpul yang dibaca pembaca layar: tanpa bagian `aria-hidden`, spasi dirapikan.
+     */
+    private function teksTerbaca(DOMXPath $xpath, DOMNode $simpul): string
+    {
+        $teks = '';
+
+        foreach ($xpath->query('.//text()[not(ancestor::*[@aria-hidden="true"])]', $simpul) as $satu) {
+            $teks .= $satu->textContent . ' ';
+        }
+
+        return trim((string) preg_replace('/\s+/u', ' ', $teks));
     }
 
     private function bukanHalaman(string $pola): bool

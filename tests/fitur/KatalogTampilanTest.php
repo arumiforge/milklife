@@ -46,18 +46,18 @@ final class KatalogTampilanTest extends UjiBasisData
         }
     }
 
-    public function testMenuBawahPonselLimaButirPendaftaran(): void
+    public function testMenuBawahPonselLimaButir(): void
     {
         $xpath = $this->xpathDari($this->bukaSebagaiAdmin('admin/gaya'));
-        $butir = $xpath->query('//nav[@aria-label="Menu pendaftaran"]//li/*[self::a or self::button]');
+        $butir = $xpath->query('//nav[@aria-label="Menu bawah"]//li/*[self::a or self::button]');
 
         $label = [];
         foreach ($butir as $a) {
             $label[] = trim($a->textContent);
         }
 
-        // K133, dengan butir Menu yang membuka sidebar sebagai butir kelima (F10-03, permintaan A9).
-        $this->assertSame(['Dasbor', 'Pendaftaran', 'Atlet', 'Rekap', 'Menu'], $label);
+        // K174 butir 3: Pengaturan menggantikan butir Menu; sidebar dibuka tombol di kepala.
+        $this->assertSame(['Dasbor', 'Pendaftaran', 'Atlet', 'Rekap', 'Pengaturan'], $label);
     }
 
     public function testTataLetakPublikBaruDanMenunya(): void

@@ -8,7 +8,9 @@
  *
  * Bagian yang diisi tampilan:
  * - `judul`: nama halaman; tab peramban `<judul> – Admin <nama acara>`.
- * - `judul_halaman` (pilihan): `<h1>` di kepala; bila kosong memakai `judul`.
+ * - `judul_halaman` (pilihan): `<h1>` di kepala, hanya untuk pembaca layar
+ *   (judul yang terlihat sudah ada di jejak, K174 butir 1); bila kosong
+ *   memakai `judul`.
  * - `jejak` (pilihan): jejak navigasi dari `admin/_jejak_tw` (K117). Bila
  *   kosong, jejak disusun dari menu dan judul (`MenuAdmin::jejak()`, F10-03),
  *   jadi setiap halaman admin punya jejak.
@@ -32,10 +34,15 @@
  * Sidebar `w-72`, isi `lg:ps-72` tanpa batas lebar. Kelompok dan submenu
  * dilipat `aset/js/menu-admin.js`.
  *
+ * Kepala halaman (K174 butir 1): tanpa judul terlihat; kotak cari menu
+ * (`aset/js/cari-menu.js`, `data-cari-menu`) yang menyaring butir sidebar dan
+ * membuka halamannya. Di ponsel kotak cari dan tombol Keluar berupa ikon saja
+ * berlatar dan bergaris tepi; kotak cari terbuka menutupi kepala.
+ *
  * Ponsel: sidebar menjadi laci (Flowbite `data-drawer-*`) yang dibuka tombol
- * menu di kepala (K131, K133) atau butir Menu di menu bawah (F10-03); menu
- * bawah 5 butir, butir aktif ikon dan label oranye (K133). Nama admin menuju
- * Akun; Keluar `POST` dengan CSRF. Penanda uji:
+ * menu di kepala (K131, K133); menu bawah 5 butir Dasbor, Pendaftaran, Atlet,
+ * Rekap, Pengaturan (K174 butir 3), butir aktif ikon dan label oranye (K133).
+ * Nama admin menuju Akun; Keluar `POST` dengan CSRF. Penanda uji:
  * `data-menu-admin="samping|bawah"` pada `<nav>`, `data-kepala-admin` pada
  * `<header>`, `data-pojok-admin` pada blok logo.
  *
@@ -87,13 +94,34 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
         <button type="button" data-drawer-target="menu-laci" data-drawer-toggle="menu-laci" aria-controls="menu-laci" class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 lg:hidden">
             <?= ikon('menu', 'size-6', 'Buka menu') ?>
         </button>
-        <h1 class="min-w-0 flex-1 truncate text-lg font-bold text-gray-900"><?= $judulHalaman ?></h1>
+        <h1 class="sr-only"><?= $judulHalaman ?></h1>
+        <div class="group/cari flex min-w-0 flex-1 items-center justify-end sm:justify-start" data-cari-menu>
+            <div class="items-center gap-2 bg-white max-sm:absolute max-sm:inset-0 max-sm:z-10 max-sm:hidden max-sm:px-2 max-sm:group-data-terbuka/cari:flex sm:flex sm:w-full sm:max-w-md" id="cari-menu-panel" data-cari-menu-panel hidden>
+                <div class="relative min-w-0 flex-1" role="search" aria-label="Cari menu">
+                    <label for="cari-menu" class="sr-only">Cari menu</label>
+                    <span class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3 text-gray-500"><?= ikon('search', 'size-4') ?></span>
+                    <input id="cari-menu" type="search" autocomplete="off" spellcheck="false" placeholder="Cari menu…" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="cari-menu-hasil" aria-describedby="cari-menu-petunjuk" aria-keyshortcuts="/" class="block min-h-11 w-full rounded-lg border border-gray-300 bg-gray-50 ps-9 pe-3 max-sm:[&::-webkit-search-cancel-button]:appearance-none text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500" data-cari-menu-isian>
+                    <span id="cari-menu-petunjuk" class="sr-only">Ketik nama menu, pilih dengan panah atas atau bawah, lalu tekan Enter untuk membuka halamannya.</span>
+                    <ul id="cari-menu-hasil" role="listbox" aria-label="Menu yang cocok" class="absolute inset-x-0 top-full z-40 mt-1 max-h-80 overflow-y-auto rounded-lg border border-gray-200 bg-white p-1 shadow-lg" data-cari-menu-hasil hidden></ul>
+                    <p class="absolute inset-x-0 top-full z-40 mt-1 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-600 shadow-lg" data-cari-menu-kosong hidden>Tidak ada menu yang cocok.</p>
+                    <span class="sr-only" role="status" data-cari-menu-status></span>
+                </div>
+                <button type="button" class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 sm:hidden" data-cari-menu-tutup>
+                    <?= ikon('x', 'size-5', 'Tutup pencarian menu') ?>
+                </button>
+            </div>
+            <button type="button" class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100 sm:hidden" aria-controls="cari-menu-panel" aria-expanded="false" data-cari-menu-buka hidden>
+                <?= ikon('search', 'size-5', 'Cari menu') ?>
+            </button>
+        </div>
         <a href="<?= site_url('admin/akun') ?>" data-nama-admin class="hidden min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold text-gray-700 hover:bg-gray-100 sm:inline-flex" title="Buka Akun: ganti nama dan kata sandi">
             <?= ikon('circle-user-round', 'size-6 text-gray-500') ?><span class="sr-only">Masuk sebagai</span><span class="max-w-40 truncate"><?= esc((string) session('admin_nama')) ?></span>
         </a>
-        <form action="<?= site_url('admin/keluar') ?>" method="post">
+        <form action="<?= site_url('admin/keluar') ?>" method="post" class="shrink-0">
             <?= csrf_field() ?>
-            <?= komponen('tombol', ['label' => 'Keluar', 'tipe' => 'submit', 'varian' => 'kedua', 'ukuran' => 'kecil', 'ikon' => 'log-out', 'kelas' => 'min-h-11']) ?>
+            <button type="submit" class="inline-flex size-11 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-gray-50 text-sm font-semibold text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:outline-none focus:ring-4 focus:ring-gray-100 sm:w-auto sm:bg-white sm:px-3" title="Keluar" data-keluar-admin>
+                <?= ikon('log-out', 'size-5') ?><span class="max-sm:sr-only">Keluar</span>
+            </button>
         </form>
     </header>
 
@@ -126,13 +154,14 @@ $pakaiTabel   = trim($this->renderSection('tabel')) !== '';
         </main>
     </div>
 
-    <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden" aria-label="Menu pendaftaran" data-menu-admin="bawah">
+    <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden" aria-label="Menu bawah" data-menu-admin="bawah">
         <?= view('tata_letak/_menu_admin_tw', ['tempatMenu' => 'bawah'], ['saveData' => false]) ?>
     </nav>
 
     <script src="<?= base_url('aset/vendor/flowbite/flowbite.min.js') ?>"></script>
     <script src="<?= aset('js/kemajuan.js') ?>"></script>
     <script src="<?= aset('js/menu-admin.js') ?>"></script>
+    <script src="<?= aset('js/cari-menu.js') ?>"></script>
     <?php if ($pakaiTabel) : ?>
     <script src="<?= aset('vendor/jquery/jquery.min.js') ?>"></script>
     <script src="<?= aset('vendor/datatables/js/dataTables.min.js') ?>"></script>

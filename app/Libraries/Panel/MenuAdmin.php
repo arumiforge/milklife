@@ -15,9 +15,10 @@ use App\Controllers\Admin\Pengaturan\BerandaPengaturanController;
  *   lalu daftar akhir (Pengecekan, Lihat halaman depan) di bagian bawahnya
  *   (K102). Kelompok dan submenu bisa dilipat (F10-03,
  *   `aset/js/menu-admin.js`). Di ponsel sidebar menjadi laci yang dibuka
- *   tombol menu di kepala halaman (K131, K133) atau butir Menu di menu bawah;
- * - menu bawah ponsel: butir urusan pendaftaran bertanda `bawah`, lalu butir
- *   Menu yang membuka sidebar, tepat 5 butir: Dasbor, Pendaftaran, Atlet, Rekap, Menu (K132, K157, F10-03).
+ *   tombol menu di kepala halaman (K131, K133);
+ * - menu bawah ponsel: butir bertanda `bawah`, tepat 5 butir: Dasbor,
+ *   Pendaftaran, Atlet, Rekap, Pengaturan (K174 butir 3, menggantikan butir
+ *   Menu K157). Sidebar tetap dibuka tombol menu di kepala halaman.
  *
  * Butir: `label`, `ikon` (nama ikon Lucide), `alamat`, pilihan `label_pendek`
  * (menu bawah), `bawah`, `aktif_juga` (alamat lain yang ikut menandai
@@ -49,7 +50,7 @@ final class MenuAdmin
                     ['label' => 'Urutkan nomor atlet (BIB)', 'alamat' => 'admin/atlet/nomor-dada'],
                 ]],
                 // Atlet yang ditolak panitia, terpisah dari atlet terdaftar (K117).
-                // Di menu bawah diganti butir Menu (F10-03, permintaan A9); tetap di sidebar.
+                // Hanya di sidebar, tidak di menu bawah (K157, K174).
                 ['label' => 'Atlet ditolak', 'label_pendek' => 'Ditolak', 'ikon' => 'user-x', 'alamat' => 'admin/atlet-ditolak'],
                 // Data sekolah (K97).
                 ['label' => 'Sekolah', 'ikon' => 'school', 'alamat' => 'admin/sekolah', 'anak' => [
@@ -86,7 +87,7 @@ final class MenuAdmin
         return $kelompok + [
             // Submenu: semua halaman pengaturan dan Akun yang belum ada di kelompok lain (F10-03).
             'Pengaturan' => [
-                ['label' => 'Pengaturan', 'ikon' => 'settings', 'alamat' => 'admin/pengaturan', 'anak' => self::anakPengaturan($kelompok)],
+                ['label' => 'Pengaturan', 'ikon' => 'settings', 'alamat' => 'admin/pengaturan', 'bawah' => true, 'anak' => self::anakPengaturan($kelompok)],
             ],
         ];
     }
@@ -128,9 +129,8 @@ final class MenuAdmin
     }
 
     /**
-     * Butir menu bawah ponsel bertanda `bawah` (susunan K157, gaya butir aktif K133). Tata letak
-     * menambahkan butir Menu yang membuka sidebar sebagai butir kelima
-     * (F10-03, permintaan A9).
+     * Butir menu bawah ponsel bertanda `bawah` (susunan K174 butir 3, gaya
+     * butir aktif K133): Dasbor, Pendaftaran, Atlet, Rekap, Pengaturan.
      *
      * @return list<array{label: string, ikon: string, alamat: string, label_pendek?: string, bawah?: bool, aktif_juga?: list<string>, anak?: list<array{label: string, alamat: string}>}>
      */
@@ -150,6 +150,23 @@ final class MenuAdmin
     public static function memuat(array $butir, ?string $aktif): bool
     {
         return $aktif !== null && in_array($aktif, [$butir['alamat'], ...array_column($butir['anak'] ?? [], 'alamat')], true);
+    }
+
+    /**
+     * Apakah butir menu bawah ini sedang aktif. Pengaturan ikut menyala di
+     * semua halaman yang punya pil navigasi Pengaturan (`admin/pengaturan/…`
+     * dan Akun), termasuk yang di sidebar ada di kelompok Konten atau Hasil,
+     * sejalan dengan jejaknya (`halamanPengaturan()`).
+     *
+     * @param array{alamat: string, anak?: list<array{label: string, alamat: string}>} $butir
+     */
+    public static function aktifDiBawah(array $butir, ?string $aktif): bool
+    {
+        if ($butir['alamat'] === 'admin/pengaturan') {
+            return url_is('admin/pengaturan') || self::halamanPengaturan() !== null;
+        }
+
+        return self::memuat($butir, $aktif);
     }
 
     /**
@@ -190,9 +207,11 @@ final class MenuAdmin
      * Jejak navigasi bawaan untuk halaman yang tidak menulis jejaknya
      * sendiri (F10-03), untuk `admin/_jejak_tw`: butir induk (bila halaman
      * ini anak submenu), butir menu yang aktif, lalu judul halaman. Bila
-     * halaman ini halaman butir itu sendiri, butir terakhir memakai judul
-     * halaman. Contoh: `admin/pengaturan/jadwal/3/ubah` menjadi Pengaturan ›
-     * Agenda › Ubah Agenda.
+     * halaman ini halaman butir itu sendiri, butir terakhir memakai label
+     * butir menu (atau label pil Pengaturan), bukan judul halaman. Contoh: `admin/pengaturan/jadwal/3/ubah` menjadi Pengaturan ›
+     * Agenda › Ubah Agenda. Halaman pengaturan selalu lewat Pengaturan
+     * (`halamanPengaturan()`). Butir "Dasbor" di depan ditambahkan
+     * `admin/_jejak_tw`.
      *
      * @param string $judul Judul halaman, teks biasa.
      *
@@ -200,30 +219,13 @@ final class MenuAdmin
      */
     public static function jejak(string $judul): array
     {
-        $aktif = self::alamatAktif();
-        $jejak = [];
-        $kini  = null;
-
-        foreach ([...array_merge(...array_values(self::kelompok())), ...self::akhir()] as $butir) {
-            if (! self::memuat($butir, $aktif)) {
-                continue;
-            }
-
-            $kini = ['label' => $butir['label'], 'alamat' => $butir['alamat']];
-
-            foreach ($butir['anak'] ?? [] as $anak) {
-                if ($anak['alamat'] === $aktif) {
-                    $jejak[] = $kini;
-                    $kini    = $anak;
-                }
-            }
-
-            break;
-        }
+        [$jejak, $kini] = self::halamanPengaturan() ?? self::rantaiMenu();
 
         if ($kini !== null && ! url_is($kini['alamat'])) {
             $jejak[] = $kini;
-        } elseif ($kini !== null && $judul === '') {
+        } elseif ($kini !== null) {
+            // Halaman butir itu sendiri: label menu atau pil, bukan judul halaman,
+            // supaya jejak sama dengan sidebar dan pil navigasi (K174 butir 2).
             $judul = $kini['label'];
         }
 
@@ -236,6 +238,60 @@ final class MenuAdmin
         }
 
         return $jejak;
+    }
+
+    /**
+     * Rantai menu untuk jejak: butir induk (bila halaman ini anak submenu)
+     * dan butir yang aktif (`kini`), atau `kini` null bila tidak ada butir
+     * yang aktif.
+     *
+     * @return array{0: list<array{label: string, alamat: string}>, 1: array{label: string, alamat: string}|null}
+     */
+    private static function rantaiMenu(): array
+    {
+        $aktif = self::alamatAktif();
+
+        foreach ([...array_merge(...array_values(self::kelompok())), ...self::akhir()] as $butir) {
+            if (! self::memuat($butir, $aktif)) {
+                continue;
+            }
+
+            $jejak = [];
+            $kini  = ['label' => $butir['label'], 'alamat' => $butir['alamat']];
+
+            foreach ($butir['anak'] ?? [] as $anak) {
+                if ($anak['alamat'] === $aktif) {
+                    $jejak[] = $kini;
+                    $kini    = ['label' => $anak['label'], 'alamat' => $anak['alamat']];
+                }
+            }
+
+            return [$jejak, $kini];
+        }
+
+        return [[], null];
+    }
+
+    /**
+     * Rantai jejak halaman yang punya pil navigasi Pengaturan
+     * (`admin/pengaturan/_navigasi`): selalu Pengaturan lalu label pilnya,
+     * juga untuk halaman yang di sidebar ada di kelompok lain (Konten,
+     * Videotron, Akun), supaya jejak sejalan dengan pil yang ditandai
+     * (F11-10, K174 butir 2). Null bila alamat ini bukan halaman pengaturan.
+     *
+     * @return array{0: list<array{label: string, alamat: string}>, 1: array{label: string, alamat: string}}|null
+     */
+    private static function halamanPengaturan(): ?array
+    {
+        $kini = null;
+
+        foreach (BerandaPengaturanController::daftarHalaman() as $halaman) {
+            if ((url_is($halaman['alamat']) || url_is($halaman['alamat'] . '/*')) && strlen($halaman['alamat']) > strlen($kini['alamat'] ?? '')) {
+                $kini = ['label' => $halaman['label'], 'alamat' => $halaman['alamat']];
+            }
+        }
+
+        return $kini === null ? null : [[['label' => 'Pengaturan', 'alamat' => 'admin/pengaturan']], $kini];
     }
 
     /**

@@ -65,7 +65,7 @@ foreach ($calon as $kunci => $c) {
 
 <?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [
     ['label' => 'Hasil lomba', 'alamat' => 'admin/hasil'],
-    ['label' => $nomor['kelompok_umur'] . ' ' . $nomor['nama'], 'alamat' => 'admin/hasil/nomor/' . $nomor['id']],
+    ['label' => $nomor['nama'] . ' ' . $nomor['kelompok_umur'], 'alamat' => 'admin/hasil/nomor/' . $nomor['id']],
     ['label' => $babak['nama']],
 ]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
