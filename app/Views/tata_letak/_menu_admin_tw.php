@@ -11,14 +11,14 @@
  *   `data-lipat="<kunci>"` (`aset/js/menu-admin.js` mengingat keadaannya);
  *   yang memuat halaman aktif selalu terbuka (`data-lipat-aktif`). Tanpa
  *   JavaScript kelompok terbuka dan submenu yang tidak aktif tertutup.
- * - `$tempatMenu = 'bawah'`: menu bawah ponsel, 4 butir urusan pendaftaran
- *   dan butir Menu yang membuka sidebar (K133, F10-03); butir aktif ikon dan
- *   label oranye.
+ * - `$tempatMenu = 'bawah'`: menu bawah ponsel, 5 butir Dasbor, Pendaftaran,
+ *   Atlet, Rekap, Pengaturan (K174 butir 3); butir aktif ikon dan label
+ *   oranye (K133).
  *
  * Penanda untuk uji dan skrip (tidak bergantung pada kelas CSS):
  * `data-menu-kelompok="<nama>"`, `data-menu-tautan="<alamat>"`,
- * `data-menu-anak` pada tautan submenu, `data-menu-akhir` pada daftar akhir,
- * dan `data-menu-buka` pada butir Menu di menu bawah.
+ * `data-menu-anak` pada tautan submenu, dan `data-menu-akhir` pada daftar
+ * akhir.
  *
  * @var string|null $tempatMenu `samping` atau `bawah`
  */
@@ -67,7 +67,7 @@ $tautanSamping = static function (array $butir) use ($alamatAktif, $kelasTautan,
 <?php if (($tempatMenu ?? 'samping') === 'bawah') : ?>
     <ul class="mx-auto grid max-w-xl grid-cols-5">
         <?php foreach (MenuAdmin::bawah() as $butir) : ?>
-            <?php $kini = MenuAdmin::memuat($butir, $alamatAktif); ?>
+            <?php $kini = MenuAdmin::aktifDiBawah($butir, $alamatAktif); ?>
             <li class="min-w-0">
                 <a data-menu-tautan="<?= esc($butir['alamat'], 'attr') ?>" href="<?= site_url($butir['alamat']) ?>"<?= $kini ? ' aria-current="page"' : '' ?> class="flex min-h-14 flex-col items-center justify-center gap-0.5 px-0.5 text-[11px] min-[380px]:text-xs focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-primary-700 <?= $kini ? 'font-bold text-oranye-600' : 'font-semibold text-gray-700' ?>"<?= isset($butir['label_pendek']) ? ' title="' . esc($butir['label'], 'attr') . '"' : '' ?>>
                     <?= ikon($butir['ikon'], $kini ? 'size-6 text-oranye-500' : 'size-6 text-gray-500') ?>
@@ -75,12 +75,6 @@ $tautanSamping = static function (array $butir) use ($alamatAktif, $kelasTautan,
                 </a>
             </li>
         <?php endforeach ?>
-        <li class="min-w-0">
-            <button type="button" data-menu-buka data-drawer-target="menu-laci" data-drawer-toggle="menu-laci" aria-controls="menu-laci" class="flex min-h-14 w-full flex-col items-center justify-center gap-0.5 px-0.5 text-[11px] min-[380px]:text-xs font-semibold text-gray-700 focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-primary-700">
-                <?= ikon('menu', 'size-6 text-gray-500') ?>
-                <span class="max-w-full truncate">Menu</span>
-            </button>
-        </li>
     </ul>
 <?php else : ?>
     <div class="flex min-h-full flex-col gap-3">

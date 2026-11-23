@@ -177,12 +177,13 @@ final class BerandaPengaturanTest extends UjiHalaman
             $xpath = $this->xpathHtml($this->renderDiAlamat($alamat, 'Tests\Support\Views\contoh_admin'));
             $aktif = [];
 
-            foreach ($xpath->query('//a[@data-menu-tautan][@aria-current="page"]') as $tautan) {
+            foreach ($xpath->query('//nav[@data-menu-admin="samping"]//a[@data-menu-tautan][@aria-current="page"]') as $tautan) {
                 $aktif[] = $this->teks($tautan);
             }
 
-            // Hanya menu samping (sidebar di ponsel); Pengaturan tidak di menu bawah (K133).
             $this->assertSame([$label], $aktif, $alamat);
+            // Menu bawah: butir Pengaturan ikut menyala (K174 butir 3).
+            $this->assertSame(['Pengaturan'], array_map($this->teks(...), iterator_to_array($xpath->query('//nav[@data-menu-admin="bawah"]//a[@aria-current="page"]'))), $alamat);
         }
 
         $xpath = $this->xpathHtml($this->renderDiAlamat('admin/pengaturanlain', 'Tests\Support\Views\contoh_admin'));

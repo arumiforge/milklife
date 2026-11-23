@@ -34,7 +34,7 @@ $pesan    = static fn (string $kotak): string => isset($galat[$kotak]) ? '<p id=
 
 <?= $this->section('judul') ?>Hasil <?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?><?= $this->endSection() ?>
 
-<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Hasil lomba', 'alamat' => 'admin/hasil'], ['label' => $nomor['kelompok_umur'] . ' ' . $nomor['nama']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
+<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Hasil lomba', 'alamat' => 'admin/hasil'], ['label' => $nomor['nama'] . ' ' . $nomor['kelompok_umur']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">

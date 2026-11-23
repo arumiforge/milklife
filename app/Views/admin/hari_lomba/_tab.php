@@ -18,7 +18,7 @@ $tab = [
 // ikon-sprite: scan-qr-code printer list-ordered calendar-days smartphone
 ?>
 <nav class="min-w-0" aria-label="Halaman hari lomba" data-tab-hari-lomba>
-    <ul class="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+    <ul class="relative -mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
         <?php foreach ($tab as $alamat => [$label, $ikon, $pendek]) : ?>
             <?php $aktifTab = $alamat === $aktif; ?>
             <li class="shrink-0">
@@ -27,7 +27,7 @@ $tab = [
                     <?php if ($pendek === null) : ?>
                         <?= esc($label) ?>
                     <?php else : ?>
-                        <span class="hidden sm:inline"><?= esc($label) ?></span><span class="sm:hidden"><?= esc($pendek) ?></span>
+                        <span class="max-sm:sr-only"><?= esc($label) ?></span><span class="sm:hidden" aria-hidden="true"><?= esc($pendek) ?></span>
                     <?php endif ?>
                 </a>
             </li>

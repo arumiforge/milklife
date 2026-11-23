@@ -74,6 +74,8 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 
 <?= $this->section('judul_halaman') ?>Rekap<?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Rekap', 'alamat' => 'admin/rekap'], ['label' => Rekap::JENIS[$jenis]]]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <section class="<?= $kartu ?> flex flex-wrap items-center justify-between gap-4" id="rekap-gabungan" aria-labelledby="judul-rekap-gabungan">

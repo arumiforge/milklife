@@ -26,6 +26,8 @@ $adaBagi  = in_array(true, array_map(static fn (array $b): bool => $b['dibagi'] 
 
 <?= $this->section('judul') ?>Seri <?= esc($nomor['nama']) ?> <?= esc($nomor['kelompok_umur']) ?><?= $this->endSection() ?>
 
+<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Seri dan lintasan', 'alamat' => 'admin/seri'], ['label' => $nomor['nama'] . ' ' . $nomor['kelompok_umur']]]], ['saveData' => false]) ?><?= $this->endSection() ?>
+
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <?= view('admin/hasil/_status_nomor', ['nomor' => $nomor, 'peringatan' => $peringatan], ['saveData' => false]) ?>

@@ -145,7 +145,7 @@ final class PanelRuteTest extends UjiHalaman
             }
 
             // Menu samping, lalu menu bawah bila butirnya (atau induk anak
-            // submenu) termasuk butir pendaftaran di menu bawah (K133, F10-03).
+            // submenu) termasuk butir menu bawah (K133, F10-03, K174).
             $bawah = trim($xpath->query('//nav[@data-menu-admin="bawah"]//a[@aria-current="page"]')->item(0)?->textContent ?? '');
             $this->assertSame([$label], array_slice($aktif, 0, 1), $alamat);
             $this->assertSame([
@@ -157,6 +157,7 @@ final class PanelRuteTest extends UjiHalaman
                 'admin/rekap/keuangan'              => 'Rekap',
                 'admin/riwayat'                     => 'Pendaftaran',
                 'admin/atlet/nomor-dada'            => 'Atlet',
+                'admin/pengaturan/pendaftaran'      => 'Pengaturan',
             ][$alamat] ?? '', $bawah, $alamat);
             $this->assertCount($bawah === '' ? 1 : 2, $aktif, $alamat);
         }
