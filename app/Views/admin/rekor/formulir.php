@@ -52,7 +52,7 @@ foreach ($nomor as $n) {
 
 <?= $this->section('judul') ?><?= esc($judul) ?><?= $this->endSection() ?>
 
-<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Hasil lomba', 'alamat' => 'admin/hasil'], ['label' => 'Rekor kejuaraan', 'alamat' => 'admin/rekor'], ['label' => $judul]]], ['saveData' => false]) ?><?= $this->endSection() ?>
+<?= $this->section('jejak') ?><?= view('admin/_jejak_tw', ['jejak' => [['label' => 'Rekor', 'alamat' => 'admin/rekor'], ['label' => $judul]]], ['saveData' => false]) ?><?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">

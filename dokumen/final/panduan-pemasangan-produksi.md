@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101); **revisi 12 23 November 2026** (penutupan Tahap 11, diubah langsung sesuai K101) |
+| Revisi 12 | Penutupan Tahap 11 (F11-08): ringkasan perintah sekali jalan pembaruan Tahap 11 (`cadangan:buat`, `migrate --all`, `data:sesuaikan`, `aset:minify`, `pembaruan:periksa`), langkah tanya-jawab baru di `data:sesuaikan`, pengaturan yang diperiksa admin setelah pembaruan (susunan klasemen, pelaksanaan nomor lomba, nomor acara, sakelar Rekor dan Videotron), dan alamat `/layar` untuk operator videotron vendor (K172–K176). Bagian yang berubah: 10 |
 | Revisi 11 | Cadangan di panel admin (F11-11, K174): menu Pengaturan > Cadangan menggantikan tombol Backup data, cadangannya berisi semua data, pengaturan, dan berkas unggahan; impor lewat panel mengganti semua setelah cadangan otomatis di `writable\cadangan`; perintah `php spark cadangan:pulihkan` untuk berkas yang terlalu besar diunggah; batas unggah PHP untuk impor. Bagian yang berubah: 8, 9, 10 |
 | Revisi 10 | Penutupan Tahap 10 (F10-11): ringkasan perintah sekali jalan pembaruan Tahap 10 berurutan (`migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `data:sesuaikan`, `aset:minify`, lalu `pendaftaran:impor` bila perlu, K157 butir 4), dan catatan bahwa tanya-jawab serta pesan WA yang sudah tersimpan di server tidak berubah otomatis, disunting admin di Pengaturan → Bantuan dan Pengaturan → Halaman depan (K166 butir 3). Bagian yang berubah: 10 |
 | Revisi 9 | Penutupan Tahap 9 (F9-18): daftar lengkap perintah sekali jalan pembaruan Tahap 9 (`migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `aset:minify`), sakelar fitur publik baru yang bawaan mati, dan server tetap tanpa Node. Bagian yang berubah: 10 |
@@ -14,7 +15,7 @@
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, dan 22 November 2026 (revisi 3, 4, 5, 6, 7, 8, 9, 10, dan 11) |
+| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, 22, dan 23 November 2026 (revisi 3, 4, 5, 6, 7, 8, 9, 10, 11, dan 12) |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -438,6 +439,33 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    - Pesan WA "Tanya panitia" dan "Bagikan lewat WA" di **Pengaturan → Halaman depan**. Pesan bawaan baru: "Halo panitia, saya ingin bertanya tentang lomba." dan "Yuk ikut lomba atletik pelajar ini. Info dan pendaftaran:". Alamat situs dan tagar `#MilkLifeAthleticsChallengeSeri2` ditambahkan otomatis.
 
    Tampilan baru (panel admin, halaman publik, gambar bergaya anime, logo Djarum Foundation baru) langsung aktif setelah `git pull` dan `aset:minify`, tanpa sakelar. Server tetap tidak perlu Node.
+
+   **Ringkasan pembaruan Tahap 11** (pelajaran hasil Seri 1, F11-01 sampai F11-12, K172–K176). Tahap 11 menambah tabel `atlet_diganti` dan `rekor` serta kolom baru di nomor lomba, babak, dan hasil. Semua kolom baru berbawaan perilaku lama, jadi data yang sudah ada tetap terbaca sama. Server yang sudah menjalankan ringkasan Tahap 10 menjalankan sekali, berurutan, setelah `git pull` dan `composer install --no-dev --optimize-autoloader`:
+
+   ```
+   php spark cadangan:buat
+   php spark migrate --all
+   php spark data:sesuaikan
+   php spark aset:minify
+   php spark pembaruan:periksa
+   ```
+
+   Server yang belum menjalankan ringkasan Tahap 9 atau Tahap 10 menjalankan ringkasan Tahap 10 di atas dulu, lalu perintah ini. Di Tahap 11 `data:sesuaikan` juga:
+
+   - menghapus kalimat bawaan lama "Juara umum dihitung per jenjang sekolah." dari tanya-jawab juara umum;
+   - mengganti jawaban bawaan lama tanya-jawab "Bolehkah mengganti atau menambah atlet …" dengan jawaban tentang ganti atlet oleh panitia, hanya bila jawabannya belum diubah admin;
+   - menambahkan **sekali** lima tanya-jawab baru (nomor acara, arti DNS/DNF/DQ/NM/r/CR, waktu tangan, nomor tidak dilombakan, rekor kejuaraan) di akhir kategorinya. Pertanyaan yang sudah ada tidak ditambah lagi, dan tanya-jawab yang kemudian dihapus admin tidak kembali saat perintah dijalankan lagi.
+
+   Jawaban lain yang sudah diubah admin tidak disentuh. Setelah pembaruan, admin memeriksa dan mengatur:
+
+   - **Pengaturan → Hasil → Susunan klasemen**: kelompok umur yang digabung dalam satu klasemen, misalnya KU 8 dan KU 10. Sebelum diatur, setiap kelompok umur punya klasemen sendiri.
+   - **Pengaturan → Nomor Lomba**, bagian Pelaksanaan lomba di tiap nomor: batas peserta minimal, status Tidak dilombakan beserta alasannya, spesifikasi alat, dan cara pencatatan waktu (bawaan elektronik).
+   - **Jadwal pertandingan**: tekan **Beri nomor acara** setelah jadwal lengkap.
+   - **Hasil → Rekor**: halaman Rekor publik (`/rekor`) **bawaan mati**. Nyalakan sakelarnya setelah isi rekor diperiksa. Tanda CR di hasil dan videotron tetap tampil tanpa sakelar ini.
+   - **Pengaturan → Videotron**: sakelar tampil untuk semua alamat videotron **bawaan mati**, dan gambar latar bisa diunggah. Setelah sakelar menyala, berikan alamat **`/layar`** situs produksi (misalnya `https://<alamat situs>/layar`) kepada operator videotron vendor. Halaman itu berisi daftar tautan tampilan tetap per seri, sesi, klasemen, kelompok umur, dan nomor lomba, tanpa perlu masuk. Tampilan putar lama ada di `/layar/putar` (K173).
+   - **Pengaturan → Cadangan**: unduh cadangan lengkap sebelum dan sesudah hari lomba. Untuk impor lewat panel, `upload_max_filesize` dan `post_max_size` di `php.ini` harus lebih besar dari berkas cadangan; bila tidak, pakai `php spark cadangan:pulihkan <berkas.zip>` (bagian 9).
+
+   Panel admin yang lebih ringkas dan halaman depan baru langsung aktif setelah `aset:minify`, tanpa sakelar. Gambar kartu kelompok umur dan latar hero kiri (G11-01, G11-02) tampil otomatis setelah berkasnya digabung ke git dan `git pull`; sebelum itu halaman memakai gradien cadangan.
 
 3. Buka halaman depan dan panel admin, pastikan tampil normal.
 

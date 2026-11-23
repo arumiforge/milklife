@@ -11,9 +11,9 @@ Tahap 11 ditutup dengan uji menyeluruh dan panduan admin hari lomba yang memuat 
 
 ## Hasil
 
-- [ ] `composer uji` lulus, uji peramban alur ganti atlet, klasemen, rekor.
-- [ ] Panduan admin dan FAQ memuat ganti atlet, status nomor, cara pencatatan waktu, kode NM dan r, rekor, dan nomor acara.
-- [ ] Rancangan web direvisi dan PDF dibuat ulang; Tahap 11 dipindah ke `agent/arsip/tahap-11.md`.
+- [x] `composer uji` lulus, uji peramban alur ganti atlet, klasemen, rekor.
+- [x] Panduan admin dan FAQ memuat ganti atlet, status nomor, cara pencatatan waktu, kode NM dan r, rekor, dan nomor acara.
+- [x] Rancangan web direvisi dan PDF dibuat ulang; Tahap 11 dipindah ke `agent/arsip/tahap-11.md`.
 
 ## Berkas dan uji
 
