@@ -551,7 +551,27 @@
         mask-image: linear-gradient(to right, #000 55%, transparent);
     }
     /* ===== akhir F11-12 ================================================ */
-=======
+
+    /* ===== F11-15: kartu KU (K179) ===================================
+       Angka KU lebih besar dari tinggi kartu: melewati tepi bawah dan kanan
+       lalu terpotong kotak (`overflow: hidden` di kartu). Ukurannya mengikuti
+       lebar kartu (container query), jadi digit kedua selalu terpotong
+       sebagian di tepi kanan, di ponsel maupun desktop. */
+    .kartu-ku {
+        container-type: inline-size;
+    }
+
+    .angka-ku {
+        font-size: 118cqw;
+        line-height: 1;
+    }
+
+    /* Jumlah nomor (ikon dan angka) di bawah angka KU: huruf ikut lebar kartu. */
+    .kartu-ku-jumlah {
+        font-size: clamp(0.75rem, 8cqw, 0.9375rem);
+    }
+    /* ===== akhir F11-15 =============================================== */
+
     /* ===== F11-10: panel admin ringkas (K174 butir 4 dan 6) =========== */
     /* Teks lebih dari dua baris di tabel dan kartu admin dipotong;
        `aset/js/panel-ringkas.js` memasang kelas dan tombol Selengkapnya.
