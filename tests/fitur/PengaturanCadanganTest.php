@@ -80,6 +80,7 @@ final class PengaturanCadanganTest extends UjiBasisData
         $this->assertNotFalse($zip->locateName('data.json'));
         $this->assertNotFalse($zip->locateName('tabel/settings.jsonl'));
         $this->assertNotFalse($zip->locateName('tabel/atlet_diganti.jsonl'));
+        $this->assertNotFalse($zip->locateName('tabel/rekor.jsonl'), 'Rekor kejuaraan (F11-06) ikut cadangan.');
         $this->assertFalse($zip->locateName('tabel/admin.jsonl'), 'Akun admin tidak ikut cadangan.');
         $this->assertFalse($zip->locateName('tabel/migrations.jsonl'));
         $this->assertNotFalse($zip->locateName('unggahan/videotron/' . str_repeat('ab', 16) . '.webp'));
