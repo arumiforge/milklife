@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101) |
+| Revisi 11 | Cadangan di panel admin (F11-11, K174): menu Pengaturan > Cadangan menggantikan tombol Backup data, cadangannya berisi semua data, pengaturan, dan berkas unggahan; impor lewat panel mengganti semua setelah cadangan otomatis di `writable\cadangan`; perintah `php spark cadangan:pulihkan` untuk berkas yang terlalu besar diunggah; batas unggah PHP untuk impor. Bagian yang berubah: 8, 9, 10 |
 | Revisi 10 | Penutupan Tahap 10 (F10-11): ringkasan perintah sekali jalan pembaruan Tahap 10 berurutan (`migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `data:sesuaikan`, `aset:minify`, lalu `pendaftaran:impor` bila perlu, K157 butir 4), dan catatan bahwa tanya-jawab serta pesan WA yang sudah tersimpan di server tidak berubah otomatis, disunting admin di Pengaturan → Bantuan dan Pengaturan → Halaman depan (K166 butir 3). Bagian yang berubah: 10 |
 | Revisi 9 | Penutupan Tahap 9 (F9-18): daftar lengkap perintah sekali jalan pembaruan Tahap 9 (`migrate --all`, `faq:awal`, `tabel-skor:impor --trilomba`, `halaman-depan:carousel`, `galeri:awal`, `aset:minify`), sakelar fitur publik baru yang bawaan mati, dan server tetap tanpa Node. Bagian yang berubah: 10 |
 | Revisi 8 | Pembaruan yang membawa Galeri (F9-06): perintah sekali jalan `php spark galeri:awal` memasang album bawaan "Seri sebelumnya" tanpa menimpa album admin; halaman Galeri tetap tersembunyi sampai dinyalakan di Pengaturan > Galeri (K140 butir 11). Bagian yang berubah: 10 |
@@ -13,7 +14,7 @@
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, dan 22 November 2026 (revisi 3, 4, 5, 6, 7, 8, 9, dan 10) |
+| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, dan 22 November 2026 (revisi 3, 4, 5, 6, 7, 8, 9, 10, dan 11) |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Laragon untuk produksi (K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example` |
 
 ## Tujuan
@@ -279,7 +280,29 @@ Bila **Last Run Result** menunjukkan `(0x1)`, cadangan gagal. Jalankan `php spar
 
 Cadangan di diska yang sama tidak menolong bila komputernya rusak atau hilang. Seminggu sekali, dan setelah pendaftaran ditutup, salin berkas zip terbaru ke flashdisk atau penyimpanan lain yang hanya bisa dibuka panitia.
 
+### Cadangan dari panel admin
+
+Selain cadangan harian, admin bisa mengunduh cadangan kapan saja dari **Pengaturan → Cadangan → Unduh cadangan** (K174). Berkas `Cadangan_MilkLife_<tanggal>_<jam>.zip` berisi semua data, semua pengaturan, dan semua berkas unggahan; akun admin tidak ikut. Berkas yang sama bisa dimasukkan ke server baru yang masih kosong dengan `php spark pendaftaran:impor`, atau dipulihkan seluruhnya (bagian 9). Simpan di tempat yang hanya bisa dibuka panitia, karena isinya data pribadi siswa.
+
 ## 9. Memulihkan cadangan
+
+### Dari Pengaturan → Cadangan
+
+Cara ini untuk berkas `Cadangan_MilkLife_….zip` yang diunduh dari panel admin. Impor **mengganti semua** data, pengaturan, dan berkas unggahan dengan isi cadangan; akun admin tidak berubah.
+
+1. Buka **Pengaturan → Cadangan**, pilih berkasnya di **Impor cadangan**, ketik kata sandi Anda, lalu tekan **Impor dan ganti semua data**.
+2. Sebelum mengganti, web menyimpan cadangan data sekarang di `C:\laragon\www\milklife\writable\cadangan\Sebelum_Impor_….zip`. Lima yang terakhir disimpan dan bisa diunduh di bagian **Cadangan otomatis** di halaman yang sama. Bila impor keliru, unduh cadangan otomatis itu lalu impor lagi.
+3. Berkas rusak, berkas dari web versi lebih baru, dan Backup data versi lama ditolak tanpa mengubah apa pun. Bila tertulis versi lebih baru, perbarui web dulu (bagian 10), lalu impor lagi.
+
+Batas ukuran unggah di halaman itu mengikuti `upload_max_filesize` dan `post_max_size` di `php.ini` Laragon (**Menu → PHP → php.ini**). Bila cadangan lebih besar dari batas itu, atau impor terputus karena terlalu lama, salin berkasnya ke komputer server lalu jalankan di terminal Laragon, dari folder `C:\laragon\www\milklife`:
+
+```
+php spark cadangan:pulihkan D:\Cadangan_MilkLife_20261124_101500.zip
+```
+
+Perintah meminta Anda mengetik `GANTI`, lalu bekerja sama persis dengan impor di panel, termasuk cadangan otomatis, tanpa batas ukuran dan waktu.
+
+### Dari cadangan harian `cadangan:buat`
 
 Lakukan hanya bila data rusak atau terhapus, atau saat pindah ke komputer baru. Pemulihan **mengganti seluruh** isi basis data dan unggahan dengan isi cadangan; pendaftaran yang masuk setelah cadangan itu dibuat akan hilang.
 
@@ -401,7 +424,7 @@ Bila ada perbaikan baru di cabang `main` GitHub:
    php spark aset:minify
    ```
 
-   Semua perintah di atas aman dijalankan lagi dan tidak menimpa isian admin. Bila data pendaftaran perlu dipindah dari zip **Backup data** server lain, jalankan impor **paling akhir**, setelah `data:sesuaikan`, supaya nama kelompok umur `KU 8` sudah cocok:
+   Semua perintah di atas aman dijalankan lagi dan tidak menimpa isian admin. Bila data pendaftaran perlu dipindah dari zip **Backup data** server lain (sejak K174 berkas dari **Pengaturan → Cadangan**; untuk mengganti seluruh isi server pakai bagian 9), jalankan impor **paling akhir**, setelah `data:sesuaikan`, supaya nama kelompok umur `KU 8` sudah cocok:
 
    ```
    php spark pendaftaran:impor <berkas.zip>

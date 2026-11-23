@@ -13,7 +13,6 @@ use App\Libraries\Panel\GantiAtlet;
 use App\Libraries\Panel\GabungPendaftaran;
 use App\Libraries\Panel\AsalRincian;
 use App\Libraries\Panel\HapusPendaftaran;
-use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Panel\RiwayatAdmin;
 use App\Libraries\Panel\StatusPembayaran;
 use App\Libraries\Panel\TimTanpaPembayar;
@@ -36,8 +35,8 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   untuk admin (rute dijaga filter admin).
  * - `lunas`, `menunggu`: status pembayaran dan nomor dada (`StatusPembayaran`).
  * - `hapus`: pendaftaran beserta berkasnya (`HapusPendaftaran`).
- * - `ekspor`: zip semua data pendaftaran beserta foto dan bukti bayar untuk
- *   pindah server (`PaketPendaftaran`, K76).
+ * - `ekspor`: alamat lama tombol "Backup data" (K76), sekarang mengarah ke
+ *   Pengaturan > Cadangan (F11-11, K174).
  * - `massal`: lunas, menunggu, atau hapus untuk pendaftaran yang dicentang di
  *   daftar (K76), satu per satu dengan aturan yang sama.
  *
@@ -92,29 +91,12 @@ class PendaftaranController extends BaseController
     }
 
     /**
-     * Unduh paket semua pendaftaran (`PaketPendaftaran::ekspor()`). Zip
-     * dikirim langsung dari berkas sementara di `writable/cache/ekspor/`.
+     * Alamat lama tombol "Backup data" (K76): cadangan sekarang di
+     * Pengaturan > Cadangan (F11-11, K174).
      */
     public function ekspor(): ResponseInterface
     {
-        // Tanpa dimuat utuh ke memori (F7-25, K118). Berkas sementara dihapus
-        // oleh ekspor berikutnya setelah 1 jam (`PaketPendaftaran::jalurSementara()`).
-        $sementara = null;
-
-        try {
-            $sementara = PaketPendaftaran::jalurSementara();
-            (new PaketPendaftaran())->ekspor($sementara);
-        } catch (\RuntimeException $e) {
-            if ($sementara !== null) {
-                @unlink($sementara);
-            }
-
-            return redirect()->to(self::ALAMAT)->with('pesan_galat', $e->getMessage());
-        }
-
-        return $this->response->download($sementara, null)
-            ->setFileName('Backup_Pendaftaran_' . date('Ymd_His') . '.zip')
-            ->setContentType('application/zip', '');
+        return redirect()->to('admin/pengaturan/cadangan');
     }
 
     public function rincian(int $id): string

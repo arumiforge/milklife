@@ -10,8 +10,8 @@ use RuntimeException;
 /**
  * `php spark pendaftaran:impor <berkas.zip>` (K76)
  *
- * Memasukkan zip dari tombol "Backup data" di panel
- * Pendaftaran ke server ini: pendaftaran, penanggung jawab, atlet, nomor
+ * Memasukkan zip dari Pengaturan > Cadangan (F11-11; dulu tombol "Backup
+ * data" di Pendaftaran) ke server ini: pendaftaran, penanggung jawab, atlet, nomor
  * lomba, tim beregu, foto, dan bukti bayar, dengan ID pendaftaran, status, dan
  * nomor dada yang sama. Aturannya di `App\Libraries\Panel\PaketPendaftaran`:
  * hanya untuk server yang belum punya pendaftaran, dan pengaturan kelompok
@@ -21,7 +21,7 @@ class ImporPendaftaran extends BaseCommand
 {
     protected $group       = 'Aplikasi';
     protected $name        = 'pendaftaran:impor';
-    protected $description = 'Memasukkan zip ekspor pendaftaran dari server lama (tombol "Backup data" di panel).';
+    protected $description = 'Memasukkan zip ekspor pendaftaran dari server lama (Pengaturan > Cadangan).';
     protected $usage       = 'pendaftaran:impor <berkas.zip>';
     protected $arguments   = ['berkas.zip' => 'Jalur zip hasil ekspor dari panel Pendaftaran server lama.'];
 

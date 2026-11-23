@@ -13,7 +13,7 @@
  */
 
 // Ikon dari `daftarHalaman()`; tulis juga di sini supaya masuk sprite.
-// ikon-sprite: calendar-days door-open users trophy landmark app-window clock download phone circle-help images table award monitor user-cog
+// ikon-sprite: calendar-days door-open users trophy landmark app-window clock download phone circle-help images table award monitor database-backup user-cog
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>
 

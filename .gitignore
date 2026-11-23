@@ -87,3 +87,6 @@ $RECYCLE.BIN/
 .vscode/
 *.sublime-workspace
 *.sublime-project
+
+# Cadangan otomatis sebelum impor dan berkas impor sementara (F11-11)
+/writable/cadangan/

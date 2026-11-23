@@ -243,7 +243,7 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         touch($lain, $sekarang - 10 * PaketPendaftaran::UMUR_SEMENTARA);
 
         $this->buatPendaftaranPanel();
-        $this->bukaSebagaiAdmin('admin/pendaftaran/ekspor')->assertStatus(200);
+        $this->kirimSebagaiAdmin('admin/pengaturan/cadangan/unduh')->assertStatus(200);
 
         $this->assertFileDoesNotExist($lama, 'Zip lebih dari 1 jam harus dihapus.');
         $this->assertFileExists($baru, 'Zip yang belum 1 jam (mungkin sedang diunduh) tidak boleh dihapus.');
@@ -263,11 +263,12 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $this->assertFileDoesNotExist($folder . '/Backup_a.zip');
     }
 
-    public function testTombolEksporMengunduhZipDanPerintahImpor(): void
+    public function testTombolUnduhCadanganMengunduhZipDanPerintahImpor(): void
     {
         $this->buatPendaftaranPanel();
 
-        $hasil = $this->bukaSebagaiAdmin('admin/pendaftaran/ekspor');
+        // Tombol Backup data pindah ke Pengaturan > Cadangan (F11-11, K174).
+        $hasil = $this->kirimSebagaiAdmin('admin/pengaturan/cadangan/unduh');
         $hasil->assertStatus(200);
 
         // F7-25: dikirim dari berkas di `writable/cache/ekspor/`, tanpa dimuat ke memori.
@@ -276,7 +277,7 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
         $this->assertSame('', (string) $jawaban->getBody(), 'Isi zip tidak boleh dimuat ke badan jawaban.');
         $jawaban->buildHeaders(); // dipanggil `send()` sebelum isi dikirim
         $this->assertStringStartsWith('application/zip', $jawaban->getHeaderLine('Content-Type'));
-        $this->assertMatchesRegularExpression('/attachment; filename="Backup_Pendaftaran_\d{8}_\d{6}\.zip"/', $jawaban->getHeaderLine('Content-Disposition'));
+        $this->assertMatchesRegularExpression('/attachment; filename="Cadangan_MilkLife_\d{8}_\d{6}\.zip"/', $jawaban->getHeaderLine('Content-Disposition'));
         $sementara = glob(PaketPendaftaran::FOLDER_SEMENTARA . '/Backup_*.zip') ?: [];
         $this->assertCount(1, $sementara);
         $this->assertSame((string) filesize($sementara[0]), $jawaban->getHeaderLine('Content-Length'));
@@ -292,6 +293,7 @@ final class PanelPaketPendaftaranTest extends UjiBasisData
 
         $this->assertSame(EXIT_ERROR, service('commands')->run('pendaftaran:impor', []));
         $this->assertBelumMasukDialihkan('admin/pendaftaran/ekspor');
+        $this->assertBelumMasukDialihkan('admin/pengaturan/cadangan/unduh', 'post');
     }
 
     /**

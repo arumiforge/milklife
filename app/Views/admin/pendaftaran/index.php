@@ -79,7 +79,6 @@ $pilihan = 'block min-h-11 w-full rounded-lg border border-gray-300 bg-white p-2
             <div class="flex max-w-full flex-wrap gap-2">
                 <?= komponen('tombol', ['label' => 'Kosongkan saringan', 'tipe' => 'reset', 'varian' => 'kedua', 'ikon' => 'circle-x']) ?>
                 <?= komponen('tombol', ['label' => 'Unduh Excel', 'href' => site_url('admin/pendaftaran/excel'), 'varian' => 'kedua', 'ikon' => 'file-spreadsheet', 'atribut' => ['id' => 'excel-pendaftaran']]) ?>
-                <?= komponen('tombol', ['label' => 'Backup data', 'href' => site_url('admin/pendaftaran/ekspor'), 'varian' => 'kedua', 'ikon' => 'cloud-download', 'atribut' => ['id' => 'ekspor-pendaftaran', 'title' => 'Semua pendaftaran, foto, dan bukti bayar dalam satu zip, misalnya untuk pindah server']]) ?>
             </div>
         </form>
 
