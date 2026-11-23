@@ -15,6 +15,7 @@ Staging dan produksi bisa dipasang di VPS Ubuntu 24.04 dengan Docker Compose (PH
 - [x] `docker/compose.yaml` dan `docker/.env.example`: app, db MySQL 8.4, cloudflared; tanpa `ports:`; subnet dan nama proyek per lingkungan; volume `writable`, `unggahan`, `mysql`; folder cadangan host; layanan `salin-r2` (rclone, profil `salin`) yang menyalin cadangan baru ke Cloudflare R2.
 - [x] `docker/Caddyfile`: hanya `index.php` dan `arumi.php` yang dijalankan, berkas tersembunyi ditolak, `HTTPS off` supaya `app.forceGlobalSecureRequests` bekerja di balik tunnel. `docker/php.ini`: batas unggah 10/12 MB, OPcache tanpa cek tanggal berkas.
 - [x] `App::$proxyIPs` ditambah subnet dari `MILKLIFE_SUBNET_PROXY` (isian salah atau terlalu luas diabaikan); `public/arumi.php` memakai daftar yang sama.
+- [x] `perpanjang_batas_waktu()` (`aplikasi_helper`) menggantikan `@set_time_limit(300)` di Daftar Peserta dan Cetak BIB: batas waktu tidak pernah diperpendek. Di PHP ZTS (FrankenPHP) batas dihitung jam dinding, dan panggilan lama membuat `composer uji` berhenti di 58%.
 - [x] `composer.json` `"php": "^8.5.13"`; CI memakai PHP 8.5, MySQL 8.4, Node 24, ditambah job "Image Docker"; `package.json` `engines.node >=24`.
 - [x] Panduan pemasangan produksi revisi 13 ditulis ulang untuk Ubuntu dan Docker, termasuk salinan cadangan ke R2, pindah dari server Laragon, dan jalan mundurnya; PDF dibuat ulang.
 - [x] K182; ATURAN, KONTEKS, PETA-KODE, README, SETUP-CLOUD, `.env.example`, dan `.env.staging.example` disesuaikan.
