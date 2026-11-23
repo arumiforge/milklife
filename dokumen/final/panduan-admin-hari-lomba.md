@@ -2,19 +2,31 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 23 November 2026** (K178) |
+| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K183, diubah langsung sesuai K101) |
 | Tanggal | 23 November 2026 |
-| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178; tugas F11-01 sampai F11-12 dan F11-14 |
+| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K183; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
+| Revisi 1 | Versi siap bagi untuk admin panitia dan juri: alamat situs dan kontak, latihan di situs staging, akun juri sendiri (F11-16), cara sekolah meminta ganti atlet, belum ada rekor awal, nama berkas cadangan, dan langkah menyunting jawaban ganti atlet di Bantuan. Bagian Asumsi dihapus karena sudah dijawab pemilik. Bagian yang berubah: Tujuan, Alamat dan kontak (baru), Ringkasan alur, 1, 1.6, 1.7, 1.9 (baru), 2.2, 3.1, 4.3, 5, 6 |
 
 ## Tujuan
 
-Panduan ini untuk admin panitia yang memakai panel admin dari pertemuan teknik 6 Desember sampai lomba selesai 12 Desember 2026. Setelah membacanya, Anda tahu:
+Panduan ini untuk admin panitia dan juri MilkLife Athletics Challenge Seri 2 – 2026. Panduan dipakai dari pertemuan teknik 6 Desember sampai lomba selesai 12 Desember 2026 di Supersoccer Arena, Kudus. Setelah membacanya, Anda tahu:
 
 - apa yang disiapkan sebelum hari lomba;
 - apa yang dikerjakan pagi hari, selama lomba, dan di akhir hari;
 - cara memperbaiki kesalahan yang sering terjadi.
 
-Panduan ini tidak membahas pendaftaran dan pembayaran. Untuk memasang atau memperbarui server, baca Panduan Pemasangan Produksi.
+Panduan ini tidak membahas pendaftaran dan pembayaran. Pemasangan dan pembaruan server diurus pengelola web.
+
+## Alamat dan kontak
+
+| | |
+|---|---|
+| Situs | `https://mac2026.web.id` |
+| Panel admin dan juri | `https://mac2026.web.id/admin/masuk` |
+| Halaman videotron | `https://mac2026.web.id/layar` |
+| Situs latihan | `https://staging.mac2026.web.id` |
+| Pengelola web | Mr. F, WA 085607505706 |
+| Penanggung jawab panitia | Iqbal, WA 088215277227 |
 
 ## Cara memakai panduan ini
 
@@ -42,6 +54,7 @@ Menu yang paling sering dipakai saat lomba ada di dua kelompok sidebar:
 | | Rekor awal dan sakelar Rekor | Rekor |
 | | Sakelar dan latar videotron, alamat `/layar` untuk operator | Videotron |
 | | Cetak BIB dan daftar peserta | Cetak BIB, Daftar peserta |
+| | Akun juri | Pengaturan → Akun juri |
 | Pagi hari lomba | Daftar ulang dan ganti atlet | Daftar ulang, Pendaftaran |
 | | Bagi seri dan kunci daftar seri | Seri dan lintasan |
 | Selama lomba | Juri mengisi prestasi | Lembar juri |
@@ -51,7 +64,9 @@ Menu yang paling sering dipakai saat lomba ada di dua kelompok sidebar:
 
 ## 1. Sebelum hari lomba
 
-Kerjakan bagian ini sebelum pertemuan teknik 6 Desember 2026. Urutannya penting: babak dibuat dulu, baru jadwal, baru seri.
+Mulai setelah pendaftaran tutup 30 November 2026, dan selesaikan sebelum pertemuan teknik 6 Desember 2026. Urutannya penting: babak dibuat dulu, baru jadwal, baru seri.
+
+Bagian ini dikerjakan admin panitia. Sebelum mengerjakannya di situs utama, berlatihlah dulu di situs latihan `https://staging.mac2026.web.id` dengan akun admin. Data di situs latihan terpisah, jadi salah isi di sana tidak memengaruhi lomba.
 
 ### 1.1 Cadangan awal
 
@@ -59,7 +74,7 @@ Kerjakan bagian ini sebelum pertemuan teknik 6 Desember 2026. Urutannya penting:
 2. Tekan **Unduh cadangan**. Berkas ZIP terunduh.
 3. Simpan berkas di luar komputer server, misalnya di laptop panitia dan penyimpanan awan panitia.
 
-Cadangan berisi semua data, pengaturan, foto, bukti bayar, dan berkas unggahan. Akun admin dan kata sandinya tidak ikut. Berkas ini berisi data pribadi siswa, jadi jangan dibagikan.
+Cadangan berisi semua data, pengaturan, foto, bukti bayar, dan berkas unggahan. Akun admin dan akun juri beserta kata sandinya tidak ikut. Berkas ini berisi data pribadi siswa, jadi jangan dibagikan.
 
 ### 1.2 Pelaksanaan tiap nomor lomba
 
@@ -140,6 +155,8 @@ Rekor kejuaraan dicatat mulai Seri 2. Hasil Seri 1 tidak diimpor.
 
 Rekor isian admin bisa diubah atau dihapus dengan **Ubah** dan **Hapus**. Rekor bertanda **Dari hasil** hanya berubah lewat hasil lombanya (bagian 3.6).
 
+Saat ini panitia belum punya rekor awal. Jadi rekor pertama tiap nomor diambil dari Final Seri 2, dan hampir semua nomor akan bertanda CR. Sampaikan ini kepada ofisial di pertemuan teknik.
+
 ### 1.7 Videotron
 
 Videotron arena dijalankan operator vendor. Web hanya menyediakan tampilan yang dipilih operator.
@@ -148,7 +165,7 @@ Videotron arena dijalankan operator vendor. Web hanya menyediakan tampilan yang 
 2. Nyalakan **Tampilkan videotron di /layar**. Bawaannya mati, dan saat mati semua alamat videotron tidak bisa dibuka.
 3. Bila perlu, unggah **Gambar latar**: JPG, PNG, atau WEBP, sebaiknya gelap dan tenang, misalnya 1920 × 1080 piksel. Kosongkan untuk memakai latar bawaan yang bergerak pelan.
 4. Tekan **Simpan pengaturan videotron**.
-5. Kirim alamat `https://<alamat situs>/layar` kepada operator videotron. Alamat lengkapnya tertulis di halaman Videotron.
+5. Kirim alamat `https://mac2026.web.id/layar` kepada operator videotron. Alamat lengkapnya tertulis di halaman Videotron.
 6. Coba buka `/layar` di peramban komputer videotron sebelum hari lomba, bersama operator.
 
 Cara operator memakainya ada di bagian 3.7.
@@ -161,6 +178,17 @@ Cara operator memakainya ada di bagian 3.7.
 
 Hanya atlet dari pendaftaran Lunas yang punya nomor atlet (BIB). Bila urutan nomor perlu dirapikan, pakai **Atlet → Urutkan nomor atlet (BIB)** sebelum mencetak.
 
+### 1.9 Akun juri
+
+Setiap juri mendapat akun sendiri. Akun juri hanya bisa membuka Lembar juri dan Akun.
+
+1. Buka **Pengaturan → Akun juri**.
+2. Tekan **Tambah juri**.
+3. Isi nama juri, nama pengguna, dan kata sandi dua kali, lalu simpan.
+4. Berikan nama pengguna dan kata sandi kepada juri itu secara pribadi.
+
+Di halaman yang sama ada **Ubah** dan **Hapus**. Saat mengubah, kosongkan kata sandi bila tidak diganti. Peran akun tidak bisa diubah: akun admin tetap admin, dan akun juri tetap juri. Prestasi yang sudah diisi juri tetap tersimpan walau akunnya dihapus.
+
 ### Daftar periksa sebelum hari lomba
 
 - [ ] Cadangan awal sudah diunduh dan disimpan di luar server.
@@ -172,6 +200,7 @@ Hanya atlet dari pendaftaran Lunas yang punya nomor atlet (BIB). Bila urutan nom
 - [ ] Rekor awal (bila ada) sudah diisi; sakelar Rekor dinyalakan bila siap.
 - [ ] Videotron sudah dinyalakan, dicoba, dan alamat `/layar` sudah di tangan operator.
 - [ ] BIB dan daftar peserta sudah dicetak.
+- [ ] Setiap juri sudah punya akun juri dan sudah mencoba masuk.
 
 ## 2. Pagi hari lomba
 
@@ -188,6 +217,8 @@ Bila salah tandai, tekan **Batal hadir** di baris atlet itu. Pendaftaran yang be
 ### 2.2 Ganti atlet
 
 Sekolah boleh mengganti atlet yang berhalangan dengan siswa lain dari sekolah yang sama. Siapkan nama atlet lama, alasan penggantian, serta nama lengkap, NISN, dan tanggal lahir atlet pengganti.
+
+Sekolah meminta ganti atlet di meja pertemuan teknik atau lewat WA penanggung jawab panitia, paling lambat sebelum daftar seri babak atlet itu dikunci.
 
 1. Buka **Pendaftaran**, cari sekolahnya, lalu buka rinciannya. Pendaftaran harus **Lunas**.
 2. Tekan **Ganti** di baris atlet yang diganti. Halaman **Ganti atlet** terbuka.
@@ -244,7 +275,7 @@ Yang perlu diketahui:
 
 ### 3.1 Lembar juri di ponsel
 
-1. Juri masuk ke panel admin di ponsel dengan akun admin.
+1. Juri masuk di alamat panel admin dari ponselnya, dengan akun juri miliknya sendiri. Setelah masuk, Lembar juri langsung terbuka.
 2. Buka **Lembar juri**. Babak dikelompokkan per hari; hari ini paling atas dan terbuka.
 3. Tekan babaknya, lalu pilih seri.
 4. Isi prestasi setiap peserta. Untuk lompat dan lempar, isi jarak tiap percobaan dalam meter, atau tekan tombol X untuk percobaan gagal.
@@ -252,6 +283,13 @@ Yang perlu diketahui:
 Setiap kartu peserta tersimpan sendiri sekitar satu detik setelah berhenti mengetik. Status di bawah kartu berubah dari **Belum tersimpan…** ke **Menyimpan…** lalu **Tersimpan**. Bila sinyal lemah, tombol **Simpan** di kartu tetap bisa ditekan.
 
 Bila muncul pesan bahwa baris baru saja diubah admin lain, muat ulang halaman, periksa isiannya, lalu ubah lagi bila perlu. Ini mencegah dua juri saling menimpa.
+
+Tentang akun juri:
+
+- akun juri hanya bisa membuka **Lembar juri** dan **Akun**. Halaman lain dialihkan ke Lembar juri, dan pojok logo bertulis "Panel juri";
+- setiap juri punya akun sendiri. Akun dibuat admin di **Pengaturan → Akun juri** (bagian 1.9);
+- bila juri lupa kata sandi, admin menekan **Ubah** di baris juri itu dan membuat kata sandi baru. Juri yang sedang masuk dengan akun itu diminta masuk lagi;
+- di halaman **Akun**, juri hanya bisa mengganti nama dan kata sandinya sendiri. Bila nama pengguna juri perlu diganti, admin menggantinya lewat **Ubah** di **Pengaturan → Akun juri**.
 
 ### 3.2 Kode hasil
 
@@ -377,7 +415,7 @@ Tombol unduh berupa ikon: ikon PDF merah dan ikon lembar kerja hijau untuk Excel
 
 ### 4.3 Cadangan akhir hari
 
-Unduh cadangan di **Pengaturan → Cadangan** setiap akhir hari lomba, lalu simpan di luar server. Beri nama berkas dengan tanggalnya bila perlu, misalnya "cadangan-9-desember.zip".
+Unduh cadangan di **Pengaturan → Cadangan** setiap akhir hari lomba, lalu simpan di luar server. Nama berkasnya sudah memuat tanggal dan jam, misalnya `Cadangan_MilkLife_20261209_173000.zip`.
 
 ### Daftar periksa akhir hari
 
@@ -397,6 +435,7 @@ Unduh cadangan di **Pengaturan → Cadangan** setiap akhir hari lomba, lalu simp
 | Tombol **Ganti** tidak ada atau penggantian ditolak | Pastikan pendaftaran Lunas. Buka kunci daftar seri babak atlet itu, ganti atletnya, lalu kunci lagi. Bila atlet sudah punya hasil, atlet tidak bisa diganti. |
 | Juri melihat pesan baris diubah admin lain | Muat ulang Lembar juri, periksa isian terbaru, lalu ubah lagi bila perlu. |
 | Status kartu juri tetap **Belum tersimpan** | Sinyal lemah. Tekan **Simpan** di kartu itu, atau pindah ke tempat bersinyal lalu muat ulang halaman. |
+| Juri tiba-tiba diminta masuk lagi | Admin baru mengganti kata sandi akun juri itu. Minta kata sandi baru ke admin panitia. |
 | Waktu stopwatch tersimpan berbeda dari yang ditulis | Itu pembulatan waktu tangan ke 0,1 detik. Bila nomor itu memakai foto finis, ubah **Cara pencatatan waktu** ke **Elektronik**. |
 | Peringkat Final perlu diubah karena keputusan juri | Isi **Koreksi per.** di babak Final, lalu **Simpan hasil**. |
 | Hasil terbit ternyata salah | Ubah hasilnya; publik, klasemen, dan rekor ikut menyesuaikan. Bila perlu disembunyikan dulu, tekan **Tarik kembali**. |
@@ -411,16 +450,12 @@ Tentang impor cadangan:
 - impor mengganti semua data, pengaturan, dan berkas unggahan dengan isi berkas;
 - sebelum impor, web menyimpan cadangan otomatis data lama. Lima yang terakhir bisa diunduh di halaman yang sama;
 - Anda harus mengetik ulang kata sandi untuk memulai impor, dan halaman jangan ditutup sampai selesai;
-- bila berkas terlalu besar untuk diunggah, minta pengelola server menjalankan `php spark cadangan:pulihkan <berkas.zip>`.
+- bila berkas terlalu besar untuk diunggah, minta pengelola web menjalankan `php spark cadangan:pulihkan <berkas.zip>`.
 
-Bila masalah tidak ada di tabel ini, catat jam, halaman, dan pesan di layar, lalu hubungi pengelola web.
+Bila masalah tidak ada di tabel ini, catat jam, halaman, dan pesan di layar, lalu hubungi pengelola web (lihat Alamat dan kontak di awal panduan).
 
 ## 6. Jawaban untuk sekolah di halaman Bantuan
 
-Halaman Bantuan publik sudah memuat jawaban tentang ganti atlet, nomor acara, arti kode DNS/DNF/DQ/NM/r/CR, waktu tangan, nomor tidak dilombakan, rekor, dan cara juara umum dihitung. Arahkan ofisial sekolah ke halaman itu. Sunting atau sembunyikan jawabannya di **Bantuan** (kelompok Konten) bila panitia ingin jawaban lain, misalnya prosedur ganti atlet lewat meja pertemuan teknik, bukan lewat WA.
+Halaman Bantuan publik sudah memuat jawaban tentang ganti atlet, nomor acara, arti kode DNS/DNF/DQ/NM/r/CR, waktu tangan, nomor tidak dilombakan, rekor, dan cara juara umum dihitung. Arahkan ofisial sekolah ke halaman itu. Sunting atau sembunyikan jawabannya di **Bantuan** (kelompok Konten) bila panitia ingin jawaban lain.
 
-## Asumsi yang perlu ditinjau
-
-1. Juri memakai akun admin yang sama dengan panitia karena panel belum punya akun khusus juri. Bagikan kata sandinya hanya kepada juri yang bertugas, dan ganti di **Akun** setelah lomba.
-2. Panduan ini belum memuat tangkapan layar karena PDF dokumen dibuat dari teks saja. Nama menu dan tombol ditulis persis seperti di panel per 23 November 2026.
-3. Pembagian sesi videotron (Pagi, Siang, Sore) mengikuti jam mulai babak (K173) dan bisa diganti bila panitia memakai pembagian sesi resmi.
+Jawaban bawaan tentang ganti atlet baru menyebut WA. Sebelum pertemuan teknik, ubah jawaban itu di **Bantuan** supaya menyebut dua cara: meja pertemuan teknik atau WA penanggung jawab panitia.
