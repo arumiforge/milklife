@@ -34,10 +34,18 @@ use Throwable;
  * 5. `tabel_skor`: tabel skor bawaan di `data/tabel-skor/` yang belum
  *    terpasang, atau nomor Trilomba yang masih berjenis hasil poin dan belum
  *    punya prestasi (F9-10, K143) → `php spark tabel-skor:impor --trilomba`.
- * 6. `data_bawaan`: data bawaan `data:awal` lama yang belum disamakan (nama
+ * 6. `faq`: tabel tanya-jawab Bantuan masih kosong (F9-04) →
+ *    `php spark faq:awal`.
+ * 7. `carousel`: foto carousel halaman depan belum pernah diatur (F9-03) →
+ *    `php spark halaman-depan:carousel`.
+ * 8. `galeri`: album galeri bawaan belum pernah dipasang dan galeri kosong
+ *    (F9-06, K140) → `php spark galeri:awal`.
+ *    Ketiganya terjadi pada server yang basis datanya dipulihkan dari versi
+ *    sebelum Tahap 9, misalnya saat pindah dari Laragon (F11-19).
+ * 9. `data_bawaan`: data bawaan `data:awal` lama yang belum disamakan (nama
  *    `KU 8 (Seneng Playon)`, nomor WA contoh, media sosial lama; F10-01) →
  *    `php spark data:sesuaikan`.
- * 7. `aset`: berkas CSS/JS/SVG yang versi `.min`-nya belum ada atau lebih tua
+ * 10. `aset`: berkas CSS/JS/SVG yang versi `.min`-nya belum ada atau lebih tua
  *    dari aslinya → `php spark aset:minify`. Dilewati bila `aplikasi.minify`
  *    mati dan belum ada berkas `.min` sama sekali.
  *
@@ -78,6 +86,9 @@ final class PemeriksaPembaruan
             $this->jalankan('sekolah', 'Data sekolah', 'php spark sekolah:impor', fn (): array => $this->periksaSekolah()),
             $this->jalankan('gabung', 'Pendaftaran Lunas ber-NPSN sama', 'php spark pendaftaran:gabung', fn (): array => $this->periksaGabung()),
             $this->jalankan('tabel_skor', 'Tabel skor multi-lomba (Trilomba)', 'php spark tabel-skor:impor --trilomba', fn (): array => $this->periksaTabelSkor()),
+            $this->jalankan('faq', 'Tanya-jawab Bantuan', 'php spark faq:awal', fn (): array => $this->periksaFaq()),
+            $this->jalankan('carousel', 'Foto carousel halaman depan', 'php spark halaman-depan:carousel', fn (): array => $this->periksaCarousel()),
+            $this->jalankan('galeri', 'Album galeri bawaan', 'php spark galeri:awal', fn (): array => $this->periksaGaleri()),
             $this->jalankan('data_bawaan', 'Data bawaan terbaru (KU 8, WA, media sosial)', 'php spark data:sesuaikan', fn (): array => $this->periksaDataBawaan()),
             $this->jalankan('aset', 'CSS dan JavaScript kecil', 'php spark aset:minify', fn (): array => $this->periksaAset()),
         ];
@@ -377,6 +388,53 @@ final class PemeriksaPembaruan
         }
 
         return [true, ucfirst(implode('; ', $bagian)) . '. Nomor yang sudah punya prestasi tidak diubah.'];
+    }
+
+    /**
+     * Tanya-jawab Bantuan (F9-04): `faq:awal` hanya mengisi tabel yang kosong.
+     *
+     * @return array{0: bool, 1: string}
+     */
+    private function periksaFaq(): array
+    {
+        $jumlah = $this->db->table('faq')->countAllResults();
+
+        if ($jumlah > 0) {
+            return [false, number_format($jumlah, 0, ',', '.') . ' tanya-jawab sudah ada.'];
+        }
+
+        return [true, 'Halaman Bantuan belum punya tanya-jawab. Perintahnya memasang tanya-jawab bawaan yang bisa disunting di Pengaturan > Bantuan.'];
+    }
+
+    /**
+     * Carousel halaman depan (F9-03): `halaman-depan:carousel` hanya memasang
+     * bila pengaturannya belum pernah diisi. Daftar kosong karena admin
+     * menghapus semua foto dianggap sudah diatur.
+     *
+     * @return array{0: bool, 1: string}
+     */
+    private function periksaCarousel(): array
+    {
+        if (setting(CarouselHalamanDepan::KUNCI) !== null) {
+            return [false, 'Sudah diatur.'];
+        }
+
+        return [true, 'Foto carousel belum pernah dipasang. Perintahnya memasang foto bawaan yang bisa diganti di Pengaturan > Halaman depan.'];
+    }
+
+    /**
+     * Album galeri bawaan (F9-06, K140): `galeri:awal` hanya memasang bila
+     * belum pernah dipasang dan galeri masih kosong.
+     *
+     * @return array{0: bool, 1: string}
+     */
+    private function periksaGaleri(): array
+    {
+        if ((bool) setting('Galeri.bawaan_dipasang') || $this->db->table('galeri')->countAllResults() > 0) {
+            return [false, 'Sudah dipasang atau sudah diisi admin.'];
+        }
+
+        return [true, 'Galeri belum punya album. Perintahnya memasang album "Seri sebelumnya"; halaman Galeri tetap tersembunyi sampai dinyalakan di Pengaturan > Galeri.'];
     }
 
     /**
