@@ -114,7 +114,8 @@ final class PengaturanSalinanR2Test extends UjiBasisData
         $this->assertStringNotContainsString('0123456789abcdef0123456789abcdef', $riwayat['ringkasan']);
 
         // Halaman menampilkan isi folder dengan tautan unduh bertanda tangan, tanpa rahasia.
-        $this->bucket[SalinanR2::folderBawaan() . '/cadangan-milklife-2026-11-25-0200.zip'] = ['isi' => 'zip karangan', 'waktu' => (int) strtotime('2026-11-25 02:00:30')];
+        // Zip dibuat lebih baru dari berkas uji, jadi tampil paling atas.
+        $this->bucket[SalinanR2::folderBawaan() . '/cadangan-milklife-2026-11-25-0200.zip'] = ['isi' => 'zip karangan', 'waktu' => time() + 60];
         $halaman = $this->bukaSebagaiAdmin(self::ALAMAT);
         $halaman->assertOK();
         $halaman->assertSee('cadangan-panitia');
