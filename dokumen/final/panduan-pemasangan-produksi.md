@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101); **revisi 12 23 November 2026** (penutupan Tahap 11, diubah langsung sesuai K101); **revisi 13 23 November 2026** (K182, ditulis ulang untuk Ubuntu dan Docker, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101); **revisi 12 23 November 2026** (penutupan Tahap 11, diubah langsung sesuai K101); **revisi 13 23 November 2026** (K182, ditulis ulang untuk Ubuntu dan Docker, diubah langsung sesuai K101); **revisi 14 24 November 2026** (K184, diubah langsung sesuai K101) |
+| Revisi 14 | Cloudflare Tunnel memakai cloudflared di host, tunnel yang sama dengan aplikasi lain di VPS, untuk staging dan produksi (K184): container app membuka port hanya di `127.0.0.1:<PORT_LOKAL>`, tunnel diarahkan ke `http://localhost:<PORT_LOKAL>`, dan container cloudflared menjadi pilihan lewat `COMPOSE_PROFILES=tunnel`. Pindah dari Laragon memindahkan nama alamat ke tunnel di host. Bagian yang berubah: ringkasan, 1, 3, 6, 8, 10, 11, asumsi 1 |
 | Revisi 13 | Server pindah dari Windows dan Laragon ke VPS Ubuntu 24.04 dengan Docker Compose (K182): PHP 8.5.13 di FrankenPHP, MySQL 8.4, cloudflared di container, cadangan harian lewat cron host yang disalin ke Cloudflare R2, dan langkah pindah dari server Laragon. Panduan ditulis ulang; ringkasan perintah sekali jalan Tahap 9 sampai 11 diringkas di bagian 10. Bagian yang berubah: semua |
 | Revisi 12 | Penutupan Tahap 11 (F11-08): ringkasan perintah sekali jalan pembaruan Tahap 11 (`cadangan:buat`, `migrate --all`, `data:sesuaikan`, `aset:minify`, `pembaruan:periksa`), langkah tanya-jawab baru di `data:sesuaikan`, pengaturan yang diperiksa admin setelah pembaruan (susunan klasemen, pelaksanaan nomor lomba, nomor acara, sakelar Rekor dan Videotron), dan alamat `/layar` untuk operator videotron vendor (K172–K176). Bagian yang berubah: 10 |
 | Revisi 11 | Cadangan di panel admin (F11-11, K174): menu Pengaturan > Cadangan menggantikan tombol Backup data, cadangannya berisi semua data, pengaturan, dan berkas unggahan; impor lewat panel mengganti semua setelah cadangan otomatis di `writable\cadangan`; perintah `php spark cadangan:pulihkan` untuk berkas yang terlalu besar diunggah; batas unggah PHP untuk impor. Bagian yang berubah: 8, 9, 10 |
@@ -16,8 +17,8 @@
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, 22, dan 23 November 2026 (revisi 3 sampai 13) |
-| Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Docker di VPS Ubuntu 24.04 (K182, menggantikan Laragon untuk produksi K08); Cloudflare Tunnel (K31); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example`; `docker/compose.yaml` dan `docker/.env.example` |
+| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, 22, dan 23 November 2026 (revisi 3 sampai 13), revisi 14 24 November 2026 |
+| Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Docker di VPS Ubuntu 24.04 (K182, menggantikan Laragon untuk produksi K08); Cloudflare Tunnel (K31, K184); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example`; `docker/compose.yaml` dan `docker/.env.example` |
 
 ## Tujuan
 
@@ -28,8 +29,9 @@ Panduan ini ditulis untuk **Ubuntu 24.04 dengan Docker** (K182). Semua perintah 
 ## Ringkasan susunan
 
 - Setiap lingkungan (produksi dan staging) punya folder kode sendiri di server, misalnya `/srv/milklife-produksi` dan `/srv/milklife-staging`, dan berjalan sebagai satu proyek Docker Compose dari `docker/compose.yaml`. Keduanya boleh di VPS yang sama, berdampingan dengan aplikasi Docker lain.
-- Satu proyek berisi tiga container: **app** (FrankenPHP dengan PHP 8.5.13 dan OPcache), **db** (MySQL 8.4), dan **cloudflared** (Cloudflare Tunnel).
-- Tidak ada container yang membuka port ke host atau ke internet. Pengunjung membuka `https://<alamat-pendaftaran>`, Cloudflare memasang HTTPS, lalu meneruskan permintaan lewat tunnel ke `http://app:8080` di jaringan internal proyek itu. Port yang terbuka di VPS hanya SSH.
+- Satu proyek berisi dua container: **app** (FrankenPHP dengan PHP 8.5.13 dan OPcache) dan **db** (MySQL 8.4).
+- Pengunjung membuka `https://<alamat-pendaftaran>`, Cloudflare memasang HTTPS, lalu meneruskan permintaan lewat **cloudflared yang berjalan di host**, yaitu tunnel yang juga dipakai aplikasi lain di VPS (K184), ke `http://localhost:<PORT_LOKAL>`. Container app hanya membuka port itu di `127.0.0.1`, jadi tidak bisa dijangkau dari jaringan luar. Port yang terbuka di VPS hanya SSH.
+- Bila VPS belum punya cloudflared di host, tunnel bisa dijalankan sebagai container ketiga di proyek ini (bagian 6, "Tunnel sebagai container").
 - Data yang harus bertahan ada di tiga volume Docker (`writable`, `unggahan`, `mysql`) dan satu folder cadangan di host. Kode ada di dalam image, yang dibangun ulang setiap memperbarui versi.
 - Setiap malam cron di host menjalankan `php spark cadangan:buat` di container app, yang menulis satu berkas zip cadangan ke folder cadangan dan menghapus cadangan yang berumur 14 hari atau lebih. Setelah itu layanan `salin-r2` menyalin cadangan baru ke bucket Cloudflare R2.
 
@@ -39,7 +41,7 @@ Panduan ini ditulis untuk **Ubuntu 24.04 dengan Docker** (K182). Semua perintah 
 - Masuk SSH hanya dengan kunci publik (Bitvise), lewat pengguna admin non-root yang bisa `sudo`. Di `/etc/ssh/sshd_config`: `PasswordAuthentication no` dan `PermitRootLogin no`. Coba masuk dengan kunci di jendela kedua sebelum menutup sesi yang sedang terbuka.
 - Firewall UFW hanya membuka SSH. Docker melewati aturan UFW untuk port yang dibuka container, karena itu `docker/compose.yaml` sengaja tidak membuka port apa pun.
 - Pengguna admin masuk grup `docker` (`sudo usermod -aG docker <pengguna>`, lalu keluar dan masuk lagi). Anggota grup `docker` sama kuatnya dengan root, jadi jangan masukkan pengguna lain.
-- Akun Cloudflare yang mengelola domainnya, misalnya `mac2026.web.id`, dan nama alamat yang dipakai.
+- Akun Cloudflare yang mengelola domainnya, misalnya `mac2026.web.id`, dan nama alamat yang dipakai. cloudflared di host (`systemctl is-active cloudflared` menampilkan `active`) memakai tunnel di akun yang sama.
 
 ## 2. Menyalin aplikasi
 
@@ -92,7 +94,8 @@ Isi setiap baris bertanda `[ISI]` dan periksa yang lain:
 - `SUBNET`: rentang alamat jaringan internal yang belum dipakai jaringan Docker lain di VPS. Lihat yang sudah dipakai dengan `docker network inspect $(docker network ls -q) | grep Subnet`. Contoh: produksi `10.201.0.0/24`, staging `10.201.1.0/24`.
 - `DB_SANDI` dan `DB_SANDI_ROOT`: dua sandi panjang buatan sendiri, huruf dan angka saja, berbeda dari staging.
 - `FOLDER_CADANGAN`: `/srv/cadangan/milklife-produksi` dari bagian 2.
-- `TUNNEL_TOKEN`: diisi di bagian 6.
+- `PORT_LOKAL`: port di `127.0.0.1` host yang belum dipakai (cek dengan `ss -tln`), berbeda untuk setiap lingkungan. Contoh: staging `8102`, produksi `8103`.
+- `COMPOSE_PROFILES` dan `TUNNEL_TOKEN`: dibiarkan kosong bila memakai cloudflared di host (bagian 6).
 
 Basis data dan penggunanya dibuat otomatis saat container db pertama kali menyala. Mengubah sandi di `docker/.env` setelah itu tidak mengganti sandi yang sudah ada.
 
@@ -176,26 +179,56 @@ Basis data dan penggunanya dibuat otomatis saat container db pertama kali menyal
 
 ## 6. HTTPS lewat Cloudflare Tunnel
 
-Langkah di dasbor Cloudflare. Nama menu di dasbor bisa sedikit berbeda karena Cloudflare kadang mengubah tampilannya.
+cloudflared yang sudah berjalan di host VPS meneruskan alamat pendaftaran ke port lokal app (K184). Langkah di dasbor Cloudflare; nama menu bisa sedikit berbeda karena Cloudflare kadang mengubah tampilannya.
 
-1. Masuk ke dasbor Cloudflare → **Zero Trust** → **Networks** → **Tunnels**. Untuk server baru, **Create a tunnel** → jenis **Cloudflared** → nama `milklife-produksi` → **Save tunnel**. Saat pindah dari Laragon, tunnel lama boleh dipakai lagi (bagian 8).
-2. Pilih lingkungan **Docker**. Dasbor menampilkan perintah `docker run cloudflare/cloudflared:latest tunnel --no-autoupdate run --token <token-panjang>`. **Jangan jalankan perintah itu.** Salin bagian setelah `--token` saja ke baris `TUNNEL_TOKEN` di `docker/.env`. Token di tunnel yang sudah ada bisa dilihat lagi di tunnel itu → **Configure** → **Docker**.
-3. Nyalakan cloudflared:
+1. Pastikan app menjawab di port lokalnya. Tanpa kepala HTTPS hasilnya `307` (dialihkan ke `https://`), dengan kepala HTTPS hasilnya `200`:
 
    ```
-   mlk up -d cloudflared
-   mlk logs --tail 20 cloudflared
+   curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:<PORT_LOKAL>/admin/masuk
+   curl -s -o /dev/null -w '%{http_code}\n' -H 'X-Forwarded-Proto: https' http://127.0.0.1:<PORT_LOKAL>/admin/masuk
    ```
 
-   Di log harus ada `Registered tunnel connection`. Di dasbor, status tunnel menjadi **Healthy**.
-4. Atur **Public hostname** (atau **Published application route**) tunnel itu:
-   - **Subdomain** dan **Domain**: alamat pendaftaran, misalnya domain `mac2026.web.id` tanpa subdomain.
-   - **Service Type**: `HTTP`; **URL**: `app:8080`.
-   - Kosongkan **HTTP Host Header** di **Additional application settings** (isian `milklife.test` dari Laragon tidak dipakai lagi).
-5. Simpan. Alamat `https://<alamat-pendaftaran>` harus menampilkan halaman depan dengan ikon gembok. Buka juga `https://<alamat-pendaftaran>/admin/masuk` dan coba masuk dengan akun admin.
+   Bila yang kedua juga `307`, aplikasi tidak memercayai alamat asal permintaan: periksa `SUBNET` di `docker/.env`.
+2. Cari tahu cara tunnel di host diatur:
+
+   ```
+   systemctl cat cloudflared | grep ExecStart | sed 's/--token [^ ]*/--token [disembunyikan]/'
+   ls /etc/cloudflared 2>/dev/null
+   ```
+
+   Bila baris `ExecStart` berisi `--token`, tunnel diatur dari dasbor (langkah 3). Bila ada `/etc/cloudflared/config.yml` berisi `ingress:`, tunnel diatur dari berkas itu (langkah 4).
+3. **Diatur dari dasbor.** Dasbor Cloudflare → **Zero Trust** → **Networks** → **Tunnels** → tunnel yang menyala di VPS → **Public Hostname** (atau **Published application routes**) → **Add**:
+   - **Subdomain** dan **Domain**: alamat pendaftaran, misalnya domain `mac2026.web.id` tanpa subdomain, atau subdomain `staging`.
+   - **Service Type**: `HTTP`; **URL**: `localhost:<PORT_LOKAL>`.
+   - Kosongkan **HTTP Host Header** di **Additional application settings**.
+
+   Perubahan langsung berlaku tanpa menyalakan ulang cloudflared, dan alamat aplikasi lain di tunnel yang sama tidak terganggu. Bila dasbor menolak karena catatan DNS untuk alamat itu sudah ada, hapus dulu catatan `CNAME` alamat itu di **DNS** → **Records**.
+4. **Diatur dari berkas.** Tambahkan satu baris layanan di `/etc/cloudflared/config.yml`, **di atas** baris terakhir `- service: http_status:404`:
+
+   ```
+     - hostname: <alamat-pendaftaran>
+       service: http://localhost:<PORT_LOKAL>
+   ```
+
+   Lalu daftarkan alamatnya dan nyalakan ulang cloudflared (aplikasi lain di tunnel itu terputus beberapa detik):
+
+   ```
+   sudo cloudflared tunnel route dns <nama-tunnel> <alamat-pendaftaran>
+   sudo systemctl restart cloudflared
+   ```
+
+5. Alamat `https://<alamat-pendaftaran>` harus menampilkan halaman depan dengan ikon gembok. Buka juga `https://<alamat-pendaftaran>/admin/masuk` dan coba masuk dengan akun admin.
 6. Di dasbor Cloudflare untuk domain itu → **SSL/TLS** → **Edge Certificates**, nyalakan **Always Use HTTPS**. Aplikasi tidak memasang HSTS sendiri; bila diinginkan, nyalakan **HSTS** di halaman yang sama setelah semuanya berjalan baik.
 
-Mengapa `app:8080`: cloudflared dan app ada di jaringan internal yang sama, dan aplikasi hanya memercayai keterangan "pengunjung memakai HTTPS" serta alamat asli pengunjung (`CF-Connecting-IP`) bila datang dari subnet jaringan itu (`SUBNET` di `docker/.env`, K31, K182). Bila cloudflared dijalankan di luar proyek compose ini, halaman terus memuat ulang dan pembatasan percobaan masuk menganggap semua pengunjung satu orang.
+Mengapa `localhost:<PORT_LOKAL>`: Docker meneruskan permintaan dari port itu ke container app dari alamat gateway jaringan proyek, yang ada di dalam `SUBNET`. Aplikasi hanya memercayai keterangan "pengunjung memakai HTTPS" serta alamat asli pengunjung (`CF-Connecting-IP`) bila datang dari subnet itu (K31, K182). Port itu hanya terbuka di `127.0.0.1`, jadi hanya program di VPS sendiri yang bisa memakainya.
+
+### Tunnel sebagai container
+
+Untuk VPS yang belum punya cloudflared di host, tunnel bisa dijalankan sebagai container proyek ini:
+
+1. Dasbor Cloudflare → **Zero Trust** → **Networks** → **Tunnels** → **Create a tunnel** → **Cloudflared** → nama, misalnya `milklife-produksi` → lingkungan **Docker**. Salin bagian setelah `--token` dari perintah yang tampil (jangan jalankan perintahnya).
+2. Di `docker/.env`: `COMPOSE_PROFILES=tunnel` dan `TUNNEL_TOKEN=<token>`. Lalu `mlk up -d` dan `mlk logs --tail 20 cloudflared`; di log harus ada `Registered tunnel connection`.
+3. **Public Hostname** tunnel itu: **Service Type** `HTTP`, **URL** `app:8080`, **HTTP Host Header** kosong.
 
 ### Pemeriksaan keamanan Cloudflare Turnstile
 
@@ -270,9 +303,16 @@ Selain cadangan harian, admin bisa mengunduh cadangan kapan saja dari **Pengatur
 
 ## 8. Pindah dari server Laragon
 
-Langkah ini dijalankan sekali, saat produksi pindah dari komputer Windows dengan Laragon ke VPS (K182). Kerjakan dulu bagian 1 sampai 5 di VPS (lewati langkah 3 di bagian 5) dan coba seluruhnya di staging. Pilih waktu sepi, misalnya malam hari: pendaftaran yang masuk ke server lama setelah cadangan terakhir dibuat tidak ikut pindah. Perkiraan jeda 15–30 menit.
+Langkah ini dijalankan sekali, saat produksi pindah dari komputer Windows dengan Laragon ke VPS (K182). Kerjakan dulu bagian 1 sampai 5 di VPS (lewati langkah 3 di bagian 5) dan coba seluruhnya di staging. Pilih waktu sepi, misalnya malam hari. Web dimatikan dulu sebelum cadangan dibuat, jadi tidak ada pendaftaran yang tertinggal di server lama. Perkiraan jeda 15–30 menit.
 
-1. **Di server Laragon**, buat cadangan lengkap di terminal Laragon. Server Laragon tidak perlu diperbarui lebih dulu; `spark migrate --all` di VPS melengkapi tabelnya:
+1. **Di server Laragon**, matikan web dengan menghentikan cloudflared. Buka Command Prompt sebagai administrator:
+
+   ```
+   sc stop cloudflared
+   sc config cloudflared start= demand
+   ```
+
+   Baris kedua mencegah cloudflared Laragon menyala lagi sendiri saat komputer dinyalakan ulang. Lalu buat cadangan lengkap di terminal Laragon. Server Laragon tidak perlu diperbarui lebih dulu; `spark migrate --all` di VPS melengkapi tabelnya:
 
    ```
    php spark cadangan:buat
@@ -310,11 +350,11 @@ Langkah ini dijalankan sekali, saat produksi pindah dari komputer Windows dengan
    ```
 
    Jalankan perintah yang diminta `pembaruan:periksa` sampai tertulis "Tidak ada perintah lain yang perlu dijalankan".
-6. **Pindahkan tunnel.** Di komputer Laragon, hentikan cloudflared: buka Command Prompt sebagai administrator lalu `sc stop cloudflared`. Di VPS, isi `TUNNEL_TOKEN` dengan token tunnel yang sama dan jalankan `mlk up -d cloudflared`. Di dasbor Cloudflare, ubah Public hostname alamat pendaftaran menjadi **URL** `app:8080` dan kosongkan **HTTP Host Header** (bagian 6 langkah 4).
+6. **Pindahkan alamat ke tunnel VPS.** Di dasbor Cloudflare → **Zero Trust** → **Networks** → **Tunnels**, buka tunnel Laragon → **Public Hostname**, lalu hapus baris alamat pendaftaran. Setelah itu tambahkan alamat itu di tunnel yang menyala di VPS, mengikuti bagian 6 langkah 3 atau 4 (`localhost:<PORT_LOKAL>`). Bila dasbor menolak karena catatan DNS sudah ada, hapus dulu catatan `CNAME` alamat itu di **DNS** → **Records**.
 7. Buka `https://<alamat-pendaftaran>` dan panel admin dari ponsel: jumlah pendaftaran di dasbor, satu rincian pendaftaran beserta foto ofisial dan bukti bayarnya, dan halaman depan harus sama dengan server lama. Jadwalkan cadangan harian (bagian 7).
 8. Biarkan server Laragon utuh, tetapi cloudflared-nya tetap mati, sampai lomba selesai sebagai jalan mundur. Hapus `/srv/pindahan` di VPS setelah semuanya benar, karena isinya data pribadi.
 
-**Mundur ke server Laragon** bila VPS bermasalah: di VPS `mlk stop cloudflared`; di komputer Laragon `sc start cloudflared`; di dasbor Cloudflare kembalikan URL menjadi `127.0.0.1:80` dengan HTTP Host Header `milklife.test`. Pendaftaran yang masuk ke VPS sejak pindah harus dibawa kembali lewat **Pengaturan → Cadangan** (unduh di VPS, impor di Laragon).
+**Mundur ke server Laragon** bila VPS bermasalah: di dasbor Cloudflare hapus alamat pendaftaran dari tunnel VPS, lalu tambahkan kembali di tunnel Laragon dengan URL `127.0.0.1:80` dan HTTP Host Header `milklife.test`; di komputer Laragon `sc start cloudflared`. Pendaftaran yang masuk ke VPS sejak pindah harus dibawa kembali lewat **Pengaturan → Cadangan** (unduh di VPS, impor di Laragon).
 
 ## 9. Memulihkan cadangan
 
@@ -392,7 +432,7 @@ Bila ada perbaikan baru di cabang `main` GitHub, jalankan dari folder kode lingk
    `pembaruan:periksa` tidak mengubah apa pun. Ia memeriksa pustaka Composer, migrasi, data sekolah, pendaftaran Lunas ber-NPSN sama, tabel skor Trilomba, data bawaan, dan CSS/JavaScript kecil, lalu menulis `[beres]` atau `[PERLU]` dan daftar perintah yang masih perlu dijalankan (K115). Jalankan perintah itu dengan awalan `spark`, lalu jalankan `pembaruan:periksa` lagi sampai tertulis "Tidak ada perintah lain yang perlu dijalankan". Bila tertulis basis data tidak bisa dihubungi, periksa `mlk ps`: container `db` harus `healthy`.
 4. Buka halaman depan dan panel admin, pastikan tampil normal.
 
-Bila pembaruan mengubah `docker/compose.yaml` atau image MySQL dan cloudflared, `mlk up -d` sekaligus memasang versi barunya. Hapus image lama sesekali dengan `docker image prune` supaya diska tidak penuh.
+Bila pembaruan mengubah `docker/compose.yaml` atau image MySQL, `mlk up -d` sekaligus memasang versi barunya. Hapus image lama sesekali dengan `docker image prune` supaya diska tidak penuh.
 
 ### Perintah sekali jalan dari pembaruan lama
 
@@ -429,8 +469,8 @@ Catatan:
 
 Server dan keamanan:
 
-- [ ] `mlk ps`: app `healthy`, db `healthy`, cloudflared `Up`; ketiganya menyala lagi sendiri setelah VPS dinyalakan ulang (`sudo reboot`, lalu `mlk ps`).
-- [ ] SSH hanya dengan kunci, `PermitRootLogin no`, UFW hanya membuka SSH, dan `mlk ps` tidak menampilkan port yang dibuka ke host (kolom PORTS tanpa `0.0.0.0`).
+- [ ] `mlk ps`: app dan db `healthy`, dan keduanya menyala lagi sendiri setelah VPS dinyalakan ulang (`sudo reboot`, lalu `mlk ps`). Kolom PORTS app hanya `127.0.0.1:<PORT_LOKAL>->8080/tcp`.
+- [ ] SSH hanya dengan kunci, `PermitRootLogin no`, UFW hanya membuka SSH, dan `mlk ps` tidak menampilkan port yang dibuka ke jaringan luar (kolom PORTS tanpa `0.0.0.0`).
 - [ ] `docker/.env` dan `.env`: izin berkas benar (`600` dan `644`), salinannya tersimpan aman di luar server.
 - [ ] `.env`: `CI_ENVIRONMENT = production`, `app.baseURL` berawalan `https://`, `cookie.secure = true`, `aplikasi.minify = true`, `turnstile.kunciRahasia` terisi.
 - [ ] `https://<alamat-pendaftaran>` terbuka dengan ikon gembok dari ponsel memakai data seluler.
@@ -457,7 +497,7 @@ Selama masa pendaftaran, periksa sesekali bahwa folder cadangan berisi berkas ha
 
 ## Asumsi yang perlu ditinjau
 
-1. VPS sudah menjalankan Docker untuk aplikasi lain; MilkLife tidak memakai port host, reverse proxy, atau cloudflared milik aplikasi lain, dan subnet-nya dipilih supaya tidak bentrok (K182).
+1. VPS sudah menjalankan Docker dan cloudflared di host untuk aplikasi lain. MilkLife memakai tunnel itu lewat port `127.0.0.1` sendiri per lingkungan, tanpa reverse proxy, dan subnet serta port-nya dipilih supaya tidak bentrok (K182, K184).
 2. Cadangan dijalankan pukul 02.00 waktu server oleh cron host, lalu disalin ke bucket Cloudflare R2 yang sudah dimiliki panitia. Container app dan db memakai zona waktu `Asia/Jakarta`.
 3. `.env` dan `docker/.env` tidak ikut dalam berkas cadangan (berisi rahasia); pengembang menyimpan salinannya sendiri.
 4. Image dibangun di server dari kode hasil `git pull`; tidak ada registry image terpisah.

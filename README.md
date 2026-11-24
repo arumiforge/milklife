@@ -103,14 +103,14 @@ Bila admin mengunggah berkas yang lebih besar dari `post_max_size`, halaman kemb
 
 ### Cloudflare Tunnel
 
-Web dibuka dari internet lewat Cloudflare Tunnel (K31, K182). Susunannya:
+Web dibuka dari internet lewat Cloudflare Tunnel (K31, K182, K184). Susunannya:
 
-- Di server, `cloudflared` berjalan sebagai container di proyek compose yang sama dengan aplikasi (`docker/compose.yaml`) dan meneruskan alamat publik ke `http://app:8080`.
+- Di VPS, `cloudflared` berjalan di host (tunnel yang sama dengan aplikasi lain di server itu) dan meneruskan alamat publik ke `http://localhost:<PORT_LOKAL>`. Container app hanya membuka port itu di `127.0.0.1`, dan Docker meneruskannya dari gateway jaringan compose. Sebagai pilihan lain, `cloudflared` bisa dijalankan sebagai container proyek compose (`COMPOSE_PROFILES=tunnel`) dan diarahkan ke `http://app:8080`.
 - Alamat pengunjung yang asli dikirim Cloudflare dalam kepala `CF-Connecting-IP`.
 - Aplikasi memercayai kepala `CF-Connecting-IP` dan `X-Forwarded-Proto` **hanya** dari `127.0.0.1`, `::1`, dan subnet jaringan compose yang diisi lewat variabel `MILKLIFE_SUBNET_PROXY` (`app/Config/App.php`, `$proxyIPs`). Permintaan dari alamat lain tetap dicatat dengan alamatnya sendiri walaupun membawa kepala itu, jadi alamat tidak bisa dipalsukan.
 - Dengan begitu, pembatasan percobaan masuk admin dan pembatasan laju di halaman pendaftaran, cek, dan bukti dihitung per pengunjung, bukan semua pengunjung dianggap satu alamat.
 
-Jangan menjalankan `cloudflared` di luar proyek compose lingkungan itu; bila terpaksa, alamatnya harus ditambahkan ke `$proxyIPs`.
+Kedua cara membuat permintaan datang dari subnet compose, jadi tidak ada alamat yang perlu ditambahkan ke `$proxyIPs`. `cloudflared` di host jangan diarahkan ke alamat lain selain `localhost:<PORT_LOKAL>`.
 
 ## Tampilan (Tahap 9)
 
