@@ -5,12 +5,14 @@ namespace App\Controllers\Admin\Pengaturan;
 use App\Controllers\Admin\AkunController;
 use App\Controllers\BaseController;
 use App\Libraries\Cadangan\CadanganLengkap;
+use App\Libraries\Cadangan\SalinanR2;
 use App\Libraries\Panel\PaketPendaftaran;
 use App\Libraries\Panel\RiwayatAdmin;
 use App\Libraries\SesiAdmin;
 use App\Libraries\Unggahan;
 use App\Models\AdminModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
+use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\ResponseInterface;
 use RuntimeException;
 
@@ -26,6 +28,11 @@ use RuntimeException;
  *   yang sedang masuk. Impor mengganti semua data dan pengaturan; data
  *   sekarang lebih dulu dicadangkan otomatis di server.
  * - `GET  admin/pengaturan/cadangan/<nama>/unduh`: unduh cadangan otomatis.
+ * - `POST admin/pengaturan/cadangan/r2`: simpan pengaturan salinan Cloudflare
+ *   R2 (F11-19, K185) dengan kata sandi admin. Disimpan hanya bila
+ *   sambungannya lulus diperiksa (berkas uji ditulis, isi folder terbaca).
+ * - `POST admin/pengaturan/cadangan/r2/periksa`: periksa lagi sambungan tersimpan.
+ * - `POST admin/pengaturan/cadangan/r2/hapus`: matikan salinan, dengan kata sandi.
  *
  * Percobaan kata sandi dibatasi seperti halaman Akun (5 percobaan, lalu satu
  * tiap 12 detik).
@@ -101,17 +108,10 @@ class CadanganController extends BaseController
             $galat['berkas'] = 'Berkas cadangan harus berakhiran .zip, seperti yang diunduh dari halaman ini.';
         }
 
-        if ($sandi === '') {
-            $galat['sandi'] = 'Tulis kata sandi Anda untuk memastikan impor ini memang Anda yang meminta.';
-        } else {
-            $tunggu = $this->tungguPembatas($idAdmin);
-            $hash   = model(AdminModel::class)->sandiTersimpan($idAdmin);
+        $galatSandi = $this->periksaSandi($idAdmin, $sandi, 'Tulis kata sandi Anda untuk memastikan impor ini memang Anda yang meminta.');
 
-            if ($tunggu !== null) {
-                $galat['sandi'] = 'Terlalu banyak percobaan kata sandi. Tunggu ' . $tunggu . ' detik, lalu coba lagi.';
-            } elseif ($hash === null || strlen($sandi) > 255 || ! password_verify($sandi, $hash)) {
-                $galat['sandi'] = self::PESAN_SANDI_SALAH;
-            }
+        if ($galatSandi !== null) {
+            $galat['sandi'] = $galatSandi;
         }
 
         if ($galat !== []) {
@@ -162,6 +162,130 @@ class CadanganController extends BaseController
     }
 
     /**
+     * Simpan pengaturan salinan R2 setelah sambungannya lulus diperiksa.
+     *
+     * @return RedirectResponse|string
+     */
+    public function simpanR2()
+    {
+        $lama  = SalinanR2::pengaturan();
+        $isian = [
+            'id_akun'  => SalinanR2::rapikanIdAkun((string) $this->request->getPost('id_akun')),
+            'bucket'   => strtolower(trim((string) $this->request->getPost('bucket'))),
+            'kunci_id' => trim((string) $this->request->getPost('kunci_id')),
+            'folder'   => strtolower(trim((string) $this->request->getPost('folder'), " \t\n\r\0\x0B/")),
+        ];
+        $rahasia = trim((string) $this->request->getPost('rahasia'));
+        $galat   = [];
+
+        if (preg_match(SalinanR2::POLA_ID_AKUN, $isian['id_akun']) !== 1) {
+            $galat['id_akun'] = 'ID akun berupa 32 huruf dan angka, misalnya 0123456789abcdef0123456789abcdef. Salin dari dasbor Cloudflare > R2, atau tempel alamat S3 API bucket.';
+        }
+
+        if (preg_match(SalinanR2::POLA_BUCKET, $isian['bucket']) !== 1) {
+            $galat['bucket'] = 'Nama bucket 3–63 huruf kecil, angka, atau tanda hubung, persis seperti di dasbor Cloudflare > R2.';
+        }
+
+        if (preg_match(SalinanR2::POLA_KUNCI_ID, $isian['kunci_id']) !== 1) {
+            $galat['kunci_id'] = 'Access Key ID berupa huruf dan angka tanpa spasi. Salin dari halaman token R2.';
+        }
+
+        if ($rahasia === '' && $lama === null) {
+            $galat['rahasia'] = 'Tempel Secret Access Key dari halaman token R2.';
+        } elseif ($rahasia !== '' && preg_match(SalinanR2::POLA_RAHASIA, $rahasia) !== 1) {
+            $galat['rahasia'] = 'Secret Access Key berupa huruf dan angka tanpa spasi. Salin ulang dari halaman token R2.';
+        }
+
+        if ($isian['folder'] === '') {
+            $isian['folder'] = SalinanR2::folderBawaan();
+        } elseif (preg_match(SalinanR2::POLA_FOLDER, $isian['folder']) !== 1) {
+            $galat['folder'] = 'Folder 1–63 huruf kecil, angka, titik, garis bawah, atau tanda hubung, tanpa garis miring, misalnya ' . SalinanR2::folderBawaan() . '.';
+        }
+
+        $galatSandi = $this->periksaSandi((int) session(SesiAdmin::KUNCI_ID), (string) $this->request->getPost('sandi'), 'Tulis kata sandi Anda untuk memastikan perubahan ini memang Anda yang meminta.');
+
+        if ($galatSandi !== null) {
+            $galat['sandi_r2'] = $galatSandi;
+        }
+
+        if ($galat !== []) {
+            return $this->tampilkan([], $galat, $isian);
+        }
+
+        try {
+            // Secret kosong = pakai yang sudah tersimpan.
+            $hasil = SalinanR2::periksa(SalinanR2::klien($isian, $rahasia === '' ? null : $rahasia), $isian['folder']);
+            SalinanR2::simpan($isian, $rahasia === '' ? null : $rahasia);
+        } catch (RuntimeException $e) {
+            return $this->tampilkan([], ['r2' => 'Pengaturan belum disimpan. ' . $e->getMessage()], $isian);
+        }
+
+        (new RiwayatAdmin())->catat(null, RiwayatAdmin::TANPA_ID, RiwayatAdmin::ATUR_R2, sprintf(
+            'Salinan Cloudflare R2 %s: bucket %s, folder %s, Access Key ID %s%s.',
+            $lama === null ? 'diatur' : 'diubah',
+            $isian['bucket'],
+            $isian['folder'],
+            self::samarkan($isian['kunci_id']),
+            $rahasia === '' ? '' : ', Secret Access Key baru',
+        ));
+
+        return redirect()->to(self::ALAMAT . '#salinan-r2')->with('pesan_sukses', sprintf(
+            'Tersambung ke bucket %s dan pengaturan disimpan. Folder %s sekarang berisi %d berkas. Cadangan harian berikutnya ikut dikirim ke sana.',
+            $isian['bucket'],
+            $isian['folder'],
+            count($hasil['berkas']),
+        ));
+    }
+
+    public function periksaR2(): RedirectResponse
+    {
+        $pengaturan = SalinanR2::pengaturan();
+
+        if ($pengaturan === null) {
+            return redirect()->to(self::ALAMAT . '#salinan-r2')->with('pesan_galat', 'Salinan ke Cloudflare R2 belum diatur.');
+        }
+
+        try {
+            $hasil = SalinanR2::periksa(SalinanR2::klien(), $pengaturan['folder']);
+        } catch (RuntimeException $e) {
+            return redirect()->to(self::ALAMAT . '#salinan-r2')->with('pesan_galat', 'Sambungan ke Cloudflare R2 gagal. ' . $e->getMessage());
+        }
+
+        return redirect()->to(self::ALAMAT . '#salinan-r2')->with('pesan_sukses', sprintf(
+            'Sambungan ke bucket %s baik: berkas uji tertulis dan folder %s berisi %d berkas.',
+            $pengaturan['bucket'],
+            $pengaturan['folder'],
+            count($hasil['berkas']),
+        ));
+    }
+
+    /**
+     * @return RedirectResponse|string
+     */
+    public function hapusR2()
+    {
+        $pengaturan = SalinanR2::pengaturan();
+        $galatSandi = $this->periksaSandi((int) session(SesiAdmin::KUNCI_ID), (string) $this->request->getPost('sandi'), 'Tulis kata sandi Anda untuk memastikan salinan memang Anda yang mematikan.');
+
+        if ($pengaturan === null) {
+            return redirect()->to(self::ALAMAT . '#salinan-r2');
+        }
+
+        if ($galatSandi !== null) {
+            return $this->tampilkan([], ['sandi_hapus_r2' => $galatSandi]);
+        }
+
+        SalinanR2::hapus();
+        (new RiwayatAdmin())->catat(null, RiwayatAdmin::TANPA_ID, RiwayatAdmin::ATUR_R2, sprintf(
+            'Salinan Cloudflare R2 dimatikan (bucket %s, folder %s). Berkas di bucket tidak dihapus.',
+            $pengaturan['bucket'],
+            $pengaturan['folder'],
+        ));
+
+        return redirect()->to(self::ALAMAT . '#salinan-r2')->with('pesan_sukses', 'Salinan ke Cloudflare R2 dimatikan. Berkas yang sudah ada di bucket tidak dihapus; cadangan harian tetap dibuat di server.');
+    }
+
+    /**
      * Batas unggah server (bita): yang terkecil dari `upload_max_filesize` dan `post_max_size`.
      */
     public static function batasUnggah(): int
@@ -193,6 +317,35 @@ class CadanganController extends BaseController
         };
     }
 
+    /**
+     * Pesan galat kata sandi admin yang sedang masuk, atau `null` bila benar.
+     * Percobaan dibatasi bersama untuk semua formulir di halaman ini.
+     */
+    private function periksaSandi(int $idAdmin, string $sandi, string $pesanKosong): ?string
+    {
+        if ($sandi === '') {
+            return $pesanKosong;
+        }
+
+        $tunggu = $this->tungguPembatas($idAdmin);
+
+        if ($tunggu !== null) {
+            return 'Terlalu banyak percobaan kata sandi. Tunggu ' . $tunggu . ' detik, lalu coba lagi.';
+        }
+
+        $hash = model(AdminModel::class)->sandiTersimpan($idAdmin);
+
+        return $hash === null || strlen($sandi) > 255 || ! password_verify($sandi, $hash) ? self::PESAN_SANDI_SALAH : null;
+    }
+
+    /**
+     * Access Key ID untuk riwayat: hanya 4 huruf awal dan akhir.
+     */
+    private static function samarkan(string $kunci): string
+    {
+        return strlen($kunci) <= 8 ? str_repeat('•', strlen($kunci)) : substr($kunci, 0, 4) . '…' . substr($kunci, -4);
+    }
+
     private function tungguPembatas(int $idAdmin): ?int
     {
         $pembatas = service('throttler');
@@ -205,12 +358,36 @@ class CadanganController extends BaseController
     }
 
     /**
-     * @param array<string, string> $galat
+     * @param array<string, string>      $galat   Pesan per kotak formulir impor.
+     * @param array<string, string>      $galatR2 Pesan per kotak formulir R2 (`r2` = pesan umum).
+     * @param array<string, string>|null $isianR2 Isian formulir R2 yang dikirim ulang.
      */
-    private function tampilkan(array $galat = []): string
+    private function tampilkan(array $galat = [], array $galatR2 = [], ?array $isianR2 = null): string
     {
+        $r2         = SalinanR2::pengaturan();
+        $isiR2      = null;
+        $galatIsiR2 = null;
+
+        if ($r2 !== null) {
+            try {
+                $isiR2 = SalinanR2::isiBucket();
+            } catch (RuntimeException $e) {
+                $galatIsiR2 = $e->getMessage();
+            }
+        }
+
         return view('admin/pengaturan/cadangan', [
             'galat'    => $galat,
+            'r2'       => $r2,
+            'galatR2'  => $galatR2,
+            'isianR2'  => $isianR2 ?? [
+                'id_akun'  => $r2['id_akun'] ?? '',
+                'bucket'   => $r2['bucket'] ?? '',
+                'kunci_id' => $r2['kunci_id'] ?? '',
+                'folder'   => $r2['folder'] ?? SalinanR2::folderBawaan(),
+            ],
+            'isiR2'      => $isiR2,
+            'galatIsiR2' => $galatIsiR2,
             'batas'    => self::batasUnggah(),
             'otomatis' => CadanganLengkap::daftarOtomatis(),
             'riwayat'  => (new RiwayatAdmin())->untukCadangan(),

@@ -338,6 +338,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('cadangan/unduh', 'CadanganController::unduh');
         $routes->post('cadangan/impor', 'CadanganController::impor');
         $routes->get('cadangan/(Sebelum_Impor_[0-9_a-f]+\.zip)/unduh', 'CadanganController::unduhOtomatis/$1');
+        // Salinan Cloudflare R2 (F11-19, K185).
+        $routes->post('cadangan/r2', 'CadanganController::simpanR2');
+        $routes->post('cadangan/r2/periksa', 'CadanganController::periksaR2');
+        $routes->post('cadangan/r2/hapus', 'CadanganController::hapusR2');
         // ---------- Akhir cadangan ----------
 
         // ---------- Galeri (F9-06) ----------

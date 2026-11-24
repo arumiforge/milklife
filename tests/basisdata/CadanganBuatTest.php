@@ -1,8 +1,11 @@
 <?php
 
 use App\Commands\BuatCadangan;
+use App\Libraries\Cadangan\KlienR2;
 use App\Libraries\Cadangan\PembuatCadangan;
+use App\Libraries\Cadangan\SalinanR2;
 use CodeIgniter\CLI\CLI;
+use CodeIgniter\Config\Services;
 use CodeIgniter\Test\Mock\MockInputOutput;
 use Config\Cadangan;
 use Config\Database;
@@ -153,7 +156,47 @@ final class CadanganBuatTest extends UjiBasisData
 
         $this->assertSame(EXIT_SUCCESS, $kode);
         $this->assertStringContainsString('Cadangan dibuat: ', $io->getOutput());
+        $this->assertStringContainsString('Salinan Cloudflare R2 belum diatur', $io->getOutput());
         $this->assertCount(1, glob($this->sementara . '/cadangan/cadangan-milklife-*.zip') ?: []);
+    }
+
+    public function testPerintahMengirimKeR2BilaDiatur(): void
+    {
+        // F11-19, K185: R2 diganti tiruan; kiriman gagal = kode keluar 1, zip tetap di server.
+        $kunciLama                = config('Encryption')->key;
+        config('Encryption')->key = random_bytes(32);
+        Services::resetSingle('encrypter');
+        $terkirim = [];
+        $status   = 200;
+        KlienR2::gantiPengirim(static function (string $metode, string $url, array $kepala, ?string $berkas) use (&$terkirim, &$status): array {
+            $terkirim[] = $metode . ' ' . $url . ' ' . ($berkas === null ? '' : (string) filesize($berkas));
+
+            return ['status' => $status, 'isi' => $status === 200 ? '' : '<Error><Code>InternalError</Code></Error>'];
+        });
+
+        try {
+            SalinanR2::simpan(['id_akun' => str_repeat('ab', 16), 'bucket' => 'cadangan-karangan', 'kunci_id' => str_repeat('cd', 16), 'folder' => 'uji-karangan'], str_repeat('ef', 32));
+            config('Cadangan')->folder = $this->sementara . '/cadangan';
+
+            $io = new MockInputOutput();
+            CLI::setInputOutput($io);
+            $this->assertSame(EXIT_SUCCESS, (new BuatCadangan(service('logger'), service('commands')))->run([]));
+            $zip = (string) (glob($this->sementara . '/cadangan/cadangan-milklife-*.zip') ?: [''])[0];
+            $this->assertStringContainsString('Dikirim ke Cloudflare R2: cadangan-karangan/uji-karangan/' . basename($zip) . '.', $io->getOutput());
+            $this->assertSame(['PUT https://' . str_repeat('ab', 16) . '.r2.cloudflarestorage.com/cadangan-karangan/uji-karangan/' . basename($zip) . ' ' . filesize($zip)], $terkirim);
+            $this->assertTrue(SalinanR2::pengaturan()['kirim_berhasil']);
+
+            $status = 500;
+            $io     = new MockInputOutput();
+            CLI::setInputOutput($io);
+            $this->assertSame(EXIT_ERROR, (new BuatCadangan(service('logger'), service('commands')))->run([]));
+            $this->assertStringContainsString('Cadangan tersimpan di server, tetapi gagal dikirim ke Cloudflare R2: Cloudflare R2 menjawab 500 InternalError', $io->getOutput());
+            $this->assertFalse(SalinanR2::pengaturan()['kirim_berhasil']);
+        } finally {
+            KlienR2::gantiPengirim(null);
+            config('Encryption')->key = $kunciLama;
+            Services::resetSingle('encrypter');
+        }
     }
 
     private function pembuat(?string $folder = null, string $mysqldump = 'mysqldump'): PembuatCadangan
