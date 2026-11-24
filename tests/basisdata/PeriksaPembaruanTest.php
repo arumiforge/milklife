@@ -1,5 +1,7 @@
 <?php
 
+use App\Libraries\Bantuan\FaqBawaan;
+use App\Libraries\CarouselHalamanDepan;
 use App\Libraries\Hasil\DataTabelSkor;
 use App\Libraries\PemeriksaPembaruan;
 use CodeIgniter\Test\StreamFilterTrait;
@@ -36,6 +38,11 @@ final class PeriksaPembaruanTest extends UjiBasisData
         file_put_contents($this->akar . 'aset/js/contoh.js', 'var a = 1;');
 
         $this->db->table('sekolah')->insert(['npsn' => '99000001', 'nama' => 'SD KARANGAN SATU', 'jenjang' => 'SD', 'kabupaten' => 'Blora']);
+
+        // Isi bawaan halaman publik sudah terpasang, seperti server hasil data:awal.
+        FaqBawaan::pasang($this->db);
+        CarouselHalamanDepan::simpan([]);
+        setting('Galeri.bawaan_dipasang', true);
     }
 
     protected function tearDown(): void
@@ -62,9 +69,9 @@ final class PeriksaPembaruanTest extends UjiBasisData
     {
         $hasil = $this->periksa();
 
-        $this->assertSame(['composer', 'migrasi', 'sekolah', 'gabung', 'tabel_skor', 'data_bawaan', 'aset'], array_keys($hasil));
+        $this->assertSame(['composer', 'migrasi', 'sekolah', 'gabung', 'tabel_skor', 'faq', 'carousel', 'galeri', 'data_bawaan', 'aset'], array_keys($hasil));
         $this->assertSame([], array_filter(array_column($hasil, 'perlu')), json_encode($hasil, JSON_PRETTY_PRINT));
-        $this->assertSame([null, null, null, null, null, null, null], array_column($hasil, 'perintah'));
+        $this->assertSame(array_fill(0, 10, null), array_column($hasil, 'perintah'));
         $this->assertStringContainsString('migrasi sudah dijalankan', $hasil['migrasi']['keterangan']);
     }
 
@@ -111,6 +118,30 @@ final class PeriksaPembaruanTest extends UjiBasisData
         (new DataTabelSkor($this->db))->pasangBawaan(false, $this->akar . 'data/tabel-skor');
         $this->assertSame(1, (new DataTabelSkor($this->db))->pakaiUntukTrilomba());
         $this->assertFalse($this->periksa()['tabel_skor']['perlu']);
+    }
+
+    public function testIsiPublikKosongSetelahPulihDariVersiLama(): void
+    {
+        // F11-19: basis data dari server Tahap 8 (Laragon) belum punya tanya-jawab, carousel, dan galeri.
+        $this->db->table('faq')->truncate();
+        setting()->forget(CarouselHalamanDepan::KUNCI);
+        setting()->forget('Galeri.bawaan_dipasang');
+
+        $hasil = $this->periksa();
+        $this->assertSame('php spark faq:awal', $hasil['faq']['perintah']);
+        $this->assertSame('php spark halaman-depan:carousel', $hasil['carousel']['perintah']);
+        $this->assertSame('php spark galeri:awal', $hasil['galeri']['perintah']);
+
+        // Galeri yang sudah diisi admin tidak perlu album bawaan.
+        $this->db->table('galeri')->insert(['judul' => 'Album karangan', 'keterangan' => '', 'urutan' => 1, 'aktif' => 1]);
+        $this->assertFalse($this->periksa()['galeri']['perlu']);
+
+        // Carousel yang dikosongkan admin dianggap sudah diatur.
+        CarouselHalamanDepan::simpan([]);
+        $this->assertFalse($this->periksa()['carousel']['perlu']);
+
+        $this->assertSame(EXIT_SUCCESS, service('commands')->run('faq:awal', []));
+        $this->assertFalse($this->periksa()['faq']['perlu']);
     }
 
     public function testDataBawaanLama(): void
