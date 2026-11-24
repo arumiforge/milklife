@@ -116,6 +116,9 @@ jobs:
         run: |
           cp docker/.env.example docker/.env
           docker compose -f docker/compose.yaml config --quiet
+          # Tanpa profil hanya app dan db; dengan profil tunnel ada cloudflared (K184).
+          test "$(docker compose -f docker/compose.yaml config --services | sort | tr '\n' ' ')" = "app db "
+          COMPOSE_PROFILES=tunnel TUNNEL_TOKEN=contoh docker compose -f docker/compose.yaml config --services | grep -qx cloudflared
 
   uji:
     name: PHPUnit (PHP 8.5, MySQL 8.4)

@@ -15,7 +15,7 @@ Web ini mengurus pendaftaran, cek pendaftaran, rekap panitia, dan sejak K124 jug
 
 ## Teknologi
 
-CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.5.13+, MySQL 8.4, mPDF, PhpSpreadsheet. Staging dan produksi berjalan di Docker Compose pada VPS Ubuntu 24.04: FrankenPHP (mode biasa) dengan OPcache, MySQL 8.4, dan cloudflared, tanpa port ke host (`docker/`, K182). Komputer pengembang boleh memakai Laragon dengan PHP 8.5. Tampilan sejak Tahap 9: **Flowbite Pro di atas Tailwind CSS 4** (K138, K141), ikon Lucide, Three.js, DataTables bergaya Tailwind; CSS dibangun `npm run bangun` (Node 24 hanya di komputer pengembang dan CI) dan hasilnya di-commit, server tanpa Node. Bootstrap 5 sudah dilepas (F9-17). Gambar ilustrasi dibuat Codex dari `desain/tugas/` (`AGENTS.md`, K150); kodenya ditulis Claude.
+CodeIgniter 4.7 (dipasang lewat Composer dari sumber resmi), PHP 8.5.13+, MySQL 8.4, mPDF, PhpSpreadsheet. Staging dan produksi berjalan di Docker Compose pada VPS Ubuntu 24.04: FrankenPHP (mode biasa) dengan OPcache dan MySQL 8.4, tanpa port ke jaringan luar (`docker/`, K182); Cloudflare Tunnel lewat cloudflared di host VPS yang sama dengan aplikasi lain (K184). Komputer pengembang boleh memakai Laragon dengan PHP 8.5. Tampilan sejak Tahap 9: **Flowbite Pro di atas Tailwind CSS 4** (K138, K141), ikon Lucide, Three.js, DataTables bergaya Tailwind; CSS dibangun `npm run bangun` (Node 24 hanya di komputer pengembang dan CI) dan hasilnya di-commit, server tanpa Node. Bootstrap 5 sudah dilepas (F9-17). Gambar ilustrasi dibuat Codex dari `desain/tugas/` (`AGENTS.md`, K150); kodenya ditulis Claude.
 
 ## Dokumen utama
 

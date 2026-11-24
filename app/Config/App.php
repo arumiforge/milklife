@@ -186,8 +186,9 @@ class App extends BaseConfig
      * itu sendiri. Pengunjung yang langsung datang dari alamat lain tidak bisa
      * memalsukan alamatnya lewat kepala ini. Lihat README, bagian Cloudflare Tunnel.
      *
-     * Di Docker (K182) `cloudflared` berjalan di container sendiri, jadi
-     * permintaan datang dari subnet jaringan compose. Subnet itu ditambahkan
+     * Di Docker (K182, K184) permintaan datang dari subnet jaringan compose:
+     * dari container `cloudflared`, atau dari `cloudflared` di host lewat
+     * port 127.0.0.1 yang diteruskan Docker dari gateway jaringan itu. Subnet itu ditambahkan
      * dari variabel lingkungan `MILKLIFE_SUBNET_PROXY` (diisi compose.yaml
      * dari `SUBNET` di docker/.env); lihat __construct() di bawah.
      *
