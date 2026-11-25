@@ -288,7 +288,7 @@ class DataAwal extends BaseCommand
         }
 
         if ($unduhan['gagal'] !== []) {
-            CLI::error('Berkas unduhan gagal disalin: ' . implode(', ', $unduhan['gagal']) . '. Pastikan folder public/unggahan boleh ditulisi, lalu unggah berkasnya lewat Pengaturan > Unduhan.');
+            CLI::error(self::pesanUnduhanGagal($unduhan['gagal']));
         }
 
         // ---------- Foto carousel pembuka (F9-03) ----------
@@ -379,6 +379,39 @@ class DataAwal extends BaseCommand
         }
 
         return $hasil;
+    }
+
+    /**
+     * Pesan untuk berkas unduhan bawaan yang tidak terpasang. Berkas yang
+     * sumbernya tidak ada di folder kode (misalnya image Docker lama tanpa
+     * `sumber/flyer/`) dipisahkan dari yang gagal ditulis ke `public/unggahan`.
+     *
+     * @param list<string> $gagal judul berkas dari `pasangUnduhanBawaan()`
+     */
+    public static function pesanUnduhanGagal(array $gagal): string
+    {
+        $hilang = [];
+
+        foreach (self::UNDUHAN as [$judul, , $berkas]) {
+            if (in_array($judul, $gagal, true) && ! is_file(ROOTPATH . $berkas)) {
+                $hilang[$judul] = $berkas;
+            }
+        }
+
+        $pesan = [];
+
+        if ($hilang !== []) {
+            $pesan[] = 'Berkas unduhan tidak dipasang karena berkas sumbernya tidak ada di folder kode: '
+                . implode(', ', array_map(static fn (string $judul, string $berkas): string => $judul . ' (' . $berkas . ')', array_keys($hilang), $hilang)) . '.';
+        }
+
+        $tidakTertulis = array_values(array_diff($gagal, array_keys($hilang)));
+
+        if ($tidakTertulis !== []) {
+            $pesan[] = 'Berkas unduhan gagal disalin: ' . implode(', ', $tidakTertulis) . '. Pastikan folder public/unggahan boleh ditulisi.';
+        }
+
+        return implode(' ', $pesan) . ' Unggah berkasnya lewat Pengaturan > Unduhan.';
     }
 
     /**

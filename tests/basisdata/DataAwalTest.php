@@ -191,6 +191,15 @@ final class DataAwalTest extends UjiBasisData
         $this->seeNumRecords(count(DataAwal::UNDUHAN), 'unduhan', []);
     }
 
+    public function testPesanUnduhanGagalMenyebutSebabnya(): void
+    {
+        // Sumber ada di folder kode, jadi sebabnya folder unggahan tidak bisa ditulisi.
+        $pesan = DataAwal::pesanUnduhanGagal(['Flyer Seri 2 – 2026']);
+        $this->assertStringContainsString('Berkas unduhan gagal disalin: Flyer Seri 2 – 2026. Pastikan folder public/unggahan boleh ditulisi.', $pesan);
+        $this->assertStringNotContainsString('sumbernya tidak ada', $pesan);
+        $this->assertStringEndsWith('Unggah berkasnya lewat Pengaturan > Unduhan.', $pesan);
+    }
+
     public function testLimaKelompokUmurDenganTahunLahirJenjangDanBiaya(): void
     {
         $this->jalankan();
