@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101); **revisi 12 23 November 2026** (penutupan Tahap 11, diubah langsung sesuai K101); **revisi 13 23 November 2026** (K182, ditulis ulang untuk Ubuntu dan Docker, diubah langsung sesuai K101); **revisi 14 24 November 2026** (K184, diubah langsung sesuai K101); **revisi 15 25 November 2026** (K185, diubah langsung sesuai K101); **revisi 16 25 November 2026** (K187, diubah langsung sesuai K101) |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101); **revisi 12 23 November 2026** (penutupan Tahap 11, diubah langsung sesuai K101); **revisi 13 23 November 2026** (K182, ditulis ulang untuk Ubuntu dan Docker, diubah langsung sesuai K101); **revisi 14 24 November 2026** (K184, diubah langsung sesuai K101); **revisi 15 25 November 2026** (K185, diubah langsung sesuai K101); **revisi 16 25 November 2026** (K187, diubah langsung sesuai K101); **revisi 17 25 November 2026** (K188, diubah langsung sesuai K101) |
+| Revisi 17 | Perintah `mlk` di server (K188), mengikuti pola `spmb deploy`: image bertag SHA commit dibangun dari `git archive`, `mlk deploy staging` memasangnya setelah cadangan lalu `migrate --all`, `sekolah:impor`, dan cek kesehatan, dan kembali otomatis ke versi sebelumnya bila gagal; `mlk deploy produksi` memakai image staging tanpa membangun ulang; `mlk rollback`, `mlk status`, `mlk pasang` untuk pemasangan pertama; port dicatat di `/opt/apps/PORTS`; singkatan `alias mlk` diganti tautan ke skrip `docker/mlk`. Flyer, banner, dan juknis bawaan ikut masuk image, jadi `data:awal` tidak lagi gagal memasangnya. Bagian yang berubah: 2, 5, 10, asumsi 4 |
 | Revisi 16 | Salinan cadangan ke Cloudflare R2 diatur admin di **Pengaturan → Cadangan**, bukan lagi di `docker/.env` (K187): ID akun, bucket, token, dan folder diisi di panel, sambungan diperiksa sebelum disimpan, isi folder di bucket tampil dengan tombol unduh, dan `cadangan:buat` langsung mengirim zip baru ke R2. Layanan `salin-r2` dan variabel `R2_*` dihapus; cron cukup satu perintah. Bagian yang berubah: ringkasan, 7, 11, asumsi 2 |
 | Revisi 15 | Pindah dari Laragon dicoba dengan dump dan zip Backup data produksi (K185): zip Backup data ikut diunduh sebagai pembanding dan jalan cadangan bila basis data gagal dimuat, isian `cadangan.folder` bila `cadangan:buat` menolak, pemeriksaan jumlah atlet, dan jalan mundur yang memperbarui kode Laragon dulu. `pembaruan:periksa` kini menyebut `faq:awal`, `halaman-depan:carousel`, dan `galeri:awal` (F11-19). Bagian yang berubah: 8 |
 | Revisi 14 | Cloudflare Tunnel memakai cloudflared di host, tunnel yang sama dengan aplikasi lain di VPS, untuk staging dan produksi (K184): container app membuka port hanya di `127.0.0.1:<PORT_LOKAL>`, tunnel diarahkan ke `http://localhost:<PORT_LOKAL>`, dan container cloudflared menjadi pilihan lewat `COMPOSE_PROFILES=tunnel`. Pindah dari Laragon memindahkan nama alamat ke tunnel di host. Bagian yang berubah: ringkasan, 1, 3, 6, 8, 10, 11, asumsi 1 |
@@ -70,15 +71,16 @@ Panduan ini ditulis untuk **Ubuntu 24.04 dengan Docker** (K182). Semua perintah 
    ```
 
    Jawab `yes` bila ditanya keaslian github.com. Kunci `~/.ssh/milklife-produksi` (tanpa `.pub`) adalah rahasia: jangan dikirim ke siapa pun dan jangan disalin ke folder proyek.
-3. Buat dua singkatan perintah supaya langkah berikutnya lebih pendek. Keduanya dijalankan dari folder kode lingkungan yang sedang dikerjakan:
+3. Pasang perintah `mlk` (skrip `docker/mlk` di repo) dan singkatan `spark`:
 
    ```
-   echo "alias mlk='docker compose -f docker/compose.yaml'" >> ~/.bashrc
-   echo "alias spark='docker compose -f docker/compose.yaml exec app php spark'" >> ~/.bashrc
-   source ~/.bashrc
+   sudo ln -sf /srv/milklife-produksi/docker/mlk /usr/local/bin/mlk
+   sed -i '/alias mlk=/d; /alias spark=/d' ~/.bashrc
+   echo "alias spark='mlk spark'" >> ~/.bashrc
+   unalias mlk 2>/dev/null; source ~/.bashrc
    ```
 
-   `mlk` mengatur container (misalnya `mlk ps`), `spark` menjalankan perintah aplikasi di container app (misalnya `spark migrate --all`). Selanjutnya setiap perintah di panduan ini dijalankan dari `/srv/milklife-produksi`.
+   Di dalam folder kode, `mlk` meneruskan perintah ke Docker Compose (misalnya `mlk ps`), dan `spark` menjalankan perintah aplikasi di container app (misalnya `spark migrate --all`). Dari folder mana pun, sebutkan lingkungannya: `mlk produksi ps`, `mlk staging spark pembaruan:periksa`. `mlk` mencari folder lingkungan di `/opt/apps/milklife/<lingkungan>`, lalu `/srv/milklife-<lingkungan>`. `mlk deploy` (bagian 10) dan `mlk pasang` (bagian 5) menjalankan beberapa langkah sekaligus. Selanjutnya setiap perintah di panduan ini dijalankan dari `/srv/milklife-produksi`.
 
 ## 3. Pengaturan Docker (`docker/.env`)
 
@@ -138,6 +140,8 @@ Basis data dan penggunanya dibuat otomatis saat container db pertama kali menyal
 `.env` dipasang ke container dalam mode baca saja. Perubahan `.env` langsung berlaku di permintaan berikutnya, tanpa perlu menyalakan ulang container.
 
 ## 5. Menyalakan dan mengisi aplikasi
+
+Pada pemasangan baru, langkah 1 sampai 5 di bawah bisa dijalankan sekaligus dengan `mlk pasang produksi` (atau `mlk pasang staging`). Perintah itu memeriksa `DB_SANDI` sama dengan sandi di `.env`, mencatat port di `/opt/apps/PORTS`, membangun image dari commit folder kode, menyalakan container, mengisi `encryption.key` bila masih kosong, menjalankan `migrate --all` dan `sekolah:impor`, menjalankan `data:awal` hanya bila basis data belum berisi kelompok umur, menanyakan akun admin, lalu cek kesehatan dan `pembaruan:periksa`. **Jangan** dipakai saat pindah dari server lama: kunci dan data diambil dari server lama (bagian 8).
 
 1. Bangun image dan nyalakan app serta basis data. Pembangunan pertama makan beberapa menit:
 
@@ -420,35 +424,39 @@ Lakukan hanya bila data rusak atau terhapus. Pemulihan **mengganti seluruh** isi
 
 ## 10. Memperbarui ke versi baru
 
-Bila ada perbaikan baru di cabang `main` GitHub, jalankan dari folder kode lingkungan itu. Coba di staging lebih dulu.
+Pembaruan memakai perintah `mlk` (K188). Staging selalu lebih dulu, lalu produksi memakai image yang sama persis:
 
-1. Buat cadangan:
+```
+mlk deploy staging
+mlk deploy produksi
+```
 
-   ```
-   spark cadangan:buat
-   ```
+`mlk deploy staging` mengambil `origin/main` (atau versi lain: `mlk deploy staging <commit atau tag>`) dan menjalankan berurutan:
 
-2. Ambil versi baru, bangun ulang image, dan ganti container app:
+1. Memeriksa `docker/.env` dan `.env` ada dan sandinya sama, tidak ada berkas proyek yang terubah di server, dan `PORT_LOKAL` tercatat di `/opt/apps/PORTS` (daftar port bersama aplikasi lain di server).
+2. `git fetch`, lalu membangun image `milklife-app:<12 huruf SHA>` dari isi commit itu persis (`git archive`). Bila image itu sudah ada, tidak dibangun ulang.
+3. `spark cadangan:buat` bila container app sedang menyala. Bila cadangan gagal, misalnya kiriman ke R2 ditolak, belum ada yang diubah dan deploy berhenti; perbaiki sebabnya, atau ulangi dengan `--tanpa-cadangan` bila cadangan sudah dibuat dengan cara lain.
+4. Memindah folder kode ke commit itu (`git checkout --detach`), sehingga `docker/compose.yaml` ikut versi kodenya, lalu mencatat `TAG` dan `TAG_SEBELUM` di `docker/.env`.
+5. `docker compose up -d --remove-orphans --wait`: container diganti dan ditunggu sampai sehat. Web berhenti beberapa detik.
+6. `spark migrate --all` dan `spark sekolah:impor`.
+7. Cek kesehatan: `/admin/masuk` di port lokal harus menjawab `307`, dan `200` dengan kepala `X-Forwarded-Proto: https`.
+8. Bila langkah 5, 6, atau 7 gagal, versi sebelumnya otomatis dinyalakan lagi. Perubahan basis data dari migrate yang sudah berjalan tidak dibatalkan.
+9. Mencatat deploy di `/opt/apps/milklife/deploy-<lingkungan>.log`, menghapus image lama (5 terbaru dan yang dipakai staging atau produksi disimpan), lalu menjalankan `spark pembaruan:periksa`.
 
-   ```
-   git pull
-   mlk build app
-   mlk up -d
-   ```
+`mlk deploy produksi` tanpa versi memakai image yang sedang jalan di staging, tanpa membangun ulang, sehingga produksi menjalankan yang sudah dicoba di staging. Perintah ini menanyakan "Ketik ya untuk lanjut" (lewati dengan `--ya`), lalu menjalankan langkah 3 sampai 9.
 
-   Image baru sudah berisi pustaka Composer dan CSS/JavaScript kecil hasil `aset:minify`. OPcache tidak memeriksa perubahan berkas, jadi kode baru baru terbaca setelah container app diganti oleh `mlk up -d`. Web berhenti beberapa detik saat container diganti.
-3. Perbarui tabel dan data sekolah, lalu periksa:
+`pembaruan:periksa` memeriksa pustaka Composer, migrasi, data sekolah, pendaftaran Lunas ber-NPSN sama, tabel skor Trilomba, data bawaan, dan CSS/JavaScript kecil, lalu menulis `[beres]` atau `[PERLU]` (K115). Bila ada `[PERLU]`, `mlk deploy` selesai dengan kode 2 dan menyebut perintahnya; jalankan dengan `mlk produksi spark <perintah>`, lalu `mlk produksi spark pembaruan:periksa` lagi sampai tertulis "Tidak ada perintah lain yang perlu dijalankan". Bila tertulis basis data tidak bisa dihubungi, periksa `mlk produksi ps`: container `db` harus `healthy`.
 
-   ```
-   spark migrate --all
-   spark sekolah:impor
-   spark pembaruan:periksa
-   ```
+Perintah lain:
 
-   `pembaruan:periksa` tidak mengubah apa pun. Ia memeriksa pustaka Composer, migrasi, data sekolah, pendaftaran Lunas ber-NPSN sama, tabel skor Trilomba, data bawaan, dan CSS/JavaScript kecil, lalu menulis `[beres]` atau `[PERLU]` dan daftar perintah yang masih perlu dijalankan (K115). Jalankan perintah itu dengan awalan `spark`, lalu jalankan `pembaruan:periksa` lagi sampai tertulis "Tidak ada perintah lain yang perlu dijalankan". Bila tertulis basis data tidak bisa dihubungi, periksa `mlk ps`: container `db` harus `healthy`.
-4. Buka halaman depan dan panel admin, pastikan tampil normal.
+| Perintah | Gunanya |
+|---|---|
+| `mlk rollback <lingkungan>` | Kembali ke image sebelumnya (`TAG_SEBELUM`). Basis data tidak ikut kembali; pulihkan cadangan bila perlu (bagian 9) |
+| `mlk status <lingkungan>` | Versi yang jalan, container, dan 5 deploy terakhir |
+| `mlk <lingkungan> logs --tail 100 app` | Catatan container app |
+| `mlk <lingkungan> spark <perintah>` | Perintah aplikasi di container app |
 
-Bila pembaruan mengubah `docker/compose.yaml` atau image MySQL, `mlk up -d` sekaligus memasang versi barunya. Hapus image lama sesekali dengan `docker image prune` supaya diska tidak penuh.
+Hanya satu perintah `deploy`, `pasang`, atau `rollback` yang bisa berjalan pada satu waktu. Setelah selesai, buka halaman depan dan panel admin, pastikan tampil normal. Jangan menjalankan `git pull` sendiri di folder kode: folder itu berada di commit yang sedang dipasang, dan `mlk deploy` yang memindahkannya.
 
 ### Perintah sekali jalan dari pembaruan lama
 
@@ -477,8 +485,8 @@ Setelah pembaruan Tahap 11 (K172–K176), admin memeriksa dan mengatur:
 
 Catatan:
 
-- `git pull` tidak menyentuh `.env`, `docker/.env`, volume, dan folder cadangan; semuanya tidak ada di git.
-- Bila `git pull` menolak karena "local changes", ada berkas proyek yang terubah di server. Jangan menyunting berkas proyek di server; hubungi pengembang.
+- `mlk deploy` tidak menyentuh `.env`, volume, dan folder cadangan; dari `docker/.env` hanya `TAG` dan `TAG_SEBELUM` yang diubah. Semuanya tidak ada di git.
+- Bila `mlk deploy` menolak karena ada berkas proyek yang terubah di server, jangan menyunting berkas proyek di server; hubungi pengembang.
 - Admin yang sedang masuk bisa diminta masuk lagi setelah pembaruan tertentu. Itu wajar.
 
 ## 11. Daftar periksa sebelum membuka pendaftaran
@@ -516,6 +524,6 @@ Selama masa pendaftaran, periksa sesekali bahwa folder cadangan berisi berkas ha
 1. VPS sudah menjalankan Docker dan cloudflared di host untuk aplikasi lain. MilkLife memakai tunnel itu lewat port `127.0.0.1` sendiri per lingkungan, tanpa reverse proxy, dan subnet serta port-nya dipilih supaya tidak bentrok (K182, K184).
 2. Cadangan dijalankan pukul 02.00 waktu server oleh cron host, dan `cadangan:buat` langsung mengirimnya ke bucket Cloudflare R2 yang sudah dimiliki panitia, dengan pengaturan dari panel admin (K187). Container app dan db memakai zona waktu `Asia/Jakarta`.
 3. `.env` dan `docker/.env` tidak ikut dalam berkas cadangan (berisi rahasia); pengembang menyimpan salinannya sendiri.
-4. Image dibangun di server dari kode hasil `git pull`; tidak ada registry image terpisah.
+4. Image dibangun di server dari isi commit (`git archive`) oleh `mlk deploy staging`, dan produksi memakai image yang sama; tidak ada registry image terpisah (K188).
 5. Kode diambil dan diperbarui dengan `git` dari repo privat lewat deploy key baca saja per server (K138, K148).
 6. FrankenPHP berjalan dalam mode biasa. Worker mode, Redis, dan Memcached tidak dipakai selama web hanya satu container app (K182).

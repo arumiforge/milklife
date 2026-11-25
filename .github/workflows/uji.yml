@@ -99,6 +99,9 @@ jobs:
       - name: Ambil kode
         uses: actions/checkout@v4
 
+      - name: Periksa skrip mlk
+        run: shellcheck docker/mlk
+
       - name: Bangun image aplikasi
         run: docker build -f docker/Dockerfile -t milklife-app:ci .
 
