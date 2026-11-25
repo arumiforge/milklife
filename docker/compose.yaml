@@ -24,6 +24,9 @@ name: ${COMPOSE_PROJECT_NAME:?Isi COMPOSE_PROJECT_NAME di docker/.env}
 
 services:
   app:
+    # Tag diisi `mlk deploy` (12 huruf pertama SHA commit, K189); image yang
+    # sama dipakai staging dan produksi.
+    image: milklife-app:${TAG:-lokal}
     build:
       context: ..
       dockerfile: docker/Dockerfile

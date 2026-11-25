@@ -1,0 +1,475 @@
+#!/usr/bin/env bash
+#--------------------------------------------------------------------
+# mlk: perintah MilkLife di server Docker (K182, K189).
+#
+#   mlk deploy staging [ref]    bangun image commit itu (bawaan origin/main),
+#                               cadangan, pasang, migrate, cek kesehatan
+#   mlk deploy produksi [ref]   tanpa ref: image yang sedang jalan di staging
+#   mlk rollback <lingkungan>   kembali ke image sebelumnya
+#   mlk pasang <lingkungan>     pemasangan pertama, setelah docker/.env
+#                               dan .env diisi
+#   mlk status <lingkungan>     versi, container, dan deploy terakhir
+#   mlk staging ps              perintah docker compose untuk lingkungan itu
+#   mlk produksi logs -f app
+#   mlk staging spark <perintah> perintah spark di container app
+#   mlk ps                      tanpa nama lingkungan: folder saat ini
+#
+# Dipasang sekali di server:
+#   ln -sf /opt/apps/milklife/staging/docker/mlk /usr/local/bin/mlk
+#
+# Folder lingkungan: $MLK_FOLDER/<lingkungan> (bawaan /opt/apps/milklife),
+# lalu /srv/milklife-<lingkungan>. Setiap folder adalah clone repo dengan
+# docker/.env dan .env sendiri. Image bernama milklife-app:<12 huruf SHA>,
+# dipakai bersama staging dan produksi.
+#--------------------------------------------------------------------
+
+# Semua isi skrip ada di main(), yang dipanggil di baris terakhir: bash
+# membaca seluruhnya sebelum mulai, jadi git checkout yang mengganti berkas
+# ini di tengah deploy tidak mengacaukan perintah yang sedang berjalan.
+main() {
+set -euo pipefail
+
+FOLDER_INDUK="${MLK_FOLDER:-/opt/apps/milklife}"
+DAFTAR_PORT="${MLK_DAFTAR_PORT:-/opt/apps/PORTS}"
+IMAGE=milklife-app
+SIMPAN_IMAGE=5
+LINGKUNGAN=''
+SEBELUM_LAMA=''
+SKRIP="$(readlink -f "${BASH_SOURCE[0]}")"
+
+if [ -t 1 ]; then
+  HIJAU=$'\e[32m'; KUNING=$'\e[33m'; MERAH=$'\e[31m'; TEBAL=$'\e[1m'; BIASA=$'\e[0m'
+else
+  HIJAU=''; KUNING=''; MERAH=''; TEBAL=''; BIASA=''
+fi
+
+langkah() { printf '\n%s==> %s%s\n' "$TEBAL" "$*" "$BIASA"; }
+beres()   { printf '%s%s%s\n' "$HIJAU" "$*" "$BIASA"; }
+awas()    { printf '%s%s%s\n' "$KUNING" "$*" "$BIASA"; }
+gagal()   { printf '%sGagal: %s%s\n' "$MERAH" "$*" "$BIASA" >&2; exit 1; }
+
+compose() { docker compose -f docker/compose.yaml "$@"; }
+spark()   { compose exec app php spark "$@"; }
+spark_t() { compose exec -T app php spark "$@"; }
+
+ambil_var() { if [ -f "$1" ]; then sed -n "s/^$2=//p" "$1" | tail -n1; fi; }
+isi_var() {
+  if grep -q "^$2=" "$1"; then
+    sed -i "s|^$2=.*|$2=$3|" "$1"
+  else
+    printf '%s=%s\n' "$2" "$3" >> "$1"
+  fi
+}
+
+nama_lingkungan() {
+  case "${1:-}" in
+    staging) echo staging ;;
+    produksi|production|prod) echo produksi ;;
+    *) return 1 ;;
+  esac
+}
+
+folder_lingkungan() {
+  local folder
+  for folder in "$FOLDER_INDUK/$1" "/srv/milklife-$1"; do
+    if [ -f "$folder/docker/compose.yaml" ]; then
+      echo "$folder"
+      return 0
+    fi
+  done
+  return 1
+}
+
+masuk_folder() {
+  local folder
+  folder="$(folder_lingkungan "$1")" || gagal "folder $FOLDER_INDUK/$1 belum berisi kode MilkLife. Jalankan dulu: cd $FOLDER_INDUK && git clone github-milklife:arumiforge/milklife.git $1"
+  cd "$folder"
+}
+
+kunci() {
+  exec 9>"$FOLDER_INDUK/.mlk.lock"
+  flock -n 9 || gagal "perintah mlk lain sedang berjalan. Tunggu sampai selesai."
+}
+
+periksa_berkas_env() {
+  [ -f docker/.env ] || gagal "docker/.env belum ada di $(pwd). Salin dari docker/.env.example, lalu isi."
+  [ -f .env ] || gagal ".env aplikasi belum ada di $(pwd). Salin dari .env.example (produksi) atau .env.staging.example (staging), lalu isi."
+
+  local sandi_docker sandi_app
+  sandi_docker="$(ambil_var docker/.env DB_SANDI)"
+  sandi_app="$(sed -n "s/^[[:space:]]*database\.default\.password[[:space:]]*=[[:space:]]*//p" .env | tail -1 | sed "s/^['\"]//; s/['\"][[:space:]]*$//")"
+  [ -n "$sandi_docker" ] && [ "$sandi_docker" != '[ISI]' ] || gagal "DB_SANDI di docker/.env belum diisi."
+  [ "$sandi_docker" = "$sandi_app" ] || gagal "database.default.password di .env tidak sama dengan DB_SANDI di docker/.env. Samakan keduanya."
+}
+
+periksa_tanpa_ubahan() {
+  if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+    git status --short --untracked-files=no
+    gagal "ada berkas proyek yang terubah di server (lihat di atas). Jangan menyunting berkas proyek di server; hubungi pengembang."
+  fi
+}
+
+# Catat PORT_LOKAL di daftar port bersama server (dipakai juga oleh SPMB),
+# supaya aplikasi lain tidak mengambil port yang sama.
+daftar_port() {
+  [ -f "$DAFTAR_PORT" ] || return 0
+  local port nama pemilik
+  port="$(ambil_var docker/.env PORT_LOKAL)"
+  nama="$(ambil_var docker/.env COMPOSE_PROJECT_NAME)"
+  pemilik="$(awk -v p="$port" '$1 == p { print $2; exit }' "$DAFTAR_PORT")"
+  if [ -z "$pemilik" ]; then
+    printf '%s %s\n' "$port" "$nama" >> "$DAFTAR_PORT"
+    beres "Port $port dicatat untuk $nama di $DAFTAR_PORT."
+  elif [ "$pemilik" != "$nama" ]; then
+    gagal "port $port sudah dipakai $pemilik menurut $DAFTAR_PORT. Ganti PORT_LOKAL di docker/.env."
+  fi
+}
+
+# Isi satu kunci di .env. Berkas ditulis ulang di tempat (bukan sed -i)
+# supaya container yang memasang .env sebagai berkas tetap membaca isi baru.
+tulis_env() {
+  local kunci="$1" nilai="$2" sementara
+  sementara="$(mktemp)"
+  if grep -Eq "^[#[:space:]]*${kunci//./\\.}[[:space:]]*=" .env; then
+    awk -v k="$kunci" -v n="$nilai" '
+      !diganti && $0 ~ "^[#[:space:]]*" k "[[:space:]]*=" { print k " = " n; diganti = 1; next }
+      { print }' .env > "$sementara"
+  else
+    cat .env > "$sementara"
+    printf '\n%s = %s\n' "$kunci" "$nilai" >> "$sementara"
+  fi
+  cat "$sementara" > .env
+  rm -f "$sementara"
+}
+
+sha_image() {
+  docker image inspect -f '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$IMAGE:$1" 2>/dev/null || true
+}
+
+# Bangun image dari isi commit persis (git archive), tanpa berkas lokal.
+bangun_image() {
+  local sha="$1" tag="${1:0:12}"
+  if docker image inspect "$IMAGE:$tag" >/dev/null 2>&1; then
+    beres "Image $IMAGE:$tag sudah ada, tidak dibangun ulang."
+    return 0
+  fi
+  langkah "Membangun image $IMAGE:$tag"
+  git archive "$sha" | docker build -f docker/Dockerfile \
+    --label "org.opencontainers.image.revision=$sha" -t "$IMAGE:$tag" -
+}
+
+nyalakan() {
+  compose up -d --remove-orphans --wait --wait-timeout 300
+}
+
+periksa_kesehatan() {
+  local port kode_http='' kode_https=''
+  port="$(ambil_var docker/.env PORT_LOKAL)"
+  for _ in $(seq 1 20); do
+    kode_http="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$port/admin/masuk" || true)"
+    kode_https="$(curl -s -o /dev/null -w '%{http_code}' -H 'X-Forwarded-Proto: https' "http://127.0.0.1:$port/admin/masuk" || true)"
+    if [ "$kode_http" = 307 ] && [ "$kode_https" = 200 ]; then
+      beres "Port lokal $port menjawab (307 lalu 200)."
+      return 0
+    fi
+    sleep 3
+  done
+  awas "Port lokal $port menjawab $kode_http dan $kode_https, seharusnya 307 dan 200."
+  return 1
+}
+
+periksa_pembaruan() {
+  langkah "Memeriksa pembaruan"
+  if ! spark_t pembaruan:periksa; then
+    awas "Masih ada yang perlu dijalankan (lihat [PERLU] di atas). Jalankan dengan: mlk $LINGKUNGAN spark <perintah>"
+    awas "Lalu periksa lagi: mlk $LINGKUNGAN spark pembaruan:periksa"
+    return 1
+  fi
+}
+
+catat_deploy() {
+  printf '%s %s %s %s %s\n' "$(date -Iseconds)" "$LINGKUNGAN" "$1" "$(sha_image "$1")" "$2" >> "$FOLDER_INDUK/deploy-$LINGKUNGAN.log"
+}
+
+# Hapus image milklife-app lama: simpan 5 terbaru dan semua tag yang
+# disebut docker/.env staging atau produksi.
+pangkas_image() {
+  local dipakai='' l f tag
+  for l in staging produksi; do
+    f="$(folder_lingkungan "$l")" || continue
+    dipakai="$dipakai $(ambil_var "$f/docker/.env" TAG) $(ambil_var "$f/docker/.env" TAG_SEBELUM)"
+  done
+  docker image ls "$IMAGE" --format '{{.Tag}}' | tail -n +$((SIMPAN_IMAGE + 1)) | while read -r tag; do
+    case " $dipakai " in *" $tag "*) continue ;; esac
+    if docker image rm "$IMAGE:$tag" >/dev/null 2>&1; then echo "Image lama dihapus: $IMAGE:$tag"; fi
+  done || true
+}
+
+kembalikan() {
+  local lama="$1" sha_lama
+  if [ -z "$lama" ]; then
+    compose ps || true
+    gagal "$2. Tidak ada versi sebelumnya untuk dinyalakan lagi. Lihat: mlk $LINGKUNGAN logs --tail 100 app"
+  fi
+  awas "$2. Menyalakan lagi versi sebelumnya ($lama)."
+  sha_lama="$(sha_image "$lama")"
+  if [ -n "$sha_lama" ]; then git checkout -q --detach "$sha_lama"; fi
+  isi_var docker/.env TAG "$lama"
+  isi_var docker/.env TAG_SEBELUM "$SEBELUM_LAMA"
+  nyalakan || true
+  catat_deploy "$lama" "dikembalikan"
+  gagal "deploy dibatalkan, $LINGKUNGAN kembali ke $lama. Bila migrate sudah berjalan, perubahan basis datanya tidak dibatalkan."
+}
+
+# Pasang image bertag itu di lingkungan saat ini: cadangan, checkout commit
+# yang sama (compose.yaml ikut versi kode), ganti container, migrate, cek.
+aktifkan() {
+  local tag="$1" tanpa_cadangan="$2" sha lama
+  sha="$(sha_image "$tag")"
+  [ -n "$sha" ] || gagal "image $IMAGE:$tag tidak ada."
+  lama="$(ambil_var docker/.env TAG)"
+  SEBELUM_LAMA="$(ambil_var docker/.env TAG_SEBELUM)"
+
+  if [ "$tanpa_cadangan" = 1 ]; then
+    awas "Cadangan dilewati (--tanpa-cadangan)."
+  elif [ -n "$(compose ps -q --status running app 2>/dev/null)" ]; then
+    langkah "Membuat cadangan sebelum memperbarui"
+    spark_t cadangan:buat || gagal "cadangan belum beres (lihat pesan di atas), jadi belum ada yang diubah. Perbaiki dulu, atau ulangi dengan --tanpa-cadangan."
+  else
+    awas "Container app belum menyala, jadi cadangan dilewati."
+  fi
+
+  langkah "Memasang versi $tag"
+  git log --oneline -1 "$sha"
+  git checkout -q --detach "$sha"
+  if [ "$lama" != "$tag" ]; then
+    isi_var docker/.env TAG_SEBELUM "$lama"
+    isi_var docker/.env TAG "$tag"
+  fi
+
+  nyalakan || kembalikan "$lama" "container tidak sehat"
+
+  langkah "Memperbarui tabel dan data sekolah"
+  spark_t migrate --all || kembalikan "$lama" "migrate gagal"
+  spark_t sekolah:impor || kembalikan "$lama" "sekolah:impor gagal"
+
+  langkah "Memeriksa kesehatan"
+  periksa_kesehatan || kembalikan "$lama" "cek kesehatan gagal"
+
+  catat_deploy "$tag" "deploy"
+  pangkas_image
+
+  local perlu=0
+  periksa_pembaruan || perlu=1
+
+  printf '\n'
+  beres "Selesai: $LINGKUNGAN menjalankan $tag ($(git log --format=%s -1 "$sha"))."
+  if [ -n "$lama" ] && [ "$lama" != "$tag" ]; then echo "Bila ada masalah: mlk rollback $LINGKUNGAN (kembali ke $lama)."; fi
+  [ "$perlu" = 0 ] || exit 2
+}
+
+ambil_pilihan() {
+  REF=''; TANPA_CADANGAN=0; YA=0
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      --tanpa-cadangan) TANPA_CADANGAN=1 ;;
+      --ya|-y) YA=1 ;;
+      -*) gagal "pilihan $arg tidak dikenal." ;;
+      *) [ -z "$REF" ] || gagal "terlalu banyak isian: $arg"; REF="$arg" ;;
+    esac
+  done
+}
+
+tanya_produksi() {
+  [ "$YA" = 1 ] && return 0
+  local jawab=''
+  read -r -p "$1 Ketik ya untuk lanjut: " jawab || true
+  [ "$jawab" = ya ] || gagal "dibatalkan. Untuk menjalankan tanpa pertanyaan, tambahkan --ya."
+}
+
+# ---------- mlk deploy <lingkungan> [ref] ----------
+deploy() {
+  ambil_pilihan "$@"
+  periksa_berkas_env
+  periksa_tanpa_ubahan
+  daftar_port
+
+  langkah "Mengambil versi terbaru dari GitHub"
+  git fetch --prune --tags origin
+
+  local sha tag
+  if [ "$LINGKUNGAN" = produksi ] && [ -z "$REF" ]; then
+    local folder_staging
+    folder_staging="$(folder_lingkungan staging)" || gagal "folder staging tidak ditemukan. Sebutkan versinya: mlk deploy produksi <ref>"
+    tag="$(ambil_var "$folder_staging/docker/.env" TAG)"
+    [ -n "$tag" ] || gagal "staging belum dipasang dengan mlk deploy. Jalankan dulu mlk deploy staging, atau sebutkan versinya: mlk deploy produksi <ref>"
+    sha="$(sha_image "$tag")"
+    [ -n "$sha" ] || gagal "image $IMAGE:$tag milik staging tidak ada lagi. Jalankan mlk deploy staging lagi."
+    git cat-file -e "$sha^{commit}" 2>/dev/null || gagal "commit $sha belum ada di folder produksi setelah git fetch."
+    echo "Memakai image yang sedang jalan di staging: $tag."
+  else
+    sha="$(git rev-parse --verify "${REF:-origin/main}^{commit}" 2>/dev/null)" || gagal "versi ${REF:-origin/main} tidak ditemukan."
+    tag="${sha:0:12}"
+    bangun_image "$sha"
+    if [ "$LINGKUNGAN" = produksi ]; then
+      local folder_staging tag_staging=''
+      if folder_staging="$(folder_lingkungan staging)"; then tag_staging="$(ambil_var "$folder_staging/docker/.env" TAG)"; fi
+      [ "$tag_staging" = "$tag" ] || awas "Perhatian: staging menjalankan ${tag_staging:-versi lain}, bukan $tag."
+    fi
+  fi
+
+  if [ "$LINGKUNGAN" = produksi ]; then
+    tanya_produksi "Pasang $tag di PRODUKSI? Web berhenti beberapa detik."
+  fi
+
+  aktifkan "$tag" "$TANPA_CADANGAN"
+}
+
+# ---------- mlk rollback <lingkungan> ----------
+rollback() {
+  ambil_pilihan "$@"
+  [ -z "$REF" ] || gagal "rollback tidak menerima versi; ia kembali ke TAG_SEBELUM."
+  periksa_berkas_env
+  periksa_tanpa_ubahan
+
+  local sekarang sebelum sha
+  sekarang="$(ambil_var docker/.env TAG)"
+  sebelum="$(ambil_var docker/.env TAG_SEBELUM)"
+  [ -n "$sebelum" ] || gagal "belum ada versi sebelumnya untuk $LINGKUNGAN."
+  sha="$(sha_image "$sebelum")"
+  [ -n "$sha" ] || gagal "image $IMAGE:$sebelum tidak ada lagi."
+  [ "$LINGKUNGAN" != produksi ] || tanya_produksi "Kembalikan PRODUKSI dari $sekarang ke $sebelum? Basis data tidak ikut dikembalikan."
+
+  langkah "Kembali ke $sebelum"
+  git checkout -q --detach "$sha"
+  isi_var docker/.env TAG "$sebelum"
+  isi_var docker/.env TAG_SEBELUM "$sekarang"
+  nyalakan || gagal "container tidak sehat. Lihat: mlk $LINGKUNGAN logs --tail 100 app"
+  periksa_kesehatan || gagal "cek kesehatan gagal. Lihat: mlk $LINGKUNGAN logs --tail 100 app"
+  catat_deploy "$sebelum" "rollback"
+  beres "Selesai: $LINGKUNGAN menjalankan $sebelum. Basis data tidak dikembalikan; pulihkan cadangan bila perlu (panduan bagian 9)."
+}
+
+# ---------- mlk pasang <lingkungan> ----------
+pasang() {
+  ambil_pilihan "$@"
+  [ -z "$REF" ] || gagal "pasang memakai versi folder saat ini; isian $REF tidak dikenal."
+  periksa_berkas_env
+  periksa_tanpa_ubahan
+  daftar_port
+
+  local sha tag
+  sha="$(git rev-parse HEAD)"
+  tag="${sha:0:12}"
+  bangun_image "$sha"
+  isi_var docker/.env TAG "$tag"
+
+  langkah "Menyalakan container"
+  nyalakan || gagal "container tidak sehat. Lihat: mlk $LINGKUNGAN logs --tail 100 app"
+
+  if ! grep -Eq "^[[:space:]]*encryption\.key[[:space:]]*=[[:space:]]*['\"]?hex2bin:[0-9a-f]{64}" .env; then
+    langkah "Membuat kunci rahasia aplikasi (encryption.key)"
+    local kunci_app
+    kunci_app="$(spark_t key:generate --show | grep -Eo 'hex2bin:[0-9a-f]{64}' | head -1)"
+    [ -n "$kunci_app" ] || gagal "kunci rahasia tidak terbaca dari spark key:generate --show."
+    tulis_env encryption.key "$kunci_app"
+    beres "encryption.key ditulis di .env. Catat isinya di tempat aman bersama cadangan."
+  else
+    beres "encryption.key sudah ada di .env, tidak diganti."
+  fi
+
+  langkah "Membuat tabel"
+  spark_t migrate --all
+
+  langkah "Mengisi data sekolah"
+  spark_t sekolah:impor
+
+  local jumlah_ku
+  # shellcheck disable=SC2016 # variabel diuraikan di dalam container db
+  jumlah_ku="$(compose exec -T db sh -c 'mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE" -Nse "SELECT COUNT(*) FROM kelompok_umur" 2>/dev/null' || echo '?')"
+  if [ "$jumlah_ku" = 0 ]; then
+    langkah "Mengisi data awal"
+    spark_t data:awal
+  elif [ "$jumlah_ku" = '?' ]; then
+    gagal "isi basis data tidak bisa diperiksa. Lihat: mlk $LINGKUNGAN logs --tail 100 db"
+  else
+    awas "Data awal dilewati: basis data sudah berisi $jumlah_ku kelompok umur."
+  fi
+
+  langkah "Akun admin"
+  echo "Isi nama pengguna, nama, dan kata sandi admin (minimal 8 karakter)."
+  echo "Bila akun admin sudah ada dan tidak ingin diubah, tekan Ctrl+C. Langkah lain sudah selesai."
+  spark admin:buat
+
+  langkah "Memeriksa kesehatan"
+  periksa_kesehatan || gagal "lihat: mlk $LINGKUNGAN logs --tail 100 app"
+  catat_deploy "$tag" "pasang"
+
+  local perlu=0
+  periksa_pembaruan || perlu=1
+
+  printf '\n'
+  beres "Selesai: $LINGKUNGAN terpasang dengan $tag."
+  echo "Langkah berikutnya: arahkan alamatnya di dasbor Cloudflare ke localhost:$(ambil_var docker/.env PORT_LOKAL)."
+  echo "Pembaruan berikutnya cukup: mlk deploy $LINGKUNGAN"
+  [ "$perlu" = 0 ] || exit 2
+}
+
+status() {
+  echo "Folder : $(pwd)"
+  echo "Versi  : $(ambil_var docker/.env TAG) (sebelumnya: $(ambil_var docker/.env TAG_SEBELUM))"
+  echo "Commit : $(git log --oneline -1)"
+  echo
+  compose ps
+  if [ -f "$FOLDER_INDUK/deploy-$LINGKUNGAN.log" ]; then
+    echo
+    echo "Deploy terakhir:"
+    tail -n 5 "$FOLDER_INDUK/deploy-$LINGKUNGAN.log"
+  fi
+}
+
+bantuan() {
+  sed -n '3,23p' "$SKRIP" | sed 's/^# \{0,1\}//'
+}
+
+# ---------- Pembagian perintah ----------
+local perintah="${1:-}"
+
+case "$perintah" in
+  ''|-h|--help|bantuan)
+    bantuan
+    ;;
+  deploy|pasang|rollback|status)
+    shift
+    LINGKUNGAN="$(nama_lingkungan "${1:-}")" || gagal "sebutkan lingkungannya: mlk $perintah staging, atau mlk $perintah produksi."
+    shift
+    masuk_folder "$LINGKUNGAN"
+    case "$perintah" in
+      deploy) kunci; deploy "$@" ;;
+      pasang) kunci; pasang "$@" ;;
+      rollback) kunci; rollback "$@" ;;
+      status) status ;;
+    esac
+    ;;
+  *)
+    if LINGKUNGAN="$(nama_lingkungan "$perintah")"; then
+      shift
+      masuk_folder "$LINGKUNGAN"
+    elif [ -f docker/compose.yaml ]; then
+      LINGKUNGAN=''
+    else
+      gagal "folder ini bukan folder kode MilkLife. Sebutkan lingkungannya, misalnya: mlk staging $*"
+    fi
+    if [ "${1:-}" = spark ]; then
+      shift
+      spark "$@"
+    else
+      compose "$@"
+    fi
+    ;;
+esac
+}
+
+main "$@"
+exit $?

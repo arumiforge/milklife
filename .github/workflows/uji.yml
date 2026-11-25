@@ -99,6 +99,9 @@ jobs:
       - name: Ambil kode
         uses: actions/checkout@v4
 
+      - name: Periksa skrip mlk
+        run: shellcheck docker/mlk
+
       - name: Bangun image aplikasi
         run: docker build -f docker/Dockerfile -t milklife-app:ci .
 
@@ -111,6 +114,8 @@ jobs:
             mysqldump --version | grep -q " 8\.4\."
             test -f public/aset/css/tw.min.css
           '
+          # Flyer, juknis, dan gambar bawaan untuk `spark data:awal` ikut masuk image.
+          docker run --rm --entrypoint php milklife-app:ci docker/periksa-berkas-bawaan.php
 
       - name: Periksa susunan compose
         run: |

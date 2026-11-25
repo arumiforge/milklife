@@ -17,7 +17,11 @@ tests
 agent
 dokumen
 desain
-sumber
+# sumber/ tidak masuk, kecuali flyer, banner, dan juknis yang dipasang
+# `spark data:awal` sebagai berkas unduhan bawaan (DataAwal::UNDUHAN).
+sumber/*
+!sumber/flyer
+!sumber/juknis
 data/cadangan*
 template-flowbites
 alat
