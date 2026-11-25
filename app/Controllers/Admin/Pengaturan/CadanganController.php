@@ -29,7 +29,7 @@ use RuntimeException;
  *   sekarang lebih dulu dicadangkan otomatis di server.
  * - `GET  admin/pengaturan/cadangan/<nama>/unduh`: unduh cadangan otomatis.
  * - `POST admin/pengaturan/cadangan/r2`: simpan pengaturan salinan Cloudflare
- *   R2 (F11-19, K185) dengan kata sandi admin. Disimpan hanya bila
+ *   R2 (F11-21, K187) dengan kata sandi admin. Disimpan hanya bila
  *   sambungannya lulus diperiksa (berkas uji ditulis, isi folder terbaca).
  * - `POST admin/pengaturan/cadangan/r2/periksa`: periksa lagi sambungan tersimpan.
  * - `POST admin/pengaturan/cadangan/r2/hapus`: matikan salinan, dengan kata sandi.

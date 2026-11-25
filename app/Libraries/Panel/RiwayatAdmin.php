@@ -43,7 +43,7 @@ final class RiwayatAdmin
     // Pengaturan > Cadangan (F11-11); tanpa pendaftaran, `id_pendaftaran` berisi `TANPA_ID`.
     public const UNDUH_CADANGAN = 'unduh_cadangan';
     public const IMPOR_CADANGAN = 'impor_cadangan';
-    // Pengaturan salinan Cloudflare R2 diubah atau dimatikan (F11-19).
+    // Pengaturan salinan Cloudflare R2 diubah atau dimatikan (F11-21).
     public const ATUR_R2        = 'atur_r2';
     public const TANPA_ID       = '-';
 

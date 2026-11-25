@@ -8,7 +8,7 @@ use CodeIgniter\Encryption\Exceptions\EncryptionException;
 use RuntimeException;
 
 /**
- * Salinan cadangan harian ke Cloudflare R2 (F11-19, K185), diatur admin di
+ * Salinan cadangan harian ke Cloudflare R2 (F11-21, K187), diatur admin di
  * Pengaturan > Cadangan, bukan di `docker/.env`.
  *
  * Pengaturan disimpan di tabel `salinan_r2` (satu baris). Secret Access Key

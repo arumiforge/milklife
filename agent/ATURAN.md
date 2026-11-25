@@ -12,7 +12,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Dokumen boleh diubah langsung sesuai kondisi terbaru, PDF dibuat ulang (K100, K101).
 - Bahasa Inggris hanya untuk slogan, judul bagian bergaya editorial, dan art; tombol, formulir, pesan, menu fungsional, dan panel admin tetap berbahasa Indonesia, kecuali judul editorial "Admin Area" di halaman masuk admin (K153, K171).
 - Backup pendaftaran (data siswa asli) tidak masuk git; diuji di basis data lokal dan diimpor pemilik di server (K138, K153).
-- Staging dan produksi di Docker Compose pada VPS Ubuntu 24.04: PHP 8.5.13+ di FrankenPHP (mode biasa), MySQL 8.4, OPcache tanpa Redis/Memcached, tanpa port ke jaringan luar (K182, menggantikan K08 dan K18). Web lewat Cloudflare Tunnel: cloudflared di host, tunnel yang sama dengan aplikasi lain di VPS, ke `127.0.0.1:<PORT_LOKAL>` per lingkungan; container cloudflared hanya pilihan (`COMPOSE_PROFILES=tunnel`) (K184). IP dari `CF-Connecting-IP` dipercaya dari 127.0.0.1, ::1, dan subnet compose `MILKLIFE_SUBNET_PROXY` (K31, K182).
+- Staging dan produksi di Docker Compose pada VPS Ubuntu 24.04: PHP 8.5.13+ di FrankenPHP (mode biasa), MySQL 8.4, OPcache tanpa Redis/Memcached, tanpa port ke jaringan luar (K182, menggantikan K08 dan K18). Web lewat Cloudflare Tunnel: cloudflared di host, tunnel yang sama dengan aplikasi lain di VPS, ke `127.0.0.1:<PORT_LOKAL>` per lingkungan; container cloudflared hanya pilihan (`COMPOSE_PROFILES=tunnel`) (K184). IP dari `CF-Connecting-IP` dipercaya dari 127.0.0.1, ::1, dan subnet compose `MILKLIFE_SUBNET_PROXY` (K31, K182). Produksi pindah dari Laragon lewat cadangan basis data lengkap; zip Backup data hanya pembanding dan jalan cadangan (K185).
 - Tidak menambah pustaka kecuali yang disetujui: Turnstile tanpa pustaka PHP (K122), PHPStan `require-dev` (K123), Lucide dan Three.js lokal tanpa CDN (K140), huruf judul Barlow Condensed lokal (K155), dan rantai bangun Flowbite Pro (Tailwind 4, plugin dan JS Flowbite) dengan Node hanya di komputer pengembang dan CI (K141).
 - Tampilan pindah ke Tailwind 4 berdasar Flowbite Pro (`template-flowbites/`) per halaman di Tahap 9; CSS hasil bangun di-commit, server tanpa Node; halaman yang belum dipindah tetap Bootstrap 5 (K140, K141, menggantikan K103). Mode terang; ilustrasi Codex bergaya anime olahraga 2D cel-shaded (K153, menggantikan 3D lembut), hero halaman depan memakai foto asli bergaya editorial. Stadion di gambar Codex dikenali sebagai Supersoccer Arena Kudus dari foto rujukan pemilik, tanpa menyalin tulisan, sponsor, atau watermark (K158). Videotron cair untuk ukuran layar apa pun (K141).
 - Codex hanya membuat aset gambar lewat `desain/` dan `AGENTS.md`; kode ditulis Claude, yang juga meninjau dan menggabung PR Codex (K140). Semua kebutuhan gambar dan visual dipesan ke Codex tanpa batas jumlah tugas; pemasangannya di halaman lewat tugas Claude (K150). Favicon, ikon aplikasi, dan logo merek bawaan memakai logo resmi utuh dari pemilik (`sumber/logo/`), bukan gambar Codex (K152).
@@ -39,7 +39,8 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 
 - Ditentukan jenjang dulu, lalu tahun lahir; rentang boleh beririsan antar-jenjang (K95, K23, K24). Atlet tidak bisa masuk kelompok umur jenjang lain.
 - Dalam satu jenjang rentang boleh beririsan bila sakelar "Pendaftar memilih kelompok umur" menyala (bawaan); atlet di tahun irisan wajib memilih satu kelompok umur di wizard, admin boleh memindahnya di Ubah; mati = irisan ditolak (K134).
-- Batas tahun lahir data awal: KU 8 2019+, KU 10 2016–2018, KU 12 2014–2015, KU 15 2011–2014, KU 18 2008–2010 (K36, K112); perubahan dari panitia diisi admin di panel (K134).
+- Batas tahun lahir data awal sama dengan isian panitia di produksi: KU 8 2018–2021, KU 10 2016–2017, KU 12 2014–2016, KU 15 2010–2014, KU 18 2008–2012; KU 10 dan KU 12 beririsan di 2016 dan pendaftar memilih (K186, menggantikan angka K36 dan K112; K134).
+- Agenda data awal: pertemuan teknik daring Sabtu 5 Desember 2026 pukul 13.00 (Zoom Meeting / Teams); nomor atlet (BIB) diambil Selasa 8 Desember 2026 pukul 13.00 di Supersoccer Arena, Kudus; lomba 9–12 Desember mulai 06.30 (K186, menggantikan K112 butir 3).
 - Usia hanya keterangan, dihitung pada tanggal mulai acara (K37). Juknis resmi sudah dicocokkan (K112).
 
 ## Nomor lomba, regu, dan biaya
@@ -58,7 +59,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - ID pendaftaran tetap saat diubah (K63).
 - Status Lunas dan Menunggu (K90). Lunas diubah dan total berubah → kembali Menunggu (K32); total tetap → atlet baru langsung dapat nomor (K59).
 - Nomor atlet dibuat saat Lunas (K11), awalan per kelompok umur, bisa banyak awalan (K05, K33).
-- Reset nomor atlet setelah uji coba (K94); urutkan ulang per sekolah sebelum pertemuan teknik (K111).
+- Reset nomor atlet setelah uji coba (K94); urutkan ulang per sekolah sebelum nomor atlet dibagikan (K111).
 - Pendaftaran Lunas ber-NPSN sama digabung otomatis, tidak bisa dipisah (K109, K110).
 - Tolak atlet per atlet dari pendaftaran Menunggu; NISN bisa didaftarkan lagi; catatan di `atlet_ditolak` (K116).
 - Status tampilan "Semua atlet ditolak", bahasa untuk sekolah, menu Atlet ditolak, jejak navigasi (K117).
@@ -78,7 +79,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Kolom No, pilih massal (100), Backup data dan `pendaftaran:impor` (K76, K77); Backup data tanpa dimuat ke memori (K118 B4). Cadangan pindah ke Pengaturan > Cadangan: semua data, berkas, dan pengaturan; impor web mengganti semua setelah cadangan otomatis dan konfirmasi sandi (K174).
 - Antarmuka tanpa teks teknis (K79). Ubah boleh mempertahankan KU dan nomor yang sudah ditutup (K98).
 - Monitoring `arumi.php`, catatan pengunjung, menu Pengecekan, dasbor bergrafik (K102, K104).
-- `pembaruan:periksa` setelah `git pull` dan bangun ulang image (K115, K182). Cadangan harian 14 hari lewat cron host; `cadangan:buat` juga mengirimnya ke bucket Cloudflare R2 panitia yang diatur admin di Pengaturan > Cadangan, dengan rahasia terenkripsi, sambungan diperiksa sebelum disimpan, dan isi bucket tampil di panel (K66, K182, K185).
+- `pembaruan:periksa` setelah `git pull` dan bangun ulang image (K115, K182). Cadangan harian 14 hari lewat cron host; `cadangan:buat` juga mengirimnya ke bucket Cloudflare R2 panitia yang diatur admin di Pengaturan > Cadangan, dengan rahasia terenkripsi, sambungan diperiksa sebelum disimpan, dan isi bucket tampil di panel (K66, K182, K187).
 
 ## Halaman depan
 

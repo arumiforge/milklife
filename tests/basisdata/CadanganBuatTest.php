@@ -162,7 +162,7 @@ final class CadanganBuatTest extends UjiBasisData
 
     public function testPerintahMengirimKeR2BilaDiatur(): void
     {
-        // F11-19, K185: R2 diganti tiruan; kiriman gagal = kode keluar 1, zip tetap di server.
+        // F11-21, K187: R2 diganti tiruan; kiriman gagal = kode keluar 1, zip tetap di server.
         $kunciLama                = config('Encryption')->key;
         config('Encryption')->key = random_bytes(32);
         Services::resetSingle('encrypter');

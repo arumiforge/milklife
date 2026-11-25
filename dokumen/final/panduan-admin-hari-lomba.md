@@ -2,14 +2,15 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K183, diubah langsung sesuai K101) |
-| Tanggal | 23 November 2026 |
-| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K183; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
+| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K183, diubah langsung sesuai K101); **revisi 2 25 November 2026** (K186, diubah langsung sesuai K101) |
+| Tanggal | 23 November 2026, revisi 2 25 November 2026 |
+| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K183, K186; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
+| Revisi 2 | Pertemuan teknik daring Sabtu 5 Desember 2026, mengikuti agenda di server produksi (K186). Bagian yang berubah: Tujuan, 1 |
 | Revisi 1 | Versi siap bagi untuk admin panitia dan juri: alamat situs dan kontak, latihan di situs staging, akun juri sendiri (F11-16), cara sekolah meminta ganti atlet, belum ada rekor awal, nama berkas cadangan, dan langkah menyunting jawaban ganti atlet di Bantuan. Bagian Asumsi dihapus karena sudah dijawab pemilik. Bagian yang berubah: Tujuan, Alamat dan kontak (baru), Ringkasan alur, 1, 1.6, 1.7, 1.9 (baru), 2.2, 3.1, 4.3, 5, 6 |
 
 ## Tujuan
 
-Panduan ini untuk admin panitia dan juri MilkLife Athletics Challenge Seri 2 – 2026. Panduan dipakai dari pertemuan teknik 6 Desember sampai lomba selesai 12 Desember 2026 di Supersoccer Arena, Kudus. Setelah membacanya, Anda tahu:
+Panduan ini untuk admin panitia dan juri MilkLife Athletics Challenge Seri 2 – 2026. Panduan dipakai dari pertemuan teknik daring 5 Desember sampai lomba selesai 12 Desember 2026 di Supersoccer Arena, Kudus. Setelah membacanya, Anda tahu:
 
 - apa yang disiapkan sebelum hari lomba;
 - apa yang dikerjakan pagi hari, selama lomba, dan di akhir hari;
@@ -64,7 +65,7 @@ Menu yang paling sering dipakai saat lomba ada di dua kelompok sidebar:
 
 ## 1. Sebelum hari lomba
 
-Mulai setelah pendaftaran tutup 30 November 2026, dan selesaikan sebelum pertemuan teknik 6 Desember 2026. Urutannya penting: babak dibuat dulu, baru jadwal, baru seri.
+Mulai setelah pendaftaran tutup 30 November 2026, dan selesaikan sebelum pertemuan teknik 5 Desember 2026. Urutannya penting: babak dibuat dulu, baru jadwal, baru seri.
 
 Bagian ini dikerjakan admin panitia. Sebelum mengerjakannya di situs utama, berlatihlah dulu di situs latihan `https://staging.mac2026.web.id` dengan akun admin. Data di situs latihan terpisah, jadi salah isi di sana tidak memengaruhi lomba.
 

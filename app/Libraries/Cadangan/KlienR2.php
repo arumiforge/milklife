@@ -6,7 +6,7 @@ use RuntimeException;
 use SimpleXMLElement;
 
 /**
- * Klien kecil API S3 Cloudflare R2 untuk salinan cadangan (F11-19, K185),
+ * Klien kecil API S3 Cloudflare R2 untuk salinan cadangan (F11-21, K187),
  * tanpa pustaka tambahan: tanda tangan AWS Signature Version 4, gaya jalur
  * (`https://<id-akun>.r2.cloudflarestorage.com/<bucket>/<kunci>`), wilayah
  * `auto`.

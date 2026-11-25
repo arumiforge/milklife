@@ -10,7 +10,7 @@ use Tests\Support\KirimFormulir;
 use Tests\Support\UjiBasisData;
 
 /**
- * Salinan cadangan ke Cloudflare R2 di Pengaturan > Cadangan (F11-19, K185):
+ * Salinan cadangan ke Cloudflare R2 di Pengaturan > Cadangan (F11-21, K187):
  * simpan pengaturan hanya bila sambungan lulus diperiksa, rahasia terenkripsi,
  * isi folder di bucket dengan tautan unduh, periksa ulang, matikan, kiriman
  * `cadangan:buat`, dan tabel pengaturan yang tidak ikut cadangan lengkap.

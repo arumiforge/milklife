@@ -1,8 +1,8 @@
 <?php
 /**
  * Pengaturan > Cadangan (F11-11, K174, `Admin\Pengaturan\CadanganController`):
- * unduh cadangan lengkap, salinan cadangan harian ke Cloudflare R2 (F11-19,
- * K185: pengaturan, periksa sambungan, isi folder di bucket), impor cadangan
+ * unduh cadangan lengkap, salinan cadangan harian ke Cloudflare R2 (F11-21,
+ * K187: pengaturan, periksa sambungan, isi folder di bucket), impor cadangan
  * yang mengganti semua data dan pengaturan, daftar cadangan otomatis sebelum
  * impor, dan riwayat cadangan. Tata letak `admin_tw`.
  *

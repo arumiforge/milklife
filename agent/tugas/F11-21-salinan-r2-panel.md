@@ -1,4 +1,4 @@
-# F11-19 Salinan cadangan Cloudflare R2 diatur di panel admin
+# F11-21 Salinan cadangan Cloudflare R2 diatur di panel admin
 
 | | |
 |---|---|
@@ -7,7 +7,7 @@
 
 ## Tujuan
 
-Admin mengatur salinan cadangan harian ke Cloudflare R2 dari **Pengaturan > Cadangan**, termasuk token, dan bisa melihat isi bucket untuk memastikan cadangan sampai (K185). Tidak ada lagi isian R2 di `docker/.env` dan container rclone.
+Admin mengatur salinan cadangan harian ke Cloudflare R2 dari **Pengaturan > Cadangan**, termasuk token, dan bisa melihat isi bucket untuk memastikan cadangan sampai (K187). Tidak ada lagi isian R2 di `docker/.env` dan container rclone.
 
 ## Hasil
 
@@ -17,7 +17,7 @@ Admin mengatur salinan cadangan harian ke Cloudflare R2 dari **Pengaturan > Cada
 - [x] Pengaturan > Cadangan: bagian "Salinan di Cloudflare R2" dengan status, Periksa sambungan, isi folder bertombol Unduh, formulir atur atau ubah (dengan kata sandi admin, hanya disimpan bila sambungan lulus), dan Matikan salinan. Perubahan dicatat di riwayat (`RiwayatAdmin::ATUR_R2`) tanpa rahasia.
 - [x] `cadangan:buat` mengirim zip baru ke R2 bila sudah diatur; gagal kirim = kode keluar 1, zip tetap di server.
 - [x] Layanan `salin-r2` dan variabel `R2_*` dihapus dari `docker/compose.yaml` dan `docker/.env.example`.
-- [x] Panduan produksi revisi 15 (bagian 7: dasbor Cloudflare untuk bucket, lifecycle, dan token; panel untuk pengaturannya; cron satu perintah), rancangan revisi 42, K185, ATURAN, PETA-KODE.
+- [x] Panduan produksi revisi 15 (bagian 7: dasbor Cloudflare untuk bucket, lifecycle, dan token; panel untuk pengaturannya; cron satu perintah), rancangan revisi 42, K187, ATURAN, PETA-KODE.
 
 ## Berkas dan uji
 

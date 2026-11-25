@@ -2,8 +2,9 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101); **revisi 12 23 November 2026** (penutupan Tahap 11, diubah langsung sesuai K101); **revisi 13 23 November 2026** (K182, ditulis ulang untuk Ubuntu dan Docker, diubah langsung sesuai K101); **revisi 14 24 November 2026** (K184, diubah langsung sesuai K101); **revisi 15 25 November 2026** (K185, diubah langsung sesuai K101) |
-| Revisi 15 | Salinan cadangan ke Cloudflare R2 diatur admin di **Pengaturan → Cadangan**, bukan lagi di `docker/.env` (K185): ID akun, bucket, token, dan folder diisi di panel, sambungan diperiksa sebelum disimpan, isi folder di bucket tampil dengan tombol unduh, dan `cadangan:buat` langsung mengirim zip baru ke R2. Layanan `salin-r2` dan variabel `R2_*` dihapus; cron cukup satu perintah. Bagian yang berubah: ringkasan, 7, 11, asumsi 2 |
+| Status | **Disetujui pemilik pada 12 November 2026**; **revisi 1 disetujui 14 November 2026** (K100); **revisi 2 16 November 2026** (K109, K112, diubah langsung sesuai K101); **revisi 3 17 November 2026** (K114, diubah langsung sesuai K101); **revisi 4 17 November 2026** (K115, diubah langsung sesuai K101); **revisi 5 17 November 2026** (K122, diubah langsung sesuai K101); **revisi 6 21 November 2026** (K138, diubah langsung sesuai K101); **revisi 7 21 November 2026** (K140 butir 7b, K143, diubah langsung sesuai K101); **revisi 8 21 November 2026** (K140 butir 11, diubah langsung sesuai K101); **revisi 9 22 November 2026** (penutupan Tahap 9, diubah langsung sesuai K101); **revisi 10 22 November 2026** (penutupan Tahap 10, diubah langsung sesuai K101); **revisi 11 22 November 2026** (K174, diubah langsung sesuai K101); **revisi 12 23 November 2026** (penutupan Tahap 11, diubah langsung sesuai K101); **revisi 13 23 November 2026** (K182, ditulis ulang untuk Ubuntu dan Docker, diubah langsung sesuai K101); **revisi 14 24 November 2026** (K184, diubah langsung sesuai K101); **revisi 15 25 November 2026** (K185, diubah langsung sesuai K101); **revisi 16 25 November 2026** (K187, diubah langsung sesuai K101) |
+| Revisi 16 | Salinan cadangan ke Cloudflare R2 diatur admin di **Pengaturan → Cadangan**, bukan lagi di `docker/.env` (K187): ID akun, bucket, token, dan folder diisi di panel, sambungan diperiksa sebelum disimpan, isi folder di bucket tampil dengan tombol unduh, dan `cadangan:buat` langsung mengirim zip baru ke R2. Layanan `salin-r2` dan variabel `R2_*` dihapus; cron cukup satu perintah. Bagian yang berubah: ringkasan, 7, 11, asumsi 2 |
+| Revisi 15 | Pindah dari Laragon dicoba dengan dump dan zip Backup data produksi (K185): zip Backup data ikut diunduh sebagai pembanding dan jalan cadangan bila basis data gagal dimuat, isian `cadangan.folder` bila `cadangan:buat` menolak, pemeriksaan jumlah atlet, dan jalan mundur yang memperbarui kode Laragon dulu. `pembaruan:periksa` kini menyebut `faq:awal`, `halaman-depan:carousel`, dan `galeri:awal` (F11-19). Bagian yang berubah: 8 |
 | Revisi 14 | Cloudflare Tunnel memakai cloudflared di host, tunnel yang sama dengan aplikasi lain di VPS, untuk staging dan produksi (K184): container app membuka port hanya di `127.0.0.1:<PORT_LOKAL>`, tunnel diarahkan ke `http://localhost:<PORT_LOKAL>`, dan container cloudflared menjadi pilihan lewat `COMPOSE_PROFILES=tunnel`. Pindah dari Laragon memindahkan nama alamat ke tunnel di host. Bagian yang berubah: ringkasan, 1, 3, 6, 8, 10, 11, asumsi 1 |
 | Revisi 13 | Server pindah dari Windows dan Laragon ke VPS Ubuntu 24.04 dengan Docker Compose (K182): PHP 8.5.13 di FrankenPHP, MySQL 8.4, cloudflared di container, cadangan harian lewat cron host yang disalin ke Cloudflare R2, dan langkah pindah dari server Laragon. Panduan ditulis ulang; ringkasan perintah sekali jalan Tahap 9 sampai 11 diringkas di bagian 10. Bagian yang berubah: semua |
 | Revisi 12 | Penutupan Tahap 11 (F11-08): ringkasan perintah sekali jalan pembaruan Tahap 11 (`cadangan:buat`, `migrate --all`, `data:sesuaikan`, `aset:minify`, `pembaruan:periksa`), langkah tanya-jawab baru di `data:sesuaikan`, pengaturan yang diperiksa admin setelah pembaruan (susunan klasemen, pelaksanaan nomor lomba, nomor acara, sakelar Rekor dan Videotron), dan alamat `/layar` untuk operator videotron vendor (K172–K176). Bagian yang berubah: 10 |
@@ -18,7 +19,7 @@
 | Revisi 3 | Pemeriksaan menu Sekolah menyebut tombol Tambahkan nama desa untuk sekolah bernama sama (K114). Bagian yang berubah: 11 |
 | Revisi 2 | Perintah sekali jalan `php spark pendaftaran:gabung` saat memasang pembaruan penggabungan pendaftaran (K109); pemeriksaan KU 12, juknis, dan jadwal pertemuan teknik (technical meeting) setelah pembaruan (K112). Bagian yang berubah: 10 |
 | Revisi 1 | Data sekolah 4.766 sekolah dari Sekolah Kita, impor sekolah ikut dijalankan saat memperbarui versi, dan pemeriksaan menu Sekolah sebelum dan selama masa pendaftaran (K97, K99). Bagian yang berubah: 6, 10, 11 |
-| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, 22, dan 23 November 2026 (revisi 3 sampai 13), revisi 14 24 November 2026, revisi 15 25 November 2026 |
+| Tanggal | 12 November 2026, revisi 14, 16, 17, 21, 22, dan 23 November 2026 (revisi 3 sampai 13), revisi 14 24 November 2026, revisi 15 dan 16 25 November 2026 |
 | Dasar | Rancangan bagian 15; rencana implementasi Tahap 7 bagian "Cadangan" dan "Panduan pemasangan produksi" (K69); Docker di VPS Ubuntu 24.04 (K182, menggantikan Laragon untuk produksi K08); Cloudflare Tunnel (K31, K184); cadangan harian 14 hari (K66); bagian PRODUKSI dan CADANGAN di `.env.example`; `docker/compose.yaml` dan `docker/.env.example` |
 
 ## Tujuan
@@ -34,7 +35,7 @@ Panduan ini ditulis untuk **Ubuntu 24.04 dengan Docker** (K182). Semua perintah 
 - Pengunjung membuka `https://<alamat-pendaftaran>`, Cloudflare memasang HTTPS, lalu meneruskan permintaan lewat **cloudflared yang berjalan di host**, yaitu tunnel yang juga dipakai aplikasi lain di VPS (K184), ke `http://localhost:<PORT_LOKAL>`. Container app hanya membuka port itu di `127.0.0.1`, jadi tidak bisa dijangkau dari jaringan luar. Port yang terbuka di VPS hanya SSH.
 - Bila VPS belum punya cloudflared di host, tunnel bisa dijalankan sebagai container ketiga di proyek ini (bagian 6, "Tunnel sebagai container").
 - Data yang harus bertahan ada di tiga volume Docker (`writable`, `unggahan`, `mysql`) dan satu folder cadangan di host. Kode ada di dalam image, yang dibangun ulang setiap memperbarui versi.
-- Setiap malam cron di host menjalankan `php spark cadangan:buat` di container app, yang menulis satu berkas zip cadangan ke folder cadangan dan menghapus cadangan yang berumur 14 hari atau lebih. Bila salinan Cloudflare R2 sudah diatur admin di **Pengaturan → Cadangan**, perintah yang sama mengirim zip baru ke bucket R2 panitia (K185).
+- Setiap malam cron di host menjalankan `php spark cadangan:buat` di container app, yang menulis satu berkas zip cadangan ke folder cadangan dan menghapus cadangan yang berumur 14 hari atau lebih. Bila salinan Cloudflare R2 sudah diatur admin di **Pengaturan → Cadangan**, perintah yang sama mengirim zip baru ke bucket R2 panitia (K187).
 
 ## 1. Yang perlu disiapkan
 
@@ -281,7 +282,7 @@ Setelah berhasil, cadangan yang berumur 14 hari atau lebih di folder itu dihapus
 
 ### Salinan di luar server (Cloudflare R2)
 
-Cadangan di VPS yang sama tidak menolong bila VPS-nya rusak atau hilang. Karena itu setiap cadangan harian juga dikirim ke bucket Cloudflare R2 oleh `cadangan:buat` sendiri (K185). Pengaturannya diisi admin di panel web, bukan di berkas server, dan web tidak pernah menghapus apa pun di bucket.
+Cadangan di VPS yang sama tidak menolong bila VPS-nya rusak atau hilang. Karena itu setiap cadangan harian juga dikirim ke bucket Cloudflare R2 oleh `cadangan:buat` sendiri (K187). Pengaturannya diisi admin di panel web, bukan di berkas server, dan web tidak pernah menghapus apa pun di bucket.
 
 Di dasbor Cloudflare (sekali saja):
 
@@ -321,8 +322,12 @@ Langkah ini dijalankan sekali, saat produksi pindah dari komputer Windows dengan
    php spark cadangan:buat
    ```
 
+   Bila perintah menolak karena `cadangan.folder` belum diisi, buat foldernya (misalnya `D:\cadangan-milklife`), isi `cadangan.folder` dengan folder itu dan `cadangan.mysqldump` dengan jalur `mysqldump.exe` di `C:\laragon\bin\mysql\…\bin\` di `.env` Laragon, lalu ulangi.
+
+   Unduh juga zip **Backup data** dari menu Pendaftaran di panel admin lama, dibuka di komputer Laragon (`http://milklife.test/admin`). Zip ini hanya berisi pendaftaran dan berkasnya, tanpa pengaturan; gunanya sebagai pembanding dan jalan cadangan bila basis data gagal dimuat (K185). Catat juga jumlah pendaftaran dan atlet di dasbor lama.
+
    Salin juga nilai `encryption.key`, `turnstile.kunciRahasia`, dan `arumi.sandiHash` (bila ada) dari `.env` lama ke `.env` baru di VPS. `encryption.key` harus sama supaya hitungan pengunjung unik tetap bersambung.
-2. Kirim berkas zip cadangan itu ke VPS lewat jendela SFTP Bitvise, misalnya ke `/srv/pindahan/`, lalu ekstrak:
+2. Kirim berkas zip cadangan dan zip Backup data ke VPS lewat jendela SFTP Bitvise, misalnya ke `/srv/pindahan/`, lalu ekstrak:
 
    ```
    sudo apt-get install -y unzip
@@ -352,12 +357,20 @@ Langkah ini dijalankan sekali, saat produksi pindah dari komputer Windows dengan
    spark pembaruan:periksa
    ```
 
-   Jalankan perintah yang diminta `pembaruan:periksa` sampai tertulis "Tidak ada perintah lain yang perlu dijalankan".
+   Jalankan perintah yang diminta `pembaruan:periksa` sampai tertulis "Tidak ada perintah lain yang perlu dijalankan". Dari server Laragon versi lama, biasanya yang diminta `tabel-skor:impor --trilomba`, `faq:awal`, `halaman-depan:carousel`, dan `galeri:awal`.
 6. **Pindahkan alamat ke tunnel VPS.** Di dasbor Cloudflare → **Zero Trust** → **Networks** → **Tunnels**, buka tunnel Laragon → **Public Hostname**, lalu hapus baris alamat pendaftaran. Setelah itu tambahkan alamat itu di tunnel yang menyala di VPS, mengikuti bagian 6 langkah 3 atau 4 (`localhost:<PORT_LOKAL>`). Bila dasbor menolak karena catatan DNS sudah ada, hapus dulu catatan `CNAME` alamat itu di **DNS** → **Records**.
-7. Buka `https://<alamat-pendaftaran>` dan panel admin dari ponsel: jumlah pendaftaran di dasbor, satu rincian pendaftaran beserta foto ofisial dan bukti bayarnya, dan halaman depan harus sama dengan server lama. Jadwalkan cadangan harian (bagian 7).
+7. Buka `https://<alamat-pendaftaran>` dan panel admin dari ponsel: jumlah pendaftaran dan atlet di dasbor (sama dengan catatan di langkah 1), satu rincian pendaftaran beserta foto ofisial dan bukti bayarnya, dan halaman depan harus sama dengan server lama. Jadwalkan cadangan harian (bagian 7).
 8. Biarkan server Laragon utuh, tetapi cloudflared-nya tetap mati, sampai lomba selesai sebagai jalan mundur. Hapus `/srv/pindahan` di VPS setelah semuanya benar, karena isinya data pribadi.
 
-**Mundur ke server Laragon** bila VPS bermasalah: di dasbor Cloudflare hapus alamat pendaftaran dari tunnel VPS, lalu tambahkan kembali di tunnel Laragon dengan URL `127.0.0.1:80` dan HTTP Host Header `milklife.test`; di komputer Laragon `sc start cloudflared`. Pendaftaran yang masuk ke VPS sejak pindah harus dibawa kembali lewat **Pengaturan → Cadangan** (unduh di VPS, impor di Laragon).
+**Bila basis data cadangan gagal dimuat** di langkah 3, pakai zip Backup data (K185). Kosongkan basis data dengan baris `DROP DATABASE` di bagian 9 langkah 2, lalu kerjakan bagian 5 langkah 3 (`migrate --all`, `sekolah:impor`, `data:awal`). Samakan pengaturan dengan server lama lewat panel admin, karena zip tidak membawanya: batas tahun lahir dan biaya tiap kelompok umur, nomor lomba, pembayaran (rekening dan logo bank), halaman depan dan gambarnya, aturan pendaftaran, BIB, jadwal, dan berkas unduhan. Setelah itu salin zip ke folder cadangan host dan masukkan:
+
+```
+spark pendaftaran:impor /cadangan/Backup_Pendaftaran_<tanggal>.zip
+```
+
+Perintah hanya mau berjalan di server yang belum punya pendaftaran. Bila menolak karena nama kelompok umur atau nomor lomba tidak ditemukan, samakan namanya di Pengaturan lalu ulangi. Akun admin dibuat dengan `spark admin:buat`, dan catatan kunjungan lama tidak ikut.
+
+**Mundur ke server Laragon** bila VPS bermasalah: di dasbor Cloudflare hapus alamat pendaftaran dari tunnel VPS, lalu tambahkan kembali di tunnel Laragon dengan URL `127.0.0.1:80` dan HTTP Host Header `milklife.test`; di komputer Laragon `sc start cloudflared`. Pendaftaran yang masuk ke VPS sejak pindah dibawa kembali lewat **Pengaturan → Cadangan**: unduh cadangan di VPS, lalu impor di Laragon. Laragon versi lama belum punya menu itu, jadi perbarui dulu kodenya ke versi yang sama dengan VPS di terminal Laragon: `git pull`, `composer install --no-dev --optimize-autoloader --ignore-platform-req=php` (PHP Laragon 8.3), `php spark migrate --all`, dan `php spark aset:minify`.
 
 ## 9. Memulihkan cadangan
 
@@ -501,7 +514,7 @@ Selama masa pendaftaran, periksa sesekali bahwa folder cadangan berisi berkas ha
 ## Asumsi yang perlu ditinjau
 
 1. VPS sudah menjalankan Docker dan cloudflared di host untuk aplikasi lain. MilkLife memakai tunnel itu lewat port `127.0.0.1` sendiri per lingkungan, tanpa reverse proxy, dan subnet serta port-nya dipilih supaya tidak bentrok (K182, K184).
-2. Cadangan dijalankan pukul 02.00 waktu server oleh cron host, dan `cadangan:buat` langsung mengirimnya ke bucket Cloudflare R2 yang sudah dimiliki panitia, dengan pengaturan dari panel admin (K185). Container app dan db memakai zona waktu `Asia/Jakarta`.
+2. Cadangan dijalankan pukul 02.00 waktu server oleh cron host, dan `cadangan:buat` langsung mengirimnya ke bucket Cloudflare R2 yang sudah dimiliki panitia, dengan pengaturan dari panel admin (K187). Container app dan db memakai zona waktu `Asia/Jakarta`.
 3. `.env` dan `docker/.env` tidak ikut dalam berkas cadangan (berisi rahasia); pengembang menyimpan salinannya sendiri.
 4. Image dibangun di server dari kode hasil `git pull`; tidak ada registry image terpisah.
 5. Kode diambil dan diperbarui dengan `git` dari repo privat lewat deploy key baca saja per server (K138, K148).

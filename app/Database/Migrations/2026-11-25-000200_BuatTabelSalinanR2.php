@@ -5,7 +5,7 @@ namespace App\Database\Migrations;
 use CodeIgniter\Database\Migration;
 
 /**
- * Salinan cadangan ke Cloudflare R2 (F11-19, K185): satu baris (`id` = 1)
+ * Salinan cadangan ke Cloudflare R2 (F11-21, K187): satu baris (`id` = 1)
  * berisi pengaturan yang diisi admin di Pengaturan > Cadangan, dan hasil
  * kiriman terakhir `cadangan:buat`.
  *

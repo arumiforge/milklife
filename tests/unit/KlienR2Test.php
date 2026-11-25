@@ -4,7 +4,7 @@ use App\Libraries\Cadangan\KlienR2;
 use CodeIgniter\Test\CIUnitTestCase;
 
 /**
- * `KlienR2` (F11-19, K185): tanda tangan AWS Signature Version 4 dicocokkan
+ * `KlienR2` (F11-21, K187): tanda tangan AWS Signature Version 4 dicocokkan
  * dengan contoh resmi dokumentasi Amazon S3, lalu permintaan ke R2 diperiksa
  * lewat pengirim tiruan. Semua kunci karangan.
  *
