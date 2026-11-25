@@ -94,8 +94,9 @@ class DataAwal extends BaseCommand
     public const JADWAL = [
         ['Zoom Meeting Sosialisasi', '2026-10-05 19:00:00', 'Zoom Meeting', 'https://zoom.us/j/1234567890', "Penjelasan aturan lomba dan cara mendaftar untuk guru dan ofisial sekolah.\nTautan Zoom di atas masih contoh."],
         ['Batas akhir pendaftaran dan pembayaran', '2026-11-30 23:59:00', 'Web pendaftaran', '', 'Pendaftaran ditutup otomatis. Pastikan bukti transfer sudah diunggah di web pendaftaran sebelum batas ini.'],
-        // Technical meeting dan waktu lomba dari juknis (K112); nomor dada dibagikan saat technical meeting.
-        ['Pertemuan Teknik (Technical Meeting) dan pembagian nomor atlet (BIB)', '2026-12-06 10:00:00', 'Super Cafe SSA Kudus', '', "Pembahasan teknis lomba bersama ofisial sekolah, sekaligus pembagian nomor atlet (BIB).\nWajib dihadiri setiap sekolah yang mendaftarkan siswanya. Bawa bukti pendaftaran (PDF atau cetak) dengan status Lunas."],
+        // Technical meeting daring dan pengambilan nomor dada seperti di server produksi (K186); waktu lomba dari juknis (K112).
+        ['Pertemuan Teknik (Technical Meeting)', '2026-12-05 13:00:00', 'Zoom Meeting / Teams', '', "Pembahasan teknis lomba bersama ofisial sekolah.\nWajib dihadiri minimal satu penanggung jawab tiap sekolah. Pertemuan teknik dilaksanakan secara daring."],
+        ['Pengambilan nomor atlet (BIB)', '2026-12-08 13:00:00', 'Supersoccer Arena, Kudus', '', 'Bawa bukti pendaftaran (PDF atau cetak) dengan status Lunas.'],
         ['Pelaksanaan lomba', '2026-12-09 06:30:00', 'Supersoccer Arena, Kudus', '', 'Lomba berlangsung 9–12 Desember 2026, pagi pukul 06.30–10.00 dan sore pukul 14.30–17.00. Jadwal per nomor lomba diumumkan saat pertemuan teknik (technical meeting).'],
     ];
 
@@ -140,8 +141,10 @@ class DataAwal extends BaseCommand
     /**
      * Kelompok umur dan nomor lombanya, berurutan seperti di flyer.
      *
-     * - `lahir`: [tahun lahir paling awal, tahun lahir paling akhir] (K36);
-     *   `null` = tidak dibatasi di sisi itu (KU 8: lahir 2019 ke atas).
+     * - `lahir`: [tahun lahir paling awal, tahun lahir paling akhir] (K36),
+     *   sama dengan isian panitia di server produksi (K186); `null` = tidak
+     *   dibatasi di sisi itu. Rentang KU 10 dan KU 12 beririsan di 2016:
+     *   pendaftar memilih (K134).
      * - `jenjang`: kode jenjang yang boleh ikut (`App\Libraries\Jenjang`).
      * - `biaya`: biaya individu, rupiah per atlet per nomor (K73).
      * - `awalan`: awalan nomor dada (satu angka), `urutan` 1 dan `nomor_terakhir` 0 (K33).
@@ -158,7 +161,7 @@ class DataAwal extends BaseCommand
     public const KELOMPOK_UMUR = [
         [
             'nama'     => 'KU 8',
-            'lahir'    => [2019, null],
+            'lahir'    => [2018, 2021],
             'jenjang'  => ['A'],
             'biaya'    => 25000,
             'awalan'   => '1',
@@ -167,7 +170,7 @@ class DataAwal extends BaseCommand
         ],
         [
             'nama'     => 'KU 10',
-            'lahir'    => [2016, 2018],
+            'lahir'    => [2016, 2017],
             'jenjang'  => ['A'],
             'biaya'    => 25000,
             'awalan'   => '2',
@@ -180,8 +183,8 @@ class DataAwal extends BaseCommand
         ],
         [
             'nama'     => 'KU 12',
-            // Juknis: batas usia maksimal kelahiran 2014 (K112, mengganti 2015 dari K36).
-            'lahir'    => [2014, 2015],
+            // Juknis: batas usia maksimal kelahiran 2014 (K112); 2016 dari isian panitia (K186).
+            'lahir'    => [2014, 2016],
             'jenjang'  => ['A'],
             'biaya'    => 25000,
             'awalan'   => '3',
@@ -192,7 +195,7 @@ class DataAwal extends BaseCommand
         ],
         [
             'nama'     => 'KU 15',
-            'lahir'    => [2011, 2014],
+            'lahir'    => [2010, 2014],
             'jenjang'  => ['B'],
             'biaya'    => 35000,
             'awalan'   => '4',
@@ -206,7 +209,7 @@ class DataAwal extends BaseCommand
         ],
         [
             'nama'     => 'KU 18',
-            'lahir'    => [2008, 2010],
+            'lahir'    => [2008, 2012],
             'jenjang'  => ['C'],
             'biaya'    => 50000,
             'awalan'   => '5',

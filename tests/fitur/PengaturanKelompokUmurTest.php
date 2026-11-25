@@ -88,7 +88,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
 
         $baris = $this->barisTabel($hasil);
         $this->assertSame(['KU 8', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 0));
-        $this->assertSame(['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2014–2015', 'Lahir 2011–2014', 'Lahir 2008–2010'], array_column($baris, 1));
+        $this->assertSame(['Lahir 2018–2021', 'Lahir 2016–2017', 'Lahir 2014–2016', 'Lahir 2010–2014', 'Lahir 2008–2012'], array_column($baris, 1));
         $this->assertSame(['SD/MI', 'SD/MI', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA'], array_column($baris, 2));
         $this->assertSame(['Rp 25.000', 'Rp 25.000', 'Rp 25.000', 'Rp 35.000', 'Rp 50.000'], array_column($baris, 3));
         $this->assertSame(['1', '2', '3', '4', '5'], array_column($baris, 4));
@@ -221,7 +221,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT, $this->isian(['nama' => 'KU 13', 'tahun_lahir_awal' => '2014', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A'], 'aktif' => '1']));
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_awal', 'tahun_lahir_akhir']);
-        $hasil->assertSee('Tahun lahir ini bertabrakan dengan KU 12 (lahir 2014–2015) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif.');
+        $hasil->assertSee('Tahun lahir ini bertabrakan dengan KU 12 (lahir 2014–2016) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif.');
         $this->seeNumRecords(0, 'kelompok_umur', ['nama' => 'KU 13']);
 
         // Kelompok umur yang mati boleh disimpan dengan rentang yang sama.
@@ -268,6 +268,8 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
     public function testSakelarPilihanKelompokUmur(): void
     {
         DataAwal::isi($this->db);
+        // Data awal beririsan di 2016 (KU 10 dan KU 12, K186); sempitkan KU 12 supaya tanpa irisan.
+        $this->db->table('kelompok_umur')->where('nama', 'KU 12')->update(['tahun_lahir_akhir' => 2015]);
 
         // Tanpa irisan, sakelar bisa dimatikan; irisan baru lalu ditolak.
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . '/pilihan', []);
@@ -397,7 +399,7 @@ final class PengaturanKelompokUmurTest extends UjiBasisData
         $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . "/{$id}", $this->isian(['nama' => 'KU 10 Lama', 'tahun_lahir_awal' => '2017', 'tahun_lahir_akhir' => '2019', 'jenjang' => ['A'], 'aktif' => '1']));
 
         $this->assertIsianSalahDitampilkanUlang($hasil, ['tahun_lahir_awal']);
-        $hasil->assertSee('bertabrakan dengan KU 8 (lahir 2019 ke atas)');
+        $hasil->assertSee('bertabrakan dengan KU 8 (lahir 2018–2021)');
         $this->seeInDatabase('kelompok_umur', ['id' => $id, 'aktif' => 0]);
     }
 

@@ -178,18 +178,18 @@ final class KelompokUmurModelTest extends UjiBasisData
         ]));
 
         $this->assertSame(
-            'Tahun lahir ini bertabrakan dengan KU 10 (lahir 2016–2018) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, hapus centang jenjang yang sama, matikan salah satu kelompok umur, atau nyalakan "Pendaftar memilih kelompok umur" di halaman Kelompok umur.',
+            'Tahun lahir ini bertabrakan dengan KU 10 (lahir 2016–2017) untuk jenjang SD/MI. Dalam satu jenjang, satu tahun lahir hanya boleh masuk satu kelompok umur aktif. Ubah tahunnya, hapus centang jenjang yang sama, matikan salah satu kelompok umur, atau nyalakan "Pendaftar memilih kelompok umur" di halaman Kelompok umur.',
             $galat['tahun_lahir_awal'],
         );
 
-        // Batas kosong = tidak terbatas: "lahir 2020 ke atas" menabrak KU 8 (2019 ke atas).
+        // Batas kosong = tidak terbatas: "lahir 2020 ke atas" menabrak KU 8 (2018–2021).
         [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 6', 'tahun_lahir_awal' => '2020', 'jenjang' => ['A']]));
-        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 8 (lahir 2019 ke atas) untuk jenjang SD/MI.', $galat['tahun_lahir_awal']);
+        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 8 (lahir 2018–2021) untuk jenjang SD/MI.', $galat['tahun_lahir_awal']);
     }
 
     public function testRentangBeririsanBolehUntukJenjangLain(): void
     {
-        // K95: KU 12 (SD) diperlebar sampai 2012, beririsan dengan KU 15 (SMP, 2011–2014).
+        // K95: KU 12 (SD) diperlebar sampai 2012, beririsan dengan KU 15 (SMP, 2010–2014).
         DataAwal::isi($this->db);
         // Pendaftar tidak memilih kelompok umur (K134 mati): irisan dalam satu jenjang ditolak (K95).
         setting('Pendaftaran.pilih_kelompok_umur', false);
@@ -200,7 +200,7 @@ final class KelompokUmurModelTest extends UjiBasisData
 
         // Mencentang SMP juga membuat keduanya menerima SMP 2012–2014: ditolak.
         [, $galat] = $this->model->periksa($this->isian(['nama' => 'KU 12', 'tahun_lahir_awal' => '2012', 'tahun_lahir_akhir' => '2015', 'jenjang' => ['A', 'B']]), $id);
-        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 15 (lahir 2011–2014) untuk jenjang SMP/MTs.', $galat['tahun_lahir_awal']);
+        $this->assertStringStartsWith('Tahun lahir ini bertabrakan dengan KU 15 (lahir 2010–2014) untuk jenjang SMP/MTs.', $galat['tahun_lahir_awal']);
     }
 
     public function testRentangBeririsanDalamSatuJenjangBolehBilaPendaftarMemilih(): void

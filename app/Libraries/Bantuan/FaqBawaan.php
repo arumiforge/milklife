@@ -230,18 +230,18 @@ final class FaqBawaan
 
         // ---------- Hari lomba ----------
         ['hari_lomba', 'Apa itu pertemuan teknik (technical meeting), wajib hadir?', <<<'MD'
-            Pertemuan teknik membahas pelaksanaan lomba bersama ofisial sekolah, sekaligus pembagian nomor atlet (BIB). **Setiap sekolah yang mendaftarkan siswanya wajib hadir.** Sekolah yang tidak hadir wajib menerima keputusan pertemuan itu.
+            Pertemuan teknik membahas pelaksanaan lomba bersama ofisial sekolah dan dilaksanakan secara daring. **Setiap sekolah yang mendaftarkan siswanya wajib hadir, minimal satu penanggung jawab.** Sekolah yang tidak hadir wajib menerima keputusan pertemuan itu.
 
             Waktu dan tempatnya ada di bagian **Agenda** halaman depan.
             MD],
-        ['hari_lomba', 'Apa yang dibawa saat pertemuan teknik?', <<<'MD'
+        ['hari_lomba', 'Apa yang dibawa saat mengambil nomor atlet (BIB)?', <<<'MD'
             1. **Bukti pendaftaran** berstatus Lunas, dicetak atau di HP.
             2. **Surat keterangan dari sekolah** berpas foto dan berstempel untuk setiap atlet.
 
-            Panitia memeriksa keabsahan peserta saat pertemuan teknik. Templat surat keterangan ada di halaman **Unduhan**.
+            Panitia memeriksa keabsahan peserta saat pengambilan nomor atlet. Templat surat keterangan ada di halaman **Unduhan**.
             MD],
         ['hari_lomba', 'Kapan nomor atlet (BIB) dibagikan dan bagaimana memakainya?', <<<'MD'
-            Nomor atlet dibagikan saat pertemuan teknik. Setiap atlet wajib memasang nomor atletnya di **dada** saat berlomba.
+            Nomor atlet diambil ofisial sekolah di tempat lomba sebelum lomba dimulai. Waktu dan tempatnya ada di bagian **Agenda** halaman depan. Setiap atlet wajib memasang nomor atletnya di **dada** saat berlomba.
             MD],
         ['hari_lomba', 'Jam berapa lomba dimulai?', <<<'MD'
             Lomba berlangsung pagi pukul 06.30–10.00 dan sore pukul 14.30–17.00 WIB, **{tanggal_lomba}**. Jadwal per nomor lomba diumumkan saat pertemuan teknik.

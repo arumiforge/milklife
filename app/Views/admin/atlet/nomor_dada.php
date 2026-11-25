@@ -28,7 +28,7 @@ $td     = 'px-3 py-2 align-top';
 <?= $this->section('isi') ?>
 <div class="space-y-4 p-4 sm:px-6 sm:py-4">
     <p class="text-gray-700">
-        Nomor atlet (BIB) dibagikan saat pertemuan teknik (technical meeting). Sebelum itu, nomor bisa dibuat ulang supaya nomor atlet satu sekolah berurutan,
+        Nomor atlet (BIB) diambil sekolah sebelum lomba (lihat Agenda di Pengaturan > Jadwal). Sebelum itu, nomor bisa dibuat ulang supaya nomor atlet satu sekolah berurutan,
         walau pendaftarannya masuk tidak berurutan. Sekolah yang mendaftar lebih dulu mendapat nomor lebih kecil, dan di dalam satu sekolah
         atlet diurutkan menurut urutan mendaftar. Nomor dimulai lagi dari 001 di awalan setiap kelompok umur.
     </p>
@@ -81,7 +81,7 @@ $td     = 'px-3 py-2 align-top';
             <div class="flex items-start gap-3 rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900" role="note">
                 <?= ikon('triangle-alert', 'mt-0.5 size-4 shrink-0') ?>
                 <p>Semua nomor atlet (BIB) lama diganti. Jangan urutkan ulang setelah nomor atlet dibagikan ke peserta.
-                Pendaftaran yang ditandai Lunas sesudahnya mendapat nomor lanjutan. Bila perlu, urutkan lagi sebelum pertemuan teknik (technical meeting).</p>
+                Pendaftaran yang ditandai Lunas sesudahnya mendapat nomor lanjutan. Bila perlu, urutkan lagi sebelum nomor atlet diambil sekolah.</p>
             </div>
 
             <?php if ($kurang !== []) : ?>
