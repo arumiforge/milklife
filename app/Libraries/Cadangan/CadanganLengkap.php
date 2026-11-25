@@ -60,10 +60,11 @@ final class CadanganLengkap
 
     /**
      * Tabel yang tidak ikut cadangan dan tidak diubah impor: akun admin (kata
-     * sandi tetap milik server ini, jadi admin yang mengimpor tetap masuk)
-     * dan catatan migrasi (bentuk tabel milik versi web, bukan data).
+     * sandi tetap milik server ini, jadi admin yang mengimpor tetap masuk),
+     * catatan migrasi (bentuk tabel milik versi web, bukan data), dan
+     * pengaturan salinan Cloudflare R2 (token milik server ini, F11-21).
      */
-    public const TABEL_DILEWATI = ['admin', 'migrations'];
+    public const TABEL_DILEWATI = ['admin', 'migrations', 'salinan_r2'];
 
     /**
      * Banyaknya cadangan otomatis `Sebelum_Impor_*.zip` yang disimpan; yang lebih lama dihapus.

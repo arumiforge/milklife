@@ -79,7 +79,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - Kolom No, pilih massal (100), Backup data dan `pendaftaran:impor` (K76, K77); Backup data tanpa dimuat ke memori (K118 B4). Cadangan pindah ke Pengaturan > Cadangan: semua data, berkas, dan pengaturan; impor web mengganti semua setelah cadangan otomatis dan konfirmasi sandi (K174).
 - Antarmuka tanpa teks teknis (K79). Ubah boleh mempertahankan KU dan nomor yang sudah ditutup (K98).
 - Monitoring `arumi.php`, catatan pengunjung, menu Pengecekan, dasbor bergrafik (K102, K104).
-- `pembaruan:periksa` setelah `git pull` dan bangun ulang image (K115, K182). Cadangan harian 14 hari lewat cron host, lalu disalin ke bucket Cloudflare R2 panitia oleh layanan `salin-r2` (K66, K182).
+- `pembaruan:periksa` setelah `git pull` dan bangun ulang image (K115, K182). Cadangan harian 14 hari lewat cron host; `cadangan:buat` juga mengirimnya ke bucket Cloudflare R2 panitia yang diatur admin di Pengaturan > Cadangan, dengan rahasia terenkripsi, sambungan diperiksa sebelum disimpan, dan isi bucket tampil di panel (K66, K182, K187).
 
 ## Halaman depan
 

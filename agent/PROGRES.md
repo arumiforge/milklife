@@ -5,6 +5,7 @@ Diperbarui: 25 November 2026
 ## Sedang berjalan
 
 - F11-20 Data awal sesuai isian panitia di produksi (K186): menunggu tinjauan.
+- F11-21 Salinan cadangan Cloudflare R2 diatur di panel admin (K187): menunggu tinjauan.
 
 ## Berikutnya
 
@@ -29,4 +30,4 @@ Diperbarui: 25 November 2026
 
 ## Menunggu pemilik
 
-- Pemasangan di VPS Ubuntu 24.04 (F11-17, K182), dikerjakan pemilik karena agen tidak punya akses ke VPS: staging dipasang dulu (panduan produksi bagian 1–7, `COMPOSE_PROJECT_NAME=milklife-staging`), lalu produksi dipindah dari Laragon pada malam hari sebelum 30 November 2026 (bagian 8), dan token R2 diisi lalu dicoba dengan `run --rm salin-r2` (bagian 7). Deploy key diurus pengembang sendiri dan lisensi Flowbite Pro sudah mencakup semua pengembang (K148).
+- Pemasangan di VPS Ubuntu 24.04 (F11-17, K182), dikerjakan pemilik karena agen tidak punya akses ke VPS: staging dipasang dulu (panduan produksi bagian 1–7, `COMPOSE_PROJECT_NAME=milklife-staging`), lalu produksi dipindah dari Laragon pada malam hari sebelum 30 November 2026 (bagian 8), dan salinan R2 diatur admin di Pengaturan > Cadangan lalu dicoba dengan `cadangan:buat` (bagian 7). Langkah yang disesuaikan dengan server spmb-prod ada di Claude Doc "Pemasangan MilkLife di VPS spmb-prod". Deploy key diurus pengembang sendiri dan lisensi Flowbite Pro sudah mencakup semua pengembang (K148).

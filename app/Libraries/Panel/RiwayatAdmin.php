@@ -43,6 +43,8 @@ final class RiwayatAdmin
     // Pengaturan > Cadangan (F11-11); tanpa pendaftaran, `id_pendaftaran` berisi `TANPA_ID`.
     public const UNDUH_CADANGAN = 'unduh_cadangan';
     public const IMPOR_CADANGAN = 'impor_cadangan';
+    // Pengaturan salinan Cloudflare R2 diubah atau dimatikan (F11-21).
+    public const ATUR_R2        = 'atur_r2';
     public const TANPA_ID       = '-';
 
     /**
@@ -64,6 +66,7 @@ final class RiwayatAdmin
         self::GANTI_ATLET  => 'Ganti atlet',
         self::UNDUH_CADANGAN => 'Unduh cadangan',
         self::IMPOR_CADANGAN => 'Impor cadangan',
+        self::ATUR_R2        => 'Atur salinan R2',
     ];
 
     /**
@@ -187,7 +190,7 @@ final class RiwayatAdmin
     public function untukCadangan(int $batas = 10): array
     {
         return array_map(self::bentuk(...), $this->db->table('riwayat_admin')
-            ->whereIn('tindakan', [self::UNDUH_CADANGAN, self::IMPOR_CADANGAN])
+            ->whereIn('tindakan', [self::UNDUH_CADANGAN, self::IMPOR_CADANGAN, self::ATUR_R2])
             ->orderBy('dibuat_pada', 'DESC')->orderBy('id', 'DESC')
             ->limit($batas)
             ->get()->getResultArray());

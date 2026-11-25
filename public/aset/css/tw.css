@@ -4854,6 +4854,9 @@
     .sm\:grid-cols-\[12rem_1fr\] {
       grid-template-columns: 12rem 1fr;
     }
+    .sm\:grid-cols-\[max-content_1fr\] {
+      grid-template-columns: max-content 1fr;
+    }
     .sm\:flex-row {
       flex-direction: row;
     }
