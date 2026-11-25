@@ -1,4 +1,4 @@
-# F11-22 Perintah `mlk deploy` dan `mlk pasang` di server Docker
+# F11-23 Perintah `mlk deploy` dan `mlk pasang` di server Docker
 
 | | |
 |---|---|
@@ -7,7 +7,7 @@
 
 ## Tujuan
 
-Pembaruan staging dan produksi di VPS cukup satu perintah, `mlk deploy <lingkungan>`, seperti `spmb deploy` aplikasi lain di server itu, dan pemasangan pertama cukup `mlk pasang <lingkungan>` (K188). Sekalian, flyer, banner, dan juknis bawaan ikut masuk image Docker, karena `data:awal` di staging gagal memasangnya.
+Pembaruan staging dan produksi di VPS cukup satu perintah, `mlk deploy <lingkungan>`, seperti `spmb deploy` aplikasi lain di server itu, dan pemasangan pertama cukup `mlk pasang <lingkungan>` (K189). Sekalian, flyer, banner, dan juknis bawaan ikut masuk image Docker, karena `data:awal` di staging gagal memasangnya.
 
 ## Hasil
 
@@ -16,7 +16,7 @@ Pembaruan staging dan produksi di VPS cukup satu perintah, `mlk deploy <lingkung
 - [x] `.env` ditulis ulang di tempat (bukan `sed -i`), supaya container yang memasang `.env` sebagai berkas tetap membaca isi baru.
 - [x] `.dockerignore`: `sumber/flyer` dan `sumber/juknis` ikut image. CI memeriksa semua berkas bawaan `data:awal` dan carousel ada di image (`docker/periksa-berkas-bawaan.php`) dan menjalankan `shellcheck docker/mlk`.
 - [x] Pesan `data:awal` memisahkan berkas sumber yang tidak ada dari folder unggahan yang tidak bisa ditulisi.
-- [x] Panduan produksi revisi 17 (bagian 2, 5, 10), rancangan revisi 45, K188, ATURAN, PETA-KODE.
+- [x] Panduan produksi revisi 17 (bagian 2, 5, 10), rancangan revisi 45, K189, ATURAN, PETA-KODE.
 
 ## Berkas dan uji
 

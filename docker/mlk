@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #--------------------------------------------------------------------
-# mlk: perintah MilkLife di server Docker (K182, K188).
+# mlk: perintah MilkLife di server Docker (K182, K189).
 #
 #   mlk deploy staging [ref]    bangun image commit itu (bawaan origin/main),
 #                               cadangan, pasang, migrate, cek kesehatan

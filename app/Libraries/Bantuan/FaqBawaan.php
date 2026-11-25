@@ -260,10 +260,12 @@ final class FaqBawaan
             Bila atlet berhalangan, sekolah bisa meminta panitia **mengganti** atlet itu dengan siswa lain dari sekolah yang sama. Syaratnya:
 
             - pendaftaran sudah Lunas;
-            - daftar seri nomor itu belum dikunci dan hasilnya belum diisi;
+            - hasil atlet lama di nomor itu belum diisi;
             - kelompok umur dan jenis kelamin atlet pengganti sama dengan nomor lombanya, dan atlet pengganti belum terdaftar.
 
-            Atlet pengganti memakai nomor lomba atlet lama dan mendapat nomor atlet (BIB) baru. Biaya tidak berubah. Kirim nama atlet lama serta nama, NISN, dan tanggal lahir atlet pengganti ke panitia lewat WA.
+            Atlet pengganti memakai nomor lomba dan tempat atlet lama di seri, lalu mendapat nomor atlet (BIB) baru. Biaya tidak berubah.
+
+            Sampaikan permintaan saat pertemuan teknik, saat mengambil nomor atlet, atau di hari lomba sebelum atlet itu berlomba. Siapkan nama atlet lama serta nama, NISN, dan tanggal lahir atlet pengganti. Permintaan juga bisa dikirim ke panitia lewat WA.
             MD],
         ['hari_lomba', 'Apakah panitia menanggung transportasi dan penginapan?', <<<'MD'
             Tidak. Biaya transportasi dan akomodasi ditanggung masing-masing peserta.

@@ -74,6 +74,20 @@ class Pendaftaran extends BaseConfig
     public bool $pilih_kelompok_umur = true;
 
     /**
+     * Ganti atlet oleh admin dibuka (K188). Seperti Seri 1, bawaan menyala:
+     * sekolah meminta ganti atlet saat pertemuan teknik, saat mengambil nomor
+     * atlet, dan di hari lomba. Mati = formulir ganti atlet ditutup.
+     */
+    public bool $ganti_atlet = true;
+
+    /**
+     * Ganti atlet tetap boleh setelah seri babaknya dikunci (K188), misalnya
+     * di hari lomba: atlet pengganti mengambil seri dan lintasan atlet lama.
+     * Mati = kunci seri babak itu dibuka dulu di menu Seri.
+     */
+    public bool $ganti_atlet_seri_dikunci = true;
+
+    /**
      * Nama regu beregu (K106): `ketentuan` = official memilih dari
      * `label_regu`; `bebas` = official mengetik nama regu sendiri.
      */
