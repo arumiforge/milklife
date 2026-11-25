@@ -39,7 +39,8 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 
 - Ditentukan jenjang dulu, lalu tahun lahir; rentang boleh beririsan antar-jenjang (K95, K23, K24). Atlet tidak bisa masuk kelompok umur jenjang lain.
 - Dalam satu jenjang rentang boleh beririsan bila sakelar "Pendaftar memilih kelompok umur" menyala (bawaan); atlet di tahun irisan wajib memilih satu kelompok umur di wizard, admin boleh memindahnya di Ubah; mati = irisan ditolak (K134).
-- Batas tahun lahir data awal: KU 8 2019+, KU 10 2016–2018, KU 12 2014–2015, KU 15 2011–2014, KU 18 2008–2010 (K36, K112); perubahan dari panitia diisi admin di panel (K134).
+- Batas tahun lahir data awal sama dengan isian panitia di produksi: KU 8 2018–2021, KU 10 2016–2017, KU 12 2014–2016, KU 15 2010–2014, KU 18 2008–2012; KU 10 dan KU 12 beririsan di 2016 dan pendaftar memilih (K186, menggantikan angka K36 dan K112; K134).
+- Agenda data awal: pertemuan teknik daring Sabtu 5 Desember 2026 pukul 13.00 (Zoom Meeting / Teams); nomor atlet (BIB) diambil Selasa 8 Desember 2026 pukul 13.00 di Supersoccer Arena, Kudus; lomba 9–12 Desember mulai 06.30 (K186, menggantikan K112 butir 3).
 - Usia hanya keterangan, dihitung pada tanggal mulai acara (K37). Juknis resmi sudah dicocokkan (K112).
 
 ## Nomor lomba, regu, dan biaya
@@ -58,7 +59,7 @@ Ringkasan keputusan pemilik yang **masih berlaku**, satu baris per aturan dengan
 - ID pendaftaran tetap saat diubah (K63).
 - Status Lunas dan Menunggu (K90). Lunas diubah dan total berubah → kembali Menunggu (K32); total tetap → atlet baru langsung dapat nomor (K59).
 - Nomor atlet dibuat saat Lunas (K11), awalan per kelompok umur, bisa banyak awalan (K05, K33).
-- Reset nomor atlet setelah uji coba (K94); urutkan ulang per sekolah sebelum pertemuan teknik (K111).
+- Reset nomor atlet setelah uji coba (K94); urutkan ulang per sekolah sebelum nomor atlet dibagikan (K111).
 - Pendaftaran Lunas ber-NPSN sama digabung otomatis, tidak bisa dipisah (K109, K110).
 - Tolak atlet per atlet dari pendaftaran Menunggu; NISN bisa didaftarkan lagi; catatan di `atlet_ditolak` (K116).
 - Status tampilan "Semua atlet ditolak", bahasa untuk sekolah, menu Atlet ditolak, jejak navigasi (K117).

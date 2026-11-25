@@ -200,10 +200,9 @@ final class DataAwalTest extends UjiBasisData
         $this->assertSame(['KU 8', 'KU 10', 'KU 12', 'KU 15', 'KU 18'], array_column($baris, 'nama'));
         $this->assertSame(['1', '2', '3', '4', '5'], array_column($baris, 'urutan'));
 
-        // K36: KU 8 lahir 2019 ke atas (akhir kosong), KU 10 2016–2018,
-        // KU 12 2015, KU 15 2011–2014, KU 18 2008–2010.
+        // K186: sama dengan isian panitia di server produksi; KU 10 dan KU 12 beririsan di 2016 (K134).
         $this->assertSame(
-            [['2019', null], ['2016', '2018'], ['2014', '2015'], ['2011', '2014'], ['2008', '2010']],
+            [['2018', '2021'], ['2016', '2017'], ['2014', '2016'], ['2010', '2014'], ['2008', '2012']],
             array_map(static fn (array $ku): array => [$ku['tahun_lahir_awal'], $ku['tahun_lahir_akhir']], $baris),
         );
 
@@ -358,9 +357,9 @@ final class DataAwalTest extends UjiBasisData
         $this->assertStringContainsString('1 Oktober 2026 pukul 00.00 sampai 30 November 2026 pukul 23.59', $keluaran);
         $this->assertStringContainsString('Kelompok umur: 5', $keluaran);
         $this->assertStringContainsString('Nomor lomba  : 69 (58 individu, 11 beregu)', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 10\s+: lahir 2016–2018,\s+awalan nomor atlet \(BIB\) 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 8\s+: lahir 2019 ke atas,\s+awalan nomor atlet \(BIB\) 1/', $keluaran);
-        $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2014–2015,\s+awalan nomor atlet \(BIB\) 3/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 10\s+: lahir 2016–2017,\s+awalan nomor atlet \(BIB\) 2,\s+6 nomor individu, 5 nomor beregu/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 8\s+: lahir 2018–2021,\s+awalan nomor atlet \(BIB\) 1/', $keluaran);
+        $this->assertMatchesRegularExpression('/KU 12\s+: lahir 2014–2016,\s+awalan nomor atlet \(BIB\) 3/', $keluaran);
         $this->assertStringNotContainsString('Patokan usia', $keluaran);
         $this->assertStringContainsString('Gambar kepala bawaan dipasang', $keluaran);
         $this->assertStringContainsString('Logo persegi bawaan dipasang', $keluaran);

@@ -55,7 +55,7 @@ final class HalamanDepanLombaTest extends UjiBasisData
             $this->daftarTeks($xpath, '//article[@data-lomba-ku]//h3'),
         );
         $this->assertSame(
-            ['Lahir 2019 ke atas', 'Lahir 2016–2018', 'Lahir 2014–2015', 'Lahir 2011–2014', 'Lahir 2008–2010'],
+            ['Lahir 2018–2021', 'Lahir 2016–2017', 'Lahir 2014–2016', 'Lahir 2010–2014', 'Lahir 2008–2012'],
             $this->daftarTeks($xpath, '//*[@data-lomba-tahun-lahir]'),
         );
 
