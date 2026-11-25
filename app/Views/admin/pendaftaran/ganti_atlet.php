@@ -24,7 +24,7 @@ $alamat = 'admin/pendaftaran/' . (int) $p['id'];
 $jk     = $a['jenis_kelamin'] === 'P' ? 'Perempuan' : 'Laki-laki';
 
 $kalimatKonfirmasi = $a['nama'] . ' akan dikeluarkan dari pendaftaran ' . $p['id_pendaftaran']
-    . ' dan diganti atlet baru. Nomor lomba, regu, dan tempat di seri yang belum dikunci pindah ke atlet baru, '
+    . ' dan diganti atlet baru. Nomor lomba, regu, dan tempat di seri pindah ke atlet baru, '
     . 'yang mendapat nomor atlet (BIB) baru. Nomor atlet lama tidak dipakai lagi. Tindakan ini tidak bisa dibatalkan.';
 ?>
 <?= $this->extend('tata_letak/admin_tw') ?>

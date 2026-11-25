@@ -294,6 +294,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
         $routes->post('halaman-depan/carousel/(:num)/hapus', 'CarouselController::hapus/$1');
         // ---------- Akhir foto carousel halaman depan ----------
 
+        // Sakelar ganti atlet di halaman Pendaftaran (K188).
+        $routes->post('pendaftaran/ganti-atlet', 'PendaftaranController::gantiAtlet');
+
         // Sakelar "Pendaftar memilih kelompok umur" di halaman Kelompok Umur (K134).
         $routes->post('kelompok-umur/pilihan', 'KelompokUmurController::pilihan');
 

@@ -12,6 +12,8 @@
  * @var array<string, string>  $pilihanUsia       nilai => label pilihan tampilan usia
  * @var array<string, string>  $pilihanRegu       mode nama regu (`Regu::MODE`)
  * @var string                 $tanggalMulaiAcara tanggal mulai acara dalam bahasa Indonesia, `''` bila belum diisi
+ * @var bool                   $gantiAtlet        sakelar "Ganti atlet dibuka" (K188)
+ * @var bool                   $gantiAtletDikunci sakelar "Boleh setelah seri dikunci" (K188)
  */
 
 /**
@@ -189,6 +191,31 @@ $angka = ['min' => '1', 'step' => '1', 'inputmode' => 'numeric'];
 
             <?= komponen('tombol', ['label' => 'Simpan pengaturan pendaftaran', 'tipe' => 'submit', 'ikon' => 'check']) ?>
         </form>
+
+        <section class="<?= $kartu ?>" aria-labelledby="judul-ganti-atlet">
+            <h2 id="judul-ganti-atlet" class="text-lg font-bold text-gray-900">Ganti atlet</h2>
+            <p class="mt-1 text-sm text-gray-600">
+                Admin mengganti atlet pendaftaran Lunas lewat tombol Ganti di rincian pendaftaran, misalnya bila atlet cedera.
+                Seperti Seri 1, sekolah bisa meminta ganti atlet saat pertemuan teknik, saat mengambil nomor atlet (BIB),
+                dan di hari lomba. Atlet yang sudah punya hasil tidak bisa diganti.
+            </p>
+            <form action="<?= site_url('admin/pengaturan/pendaftaran/ganti-atlet') ?>" method="post" class="mt-3 space-y-3">
+                <?= csrf_field() ?>
+                <?= komponen('sakelar', [
+                    'label'   => 'Ganti atlet dibuka',
+                    'nama'    => 'ganti_atlet',
+                    'centang' => $gantiAtlet,
+                    'bantuan' => 'Mati: formulir ganti atlet ditutup untuk semua pendaftaran.',
+                ]) ?>
+                <?= komponen('sakelar', [
+                    'label'   => 'Boleh setelah seri dikunci',
+                    'nama'    => 'ganti_atlet_seri_dikunci',
+                    'centang' => $gantiAtletDikunci,
+                    'bantuan' => 'Menyala: di hari lomba, atlet pengganti langsung mengambil seri dan lintasan atlet lama. Mati: kunci seri babak itu dibuka dulu di menu Seri.',
+                ]) ?>
+                <?= komponen('tombol', ['label' => 'Simpan ganti atlet', 'tipe' => 'submit', 'varian' => 'kedua', 'ikon' => 'check']) ?>
+            </form>
+        </section>
     </div>
 </div>
 <?= $this->endSection() ?>

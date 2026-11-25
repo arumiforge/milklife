@@ -91,7 +91,7 @@ final class PanelGantiAtletHalamanTest extends UjiBasisData
             $hasil,
             'admin/pendaftaran/' . $p['id'],
             'Budi Karangan sudah diganti DEWI KARANGAN dengan nomor atlet (BIB) baru 2002.'
-            . ' Nomor lomba, regu, dan tempatnya di seri yang belum dikunci ikut pindah. Cetak BIB baru di menu Cetak BIB.',
+            . ' Nomor lomba, regu, dan tempatnya di seri ikut pindah. Cetak BIB baru di menu Cetak BIB, dan cetak ulang daftar seri bila sudah dibagikan.',
         );
 
         $rincian = $this->bukaSebagaiAdmin('admin/pendaftaran/' . $p['id']);

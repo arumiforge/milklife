@@ -22,6 +22,8 @@ use DateTimeImmutable;
  *   tanggal mulai acara; kelompok umur ditentukan tahun lahir (K36).
  * - Keadaan buka-tutup pendaftaran dihitung `BukaTutupPendaftaran` (F2-09),
  *   bukan di sini.
+ * - Dua sakelar ganti atlet (K188) punya formulir sendiri:
+ *   `POST /admin/pengaturan/pendaftaran/ganti-atlet` (`gantiAtlet`).
  */
 class PendaftaranController extends BaseController
 {
@@ -96,6 +98,26 @@ class PendaftaranController extends BaseController
         setting('Pendaftaran.label_regu', implode(', ', Regu::daftarLabel($isian['label_regu'])));
 
         return redirect()->to(self::ALAMAT)->with('pesan_sukses', 'Pengaturan pendaftaran tersimpan.');
+    }
+
+    /**
+     * Simpan sakelar ganti atlet (K188): dibuka, dan boleh setelah seri dikunci.
+     */
+    public function gantiAtlet(): ResponseInterface
+    {
+        $dibuka  = $this->request->getPost('ganti_atlet') === '1';
+        $dikunci = $this->request->getPost('ganti_atlet_seri_dikunci') === '1';
+
+        setting('Pendaftaran.ganti_atlet', $dibuka);
+        setting('Pendaftaran.ganti_atlet_seri_dikunci', $dikunci);
+
+        $pesan = ! $dibuka
+            ? 'Ganti atlet ditutup. Formulir ganti atlet tidak bisa dipakai sampai sakelarnya dinyalakan lagi.'
+            : ($dikunci
+                ? 'Ganti atlet dibuka, juga untuk babak yang seri-nya sudah dikunci.'
+                : 'Ganti atlet dibuka sampai seri babak atlet itu dikunci.');
+
+        return redirect()->to(self::ALAMAT)->with('pesan_sukses', $pesan);
     }
 
     /**
@@ -296,6 +318,8 @@ class PendaftaranController extends BaseController
             'pilihanUsia'       => self::TAMPILAN_USIA,
             'pilihanRegu'       => Regu::MODE,
             'tanggalMulaiAcara' => tanggal_id(setting('Acara.tanggal_mulai')),
+            'gantiAtlet'        => (bool) setting('Pendaftaran.ganti_atlet'),
+            'gantiAtletDikunci' => (bool) setting('Pendaftaran.ganti_atlet_seri_dikunci'),
         ]);
     }
 }

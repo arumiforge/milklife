@@ -58,7 +58,7 @@ class GantiAtletController extends BaseController
 
         $pesan = $form['atlet']['nama'] . ' sudah diganti ' . $hasil['nama']
             . ($hasil['nomor_dada'] === null ? '.' : ' dengan nomor atlet (BIB) baru ' . $hasil['nomor_dada'] . '.')
-            . ' Nomor lomba, regu, dan tempatnya di seri yang belum dikunci ikut pindah. Cetak BIB baru di menu Cetak BIB.';
+            . ' Nomor lomba, regu, dan tempatnya di seri ikut pindah. Cetak BIB baru di menu Cetak BIB, dan cetak ulang daftar seri bila sudah dibagikan.';
 
         return redirect()->to(self::ALAMAT . '/' . $id)->with('pesan_sukses', $pesan);
     }

@@ -57,6 +57,25 @@ final class PengaturanPendaftaranTest extends UjiBasisData
 
     // ---------- Kunci pengaturan ----------
 
+    public function testSakelarGantiAtlet(): void
+    {
+        // K188: bawaan menyala seperti Seri 1.
+        $hasil = $this->bukaSebagaiAdmin(self::ALAMAT);
+        $hasil->assertSee('Ganti atlet dibuka');
+        $hasil->assertSee('Boleh setelah seri dikunci');
+        $this->assertMatchesRegularExpression('/id="ganti_atlet"[^>]*checked/', (string) $hasil->getBody());
+        $this->assertMatchesRegularExpression('/id="ganti_atlet_seri_dikunci"[^>]*checked/', (string) $hasil->getBody());
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . '/ganti-atlet', ['ganti_atlet' => '1', 'ganti_atlet_seri_dikunci' => '0']);
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Ganti atlet dibuka sampai seri babak atlet itu dikunci.');
+        $this->assertTrue((bool) setting('Pendaftaran.ganti_atlet'));
+        $this->assertFalse((bool) setting('Pendaftaran.ganti_atlet_seri_dikunci'));
+
+        $hasil = $this->kirimSebagaiAdmin(self::ALAMAT . '/ganti-atlet', ['ganti_atlet' => '0', 'ganti_atlet_seri_dikunci' => '0']);
+        $this->assertBerhasilDialihkan($hasil, self::ALAMAT, 'Ganti atlet ditutup. Formulir ganti atlet tidak bisa dipakai sampai sakelarnya dinyalakan lagi.');
+        $this->assertFalse((bool) setting('Pendaftaran.ganti_atlet'));
+    }
+
     public function testTanggalPatokanUsiaSudahDihapus(): void
     {
         // K37: usia hanya keterangan, dihitung pada tanggal mulai acara.
@@ -69,6 +88,7 @@ final class PengaturanPendaftaranTest extends UjiBasisData
     {
         $this->assertBelumMasukDialihkan(self::ALAMAT);
         $this->assertBelumMasukDialihkan(self::ALAMAT, 'post');
+        $this->assertBelumMasukDialihkan(self::ALAMAT . '/ganti-atlet', 'post');
     }
 
     public function testFormulirBerisiNilaiAwal(): void
