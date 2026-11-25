@@ -34,11 +34,13 @@ use Throwable;
  *   cadangan. Total pendaftaran tidak berubah, jadi status tetap Lunas.
  * - Atlet baru mendapat **nomor atlet (BIB) baru**; nomor atlet lama tidak
  *   dipakai ulang (K11).
+ * - Ditutup bila sakelar `Pendaftaran.ganti_atlet` mati (K188).
  * - Ditolak bila atlet lama sudah punya prestasi atau keterangan (DNS, DNF,
- *   DQ) di babak mana pun, atau masuk seri di babak yang **sudah dikunci**.
- *   Untuk nomor beregu, ditolak bila regunya sudah punya hasil.
- * - Baris hasil atlet lama yang masih kosong (seri dan lintasan babak yang
- *   belum dikunci) dipindah ke atlet baru, jadi tempatnya di seri tetap.
+ *   DQ) di babak mana pun. Untuk nomor beregu, ditolak bila regunya sudah
+ *   punya hasil. Babak yang seri-nya **sudah dikunci** hanya menolak bila
+ *   sakelar `Pendaftaran.ganti_atlet_seri_dikunci` mati (K188).
+ * - Baris hasil atlet lama yang masih kosong (seri dan lintasan) dipindah ke
+ *   atlet baru, jadi tempatnya di seri tetap.
  * - Atlet lama dihapus (NISN-nya bisa didaftarkan lagi). Salinannya dan
  *   penggantinya dicatat di `atlet_diganti`, ditambah riwayat tindakan admin.
  *   Semua dalam satu transaksi dengan kunci per NPSN.
@@ -119,6 +121,10 @@ final class GantiAtlet
         }
 
         $hambatan = [];
+
+        if (! (bool) setting('Pendaftaran.ganti_atlet')) {
+            $hambatan[] = 'Ganti atlet sedang ditutup panitia. Buka lagi lewat sakelar "Ganti atlet dibuka" di Pengaturan > Pendaftaran.';
+        }
 
         if ($p['status'] !== 'lunas') {
             $hambatan[] = 'Ganti atlet hanya untuk pendaftaran Lunas. Untuk pendaftaran Menunggu, pakai Ubah atau Tolak atlet.';
@@ -329,7 +335,7 @@ final class GantiAtlet
                 ]));
             }
 
-            // Tempat atlet lama di seri dan lintasan babak yang belum dikunci pindah ke atlet baru.
+            // Tempat atlet lama di seri dan lintasan pindah ke atlet baru, juga di babak yang seri-nya sudah dikunci (K188).
             $this->pastikan($this->db->table('hasil')->where('atlet_id', $atletId)->update(['atlet_id' => $baruId]));
 
             // Nomor atlet baru dibagi sebelum atlet lama dihapus, supaya nomor
@@ -422,7 +428,8 @@ final class GantiAtlet
      */
     private function hambatanHasil(int $id, int $atletId, array $nomor): array
     {
-        $hambatan = [];
+        $hambatan     = [];
+        $bolehDikunci = (bool) setting('Pendaftaran.ganti_atlet_seri_dikunci');
 
         $individu = $this->db->table('hasil h')
             ->select('nl.nama, nl.kategori, nl.jenis, b.nama AS babak, b.seri_dikunci_pada, h.prestasi, h.keterangan')
@@ -436,8 +443,8 @@ final class GantiAtlet
 
             if ($h['prestasi'] !== null || ($h['keterangan'] ?? '') !== '') {
                 $hambatan[] = 'Atlet ini sudah punya hasil di ' . $nama . ', jadi tidak bisa diganti.';
-            } elseif ($h['seri_dikunci_pada'] !== null) {
-                $hambatan[] = 'Seri ' . $nama . ' sudah dikunci. Buka kunci seri babak itu di menu Seri dulu, lalu ganti atlet.';
+            } elseif ($h['seri_dikunci_pada'] !== null && ! $bolehDikunci) {
+                $hambatan[] = 'Seri ' . $nama . ' sudah dikunci. Buka kunci seri babak itu di menu Seri dulu, atau nyalakan "Boleh setelah seri dikunci" di Pengaturan > Pendaftaran, lalu ganti atlet.';
             }
         }
 

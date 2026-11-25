@@ -2,9 +2,10 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K183, diubah langsung sesuai K101); **revisi 2 25 November 2026** (K186, diubah langsung sesuai K101) |
-| Tanggal | 23 November 2026, revisi 2 25 November 2026 |
-| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K183, K186; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
+| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K183, diubah langsung sesuai K101); **revisi 2 25 November 2026** (K186, diubah langsung sesuai K101); **revisi 3 25 November 2026** (K188, diubah langsung sesuai K101) |
+| Tanggal | 23 November 2026, revisi 2 dan 3 25 November 2026 |
+| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K183, K186, K188; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
+| Revisi 3 | Ganti atlet seperti Seri 1 (K188): saat pertemuan teknik, saat mengambil nomor atlet, dan di hari lomba, ditambah WA; dua sakelar di Pengaturan → Pendaftaran, dan ganti atlet setelah seri dikunci tidak perlu membuka kunci seri. Bagian yang berubah: 2.2, 5, 6 |
 | Revisi 2 | Pertemuan teknik daring Sabtu 5 Desember 2026, mengikuti agenda di server produksi (K186). Bagian yang berubah: Tujuan, 1 |
 | Revisi 1 | Versi siap bagi untuk admin panitia dan juri: alamat situs dan kontak, latihan di situs staging, akun juri sendiri (F11-16), cara sekolah meminta ganti atlet, belum ada rekor awal, nama berkas cadangan, dan langkah menyunting jawaban ganti atlet di Bantuan. Bagian Asumsi dihapus karena sudah dijawab pemilik. Bagian yang berubah: Tujuan, Alamat dan kontak (baru), Ringkasan alur, 1, 1.6, 1.7, 1.9 (baru), 2.2, 3.1, 4.3, 5, 6 |
 
@@ -219,7 +220,10 @@ Bila salah tandai, tekan **Batal hadir** di baris atlet itu. Pendaftaran yang be
 
 Sekolah boleh mengganti atlet yang berhalangan dengan siswa lain dari sekolah yang sama. Siapkan nama atlet lama, alasan penggantian, serta nama lengkap, NISN, dan tanggal lahir atlet pengganti.
 
-Sekolah meminta ganti atlet di meja pertemuan teknik atau lewat WA penanggung jawab panitia, paling lambat sebelum daftar seri babak atlet itu dikunci.
+Seperti Seri 1, sekolah meminta ganti atlet saat pertemuan teknik, saat mengambil nomor atlet (BIB), atau di hari lomba sebelum atlet itu berlomba. Permintaan juga bisa lewat WA penanggung jawab panitia (K188). Ganti atlet diatur dua sakelar di **Pengaturan → Pendaftaran**, bagian **Ganti atlet**, dan keduanya menyala sejak awal:
+
+- **Ganti atlet dibuka**: matikan bila panitia menutup ganti atlet;
+- **Boleh setelah seri dikunci**: atlet pengganti langsung mengambil seri dan lintasan atlet lama, jadi daftar seri tidak perlu dibuka kuncinya.
 
 1. Buka **Pendaftaran**, cari sekolahnya, lalu buka rinciannya. Pendaftaran harus **Lunas**.
 2. Tekan **Ganti** di baris atlet yang diganti. Halaman **Ganti atlet** terbuka.
@@ -231,17 +235,18 @@ Hasilnya:
 - atlet pengganti memakai nomor lomba, regu, dan status Inti/Cadangan atlet lama;
 - biaya dan status Lunas tidak berubah;
 - atlet pengganti mendapat nomor atlet (BIB) baru, dan BIB atlet lama tidak dipakai lagi;
-- bila atlet lama sudah masuk seri yang belum dikunci, tempatnya pindah ke atlet pengganti;
+- bila atlet lama sudah masuk seri, tempatnya (seri dan lintasan) pindah ke atlet pengganti; cetak ulang daftar seri bila sudah dibagikan;
 - atlet lama tercatat di bagian **Atlet diganti** di rincian pendaftaran, bukan sebagai atlet ditolak.
 
 Penggantian ditolak bila:
 
-- daftar seri babak atlet lama sudah dikunci;
+- sakelar **Ganti atlet dibuka** mati;
+- daftar seri babak atlet lama sudah dikunci dan sakelar **Boleh setelah seri dikunci** mati;
 - atlet lama sudah punya hasil (untuk nomor beregu: regunya sudah punya hasil);
 - kelompok umur atau jenis kelamin atlet pengganti tidak cocok dengan nomor lombanya;
 - NISN atlet pengganti sudah terdaftar.
 
-Pesan di layar menyebut alasannya. Bila daftar seri sudah dikunci, buka kuncinya dulu (bagian 2.4), ganti atletnya, lalu kunci lagi.
+Pesan di layar menyebut alasannya. Bila sakelar **Boleh setelah seri dikunci** sengaja dimatikan, buka kunci daftar seri dulu (bagian 2.4), ganti atletnya, lalu kunci lagi.
 
 ### 2.3 Cetak BIB atlet pengganti
 
@@ -433,7 +438,7 @@ Unduh cadangan di **Pengaturan → Cadangan** setiap akhir hari lomba, lalu simp
 | Daftar start tidak tampil di halaman publik atau videotron | Kunci daftar seri babak itu, lalu nyalakan **Tampil untuk umum** di Seri dan lintasan. |
 | Hasil tidak tampil di halaman publik atau videotron | Tekan **Terbitkan** di nomor itu. Untuk videotron, pastikan juga **Tampilkan videotron di /layar** menyala. |
 | Videotron menampilkan halaman kosong atau tidak bisa dibuka | Nyalakan **Tampilkan videotron di /layar** di menu Videotron. Periksa sambungan internet komputer videotron. |
-| Tombol **Ganti** tidak ada atau penggantian ditolak | Pastikan pendaftaran Lunas. Buka kunci daftar seri babak atlet itu, ganti atletnya, lalu kunci lagi. Bila atlet sudah punya hasil, atlet tidak bisa diganti. |
+| Tombol **Ganti** tidak ada atau penggantian ditolak | Pastikan pendaftaran Lunas dan kedua sakelar ganti atlet di **Pengaturan → Pendaftaran** menyala. Bila sakelar **Boleh setelah seri dikunci** sengaja dimatikan, buka kunci daftar seri babak atlet itu, ganti atletnya, lalu kunci lagi. Bila atlet sudah punya hasil, atlet tidak bisa diganti. |
 | Juri melihat pesan baris diubah admin lain | Muat ulang Lembar juri, periksa isian terbaru, lalu ubah lagi bila perlu. |
 | Status kartu juri tetap **Belum tersimpan** | Sinyal lemah. Tekan **Simpan** di kartu itu, atau pindah ke tempat bersinyal lalu muat ulang halaman. |
 | Juri tiba-tiba diminta masuk lagi | Admin baru mengganti kata sandi akun juri itu. Minta kata sandi baru ke admin panitia. |
@@ -459,4 +464,4 @@ Bila masalah tidak ada di tabel ini, catat jam, halaman, dan pesan di layar, lal
 
 Halaman Bantuan publik sudah memuat jawaban tentang ganti atlet, nomor acara, arti kode DNS/DNF/DQ/NM/r/CR, waktu tangan, nomor tidak dilombakan, rekor, dan cara juara umum dihitung. Arahkan ofisial sekolah ke halaman itu. Sunting atau sembunyikan jawabannya di **Bantuan** (kelompok Konten) bila panitia ingin jawaban lain.
 
-Jawaban bawaan tentang ganti atlet baru menyebut WA. Sebelum pertemuan teknik, ubah jawaban itu di **Bantuan** supaya menyebut dua cara: meja pertemuan teknik atau WA penanggung jawab panitia.
+Jawaban bawaan tentang ganti atlet menyebut tiga kesempatan seperti Seri 1: pertemuan teknik, pengambilan nomor atlet, dan hari lomba, ditambah WA panitia. Server yang tanya-jawabnya dipasang sebelum 25 November 2026 masih memakai jawaban lama yang hanya menyebut WA; sunting jawabannya di **Bantuan**.

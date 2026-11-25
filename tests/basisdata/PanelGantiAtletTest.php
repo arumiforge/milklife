@@ -177,8 +177,42 @@ final class PanelGantiAtletTest extends UjiBasisData
         $this->db->table('hasil')->where('babak_id', $babak)->update(['prestasi' => null]);
         $this->db->table('babak')->where('id', $babak)->update(['seri_dikunci_pada' => '2026-12-09 07:00:00']);
 
+        // K188: sakelar "Boleh setelah seri dikunci" mati, jadi kunci seri dibuka dulu.
+        setting('Pendaftaran.ganti_atlet_seri_dikunci', false);
         $form = (new GantiAtlet())->formulir($p['id'], $p['atlet'][0]);
         $this->assertStringContainsString('sudah dikunci', $form['hambatan'][0]);
+
+        $hasil = (new GantiAtlet())->ganti($p['id'], $p['atlet'][0], $this->pengganti(), self::ALASAN, 'Admin Uji', '2026-12-01');
+        $this->assertFalse($hasil['tersimpan']);
+        $this->assertSame(1, $this->db->table('atlet')->where('id', $p['atlet'][0])->countAllResults());
+    }
+
+    public function testSeriDikunciBolehDigantiBawaanSeperiSeri1(): void
+    {
+        // K188: bawaan menyala, atlet pengganti mengambil seri dan lintasan atlet lama di babak yang sudah dikunci.
+        $p     = $this->pendaftaranLunas();
+        $babak = $this->babak('lari60putra');
+        $this->db->table('hasil')->insert(['babak_id' => $babak, 'atlet_id' => $p['atlet'][0], 'seri' => 3, 'lintasan' => 6]);
+        $this->db->table('babak')->where('id', $babak)->update(['seri_dikunci_pada' => '2026-12-09 07:00:00']);
+
+        $this->assertSame([], (new GantiAtlet())->formulir($p['id'], $p['atlet'][0])['hambatan']);
+
+        $hasil = (new GantiAtlet())->ganti($p['id'], $p['atlet'][0], $this->pengganti(), self::ALASAN, 'Admin Uji', '2026-12-09');
+        $this->assertTrue($hasil['tersimpan'], json_encode($hasil['galat']));
+
+        $baru  = (int) $this->db->table('atlet')->where('nisn', '9900199001')->get()->getRow()->id;
+        $baris = $this->db->table('hasil')->where('babak_id', $babak)->get()->getRowArray();
+        $this->assertSame($baru, (int) $baris['atlet_id']);
+        $this->assertSame([3, 6], [(int) $baris['seri'], (int) $baris['lintasan']]);
+    }
+
+    public function testGantiAtletDitutup(): void
+    {
+        $p = $this->pendaftaranLunas();
+        setting('Pendaftaran.ganti_atlet', false);
+
+        $form = (new GantiAtlet())->formulir($p['id'], $p['atlet'][0]);
+        $this->assertStringContainsString('Ganti atlet sedang ditutup', $form['hambatan'][0]);
 
         $hasil = (new GantiAtlet())->ganti($p['id'], $p['atlet'][0], $this->pengganti(), self::ALASAN, 'Admin Uji', '2026-12-01');
         $this->assertFalse($hasil['tersimpan']);
