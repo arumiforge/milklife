@@ -16,7 +16,8 @@ use Throwable;
  * - Diterima: gambar JPG, PNG, atau WEBP yang benar-benar terbaca, paling
  *   besar `BATAS_BITA`. Jenisnya diperiksa dari isi, bukan dari nama berkas.
  * - Gambar dibaca ulang lewat GD dan disimpan ulang sebagai JPEG, sisi
- *   terpanjang paling besar `SISI_MAKSIMAL` piksel. Data tambahan berkas
+ *   terpanjang paling besar `SISI_MAKSIMAL` piksel dan berkas paling besar
+ *   `BATAS_SIMPAN` (2 MB, K190). Data tambahan berkas
  *   (lokasi kamera dan sebagainya) ikut terbuang.
  * - Disimpan di luar folder publik dengan nama acak:
  *   `WRITEPATH . 'unggahan/bukti-bayar/<32 heksa>.jpg'`. Yang disimpan di
@@ -62,6 +63,13 @@ final class BerkasBuktiBayar
     public const FOLDER = 'bukti-bayar';
 
     public const MUTU_JPEG = 85;
+
+    /**
+     * Ukuran berkas tersimpan paling besar (K190). Bila JPEG mutu
+     * `MUTU_JPEG` masih lebih besar, mutunya diturunkan bertahap, lalu sisi
+     * gambar dikecilkan.
+     */
+    public const BATAS_SIMPAN = 2 * 1024 * 1024;
 
     /**
      * Hasil `unggahKe()` bila batas bukti per pendaftaran sudah tercapai;
@@ -204,7 +212,7 @@ final class BerkasBuktiBayar
             $jalur = self::FOLDER . '/' . bin2hex(random_bytes(16)) . '.jpg';
             $penuh = self::folderDasar() . $jalur;
 
-            if (! imagejpeg($gambar, $penuh, self::MUTU_JPEG)) {
+            if (@file_put_contents($penuh, self::jpegPalingBesar($gambar, self::BATAS_SIMPAN)) === false) {
                 throw new RuntimeException('Gambar gagal disimpan. Pastikan ruang penyimpanan masih cukup, lalu coba lagi.');
             }
         } finally {
@@ -424,6 +432,43 @@ final class BerkasBuktiBayar
         imagedestroy($gambar);
 
         return $diputar;
+    }
+
+    /**
+     * Bita JPEG gambar itu yang tidak lebih dari `$batas`: mutu `MUTU_JPEG`,
+     * lalu 75, 65, dan 55; bila masih kebesaran, sisi gambar dikecilkan
+     * tiga perempat dan dicoba lagi. Gambar 1600 piksel berisi derau acak
+     * pun sudah di bawah 2 MB pada mutu `MUTU_JPEG`, jadi langkah tambahan
+     * ini hanya pengaman.
+     */
+    public static function jpegPalingBesar(GdImage $gambar, int $batas): string
+    {
+        while (true) {
+            foreach ([self::MUTU_JPEG, 75, 65, 55] as $mutu) {
+                ob_start();
+                imagejpeg($gambar, null, $mutu);
+                $isi = (string) ob_get_clean();
+
+                if (strlen($isi) <= $batas) {
+                    return $isi;
+                }
+            }
+
+            $lebar  = imagesx($gambar);
+            $tinggi = imagesy($gambar);
+
+            if (max($lebar, $tinggi) <= 200) {
+                return $isi;
+            }
+
+            $kecil = imagescale($gambar, max(1, (int) ($lebar * 3 / 4)), max(1, (int) ($tinggi * 3 / 4)));
+
+            if (! $kecil instanceof GdImage) {
+                return $isi;
+            }
+
+            $gambar = $kecil;
+        }
     }
 
     /**

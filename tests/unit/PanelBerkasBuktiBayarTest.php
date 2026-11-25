@@ -73,6 +73,50 @@ final class PanelBerkasBuktiBayarTest extends CIUnitTestCase
         $this->assertSame([$hasil['berkas']], $this->berkasBuktiBayarTersimpan());
     }
 
+    public function testBerkasTersimpanPalingBesar2Mb(): void
+    {
+        // Derau acak 1600 × 1600 piksel: gambar paling sulit dikecilkan JPEG.
+        $gambar = self::gambarDerau(1600, 1600);
+        ob_start();
+        imagepng($gambar, null, 1);
+        $hasil = (new BerkasBuktiBayar())->simpanIsi((string) ob_get_clean());
+
+        $this->assertLessThanOrEqual(BerkasBuktiBayar::BATAS_SIMPAN, $hasil['ukuran']);
+        $this->assertSame([1600, 1600, IMAGETYPE_JPEG], $this->ukuranGambar($hasil['berkas']));
+    }
+
+    public function testJpegDiturunkanMutuLaluDikecilkanSampaiMuatBatas(): void
+    {
+        $gambar = self::gambarDerau(800, 600);
+        ob_start();
+        imagejpeg($gambar, null, BerkasBuktiBayar::MUTU_JPEG);
+        $awal = strlen((string) ob_get_clean());
+
+        foreach ([(int) ($awal * 0.8), 60 * 1024] as $batas) {
+            $isi = BerkasBuktiBayar::jpegPalingBesar($gambar, $batas);
+
+            $this->assertLessThanOrEqual($batas, strlen($isi));
+            $this->assertSame(IMAGETYPE_JPEG, getimagesizefromstring($isi)[2]);
+        }
+
+        // Batas 60 KB tidak cukup dengan menurunkan mutu saja; sisi gambar ikut mengecil.
+        $this->assertLessThan(800, getimagesizefromstring(BerkasBuktiBayar::jpegPalingBesar($gambar, 60 * 1024))[0]);
+    }
+
+    private static function gambarDerau(int $lebar, int $tinggi): GdImage
+    {
+        mt_srand(190);
+        $gambar = imagecreatetruecolor($lebar, $tinggi);
+
+        for ($y = 0; $y < $tinggi; $y++) {
+            for ($x = 0; $x < $lebar; $x++) {
+                imagesetpixel($gambar, $x, $y, mt_rand(0, 0xFFFFFF));
+            }
+        }
+
+        return $gambar;
+    }
+
     public function testGambarTegakDikecilkanMenurutTinggi(): void
     {
         $hasil = (new BerkasBuktiBayar())->simpanIsi(self::gambarPanel(900, 2400, 'jpg'));
