@@ -62,7 +62,9 @@
 
 use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\IlustrasiBeranda;
+use App\Libraries\IsiHalamanDepan;
 use App\Libraries\PetaLokasi;
+use App\Libraries\VarianFoto;
 
 $keadaan = $bukaTutup->keadaan();
 $batas   = $bukaTutup->batas();
@@ -122,6 +124,17 @@ $pitaSudut     = $foto === [] ? gambar_opsional('pola/pita-sudut.webp', ['class'
 $heroKiri       = gambar_opsional('beranda/hero-kiri.webp', ['class' => 'pointer-events-none absolute inset-y-0 left-0 z-10 hidden h-full w-[62%] select-none object-cover object-left lg:block', 'loading' => false, 'data-hiasan' => 'hero-kiri']);
 $heroKiriPonsel = gambar_opsional('beranda/hero-kiri-ponsel.webp', ['class' => 'pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[75%] w-full select-none object-cover object-top lg:hidden', 'data-hiasan' => 'hero-kiri-ponsel']);
 $latarLintasan = gambar_opsional('beranda/latar-lintasan.webp', ['class' => 'pointer-events-none absolute inset-0 -z-10 hidden size-full select-none object-cover md:block', 'data-hiasan' => 'latar-lintasan']);
+
+// Logo merek di kanan judul, hanya di bawah lg saat foto di atas judul (K191): logo unggahan admin
+// (salinan 400 piksel supaya tajam di layar ponsel) atau logo bawaan.
+$logoJudul      = IsiHalamanDepan::logoMerek($tampilan);
+$kunciLogoJudul = IsiHalamanDepan::logoKepala($tampilan);
+if ($logoJudul !== null && $kunciLogoJudul !== null) {
+    $logoJudulKecil = VarianFoto::kecil((string) setting('HalamanDepan.' . $kunciLogoJudul), VarianFoto::LEBAR_LOGO[1]);
+    if ($logoJudulKecil !== null) {
+        $logoJudul['alamat'] = base_url($logoJudulKecil);
+    }
+}
 
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . (int) $ukuran['lebar'] . '" height="' . (int) $ukuran['tinggi'] . '"';
 
@@ -190,12 +203,23 @@ $nilaiFakta = 'mt-1 font-tampilan text-[clamp(1.25rem,6.4vw,1.75rem)] font-extra
 
         <div class="relative z-10 mx-auto max-w-screen-xl px-4 pb-10 lg:flex lg:min-h-[34rem] lg:items-center lg:py-16 xl:min-h-[38rem] <?= $foto !== [] ? 'pt-2 sm:pt-4' : 'pt-10 sm:pt-14' ?>">
             <div class="flex max-w-2xl flex-col gap-5 sm:gap-6 lg:w-1/2 xl:w-[46%]">
-                <h1 id="judul-acara" class="font-tampilan text-[clamp(2.75rem,1.6rem+5vw,5.5rem)] font-extrabold uppercase italic leading-[0.9] tracking-tight text-white">
-                    <?php foreach ($kalimatJudul as $i => $kalimat) : ?>
-                        <?php $sorot = $i === count($kalimatJudul) - 1 && $i > 0; ?>
-                        <span class="block<?= $sorot ? ' text-oranye-400' : '' ?>"<?= $sorot ? ' data-judul-sorot' : '' ?>><?= esc($kalimat) ?></span>
-                    <?php endforeach ?>
-                </h1>
+                <div class="relative">
+                    <h1 id="judul-acara" class="font-tampilan text-[clamp(2.75rem,1.6rem+5vw,5.5rem)] font-extrabold uppercase italic leading-[0.9] tracking-tight text-white">
+                        <?php foreach ($kalimatJudul as $i => $kalimat) : ?>
+                            <?php $sorot = $i === count($kalimatJudul) - 1 && $i > 0; ?>
+                            <span class="block<?= $sorot ? ' text-oranye-400' : '' ?>"<?= $sorot ? ' data-judul-sorot' : '' ?>><?= esc($kalimat) ?></span>
+                        <?php endforeach ?>
+                    </h1>
+                    <?php if ($logoJudul !== null) : ?>
+                        <?php
+                        // Di kanan judul, lapisan teratas hero (K191). Ukurannya dalam em huruf judul: lebar 2,4 em
+                        // muat di samping baris terpanjang "Challenge" (3,9 em) mulai layar 320 piksel, tinggi
+                        // hampir setinggi tiga baris judul, dan tengahnya sejajar tengah judul. Hiasan: nama acara
+                        // sudah dibaca dari judul dan logo kepala.
+                        ?>
+                        <img src="<?= esc($logoJudul['alamat'], 'attr') ?>" alt="" class="pointer-events-none absolute right-0 top-1/2 z-50 h-[2.5em] w-[2.4em] -translate-y-1/2 select-none object-contain object-right text-[clamp(2.75rem,1.6rem+5vw,5.5rem)] drop-shadow-[0_6px_14px_rgba(0,0,0,0.35)] lg:hidden"<?= $ukuranAtribut($logoJudul['ukuran']) ?> decoding="async" data-logo-judul>
+                    <?php endif ?>
+                </div>
 
                 <?php if ($tampilan['teks'] !== []) : ?>
                     <div class="space-y-2 text-base text-primary-100 sm:text-lg" data-pembuka-teks>

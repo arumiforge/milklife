@@ -33,7 +33,7 @@ final class AlbumBawaan
     /**
      * Foto sampul di `data/`.
      */
-    public const SAMPUL = 'halaman-depan/carousel/04-podium-juara.webp';
+    public const SAMPUL = 'halaman-depan/carousel/05-selebrasi-finis.webp';
 
     /**
      * Pasang album bawaan bila belum pernah dipasang dan tabel `galeri` masih kosong.

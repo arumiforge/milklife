@@ -36,7 +36,8 @@ use Throwable;
  *    punya prestasi (F9-10, K143) → `php spark tabel-skor:impor --trilomba`.
  * 6. `faq`: tabel tanya-jawab Bantuan masih kosong (F9-04) →
  *    `php spark faq:awal`.
- * 7. `carousel`: foto carousel halaman depan belum pernah diatur (F9-03) →
+ * 7. `carousel`: foto carousel halaman depan belum pernah diatur (F9-03) atau
+ *    masih berisi foto bawaan lama (K191) →
  *    `php spark halaman-depan:carousel`.
  * 8. `galeri`: album galeri bawaan belum pernah dipasang dan galeri kosong
  *    (F9-06, K140) → `php spark galeri:awal`.
@@ -407,8 +408,9 @@ final class PemeriksaPembaruan
     }
 
     /**
-     * Carousel halaman depan (F9-03): `halaman-depan:carousel` hanya memasang
-     * bila pengaturannya belum pernah diisi. Daftar kosong karena admin
+     * Carousel halaman depan (F9-03): `halaman-depan:carousel` memasang
+     * bila pengaturannya belum pernah diisi, atau mengganti salinan foto
+     * bawaan lama yang masih ada (K191). Daftar kosong karena admin
      * menghapus semua foto dianggap sudah diatur.
      *
      * @return array{0: bool, 1: string}
@@ -416,6 +418,13 @@ final class PemeriksaPembaruan
     private function periksaCarousel(): array
     {
         if (setting(CarouselHalamanDepan::KUNCI) !== null) {
+            // Foto bawaan lama diganti foto bawaan baru (K191); foto unggahan admin tetap.
+            $lama = CarouselHalamanDepan::jumlahBawaanLama();
+
+            if ($lama > 0) {
+                return [true, $lama . ' foto bawaan lama masih tampil. Perintahnya menggantinya dengan foto bawaan baru tanpa mengubah foto unggahan admin.'];
+            }
+
             return [false, 'Sudah diatur.'];
         }
 

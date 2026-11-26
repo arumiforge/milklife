@@ -1,10 +1,11 @@
 # Progres
 
-Diperbarui: 25 November 2026
+Diperbarui: 26 November 2026
 
 ## Sedang berjalan
 
 - F11-22 Ganti atlet seperti Seri 1 dengan dua sakelar (K188): menunggu tinjauan.
+- F11-24 Foto hero baru, slideshow 3 detik, dan logo di kanan judul ponsel (K191): menunggu tinjauan. Setelah pembaruan server jalankan `php spark halaman-depan:carousel` (diminta `pembaruan:periksa`).
 
 ## Berikutnya
 
