@@ -125,6 +125,22 @@ daftar_port() {
   fi
 }
 
+# Folder cadangan di host dipasang ke /cadangan dan ditulisi www-data
+# (uid 33) di container. Bila folder belum ada, Docker membuatnya milik
+# root dan cadangan:buat gagal, jadi folder disiapkan di sini.
+siapkan_folder_cadangan() {
+  local folder
+  folder="$(ambil_var docker/.env FOLDER_CADANGAN)"
+  [ -n "$folder" ] || gagal "FOLDER_CADANGAN di docker/.env belum diisi."
+  mkdir -p "$folder" || gagal "folder cadangan $folder tidak bisa dibuat."
+  if [ "$(stat -c %u "$folder")" != 33 ]; then
+    if ! { chown 33:33 "$folder" && chmod 700 "$folder"; }; then
+      gagal "folder cadangan $folder belum milik www-data (uid 33). Jalankan sebagai root: chown 33:33 $folder"
+    fi
+    beres "Folder cadangan $folder disiapkan untuk www-data."
+  fi
+}
+
 # Isi satu kunci di .env. Berkas ditulis ulang di tempat (bukan sed -i)
 # supaya container yang memasang .env sebagai berkas tetap membaca isi baru.
 tulis_env() {
@@ -294,6 +310,7 @@ deploy() {
   periksa_berkas_env
   periksa_tanpa_ubahan
   daftar_port
+  siapkan_folder_cadangan
 
   langkah "Mengambil versi terbaru dari GitHub"
   git fetch --prune --tags origin
@@ -358,6 +375,7 @@ pasang() {
   periksa_berkas_env
   periksa_tanpa_ubahan
   daftar_port
+  siapkan_folder_cadangan
 
   local sha tag
   sha="$(git rev-parse HEAD)"
