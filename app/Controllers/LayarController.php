@@ -8,6 +8,7 @@ use App\Libraries\Hasil\PapanVideotron;
 use App\Libraries\Hasil\TampilanVideotron;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
+use Throwable;
 
 /**
  * Videotron (F9-13, K141, F11-09, K173), tanpa masuk.
@@ -30,8 +31,10 @@ use CodeIgniter\HTTP\ResponseInterface;
  *   peramban/proksi sebentar; `ETag` membuat pengambilan ulang tanpa
  *   perubahan cukup dijawab 304. Batas `BATAS_PERMINTAAN` per alamat IP.
  * - Latar: gambar unggahan admin di Pengaturan > Videotron (K173), tanpa
- *   adegan Three.js; bila kosong, potongan G9-06 (`aset/gambar/layar/`) yang
- *   berkasnya ada dan adegan Three.js.
+ *   adegan Three.js; bila kosong, latar bawaan pilihan admin (K192): potongan
+ *   G9-06 (`aset/gambar/layar/`) yang berkasnya ada tanpa gerakan (bawaan),
+ *   gradien biru polos, atau potongan G9-06 dengan adegan Three.js.
+ * - Logo acara di kanan kepala layar (`IsiHalamanDepan::logoBesar()`, K192).
  */
 class LayarController extends BaseController
 {
@@ -97,6 +100,7 @@ class LayarController extends BaseController
             ->setBody(view('layar/daftar', [
                 'daftar'    => $daftar,
                 'namaAcara' => (new IsiHalamanDepan())->acara()['nama'],
+                'sebutan'   => PapanVideotron::sebutanSeri(),
             ]));
     }
 
@@ -160,10 +164,21 @@ class LayarController extends BaseController
         }
 
         // Latar unggahan admin (K173) menggantikan potongan G9-06 dan adegan Three.js.
-        $unggahan = PapanVideotron::latar();
+        // Tanpa unggahan, latar bawaan pilihan admin (K192): sapuan kuas diam, biru polos, atau animasi lama.
+        $unggahan    = PapanVideotron::latar();
+        $latarBawaan = PapanVideotron::latarBawaan();
 
         if ($unggahan !== null) {
             $latar = ['dasar' => base_url($unggahan)];
+        } elseif ($latarBawaan === 'polos') {
+            $latar = [];
+        }
+
+        // Logo acara di kepala layar (K192).
+        try {
+            $logo = IsiHalamanDepan::logoBesar((new IsiHalamanDepan())->tampilan());
+        } catch (Throwable) {
+            $logo = IsiHalamanDepan::logoBesar([]);
         }
 
         return $this->response
@@ -173,7 +188,8 @@ class LayarController extends BaseController
                 'sumber'      => $sumber,
                 'latar'       => $latar,
                 'gambar'      => $gambar,
-                'tanpaAdegan' => $unggahan !== null,
+                'tanpaAdegan' => $unggahan !== null || $latarBawaan !== 'animasi',
+                'logo'        => $logo['alamat'] ?? null,
                 'segar'       => self::SEGAR_DETIK,
             ]));
     }

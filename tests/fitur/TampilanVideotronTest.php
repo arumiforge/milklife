@@ -85,6 +85,14 @@ final class TampilanVideotronTest extends UjiBasisData
         $this->assertSame(1, $x->query('//*[@data-babak-layar="' . $babak['penyisihan'] . '"]//*[@data-tautan-layar="layar/seri/' . $babak['penyisihan'] . '/1"]')->length);
         $this->assertSame(1, $x->query('//*[@data-babak-layar="' . $babak['penyisihan'] . '"]//*[@data-tautan-layar="layar/seri/' . $babak['penyisihan'] . '/2"]')->length);
         $this->assertSame(0, $x->query('//*[@data-babak-layar="' . $babak['final'] . '"]//*[starts-with(@data-tautan-layar, "layar/seri/")]')->length);
+        // K192: tautan bersebutan "Heat" (bawaan), atau "Seri" bila admin memilihnya.
+        $this->assertStringContainsString('Heat 2', (string) $x->query('//*[@data-tautan-layar="layar/seri/' . $babak['penyisihan'] . '/2"]/a')->item(0)?->textContent);
+        setting('Videotron.sebutan_seri', 'Seri');
+        service('cache')->clean();
+        $seri = $this->xpathDari($this->get('layar'))->query('//*[@data-tautan-layar="layar/seri/' . $babak['penyisihan'] . '/2"]/a')->item(0);
+        $this->assertStringContainsString('Seri 2', (string) $seri?->textContent);
+        setting('Videotron.sebutan_seri', 'Heat');
+        service('cache')->clean();
 
         // Kelompok umur dan nomor, juga yang belum terbit; papan putar tetap ada.
         $this->assertSame(1, $x->query('//*[@data-tautan-layar="layar/kelompok-umur/' . $this->idInduk['ku10'] . '"]')->length);
@@ -113,7 +121,8 @@ final class TampilanVideotronTest extends UjiBasisData
         $this->assertSame([], $data['hasil']);
         $this->assertCount(1, $data['start']);
         $this->assertTrue($data['start'][0]['lintasan']);
-        $this->assertStringContainsString('Seri 2', $data['judul']);
+        $this->assertStringContainsString('Heat 2', $data['judul'], 'Sebutan bawaan Heat (K192).');
+        $this->assertStringEndsWith(' · Heat 2', $data['start'][0]['babak']);
         $diSeri2 = $this->db->table('hasil')->where('babak_id', $babak['penyisihan'])->where('seri', 2)->orderBy('lintasan')->get()->getResultArray();
         $this->assertSame(array_map('intval', array_column($diSeri2, 'lintasan')), array_column($data['start'][0]['baris'], 'lintasan'));
         $this->assertArrayNotHasKey('nisn', $data['start'][0]['baris'][0]);
@@ -221,10 +230,26 @@ final class TampilanVideotronTest extends UjiBasisData
         setting('Videotron.tampil', true);
         $this->assertNull(PapanVideotron::latar());
 
-        // Tanpa latar unggahan: latar bawaan dengan adegan Three.js.
+        // Tanpa latar unggahan: latar bawaan sapuan kuas tanpa adegan Three.js (K192).
+        $this->assertSame('kuas', PapanVideotron::latarBawaan());
         $layar = $this->xpathDari($this->get('layar/putar'))->query('//*[@data-layar]')->item(0);
         $this->assertInstanceOf(DOMElement::class, $layar);
+        $this->assertTrue($layar->hasAttribute('data-tanpa-adegan'));
+
+        // Latar bawaan lain: animasi lama, atau biru polos tanpa gambar.
+        $this->kirimSebagaiAdmin('admin/pengaturan/videotron', ['tampil' => '1', 'lama' => '12', 'isi' => ['hasil'], 'latar_bawaan' => 'animasi', 'sebutan_seri' => 'Seri']);
+        $this->assertSame(['animasi', 'Seri'], [PapanVideotron::latarBawaan(), PapanVideotron::sebutanSeri()]);
+        $layar = $this->xpathDari($this->get('layar/putar'))->query('//*[@data-layar]')->item(0);
         $this->assertFalse($layar->hasAttribute('data-tanpa-adegan'));
+        $this->kirimSebagaiAdmin('admin/pengaturan/videotron', ['tampil' => '1', 'lama' => '12', 'isi' => ['hasil'], 'latar_bawaan' => 'polos', 'sebutan_seri' => 'Babak']);
+        $this->assertSame(['polos', 'Heat'], [PapanVideotron::latarBawaan(), PapanVideotron::sebutanSeri()], 'Pilihan tidak sah kembali ke bawaan.');
+        $layar = $this->xpathDari($this->get('layar/putar'))->query('//*[@data-layar]')->item(0);
+        $this->assertTrue($layar->hasAttribute('data-tanpa-adegan'));
+        $this->assertFalse($layar->hasAttribute('data-latar-dasar'));
+        $halaman = $this->xpathDari($this->bukaSebagaiAdmin('admin/pengaturan/videotron'));
+        $this->assertSame(1, $halaman->query('//input[@name="latar_bawaan"][@value="polos"][@checked]')->length);
+        $this->assertSame(1, $halaman->query('//input[@name="sebutan_seri"][@value="Heat"][@checked]')->length);
+        setting('Videotron.latar_bawaan', 'kuas');
 
         // Bukan gambar ditolak, pengaturan tidak berubah.
         $this->siapkanBerkas('latar', 'latar.pdf', self::isiPdf());
@@ -256,6 +281,21 @@ final class TampilanVideotronTest extends UjiBasisData
         $this->assertSame('', (string) setting('Videotron.latar'));
         $this->assertFileDoesNotExist($this->jalurUnggahan($jalur));
         $this->assertNull(PapanVideotron::latar());
+    }
+
+    public function testLogoAcaraDiKepalaLayar(): void
+    {
+        setting('Videotron.tampil', true);
+
+        // K192: logo unggahan admin di kanan kepala layar.
+        $jalur = 'unggahan/halaman-depan/' . str_repeat('f', 32) . '.png';
+        mkdir(dirname($this->jalurUnggahan($jalur)), 0777, true);
+        file_put_contents($this->jalurUnggahan($jalur), self::isiPng());
+        setting('HalamanDepan.logo_persegi', $jalur);
+
+        $layar = $this->xpathDari($this->get('layar/putar'))->query('//*[@data-layar]')->item(0);
+        $this->assertInstanceOf(DOMElement::class, $layar);
+        $this->assertSame(base_url($jalur), $layar->getAttribute('data-logo'));
     }
 
     public function testAlamatSalah404(): void

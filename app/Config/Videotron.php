@@ -27,6 +27,21 @@ class Videotron extends BaseConfig
     public string $latar = '';
 
     /**
+     * Latar bawaan bila belum ada gambar unggahan (K192): `kuas` (gambar
+     * sapuan kuas biru G9-06 tanpa gerakan), `polos` (gradien biru tua), atau
+     * `animasi` (gambar G9-06 dengan bentuk 3D bergerak pelan, latar lama).
+     * Lihat `PapanVideotron::LATAR_BAWAAN`.
+     */
+    public string $latar_bawaan = 'kuas';
+
+    /**
+     * Sebutan pembagian babak di layar dan daftar tampilan videotron (K192):
+     * `Heat` (bawaan, istilah panitia dan vendor di Seri 1) atau `Seri`.
+     * Lihat `PapanVideotron::SEBUTAN_SERI`.
+     */
+    public string $sebutan_seri = 'Heat';
+
+    /**
      * Isi papan putar `/layar/putar`, dipisah koma, urut tampil. Kode dari
      * `PapanVideotron::ISI`: `hasil`, `juara_umum`, `jadwal`, `berlangsung`.
      */

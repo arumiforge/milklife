@@ -122,7 +122,9 @@ function halamanUji(data) {
     const attr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     const gambar = Object.entries(GAMBAR_JUARA)
         .filter(([, berkas]) => existsSync(join(publik, 'aset/gambar/layar', berkas)))
-        .map(([kunci, berkas]) => ` data-gambar-${kunci}="/aset/gambar/layar/${berkas}"`).join('');
+        .map(([kunci, berkas]) => ` data-gambar-${kunci}="/aset/gambar/layar/${berkas}"`).join('')
+        // Logo acara di kepala layar (K192), seperti LayarController bila logo bawaan ada.
+        + (existsSync(join(publik, 'aset/gambar/logo.webp')) ? ' data-logo="/aset/gambar/logo.webp"' : '');
     // Sama dengan app/Views/layar/index.php, ditambah data-uji dan tanpa sumber jaringan.
     return `<!doctype html>
 <html lang="id" class="h-full bg-primary-950">

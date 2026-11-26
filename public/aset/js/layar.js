@@ -28,6 +28,10 @@
  *   cadangannya potongan gambar G9-06 dari `data-latar-*`, lalu gradien.
  * - Tanpa jam, waktu pembaruan, dan nomor halaman (K173). Baris tabel paling
  *   pendek muat dua baris teks.
+ * - Gaya K192: logo acara di kanan kepala (`data-logo`), judul nomor besar
+ *   huruf tampilan miring, label dan babak (misalnya "Babak 1 · Heat 3") dalam
+ *   pil, dan tiap baris kotak putih berhuruf biru tua kapital dengan lencana
+ *   1–3, lintasan dalam kotak gelap, dan tanda Q/q.
  * - Satu `setInterval` (detak 1 detik) mengatur putaran, kendali, dan pengambilan
  *   data; tidak ada pewaktu lain yang menumpuk, dan adegan dibuang saat
  *   halaman ditutup, jadi aman berjalan berjam-jam.
@@ -111,6 +115,14 @@ if (akar) {
     const seri = el('p', 'text-[length:calc(var(--u)*0.75)] font-semibold text-oranye-300 wrap-anywhere');
     merek.append(namaAcara, seri);
     kepala.append(merek);
+    // Logo acara di kanan kepala (K192), hanya bila ada.
+    if (akar.dataset.logo) {
+        const logo = el('img', 'h-[calc(var(--u)*3.2)] w-auto max-w-[calc(var(--u)*4.5)] shrink-0 object-contain drop-shadow-[0_0.15em_0.3em_rgba(0,0,0,0.45)]');
+        logo.src = akar.dataset.logo;
+        logo.alt = '';
+        logo.dataset.logoLayar = '';
+        kepala.append(logo);
+    }
 
     const isi = el('main', 'flex min-h-0 flex-1 gap-[calc(var(--u)*0.7)]');
     isi.setAttribute('aria-live', 'off');
@@ -169,7 +181,7 @@ if (akar) {
         const warna = p === 1 ? 'bg-amber-300 text-primary-950'
             : p === 2 ? 'bg-slate-200 text-primary-950'
                 : p === 3 ? 'bg-oranye-300 text-primary-950'
-                    : 'bg-white/10 text-white';
+                    : 'bg-primary-100 text-primary-950';
         const e = el('span', 'inline-flex min-w-[calc(var(--u)*1.7)] items-center justify-center rounded-full px-[calc(var(--u)*0.25)] py-[calc(var(--u)*0.05)] font-extrabold tabular-nums ' + warna, peringkat ?? '–');
         return e;
     }
@@ -191,7 +203,7 @@ if (akar) {
     function selTeks(utama, kedua, kelasUtama = 'font-semibold') {
         const td = el('td', kelasSel + ' wrap-anywhere');
         td.append(el('div', kelasUtama, utama));
-        if (kedua) td.append(el('div', 'text-[length:calc(var(--u)*0.7)] text-primary-200', kedua));
+        if (kedua) td.append(el('div', 'text-[length:calc(var(--u)*0.7)] font-semibold text-primary-600', kedua));
         return td;
     }
 
@@ -209,18 +221,18 @@ if (akar) {
             const kolom = [
                 { judul: 'Per.', kelas: 'w-[calc(var(--u)*2.4)]', isi: (b) => { const td = el('td', kelasSel); td.append(lencanaPeringkat(b.peringkat)); return td; } },
             ];
-            if (dada) kolom.push({ judul: 'No. atlet', kelas: 'w-[calc(var(--u)*4)]', isi: (b) => el('td', kelasSel + ' font-semibold tabular-nums text-primary-100', b.nomor_dada || '') });
-            kolom.push({ judul: beregu ? 'Sekolah / regu' : 'Nama', kelas: '', isi: (b) => selTeks(b.nama, tumpuk ? b.sekolah : null) });
-            if (sekolahSendiri) kolom.push({ judul: 'Sekolah', kelas: 'w-[38%]', isi: (b) => selTeks(b.sekolah, null, 'text-primary-100') });
+            if (dada) kolom.push({ judul: 'No. atlet', kelas: 'w-[calc(var(--u)*4)]', isi: (b) => el('td', kelasSel + ' font-semibold tabular-nums text-primary-700', b.nomor_dada || '') });
+            kolom.push({ judul: beregu ? 'Sekolah / regu' : 'Nama', kelas: '', isi: (b) => selTeks(b.nama, tumpuk ? b.sekolah : null, 'font-bold') });
+            if (sekolahSendiri) kolom.push({ judul: 'Sekolah', kelas: 'w-[38%]', isi: (b) => selTeks(b.sekolah, null, 'font-semibold text-primary-700') });
             kolom.push({
                 judul: butir.satuan ? 'Prestasi (' + butir.satuan + ')' : 'Prestasi',
                 kelas: (butir.baris.some((b) => b.tanda || b.rekor) ? 'w-[calc(var(--u)*6.6)]' : 'w-[calc(var(--u)*5.2)]') + ' text-end',
                 isi: (b) => {
-                    const td = el('td', kelasSel + ' whitespace-nowrap text-end font-extrabold tabular-nums text-amber-200', b.prestasi ? b.prestasi + (b.keterangan === 'r' ? ' r' : '') : (b.keterangan || '–'));
+                    const td = el('td', kelasSel + ' whitespace-nowrap text-end font-extrabold tabular-nums ' + (b.prestasi ? 'text-primary-950' : 'text-red-700'), b.prestasi ? b.prestasi + (b.keterangan === 'r' ? ' r' : '') : (b.keterangan || '–'));
                     // Rekor kejuaraan (F11-06).
                     if (b.rekor) td.append(' ', el('span', 'rounded bg-red-600 px-[calc(var(--u)*0.2)] text-[length:calc(var(--u)*0.7)] font-bold text-white', 'CR'));
                     // Tanda lolos Q/q ke babak berikutnya (tampilan tetap).
-                    if (b.tanda) td.append(' ', el('span', 'text-[length:calc(var(--u)*0.7)] font-bold text-langit-300', b.tanda));
+                    if (b.tanda) td.append(' ', el('span', 'rounded-[calc(var(--u)*0.2)] bg-primary-900 px-[calc(var(--u)*0.25)] text-[length:calc(var(--u)*0.7)] font-bold text-white', b.tanda));
                     return td;
                 },
             });
@@ -234,12 +246,17 @@ if (akar) {
             const kolom = [
                 {
                     judul: butir.lintasan ? 'Lint.' : 'Urut', judulPanjang: butir.lintasan ? 'Lintasan' : 'Urutan tampil', kelas: 'w-[calc(var(--u)*2.6)] text-center',
-                    isi: (b) => el('td', kelasSel + ' text-center font-extrabold tabular-nums text-amber-200', b.lintasan ?? '–'),
+                    isi: (b) => {
+                        // Lintasan dalam kotak biru tua (K192).
+                        const td = el('td', kelasSel + ' text-center');
+                        td.append(el('span', 'inline-flex min-w-[calc(var(--u)*1.6)] justify-center rounded-[calc(var(--u)*0.25)] bg-primary-900 px-[calc(var(--u)*0.2)] py-[calc(var(--u)*0.05)] font-extrabold tabular-nums text-white', b.lintasan ?? '–'));
+                        return td;
+                    },
                 },
             ];
-            if (dada) kolom.push({ judul: 'No. atlet', kelas: 'w-[calc(var(--u)*4)]', isi: (b) => el('td', kelasSel + ' font-semibold tabular-nums text-primary-100', b.nomor_dada || '') });
-            kolom.push({ judul: beregu ? 'Sekolah / regu' : 'Nama', kelas: '', isi: (b) => selTeks(b.nama, tumpuk ? b.sekolah : null) });
-            if (sekolahSendiri) kolom.push({ judul: 'Sekolah', kelas: 'w-[40%]', isi: (b) => selTeks(b.sekolah, null, 'text-primary-100') });
+            if (dada) kolom.push({ judul: 'No. atlet', kelas: 'w-[calc(var(--u)*4)]', isi: (b) => el('td', kelasSel + ' font-semibold tabular-nums text-primary-700', b.nomor_dada || '') });
+            kolom.push({ judul: beregu ? 'Sekolah / regu' : 'Nama', kelas: '', isi: (b) => selTeks(b.nama, tumpuk ? b.sekolah : null, 'font-bold') });
+            if (sekolahSendiri) kolom.push({ judul: 'Sekolah', kelas: 'w-[40%]', isi: (b) => selTeks(b.sekolah, null, 'font-semibold text-primary-700') });
             return kolom;
         }
         if (jenis === 'juara_umum') {
@@ -253,7 +270,7 @@ if (akar) {
             const medali = sempit && metodePoin ? [] : [['emas', 'I', 'bg-amber-300'], ['perak', 'II', 'bg-slate-200'], ['perunggu', 'III', 'bg-oranye-300']];
             const kolom = [
                 { judul: 'Per.', kelas: 'w-[calc(var(--u)*2.4)]', isi: (b) => { const td = el('td', kelasSel); td.append(medaliPeringkat(b.peringkat)); return td; } },
-                { judul: 'Sekolah', kelas: '', isi: (b) => selTeks(b.sekolah, null) },
+                { judul: 'Sekolah', kelas: '', isi: (b) => selTeks(b.sekolah, null, 'font-bold') },
             ];
             for (const [kunci, label, warna] of medali) {
                 kolom.push({
@@ -263,8 +280,8 @@ if (akar) {
                     isi: (b) => el('td', kelasSel + ' text-center font-bold tabular-nums', b[kunci] ?? 0),
                 });
             }
-            if (jumlah) kolom.push({ judul: 'Jml', judulPanjang: 'Jumlah', kelas: 'w-[calc(var(--u)*2.6)] text-center', isi: (b) => el('td', kelasSel + ' text-center tabular-nums text-primary-100', b.jumlah ?? '') });
-            if (adaPoin && !(sempit && !metodePoin)) kolom.push({ judul: 'Poin', kelas: 'w-[calc(var(--u)*3.2)] text-end', isi: (b) => el('td', kelasSel + ' text-end font-extrabold tabular-nums text-amber-200', b.poin ?? '') });
+            if (jumlah) kolom.push({ judul: 'Jml', judulPanjang: 'Jumlah', kelas: 'w-[calc(var(--u)*2.6)] text-center', isi: (b) => el('td', kelasSel + ' text-center tabular-nums text-primary-700', b.jumlah ?? '') });
+            if (adaPoin && !(sempit && !metodePoin)) kolom.push({ judul: 'Poin', kelas: 'w-[calc(var(--u)*3.2)] text-end', isi: (b) => el('td', kelasSel + ' text-end font-extrabold tabular-nums text-primary-950', b.poin ?? '') });
             return kolom;
         }
         // jadwal dan berlangsung
@@ -275,22 +292,22 @@ if (akar) {
                 judul: 'Jam', kelas: 'w-[calc(var(--u)*4.4)]',
                 isi: (b) => {
                     const td = el('td', kelasSel + ' tabular-nums');
-                    if (b.hari && b.hari !== 'Hari ini') td.append(el('div', 'text-[length:calc(var(--u)*0.62)] text-primary-200 wrap-anywhere', b.hari));
-                    td.append(el('div', 'font-extrabold text-amber-200', b.jam));
+                    if (b.hari && b.hari !== 'Hari ini') td.append(el('div', 'text-[length:calc(var(--u)*0.62)] font-semibold text-primary-600 wrap-anywhere', b.hari));
+                    td.append(el('div', 'font-extrabold text-oranye-700', b.jam));
                     return td;
                 },
             },
             {
                 judul: 'Nomor lomba', kelas: '',
-                isi: (b) => selTeks(b.nomor, kecil ? null : [b.kelompok_umur, b.babak, lokasiSendiri ? null : b.lokasi].filter(Boolean).join(' · ')),
+                isi: (b) => selTeks(b.nomor, kecil ? null : [b.kelompok_umur, b.babak, lokasiSendiri ? null : b.lokasi].filter(Boolean).join(' · '), 'font-bold'),
             },
         ];
-        if (lokasiSendiri) kolom.push({ judul: 'Lokasi', kelas: 'w-[30%]', isi: (b) => selTeks(b.lokasi || '', null, 'text-primary-100') });
+        if (lokasiSendiri) kolom.push({ judul: 'Lokasi', kelas: 'w-[30%]', isi: (b) => selTeks(b.lokasi || '', null, 'font-semibold text-primary-700') });
         return kolom;
     }
 
     function buatPanel(halaman, info) {
-        const panel = el('section', 'flex h-full min-h-0 flex-col gap-[calc(var(--u)*0.4)] overflow-hidden rounded-[calc(var(--u)*0.6)] bg-primary-950/80 p-[calc(var(--u)*0.7)] ring-1 ring-white/15 text-[length:var(--u)] leading-tight');
+        const panel = el('section', 'flex h-full min-h-0 flex-col gap-[calc(var(--u)*0.4)] overflow-hidden rounded-[calc(var(--u)*0.6)] bg-primary-950/45 p-[calc(var(--u)*0.7)] text-[length:var(--u)] leading-tight');
         panel.dataset.jenis = halaman.jenis;
 
         const kepalaPanel = el('div', 'flex shrink-0 flex-wrap items-center gap-x-[calc(var(--u)*0.6)] gap-y-[calc(var(--u)*0.2)]');
@@ -307,13 +324,15 @@ if (akar) {
             podium.dataset.podium = '';
             kepalaPanel.append(podium);
         }
-        kepalaPanel.append(el('span', 'shrink-0 rounded-full px-[calc(var(--u)*0.55)] py-[calc(var(--u)*0.1)] text-[length:calc(var(--u)*0.62)] font-bold uppercase tracking-wide ' + warnaLabel, LABEL[halaman.jenis]));
-        const judul = el('h2', 'min-w-0 flex-1 basis-[12em] text-[length:calc(var(--u)*1.3)] font-extrabold wrap-anywhere in-data-[susunan=kecil]:text-[length:calc(var(--u)*1.05)]', halaman.judul);
-        if (halaman.sub) {
-            judul.append(' ');
-            judul.append(el('span', 'text-[length:calc(var(--u)*0.8)] font-semibold text-primary-200', halaman.sub));
-        }
+        // Judul nomor besar huruf tampilan miring, kelompok umur di belakangnya (K192).
+        const judul = el('h2', 'min-w-0 flex-1 basis-[12em] font-tampilan text-[length:calc(var(--u)*1.9)] font-extrabold uppercase italic leading-[0.95] tracking-tight wrap-anywhere in-data-[susunan=kecil]:text-[length:calc(var(--u)*1.2)]', halaman.judul);
+        if (halaman.ku) judul.append(el('span', 'text-oranye-300', ' · ' + halaman.ku));
         kepalaPanel.append(judul);
+        // Label isi dan babak dalam pil, misalnya "Hasil" dan "Babak 1 · Heat 3".
+        const pil = el('div', 'flex basis-full flex-wrap items-center gap-[calc(var(--u)*0.35)]');
+        pil.append(el('span', 'shrink-0 rounded-[calc(var(--u)*0.3)] px-[calc(var(--u)*0.55)] py-[calc(var(--u)*0.1)] text-[length:calc(var(--u)*0.7)] font-bold uppercase tracking-wide ' + warnaLabel, LABEL[halaman.jenis]));
+        if (halaman.sub) pil.append(el('span', 'min-w-0 rounded-[calc(var(--u)*0.3)] bg-primary-700 px-[calc(var(--u)*0.55)] py-[calc(var(--u)*0.1)] text-[length:calc(var(--u)*0.7)] font-bold uppercase tracking-wide text-white wrap-anywhere', halaman.sub));
+        kepalaPanel.append(pil);
         panel.append(kepalaPanel);
 
         const badan = el('div', 'min-h-0 flex-1 overflow-hidden');
@@ -324,7 +343,7 @@ if (akar) {
             return { panel, badan, tbody: null };
         }
 
-        const tabel = el('table', 'w-full table-fixed border-collapse');
+        const tabel = el('table', 'w-full table-fixed border-separate border-spacing-x-0 border-spacing-y-[calc(var(--u)*0.18)]');
         const kepalaTabel = el('thead');
         const barisKepala = el('tr');
         for (const k of info.kolom) {
@@ -349,7 +368,8 @@ if (akar) {
     }
 
     function barisTabel(kolom, b) {
-        const tr = el('tr', 'odd:bg-white/6');
+        // Kotak putih per baris, huruf biru tua kapital (K192).
+        const tr = el('tr', 'uppercase text-primary-950 *:bg-white/95 [&>td:first-child]:rounded-s-[calc(var(--u)*0.35)] [&>td:last-child]:rounded-e-[calc(var(--u)*0.35)]');
         for (const k of kolom) tr.append(k.isi(b));
         return tr;
     }
@@ -410,7 +430,7 @@ if (akar) {
         if (!data) return [];
         if (jenis === 'hasil' || jenis === 'start') {
             return (data[jenis] || []).filter((n) => n.baris?.length).map((n) => ({
-                jenis, kunci: jenis + ':' + (n.kunci || n.id), judul: n.nomor, sub: [n.kelompok_umur, n.babak].filter(Boolean).join(' · '),
+                jenis, kunci: jenis + ':' + (n.kunci || n.id), judul: n.nomor, ku: n.kelompok_umur || '', sub: n.babak || '',
                 beregu: n.beregu, satuan: n.satuan, lintasan: n.lintasan, baris: n.baris,
             }));
         }

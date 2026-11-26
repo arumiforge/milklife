@@ -22,7 +22,8 @@
  * @var string                $sumber alamat JSON yang diambil ulang
  * @var array<string, string> $latar kunci (`dasar`, `pita`, `kiri-atas`, `kanan-bawah`) => alamat gambar
  * @var array<string, string> $gambar kunci (`podium`, `medali-emas`, `medali-perak`, `medali-perunggu`) => alamat gambar juara umum G9-06
- * @var bool                  $tanpaAdegan latar unggahan admin dipakai: adegan Three.js tidak dipasang (K173)
+ * @var bool                  $tanpaAdegan adegan Three.js tidak dipasang: latar unggahan admin (K173) atau latar bawaan selain animasi (K192)
+ * @var string|null           $logo  alamat logo acara di kanan kepala layar (K192), `null` bila belum ada
  * @var int                   $segar detik antarpengambilan data
  */
 $atributLatar = '';
@@ -33,6 +34,10 @@ foreach ($latar as $kunci => $alamat) {
 
 if (! empty($tanpaAdegan)) {
     $atributLatar .= ' data-tanpa-adegan';
+}
+
+if (($logo ?? null) !== null) {
+    $atributLatar .= ' data-logo="' . esc($logo, 'attr') . '"';
 }
 
 foreach ($gambar ?? [] as $kunci => $alamat) {
