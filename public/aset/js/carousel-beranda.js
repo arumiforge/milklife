@@ -13,7 +13,7 @@
  *         </div>
  *     </div>
  *
- * - Ganti foto tiap JEDA milidetik (5 detik) dengan memudar; hanya titik
+ * - Ganti foto tiap JEDA milidetik (3 detik, K191) dengan memudar; hanya titik
  *   penanda, tanpa tombol maju/mundur. Geser di layar sentuh juga berpindah.
  * - Berhenti selama: pengunjung memilih kurangi gerak (`prefers-reduced-motion`,
  *   juga tanpa animasi), tab tidak terlihat, wadah di luar layar, fokus papan
@@ -26,8 +26,8 @@
 (function () {
     'use strict';
 
-    var JEDA = 5000;
-    // Foto berikutnya mulai diunduh sekian milidetik sebelum gilirannya.
+    var JEDA = 3000;
+    // Foto berikutnya mulai diunduh sekian milidetik sebelum gilirannya (kurang dari JEDA).
     var SIAPKAN = 2000;
 
     function pasang(wadah) {

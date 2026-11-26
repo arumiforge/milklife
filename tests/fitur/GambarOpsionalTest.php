@@ -269,6 +269,8 @@ final class GambarOpsionalTest extends UjiBasisData
         $this->assertNotNull($logo);
         $this->assertStringContainsString('aset/gambar/logo.webp', $logo->getAttribute('src'));
         $this->assertSame('153', $logo->getAttribute('width'));
+        // Logo yang sama di kanan judul hero (K191).
+        $this->assertStringContainsString('aset/gambar/logo.webp', (string) $xpath->query('//section[@id="pembuka"]//img[@data-logo-judul]')->item(0)?->getAttribute('src'));
         $this->assertSame(0, $xpath->query('//link[@rel="icon"][contains(@href, "ikon.svg")]')->length);
         $this->assertSame(1, $xpath->query('//link[@rel="icon"][contains(@href, "favicon-32.png")]')->length);
 

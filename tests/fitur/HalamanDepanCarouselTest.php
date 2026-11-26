@@ -66,6 +66,79 @@ final class HalamanDepanCarouselTest extends UjiBasisData
         $this->assertCount(count(CarouselHalamanDepan::BAWAAN), CarouselHalamanDepan::daftar());
     }
 
+    public function testFotoBawaanLamaDigantiTanpaMenyentuhUnggahanAdmin(): void
+    {
+        // K191: dua salinan foto bawaan lama mengapit foto unggahan admin. Sidik lama
+        // diganti sidik berkas karangan, karena berkas aslinya tidak ada lagi di repo.
+        $folder = $this->folderUnggahan . CarouselHalamanDepan::FOLDER;
+        mkdir($folder, 0755, true);
+        $lama = ['unggahan/halaman-depan/' . str_repeat('a', 32) . '.webp', 'unggahan/halaman-depan/' . str_repeat('c', 32) . '.webp'];
+        $admin = 'unggahan/halaman-depan/' . str_repeat('b', 32) . '.webp';
+        file_put_contents($this->jalurUnggahan($lama[0]), 'foto lama satu');
+        file_put_contents($this->jalurUnggahan($lama[1]), 'foto lama dua');
+        file_put_contents($this->jalurUnggahan($admin), 'foto admin');
+        $sidik = [sha1('foto lama satu'), sha1('foto lama dua')];
+
+        CarouselHalamanDepan::simpan([
+            ['berkas' => $admin, 'keterangan' => 'Foto admin'],
+            ['berkas' => $lama[0], 'keterangan' => 'Lama satu'],
+            ['berkas' => $lama[1], 'keterangan' => 'Lama dua'],
+        ]);
+        $this->assertSame(2, CarouselHalamanDepan::jumlahBawaanLama(null, $sidik));
+        $this->assertSame(0, CarouselHalamanDepan::jumlahBawaanLama(), 'Berkas karangan bukan foto bawaan lama yang asli.');
+
+        $hasil = CarouselHalamanDepan::gantiBawaanLama(null, $sidik);
+        $this->assertSame(['dipasang' => count(CarouselHalamanDepan::BAWAAN), 'dihapus' => 2, 'gagal' => 0], $hasil);
+
+        // Foto admin tetap di depan; foto baru menempati tempat foto lama pertama.
+        $daftar = CarouselHalamanDepan::tersimpan();
+        $this->assertSame(['Foto admin', ...array_values(CarouselHalamanDepan::BAWAAN)], array_column($daftar, 'keterangan'));
+        $this->assertSame($admin, $daftar[0]['berkas']);
+        $this->assertFileExists($this->jalurUnggahan($admin));
+        $this->assertFileDoesNotExist($this->jalurUnggahan($lama[0]));
+        $this->assertFileDoesNotExist($this->jalurUnggahan($lama[1]));
+        $this->assertSame(0, CarouselHalamanDepan::jumlahBawaanLama(null, $sidik));
+
+        // Diulang: tidak ada lagi yang diganti.
+        $this->assertNull(CarouselHalamanDepan::gantiBawaanLama(null, $sidik));
+        $this->assertSame(EXIT_SUCCESS, service('commands')->run('halaman-depan:carousel', []));
+        $this->assertStringContainsString('sudah diatur admin', $this->getStreamFilterBuffer());
+        $this->assertSame($daftar, CarouselHalamanDepan::tersimpan());
+    }
+
+    public function testFotoBaruMengikutiBatasCarousel(): void
+    {
+        $folder = $this->folderUnggahan . CarouselHalamanDepan::FOLDER;
+        mkdir($folder, 0755, true);
+        $daftar = [];
+
+        // 18 foto admin dan 1 foto lama: hanya 2 foto baru yang muat dari batas 20.
+        for ($i = 0; $i < CarouselHalamanDepan::BATAS - 2; $i++) {
+            $berkas = 'unggahan/halaman-depan/' . str_pad((string) $i, 32, 'd', STR_PAD_LEFT) . '.webp';
+            file_put_contents($this->jalurUnggahan($berkas), 'admin ' . $i);
+            $daftar[] = ['berkas' => $berkas, 'keterangan' => 'Admin ' . $i];
+        }
+
+        $lama = 'unggahan/halaman-depan/' . str_repeat('e', 32) . '.webp';
+        file_put_contents($this->jalurUnggahan($lama), 'foto lama');
+        $daftar[] = ['berkas' => $lama, 'keterangan' => 'Lama'];
+        CarouselHalamanDepan::simpan($daftar);
+
+        $this->assertSame(['dipasang' => 2, 'dihapus' => 1, 'gagal' => 0], CarouselHalamanDepan::gantiBawaanLama(null, [sha1('foto lama')]));
+        $this->assertCount(CarouselHalamanDepan::BATAS, CarouselHalamanDepan::tersimpan());
+    }
+
+    public function testFotoBawaanBaruBukanFotoLama(): void
+    {
+        $this->assertCount(9, CarouselHalamanDepan::BAWAAN);
+        $this->assertCount(11, CarouselHalamanDepan::SIDIK_BAWAAN_LAMA);
+
+        foreach (array_keys(CarouselHalamanDepan::BAWAAN) as $berkas) {
+            $this->assertFileExists(ROOTPATH . 'data/' . $berkas);
+            $this->assertNotContains(sha1_file(ROOTPATH . 'data/' . $berkas), CarouselHalamanDepan::SIDIK_BAWAAN_LAMA, $berkas);
+        }
+    }
+
     public function testCarouselDiPembuka(): void
     {
         $this->assertSame(EXIT_SUCCESS, service('commands')->run('halaman-depan:carousel', []));

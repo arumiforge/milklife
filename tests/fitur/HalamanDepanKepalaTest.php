@@ -41,6 +41,7 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $hasil->assertOK();
         $xpath = $this->xpathDari($hasil);
 
+        // Tanpa logo unggahan dan logo bawaan, logo di kanan judul (K191) pun tidak ada.
         $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//img')->length);
         $this->assertSame(0, $xpath->query('//*[contains(@class, "tanpa-gambar")]')->length, 'Kotak "tanpa gambar" hanya untuk panel admin (K41).');
         $this->assertSame(0, $xpath->query('//*[@data-foto-pembuka or @data-carousel-beranda]')->length);
@@ -80,6 +81,13 @@ final class HalamanDepanKepalaTest extends UjiBasisData
         $logo = [];
 
         $this->assertSame(0, $xpath->query('//section[@id="pembuka"]//img[contains(@alt, "Logo")]')->length);
+
+        // K191: logo persegi juga di kanan judul hero, hanya di bawah lg, sebagai hiasan (alt kosong).
+        $logoJudul = $xpath->query('//section[@id="pembuka"]//img[@data-logo-judul]');
+        $this->assertSame(1, $logoJudul->length);
+        $this->assertSame(base_url($jalur['logo_persegi']), $logoJudul->item(0)->getAttribute('src'));
+        $this->assertSame('', $logoJudul->item(0)->getAttribute('alt'));
+        $this->assertContains('lg:hidden', explode(' ', $logoJudul->item(0)->getAttribute('class')));
 
         foreach ($xpath->query('//footer//img[@data-kaki-logo]') as $img) {
             $logo[] = [$img->getAttribute('src'), $img->getAttribute('alt'), $img->getAttribute('width')];
