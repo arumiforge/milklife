@@ -11,6 +11,7 @@
  * @var CodeIgniter\View\View $this
  * @var string                $namaAcara
  * @var array<string, mixed>  $daftar    `TampilanVideotron::daftar()`
+ * @var string                $sebutan   sebutan pembagian babak, "Heat" atau "Seri" (`PapanVideotron::sebutanSeri()`, K192)
  */
 
 // ikon-sprite: monitor copy check calendar-clock trophy users list-ordered repeat
@@ -37,7 +38,7 @@ $tautan = static function (string $label, string $alamat, string $keterangan = '
 
 <?= $this->section('judul') ?>Tampilan videotron – <?= esc($namaAcara) ?><?= $this->endSection() ?>
 
-<?= $this->section('keterangan') ?>Daftar tampilan videotron per seri, sesi, klasemen, kelompok umur, dan nomor lomba.<?= $this->endSection() ?>
+<?= $this->section('keterangan') ?>Daftar tampilan videotron per <?= esc(mb_strtolower($sebutan)) ?>, sesi, klasemen, kelompok umur, dan nomor lomba.<?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
 <section class="latar-merek border-b border-gray-200/70" aria-labelledby="judul-tampilan-videotron">
@@ -70,10 +71,10 @@ $tautan = static function (string $label, string $alamat, string $keterangan = '
 
     <section id="bagian-sesi" class="scroll-mt-24 space-y-4" aria-labelledby="judul-bagian-sesi" data-bagian-layar="sesi">
         <h2 id="judul-bagian-sesi" class="flex items-center gap-2 text-xl font-bold text-primary-900 sm:text-2xl"><?= ikon('calendar-clock', 'size-6 text-oranye-600') ?>Per hari dan sesi</h2>
-        <p class="text-gray-700">Sesi dibagi menurut jam mulai babak: Pagi sebelum 11.00, Siang 11.00 sampai sebelum 15.00, Sore mulai 15.00. Tiap seri menampilkan daftar start setelah daftar seri dikunci, lalu hasil seri itu setelah terbit.</p>
+        <p class="text-gray-700">Sesi dibagi menurut jam mulai babak: Pagi sebelum 11.00, Siang 11.00 sampai sebelum 15.00, Sore mulai 15.00. Tiap <?= esc(mb_strtolower($sebutan)) ?> menampilkan daftar start setelah panitia mengunci pembagiannya, lalu hasil <?= esc(mb_strtolower($sebutan)) ?> itu setelah terbit.</p>
 
         <?php if ($daftar['hari'] === []) : ?>
-            <p class="<?= $kartu ?> text-gray-700">Jadwal pertandingan belum diisi panitia. Tampilan per sesi dan per seri muncul di sini setelah babak diberi tanggal.</p>
+            <p class="<?= $kartu ?> text-gray-700">Jadwal pertandingan belum diisi panitia. Tampilan per sesi dan per <?= esc(mb_strtolower($sebutan)) ?> muncul di sini setelah babak diberi tanggal.</p>
         <?php endif ?>
 
         <?php foreach ($daftar['hari'] as $hari) : ?>
@@ -93,10 +94,10 @@ $tautan = static function (string $label, string $alamat, string $keterangan = '
                                     </p>
                                     <?php if ($b['seri'] !== []) : ?>
                                         <?php foreach ($b['seri'] as $s) : ?>
-                                            <?= $tautan('Seri ' . $s, 'layar/seri/' . $b['id'] . '/' . $s) ?>
+                                            <?= $tautan($sebutan . ' ' . $s, 'layar/seri/' . $b['id'] . '/' . $s) ?>
                                         <?php endforeach ?>
                                     <?php else : ?>
-                                        <p class="text-sm text-gray-600"><?= $b['dikunci'] ? 'Babak ini tidak dibagi ke seri.' : 'Daftar seri belum dikunci panitia.' ?></p>
+                                        <p class="text-sm text-gray-600"><?= esc($b['dikunci'] ? 'Babak ini tidak dibagi ke ' . mb_strtolower($sebutan) . '.' : 'Pembagian ' . mb_strtolower($sebutan) . ' belum dikunci panitia.') ?></p>
                                     <?php endif ?>
                                 </li>
                             <?php endforeach ?>

@@ -64,7 +64,6 @@ use App\Libraries\BukaTutupPendaftaran;
 use App\Libraries\IlustrasiBeranda;
 use App\Libraries\IsiHalamanDepan;
 use App\Libraries\PetaLokasi;
-use App\Libraries\VarianFoto;
 
 $keadaan = $bukaTutup->keadaan();
 $batas   = $bukaTutup->batas();
@@ -127,14 +126,7 @@ $latarLintasan = gambar_opsional('beranda/latar-lintasan.webp', ['class' => 'poi
 
 // Logo merek di kanan judul, hanya di bawah lg saat foto di atas judul (K191): logo unggahan admin
 // (salinan 400 piksel supaya tajam di layar ponsel) atau logo bawaan.
-$logoJudul      = IsiHalamanDepan::logoMerek($tampilan);
-$kunciLogoJudul = IsiHalamanDepan::logoKepala($tampilan);
-if ($logoJudul !== null && $kunciLogoJudul !== null) {
-    $logoJudulKecil = VarianFoto::kecil((string) setting('HalamanDepan.' . $kunciLogoJudul), VarianFoto::LEBAR_LOGO[1]);
-    if ($logoJudulKecil !== null) {
-        $logoJudul['alamat'] = base_url($logoJudulKecil);
-    }
-}
+$logoJudul = IsiHalamanDepan::logoBesar($tampilan);
 
 $ukuranAtribut = static fn (?array $ukuran): string => $ukuran === null ? '' : ' width="' . (int) $ukuran['lebar'] . '" height="' . (int) $ukuran['tinggi'] . '"';
 

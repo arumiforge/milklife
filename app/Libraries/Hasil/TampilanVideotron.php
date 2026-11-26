@@ -251,7 +251,8 @@ final class TampilanVideotron
 
         $seri  = (int) $nomorSeri;
         $nomor = $babak['nomor'];
-        $judul = $nomor['nama'] . ' · ' . $nomor['kelompok_umur'] . ' · ' . $babak['nama'] . ' · Seri ' . $seri;
+        $sebutan = PapanVideotron::sebutanSeri();
+        $judul   = $nomor['nama'] . ' · ' . $nomor['kelompok_umur'] . ' · ' . $babak['nama'] . ' · ' . $sebutan . ' ' . $seri;
         $dasar = ['judul' => $judul, 'isi' => ['hasil', 'start']];
 
         if ($nomor['terbit_pada'] !== null && $babak['ada_hasil']) {
@@ -285,13 +286,13 @@ final class TampilanVideotron
             'kunci'         => 'start:' . $babak['id'] . ':' . $seri,
             'nomor'         => $nomor['nama'],
             'kelompok_umur' => $nomor['kelompok_umur'],
-            'babak'         => $babak['nama'] . ' · Seri ' . $seri,
+            'babak'         => $babak['nama'] . ' · ' . $sebutan . ' ' . $seri,
             'beregu'        => $nomor['jenis'] === 'beregu',
             'lintasan'      => $lintasan,
             'baris'         => $baris,
         ]];
 
-        return $dasar + ['kosong' => 'Seri ini tidak punya peserta.', 'start' => $start];
+        return $dasar + ['kosong' => $sebutan . ' ini tidak punya peserta.', 'start' => $start];
     }
 
     /**

@@ -207,6 +207,31 @@ final class IsiHalamanDepan
     }
 
     /**
+     * Logo merek ukuran besar (hero ponsel K191, videotron K192): seperti
+     * `logoMerek()`, tetapi logo unggahan admin memakai salinan 400 piksel
+     * supaya tetap tajam saat tampil besar.
+     *
+     * @param array<string, mixed> $tampilan hasil `tampilan()`, atau `[]` bila basis data belum siap
+     *
+     * @return array{alamat: string, ukuran: array{lebar: int, tinggi: int}|null}|null
+     */
+    public static function logoBesar(array $tampilan): ?array
+    {
+        $logo  = self::logoMerek($tampilan);
+        $kunci = self::logoKepala($tampilan);
+
+        if ($logo !== null && $kunci !== null) {
+            $kecil = VarianFoto::kecil((string) setting('HalamanDepan.' . $kunci), VarianFoto::LEBAR_LOGO[1]);
+
+            if ($kecil !== null) {
+                $logo['alamat'] = base_url($kecil);
+            }
+        }
+
+        return $logo;
+    }
+
+    /**
      * Logo bawaan: logo resmi MilkLife Athletics Challenge dari pemilik (K152),
      * dipakai di kepala halaman bila admin belum mengunggah logo sendiri.
      */

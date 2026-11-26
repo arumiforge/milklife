@@ -2,9 +2,10 @@
 
 | | |
 |---|---|
-| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K183, diubah langsung sesuai K101); **revisi 2 25 November 2026** (K186, diubah langsung sesuai K101); **revisi 3 25 November 2026** (K188, diubah langsung sesuai K101) |
-| Tanggal | 23 November 2026, revisi 2 dan 3 25 November 2026 |
-| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K183, K186, K188; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
+| Status | **Disetujui pemilik pada 23 November 2026** (K178); **revisi 1 23 November 2026** (K181, K183, diubah langsung sesuai K101); **revisi 2 25 November 2026** (K186, diubah langsung sesuai K101); **revisi 3 25 November 2026** (K188, diubah langsung sesuai K101); **revisi 4 26 November 2026** (K192, diubah langsung sesuai K101) |
+| Tanggal | 23 November 2026, revisi 2 dan 3 25 November 2026, revisi 4 26 November 2026 |
+| Dasar | Rancangan web bagian 9 dan 18; K124, K140, K141, K172–K176, K178, K181, K183, K186, K188, K192; tugas F11-01 sampai F11-12, F11-14, dan F11-16 |
+| Revisi 4 | Videotron bergaya baru dengan logo, latar bawaan diam yang bisa dipilih, dan sebutan Heat (bawaan) atau Seri (K192). Bagian yang berubah: 1.7, 3.7 |
 | Revisi 3 | Ganti atlet seperti Seri 1 (K188): saat pertemuan teknik, saat mengambil nomor atlet, dan di hari lomba, ditambah WA; dua sakelar di Pengaturan → Pendaftaran, dan ganti atlet setelah seri dikunci tidak perlu membuka kunci seri. Bagian yang berubah: 2.2, 5, 6 |
 | Revisi 2 | Pertemuan teknik daring Sabtu 5 Desember 2026, mengikuti agenda di server produksi (K186). Bagian yang berubah: Tujuan, 1 |
 | Revisi 1 | Versi siap bagi untuk admin panitia dan juri: alamat situs dan kontak, latihan di situs staging, akun juri sendiri (F11-16), cara sekolah meminta ganti atlet, belum ada rekor awal, nama berkas cadangan, dan langkah menyunting jawaban ganti atlet di Bantuan. Bagian Asumsi dihapus karena sudah dijawab pemilik. Bagian yang berubah: Tujuan, Alamat dan kontak (baru), Ringkasan alur, 1, 1.6, 1.7, 1.9 (baru), 2.2, 3.1, 4.3, 5, 6 |
@@ -165,7 +166,8 @@ Videotron arena dijalankan operator vendor. Web hanya menyediakan tampilan yang 
 
 1. Buka **Videotron** (kelompok Hasil).
 2. Nyalakan **Tampilkan videotron di /layar**. Bawaannya mati, dan saat mati semua alamat videotron tidak bisa dibuka.
-3. Bila perlu, unggah **Gambar latar**: JPG, PNG, atau WEBP, sebaiknya gelap dan tenang, misalnya 1920 × 1080 piksel. Kosongkan untuk memakai latar bawaan yang bergerak pelan.
+3. Bila perlu, unggah **Gambar latar**: JPG, PNG, atau WEBP, sebaiknya gelap dan tenang, misalnya 1920 × 1080 piksel. Bila kosong, videotron memakai **Latar bawaan**: sapuan kuas biru yang diam (bawaan), biru tua polos, atau sapuan kuas dengan bentuk 3D bergerak pelan.
+   Pilih juga **Sebutan pembagian babak**: **Heat** (bawaan) atau **Seri**. Sebutan ini tertulis di videotron dan daftar `/layar`, misalnya "Babak 1 · Heat 3".
 4. Tekan **Simpan pengaturan videotron**.
 5. Kirim alamat `https://mac2026.web.id/layar` kepada operator videotron. Alamat lengkapnya tertulis di halaman Videotron.
 6. Coba buka `/layar` di peramban komputer videotron sebelum hari lomba, bersama operator.
@@ -373,7 +375,7 @@ Tampilan yang tersedia:
 
 | Tampilan | Isi |
 |---|---|
-| Per seri | Daftar start urut lintasan setelah daftar seri dikunci, lalu hasil seri itu setelah terbit |
+| Per heat (atau per seri) | Daftar start urut lintasan setelah pembagian heat dikunci, lalu hasil heat itu setelah terbit |
 | Per sesi | Semua hasil terbit satu sesi: Pagi sebelum 11.00, Siang 11.00 sampai sebelum 15.00, Sore mulai 15.00 |
 | Klasemen | Juara umum satu klasemen, sesuai susunan di Pengaturan → Hasil |
 | Per kelompok umur | Semua hasil terbit satu kelompok umur |

@@ -5,10 +5,12 @@
  * tiap tampilan papan putar `/layar/putar`. Tata letak `admin_tw`.
  *
  * @var CodeIgniter\View\View                               $this
- * @var array{tampil: bool, lama: string, isi: list<string>} $isian
+ * @var array{tampil: bool, lama: string, isi: list<string>, latar_bawaan: string, sebutan_seri: string} $isian
  * @var array<string, string>                               $galat
  * @var array<string, string>                               $pilihanIsi kode => label (`PapanVideotron::ISI`)
  * @var string|null                                         $latar      jalur gambar latar unggahan (`PapanVideotron::latar()`)
+ * @var array<string, string>                               $pilihanLatar   kode => label latar bawaan (`PapanVideotron::LATAR_BAWAAN`, K192)
+ * @var list<string>                                        $pilihanSebutan "Heat" dan "Seri" (`PapanVideotron::SEBUTAN_SERI`, K192)
  */
 
 use App\Libraries\Unggahan;
@@ -28,7 +30,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 
     <p class="text-gray-700">
         Tampilan hasil untuk videotron di arena. Operator videotron membuka daftar di /layar, lalu memilih satu tampilan:
-        per seri, per sesi, klasemen, per kelompok umur, atau per nomor lomba. Tampilan itu tidak berganti sendiri.
+        per <?= esc(mb_strtolower($isian['sebutan_seri'])) ?>, per sesi, klasemen, per kelompok umur, atau per nomor lomba. Tampilan itu tidak berganti sendiri.
         Hanya hasil yang sudah diterbitkan yang tampil.
     </p>
 
@@ -56,7 +58,7 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
 
             <section class="<?= $kartu ?>" aria-labelledby="judul-latar-videotron" data-latar-videotron>
                 <h2 id="judul-latar-videotron" class="mb-1 text-lg font-bold text-gray-900">Gambar latar</h2>
-                <p class="mb-3 text-sm text-gray-600">Dipakai semua tampilan videotron. Bila kosong, videotron memakai latar bawaan yang bergerak pelan.</p>
+                <p class="mb-3 text-sm text-gray-600">Dipakai semua tampilan videotron. Bila kosong, videotron memakai latar bawaan yang dipilih di bawah.</p>
                 <?php if ($latar !== null) : ?>
                     <div class="mb-3 aspect-video w-full max-w-sm overflow-hidden rounded-lg border border-gray-200 bg-primary-950">
                         <img src="<?= esc(base_url($latar), 'attr') ?>" alt="Gambar latar videotron saat ini" class="size-full object-cover">
@@ -77,6 +79,36 @@ $kartu = 'rounded-2xl border border-gray-200 bg-white p-4 shadow-lembut sm:p-5';
                         <span class="text-sm text-gray-900">Hapus gambar latar, kembali ke latar bawaan</span>
                     </label>
                 <?php endif ?>
+            </section>
+
+            <section class="<?= $kartu ?>" data-latar-bawaan>
+                <fieldset>
+                    <legend class="text-lg font-bold text-gray-900">Latar bawaan</legend>
+                    <p class="mb-3 mt-1 text-sm text-gray-600">Dipakai bila belum ada gambar latar unggahan. Latar diam lebih tenang untuk dibaca dari tribun.</p>
+                    <div class="space-y-1">
+                        <?php foreach ($pilihanLatar as $kode => $label) : ?>
+                            <label class="flex min-h-11 items-center gap-2" for="latar-bawaan-<?= esc($kode, 'attr') ?>">
+                                <input class="size-4 border-gray-300 text-primary-700 focus:ring-primary-300" type="radio" id="latar-bawaan-<?= esc($kode, 'attr') ?>" name="latar_bawaan" value="<?= esc($kode, 'attr') ?>"<?= $isian['latar_bawaan'] === $kode ? ' checked' : '' ?>>
+                                <span class="text-sm text-gray-900"><?= esc($label) ?><?= $kode === 'kuas' ? ' (bawaan)' : '' ?></span>
+                            </label>
+                        <?php endforeach ?>
+                    </div>
+                </fieldset>
+            </section>
+
+            <section class="<?= $kartu ?>" data-sebutan-seri>
+                <fieldset aria-describedby="sebutan-keterangan">
+                    <legend class="text-lg font-bold text-gray-900">Sebutan pembagian babak</legend>
+                    <p id="sebutan-keterangan" class="mb-3 mt-1 text-sm text-gray-600">Tertulis di videotron dan daftar tampilan /layar, misalnya "Babak 1 · Heat 3". Halaman panitia tetap memakai kata seri.</p>
+                    <div class="flex flex-wrap gap-x-6 gap-y-1">
+                        <?php foreach ($pilihanSebutan as $i => $sebutan) : ?>
+                            <label class="inline-flex min-h-11 items-center gap-2" for="sebutan-<?= esc(mb_strtolower($sebutan), 'attr') ?>">
+                                <input class="size-4 border-gray-300 text-primary-700 focus:ring-primary-300" type="radio" id="sebutan-<?= esc(mb_strtolower($sebutan), 'attr') ?>" name="sebutan_seri" value="<?= esc($sebutan, 'attr') ?>"<?= $isian['sebutan_seri'] === $sebutan ? ' checked' : '' ?>>
+                                <span class="text-sm text-gray-900"><?= esc($sebutan) ?><?= $i === 0 ? ' (bawaan)' : '' ?></span>
+                            </label>
+                        <?php endforeach ?>
+                    </div>
+                </fieldset>
             </section>
 
             <h2 class="pt-2 text-lg font-bold text-gray-900">Papan putar</h2>

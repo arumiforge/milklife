@@ -12,8 +12,9 @@ use RuntimeException;
 /**
  * Pengaturan > Videotron (F9-13, F11-09): sakelar semua alamat videotron
  * `/layar` (bawaan mati), gambar latar unggahan (K173, folder
- * `unggahan/videotron/`, disimpan WEBP), lalu isi dan lama tiap tampilan
- * papan putar `/layar/putar`. Kunci `Videotron.*` (`Config\Videotron`).
+ * `unggahan/videotron/`, disimpan WEBP), latar bawaan dan sebutan Heat atau
+ * Seri (K192), lalu isi dan lama tiap tampilan papan putar `/layar/putar`.
+ * Kunci `Videotron.*` (`Config\Videotron`).
  */
 class VideotronController extends BaseController
 {
@@ -27,9 +28,11 @@ class VideotronController extends BaseController
     public function index(): string
     {
         return $this->tampilkan([
-            'tampil' => PapanVideotron::tampil(),
-            'lama'   => (string) PapanVideotron::pengaturan()['lama'],
-            'isi'    => PapanVideotron::pengaturan()['isi'],
+            'tampil'       => PapanVideotron::tampil(),
+            'lama'         => (string) PapanVideotron::pengaturan()['lama'],
+            'isi'          => PapanVideotron::pengaturan()['isi'],
+            'latar_bawaan' => PapanVideotron::latarBawaan(),
+            'sebutan_seri' => PapanVideotron::sebutanSeri(),
         ]);
     }
 
@@ -38,11 +41,16 @@ class VideotronController extends BaseController
      */
     public function simpan()
     {
-        $isi   = $this->request->getPost('isi');
-        $isian = [
-            'tampil' => $this->request->getPost('tampil') === '1',
-            'lama'   => trim((string) $this->request->getPost('lama')),
-            'isi'    => PapanVideotron::rapikanIsi(is_array($isi) ? $isi : []),
+        $isi     = $this->request->getPost('isi');
+        $latar   = (string) $this->request->getPost('latar_bawaan');
+        $sebutan = (string) $this->request->getPost('sebutan_seri');
+        $isian   = [
+            'tampil'       => $this->request->getPost('tampil') === '1',
+            'lama'         => trim((string) $this->request->getPost('lama')),
+            'isi'          => PapanVideotron::rapikanIsi(is_array($isi) ? $isi : []),
+            // Pilihan di luar daftar kembali ke bawaan, sama seperti saat dibaca.
+            'latar_bawaan' => isset(PapanVideotron::LATAR_BAWAAN[$latar]) ? $latar : 'kuas',
+            'sebutan_seri' => in_array($sebutan, PapanVideotron::SEBUTAN_SERI, true) ? $sebutan : PapanVideotron::SEBUTAN_SERI[0],
         ];
         $galat = [];
 
@@ -91,23 +99,30 @@ class VideotronController extends BaseController
         setting('Videotron.tampil', $isian['tampil']);
         setting('Videotron.lama', (int) $isian['lama']);
         setting('Videotron.isi', implode(',', $isian['isi']));
+        setting('Videotron.latar_bawaan', $isian['latar_bawaan']);
+        setting('Videotron.sebutan_seri', $isian['sebutan_seri']);
         cache()->delete(LayarController::KUNCI_TEMBOLOK);
+        cache()->delete(LayarController::KUNCI_TEMBOLOK_DAFTAR);
+        // Sebutan Heat atau Seri ada di data tampilan tetap yang ditembolok.
+        cache()->deleteMatching(LayarController::AWALAN_TEMBOLOK_TAMPILAN . '*');
 
         return redirect()->to('admin/pengaturan/videotron')
             ->with('pesan_sukses', $isian['tampil'] ? 'Pengaturan videotron tersimpan. Daftar tampilan videotron bisa dibuka di /layar.' : 'Pengaturan videotron tersimpan. Videotron disembunyikan.');
     }
 
     /**
-     * @param array{tampil: bool, lama: string, isi: list<string>} $isian
-     * @param array<string, string>                                $galat
+     * @param array{tampil: bool, lama: string, isi: list<string>, latar_bawaan: string, sebutan_seri: string} $isian
+     * @param array<string, string> $galat
      */
     private function tampilkan(array $isian, array $galat = []): string
     {
         return view('admin/pengaturan/videotron', [
-            'isian'      => $isian,
-            'galat'      => $galat,
-            'pilihanIsi' => PapanVideotron::ISI,
-            'latar'      => PapanVideotron::latar(),
+            'isian'          => $isian,
+            'galat'          => $galat,
+            'pilihanIsi'     => PapanVideotron::ISI,
+            'pilihanLatar'   => PapanVideotron::LATAR_BAWAAN,
+            'pilihanSebutan' => PapanVideotron::SEBUTAN_SERI,
+            'latar'          => PapanVideotron::latar(),
         ]);
     }
 }

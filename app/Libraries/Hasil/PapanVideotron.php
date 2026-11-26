@@ -101,6 +101,44 @@ final class PapanVideotron
     }
 
     /**
+     * Pilihan latar bawaan (K192): kode => label di Pengaturan > Videotron.
+     *
+     * @var array<string, string>
+     */
+    public const LATAR_BAWAAN = [
+        'kuas'    => 'Sapuan kuas biru, diam',
+        'polos'   => 'Biru tua polos',
+        'animasi' => 'Sapuan kuas dengan bentuk 3D bergerak pelan',
+    ];
+
+    /**
+     * Pilihan sebutan pembagian babak (K192), yang pertama bawaan.
+     *
+     * @var list<string>
+     */
+    public const SEBUTAN_SERI = ['Heat', 'Seri'];
+
+    /**
+     * Latar bawaan yang berlaku (`kuas` bila isiannya tidak sah).
+     */
+    public static function latarBawaan(): string
+    {
+        $kode = (string) setting('Videotron.latar_bawaan');
+
+        return isset(self::LATAR_BAWAAN[$kode]) ? $kode : 'kuas';
+    }
+
+    /**
+     * Sebutan pembagian babak di videotron: "Heat" (bawaan) atau "Seri".
+     */
+    public static function sebutanSeri(): string
+    {
+        $sebutan = (string) setting('Videotron.sebutan_seri');
+
+        return in_array($sebutan, self::SEBUTAN_SERI, true) ? $sebutan : self::SEBUTAN_SERI[0];
+    }
+
+    /**
      * Isi dan lama tampilan yang sudah dirapikan.
      *
      * @return array{isi: list<string>, lama: int}
@@ -259,7 +297,7 @@ final class PapanVideotron
             'kunci'         => 'babak:' . $babak['id'] . ($seri === null ? '' : ':' . $seri),
             'nomor'         => (string) $nomor['nama'],
             'kelompok_umur' => (string) $nomor['kelompok_umur'],
-            'babak'         => $babak['nama'] . ($seri === null ? '' : ' · Seri ' . $seri),
+            'babak'         => $babak['nama'] . ($seri === null ? '' : ' · ' . self::sebutanSeri() . ' ' . $seri),
             'beregu'        => $nomor['jenis'] === 'beregu',
             'satuan'        => self::satuan((string) $nomor['jenis_hasil']),
             'baris'         => $baris,
