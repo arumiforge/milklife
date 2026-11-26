@@ -5,7 +5,6 @@ Diperbarui: 25 November 2026
 ## Sedang berjalan
 
 - F11-22 Ganti atlet seperti Seri 1 dengan dua sakelar (K188): menunggu tinjauan.
-- F11-23 Perintah `mlk deploy` dan `mlk pasang` di server Docker (K189): menunggu tinjauan.
 
 ## Berikutnya
 
@@ -26,8 +25,8 @@ Diperbarui: 25 November 2026
 - Tahap 9 — Rombak tampilan dan fitur publik hari lomba: [`arsip/tahap-9.md`](arsip/tahap-9.md). Selesai 22 November 2026; F9-01 sampai F9-17 dan F9-19 (#121–#150), penutupan F9-18 (#151).
 - Tahap 10 — Identitas visual anime, panel admin, dan data terbaru: [`arsip/tahap-10.md`](arsip/tahap-10.md). Selesai 22 November 2026; F10-01 sampai F10-10, F10-12, F10-13 (#172–#203) dan gambar G10-01 sampai G10-13, penutupan F10-11.
 - Tahap 11 — Pelajaran hasil Seri 1: [`arsip/tahap-11.md`](arsip/tahap-11.md). Selesai 23 November 2026; F11-01 sampai F11-07 dan F11-09 sampai F11-12 (#211–#224), penutupan F11-08. Gambar G11-01 (kartu kelompok umur, #236) dan G11-02 (latar hero kiri, #237) dari Codex dipasang 24 November 2026; PR #230 dan #231 dari brief lama ditutup.
-- Tugas sisipan Tahap 11 setelah penutupan: F11-15 kartu KU dan pita fakta halaman depan (K179), F11-16 peran juri (K181, #234), F11-17 migrasi server ke Docker (K182, #235), F11-18 tunnel Cloudflare di host VPS (K184, #241), F11-19 pemeriksaan pembaruan untuk data pindahan (K185, #242), F11-20 data awal sesuai isian panitia di produksi (K186, #244), F11-21 salinan cadangan R2 diatur di panel (K187, #243).
+- Tugas sisipan Tahap 11 setelah penutupan: F11-15 kartu KU dan pita fakta halaman depan (K179), F11-16 peran juri (K181, #234), F11-17 migrasi server ke Docker (K182, #235), F11-18 tunnel Cloudflare di host VPS (K184, #241), F11-19 pemeriksaan pembaruan untuk data pindahan (K185, #242), F11-20 data awal sesuai isian panitia di produksi (K186, #244), F11-21 salinan cadangan R2 diatur di panel (K187, #243), F11-23 perintah `mlk deploy` dan `mlk pasang` (K189, #245).
 
 ## Menunggu pemilik
 
-- Pemasangan di VPS Ubuntu 24.04 (F11-17, K182), dikerjakan pemilik karena agen tidak punya akses ke VPS: staging dipasang dulu (panduan produksi bagian 1–7, `COMPOSE_PROJECT_NAME=milklife-staging`), lalu produksi dipindah dari Laragon pada malam hari sebelum 30 November 2026 (bagian 8), dan salinan R2 diatur admin di Pengaturan > Cadangan lalu dicoba dengan `cadangan:buat` (bagian 7). Langkah yang disesuaikan dengan server spmb-prod ada di Claude Doc "Pemasangan MilkLife di VPS spmb-prod". Deploy key diurus pengembang sendiri dan lisensi Flowbite Pro sudah mencakup semua pengembang (K148).
+- Pemasangan di VPS Ubuntu 24.04 (F11-17, K182), dikerjakan pemilik karena agen tidak punya akses ke VPS: staging sudah terpasang dengan `mlk pasang staging` dan diperbarui dengan `mlk deploy staging` (26 November 2026; pendaftaran, Cetak BIB, dan `cadangan:buat` sudah dicoba), lalu produksi dipindah dari Laragon pada malam hari sebelum 30 November 2026 (bagian 8), dan salinan R2 diatur admin di Pengaturan > Cadangan lalu dicoba dengan `cadangan:buat` (bagian 7). Langkah yang disesuaikan dengan server spmb-prod ada di Claude Doc "Pemasangan MilkLife di VPS spmb-prod". Deploy key diurus pengembang sendiri dan lisensi Flowbite Pro sudah mencakup semua pengembang (K148).
