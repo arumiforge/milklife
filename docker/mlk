@@ -125,6 +125,22 @@ daftar_port() {
   fi
 }
 
+# Folder cadangan di host dipasang ke /cadangan dan ditulisi www-data
+# (uid 33) di container. Bila folder belum ada, Docker membuatnya milik
+# root dan cadangan:buat gagal, jadi folder disiapkan di sini.
+siapkan_folder_cadangan() {
+  local folder
+  folder="$(ambil_var docker/.env FOLDER_CADANGAN)"
+  [ -n "$folder" ] || gagal "FOLDER_CADANGAN di docker/.env belum diisi."
+  mkdir -p "$folder" || gagal "folder cadangan $folder tidak bisa dibuat."
+  if [ "$(stat -c %u "$folder")" != 33 ]; then
+    if ! { chown 33:33 "$folder" && chmod 700 "$folder"; }; then
+      gagal "folder cadangan $folder belum milik www-data (uid 33). Jalankan sebagai root: chown 33:33 $folder"
+    fi
+    beres "Folder cadangan $folder disiapkan untuk www-data."
+  fi
+}
+
 # Isi satu kunci di .env. Berkas ditulis ulang di tempat (bukan sed -i)
 # supaya container yang memasang .env sebagai berkas tetap membaca isi baru.
 tulis_env() {
@@ -176,6 +192,18 @@ periksa_kesehatan() {
   done
   awas "Port lokal $port menjawab $kode_http dan $kode_https, seharusnya 307 dan 200."
   return 1
+}
+
+# `spark migrate` CodeIgniter 4.7 menampilkan galat (misalnya basis data
+# tidak tersambung) tetapi tetap keluar dengan kode 0, jadi keluarannya
+# diperiksa juga.
+migrasi() {
+  local keluaran
+  keluaran="$(spark_t migrate --all 2>&1)" || { printf '%s\n' "$keluaran"; return 1; }
+  printf '%s\n' "$keluaran"
+  if printf '%s\n' "$keluaran" | sed 's/\x1b\[[0-9;]*m//g' | grep -Eq '^\[[A-Za-z\\]*(Exception|Error)\]|Migration failed!|Migrasi gagal!'; then
+    return 1
+  fi
 }
 
 periksa_pembaruan() {
@@ -250,7 +278,7 @@ aktifkan() {
   nyalakan || kembalikan "$lama" "container tidak sehat"
 
   langkah "Memperbarui tabel dan data sekolah"
-  spark_t migrate --all || kembalikan "$lama" "migrate gagal"
+  migrasi || kembalikan "$lama" "migrate gagal"
   spark_t sekolah:impor || kembalikan "$lama" "sekolah:impor gagal"
 
   langkah "Memeriksa kesehatan"
@@ -294,6 +322,7 @@ deploy() {
   periksa_berkas_env
   periksa_tanpa_ubahan
   daftar_port
+  siapkan_folder_cadangan
 
   langkah "Mengambil versi terbaru dari GitHub"
   git fetch --prune --tags origin
@@ -358,6 +387,7 @@ pasang() {
   periksa_berkas_env
   periksa_tanpa_ubahan
   daftar_port
+  siapkan_folder_cadangan
 
   local sha tag
   sha="$(git rev-parse HEAD)"
@@ -380,7 +410,7 @@ pasang() {
   fi
 
   langkah "Membuat tabel"
-  spark_t migrate --all
+  migrasi || gagal "migrate gagal (lihat pesan di atas). Periksa pengaturan basis data di .env, lalu jalankan lagi: mlk pasang $LINGKUNGAN"
 
   langkah "Mengisi data sekolah"
   spark_t sekolah:impor
