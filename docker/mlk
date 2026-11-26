@@ -194,6 +194,18 @@ periksa_kesehatan() {
   return 1
 }
 
+# `spark migrate` CodeIgniter 4.7 menampilkan galat (misalnya basis data
+# tidak tersambung) tetapi tetap keluar dengan kode 0, jadi keluarannya
+# diperiksa juga.
+migrasi() {
+  local keluaran
+  keluaran="$(spark_t migrate --all 2>&1)" || { printf '%s\n' "$keluaran"; return 1; }
+  printf '%s\n' "$keluaran"
+  if printf '%s\n' "$keluaran" | sed 's/\x1b\[[0-9;]*m//g' | grep -Eq '^\[[A-Za-z\\]*(Exception|Error)\]|Migration failed!|Migrasi gagal!'; then
+    return 1
+  fi
+}
+
 periksa_pembaruan() {
   langkah "Memeriksa pembaruan"
   if ! spark_t pembaruan:periksa; then
@@ -266,7 +278,7 @@ aktifkan() {
   nyalakan || kembalikan "$lama" "container tidak sehat"
 
   langkah "Memperbarui tabel dan data sekolah"
-  spark_t migrate --all || kembalikan "$lama" "migrate gagal"
+  migrasi || kembalikan "$lama" "migrate gagal"
   spark_t sekolah:impor || kembalikan "$lama" "sekolah:impor gagal"
 
   langkah "Memeriksa kesehatan"
@@ -398,7 +410,7 @@ pasang() {
   fi
 
   langkah "Membuat tabel"
-  spark_t migrate --all
+  migrasi || gagal "migrate gagal (lihat pesan di atas). Periksa pengaturan basis data di .env, lalu jalankan lagi: mlk pasang $LINGKUNGAN"
 
   langkah "Mengisi data sekolah"
   spark_t sekolah:impor
